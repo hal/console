@@ -21,26 +21,27 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.LabelElement;
-import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.SimpleEventBus;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasName;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.IsWidget;
+import elemental.client.Browser;
+import elemental.dom.Document;
+import elemental.dom.Element;
+import elemental.dom.Node;
+import elemental.html.ButtonElement;
+import elemental.html.DivElement;
+import elemental.html.LabelElement;
+import elemental.html.SpanElement;
+import org.jboss.hal.ballroom.Elements;
 import org.jboss.hal.ballroom.Id;
+import org.jboss.hal.ballroom.IsElement;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -51,9 +52,9 @@ import static java.util.Collections.singletonList;
 /**
  * @author Harald Pehl
  */
-public abstract class FormItem<T> extends Composite
-        implements IsWidget, HasEnabled, Focusable, HasName, HasValue<T>,
-        HasText /* for expression support */, FormLayout {
+public abstract class FormItem<T>
+        implements IsElement, HasEnabled, Focusable, HasName, HasValue<T>, HasText /* for expression support */,
+        FormLayout {
 
     public static final String STYLE_NAME = "hal-FormItem";
 
@@ -65,16 +66,16 @@ public abstract class FormItem<T> extends Composite
     private boolean undefined;
     private boolean restricted;
 
-    protected final FlowPanel container;
-    protected final FlowPanel inputContainer;
-    protected final FlowPanel inputGroupContainer;
+    protected final DivElement container;
+    protected final DivElement inputContainer;
+    protected final DivElement inputGroupContainer;
     protected final LabelElement labelElement;
     protected final InputElement<T> inputElement;
-    protected final InlineLabel errorText;
-    protected final FlowPanel expressionContainer;
-    protected final Button expressionButton;
+    protected final SpanElement errorText;
+    protected final SpanElement expressionContainer;
+    protected final ButtonElement expressionButton;
     protected final RestrictedElement restrictedElement;
-    protected final InlineLabel restrictedIcon;
+    protected final SpanElement restrictedIcon;
 
 
     // ------------------------------------------------------ initialization
@@ -92,36 +93,36 @@ public abstract class FormItem<T> extends Composite
         resetValidationHandlers();
 
         // create UI elements
-        container = new FlowPanel();
-        initWidget(this.container);
-        container.addStyleName(STYLE_NAME);
-        container.addStyleName("form-group");
+        Document document = Browser.getDocument();
+        container = document.createDivElement();
+        container.setClassName(STYLE_NAME + " form-group");
 
-        labelElement = Document.get().createLabelElement();
+        labelElement = document.createLabelElement();
         labelElement.setClassName("col-" + COLUMN_DISCRIMINATOR + "-" + LABEL_COLUMNS + " control-label");
         labelElement.setInnerText(label);
 
-        inputContainer = new FlowPanel();
-        inputContainer.addStyleName("col-" + COLUMN_DISCRIMINATOR + "-" + INPUT_COLUMNS);
+        inputContainer = document.createDivElement();
+        inputContainer.setClassName("col-" + COLUMN_DISCRIMINATOR + "-" + INPUT_COLUMNS);
 
-        inputGroupContainer = new FlowPanel();
-        inputGroupContainer.addStyleName("input-group");
+        inputGroupContainer = document.createDivElement();
+        inputGroupContainer.setClassName("input-group");
 
-        errorText = new InlineLabel();
-        errorText.addStyleName("help-block");
-        errorText.setVisible(false);
+        errorText = document.createSpanElement();
+        errorText.setClassName("help-block");
+        Elements.setVisible(errorText, false);
 
-        expressionContainer = new FlowPanel(SpanElement.TAG);
-        expressionContainer.addStyleName("input-group-btn");
-        expressionButton = new Button(SafeHtmlUtils.fromTrustedString("<i class=\"fa fa-link\"></i>"));
-        expressionButton.addClickHandler(event -> ResolveExpressionEvent.fire(this, getExpressionValue()));
-        expressionButton.addStyleName("btn btn-default");
+        expressionContainer = document.createSpanElement();
+        expressionContainer.setClassName("input-group-btn");
+        expressionButton = document.createButtonElement();
+        expressionButton.setClassName("btn btn-default");
+        expressionButton.setInnerHTML("<i class=\"fa fa-link\"></i>");
+        expressionButton.setOnclick(event -> ResolveExpressionEvent.fire(this, getExpressionValue()));
         expressionButton.setTitle("Expression Resolver");
 
         restrictedElement = new RestrictedElement();
-        restrictedIcon = new InlineLabel();
-        restrictedIcon.addStyleName("fa fa-lock form-control-feedback");
-        restrictedIcon.setVisible(false);
+        restrictedIcon = document.createSpanElement();
+        restrictedIcon.setClassName("fa fa-lock form-control-feedback");
+        Elements.setVisible(restrictedIcon, false);
 
         setId(Id.generate(name));
         setName(name);
@@ -133,13 +134,13 @@ public abstract class FormItem<T> extends Composite
      * form item.
      */
     protected void assembleUI() {
-        expressionContainer.add(expressionButton);
-        inputGroupContainer.add(expressionContainer);
-        inputContainer.add(inputElement);
-        inputContainer.add(errorText);
-        inputContainer.add(restrictedIcon);
-        container.getElement().appendChild(labelElement);
-        container.add(inputContainer);
+        expressionContainer.appendChild(expressionButton);
+        inputGroupContainer.appendChild(expressionContainer);
+        inputContainer.appendChild(inputElement.asElement());
+        inputContainer.appendChild(errorText);
+        inputContainer.appendChild(restrictedIcon);
+        container.appendChild(labelElement);
+        container.appendChild(inputContainer);
     }
 
     /**
@@ -151,6 +152,10 @@ public abstract class FormItem<T> extends Composite
      */
     protected abstract InputElement<T> newInputElement();
 
+    @Override
+    public Element asElement() {
+        return container;
+    }
 
     // ------------------------------------------------------ state, id, name & text
 
@@ -194,7 +199,7 @@ public abstract class FormItem<T> extends Composite
     }
 
     public void setId(String id) {
-        Id.set(inputElement.asWidget(), id);
+        Id.set(inputElement.asElement(), id);
         labelElement.setHtmlFor(id);
     }
 
@@ -258,14 +263,14 @@ public abstract class FormItem<T> extends Composite
     }
 
     void clearError() {
-        errorText.setVisible(false);
-        container.removeStyleName("has-error");
+        Elements.setVisible(errorText, false);
+        container.getClassList().remove("has-error");
     }
 
     void showError(String message) {
-        container.addStyleName("has-error");
-        errorText.setText(message);
-        errorText.setVisible(true);
+        container.getClassList().add("has-error");
+        errorText.setInnerText(message);
+        Elements.setVisible(errorText, true);
     }
 
 
@@ -299,13 +304,13 @@ public abstract class FormItem<T> extends Composite
         // only change the UI if expressions are supported and switch is necessary
         if (supportsExpressions() && !isRestricted() && on != inExpressionState()) {
             if (on) {
-                inputContainer.remove(inputElement);
-                inputGroupContainer.insert(inputElement, 0);
-                inputContainer.insert(inputGroupContainer, 0);
+                inputContainer.removeChild(inputElement.asElement());
+                inputGroupContainer.appendChild(inputElement.asElement());
+                inputContainer.appendChild(inputGroupContainer);
             } else {
-                inputGroupContainer.remove(inputElement);
-                inputContainer.remove(inputGroupContainer);
-                inputContainer.insert(inputElement, 0);
+                inputGroupContainer.removeChild(inputElement.asElement());
+                inputContainer.removeChild(inputGroupContainer);
+                inputContainer.appendChild(inputElement.asElement());
             }
             return true;
         }
@@ -313,7 +318,7 @@ public abstract class FormItem<T> extends Composite
     }
 
     boolean inExpressionState() {
-        return inputGroupContainer.isAttached();
+        return inputContainer.contains(inputGroupContainer);
     }
 
 
@@ -404,19 +409,20 @@ public abstract class FormItem<T> extends Composite
 
     protected void toggleRestricted(final boolean on) {
         if (on) {
-            container.addStyleName("has-feedback");
-            inputContainer.remove(0); // 0 because we don't know whether it's input inputElement or inputGroupContainer
-            inputContainer.insert(restrictedElement, 0);
+            container.getClassList().add("has-feedback");
+            Node firstChild = inputContainer.getChildren().item(0);
+            inputContainer.removeChild(firstChild);
+            inputContainer.appendChild(restrictedElement.asElement());
         } else {
-            container.removeStyleName("has-feedback");
-            inputContainer.remove(restrictedElement);
+            container.getClassList().remove("has-feedback");
+            inputContainer.removeChild(restrictedElement.asElement());
             if (isExpressionValue()) {
-                inputContainer.insert(inputGroupContainer, 0);
+                inputContainer.appendChild(inputGroupContainer);
             } else {
-                inputContainer.insert(inputElement, 0);
+                inputContainer.appendChild(inputElement.asElement());
             }
         }
-        restrictedIcon.setVisible(on);
+        Elements.setVisible(restrictedIcon, on);
     }
 
     protected InputElement<T> inputElement() {

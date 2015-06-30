@@ -40,6 +40,10 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
+import elemental.client.Browser;
+import elemental.html.DivElement;
+import elemental.html.ParagraphElement;
+import elemental.html.SpanElement;
 import org.jboss.hal.ballroom.Id;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.HalConstants;
@@ -57,33 +61,6 @@ import static org.jboss.hal.ballroom.form.Form.State.*;
  */
 public abstract class AbstractForm<T> implements Form<T>, FormLayout {
 
-    /**
-     * Defines common properties across the different builders
-     */
-    protected static abstract class AbstractBuilder<T> {
-
-        private final String id;
-        protected ResourceAddress resourceAddress;
-        protected List<FormItem> formItems;
-        protected List<FormValidation> validationHandlers;
-        protected SaveCallback<T> saveCallback;
-        protected UndefineCallback<T> undefineCallback;
-        protected CancelCallback<T> cancelCallback;
-        protected boolean supportsUndefine;
-        protected boolean supportsHelp;
-
-        protected AbstractBuilder(final String id) {
-            this.id = id;
-            this.formItems = new ArrayList<>();
-            this.validationHandlers = new ArrayList<>();
-            this.supportsUndefine = false;
-            this.supportsHelp = true;
-        }
-
-        public abstract Form<T> build();
-    }
-
-
     interface Templates extends SafeHtmlTemplates {
 
         @Template("<span class=\"pficon-layered\"><span class=\"pficon pficon-error-octagon\"></span><span class=\"pficon pficon-error-exclamation\"></span></span><span></span>")
@@ -95,7 +72,7 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
 
 
     private final static HalConstants CONSTANTS = GWT.create(HalConstants.class);
-    private static final Templates TEMPLATES = GWT.create(Templates.class);
+    private final static Templates TEMPLATES = GWT.create(Templates.class);
 
     private final String id;
     private final Map<State, Integer> stateDeck;
@@ -114,20 +91,20 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
     private int eventBits;
     private FormLinks formLinks;
     private DeckPanel deck;
-    private HTMLPanel errorPanel;
-    private InlineLabel errorMessage;
+    private DivElement errorPanel;
+    private SpanElement errorMessage;
 
 
     // ------------------------------------------------------ initialization / ui setup
 
     @SuppressWarnings("unchecked")
-    protected AbstractForm(final AbstractBuilder<T> builder) {
+    protected AbstractForm(final String id, final ResourceAddress resourceAddress) {
         this.state = EMPTY;
         this.stateDeck = ImmutableMap.of(EMPTY, 0, VIEW, 1, EDIT, 2);
         this.eventBits = -1;
 
-        this.id = builder.id;
-        this.resourceAddress = builder.resourceAddress;
+        this.id = id;
+        this.resourceAddress = resourceAddress;
         this.formItems = new LinkedHashMap<>();
         for (FormItem formItem : builder.formItems) {
             formItem.setId(Id.generate(this.id, formItem.getName()));
@@ -162,21 +139,33 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
         return root;
     }
 
-    private Widget emptyPanel() {
-        FlowPanel panel = new FlowPanel();
-        panel.addStyleName("form form-horizontal");
-        panel.add(new HTML("<p>Empty panel not yet implemented.</p>"));
+    private elemental.dom.Element emptyPanel() {
+        elemental.dom.Document document = Browser.getDocument();
+        DivElement panel = document.createDivElement();
+        panel.setClassName("form form-horizontal");
+        ParagraphElement p = document.createParagraphElement();
+        p.setInnerText("Empty panel not yet implemented.");
+        panel.appendChild(p);
         return panel;
     }
 
-    private Widget viewPanel() {
-        FlowPanel panel = new FlowPanel();
-        panel.addStyleName("form form-horizontal");
-        panel.add(new HTML("<p>View panel not yet implemented.</p>"));
+    private elemental.dom.Element viewPanel() {
+        elemental.dom.Document document = Browser.getDocument();
+        DivElement panel = document.createDivElement();
+        panel.setClassName("form form-horizontal");
+        ParagraphElement p = document.createParagraphElement();
+        p.setInnerText("Empty panel not yet implemented.");
+        panel.appendChild(p);
         return panel;
     }
 
     private Widget editPanel() {
+        elemental.dom.Document document = Browser.getDocument();
+        elemental.html.FormElement form = document.createFormElement();
+        form.setClassName("form form-horizontal");
+
+
+
         FlowPanel panel = new FlowPanel(FormElement.TAG);
         panel.addStyleName("form form-horizontal");
 

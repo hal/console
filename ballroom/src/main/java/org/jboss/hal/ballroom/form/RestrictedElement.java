@@ -22,8 +22,8 @@
 package org.jboss.hal.ballroom.form;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
+import elemental.client.Browser;
+import elemental.dom.Element;
 import org.jboss.hal.resources.HalConstants;
 
 /**
@@ -32,14 +32,11 @@ import org.jboss.hal.resources.HalConstants;
 class RestrictedElement extends InputElement<String> {
 
     static final HalConstants CONSTANTS = GWT.create(HalConstants.class);
-    final TextBox element;
+    final elemental.html.InputElement element;
 
     RestrictedElement() {
-        this(new TextBox());
-    }
-
-    RestrictedElement(final TextBox element) {
-        this.element = element;
+        element = Browser.getDocument().createInputElement();
+        element.setType("text");
         setValue(CONSTANTS.restricted());
     }
 
@@ -50,12 +47,12 @@ class RestrictedElement extends InputElement<String> {
 
     @Override
     public void setAccessKey(final char c) {
-        element.setAccessKey(c);
+        element.setAccessKey(String.valueOf(c));
     }
 
     @Override
     public void setFocus(final boolean b) {
-        element.setFocus(b);
+        element.focus();
     }
 
     @Override
@@ -65,12 +62,12 @@ class RestrictedElement extends InputElement<String> {
 
     @Override
     public boolean isEnabled() {
-        return element.isEnabled();
+        return element.isDisabled();
     }
 
     @Override
     public void setEnabled(final boolean b) {
-        element.setEnabled(b);
+        element.setDisabled(true);
     }
 
     @Override
@@ -85,7 +82,7 @@ class RestrictedElement extends InputElement<String> {
 
     @Override
     void clearValue() {
-        element.setValue("", false); // no events please!
+        element.setValue(""); // no events please!
     }
 
     @Override
@@ -109,7 +106,7 @@ class RestrictedElement extends InputElement<String> {
     }
 
     @Override
-    public Widget asWidget() {
+    public Element asElement() {
         return element;
     }
 }

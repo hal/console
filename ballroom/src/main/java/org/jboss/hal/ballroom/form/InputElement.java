@@ -21,33 +21,28 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import com.google.common.base.Splitter;
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasName;
 import com.google.gwt.user.client.ui.HasText;
-import com.google.gwt.user.client.ui.IsWidget;
+import org.jboss.hal.ballroom.IsElement;
 
 /**
  * @author Harald Pehl
  */
 abstract class InputElement<T>
-        implements IsWidget, HasEnabled, Focusable, HasName, HasText /* for expression support */ {
+        implements IsElement, HasEnabled, Focusable, HasName, HasText /* for expression support */ {
 
     void setId(final String id) {
-        asWidget().getElement().setId(id);
+        asElement().setId(id);
     }
 
     String getId() {
-        return asWidget().getElement().getId();
+        return asElement().getId();
     }
 
-    void setClassName(final String className) {
-        Iterable<String> styleNames = Splitter.on(' ').split(className);
-        for (String styleName : styleNames) {
-            asWidget().addStyleName(styleName);
-        }
+    void setClassName(final String classNames) {
+        asElement().setClassName(classNames);
     }
 
     abstract T getValue();

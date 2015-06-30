@@ -201,7 +201,10 @@ public class Dialog implements IsElement {
 
         // @formatter:off
         Elements.Builder builder = new Elements.Builder()
-            .div().id(id).attribute("role", "dialog").attribute("tabindex", "-1").attribute("aria-labelledby", labelId)
+            .div().id(id).css("modal")
+                    .attribute("role", "dialog")
+                    .attribute("tabindex", "-1")
+                    .attribute("aria-labelledby", labelId)
                 .div().css("modal-dialog").attribute("role", "document").rememberAs("dialog")
                     .div().css("modal-content")
 
@@ -240,17 +243,15 @@ public class Dialog implements IsElement {
 
         Element dialog = builder.build();
         if (fadeIn) {
-            dialog.setClassName("modal fade");
-        } else {
-            dialog.setClassName("modal");
+            dialog.getClassList().add("fade");
         }
         if (!closeIcon) {
             Elements.setVisible(builder.referenceFor("closeIcon"), false);
         }
         if (size == SMALL) {
-            builder.referenceFor("dialog").setClassName("modal-dialog modal-lg");
+            builder.referenceFor("dialog").getClassList().add("modal-lg");
         } else if (size == LARGE) {
-            builder.referenceFor("dialog").setClassName("modal-dialog modal-sm");
+            builder.referenceFor("dialog").getClassList().add("modal-sm");
         }
         if (primaryButton == null && secondaryButton == null) {
             Elements.setVisible(builder.referenceFor("footer"), false);
