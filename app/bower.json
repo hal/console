@@ -1,0 +1,15 @@
+{
+  "name": "org.jboss.hal.bower",
+  "version": "0.0.1",
+  "description": "Bower setup for HAL",
+  "license": "LGPL",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0",
+    "patternfly": "~1.3.0"
+  }
+}

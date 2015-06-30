@@ -1,0 +1,23 @@
+@import "variables";
+@import "loading";
+@import "header";
+@import "form";
+@import "footer";
+
+body {
+  padding-top: @header-height-tabs;
+  @media (max-width: 767px) {
+    padding-top: @header-height-low-width;
+  }
+  padding-bottom: @footer-height;
+  &.application-padding {
+    padding-top: @header-height-application;
+    @media (max-width: 767px) {
+      padding-top: @header-height-low-width;
+    }
+  }
+}
+
+.clickable {
+  cursor: pointer;
+}

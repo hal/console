@@ -1,0 +1,31 @@
+{
+    "description" => "A definition of a management endpoint.",
+    "attributes" => {
+        "name" => {
+            "type" => STRING,
+            "description" => "The name of the management endpoint",
+            "nillable" => false
+        },
+        "scheme" => {
+            "type" => STRING,
+            "description" => "The scheme of management endpoint. Allowed values are 'http' and 'https'.",
+            "nillable" => false,
+            "allowed" => [
+                "http",
+                "https"
+            ]
+        },
+        "host-name" => {
+            "type" => STRING,
+            "description" => "The hostname of the management endpoint",
+            "nillable" => false
+        },
+        "port" => {
+            "type" => INT,
+            "description" => "The port of the management endpoint. Leave empty for the default ports.",
+            "nillable" => true
+            "min" => 1,
+            "max" => 65535
+        }
+    }
+}

@@ -1,0 +1,55 @@
+@import "variables";
+
+.form {
+  background-color: @hal-almost-white;
+  padding: 10px;
+
+}
+
+.form-links {
+  list-style: none;
+  margin: 0 0 5px;
+  padding: 0;
+  li {
+    display: inline-block;
+    margin-right: 10px;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+
+.form-help-link {
+  margin-bottom: 3px;
+}
+
+.form-help-content {
+  border: 1px solid @hal-light-gray;
+  > div {
+    padding: 10px;
+    background-color: white;
+    .form-group {
+      margin-bottom: 4px;
+    }
+  }
+}
+
+.btn-form {
+  width: 8em;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.form-buttons button {
+  margin-right: 10px;
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.help-block {
+  &.textarea {
+    color: #999;
+    font-size: smaller;
+  }
+}

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JBoss, Home of Professional Open Source.
+  ~ Copyright 2010, Red Hat, Inc., and individual contributors
+  ~ as indicated by the @author tags. See the copyright.txt file in the
+  ~ distribution for a full listing of individual contributors.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jboss.hal</groupId>
+        <artifactId>hal-parent</artifactId>
+        <version>0.0.1</version>
+    </parent>
+
+    <artifactId>hal-parent-with-dependencies</artifactId>
+    <name>HAL :: Parent :: Dependencies</name>
+    <description>The parent with dependencies declares all dependency versions in dependencyManagement. All modules
+        extend this parent, except for the BOM (which is used here).
+    </description>
+    <packaging>pom</packaging>
+
+    <properties>
+        <auto-service.version>1.0-rc2</auto-service.version>
+        <auto-common.version>1.0-SNAPSHOT</auto-common.version>
+        <circuit.version>0.1.3</circuit.version>
+        <freemarker.version>2.3.22</freemarker.version>
+        <gin.version>2.1.2</gin.version>
+        <guava.version>18.0</guava.version>
+        <gwt.log.version>3.3.2</gwt.log.version>
+        <gwt.version>2.8.0-SNAPSHOT</gwt.version>
+        <gwtp.version>1.5-SNAPSHOT</gwtp.version>
+        <junit.version>4.12</junit.version>
+        <mockito.version>1.10.17</mockito.version>
+        <nodejs.version>v0.10.34</nodejs.version>
+        <npm.version>2.1.11</npm.version>
+        <slf4j-gwt.version>1.7.7.1</slf4j-gwt.version>
+        <validation.version>1.0.0.GA</validation.version>
+    </properties>
+
+    <!-- Do not declare any build things here! Declare them in hal-parent. -->
+    <build/>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- HAL -->
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- GWT -->
+            <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-dev</artifactId>
+                <version>${gwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-user</artifactId>
+                <version>${gwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-elemental</artifactId>
+                <version>${gwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>${validation.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.gwtplatform</groupId>
+                <artifactId>gwtp-mvp-client</artifactId>
+                <version>${gwtp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.gwt.inject</groupId>
+                <artifactId>gin</artifactId>
+                <version>${gin.version}</version>
+            </dependency>
+
+            <!-- 3rd party -->
+            <dependency>
+                <groupId>org.jboss.gwt.circuit</groupId>
+                <artifactId>circuit-meta</artifactId>
+                <version>${circuit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.gwt.circuit</groupId>
+                <artifactId>circuit-processor</artifactId>
+                <version>${circuit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava-gwt</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.finam</groupId>
+                <artifactId>slf4j-gwt</artifactId>
+                <version>${slf4j-gwt.version}</version>
+            </dependency>
+
+            <!-- APT Processors -->
+            <dependency>
+                <groupId>com.google.auto.service</groupId>
+                <artifactId>auto-service</artifactId>
+                <version>${auto-service.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.auto</groupId>
+                <artifactId>auto-common</artifactId>
+                <version>${auto-common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.freemarker</groupId>
+                <artifactId>freemarker</artifactId>
+                <version>${freemarker.version}</version>
+            </dependency>
+
+            <!-- Test -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

@@ -1,0 +1,65 @@
+.navbar-brand {
+  &.logo {
+    padding: 6px 0;
+    outline: none;
+    &:hover, &:focus {
+      color: #f1f1f1;
+    }
+    @media (min-width: 768px) {
+      padding-top: 2px;
+      padding-bottom: 2px;
+    }
+  }
+}
+
+.logo-text {
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  font-weight: 300;
+  font-size: 17px;
+  &.logo-text-first {
+    font-weight: 300;
+  }
+  &.logo-text-last {
+    font-weight: 700;
+  }
+}
+
+.dropdown-menu > li.static {
+  display: block;
+  clear: both;
+  font-weight: 400;
+  line-height: 1.66666667;
+  color: #333;
+  white-space: nowrap;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 1px 0;
+  padding: 1px 10px;
+  @media (max-width: 767px) {
+    background-color: transparent;
+    border: 0;
+    color: #cfcfcf;
+    outline: 0;
+    line-height: 20px;
+    padding: 5px 15px 5px 30px;
+  }
+}
+
+.navbar-pf .navbar-utility li.dropdown > .dropdown-toggle .fa {
+  left: 10px;
+  top: 7px;
+  position: absolute;
+  @media (max-width: 767px) {
+    left: 20px;
+    position: absolute;
+    top: 10px;
+  }
+}
+
+.navbar-utility > li > a > .fa {
+  padding-right: 4px;
+}
+
+.navbar-pf .navbar-primary > li > a {
+  outline: none;
+}

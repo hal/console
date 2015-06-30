@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Form Items</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../../../../../../../../../app/src/main/webapp/patternfly/dist/css/patternfly.min.css" rel="stylesheet">
+    <link href="../../../../../../../../../app/src/main/webapp/css/hal.min.css" rel="stylesheet">
+    <script src="../../../../../../../../../app/src/main/webapp/patternfly/components/jquery/jquery.min.js"></script>
+    <script src="../../../../../../../../../app/src/main/webapp/patternfly/components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../../../../../../../../../app/src/main/webapp/patternfly/components/bootstrap-select/bootstrap-select.min.js"></script>
+    <script src="../../../../../../../../../app/src/main/webapp/patternfly/dist/js/patternfly.min.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div data-field="main" class="col-md-8 col-md-offset-1">
+            <header>
+                <div class="page-header">
+                    <h1 class="page-title">Form Items</h1>
+                    <p>This page shows the basic form items available in HAL.
+                        It serves just as a demo how to setup the HTML elements and CSS classes.
+                        It is <em>not</em> used as an Errai UI template.</p>
+                </div>
+            </header>
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <!--                                                       -->
+            <!-- TextBox                                               -->
+            <!--                                                       -->
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <section>
+                <h3>TextBox</h3>
+
+                <form class="form form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="textInput-markup">Default</label>
+
+                        <div class="col-md-9">
+                            <input type="text" id="textInput-markup" class="form-control" placeholder="Text input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="textInputDisabled-markup">Disabled</label>
+
+                        <div class="col-md-9">
+                            <input type="text" value="read-only" id="textInputDisabled-markup" class="form-control" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label class="col-md-3 control-label" for="textInputRestricted-markup">Restricted</label>
+
+                        <div class="col-md-9">
+                            <input type="text" value="The permissions for your role don't allow to access this data" id="textInputRestricted-markup" class="form-control" readonly>
+                            <span class="fa fa-lock form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="form-group has-error">
+                        <label class="col-md-3 control-label" for="textInputError-markup">With error</label>
+
+                        <div class="col-md-9">
+                            <input type="text" value="nope" id="textInputError-markup" class="form-control">
+                            <span class="help-block">Please correct the error</span>
+                        </div>
+                    </div>
+                </form>
+            </section>
+            <hr/>
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <!--                                                       -->
+            <!-- TextBox with support for expressions                  -->
+            <!--                                                       -->
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <section>
+                <h3>Expressions</h3>
+
+                <form class="form form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="expressionInput-markup">Default</label>
+
+                        <div class="col-md-9">
+                            <div class="input-group">
+                                <input type="text" id="expressionInput-markup" class="form-control" placeholder="Expression">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" title="Expression Resolver">
+                                        <i class="fa fa-link"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="expressionInputDisabled-markup">Disabled</label>
+
+                        <div class="col-md-9">
+                            <div class="input-group">
+                                <input type="text" value="${read-only}" id="expressionInputDisabled-markup" class="form-control" disabled>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" title="Expression Resolver" disabled>
+                                        <i class="fa fa-link"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label class="col-md-3 control-label" for="expressionInputRestricted-markup">Restricted</label>
+
+                        <div class="col-md-9">
+                            <input type="text" value="The permissions for your role don't allow to access this data" id="expressionInputRestricted-markup" class="form-control" readonly>
+                            <span class="fa fa-lock form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="form-group has-error">
+                        <label class="col-md-3 control-label" for="expressionInputError-markup">With error</label>
+
+                        <div class="col-md-9">
+                            <div class="input-group">
+                                <input type="text" value="nope" id="expressionInputError-markup" class="form-control">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" title="Expression Resolver">
+                                        <i class="fa fa-link"></i>
+                                    </button>
+                                </span>
+                            </div>
+                            <span class="help-block">Please correct the error</span>
+                        </div>
+                    </div>
+                </form>
+            </section>
+            <hr/>
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <!--                                                       -->
+            <!-- Password                                              -->
+            <!--                                                       -->
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <section>
+                <h3>Password</h3>
+
+                <form class="form form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="passwordInput-markup">Default</label>
+
+                        <div class="col-md-9">
+                            <input type="password" id="passwordInput-markup" class="form-control" placeholder="Password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="passwordInputDisabled-markup">Disabled</label>
+
+                        <div class="col-md-9">
+                            <input type="password" value="read-only" id="passwordInputDisabled-markup" class="form-control" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label class="col-md-3 control-label" for="passwordInputRestricted-markup">Restricted</label>
+
+                        <div class="col-md-9">
+                            <input type="text" value="The permissions for your role don't allow to access this data" id="passwordInputRestricted-markup" class="form-control" readonly>
+                            <span class="fa fa-lock form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="form-group has-error">
+                        <label class="col-md-3 control-label" for="passwordInputError-markup">With error</label>
+
+                        <div class="col-md-9">
+                            <input type="password" value="nope" id="passwordInputError-markup" class="form-control">
+                            <span class="help-block">Please correct the error</span>
+                        </div>
+                    </div>
+                </form>
+            </section>
+            <hr/>
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <!--                                                       -->
+            <!-- Number                                                -->
+            <!--                                                       -->
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <section>
+                <h3>Number</h3>
+
+                <form class="form form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="numberInput-markup">Default</label>
+
+                        <div class="col-md-9">
+                            <input type="number" id="numberInput-markup" class="form-control" placeholder="Number">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="numberInputDisabled-markup">Disabled</label>
+
+                        <div class="col-md-9">
+                            <input type="number" value="0815" id="numberInputDisabled-markup" class="form-control" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label class="col-md-3 control-label" for="numberInputRestricted-markup">Restricted</label>
+
+                        <div class="col-md-9">
+                            <input type="text" value="The permissions for your role don't allow to access this data" id="numberInputRestricted-markup" class="form-control" readonly>
+                            <span class="fa fa-lock form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="form-group has-error">
+                        <label class="col-md-3 control-label" for="numberInputError-markup">With error</label>
+
+                        <div class="col-md-9">
+                            <input type="number" value="2342" id="numberInputError-markup" class="form-control">
+                            <span class="help-block">Please correct the error</span>
+                        </div>
+                    </div>
+                </form>
+            </section>
+            <hr/>
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <!--                                                       -->
+            <!-- Textarea                                              -->
+            <!--                                                       -->
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <section>
+                <h3>Textarea</h3>
+
+                <form class="form form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="textareaInput-markup">Default</label>
+
+                        <div class="col-md-9">
+                            <textarea rows="3" id="textareaInput-markup" class="form-control" placeholder="Textarea"></textarea>
+                            <span class="help-block textarea">One item per line</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="textareaInputDisabled-markup">Disabled</label>
+
+                        <div class="col-md-9">
+                            <textarea rows="3" id="textareaInputDisabled-markup" class="form-control" disabled>read-only</textarea>
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label class="col-md-3 control-label" for="textareaInputRestricted-markup">Restricted</label>
+
+                        <div class="col-md-9">
+                            <input type="text" value="The permissions for your role don't allow to access this data" id="textareaInputRestricted-markup" class="form-control" readonly>
+                            <span class="fa fa-lock form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="form-group has-error">
+                        <label class="col-md-3 control-label" for="textareaInputError-markup">With error</label>
+
+                        <div class="col-md-9">
+                            <textarea rows="3" id="textareaInputError-markup" class="form-control">nope</textarea>
+                            <span class="help-block">Please correct the error</span>
+                        </div>
+                    </div>
+                </form>
+            </section>
+            <hr/>
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <!--                                                       -->
+            <!-- Checkbox                                              -->
+            <!--                                                       -->
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <section>
+                <h3>Checkbox</h3>
+
+                <form class="form form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="checkboxInput-markup">Default</label>
+
+                        <div class="col-md-9">
+                            <input type="checkbox" id="checkboxInput-markup">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="checkboxInputDisabled-markup">Disabled</label>
+
+                        <div class="col-md-9">
+                            <input type="checkbox" id="checkboxInputDisabled-markup" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label class="col-md-3 control-label" for="checkboxInputRestricted-markup">Restricted</label>
+
+                        <div class="col-md-9">
+                            <input type="text" value="The permissions for your role don't allow to access this data" id="checkboxInputRestricted-markup" class="form-control" readonly>
+                            <span class="fa fa-lock form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="form-group has-error">
+                        <label class="col-md-3 control-label" for="checkboxInputError-markup">With error</label>
+
+                        <div class="col-md-9">
+                            <input type="checkbox" id="checkboxInputError-markup">
+                            <span class="help-block">Please correct the error</span>
+                        </div>
+                    </div>
+                </form>
+            </section>
+            <hr/>
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <!--                                                       -->
+            <!-- Radio                                                 -->
+            <!--                                                       -->
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <section>
+                <h3>Radio</h3>
+
+                <form class="form form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="radioInput-markup">Default</label>
+
+                        <div class="col-md-9">
+                            <input type="radio" id="radioInput-markup" name="optionsRadios">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="radioInputDisabled-markup">Disabled</label>
+
+                        <div class="col-md-9">
+                            <input type="radio" id="radioInputDisabled-markup" name="optionsRadios" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label class="col-md-3 control-label" for="radioInputRestricted-markup">Restricted</label>
+
+                        <div class="col-md-9">
+                            <input type="text" value="The permissions for your role don't allow to access this data" id="radioInputRestricted-markup" class="form-control" readonly>
+                            <span class="fa fa-lock form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="form-group has-error">
+                        <label class="col-md-3 control-label" for="radioInputError-markup">With error</label>
+
+                        <div class="col-md-9">
+                            <input type="radio" id="radioInputError-markup" name="optionsRadios">
+                            <span class="help-block">Please correct the error</span>
+                        </div>
+                    </div>
+                </form>
+            </section>
+            <hr/>
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <!--                                                       -->
+            <!-- Select                                                -->
+            <!--                                                       -->
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <section>
+                <h3>Select</h3>
+
+                <form class="form form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="selectInput-markup">Default</label>
+
+                        <div class="col-md-9">
+                            <select id="selectInput-markup" class="form-control selectpicker">
+                                <option>Lorem</option>
+                                <option>ipsum</option>
+                                <option>dolor</option>
+                                <option>sit</option>
+                                <option>amet</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="selectInputDisabled-markup">Disabled</label>
+
+                        <div class="col-md-9">
+                            <select id="selectInputDisabled-markup" class="form-control selectpicker" disabled>
+                                <option>Lorem</option>
+                                <option>ipsum</option>
+                                <option>dolor</option>
+                                <option>sit</option>
+                                <option>amet</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label class="col-md-3 control-label" for="selectInputRestricted-markup">Restricted</label>
+
+                        <div class="col-md-9">
+                            <input type="text" value="The permissions for your role don't allow to access this data" id="selectInputRestricted-markup" class="form-control" readonly>
+                            <span class="fa fa-lock form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="form-group has-error">
+                        <label class="col-md-3 control-label" for="selectInputError-markup">With error</label>
+
+                        <div class="col-md-9">
+                            <select id="selectInputError-markup" class="form-control selectpicker">
+                                <option>Lorem</option>
+                                <option>ipsum</option>
+                                <option>dolor</option>
+                                <option>sit</option>
+                                <option>amet</option>
+                            </select>
+                            <span class="help-block">Please correct the error</span>
+                        </div>
+                    </div>
+                </form>
+            </section>
+            <hr/>
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <!--                                                       -->
+            <!-- Static                                                -->
+            <!--                                                       -->
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <section>
+                <h3>Static</h3>
+
+                <form class="form form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">Label for</label>
+
+                        <div class="col-md-9">
+                            <p class="form-control-static">Static text</p>
+                        </div>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label class="col-md-3 control-label">Restricted</label>
+
+                        <div class="col-md-9">
+                            <p class="form-control-static">The permissions for your role don't allow to access this data</p>
+                            <span class="fa fa-lock form-control-feedback" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                </form>
+            </section>
+            <hr/>
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <!--                                                       -->
+            <!-- Inline Button                                         -->
+            <!--                                                       -->
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <section>
+                <h3>Inline Button</h3>
+
+                <form class="form form-horizontal">
+                    <div class="form-group">
+                        <div class="col-md-offset-3 col-md-9">
+                            <button class="btn btn-default">Click Me</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-3 col-md-9">
+                            <button class="btn btn-default" disabled="disabled">Nope</button>
+                        </div>
+                    </div>
+                </form>
+            </section>
+            <hr/>
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <!--                                                       -->
+            <!-- Cancel & Save                                         -->
+            <!--                                                       -->
+            <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+            <section>
+                <h3>Cancel & Save</h3>
+
+                <form class="form form-horizontal">
+                    <div class="form-group">
+                        <div class="col-md-offset-3 col-md-9">
+                            <div class="pull-right form-buttons">
+                                <button type="button" class="btn btn-default">Cancel</button>
+                                <button type="button" class="btn btn-primary">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+</div>
+<script>
+    // Initialize Boostrap-select
+    $(document).ready(function () {
+        $('.selectpicker').selectpicker();
+    });
+</script>
+</body>
+</html>
