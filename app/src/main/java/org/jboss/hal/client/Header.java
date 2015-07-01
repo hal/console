@@ -90,9 +90,9 @@ public class Header implements IsElement {
         Element header = new Elements.Builder()
             .div().css("navbar-header")
                 .button().css("navbar-toggle")
-                        .attribute("type", "button")
-                        .attribute("data-toggle", "collapse")
-                        .attribute("data-target", "." + TOGGLE_NAV_SELECTOR)
+                        .attr("type", "button")
+                        .data("toggle", "collapse")
+                        .data("target", "." + TOGGLE_NAV_SELECTOR)
                     .span().css("sr-only").innerText(i18n.constants().toggle_navigation()).end()
                     .span().css("icon-bar").end()
                     .span().css("icon-bar").end()
@@ -116,7 +116,7 @@ public class Header implements IsElement {
                         .end() // a
                     .end() // li
                     .li().css("dropdown")
-                        .a().css("dropdown-toggle").attribute("data-toggle", "dropdown")
+                        .a().css("dropdown-toggle").data("toggle", "dropdown")
                             .span().css("pficon pficon-user").end()
                             .start(username).end()
                             .start("b").css("caret").end()
@@ -130,7 +130,7 @@ public class Header implements IsElement {
                         .end() // ul
                     .end() // li
                     .li().css("dropdown")
-                        .a().css("dropdown-toggle").attribute("data-toggle", "dropdown")
+                        .a().css("dropdown-toggle").data("toggle", "dropdown")
                             .span().css("fa fa-share-alt").end()
                             .start("b").css("caret").end()
                         .end() // a
@@ -170,7 +170,7 @@ public class Header implements IsElement {
 
         // @formatter:off
         return new Elements.Builder()
-            .start("nav").css("navbar navbar-default navbar-pf navbar-fixed-top").attribute("role", "navigation")
+            .start("nav").css("navbar navbar-default navbar-pf navbar-fixed-top").attr("role", "navigation")
                 .start(header).end()
                 .div().css("collapse navbar-collapse " + TOGGLE_NAV_SELECTOR)
                     .start(tools).end()

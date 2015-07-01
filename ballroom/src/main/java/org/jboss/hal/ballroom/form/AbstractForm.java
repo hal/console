@@ -24,27 +24,17 @@ package org.jboss.hal.ballroom.form;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.FormElement;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import elemental.client.Browser;
+import elemental.dom.Element;
+import elemental.events.EventListener;
+import elemental.events.KeyboardEvent;
 import elemental.html.DivElement;
-import elemental.html.ParagraphElement;
 import elemental.html.SpanElement;
-import org.jboss.hal.ballroom.Id;
+import org.jboss.hal.ballroom.Elements;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.HalConstants;
 
@@ -54,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
+import static org.jboss.hal.ballroom.Elements.EventType.click;
 import static org.jboss.hal.ballroom.form.Form.State.*;
 
 /**
@@ -61,146 +52,134 @@ import static org.jboss.hal.ballroom.form.Form.State.*;
  */
 public abstract class AbstractForm<T> implements Form<T>, FormLayout {
 
-    interface Templates extends SafeHtmlTemplates {
-
-        @Template("<span class=\"pficon-layered\"><span class=\"pficon pficon-error-octagon\"></span><span class=\"pficon pficon-error-exclamation\"></span></span><span></span>")
-        SafeHtml error();
-
-        @Template("<div class=\"col-" + COLUMN_DISCRIMINATOR + "-offset-" + LABEL_COLUMNS + " col-" + COLUMN_DISCRIMINATOR + "-" + INPUT_COLUMNS + "\"><div class=\"pull-right form-buttons\"></div></div>")
-        SafeHtml buttons();
-    }
-
-
     private final static HalConstants CONSTANTS = GWT.create(HalConstants.class);
-    private final static Templates TEMPLATES = GWT.create(Templates.class);
 
     private final String id;
+    private final ResourceAddress resourceAddress;
+    private final boolean supportsUndefine;
+    private final boolean supportsHelp;
     private final Map<State, Integer> stateDeck;
 
-    protected T model;
-    protected State state;
-    protected final ResourceAddress resourceAddress;
-    protected final LinkedHashMap<String, FormItem> formItems;
-    protected final List<FormValidation> validationHandlers;
-    protected final SaveCallback<T> saveCallback;
-    protected final UndefineCallback<T> undefineCallback;
-    protected final CancelCallback<T> cancelCallback;
-    protected final boolean supportsUndefine;
-    protected final boolean supportsHelp;
+    private T model;
+    private State state;
+    private EventListener exitEditWithEsc;
 
-    private int eventBits;
     private FormLinks formLinks;
     private DeckPanel deck;
     private DivElement errorPanel;
     private SpanElement errorMessage;
 
+    // accessible in subclasses
+    protected final LinkedHashMap<String, FormItem> formItems;
+    protected final List<FormValidation> validationHandlers;
+    protected SaveCallback<T> saveCallback;
+    protected UndefineCallback<T> undefineCallback;
+    protected CancelCallback<T> cancelCallback;
+
 
     // ------------------------------------------------------ initialization / ui setup
 
     @SuppressWarnings("unchecked")
-    protected AbstractForm(final String id, final ResourceAddress resourceAddress) {
-        this.state = EMPTY;
-        this.stateDeck = ImmutableMap.of(EMPTY, 0, VIEW, 1, EDIT, 2);
-        this.eventBits = -1;
+    protected AbstractForm(final String id, final ResourceAddress resourceAddress,
+            final boolean supportsUndefine, final boolean supportsHelp) {
 
         this.id = id;
         this.resourceAddress = resourceAddress;
-        this.formItems = new LinkedHashMap<>();
-        for (FormItem formItem : builder.formItems) {
-            formItem.setId(Id.generate(this.id, formItem.getName()));
-            this.formItems.put(formItem.getName(), formItem);
-        }
-        this.validationHandlers = new ArrayList<>();
-        this.validationHandlers.addAll(builder.validationHandlers);
-        this.saveCallback = builder.saveCallback;
-        this.undefineCallback = builder.undefineCallback;
-        this.cancelCallback = builder.cancelCallback;
+        this.supportsUndefine = supportsUndefine;
+        this.supportsHelp = supportsHelp;
 
-        this.supportsUndefine = builder.supportsUndefine;
-        this.supportsHelp = builder.supportsHelp;
+        this.state = EMPTY;
+        this.stateDeck = ImmutableMap.of(EMPTY, 0, VIEW, 1, EDIT, 2);
+        this.exitEditWithEsc = event -> {
+            if (event instanceof KeyboardEvent) {
+                KeyboardEvent keyboardEvent = (KeyboardEvent) event;
+                if (keyboardEvent.getKeyCode() == KeyboardEvent.KeyCode.ESC && getState() == EDIT && deck.getWidget(1)
+                        .isVisible()) {
+                    keyboardEvent.preventDefault();
+                    cancel();
+                }
+            }
+        };
+
+        this.formItems = new LinkedHashMap<>();
+        this.validationHandlers = new ArrayList<>();
     }
 
     @Override
-    public Widget asWidget() {
+    public Element asElement() {
         formLinks = new FormLinks.Builder(id, supportsHelp)
                 .onAdd(event -> add())
                 .onEdit(event -> edit(getModel()))
                 .onUndefine(event -> undefine())
                 .build();
+
         deck = new DeckPanel();
         deck.add(emptyPanel());
         deck.add(viewPanel());
         deck.add(editPanel());
         switchTo(EMPTY);
 
-        FlowPanel root = new FlowPanel();
-        root.add(formLinks);
-        root.add(deck);
+        DivElement root = Browser.getDocument().createDivElement();
+        root.appendChild(formLinks.asElement());
+        root.appendChild(Elements.asElement(deck));
         return root;
     }
 
-    private elemental.dom.Element emptyPanel() {
-        elemental.dom.Document document = Browser.getDocument();
-        DivElement panel = document.createDivElement();
-        panel.setClassName("form form-horizontal");
-        ParagraphElement p = document.createParagraphElement();
-        p.setInnerText("Empty panel not yet implemented.");
-        panel.appendChild(p);
+    private Widget emptyPanel() {
+        FlowPanel panel = new FlowPanel();
+        panel.addStyleName("form form-horizontal");
+        panel.add(new HTMLPanel("<p>Empty panel not yet implemented.</p>"));
         return panel;
     }
 
-    private elemental.dom.Element viewPanel() {
-        elemental.dom.Document document = Browser.getDocument();
-        DivElement panel = document.createDivElement();
-        panel.setClassName("form form-horizontal");
-        ParagraphElement p = document.createParagraphElement();
-        p.setInnerText("Empty panel not yet implemented.");
-        panel.appendChild(p);
+    private Widget viewPanel() {
+        FlowPanel panel = new FlowPanel();
+        panel.addStyleName("form form-horizontal");
+        panel.add(new HTMLPanel("<p>View panel not yet implemented.</p>"));
         return panel;
     }
 
     private Widget editPanel() {
-        elemental.dom.Document document = Browser.getDocument();
-        elemental.html.FormElement form = document.createFormElement();
-        form.setClassName("form form-horizontal");
-
-
-
-        FlowPanel panel = new FlowPanel(FormElement.TAG);
+        FlowPanel panel = new FlowPanel("form");
         panel.addStyleName("form form-horizontal");
 
-        errorMessage = new InlineLabel();
-        errorPanel = new HTMLPanel(TEMPLATES.error());
-        errorPanel.addStyleName("alert alert-danger");
-        // This must be kept in sync with the html template!
-        Element errorMessageElement = errorPanel.getElement().getFirstChildElement().getNextSiblingElement();
-        errorPanel.add(errorMessage, errorMessageElement);
+        // @formatter:off
+        Elements.Builder builder = new Elements.Builder()
+            .div().css("alert alert-danger")
+                .span().css("pficon-layered")
+                    .span().css("pficon pficon-error-octagon").end()
+                    .span().css("pficon pficon-error-exclamation").end()
+                .end()
+                .span().rememberAs("errorMessage").end()
+            .end();
+        // @formatter:on
+        errorMessage = builder.referenceFor("errorMessage");
+        errorPanel = builder.build();
         clearErrors();
 
         for (FormItem formItem : formItems.values()) {
-            panel.add(formItem);
+            Elements.asElement(panel).appendChild(formItem.asElement());
         }
 
-        panel.add(buttons());
+        Elements.asElement(panel).appendChild(buttons());
         return panel;
     }
 
-    private Panel buttons() {
-        Button cancel = new Button(CONSTANTS.cancel());
-        cancel.addStyleName("btn btn-default");
-        cancel.addClickHandler(event -> cancel());
-
-        Button save = new Button(CONSTANTS.save());
-        save.addClickHandler(event -> save());
-        save.addStyleName("btn btn-primary");
-
-        HTMLPanel buttons = new HTMLPanel(TEMPLATES.buttons());
-        buttons.addStyleName("form-group");
-        // This must be kept in sync with the html template!
-        Element buttonsElement = buttons.getElement().getFirstChildElement().getFirstChildElement();
-        buttons.add(cancel, buttonsElement);
-        buttons.add(save, buttonsElement);
-        return buttons;
+    private Element buttons() {
+        // @formatter:off
+        return new Elements.Builder()
+            .div().css("col-" + COLUMN_DISCRIMINATOR + "-offset-" + LABEL_COLUMNS + " col-" + COLUMN_DISCRIMINATOR + "-" + INPUT_COLUMNS)
+                .div().css("pull-right form-buttons")
+                    .button().css("btn btn-default").on(click, event -> cancel())
+                        .innerText(CONSTANTS.cancel())
+                    .end()
+                    .button().css("btn btn-primary").on(click, event -> save())
+                        .innerText(CONSTANTS.save())
+                    .end()
+                .end()
+            .end()
+            .build();
+        // @formatter:on
     }
 
     private void switchTo(State state) {
@@ -266,10 +245,7 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
      * Flips the deck panel so that the view panel is visible
      */
     protected void switchToViewState() {
-        // Remove key up event listener
-        if (eventBits != -1) {
-            DOM.sinkEvents(Document.get().getDocumentElement(), eventBits);
-        }
+        Browser.getDocument().removeEventListener("keyup", exitEditWithEsc);
         switchTo(VIEW);
     }
 
@@ -316,15 +292,7 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
         }
 
         // Exit *this* edit state by pressing ESC
-        Element document = Document.get().getDocumentElement();
-        eventBits = DOM.getEventsSunk(document);
-        DOM.sinkEvents(document, Event.ONKEYUP);
-        Event.setEventListener(document, event -> {
-            if (event.getKeyCode() == KeyCodes.KEY_ESCAPE && getState() == EDIT && deck.getWidget(1).isVisible()) {
-                event.preventDefault();
-                cancel();
-            }
-        });
+        Browser.getDocument().setOnkeyup(exitEditWithEsc);
     }
 
 
@@ -452,10 +420,7 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
      * Flips the deck panel so that the empty panel is visible
      */
     protected void switchToEmptyState() {
-        // Remove key up event listener
-        if (eventBits != -1) {
-            DOM.sinkEvents(Document.get().getDocumentElement(), eventBits);
-        }
+        Browser.getDocument().removeEventListener("keyup", exitEditWithEsc);
         switchTo(EMPTY);
     }
 
@@ -532,8 +497,8 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
         for (FormItem formItem : formItems.values()) {
             formItem.clearError();
         }
-        errorMessage.setText("");
-        errorPanel.setVisible(false);
+        errorMessage.setInnerText("");
+        Elements.setVisible(errorPanel, false);
     }
 
     @Override
@@ -546,8 +511,8 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
     }
 
     protected void showErrors(List<String> messages) {
-        errorMessage.setText(Joiner.on(", ").join(messages));
-        errorPanel.setVisible(true);
+        errorMessage.setInnerText(Joiner.on(", ").join(messages));
+        Elements.setVisible(errorPanel, true);
     }
 
     protected void reset() {

@@ -77,7 +77,7 @@ public class ElementsBuilderTest {
     @Test
     public void a() {
         assertEquals("<a href=\"http://hpehl.info/\" title=\"Visit my blog\">hpehl.info</a>",
-                builder.a().attribute("href", "http://hpehl.info/").title("Visit my blog").innerText("hpehl.info")
+                builder.a().attr("href", "http://hpehl.info/").title("Visit my blog").innerText("hpehl.info")
                         .end().build().toString());
     }
 
@@ -98,28 +98,28 @@ public class ElementsBuilderTest {
     public void form() {
         // @formatter:off
         builder
-            .form().attribute("method", "get").attribute("action", "search").css("form form-horizontal")
+            .form().attr("method", "get").attr("action", "search").css("form form-horizontal")
                 .div().css("form-group")
-                    .label().css("col-md-3 control-label").attribute("for", "name").innerText("Name").end()
+                    .label().css("col-md-3 control-label").attr("for", "name").innerText("Name").end()
                     .div().css("col-md-9")
-                        .input(text).id("name").css("form-control").attribute("placeholder", "Enter your name")
+                        .input(text).id("name").css("form-control").attr("placeholder", "Enter your name")
                     .end()
                 .end()
                 .div().css("form-group")
-                    .label().css("col-md-3 control-label").attribute("for", "age").innerText("Age").end()
+                    .label().css("col-md-3 control-label").attr("for", "age").innerText("Age").end()
                     .div().css("col-md-9")
-                        .input(number).id("age").css("form-control").attribute("placeholder", "How old are you?")
+                        .input(number).id("age").css("form-control").attr("placeholder", "How old are you?")
                     .end()
                 .end()
                 .div().css("form-group")
-                    .label().css("col-md-3 control-label").attribute("for", "hobbies").innerText("Hobbies").end()
+                    .label().css("col-md-3 control-label").attr("for", "hobbies").innerText("Hobbies").end()
                     .div().css("col-md-9")
-                        .textarea().attribute("rows", "3").id("hobbies").css("form-control").end()
+                        .textarea().attr("rows", "3").id("hobbies").css("form-control").end()
                         .span().css("help-block textarea").innerText("One item per line").end()
                     .end()
                 .end()
                 .div().css("form-group")
-                    .label().css("col-md-3 control-label").attribute("for", "choose").innerText("Choose").end()
+                    .label().css("col-md-3 control-label").attr("for", "choose").innerText("Choose").end()
                     .div().css("col-md-9")
                         .select().id("choose").css("form-control selectpicker")
                             .option().innerText("Lorem").end()
@@ -216,7 +216,19 @@ public class ElementsBuilderTest {
         assertEquals("<div id=\"foo\" title=\"bar\" class=\"bigger\"/>",
                 builder.div().id("foo").title("bar").css("bigger").build().toString());
         assertEquals("<div foo=\"bar\"/>",
-                builder.div().attribute("foo", "bar").end().build().toString());
+                builder.div().attr("foo", "bar").end().build().toString());
+    }
+
+    @Test
+    public void aria() {
+        assertEquals("<div aria-one=\"1\" aria-two=\"2\" aria-three=\"3\"/>",
+                builder.div().attr("aria-one", "1").aria("two", "2").aria("aria-three", "3").build().toString());
+    }
+
+    @Test
+    public void data() {
+        assertEquals("<div data-one=\"1\" data-two=\"2\" data-three=\"3\"/>",
+                builder.div().attr("data-one", "1").data("two", "2").data("data-three", "3").build().toString());
     }
 
 

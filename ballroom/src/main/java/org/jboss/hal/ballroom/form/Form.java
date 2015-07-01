@@ -21,7 +21,7 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import com.google.gwt.user.client.ui.IsWidget;
+import org.jboss.hal.ballroom.IsElement;
 
 import java.util.Map;
 
@@ -30,7 +30,7 @@ import java.util.Map;
  *
  * @author Harald Pehl
  */
-public interface Form<T> extends IsWidget {
+public interface Form<T> extends IsElement {
 
     /**
      * Defines the valid states for a form.

@@ -175,9 +175,9 @@ public class Dialog implements IsElement {
     private Element init() {
         String labelId = Id.generate(id, "label");
 
-        Elements.Builder footer = new Elements.Builder();
+        Elements.Builder footerBuilder = new Elements.Builder();
         if (secondaryButton != null) {
-            footer.button()
+            footerBuilder.button()
                     .css("btn btn-default")
                     .on(click, event -> {
                         if (secondaryButton.callback.execute()) {
@@ -188,7 +188,7 @@ public class Dialog implements IsElement {
                     .end();
         }
         if (primaryButton != null) {
-            footer.button()
+            footerBuilder.button()
                     .css("btn btn-primary")
                     .on(click, event -> {
                         if (primaryButton.callback.execute()) {
@@ -198,14 +198,15 @@ public class Dialog implements IsElement {
                     .innerText(primaryButton.label)
                     .end();
         }
+        Element footer = footerBuilder.build();
 
         // @formatter:off
         Elements.Builder builder = new Elements.Builder()
             .div().id(id).css("modal")
-                    .attribute("role", "dialog")
-                    .attribute("tabindex", "-1")
-                    .attribute("aria-labelledby", labelId)
-                .div().css("modal-dialog").attribute("role", "document").rememberAs("dialog")
+                    .attr("role", "dialog")
+                    .attr("tabindex", "-1")
+                    .aria("labelledby", labelId)
+                .div().css("modal-dialog").attr("role", "document").rememberAs("dialog")
                     .div().css("modal-content")
 
                         // header
@@ -220,9 +221,9 @@ public class Dialog implements IsElement {
                                             }
                                         }
                                     })
-                                    .attribute("aria-label", "Close")
+                                    .aria("label", "Close")
                                     .rememberAs("closeIcon")
-                                .span().css("pficon pficon-close").attribute("aria-hidden", "true").end()
+                                .span().css("pficon pficon-close").aria("hidden", "true").end()
                             .end()
                             .h(4).css("modal-title").id(labelId).innerText(title).end()
                         .end()
@@ -234,7 +235,7 @@ public class Dialog implements IsElement {
 
                         // footer
                         .div().css("modal-footer").rememberAs("footer")
-                            .start(footer.build())
+                            .start(footer)
                         .end()
                     .end()
                 .end()

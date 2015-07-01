@@ -23,6 +23,8 @@ package org.jboss.hal.ballroom;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Widget;
 import elemental.client.Browser;
 import elemental.dom.Document;
 import elemental.dom.Element;
@@ -220,28 +222,28 @@ public final class Elements {
      * use the following builder code:
      * <pre>
      * Element form = new Elements.Builder().
-     *     .form().attribute("method", "get").attribute("action", "search").css("form form-horizontal")
+     *     .form().attr("method", "get").attr("action", "search").css("form form-horizontal")
      *         .div().css("form-group")
-     *             .label().css("col-md-3 control-label").attribute("for", "name").innerText("Name").end()
+     *             .label().css("col-md-3 control-label").attr("for", "name").innerText("Name").end()
      *             .div().css("col-md-9")
-     *                 .input(text).id("name").css("form-control").attribute("placeholder", "Enter your name")
+     *                 .input(text).id("name").css("form-control").attr("placeholder", "Enter your name")
      *             .end()
      *         .end()
      *         .div().css("form-group")
-     *             .label().css("col-md-3 control-label").attribute("for", "age").innerText("Age").end()
+     *             .label().css("col-md-3 control-label").attr("for", "age").innerText("Age").end()
      *             .div().css("col-md-9")
-     *                 .input(number).id("age").css("form-control").attribute("placeholder", "How old are you?")
+     *                 .input(number).id("age").css("form-control").attr("placeholder", "How old are you?")
      *             .end()
      *         .end()
      *         .div().css("form-group")
-     *             .label().css("col-md-3 control-label").attribute("for", "hobbies").innerText("Hobbies").end()
+     *             .label().css("col-md-3 control-label").attr("for", "hobbies").innerText("Hobbies").end()
      *             .div().css("col-md-9")
-     *                 .textarea().attribute("rows", "3").id("hobbies").css("form-control").end()
+     *                 .textarea().attr("rows", "3").id("hobbies").css("form-control").end()
      *                 .span().css("help-block textarea").innerText("One item per line").end()
      *             .end()
      *         .end()
      *         .div().css("form-group")
-     *             .label().css("col-md-3 control-label").attribute("for", "choose").innerText("Choose").end()
+     *             .label().css("col-md-3 control-label").attr("for", "choose").innerText("Choose").end()
      *             .div().css("col-md-9")
      *                 .select().id("choose").css("form-control selectpicker")
      *                     .option().innerText("Lorem").end()
@@ -526,12 +528,43 @@ public final class Elements {
         }
 
         /**
+         * Sets the css style for the last added element.
+         */
+        public Builder style(String style) {
+            assertCurrent();
+            elements.peek().element.getStyle().setCssText(style);
+            return this;
+        }
+
+        /**
          * Adds an attribute to the last added element.
          */
-        public Builder attribute(String name, String value) {
+        public Builder attr(String name, String value) {
             assertCurrent();
             elements.peek().element.setAttribute(name, value);
             return this;
+        }
+
+        /**
+         * Adds a {@code data-} attribute to the last added element.
+         *
+         * @param name The name of the data attribute w/o the {@code data-} prefix. However it won't be added if it's
+         *             already present.
+         */
+        public Builder data(String name, String value) {
+            String failSafeName = name.startsWith("data-") ? name : "data-" + name;
+            return attr(failSafeName, value);
+        }
+
+        /**
+         * Adds an {@code aria-} attribute to the last added element.
+         *
+         * @param name The name of the aria attribute w/o the {@code aria-} prefix. However it won't be added if it's
+         *             already present.
+         */
+        public Builder aria(String name, String value) {
+            String failSafeName = name.startsWith("aria-") ? name : "aria-" + name;
+            return attr(failSafeName, value);
         }
 
         /**
@@ -601,27 +634,18 @@ public final class Elements {
         // ------------------------------------------------------ builder
 
         /**
-         * Builds the element hierarchy and returns the top level element.
-         *
-         * @throws IllegalStateException If the hierarchy is unbalanced.
-         */
-        public Element build() {
-            if (level != 0 && elements.size() != 1) {
-                throw new IllegalStateException("Unbalanced element hierarchy");
-            }
-            return elements.pop().element;
-        }
-
-        /**
          * Builds the element hierarchy and returns the top level element as the specified element type.
          *
          * @param <T> The target element type
          *
          * @throws IllegalStateException If the hierarchy is unbalanced.
          */
-        @SuppressWarnings("unchecked")
-        public <T extends Element> T buildAs() {
-            return (T) build();
+        public <T extends Element> T build() {
+            if (level != 0 && elements.size() != 1) {
+                throw new IllegalStateException("Unbalanced element hierarchy");
+            }
+            //noinspection unchecked
+            return (T) elements.pop().element;
         }
     }
 
@@ -630,5 +654,17 @@ public final class Elements {
 
     public static void setVisible(Element element, boolean visible) {
         element.getStyle().setDisplay(visible ? "inherit" : "none");
+    }
+
+    public static Element asElement(IsWidget widget) {
+        return asElement(widget.asWidget());
+    }
+
+    public static Element asElement(Widget widget) {
+        return widget.getElement().cast();
+    }
+
+    public static Element asElement(com.google.gwt.dom.client.Element element) {
+        return element.cast();
     }
 }

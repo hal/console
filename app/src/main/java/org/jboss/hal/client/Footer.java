@@ -80,7 +80,7 @@ public class Footer implements IsElement {
                             .end() // a
                         .end() // li
                         .li().css("dropdown")
-                            .a().css("dropdown-toggle").attribute("data-toggle", "dropdown")
+                            .a().css("dropdown-toggle").data("toggle", "dropdown")
                                 .span().css("fa fa-wrench").end()
                                 .span().innerText(i18n.constants().tools()).end()
                                 .start("b").css("caret").end()

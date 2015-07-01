@@ -24,46 +24,44 @@ package org.jboss.hal.ballroom.form;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.LIElement;
-import com.google.gwt.dom.client.UListElement;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.UIObject;
+import elemental.events.EventListener;
+import org.jboss.hal.ballroom.Elements;
+import org.jboss.hal.ballroom.IsElement;
 import org.jboss.hal.resources.HalConstants;
 
 /**
  * @author Harald Pehl
  */
-public class FormLinks extends Composite implements FormLayout {
+public class FormLinks implements IsElement, FormLayout {
 
     static class Builder {
 
         private final String formId;
         private final boolean supportsHelp;
-        private ClickHandler onAdd;
-        private ClickHandler onEdit;
-        private ClickHandler onUndefine;
+        private EventListener onAdd;
+        private EventListener onEdit;
+        private EventListener onUndefine;
 
         Builder(final String formId, final boolean supportsHelp) {
             this.formId = formId;
             this.supportsHelp = supportsHelp;
         }
 
-        Builder onAdd(ClickHandler onAdd) {
+        Builder onAdd(EventListener onAdd) {
             this.onAdd = onAdd;
             return this;
         }
 
-        Builder onEdit(ClickHandler onEdit) {
+        Builder onEdit(EventListener onEdit) {
             this.onEdit = onEdit;
             return this;
         }
 
-        Builder onUndefine(ClickHandler onUndefine) {
+        Builder onUndefine(EventListener onUndefine) {
             this.onUndefine = onUndefine;
             return this;
         }
@@ -99,48 +97,59 @@ public class FormLinks extends Composite implements FormLayout {
     private final static HalConstants CONSTANTS = GWT.create(HalConstants.class);
     private static final Templates TEMPLATES = GWT.create(Templates.class);
 
-    private final LIElement addElement;
-    private final LIElement editElement;
-    private final LIElement removeElement;
+    private final elemental.html.LIElement addElement;
+    private final elemental.html.LIElement editElement;
+    private final elemental.html.LIElement removeElement;
     private FlowPanel helpContentPanel;
 
-    public FormLinks(final Builder builder) {
-        FlowPanel root = new FlowPanel();
-        initWidget(root);
-        root.addStyleName("form form-horizontal");
+    public FormLinks(final Builder flb) {
+        // @formatter:off
+        Elements.Builder eb = new Elements.Builder()
+            .div().css("form form-horizontal")
+                .ul().css("form-links clearfix").rememberAs("links")
+                    .li().rememberAs("add")
+                        .a().start("i").css("pficon pficon-add").end().innerText(CONSTANTS.add()).end()
+                    .end()
+                    .li().rememberAs("edit")
+                        .a().start("i").css("pficon pficon-edit").end().innerText(CONSTANTS.edit()).end()
+                    .end()
+                    .li().rememberAs("remove")
+                        .a().start("i").css("pficon pficon-delete").end().innerText(CONSTANTS.remove()).end()
+                    .end()
+                .end()
+            .end();
+        // @formatter:on
 
-        UListElement links = Document.get().createULElement();
-        links.addClassName("form-links clearfix");
-
-        // add
-        addElement = Document.get().createLIElement();
-        UIObject.setVisible(addElement, false);
-        Anchor addLink = new Anchor(TEMPLATES.addLink(CONSTANTS.add()));
-        if (builder.onAdd != null) {
-            addLink.addClickHandler(builder.onAdd);
+        addElement = eb.referenceFor("add");
+        if (flb.onAdd != null) {
+            addElement.setOnclick(flb.onAdd);
         }
-        addElement.appendChild(addLink.getElement());
-        links.appendChild(addElement);
-
-        // edit
-        editElement = Document.get().createLIElement();
-        UIObject.setVisible(editElement, false);
-        Anchor editLink = new Anchor(TEMPLATES.editLink(CONSTANTS.edit()));
-        if (builder.onEdit != null) {
-            editLink.addClickHandler(builder.onEdit);
+        editElement = eb.referenceFor("edit");
+        if (flb.onEdit != null) {
+            editElement.setOnclick(flb.onEdit);
         }
-        editElement.appendChild(editLink.getElement());
-        links.appendChild(editElement);
-
-        // remove
-        removeElement = Document.get().createLIElement();
-        UIObject.setVisible(removeElement, false);
-        Anchor undefineLink = new Anchor(TEMPLATES.undefineLink(CONSTANTS.remove()));
-        if (builder.onUndefine != null) {
-            undefineLink.addClickHandler(builder.onUndefine);
+        removeElement = eb.referenceFor("remove");
+        if (flb.onUndefine != null) {
+            removeElement.setOnclick(flb.onUndefine);
         }
-        removeElement.appendChild(undefineLink.getElement());
-        links.appendChild(removeElement);
+
+//        @SafeHtmlTemplates.Template("<a data-toggle=\"collapse\" href=\"#{0}\" aria-expanded=\"false\" aria-controls=\"{0}\"><i class=\"pficon pficon-help\"></i> {1}</a>")
+//        SafeHtml helpLink(String formId, String label);
+
+        if (flb.supportsHelp) {
+            String helpId = flb.formId + "-help";
+            // @formatter:off
+            new Elements.Builder()
+                .li().css("pull-right")
+                    .a().attr("href", "#" + helpId + "")
+                            .data("toggle", "collapse")
+                            .aria("expanded", "false")
+                            .aria("controls", helpId)
+                        .start("i").css("pficon pficon-help").end()
+                .end()
+                .build();
+            // @formatter:on
+        }
 
         // help
         FlowPanel helpContentHolder = null;
@@ -167,21 +176,21 @@ public class FormLinks extends Composite implements FormLayout {
     void switchTo(Form.State state) {
         switch (state) {
             case EMPTY:
-                UIObject.setVisible(addElement, true);
-                UIObject.setVisible(editElement, false);
-                UIObject.setVisible(removeElement, false);
+                Elements.setVisible(addElement, true);
+                Elements.setVisible(editElement, false);
+                Elements.setVisible(removeElement, false);
                 break;
 
             case VIEW:
-                UIObject.setVisible(addElement, false);
-                UIObject.setVisible(editElement, true);
-                UIObject.setVisible(removeElement, true);
+                Elements.setVisible(addElement, false);
+                Elements.setVisible(editElement, true);
+                Elements.setVisible(removeElement, true);
                 break;
 
             case EDIT:
-                UIObject.setVisible(addElement, false);
-                UIObject.setVisible(editElement, false);
-                UIObject.setVisible(removeElement, false);
+                Elements.setVisible(addElement, false);
+                Elements.setVisible(editElement, false);
+                Elements.setVisible(removeElement, false);
                 break;
         }
     }
