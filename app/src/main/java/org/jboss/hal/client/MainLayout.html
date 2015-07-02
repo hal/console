@@ -12,52 +12,48 @@
     <script src="../../../../../webapp/patternfly/dist/js/patternfly.min.js"></script>
 </head>
 <body>
-<nav data-field="header" class="navbar navbar-default navbar-pf navbar-fixed-top" role="navigation">
+<nav class="navbar navbar-default navbar-pf navbar-fixed-top" role="navigation">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-1">
             <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
+            <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
         </button>
-        <a data-field="logoLink" class="navbar-brand logo">
-            <span data-field="first" class="logo-text logo-text-first">Wild</span><span data-field="last" class="logo-text logo-text-last">Fly</span>
+        <a href="#homepage" class="navbar-brand logo">
+            <span class="logo-text logo-text-first">Wild</span><span class="logo-text logo-text-last">Fly</span>
         </a>
     </div>
     <div class="collapse navbar-collapse navbar-collapse-1">
         <ul class="nav navbar-nav navbar-utility">
             <li>
-                <a data-field="messages" class="clickable"><i class="fa fa-align-left"></i><span data-field="messagesLabel">Messages (23)</span></a>
+                <a class="clickable"><i class="fa fa-align-left"></i>Messages (23)</a>
             </li>
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <span class="pficon pficon-user"></span><span data-field="username">John Doe</span>
-                    <b class="caret"></b>
+                <a class="clickable dropdown-toggle" data-toggle="dropdown">
+                    <i class="pficon pficon-user"></i>John Doe<b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
-                    <li class="static"><span data-field="roles">Active Roles: Foo, Bar</span></li>
+                    <li class="static">Active Roles: Administrator</li>
                     <li class="divider"></li>
-                    <li><a data-field="logout" class="clickable">Logout</a></li>
+                    <li><a class="clickable">Logout</a></li>
                 </ul>
             </li>
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <span class="fa fa-share-alt"></span><b class="caret"></b>
+                <a class="clickable dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa fa-share-alt"></i><b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
-                    <li class="static">
-                        <span data-field="connectedTo">Connected to http://127.0.0.1:9990/management</span></li>
+                    <li class="static">Connected to localhost</li>
                     <li class="divider"></li>
-                    <li><a data-field="connectTo" class="clickable">Connect to different server</a></li>
+                    <li><a class="clickable">Connect to different server</a></li>
                 </ul>
             </li>
         </ul>
         <ul class="nav navbar-nav navbar-primary">
-            <li class="active"><a data-field="homepageLink" class="active">Homepage</a></li>
-            <li><a data-field="deploymentsLink">Deployments</a></li>
-            <li><a data-field="configurationLink">Configuration</a></li>
-            <li><a data-field="runtimeLink">Runtime</a></li>
-            <li><a data-field="accessControlLink">Access Control</a></li>
+            <li class="active"><a href="#homepage" class="active">Homepage</a></li>
+            <li><a href="#deployments">Deployments</a></li>
+            <li><a href="#configuration">Configuration</a></li>
+            <li><a href="#runtime">Runtime</a></li>
+            <li><a href="#access-control">Access Control</a></li>
         </ul>
     </div>
 </nav>
@@ -98,12 +94,12 @@
         </div>
     </div>
 </div>
-<footer data-field="footer" class="footer">
-    <nav data-field="navigation" class="navbar navbar-footer navbar-fixed-bottom">
-        <progress data-field="progress" class="footer-progress"></progress>
+<footer class="footer">
+    <nav class="navbar navbar-footer navbar-fixed-bottom">
+        <progress class="footer-progress"></progress>
         <ul class="nav navbar-nav footer-tools">
             <li>
-                <a href="#"><span data-field="halVersion">0.8.15</span> <i data-field="updateAvailable" class="fa fa-bell"></i></a>
+                <a href="#"><span>0.8.15</span><i class="fa fa-bell"></i></a>
             </li>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">

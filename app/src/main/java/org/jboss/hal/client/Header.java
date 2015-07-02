@@ -24,8 +24,6 @@ package org.jboss.hal.client;
 import com.google.common.base.Joiner;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.client.Browser;
-import elemental.dom.Document;
 import elemental.dom.Element;
 import elemental.html.SpanElement;
 import org.jboss.hal.ballroom.Elements;
@@ -72,79 +70,76 @@ public class Header implements IsElement {
 
     @Override
     public Element asElement() {
-        Document document = Browser.getDocument();
+        // @formatter:off
+        Elements.Builder headerBuilder = new Elements.Builder()
+            .div().css("navbar-header")
+                .button().css("navbar-toggle").attr("type", "button").data("toggle", "collapse").data("target", "." + TOGGLE_NAV_SELECTOR)
+                    .span().css("sr-only").innerText(i18n.constants().toggle_navigation()).end()
+                    .span().css("icon-bar").end()
+                    .span().css("icon-bar").end()
+                    .span().css("icon-bar").end()
+                .end()
+                .a().css("navbar-brand logo").on(click, event -> navigateTo(NameTokens.Homepage))
+                    .span().css("logo-text logo-text-first").rememberAs("logoFirst").end()
+                    .span().css("logo-text logo-text-last").rememberAs("logoLast").end()
+                .end()
+            .end();
+        // @formatter:on
 
-        logoFirst = document.createSpanElement();
-        logoLast = document.createSpanElement();
-        messagesLabel = document.createSpanElement();
-        username = document.createSpanElement();
-        roles = document.createSpanElement();
-        connectedTo = document.createSpanElement();
+        logoFirst = headerBuilder.referenceFor("logoFirst");
+        logoLast = headerBuilder.referenceFor("logoLast");
+        Element header = headerBuilder.build();
+
+        // @formatter:off
+        Elements.Builder toolsBuilder = new Elements.Builder()
+            .ul().css("nav navbar-nav navbar-utility")
+                .li()
+                    .a().css("clickable").on(click, event -> toggleMessages())
+                        .start("i").css("fa fa-align-left").end()
+                        .span().rememberAs("messagesLabel").end()
+                    .end()
+                .end()
+                .li().css("dropdown")
+                    .a().css("dropdown-toggle").data("toggle", "dropdown")
+                        .span().css("pficon pficon-user").end()
+                        .span().rememberAs("username").end()
+                        .start("b").css("caret").end()
+                    .end()
+                    .ul().css("dropdown-menu")
+                        .li().css("static").span().rememberAs("roles").end().end()
+                        .li().css("divider").end()
+                        .li().a().css("clickable").on(click, event -> logout())
+                            .innerText(i18n.constants().logout())
+                        .end().end()
+                    .end()
+                .end()
+                .li().css("dropdown")
+                    .a().css("dropdown-toggle").data("toggle", "dropdown")
+                        .span().css("fa fa-share-alt").end()
+                        .start("b").css("caret").end()
+                    .end()
+                    .ul().css("dropdown-menu")
+                        .li().css("static").span().rememberAs("connectedTo").end().end()
+                        .li().css("divider").end()
+                        .li().a().css("clickable").on(click, event -> reconnect())
+                            .innerText(i18n.constants().connect_to_server())
+                        .end().end()
+                    .end()
+                .end()
+            .end();
+        // @formatter:on
+
+        messagesLabel = toolsBuilder.referenceFor("messageLabel");
+        username = toolsBuilder.referenceFor("userName");
+        roles = toolsBuilder.referenceFor("roles");
+        connectedTo = toolsBuilder.referenceFor("connectedTo");
 
         Id.set(messagesLabel, ids.header_messages());
         Id.set(username, ids.header_username());
         Id.set(roles, ids.header_roles());
         Id.set(connectedTo, ids.header_connected_to());
 
-        // @formatter:off
-        Element header = new Elements.Builder()
-            .div().css("navbar-header")
-                .button().css("navbar-toggle")
-                        .attr("type", "button")
-                        .data("toggle", "collapse")
-                        .data("target", "." + TOGGLE_NAV_SELECTOR)
-                    .span().css("sr-only").innerText(i18n.constants().toggle_navigation()).end()
-                    .span().css("icon-bar").end()
-                    .span().css("icon-bar").end()
-                    .span().css("icon-bar").end()
-                .end() // button
-                .a().css("navbar-brand logo").on(click, event -> navigateTo(NameTokens.Homepage))
-                    .start(logoFirst).css("logo-text logo-text-first").end()
-                    .start(logoLast).css("logo-text logo-text-first").end()
-                .end() // a
-            .end() // div
-        .build();
-        // @formatter:on
-
-        // @formatter:off
-        Element tools = new Elements.Builder()
-                .ul().css("nav navbar-nav navbar-utility")
-                    .li()
-                        .a().css("clickable").on(click, event -> toggleMessages())
-                            .start("i").css("fa fa-align-left").end()
-                            .start(messagesLabel).end()
-                        .end() // a
-                    .end() // li
-                    .li().css("dropdown")
-                        .a().css("dropdown-toggle").data("toggle", "dropdown")
-                            .span().css("pficon pficon-user").end()
-                            .start(username).end()
-                            .start("b").css("caret").end()
-                        .end() // a
-                        .ul().css("dropdown-menu")
-                            .li().css("static").start(roles).end().end()
-                            .li().css("divider").end()
-                            .li().a().css("clickable").on(click, event -> logout())
-                                .innerText(i18n.constants().logout())
-                            .end().end()
-                        .end() // ul
-                    .end() // li
-                    .li().css("dropdown")
-                        .a().css("dropdown-toggle").data("toggle", "dropdown")
-                            .span().css("fa fa-share-alt").end()
-                            .start("b").css("caret").end()
-                        .end() // a
-                        .ul().css("dropdown-menu")
-                            .li().css("static").start(connectedTo).end().end()
-                            .li().css("divider").end()
-                            .li().a().css("clickable").on(click, event -> reconnect())
-                                .innerText(i18n.constants().connect_to_server())
-                            .end().end()
-                        .end() // ul
-                    .end() // li
-                .end()
-        .build();
-        // @formatter:on
+        Element tools = toolsBuilder.build();
 
         // @formatter:off
         Element tlc = new Elements.Builder()
@@ -171,10 +166,10 @@ public class Header implements IsElement {
         // @formatter:off
         return new Elements.Builder()
             .start("nav").css("navbar navbar-default navbar-pf navbar-fixed-top").attr("role", "navigation")
-                .start(header).end()
+                .add(header)
                 .div().css("collapse navbar-collapse " + TOGGLE_NAV_SELECTOR)
-                    .start(tools).end()
-                    .start(tlc).end()
+                    .add(tools)
+                    .add(tlc)
                 .end() // div
             .end() // nav
         .build();

@@ -50,11 +50,11 @@ public final class Elements {
 
     /**
      * Known input types used in {@link Builder#input(InputType)}. If not otherwise specified the created element is a
-     * simple element.
+     * simple element and cannot contain nested elements.
      */
     public enum InputType {
         /**
-         * Creates a container element (must be closed using {@link Builder#end()})
+         * Starts a button element (must be closed using {@link Builder#end()})
          */
         button,
         checkbox,
@@ -73,13 +73,13 @@ public final class Elements {
         reset,
         search,
         /**
-         * Creates a container element (must be closed using {@link Builder#end()})
+         * Starts a select element (must be closed using {@link Builder#end()})
          */
         select,
         tel,
         text,
         /**
-         * Creates a container element (must be closed using {@link Builder#end()})
+         * Starts a textarea element (must be closed using {@link Builder#end()})
          */
         textarea,
         time,
@@ -286,63 +286,63 @@ public final class Elements {
         // ------------------------------------------------------ container elements
 
         /**
-         * Creates a new heading container. The element must be closed with {@link #end()}.
+         * Starts a new heading container. The element must be closed with {@link #end()}.
          */
         public Builder h(int ordinal) {
             return start("h" + ordinal);
         }
 
         /**
-         * Creates a new paragraph container. The element must be closed with {@link #end()}.
+         * Starts a new paragraph container. The element must be closed with {@link #end()}.
          */
         public Builder p() {
             return start(document.createParagraphElement());
         }
 
         /**
-         * Creates a new ordered list container. The element must be closed with {@link #end()}.
+         * Starts a new ordered list container. The element must be closed with {@link #end()}.
          */
         public Builder ol() {
             return start(document.createOListElement());
         }
 
         /**
-         * Creates a new unordered list container. The element must be closed with {@link #end()}.
+         * Starts a new unordered list container. The element must be closed with {@link #end()}.
          */
         public Builder ul() {
             return start(document.createUListElement());
         }
 
         /**
-         * Creates a new list container. The element must be closed with {@link #end()}.
+         * Starts a new list container. The element must be closed with {@link #end()}.
          */
         public Builder li() {
             return start(document.createLIElement());
         }
 
         /**
-         * Creates a new anchor container. The element must be closed with {@link #end()}.
+         * Starts a new anchor container. The element must be closed with {@link #end()}.
          */
         public Builder a() {
             return start(document.createAnchorElement());
         }
 
         /**
-         * Creates a new div container. The element must be closed with {@link #end()}.
+         * Starts a new div container. The element must be closed with {@link #end()}.
          */
         public Builder div() {
             return start(document.createDivElement());
         }
 
         /**
-         * Creates a new span container. The element must be closed with {@link #end()}.
+         * Starts a new span container. The element must be closed with {@link #end()}.
          */
         public Builder span() {
             return start(document.createSpanElement());
         }
 
         /**
-         * Creates the named container. The element must be closed with {@link #end()}.
+         * Starts the named container. The element must be closed with {@link #end()}.
          */
         public Builder start(String tag) {
             return start(document.createElement(tag));
@@ -390,42 +390,42 @@ public final class Elements {
         // ------------------------------------------------------ form elements
 
         /**
-         * Creates a new form. The element must be closed with {@link #end()}.
+         * Starts a new form. The element must be closed with {@link #end()}.
          */
         public Builder form() {
             return start(document.createFormElement());
         }
 
         /**
-         * Creates a new form label. The element must be closed with {@link #end()}.
+         * Starts a new form label. The element must be closed with {@link #end()}.
          */
         public Builder label() {
             return start(document.createLabelElement());
         }
 
         /**
-         * Creates a new button. The element must be closed with {@link #end()}.
+         * Starts a new button. The element must be closed with {@link #end()}.
          */
         public Builder button() {
             return input(InputType.button);
         }
 
         /**
-         * Creates a new select box. The element must be closed with {@link #end()}.
+         * Starts a new select box. The element must be closed with {@link #end()}.
          */
         public Builder select() {
             return input(InputType.select);
         }
 
         /**
-         * Creates an option to be used inside a select box. The element must be closed with {@link #end()}.
+         * Starts an option to be used inside a select box. The element must be closed with {@link #end()}.
          */
         public Builder option() {
             return start(document.createOptionElement());
         }
 
         /**
-         * Creates a new textarea. The element must be closed with {@link #end()}.
+         * Starts a new textarea. The element must be closed with {@link #end()}.
          */
         public Builder textarea() {
             return input(InputType.textarea);
@@ -481,15 +481,14 @@ public final class Elements {
         // ------------------------------------------------------ simple elements
 
         /**
-         * Creates and adds the named element. The element is a simple element and must not be closed using {@link
-         * #end()}.
+         * Creates and adds the named element. The element must not be closed using {@link #end()}.
          */
         public Builder add(String tag) {
             return add(document.createElement(tag));
         }
 
         /**
-         * Adds the given element. The element is a simple element and must not be closed using {@link #end()}.
+         * Adds the given element. The element must not be closed using {@link #end()}.
          */
         public Builder add(Element element) {
             assertCurrent();
@@ -552,8 +551,8 @@ public final class Elements {
          *             already present.
          */
         public Builder data(String name, String value) {
-            String failSafeName = name.startsWith("data-") ? name : "data-" + name;
-            return attr(failSafeName, value);
+            String safeName = name.startsWith("data-") ? name : "data-" + name;
+            return attr(safeName, value);
         }
 
         /**
@@ -563,8 +562,8 @@ public final class Elements {
          *             already present.
          */
         public Builder aria(String name, String value) {
-            String failSafeName = name.startsWith("aria-") ? name : "aria-" + name;
-            return attr(failSafeName, value);
+            String safeName = name.startsWith("aria-") ? name : "aria-" + name;
+            return attr(safeName, value);
         }
 
         /**
@@ -595,7 +594,7 @@ public final class Elements {
         // ------------------------------------------------------ event handler
 
         /**
-         * Adds the given event listener on the the last added element.
+         * Adds the given event listener to the the last added element.
          */
         public Builder on(EventType type, EventListener listener) {
             assertCurrent();
@@ -609,7 +608,8 @@ public final class Elements {
         // ------------------------------------------------------ references
 
         /**
-         * Stores a named reference for the last added element.
+         * Stores a named reference for the last added element. The element can be retrieved later on using
+         * {@link #referenceFor(String)}.
          */
         public Builder rememberAs(String id) {
             assertCurrent();
@@ -618,7 +618,7 @@ public final class Elements {
         }
 
         /**
-         * Returns the element which was stored under the given id.
+         * Returns the element which was stored using {@link #rememberAs(String)}.
          *
          * @throws NoSuchElementException if no element was stored under that id.
          */
@@ -634,7 +634,7 @@ public final class Elements {
         // ------------------------------------------------------ builder
 
         /**
-         * Builds the element hierarchy and returns the top level element as the specified element type.
+         * Builds the element hierarchy and returns the top level element casted to the specified element type.
          *
          * @param <T> The target element type
          *
@@ -653,7 +653,7 @@ public final class Elements {
     // ------------------------------------------------------ element helper methods
 
     public static void setVisible(Element element, boolean visible) {
-        element.getStyle().setDisplay(visible ? "inherit" : "none");
+        element.getStyle().setDisplay(visible ? "" : "none");
     }
 
     public static Element asElement(IsWidget widget) {
@@ -661,7 +661,7 @@ public final class Elements {
     }
 
     public static Element asElement(Widget widget) {
-        return widget.getElement().cast();
+        return asElement(widget.getElement());
     }
 
     public static Element asElement(com.google.gwt.dom.client.Element element) {
