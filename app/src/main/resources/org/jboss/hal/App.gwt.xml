@@ -32,7 +32,6 @@
     <inherits name="org.jboss.hal.Flow"/>
     <inherits name="org.jboss.hal.Resources"/>
 
-
     <set-configuration-property name="gwtp.prebootstrapper"
                                 value="org.jboss.hal.client.bootstrap.functions.HalPreBootstrapper"/>
     <set-configuration-property name="gwtp.bootstrapper"

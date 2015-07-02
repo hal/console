@@ -23,7 +23,9 @@
 
 <module>
     <inherits name="com.google.gwt.user.User"/>
+
     <inherits name="ru.finam.slf4jgwt.api.API"/>
+
     <inherits name="org.jboss.hal.Config"/>
 
     <source path="dmr"/>

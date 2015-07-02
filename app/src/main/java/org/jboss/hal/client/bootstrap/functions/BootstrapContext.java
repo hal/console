@@ -36,7 +36,6 @@ public class BootstrapContext {
     public static final String ERROR = "error";
     public static final String STATUS_CODE = "status-code";
 
-
     private final Map<String, Object> data;
     private String failure;
     private Throwable exception;

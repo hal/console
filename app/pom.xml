@@ -194,9 +194,11 @@
                 <extensions>true</extensions>
                 <configuration>
                     <moduleName>${gwt.module}</moduleName>
+<!--
                     <compilerArgs>
                         <compilerArg>-XjsInteropMode JS</compilerArg>
                     </compilerArgs>
+-->
                 </configuration>
             </plugin>
         </plugins>
