@@ -19,25 +19,55 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.gin;
+package org.jboss.hal.client.widget;
 
-import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
-import com.gwtplatform.mvp.client.gin.DefaultModule;
-import org.jboss.hal.spi.GinModule;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.PresenterWidget;
+import com.gwtplatform.mvp.client.View;
+import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.HasPresenter;
+
+import javax.inject.Inject;
 
 /**
  * @author Harald Pehl
  */
-@GinModule
-public class AppModule extends AbstractPresenterModule {
+public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView> {
+
+    public interface MyView extends View, HasPresenter<FooterPresenter> {
+
+        void update(Environment environment);
+    }
+
+    @Inject
+    public FooterPresenter(final EventBus eventBus,
+            final MyView view) {
+        super(eventBus, view);
+    }
 
     @Override
-    protected void configure() {
-        DefaultModule defaultModule = new DefaultModule.Builder()
-                .defaultPlace("TODO")
-                .errorPlace("TODO")
-                .unauthorizedPlace("TODO")
-                .build();
-        install(defaultModule);
+    protected void onBind() {
+        super.onBind();
+        getView().setPresenter(this);
+    }
+
+    public void update(Environment environment) {
+        getView().update(environment);
+    }
+
+    public void onShowVersion() {
+
+    }
+
+    public void onModelBrowser() {
+
+    }
+
+    public void onExpressionResolver() {
+
+    }
+
+    public void onSettings() {
+
     }
 }

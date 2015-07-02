@@ -19,17 +19,22 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.bootstrap.hal;
+package org.jboss.hal.client.bootstrap.functions;
 
-import com.google.gwt.inject.client.AbstractGinModule;
+import org.jboss.hal.ballroom.ProgressElement;
 
 /**
  * @author Harald Pehl
  */
-public class BootstrapModule extends AbstractGinModule {
+public class BootstrapProgress extends ProgressElement {
+
+    public BootstrapProgress() {
+        super();
+//        setVisible(true);
+    }
 
     @Override
-    protected void configure() {
-
+    public void finish() {
+        // No need to hide the progress element on finish. The main UI will replace the loading panel
     }
 }

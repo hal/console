@@ -19,16 +19,16 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client;
+package org.jboss.hal.client.widget;
 
 import com.google.common.base.Joiner;
+import com.gwtplatform.mvp.client.ViewImpl;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import elemental.html.SpanElement;
 import org.jboss.hal.ballroom.Elements;
 import org.jboss.hal.ballroom.Id;
-import org.jboss.hal.ballroom.IsElement;
+import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
@@ -44,13 +44,15 @@ import static org.jboss.hal.config.InstanceInfo.WILDFLY;
 /**
  * @author Harald Pehl
  */
-public class Header implements IsElement {
+public class HeaderView extends ViewImpl implements HeaderPresenter.MyView {
 
     private final static String TOGGLE_NAV_SELECTOR = "hal-header-collapse";
 
     private final PlaceManager placeManager;
     private final I18n i18n;
     private final HalIds ids;
+
+    private HeaderPresenter presenter;
 
     private SpanElement logoFirst;
     private SpanElement logoLast;
@@ -60,16 +62,17 @@ public class Header implements IsElement {
     private SpanElement connectedTo;
 
     @Inject
-    public Header(final PlaceManager placeManager,
+    public HeaderView(final PlaceManager placeManager,
             final I18n i18n,
             final HalIds ids) {
         this.placeManager = placeManager;
         this.i18n = i18n;
         this.ids = ids;
+
+        initWidget(Elements.asWidget(init()));
     }
 
-    @Override
-    public Element asElement() {
+    private Element init() {
         // @formatter:off
         Elements.Builder headerBuilder = new Elements.Builder()
             .div().css("navbar-header")
@@ -79,7 +82,7 @@ public class Header implements IsElement {
                     .span().css("icon-bar").end()
                     .span().css("icon-bar").end()
                 .end()
-                .a().css("navbar-brand logo").on(click, event -> navigateTo(NameTokens.Homepage))
+                .a().css("navbar-brand logo").on(click, event -> presenter.navigateTo(NameTokens.Homepage))
                     .span().css("logo-text logo-text-first").rememberAs("logoFirst").end()
                     .span().css("logo-text logo-text-last").rememberAs("logoLast").end()
                 .end()
@@ -94,7 +97,7 @@ public class Header implements IsElement {
         Elements.Builder toolsBuilder = new Elements.Builder()
             .ul().css("nav navbar-nav navbar-utility")
                 .li()
-                    .a().css("clickable").on(click, event -> toggleMessages())
+                    .a().css("clickable").on(click, event -> presenter.toggleMessages())
                         .start("i").css("fa fa-align-left").end()
                         .span().rememberAs("messagesLabel").end()
                     .end()
@@ -108,7 +111,7 @@ public class Header implements IsElement {
                     .ul().css("dropdown-menu")
                         .li().css("static").span().rememberAs("roles").end().end()
                         .li().css("divider").end()
-                        .li().a().css("clickable").on(click, event -> logout())
+                        .li().a().css("clickable").on(click, event -> presenter.logout())
                             .innerText(i18n.constants().logout())
                         .end().end()
                     .end()
@@ -121,7 +124,7 @@ public class Header implements IsElement {
                     .ul().css("dropdown-menu")
                         .li().css("static").span().rememberAs("connectedTo").end().end()
                         .li().css("divider").end()
-                        .li().a().css("clickable").on(click, event -> reconnect())
+                        .li().a().css("clickable").on(click, event -> presenter.reconnect())
                             .innerText(i18n.constants().connect_to_server())
                         .end().end()
                     .end()
@@ -144,22 +147,22 @@ public class Header implements IsElement {
         // @formatter:off
         Element tlc = new Elements.Builder()
             .ul().css("nav navbar-nav navbar-primary")
-                .li().a().id(ids.tlc_home()).on(click, event -> navigateTo(NameTokens.Homepage))
+                .li().a().id(ids.tlc_home()).on(click, event -> presenter.navigateTo(NameTokens.Homepage))
                     .innerText("Homepage")
                 .end().end()
-                .li().a().id(ids.tlc_deployments()).on(click, event -> navigateTo(NameTokens.Deployments))
+                .li().a().id(ids.tlc_deployments()).on(click, event -> presenter.navigateTo(NameTokens.Deployments))
                     .innerText("Deployments")
                 .end().end()
-                .li().a().id(ids.tlc_configuration()).on(click, event -> navigateTo(NameTokens.Configuration))
+                .li().a().id(ids.tlc_configuration()).on(click, event -> presenter.navigateTo(NameTokens.Configuration))
                     .innerText("Configuration")
                 .end().end()
-                .li().a().id(ids.tlc_runtime()).on(click, event -> navigateTo(NameTokens.Runtime))
+                .li().a().id(ids.tlc_runtime()).on(click, event -> presenter.navigateTo(NameTokens.Runtime))
                     .innerText("Runtime")
                 .end().end()
-                .li().a().id(ids.tlc_access_control()).on(click, event -> navigateTo(NameTokens.AccessControl))
+                .li().a().id(ids.tlc_access_control()).on(click, event -> presenter.navigateTo(NameTokens.AccessControl))
                     .innerText("Access Control")
                 .end().end()
-            .end() // ul
+            .end()
         .build();
         // @formatter:on
 
@@ -170,13 +173,19 @@ public class Header implements IsElement {
                 .div().css("collapse navbar-collapse " + TOGGLE_NAV_SELECTOR)
                     .add(tools)
                     .add(tlc)
-                .end() // div
-            .end() // nav
+                .end()
+            .end()
         .build();
         // @formatter:on
     }
 
-    public void init(Environment environment, Endpoints endpoints, User user) {
+    @Override
+    public void setPresenter(final HeaderPresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    @Override
+    public void update(Environment environment, Endpoints endpoints, User user) {
         // TODO Find a way how to set the logo based on the server info from the environment
         if (environment.getInstanceInfo() == WILDFLY) {
             setLogo("Wild", "Fly");
@@ -199,29 +208,13 @@ public class Header implements IsElement {
         roles.setInnerText(i18n.messages().active_roles(Joiner.on(", ").join(user.getRoles())));
     }
 
-    public void setMessageCount(int count) {
-        messagesLabel.setInnerText(i18n.messages().messages(count));
-    }
-
-    private void navigateTo(final String place) {
-        PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(place).build();
-        placeManager.revealPlace(placeRequest);
-    }
-
-    private void toggleMessages() {
-
-    }
-
-    private void reconnect() {
-
-    }
-
-    private void logout() {
-
-    }
-
     private void setLogo(String first, String last) {
         logoFirst.setInnerText(first);
         logoLast.setInnerText(last);
+    }
+
+    @Override
+    public void setMessageCount(int count) {
+        messagesLabel.setInnerText(i18n.messages().messages(count));
     }
 }

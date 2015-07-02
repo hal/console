@@ -19,10 +19,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.bootstrap.hal;
+package org.jboss.hal.client.bootstrap.functions;
 
 import com.gwtplatform.mvp.client.Bootstrapper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.flow.Control;
 
 import javax.inject.Inject;
 
@@ -39,5 +42,33 @@ public class HalBootstrapper implements Bootstrapper {
     @Override
     public void onBootstrap() {
         placeManager.revealDefaultPlace();
+    }
+
+
+    public static class BootstrapFailedCallback implements Dispatcher.FailedCallback {
+
+        private final Control<BootstrapContext> control;
+
+        public BootstrapFailedCallback(final Control<BootstrapContext> control) {this.control = control;}
+
+        @Override
+        public void onFailed(final Operation operation, final String failure) {
+            control.getContext().failed(failure);
+            control.abort();
+        }
+    }
+
+
+    public static class BootstrapExceptionCallback implements Dispatcher.ExceptionCallback {
+
+        private final Control<BootstrapContext> control;
+
+        public BootstrapExceptionCallback(final Control<BootstrapContext> control) {this.control = control;}
+
+        @Override
+        public void onException(final Operation operation, final Throwable exception) {
+            control.getContext().failed(exception);
+            control.abort();
+        }
     }
 }

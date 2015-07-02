@@ -22,6 +22,7 @@
 package org.jboss.hal.ballroom;
 
 import com.google.common.collect.Lists;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -654,6 +655,23 @@ public final class Elements {
 
     public static void setVisible(Element element, boolean visible) {
         element.getStyle().setDisplay(visible ? "" : "none");
+    }
+
+
+    // ------------------------------------------------------ conversions
+
+    private static class ElementWidget extends Widget {
+        ElementWidget(final Element element) {
+            setElement(com.google.gwt.dom.client.Element.as((JavaScriptObject)element));
+        }
+    }
+
+    public static Widget asWidget(IsElement element) {
+        return asWidget(element.asElement());
+    }
+
+    public static Widget asWidget(Element element) {
+        return new ElementWidget(element).asWidget();
     }
 
     public static Element asElement(IsWidget widget) {

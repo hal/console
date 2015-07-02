@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.bootstrap.hal;
+package org.jboss.hal.client.bootstrap.functions;
 
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -33,6 +33,7 @@ import org.jboss.hal.config.semver.Versions;
 import org.jboss.hal.flow.Control;
 import org.jboss.hal.flow.Function;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
@@ -42,8 +43,8 @@ import javax.inject.Inject;
 public class CheckForUpdate implements Function<BootstrapContext> {
 
     public static final String UPDATE_URL = "http://access-halproject.rhcloud.com/latest";
+    private static Logger logger = LoggerFactory.getLogger(CheckForUpdate.class);
 
-    @Inject Logger logger;
     private final Environment environment;
 
     @Inject

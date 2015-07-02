@@ -19,18 +19,12 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.bootstrap.hal;
+package org.jboss.hal.client.homepage;
+
+import com.gwtplatform.mvp.client.ViewImpl;
 
 /**
  * @author Harald Pehl
  */
-public class BootstrapOutcome {
-
-    private final BootstrapContext bootstrapContext;
-
-    public BootstrapOutcome(final BootstrapContext bootstrapContext) {this.bootstrapContext = bootstrapContext;}
-
-    public BootstrapContext getBootstrapContext() {
-        return bootstrapContext;
-    }
+public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
 }

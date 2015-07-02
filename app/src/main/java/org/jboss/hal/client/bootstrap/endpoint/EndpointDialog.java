@@ -2,7 +2,6 @@ package org.jboss.hal.client.bootstrap.endpoint;
 
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
-import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 
 /**
  * Modal dialog to manage bootstrap servers. The dialog offers a page to connect to an existing server and a page to
@@ -17,9 +16,9 @@ class EndpointDialog {
     private final ConnectPage connectPage;
     private final ConfigurePage configurePage;
 
-    EndpointDialog(final EndpointSelection endpointSelection) {
-        connectPage = new ConnectPage(serverSetup, this);
-        configurePage = new ConfigurePage(serverSetup, this);
+    EndpointDialog(final EndpointSelection endpointSelection, final EndpointStorage storage) {
+        connectPage = new ConnectPage(this, endpointSelection, storage);
+        configurePage = new ConfigurePage(this, endpointSelection, storage);
 
         deck = new DeckLayoutPanel();
         deck.addStyleName("window-content"); // white background for forms
@@ -33,7 +32,7 @@ class EndpointDialog {
         popupPanel.setAnimationEnabled(false);
         popupPanel.setWidget(deck);
         popupPanel.setWidth(String.valueOf(width) + "px");
-        popupPanel.setHeight(String.valueOf(width / DefaultWindow.GOLDEN_RATIO) + "px");
+//        popupPanel.setHeight(String.valueOf(width / DefaultWindow.GOLDEN_RATIO) + "px");
         popupPanel.setStyleName("default-window");
     }
 

@@ -1,6 +1,5 @@
 package org.jboss.hal.client.bootstrap.endpoint;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -10,7 +9,7 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
-import org.jboss.hal.client.bootstrap.hal.LoadingPanel;
+import org.jboss.hal.client.bootstrap.functions.LoadingPanel;
 import org.jboss.hal.config.Endpoints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +64,7 @@ public class EndpointSelection {
             }
 
         } else {
-            final String baseUrl = getBaseUrl();
+            final String baseUrl = Endpoints.getBaseUrl();
             // Test whether this console is served from a WildFly / EAP instance
             RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, baseUrl + "/management");
             requestBuilder.setCallback(new RequestCallback() {
@@ -74,7 +73,7 @@ public class EndpointSelection {
                     int statusCode = response.getStatusCode();
                     // anything but 404 is considered successful
                     if (statusCode == 0 || statusCode == 200 || statusCode == 401) {
-                        setUrls(baseUrl);
+                        endpoints.useBase(baseUrl);
                         andThen.execute();
                     } else {
                         openDialog();
@@ -96,7 +95,7 @@ public class EndpointSelection {
     }
 
     private void openDialog() {
-        dialog = new EndpointDialog(this);
+        dialog = new EndpointDialog(this, storage);
         dialog.open();
     }
 
@@ -132,49 +131,15 @@ public class EndpointSelection {
 
     void onConnect(Endpoint endpoint) {
         // store selected server
-        new BootstrapServerStore().storeSelection(endpoint);
+        storage.saveSelection(endpoint);
 
         if (dialog != null) {
             dialog.hide();
             LoadingPanel.get().on();
         }
-        String serverUrl = getServerUrl(endpoint);
-        context.setSameOrigin(serverUrl.equals(getBaseUrl()));
-        if (!serverUrl.endsWith("/")) {
-            serverUrl += "/";
-        }
 
         // Trigger authentication using a hidden iframe. This way also Safari will show the login dialog
-        setUrls(serverUrl);
+        endpoints.useBase(endpoint.getUrl());
         andThen.execute();
-    }
-
-    private void setUrls(String baseUrl) {
-        String localBaseUrl = baseUrl;
-        if (!localBaseUrl.endsWith("/")) {
-            localBaseUrl += "/";
-        }
-        String domainApi = localBaseUrl + "management";
-        String deploymentApi = localBaseUrl + "management/add-content";
-        String logoutApi = localBaseUrl + "logout";
-        String patchApi = localBaseUrl + "management-upload";
-        String cspApi = localBaseUrl + "console/csp";
-
-        System.out.println("Domain API Endpoint: " + domainApi);
-        context.setProperty(DOMAIN_API, domainApi);
-        context.setProperty(DEPLOYMENT_API, deploymentApi);
-        context.setProperty(LOGOUT_API, logoutApi);
-        context.setProperty(PATCH_API, patchApi);
-        context.setProperty(CSP_API, cspApi);
-    }
-
-    String getBaseUrl() {
-        String hostUrl = GWT.getHostPageBaseURL();
-        int schemeIndex = hostUrl.indexOf("://");
-        int slash = hostUrl.indexOf('/', schemeIndex + 3);
-        if (slash != -1) {
-            return hostUrl.substring(0, slash);
-        }
-        return hostUrl;
     }
 }

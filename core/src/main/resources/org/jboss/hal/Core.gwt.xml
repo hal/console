@@ -23,6 +23,12 @@
 
 <module>
     <inherits name="com.google.gwt.user.User"/>
+    <inherits name="com.google.gwt.inject.Inject"/>
+
+    <inherits name="com.gwtplatform.mvp.Mvp"/>
+
+    <inherits name="org.jboss.hal.DMR"/>
+    <inherits name="org.jboss.hal.Flow"/>
 
     <source path="core"/>
 </module>

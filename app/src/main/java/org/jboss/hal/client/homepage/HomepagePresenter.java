@@ -19,20 +19,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.bootstrap.hal;
+package org.jboss.hal.client.homepage;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
-import com.gwtplatform.mvp.client.PreBootstrapper;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.Presenter;
+import com.gwtplatform.mvp.client.View;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+
+import javax.inject.Inject;
 
 /**
  * @author Harald Pehl
  */
-@SuppressWarnings("unused")
-public class HalPreBootstrapper implements PreBootstrapper {
+public class HomepagePresenter extends Presenter<HomepagePresenter.MyView, HomepagePresenter.MyProxy> {
 
-    @Override
-    public void onPreBootstrap() {
-        GWT.setUncaughtExceptionHandler(e -> Window.alert("Unable to load HAL management console!"));
+    public interface MyProxy extends ProxyPlace<HomepagePresenter> {}
+
+    public interface MyView extends View {}
+
+    @Inject
+    public HomepagePresenter(final EventBus eventBus, final MyView view, final MyProxy proxy) {
+        super(eventBus, view, proxy);
     }
 }

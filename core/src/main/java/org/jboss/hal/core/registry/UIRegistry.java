@@ -19,17 +19,23 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.homepage;
+package org.jboss.hal.core.registry;
 
-import com.google.gwt.user.client.ui.Composite;
-import org.jboss.errai.ui.nav.client.local.DefaultPage;
-import org.jboss.errai.ui.nav.client.local.Page;
-import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.jboss.hal.flow.Progress;
 
 /**
+ * Registry which can be used to get references to global UI elements such as the progress bar in the footer.
  * @author Harald Pehl
  */
-@Templated("#content")
-@Page(role = DefaultPage.class, path = "home")
-public class Homepage extends Composite {
+public class UIRegistry {
+
+    private Progress progress;
+
+    public Progress getProgress() {
+        return progress;
+    }
+
+    public void register(final Progress progress) {
+        this.progress = progress;
+    }
 }

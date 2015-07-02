@@ -19,31 +19,19 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.rbac;
+package org.jboss.hal.client.bootstrap.functions;
 
-import com.google.gwt.user.client.ui.Composite;
-import org.jboss.errai.ui.nav.client.local.Page;
-import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.jboss.hal.config.CurrentUser;
-import org.jboss.hal.config.User;
-import org.jboss.hal.security.RequiredResources;
-import org.slf4j.Logger;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import com.google.gwt.inject.client.AbstractGinModule;
+import org.jboss.hal.spi.GinModule;
 
 /**
  * @author Harald Pehl
  */
-@Templated("#content")
-@Page(path = "access-control")
-public class AccessControl extends Composite {
+@GinModule
+public class BootstrapModule extends AbstractGinModule {
 
-    @Inject Logger logger;
-    @Inject @CurrentUser User currentUser;
+    @Override
+    protected void configure() {
 
-    @PostConstruct
-    public void init() {
-        logger.debug("Page AccessControl successfully created!!");
     }
 }

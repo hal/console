@@ -1,46 +1,36 @@
 package org.jboss.hal.client.bootstrap.endpoint;
 
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.widgets.ContentDescription;
-import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
-import org.jboss.ballroom.client.widgets.common.DefaultButton;
-import org.jboss.ballroom.client.widgets.forms.*;
-import org.jboss.ballroom.client.widgets.window.DialogueOptions;
-import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author Harald Pehl
  */
 class ConfigurePage implements IsWidget {
 
-    private final BootstrapServerSetup serverSetup;
-    private final BootstrapServerDialog serverDialog;
-    private final BootstrapServerStore serverStore;
+    private final EndpointSelection endpointSelection;
+    private final EndpointDialog endpointDialog;
+    private final EndpointStorage storage;
 
-    private Form<BootstrapServer> form;
-    private TextBoxItem nameItem;
-    private NumberBoxItem portItem;
-    private HTML configureStatus;
+//    private Form<BootstrapServer> form;
+//    private TextBoxItem nameItem;
+//    private NumberBoxItem portItem;
+//    private HTML configureStatus;
 
-    ConfigurePage(final BootstrapServerSetup serverSetup, final BootstrapServerDialog serverDialog) {
-        this.serverSetup = serverSetup;
-        this.serverDialog = serverDialog;
-        this.serverStore = new BootstrapServerStore();
+
+    ConfigurePage(final EndpointDialog endpointDialog,
+            final EndpointSelection endpointSelection,
+            final EndpointStorage storage) {
+        this.endpointDialog = endpointDialog;
+        this.endpointSelection = endpointSelection;
+        this.storage = storage;
     }
 
     public Widget asWidget() {
+        return new Label("NYI");
+/*
         FlowPanel content = new FlowPanel();
         content.add(new ContentHeaderLabel(Console.CONSTANTS.bs_configure_interface_header()));
         content.add(new ContentDescription(Console.CONSTANTS.bs_configure_interface_desc()));
@@ -49,7 +39,8 @@ class ConfigurePage implements IsWidget {
 
         form = new Form<>(BootstrapServer.class);
         nameItem = new TextBoxItem("name", Console.CONSTANTS.common_label_name());
-        nameItem.getInputElement().setAttribute("placeholder", Console.CONSTANTS.bs_configure_interface_name_placeholder());
+        nameItem.getInputElement()
+                .setAttribute("placeholder", Console.CONSTANTS.bs_configure_interface_name_placeholder());
 
         ListBoxItem schemeItem = new ListBoxItem("scheme", "Scheme");
         schemeItem.setChoices(Arrays.asList("http", "https"), "http");
@@ -78,10 +69,11 @@ class ConfigurePage implements IsWidget {
                 FormValidation formValidation = form.validate();
                 if (!formValidation.hasErrors()) {
                     final BootstrapServer server = form.getUpdatedEntity();
-                    serverSetup.pingServer(server, new AsyncCallback<Void>() {
+                    endpointSelection.pingServer(server, new AsyncCallback<Void>() {
                         @Override
                         public void onFailure(final Throwable caught) {
-                            status(StatusMessage.warning(Console.MESSAGES.bs_interface_warning(serverSetup.getBaseUrl())));
+                            status(StatusMessage
+                                    .warning(Console.MESSAGES.bs_interface_warning(endpointSelection.getBaseUrl())));
                         }
 
                         @Override
@@ -105,7 +97,7 @@ class ConfigurePage implements IsWidget {
                             BootstrapServer newServer = form.getUpdatedEntity();
 
                             boolean sameName = false;
-                            List<BootstrapServer> servers = serverStore.load();
+                            List<BootstrapServer> servers = storage.load();
                             for (BootstrapServer server : servers) {
                                 if (server.getName().equals(newServer.getName())) {
                                     sameName = true;
@@ -116,8 +108,8 @@ class ConfigurePage implements IsWidget {
                                 status(StatusMessage.error(Console.CONSTANTS.bs_configure_interface_duplicate()));
                                 nameItem.getInputElement().focus();
                             } else {
-                                serverStore.add(newServer);
-                                serverDialog.onConfigureOk();
+                                storage.add(newServer);
+                                endpointDialog.onConfigureOk();
                             }
                         }
                     }
@@ -126,15 +118,17 @@ class ConfigurePage implements IsWidget {
                 new ClickHandler() {
                     @Override
                     public void onClick(final ClickEvent event) {
-                        serverDialog.onConfigureCancel();
+                        endpointDialog.onConfigureCancel();
                     }
                 }
         );
 
         return new WindowContentBuilder(content, options).build();
+*/
     }
 
     void reset() {
+/*
         configureStatus.setVisible(false);
         form.clearValues();
         portItem.setValue(9990);
@@ -144,10 +138,11 @@ class ConfigurePage implements IsWidget {
                 nameItem.getInputElement().focus();
             }
         });
+*/
     }
 
     private void status(SafeHtml message) {
-        configureStatus.setVisible(true);
-        configureStatus.setHTML(message);
+//        configureStatus.setVisible(true);
+//        configureStatus.setHTML(message);
     }
 }

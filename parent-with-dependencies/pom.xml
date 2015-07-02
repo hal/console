@@ -46,7 +46,6 @@
         <freemarker.version>2.3.22</freemarker.version>
         <gin.version>2.1.2</gin.version>
         <guava.version>18.0</guava.version>
-        <gwt.log.version>3.3.2</gwt.log.version>
         <gwt.version>2.8.0-SNAPSHOT</gwt.version>
         <gwtp.version>1.5-SNAPSHOT</gwtp.version>
         <junit.version>4.12</junit.version>
@@ -95,6 +94,11 @@
             <dependency>
                 <groupId>com.gwtplatform</groupId>
                 <artifactId>gwtp-mvp-client</artifactId>
+                <version>${gwtp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.gwtplatform</groupId>
+                <artifactId>gwtp-processors</artifactId>
                 <version>${gwtp.version}</version>
             </dependency>
             <dependency>

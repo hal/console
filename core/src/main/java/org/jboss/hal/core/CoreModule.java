@@ -19,16 +19,30 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.runtime;
+package org.jboss.hal.core;
 
-import com.google.gwt.user.client.ui.Composite;
-import org.jboss.errai.ui.nav.client.local.Page;
-import org.jboss.errai.ui.shared.api.annotations.Templated;
+import com.google.gwt.inject.client.AbstractGinModule;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import org.jboss.hal.core.registry.ResourceDescriptionRegistry;
+import org.jboss.hal.core.registry.UIRegistry;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.spi.GinModule;
 
-/**
- * @author Harald Pehl
- */
-@Templated("#content")
-@Page(path = "runtime")
-public class Runtime extends Composite {
+@GinModule
+public class CoreModule extends AbstractGinModule {
+
+    @Override
+    protected void configure() {
+        bind(ResourceDescriptionRegistry.class).in(Singleton.class);
+        bind(UIRegistry.class).in(Singleton.class);
+    }
+
+    /**
+     * Convenience provider to make the global {@link Progress} implementation injectable.
+     */
+    @Provides
+    Progress provideProgress(UIRegistry uiRegistry) {
+        return uiRegistry.getProgress();
+    }
 }

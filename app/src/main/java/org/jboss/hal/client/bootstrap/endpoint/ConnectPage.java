@@ -1,40 +1,35 @@
 package org.jboss.hal.client.bootstrap.endpoint;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.as.console.client.Console;
-import org.jboss.as.console.client.widgets.ContentDescription;
-import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
-import org.jboss.ballroom.client.widgets.window.DialogueOptions;
-import org.jboss.ballroom.client.widgets.window.WindowContentBuilder;
 
 /**
  * @author Harald Pehl
  */
-public class ConnectPage implements IsWidget {
+class ConnectPage implements IsWidget {
 
-    private final BootstrapServerSetup serverSetup;
-    private final BootstrapServerDialog serverDialog;
-    private final BootstrapServerStore serverStore;
-    private BootstrapServerTable table;
-    private HTML connectStatus;
+    private final EndpointSelection endpointSelection;
+    private final EndpointDialog endpointDialog;
+    private final EndpointStorage storage;
 
-    public ConnectPage(final BootstrapServerSetup serverSetup, final BootstrapServerDialog serverDialog) {
-        this.serverSetup = serverSetup;
-        this.serverDialog = serverDialog;
-        this.serverStore = new BootstrapServerStore();
+//    private BootstrapServerTable table;
+//    private HTML connectStatus;
+
+
+    ConnectPage(final EndpointDialog endpointDialog,
+            final EndpointSelection endpointSelection,
+            final EndpointStorage storage) {
+        this.endpointDialog = endpointDialog;
+        this.endpointSelection = endpointSelection;
+        this.storage = storage;
     }
 
     @Override
     public Widget asWidget() {
+        return new Label("NYI");
+/*
         FlowPanel content = new FlowPanel();
         content.add(new ContentHeaderLabel(Console.CONSTANTS.bs_connect_interface_header()));
         content.add(new ContentDescription(Console.CONSTANTS.bs_connect_interface_desc()));
@@ -78,9 +73,11 @@ public class ConnectPage implements IsWidget {
         ).showCancel(false);
 
         return new WindowContentBuilder(content, options).build();
+*/
     }
 
     void reset() {
+/*
         connectStatus.setVisible(false);
         table.getDataProvider().setList(serverStore.load());
         BootstrapServer selection = serverStore.restoreSelection();
@@ -89,10 +86,11 @@ public class ConnectPage implements IsWidget {
         } else {
             table.getCellTable().selectDefaultEntity();
         }
+*/
     }
 
     private void status(SafeHtml message) {
-        connectStatus.setVisible(true);
-        connectStatus.setHTML(message);
+//        connectStatus.setVisible(true);
+//        connectStatus.setHTML(message);
     }
 }

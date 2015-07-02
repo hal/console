@@ -19,22 +19,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.bootstrap.hal;
+package org.jboss.hal.client.bootstrap.functions;
 
-import org.jboss.hal.ballroom.ProgressElement;
+import com.google.gwt.user.client.ui.Composite;
 
 /**
  * @author Harald Pehl
  */
-public class BootstrapProgress extends ProgressElement {
+//@Templated("#content")
+//@Page(path = "bootstrap-failed")
+public class BootstrapFailed extends Composite {
 
-    public BootstrapProgress() {
-        super();
-        setVisible(true);
-    }
+//    @Inject @DataField Label reason;
 
-    @Override
-    public void finish() {
-        // No need to hide the progress element on finish. The main UI will replace the loading panel
-    }
+//    @PageShown
+//    public void onShow(HistoryToken token) {
+//        reason.setText(token.getState().get(BootstrapContext.ERROR).iterator().next());
+//    }
 }

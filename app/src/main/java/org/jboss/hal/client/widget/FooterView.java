@@ -19,16 +19,16 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client;
+package org.jboss.hal.client.widget;
 
-import elemental.client.Browser;
+import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
 import elemental.html.SpanElement;
 import org.jboss.hal.ballroom.Elements;
 import org.jboss.hal.ballroom.Id;
-import org.jboss.hal.ballroom.IsElement;
 import org.jboss.hal.ballroom.ProgressElement;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.registry.UIRegistry;
 import org.jboss.hal.resources.HalIds;
 import org.jboss.hal.resources.I18n;
 
@@ -39,94 +39,87 @@ import static org.jboss.hal.ballroom.Elements.EventType.click;
 /**
  * @author Harald Pehl
  */
-public class Footer implements IsElement {
+public class FooterView extends ViewImpl implements FooterPresenter.MyView {
 
-    private final ProgressElement progressElement;
+    private final UIRegistry uiRegistry;
     private final I18n i18n;
     private final HalIds ids;
+
+    private FooterPresenter presenter;
 
     private SpanElement halVersion;
     private Element updateAvailable;
 
     @Inject
-    public Footer(final ProgressElement progressElement,
+    public FooterView(final UIRegistry uiRegistry,
             final I18n i18n,
             final HalIds ids) {
-        this.progressElement = progressElement;
+        this.uiRegistry = uiRegistry;
         this.i18n = i18n;
         this.ids = ids;
+
+        initWidget(Elements.asWidget(init()));
     }
 
-    @Override
-    public Element asElement() {
-        elemental.dom.Document document = Browser.getDocument();
-
-        halVersion = document.createSpanElement();
-        updateAvailable = document.createElement("i");
-
-        Id.set(halVersion, ids.footer_version());
-        Elements.setVisible(updateAvailable, false);
+    private Element init() {
+        ProgressElement progressElement = new ProgressElement();
+        uiRegistry.register(progressElement);
 
         // @formatter:off
-        return new Elements.Builder()
+        Elements.Builder builder = new Elements.Builder()
             .start("footer").css("footer")
                 .start("nav").css("navbar navbar-footer navbar-fixed-bottom")
                     .add(progressElement.asElement()).css("footer-progress")
                     .ul().css("nav navbar-nav footer-tools")
                         .li()
-                            .a().on(click, event -> showVersion())
-                                .start(halVersion).end()
-                                .start(updateAvailable).end()
-                            .end() // a
-                        .end() // li
+                            .a().on(click, event -> presenter.onShowVersion())
+                                .span().rememberAs("halVersion").end()
+                                .start("i").rememberAs("updateAvailable").end()
+                            .end()
+                        .end()
                         .li().css("dropdown")
                             .a().css("dropdown-toggle").data("toggle", "dropdown")
                                 .span().css("fa fa-wrench").end()
                                 .span().innerText(i18n.constants().tools()).end()
                                 .start("b").css("caret").end()
-                            .end() // a
+                            .end()
                             .ul().css("dropdown-menu dropdown")
-                                .li().a().on(click, event -> modelBrowser())
+                                .li().a().on(click, event -> presenter.onModelBrowser())
                                     .innerText(i18n.constants().model_browser())
                                 .end().end()
-                                .li().a().on(click, event -> expressionResolver())
+                                .li().a().on(click, event -> presenter.onExpressionResolver())
                                     .innerText(i18n.constants().expression_resolver())
                                 .end().end()
-                            .end() // ul
-                        .end() // li
-                        .li().a().on(click, event -> settings())
+                            .end()
+                        .end()
+                        .li().a().on(click, event -> presenter.onSettings())
                             .span().css("pficon pficon-settings").end()
                             .span().innerText(i18n.constants().settings()).end()
-                        .end() // li
-                    .end() // ul
-                .end() // nav
-            .end() // footer
-        .build();
+                        .end()
+                    .end()
+                .end()
+            .end();
         // @formatter:on
+
+        halVersion = builder.referenceFor("halVersion");
+        updateAvailable = builder.referenceFor("updateAvailable");
+        Id.set(halVersion, ids.footer_version());
+        Elements.setVisible(updateAvailable, false);
+
+        return builder.build();
     }
 
-    public void init(Environment environment) {
+    @Override
+    public void setPresenter(final FooterPresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    public void update(Environment environment) {
         halVersion.setInnerText(environment.getHalVersion().toString());
         if (environment.halUpdateAvailable()) {
             halVersion.setTitle(i18n.messages().update_available(environment.getHalVersion().toString(),
                     environment.getLatestHalVersion().toString()));
             Elements.setVisible(updateAvailable, true);
         }
-    }
-
-    private void showVersion() {
-
-    }
-
-    private void modelBrowser() {
-
-    }
-
-    private void expressionResolver() {
-
-    }
-
-    private void settings() {
-
     }
 }

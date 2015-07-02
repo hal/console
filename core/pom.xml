@@ -45,6 +45,10 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-flow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
             <artifactId>hal-spi</artifactId>
         </dependency>
         <dependency>
@@ -54,6 +58,10 @@
         <dependency>
             <groupId>com.gwtplatform</groupId>
             <artifactId>gwtp-mvp-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.gwtplatform</groupId>
+            <artifactId>gwtp-processors</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.gwt.inject</groupId>
