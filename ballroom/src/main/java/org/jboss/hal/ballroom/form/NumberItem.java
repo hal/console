@@ -21,10 +21,9 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
+import elemental.client.Browser;
+import elemental.dom.Element;
 import org.jboss.hal.resources.HalConstants;
 import org.jboss.hal.resources.HalMessages;
 
@@ -36,41 +35,51 @@ import static java.util.Arrays.asList;
 /**
  * @author Harald Pehl
  */
-public class NumberItem extends FormItem<Integer> {
+public class NumberItem extends FormItem<Long> {
+
+    /**
+     * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MIN_SAFE_INTEGER
+     */
+    public static final long MIN_SAFE_INTEGER = -9007199254740991l;
+
+    /**
+     * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
+     */
+    public static final long MAX_SAFE_INTEGER = 9007199254740991l;
 
     private final static HalConstants CONSTANTS = GWT.create(HalConstants.class);
     private final static HalMessages MESSAGES = GWT.create(HalMessages.class);
 
-    private int min;
-    private int max;
+    private long min;
+    private long max;
 
     public NumberItem(final String name, final String label) {
         this(name, label, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
-    public NumberItem(final String name, final String label, int min, int max) {
+    public NumberItem(final String name, final String label, long min, long max) {
         super(name, label);
         setRange(min, max);
     }
 
     @Override
-    protected List<FormItemValidation<Integer>> defaultValidationHandlers() {
+    protected List<FormItemValidation<Long>> defaultValidationHandlers() {
         return asList(new RequiredValidation<>(this), new NumberValidation(), new RangeValidation());
     }
 
     @Override
-    protected InputElement<Integer> newInputElement() {
+    protected InputElement<Long> newInputElement() {
         NumberElement number = new NumberElement();
         number.setClassName("form-control");
-        number.element.addValueChangeHandler(valueChangeEvent -> {
+        number.element.setOnchange(event -> {
             String newText = inputElement.getText();
-            Integer newValue = inputElement().getValue();
+            Long newValue = inputElement().getValue();
             setModified(true);
             setUndefined(isNullOrEmpty(newText));
             signalChange(newValue);
         });
         // toggle expression support on the fly
-        number.element.addKeyUpHandler(event -> {
+        number.element.setOnkeyup(event -> {
             if (toggleExpressionSupport(isExpressionValue())) {
                 setFocus(true);
             }
@@ -78,10 +87,9 @@ public class NumberItem extends FormItem<Integer> {
         return number;
     }
 
-    public void setRange(int min, int max) {
-        this.min = min;
-        this.max = max;
-    }
+    public void setRange(long min, long max) {
+        this.min = Math.max(MIN_SAFE_INTEGER, min);
+        this.max = Math.min(MAX_SAFE_INTEGER, max);    }
 
     @Override
     public boolean supportsExpressions() {
@@ -89,14 +97,14 @@ public class NumberItem extends FormItem<Integer> {
     }
 
 
-    class NumberValidation implements FormItemValidation<Integer> {
+    class NumberValidation implements FormItemValidation<Long> {
 
         @Override
-        public ValidationResult validate(final Integer value) {
+        public ValidationResult validate(final Long value) {
             if (!isExpressionValue()) {
                 try {
                     //noinspection ResultOfMethodCallIgnored
-                    Integer.parseInt(getText());
+                    Long.parseLong(getText());
                     return ValidationResult.OK;
                 } catch (NumberFormatException e) {
                     return ValidationResult.invalid(CONSTANTS.not_a_number());
@@ -107,13 +115,12 @@ public class NumberItem extends FormItem<Integer> {
     }
 
 
-    class RangeValidation implements FormItemValidation<Integer> {
+    class RangeValidation implements FormItemValidation<Long> {
 
         @Override
-        public ValidationResult validate(final Integer value) {
+        public ValidationResult validate(final Long value) {
             if (!isExpressionValue()) {
-                if ((min > Integer.MIN_VALUE && value < min) ||
-                        max < Integer.MAX_VALUE && value > max) {
+                if (value < min || value > max) {
                     return ValidationResult.invalid(MESSAGES.invalid_range(value, min, max));
                 }
             }
@@ -122,12 +129,14 @@ public class NumberItem extends FormItem<Integer> {
     }
 
 
-    static class NumberElement extends InputElement<Integer> {
+    static class NumberElement extends InputElement<Long> {
 
-        final TextBox element;
+        final elemental.html.InputElement element;
 
         NumberElement() {
-            element = new TextBox(); // type="number" not possible because of expression support
+            element = Browser.getDocument().createInputElement();
+            // type="number" not possible because of expression support
+            element.setType("text");
         }
 
         @Override
@@ -137,12 +146,16 @@ public class NumberItem extends FormItem<Integer> {
 
         @Override
         public void setAccessKey(final char c) {
-            element.setAccessKey(c);
+            element.setAccessKey(String.valueOf(c));
         }
 
         @Override
         public void setFocus(final boolean b) {
-            element.setFocus(b);
+            if (b) {
+                element.focus();
+            } else {
+                element.blur();
+            }
         }
 
         @Override
@@ -152,31 +165,31 @@ public class NumberItem extends FormItem<Integer> {
 
         @Override
         public boolean isEnabled() {
-            return element.isEnabled();
+            return !element.isDisabled();
         }
 
         @Override
         public void setEnabled(final boolean b) {
-            element.setEnabled(b);
+            element.setDisabled(!b);
         }
 
         @Override
-        public Integer getValue() {
+        public Long getValue() {
             try {
-                return Integer.parseInt(element.getValue());
+                return Long.parseLong(element.getValue());
             } catch (NumberFormatException e) {
                 return null;
             }
         }
 
         @Override
-        void setValue(final Integer value) {
+        void setValue(final Long value) {
             element.setValue(String.valueOf(value));
         }
 
         @Override
         void clearValue() {
-            element.setValue("", false); // no events please!
+            element.setValue("");
         }
 
         @Override
@@ -200,7 +213,7 @@ public class NumberItem extends FormItem<Integer> {
         }
 
         @Override
-        public Widget asWidget() {
+        public Element asElement() {
             return element;
         }
     }

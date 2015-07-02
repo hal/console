@@ -52,7 +52,11 @@ class RestrictedElement extends InputElement<String> {
 
     @Override
     public void setFocus(final boolean b) {
-        element.focus();
+        if (b) {
+            element.focus();
+        } else {
+            element.blur();
+        }
     }
 
     @Override
@@ -62,12 +66,12 @@ class RestrictedElement extends InputElement<String> {
 
     @Override
     public boolean isEnabled() {
-        return element.isDisabled();
+        return !element.isDisabled();
     }
 
     @Override
     public void setEnabled(final boolean b) {
-        element.setDisabled(true);
+        element.setDisabled(!b);
     }
 
     @Override

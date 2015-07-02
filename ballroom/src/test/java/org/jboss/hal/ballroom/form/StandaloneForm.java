@@ -30,25 +30,8 @@ import java.util.Map;
  */
 public class StandaloneForm extends AbstractForm<String> {
 
-    public static class Builder extends AbstractBuilder<String> {
-
-        protected Builder(final String id) {
-            super(id);
-        }
-
-        public Builder addValidationHandler(FormValidation validationHandler) {
-            this.validationHandlers.add(validationHandler);
-            return this;
-        }
-
-        @Override
-        public Form<String> build() {
-            return new StandaloneForm(this);
-        }
-    }
-
-    protected StandaloneForm(final AbstractBuilder<String> builder) {
-        super(builder);
+    protected StandaloneForm() {
+        super("test", true, true);
     }
 
     @Override

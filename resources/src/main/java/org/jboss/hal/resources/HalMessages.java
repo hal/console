@@ -30,7 +30,7 @@ public interface HalMessages extends Messages {
     //@formatter:off
     String active_roles(String roles);
     String connected_to(String url);
-    String invalid_range(int value, int min, int max);
+    String invalid_range(long value, long min, long max);
     String messages(@PluralCount int count);
     String pattern_mismatch(String pattern);
     String update_available(String current, String update);

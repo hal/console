@@ -21,8 +21,12 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import elemental.client.Browser;
+import elemental.dom.Element;
+import elemental.html.OptionElement;
+import elemental.html.SelectElement;
 
 import java.util.List;
 
@@ -31,34 +35,30 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 /**
  * @author Harald Pehl
  */
-public class ComboBoxItem extends FormItem<String> {
+public class SelectBoxItem extends FormItem<String> {
 
-    private ComboBoxElement comboBox;
+    private SelectBoxElement comboBox;
 
-    public ComboBoxItem(final String name, final String label, List<String> values) {
+    public SelectBoxItem(final String name, final String label, List<String> values) {
         this(name, label, values, null);
     }
 
-    public ComboBoxItem(final String name, final String label, List<String> values, String defaultValue) {
+    public SelectBoxItem(final String name, final String label, List<String> values, String defaultValue) {
         super(name, label);
         setValues(values, defaultValue);
     }
 
     @Override
     protected InputElement<String> newInputElement() {
-        comboBox = new ComboBoxElement();
-        comboBox.setClassName("form-control");
-        comboBox.element.addChangeHandler(changeEvent -> {
+        comboBox = new SelectBoxElement();
+        comboBox.setClassName("form-control selectpicker");
+        comboBox.element.setOnchange(event -> {
             String newValue = inputElement().getValue();
             setModified(true);
             setUndefined(isNullOrEmpty(newValue));
             signalChange(newValue);
         });
-        comboBox.element.addAttachHandler(event -> {
-            if (event.isAttached()) {
-                selectPicker(comboBox.getId());
-            }
-        });
+        selectPicker(comboBox.getId());
         return comboBox;
     }
 
@@ -76,27 +76,38 @@ public class ComboBoxItem extends FormItem<String> {
     }
 
 
-    static class ComboBoxElement extends InputElement<String> {
+    static class SelectBoxElement extends InputElement<String> {
 
-        final ListBox element;
+        final SelectElement element;
+        final BiMap<Integer, String> indexedValues;
         int defaultIndex;
 
-        ComboBoxElement() {
-            element = new ListBox();
-            element.setMultipleSelect(false);
-            element.setVisibleItemCount(1);
+        SelectBoxElement() {
+            element = Browser.getDocument().createSelectElement();
+            element.setMultiple(false);
+            element.setSize(1);
+            indexedValues = HashBiMap.create();
         }
 
         void setValues(List<String> values, String defaultValue) {
-            int index = 0;
+            indexedValues.clear();
+            while (element.getFirstChild() != null) {
+                element.removeChild(element.getFirstChild());
+            }
+
+            int i = 0;
             defaultIndex = 0;
             for (String value : values) {
-                element.addItem(value);
+                OptionElement option = Browser.getDocument().createOptionElement();
+                option.setText(value);
+                element.appendChild(option);
                 if (defaultValue != null && defaultValue.equals(value)) {
-                    defaultIndex = index;
+                    defaultIndex = i;
                 }
-                index++;
+                indexedValues.put(i, value);
+                i++;
             }
+            element.setSelectedIndex(defaultIndex);
         }
 
         @Override
@@ -106,12 +117,16 @@ public class ComboBoxItem extends FormItem<String> {
 
         @Override
         public void setAccessKey(final char c) {
-            element.setAccessKey(c);
+            element.setAccessKey(String.valueOf(c));
         }
 
         @Override
         public void setFocus(final boolean b) {
-            element.setFocus(b);
+            if (b) {
+                element.focus();
+            } else {
+                element.blur();
+            }
         }
 
         @Override
@@ -121,26 +136,27 @@ public class ComboBoxItem extends FormItem<String> {
 
         @Override
         public boolean isEnabled() {
-            return element.isEnabled();
+            return !element.isDisabled();
         }
 
         @Override
         public void setEnabled(final boolean b) {
-            element.setEnabled(b);
+            element.setDisabled(!b);
         }
 
         @Override
         public String getValue() {
-            return element.getSelectedValue();
+            int selectedIndex = element.getSelectedIndex();
+            if (indexedValues.containsKey(selectedIndex)) {
+                indexedValues.get(selectedIndex);
+            }
+            return null;
         }
 
         @Override
         void setValue(final String value) {
-            for (int i = 0; i < element.getItemCount(); i++) {
-                if (element.getItemText(i).equals(value)) {
-                    element.setSelectedIndex(i);
-                    break;
-                }
+            if (indexedValues.containsValue(value)) {
+                element.setSelectedIndex(indexedValues.inverse().get(value));
             }
         }
 
@@ -170,7 +186,7 @@ public class ComboBoxItem extends FormItem<String> {
         }
 
         @Override
-        public Widget asWidget() {
+        public Element asElement() {
             return element;
         }
     }

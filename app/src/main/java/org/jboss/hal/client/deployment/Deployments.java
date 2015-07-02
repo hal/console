@@ -27,7 +27,7 @@ import org.jboss.errai.ui.nav.client.local.Page;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.jboss.hal.ballroom.form.ButtonItem;
-import org.jboss.hal.ballroom.form.ComboBoxItem;
+import org.jboss.hal.ballroom.form.SelectBoxItem;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.NumberItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
@@ -64,7 +64,7 @@ public class Deployments extends Presenter {
     public void onBind() {
         TextBoxItem nameItem = new TextBoxItem("name", "Name");
         nameItem.setRequired(true);
-        ComboBoxItem schemeItem = new ComboBoxItem("scheme", "Scheme", asList("http", "https"));
+        SelectBoxItem schemeItem = new SelectBoxItem("scheme", "Scheme", asList("http", "https"));
         TextBoxItem hostItem = new TextBoxItem("hostname", "Hostname");
         hostItem.addValidationHandler(value -> "localhost".equals(value) ? ValidationResult
                 .invalid("Localhost does not work reliably. Please use 127.0.0.1 instead.") : ValidationResult.OK);

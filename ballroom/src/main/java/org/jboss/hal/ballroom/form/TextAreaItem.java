@@ -23,8 +23,8 @@ package org.jboss.hal.ballroom.form;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.Widget;
+import elemental.client.Browser;
+import elemental.dom.Element;
 
 import java.util.List;
 
@@ -44,7 +44,7 @@ public class TextAreaItem extends FormItem<List<String>> {
     protected InputElement<List<String>> newInputElement() {
         TextAreaElement textArea = new TextAreaElement();
         textArea.setClassName("form-control");
-        textArea.element.addValueChangeHandler(valueChangeEvent -> {
+        textArea.element.setOnchange(event -> {
             List<String> newValue = inputElement().getValue();
             setModified(true);
             setUndefined(newValue.isEmpty());
@@ -61,10 +61,10 @@ public class TextAreaItem extends FormItem<List<String>> {
 
     static class TextAreaElement extends InputElement<List<String>> {
 
-        final TextArea element;
+        final elemental.html.TextAreaElement element;
 
         TextAreaElement() {
-            element = new TextArea();
+            element = Browser.getDocument().createTextAreaElement();
         }
 
         @Override
@@ -74,12 +74,16 @@ public class TextAreaItem extends FormItem<List<String>> {
 
         @Override
         public void setAccessKey(final char c) {
-            element.setAccessKey(c);
+            element.setAccessKey(String.valueOf(c));
         }
 
         @Override
         public void setFocus(final boolean b) {
-            element.setFocus(b);
+            if (b) {
+                element.focus();
+            } else {
+                element.blur();
+            }
         }
 
         @Override
@@ -89,12 +93,12 @@ public class TextAreaItem extends FormItem<List<String>> {
 
         @Override
         public boolean isEnabled() {
-            return element.isEnabled();
+            return !element.isDisabled();
         }
 
         @Override
         public void setEnabled(final boolean b) {
-            element.setEnabled(b);
+            element.setDisabled(!b);
         }
 
         @Override
@@ -109,7 +113,7 @@ public class TextAreaItem extends FormItem<List<String>> {
 
         @Override
         void clearValue() {
-            element.setValue("", false); // no events please!
+            element.setValue("");
         }
 
         @Override
@@ -133,7 +137,7 @@ public class TextAreaItem extends FormItem<List<String>> {
         }
 
         @Override
-        public Widget asWidget() {
+        public Element asElement() {
             return element;
         }
 

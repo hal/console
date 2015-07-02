@@ -21,8 +21,8 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
+import elemental.client.Browser;
+import elemental.dom.Element;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -44,14 +44,14 @@ public class TextBoxItem extends FormItem<String> {
 
     protected final void setupInputElement(final TextBoxElement textBox) {
         textBox.setClassName("form-control");
-        textBox.element.addValueChangeHandler(valueChangeEvent -> {
+        textBox.element.setOnchange(event -> {
             String newValue = inputElement().getValue();
             setModified(true);
             setUndefined(isNullOrEmpty(newValue));
             signalChange(newValue);
         });
         // toggle expression support on the fly
-        textBox.element.addKeyUpHandler(event -> {
+        textBox.element.setOnkeyup(event -> {
             if (toggleExpressionSupport(isExpressionValue())) {
                 setFocus(true);
             }
@@ -66,13 +66,14 @@ public class TextBoxItem extends FormItem<String> {
 
     static class TextBoxElement extends InputElement<String> {
 
-        final TextBox element;
+        final elemental.html.InputElement element;
 
         TextBoxElement() {
-            this(new TextBox());
+            element = Browser.getDocument().createInputElement();
+            element.setType("text");
         }
 
-        TextBoxElement(final TextBox element) {
+        TextBoxElement(final elemental.html.InputElement element) {
             this.element = element;
         }
 
@@ -83,12 +84,16 @@ public class TextBoxItem extends FormItem<String> {
 
         @Override
         public void setAccessKey(final char c) {
-            element.setAccessKey(c);
+            element.setAccessKey(String.valueOf(c));
         }
 
         @Override
         public void setFocus(final boolean b) {
-            element.setFocus(b);
+            if (b) {
+                element.focus();
+            } else {
+                element.blur();
+            }
         }
 
         @Override
@@ -98,12 +103,12 @@ public class TextBoxItem extends FormItem<String> {
 
         @Override
         public boolean isEnabled() {
-            return element.isEnabled();
+            return !element.isDisabled();
         }
 
         @Override
         public void setEnabled(final boolean b) {
-            element.setEnabled(b);
+            element.setDisabled(!b);
         }
 
         @Override
@@ -118,7 +123,7 @@ public class TextBoxItem extends FormItem<String> {
 
         @Override
         void clearValue() {
-            element.setValue("", false); // no events please!
+            element.setValue("");
         }
 
         @Override
@@ -142,7 +147,7 @@ public class TextBoxItem extends FormItem<String> {
         }
 
         @Override
-        public Widget asWidget() {
+        public Element asElement() {
             return element;
         }
     }

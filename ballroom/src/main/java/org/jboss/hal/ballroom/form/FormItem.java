@@ -24,6 +24,7 @@ package org.jboss.hal.ballroom.form;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.ui.Focusable;
@@ -157,6 +158,7 @@ public abstract class FormItem<T>
         return container;
     }
 
+
     // ------------------------------------------------------ state, id, name & text
 
     @Override
@@ -184,6 +186,11 @@ public abstract class FormItem<T>
 
     protected void signalChange(final T value) {
         ValueChangeEvent.fire(this, value);
+    }
+
+    @Override
+    public void fireEvent(final GwtEvent<?> gwtEvent) {
+        eventBus.fireEvent(gwtEvent);
     }
 
     @Override

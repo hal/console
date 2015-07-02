@@ -21,9 +21,9 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Widget;
+import elemental.client.Browser;
+import elemental.dom.Element;
+import elemental.events.EventListener;
 
 /**
  * @author Harald Pehl
@@ -34,20 +34,21 @@ public class ButtonItem extends FormItem<Void> {
 
     public ButtonItem(final String name, final String label) {
         super(name, label);
-        button.element.setText(label);
+        button.setText(label);
     }
 
     @Override
     protected InputElement<Void> newInputElement() {
         button = new ButtonElement();
+        button.setClassName("btn btn-default btn-form");
         return button;
     }
 
     @Override
     protected void assembleUI() {
-        inputContainer.addStyleName("col-" + COLUMN_DISCRIMINATOR + "-offset-" + LABEL_COLUMNS);
-        inputContainer.add(inputElement);
-        container.add(inputContainer);
+        inputContainer.getClassList().add("col-" + COLUMN_DISCRIMINATOR + "-offset-" + LABEL_COLUMNS);
+        inputContainer.appendChild(inputElement.asElement());
+        container.appendChild(inputContainer);
     }
 
     @Override
@@ -60,17 +61,17 @@ public class ButtonItem extends FormItem<Void> {
         // noop
     }
 
-    public void onClick(ClickHandler handler) {
-        button.element.addClickHandler(handler);
+    public void onClick(EventListener listener) {
+        button.element.setOnclick(listener);
     }
 
 
     static class ButtonElement extends InputElement<Void> {
 
-        final Button element;
+        final elemental.html.ButtonElement element;
 
         ButtonElement() {
-            element = new Button();
+            element = Browser.getDocument().createButtonElement();
         }
 
         @Override
@@ -80,12 +81,16 @@ public class ButtonItem extends FormItem<Void> {
 
         @Override
         public void setAccessKey(final char c) {
-            element.setAccessKey(c);
+            element.setAccessKey(String.valueOf(c));
         }
 
         @Override
         public void setFocus(final boolean b) {
-            element.setFocus(b);
+            if (b) {
+                element.focus();
+            } else {
+                element.blur();
+            }
         }
 
         @Override
@@ -95,12 +100,12 @@ public class ButtonItem extends FormItem<Void> {
 
         @Override
         public boolean isEnabled() {
-            return element.isEnabled();
+            return !element.isDisabled();
         }
 
         @Override
         public void setEnabled(final boolean b) {
-            element.setEnabled(b);
+            element.setDisabled(!b);
         }
 
         @Override
@@ -120,26 +125,26 @@ public class ButtonItem extends FormItem<Void> {
 
         @Override
         public void setName(final String s) {
-            element.getElement().setAttribute("data-name", s);
+            element.setAttribute("data-name", s);
         }
 
         @Override
         public String getName() {
-            return element.getElement().getAttribute("data-name");
+            return element.getAttribute("data-name");
         }
 
         @Override
         public String getText() {
-            return element.getText();
+            return element.getInnerText();
         }
 
         @Override
         public void setText(final String s) {
-            element.setText(s);
+            element.setInnerText(s);
         }
 
         @Override
-        public Widget asWidget() {
+        public Element asElement() {
             return element;
         }
     }

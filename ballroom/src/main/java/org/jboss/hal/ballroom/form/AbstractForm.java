@@ -35,7 +35,6 @@ import elemental.events.KeyboardEvent;
 import elemental.html.DivElement;
 import elemental.html.SpanElement;
 import org.jboss.hal.ballroom.Elements;
-import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.HalConstants;
 
 import java.util.ArrayList;
@@ -55,7 +54,6 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
     private final static HalConstants CONSTANTS = GWT.create(HalConstants.class);
 
     private final String id;
-    private final ResourceAddress resourceAddress;
     private final boolean supportsUndefine;
     private final boolean supportsHelp;
     private final Map<State, Integer> stateDeck;
@@ -79,12 +77,9 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
 
     // ------------------------------------------------------ initialization / ui setup
 
-    @SuppressWarnings("unchecked")
-    protected AbstractForm(final String id, final ResourceAddress resourceAddress,
-            final boolean supportsUndefine, final boolean supportsHelp) {
+    protected AbstractForm(final String id, final boolean supportsUndefine, final boolean supportsHelp) {
 
         this.id = id;
-        this.resourceAddress = resourceAddress;
         this.supportsUndefine = supportsUndefine;
         this.supportsHelp = supportsHelp;
 
@@ -107,7 +102,7 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
 
     @Override
     public Element asElement() {
-        formLinks = new FormLinks.Builder(id, supportsHelp)
+        formLinks = new FormLinks.Builder(id, supportsUndefine, supportsHelp)
                 .onAdd(event -> add())
                 .onEdit(event -> edit(getModel()))
                 .onUndefine(event -> undefine())
@@ -125,21 +120,21 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
         return root;
     }
 
-    private Widget emptyPanel() {
+    protected Widget emptyPanel() {
         FlowPanel panel = new FlowPanel();
         panel.addStyleName("form form-horizontal");
-        panel.add(new HTMLPanel("<p>Empty panel not yet implemented.</p>"));
+        panel.add(new HTMLPanel("<p>The model is undefined. Click 'Add' to create a new model.</p>"));
         return panel;
     }
 
-    private Widget viewPanel() {
+    protected Widget viewPanel() {
         FlowPanel panel = new FlowPanel();
         panel.addStyleName("form form-horizontal");
         panel.add(new HTMLPanel("<p>View panel not yet implemented.</p>"));
         return panel;
     }
 
-    private Widget editPanel() {
+    protected Widget editPanel() {
         FlowPanel panel = new FlowPanel("form");
         panel.addStyleName("form form-horizontal");
 

@@ -22,12 +22,7 @@
 package org.jboss.hal.ballroom.form;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.LIElement;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
+import elemental.dom.Element;
 import elemental.events.EventListener;
 import org.jboss.hal.ballroom.Elements;
 import org.jboss.hal.ballroom.IsElement;
@@ -41,13 +36,15 @@ public class FormLinks implements IsElement, FormLayout {
     static class Builder {
 
         private final String formId;
+        private final boolean supportsUndefine;
         private final boolean supportsHelp;
         private EventListener onAdd;
         private EventListener onEdit;
         private EventListener onUndefine;
 
-        Builder(final String formId, final boolean supportsHelp) {
+        Builder(final String formId, final boolean supportsUndefine, final boolean supportsHelp) {
             this.formId = formId;
+            this.supportsUndefine = supportsUndefine;
             this.supportsHelp = supportsHelp;
         }
 
@@ -72,105 +69,88 @@ public class FormLinks implements IsElement, FormLayout {
     }
 
 
-    interface Templates extends SafeHtmlTemplates {
-
-        @Template("<i class=\"pficon pficon-add\"></i> {0}")
-        SafeHtml addLink(String label);
-
-        @Template("<i class=\"pficon pficon-edit\"></i> {0}")
-        SafeHtml editLink(String label);
-
-        @Template("<i class=\"pficon pficon-delete\"></i> {0}")
-        SafeHtml undefineLink(String label);
-
-        @Template("<a data-toggle=\"collapse\" href=\"#{0}\" aria-expanded=\"false\" aria-controls=\"{0}\"><i class=\"pficon pficon-help\"></i> {1}</a>")
-        SafeHtml helpLink(String formId, String label);
-
-        @Template("<div class=\"form-group\">" +
-                "  <label class=\"col-" + COLUMN_DISCRIMINATOR + "-" + LABEL_COLUMNS + " control-label\">{0}</label>" +
-                "  <div class=\"col-" + COLUMN_DISCRIMINATOR + "-" + INPUT_COLUMNS + "\"><p class=\"form-control-static\">{1}</p></div>" +
-                "</div>")
-        SafeHtml content(String label, String description);
-    }
-
-
     private final static HalConstants CONSTANTS = GWT.create(HalConstants.class);
-    private static final Templates TEMPLATES = GWT.create(Templates.class);
 
+    private final boolean supportsHelp;
+
+    private final Element root;
     private final elemental.html.LIElement addElement;
     private final elemental.html.LIElement editElement;
     private final elemental.html.LIElement removeElement;
-    private FlowPanel helpContentPanel;
+    private Element helpContent;
 
     public FormLinks(final Builder flb) {
-        // @formatter:off
-        Elements.Builder eb = new Elements.Builder()
-            .div().css("form form-horizontal")
-                .ul().css("form-links clearfix").rememberAs("links")
-                    .li().rememberAs("add")
-                        .a().start("i").css("pficon pficon-add").end().innerText(CONSTANTS.add()).end()
-                    .end()
-                    .li().rememberAs("edit")
-                        .a().start("i").css("pficon pficon-edit").end().innerText(CONSTANTS.edit()).end()
-                    .end()
-                    .li().rememberAs("remove")
-                        .a().start("i").css("pficon pficon-delete").end().innerText(CONSTANTS.remove()).end()
-                    .end()
-                .end()
-            .end();
-        // @formatter:on
+        this.supportsHelp = flb.supportsHelp;
 
-        addElement = eb.referenceFor("add");
+        Elements.Builder rootBuilder = new Elements.Builder()
+                .div().css("form form-horizontal")
+                .ul().css("form-links clearfix").rememberAs("links").end()
+                .end();
+        Element links = rootBuilder.referenceFor("links");
+        root = rootBuilder.build();
+
+        addElement = new Elements.Builder()
+                .li().rememberAs("add")
+                .a().start("i").css("pficon pficon-add").end().innerText(CONSTANTS.add()).end()
+                .end().build();
         if (flb.onAdd != null) {
             addElement.setOnclick(flb.onAdd);
         }
-        editElement = eb.referenceFor("edit");
+
+        editElement = new Elements.Builder()
+                .li().rememberAs("edit")
+                .a().start("i").css("pficon pficon-edit").end().innerText(CONSTANTS.edit()).end()
+                .end().build();
         if (flb.onEdit != null) {
             editElement.setOnclick(flb.onEdit);
         }
-        removeElement = eb.referenceFor("remove");
+
+        removeElement = new Elements.Builder()
+                .li().rememberAs("remove")
+                .a().start("i").css("pficon pficon-delete").end().innerText(CONSTANTS.remove()).end()
+                .end().build();
         if (flb.onUndefine != null) {
             removeElement.setOnclick(flb.onUndefine);
         }
 
-//        @SafeHtmlTemplates.Template("<a data-toggle=\"collapse\" href=\"#{0}\" aria-expanded=\"false\" aria-controls=\"{0}\"><i class=\"pficon pficon-help\"></i> {1}</a>")
-//        SafeHtml helpLink(String formId, String label);
+        if (flb.supportsUndefine) {
+            links.appendChild(addElement);
+            links.appendChild(editElement);
+            links.appendChild(removeElement);
+        } else {
+            links.appendChild(editElement);
+        }
 
         if (flb.supportsHelp) {
             String helpId = flb.formId + "-help";
             // @formatter:off
-            new Elements.Builder()
+            Element helpLink = new Elements.Builder()
                 .li().css("pull-right")
                     .a().attr("href", "#" + helpId + "")
                             .data("toggle", "collapse")
                             .aria("expanded", "false")
                             .aria("controls", helpId)
                         .start("i").css("pficon pficon-help").end()
-                .end()
-                .build();
+                        .innerText(CONSTANTS.help())
+                    .end()
+                .end().build();
             // @formatter:on
-        }
+            links.appendChild(helpLink);
 
-        // help
-        FlowPanel helpContentHolder = null;
-        if (builder.supportsHelp) {
-            String helpId = builder.formId + "-help";
-            LIElement helpElement = Document.get().createLIElement();
-            helpElement.addClassName("pull-right");
-            helpElement.setInnerSafeHtml(TEMPLATES.helpLink(helpId, CONSTANTS.help()));
-            links.appendChild(helpElement);
-
-            helpContentHolder = new FlowPanel();
-            helpContentHolder.getElement().setId(helpId);
-            helpContentHolder.addStyleName("form-help-content collapse");
-            helpContentPanel = new FlowPanel();
-            helpContentHolder.add(helpContentPanel);
+            // @formatter:off
+            Elements.Builder helpContentBuilder = new Elements.Builder()
+                .div().id(helpId).css("form-help-content collapse")
+                    .div().rememberAs("helpContent").end()
+                .end();
+            // @formatter:on
+            helpContent = helpContentBuilder.referenceFor("helpContent");
+            root.appendChild(helpContentBuilder.build());
         }
+    }
 
-        root.getElement().appendChild(links);
-        if (builder.supportsHelp) {
-            root.add(helpContentHolder);
-        }
+    @Override
+    public Element asElement() {
+        return root;
     }
 
     void switchTo(Form.State state) {
@@ -196,8 +176,21 @@ public class FormLinks implements IsElement, FormLayout {
     }
 
     void addHelpText(String label, String description) {
-        if (helpContentPanel != null) {
-            helpContentPanel.add(new HTML(TEMPLATES.content(label, description)));
+        if (supportsHelp && helpContent != null) {
+            // @formatter:off
+            Element content = new Elements.Builder()
+                .div().css("Form-group")
+                    .label().css("col-" + COLUMN_DISCRIMINATOR + "-" + LABEL_COLUMNS + " control-label")
+                        .innerText(label)
+                    .end()
+                    .div().css("col-" + COLUMN_DISCRIMINATOR + "-" + INPUT_COLUMNS)
+                        .p().css("form-control-static")
+                            .innerText(description)
+                        .end()
+                    .end()
+                .end().build();
+            // @formatter:on
+            helpContent.appendChild(content);
         }
     }
 }

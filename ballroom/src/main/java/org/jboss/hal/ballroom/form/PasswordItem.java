@@ -21,7 +21,7 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import com.google.gwt.user.client.ui.PasswordTextBox;
+import elemental.client.Browser;
 
 /**
  * @author Harald Pehl
@@ -34,8 +34,10 @@ public class PasswordItem extends TextBoxItem {
 
     @Override
     protected InputElement<String> newInputElement() {
-        TextBoxElement textBox = new TextBoxElement(new PasswordTextBox());
-        setupInputElement(textBox);
-        return textBox;
+        elemental.html.InputElement element = Browser.getDocument().createInputElement();
+        element.setType("password");
+        TextBoxElement passwordElement = new TextBoxElement(element);
+        setupInputElement(passwordElement);
+        return passwordElement;
     }
 }

@@ -20,7 +20,7 @@ public class FormTest {
     @Before
     public void setUp() {
         GWTMockUtilities.disarm();
-        form = new StandaloneForm.Builder("test").build();
+        form = new StandaloneForm();
     }
 
     @After
@@ -64,16 +64,6 @@ public class FormTest {
         form.edit("foo");
         form.save();
         assertEquals(VIEW, form.getState());
-    }
-
-    @Test
-    public void saveWithErrors() {
-        form = new StandaloneForm.Builder("test")
-                .addValidationHandler(formItems -> ValidationResult.invalid("error"))
-                .build();
-        form.edit("foo");
-        form.save();
-        assertEquals(EDIT, form.getState());
     }
 
     @Test(expected = IllegalStateException.class)

@@ -21,8 +21,8 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.Widget;
+import elemental.client.Browser;
+import elemental.dom.Element;
 
 /**
  * @author Harald Pehl
@@ -36,7 +36,7 @@ public class CheckBoxItem extends FormItem<Boolean> {
     @Override
     protected InputElement<Boolean> newInputElement() {
         CheckBoxElement checkBox = new CheckBoxElement();
-        checkBox.element.addValueChangeHandler(valueChangeEvent -> {
+        checkBox.element.setOnchange(event -> {
             Boolean newValue = inputElement().getValue();
             setModified(true);
             setUndefined(false);
@@ -53,10 +53,11 @@ public class CheckBoxItem extends FormItem<Boolean> {
 
     static class CheckBoxElement extends InputElement<Boolean> {
 
-        final CheckBox element;
+        final elemental.html.InputElement element;
 
         CheckBoxElement() {
-            element = new CheckBox();
+            element = Browser.getDocument().createInputElement();
+            element.setType("checkbox");
         }
 
         @Override
@@ -66,12 +67,16 @@ public class CheckBoxItem extends FormItem<Boolean> {
 
         @Override
         public void setAccessKey(final char c) {
-            element.setAccessKey(c);
+            element.setAccessKey(String.valueOf(c));
         }
 
         @Override
         public void setFocus(final boolean b) {
-            element.setFocus(b);
+            if (b) {
+                element.focus();
+            } else {
+                element.blur();
+            }
         }
 
         @Override
@@ -81,27 +86,27 @@ public class CheckBoxItem extends FormItem<Boolean> {
 
         @Override
         public boolean isEnabled() {
-            return element.isEnabled();
+            return !element.isDisabled();
         }
 
         @Override
         public void setEnabled(final boolean b) {
-            element.setEnabled(b);
+            element.setDisabled(!b);
         }
 
         @Override
         public Boolean getValue() {
-            return element.getValue();
+            return element.isChecked();
         }
 
         @Override
         void setValue(final Boolean value) {
-            element.setValue(value);
+            element.setChecked(value);
         }
 
         @Override
         void clearValue() {
-            element.setValue(false, false); // no events please!
+            element.setChecked(false);
         }
 
         @Override
@@ -125,7 +130,7 @@ public class CheckBoxItem extends FormItem<Boolean> {
         }
 
         @Override
-        public Widget asWidget() {
+        public Element asElement() {
             return element;
         }
     }
