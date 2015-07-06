@@ -54,7 +54,7 @@ public class GinModuleProcessor extends AbstractHalProcessor {
      * However we cannot use {@link #onLastRound(RoundEnvironment)}, because code which is generated on last round
      * will not be processed by the compiler.
      */
-    static final int GENERATE_AT_ROUND = 1;
+    static final int GENERATE_AT_ROUND = 0;
 
     private final Set<String> modules;
 
@@ -71,6 +71,7 @@ public class GinModuleProcessor extends AbstractHalProcessor {
         }
 
         if (round() == GENERATE_AT_ROUND) {
+            debug("Matching round(%d)", round());
             if (!modules.isEmpty()) {
                 debug("Generating composite GIN module");
                 code(MODULE_TEMPLATE, MODULE_PACKAGE, MODULE_CLASS, () -> {
@@ -84,6 +85,8 @@ public class GinModuleProcessor extends AbstractHalProcessor {
                         Joiner.on("\n\t- ").join(modules));
                 modules.clear();
             }
+        } else {
+            debug("round(%d) does not match GENERATE_AT_ROUND(%d)", round(), GENERATE_AT_ROUND);
         }
         return false;
     }

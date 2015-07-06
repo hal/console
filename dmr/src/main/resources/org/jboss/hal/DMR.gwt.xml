@@ -28,7 +28,5 @@
 
     <inherits name="org.jboss.hal.Config"/>
 
-    <source path="dmr">
-      <include name="**/*"/>
-    </source>
+    <source path="dmr"/>
 </module>

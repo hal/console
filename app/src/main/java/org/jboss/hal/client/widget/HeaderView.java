@@ -32,6 +32,7 @@ import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
+import org.jboss.hal.core.messaging.Message;
 import org.jboss.hal.resources.HalIds;
 import org.jboss.hal.resources.I18n;
 
@@ -214,7 +215,12 @@ public class HeaderView extends ViewImpl implements HeaderPresenter.MyView {
     }
 
     @Override
-    public void setMessageCount(int count) {
+    public void updateMessageCount(int count) {
         messagesLabel.setInnerText(i18n.messages().messages(count));
+    }
+
+    @Override
+    public void showMessage(final Message.Level level, final String message) {
+
     }
 }

@@ -30,9 +30,6 @@ import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 
 import javax.inject.Inject;
 
-/**
- * @author Harald Pehl
- */
 public class HalPlaceManager extends DefaultPlaceManager {
 
     @Inject
@@ -42,10 +39,5 @@ public class HalPlaceManager extends DefaultPlaceManager {
             @ErrorPlace final String errorPlaceNameToken,
             @UnauthorizedPlace final String unauthorizedPlaceNameToken) {
         super(eventBus, tokenFormatter, defaultPlaceNameToken, errorPlaceNameToken, unauthorizedPlaceNameToken);
-    }
-
-    @Override
-    public void revealDefaultPlace() {
-
     }
 }

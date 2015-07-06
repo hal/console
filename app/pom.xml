@@ -50,17 +50,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-ballroom</artifactId>
-            <classifier>sources</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.hal</groupId>
             <artifactId>hal-config</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-config</artifactId>
-            <classifier>sources</classifier>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
@@ -68,26 +58,11 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-core</artifactId>
-            <classifier>sources</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.hal</groupId>
             <artifactId>hal-dmr</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-dmr</artifactId>
-            <classifier>sources</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.hal</groupId>
             <artifactId>hal-flow</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-flow</artifactId>
-            <classifier>sources</classifier>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
@@ -99,17 +74,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-resources</artifactId>
-            <classifier>sources</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.hal</groupId>
             <artifactId>hal-spi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-spi</artifactId>
-            <classifier>sources</classifier>
         </dependency>
 
         <!-- GWT -->
@@ -190,10 +155,20 @@
                             <options>
                                 <hal.version>${project.version}</hal.version>
                                 <!-- Uncomment to get more messages from the annotation processors -->
-                                <!--<debug>true</debug>-->
+                                <debug>true</debug>
                             </options>
                             <defaultOutputDirectory>${project.build.directory}/generated-sources/annotations
                             </defaultOutputDirectory>
+                            <processSourceArtifacts>
+                                <processSourceArtifact>org.jboss.hal:*</processSourceArtifact>
+                            </processSourceArtifacts>
+                            <processors>
+                                <!-- List processors to exclude com.gwtplatform.dispatch.annotation.processor.GenEventProcessor -->
+                                <processor>org.jboss.hal.processors.GinModuleProcessor</processor>
+                                <processor>org.jboss.hal.processors.GwtModuleProcessor</processor>
+                                <processor>org.jboss.hal.processors.NameTokenProcessor</processor>
+                                <processor>org.jboss.hal.processors.StoreInitProcessor</processor>
+                            </processors>
                         </configuration>
                     </execution>
                 </executions>
@@ -211,7 +186,8 @@
                 <executions>
                     <execution>
                         <id>add-source</id>
-                        <phase>prepare-package</phase> <!-- matches the gwt:compile phase -->
+                        <phase>prepare-package</phase>
+                        <!-- matches the gwt:compile phase -->
                         <goals>
                             <goal>add-source</goal>
                         </goals>
@@ -226,13 +202,19 @@
             <plugin>
                 <groupId>net.ltgt.gwt.maven</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
-                <extensions>true</extensions>
                 <configuration>
                     <moduleName>${gwt.module}</moduleName>
+                    <draftCompile>true</draftCompile>
+                    <logLevel>DEBUG</logLevel>
+                    <style>DETAILED</style>
                     <compilerArgs>
                         <compilerArg>-XjsInteropMode</compilerArg>
                         <compilerArg>JS</compilerArg>
                     </compilerArgs>
+                    <devmodeArgs>
+                        <arg>-startupUrl</arg>
+                        <arg>app/index.html</arg>
+                    </devmodeArgs>
                 </configuration>
             </plugin>
         </plugins>

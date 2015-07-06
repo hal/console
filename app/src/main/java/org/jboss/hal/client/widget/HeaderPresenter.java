@@ -30,23 +30,42 @@ import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
 import org.jboss.hal.core.HasPresenter;
+import org.jboss.hal.core.messaging.Message;
+import org.jboss.hal.core.messaging.MessageEvent;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Harald Pehl
  */
-public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> {
+public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> implements MessageEvent.MessageHandler {
 
     public interface MyView extends View, HasPresenter<HeaderPresenter> {
 
         void update(Environment environment, Endpoints endpoints, User user);
 
-        void setMessageCount(int count);
+        void showMessage(Message.Level level, String message);
+
+        void updateMessageCount(int messages);
+    }
+
+    static class MessageHolder {
+        final Message.Level level;
+        final String message;
+        boolean new_;
+
+        MessageHolder(final Message.Level level, final String message) {
+            this.level = level;
+            this.message = message;
+            this.new_ = true;
+        }
     }
 
 
     private final PlaceManager placeManager;
+    private final List<MessageHolder> messages;
 
     @Inject
     public HeaderPresenter(final EventBus eventBus,
@@ -54,11 +73,13 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> {
             final PlaceManager placeManager) {
         super(eventBus, view);
         this.placeManager = placeManager;
+        this.messages = new ArrayList<>();
     }
 
     @Override
     protected void onBind() {
         super.onBind();
+        addHandler(MessageEvent.getType(), this);
         getView().setPresenter(this);
     }
 
@@ -77,5 +98,12 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> {
 
     public void logout() {
 
+    }
+
+    @Override
+    public void onMessage(final MessageEvent event) {
+        getView().showMessage(event.getLevel(), event.getMessage());
+        messages.add(new MessageHolder(event.getLevel(), event.getMessage()));
+        getView().updateMessageCount(messages.size());
     }
 }

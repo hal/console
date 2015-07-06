@@ -21,30 +21,35 @@
  */
 package org.jboss.hal.client;
 
+import com.gwtplatform.mvp.client.annotations.DefaultPlace;
+import com.gwtplatform.mvp.client.annotations.ErrorPlace;
+import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
+import com.gwtplatform.mvp.shared.proxy.RouteTokenFormatter;
 import org.jboss.hal.client.homepage.HomepagePresenter;
 import org.jboss.hal.client.homepage.HomepageView;
 import org.jboss.hal.client.widget.FooterPresenter;
 import org.jboss.hal.client.widget.FooterView;
 import org.jboss.hal.client.widget.HeaderPresenter;
 import org.jboss.hal.client.widget.HeaderView;
+import org.jboss.hal.core.HalPlaceManager;
 import org.jboss.hal.spi.GinModule;
 
-/**
- * @author Harald Pehl
- */
 @GinModule
 public class AppModule extends AbstractPresenterModule {
 
     @Override
     protected void configure() {
         DefaultModule defaultModule = new DefaultModule.Builder()
-                .defaultPlace(NameTokens.Homepage)
-                .errorPlace(NameTokens.Homepage)
-                .unauthorizedPlace(NameTokens.Homepage)
+                .placeManager(HalPlaceManager.class)
+                .tokenFormatter(RouteTokenFormatter.class)
                 .build();
         install(defaultModule);
+
+        bindConstant().annotatedWith(DefaultPlace.class).to(NameTokens.Homepage);
+        bindConstant().annotatedWith(ErrorPlace.class).to(NameTokens.Homepage);
+        bindConstant().annotatedWith(UnauthorizedPlace.class).to(NameTokens.Homepage);
 
         bindSingletonPresenterWidget(HeaderPresenter.class,
                 HeaderPresenter.MyView.class,

@@ -30,7 +30,5 @@
     <inherits name="org.jboss.hal.DMR"/>
     <inherits name="org.jboss.hal.Flow"/>
 
-    <source path="core">
-        <include name="**/*"/>
-    </source>
+    <source path="core"/>
 </module>

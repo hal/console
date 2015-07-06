@@ -27,7 +27,7 @@ import com.gwtplatform.dispatch.annotation.Order;
 @GenEvent
 public class Message {
 
-    enum Level {
+    public enum Level {
         ERROR, WARNING, INFO
     }
 

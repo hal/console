@@ -24,7 +24,5 @@
 <module>
     <inherits name="com.google.gwt.user.User"/>
 
-    <source path="resources">
-      <include name="**/*"/>
-    </source>
+    <source path="resources"/>
 </module>

@@ -27,7 +27,6 @@
 
     <source path="config">
         <exclude name="rebind/**"/>
-        <include name="**/*"/>
     </source>
 
     <generate-with class="org.jboss.hal.config.rebind.EnvironmentGenerator">
