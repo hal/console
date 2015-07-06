@@ -9,7 +9,7 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
-import org.jboss.hal.client.bootstrap.functions.LoadingPanel;
+import org.jboss.hal.client.bootstrap.LoadingPanel;
 import org.jboss.hal.config.Endpoints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

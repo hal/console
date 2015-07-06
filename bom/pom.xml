@@ -59,7 +59,19 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-ballroom</artifactId>
+                <classifier>sources</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-config</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-config</artifactId>
+                <classifier>sources</classifier>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -69,12 +81,30 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-core</artifactId>
+                <classifier>sources</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-dmr</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-dmr</artifactId>
+                <classifier>sources</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-flow</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-flow</artifactId>
+                <classifier>sources</classifier>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -94,7 +124,19 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-resources</artifactId>
+                <classifier>sources</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-spi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-spi</artifactId>
+                <classifier>sources</classifier>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

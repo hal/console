@@ -21,8 +21,9 @@ package org.jboss.hal.client.bootstrap.functions;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Random;
-import org.jboss.hal.client.bootstrap.functions.HalBootstrapper.BootstrapExceptionCallback;
-import org.jboss.hal.client.bootstrap.functions.HalBootstrapper.BootstrapFailedCallback;
+import org.jboss.hal.client.bootstrap.BootstrapContext;
+import org.jboss.hal.client.bootstrap.HalBootstrapper.BootstrapExceptionCallback;
+import org.jboss.hal.client.bootstrap.HalBootstrapper.BootstrapFailedCallback;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
 import org.jboss.hal.dmr.ModelNode;

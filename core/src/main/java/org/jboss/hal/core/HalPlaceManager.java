@@ -21,8 +21,10 @@
  */
 package org.jboss.hal.core;
 
-import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.DefaultPlace;
+import com.gwtplatform.mvp.client.annotations.ErrorPlace;
+import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
 import com.gwtplatform.mvp.client.proxy.DefaultPlaceManager;
 import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 
@@ -36,12 +38,10 @@ public class HalPlaceManager extends DefaultPlaceManager {
     @Inject
     public HalPlaceManager(final EventBus eventBus,
             final TokenFormatter tokenFormatter,
-            final String defaultPlaceNameToken,
-            final String errorPlaceNameToken,
-            final String unauthorizedPlaceNameToken,
-            final PlaceHistoryHandler.Historian historian) {
-        super(eventBus, tokenFormatter, defaultPlaceNameToken, errorPlaceNameToken, unauthorizedPlaceNameToken,
-                historian);
+            @DefaultPlace final String defaultPlaceNameToken,
+            @ErrorPlace final String errorPlaceNameToken,
+            @UnauthorizedPlace final String unauthorizedPlaceNameToken) {
+        super(eventBus, tokenFormatter, defaultPlaceNameToken, errorPlaceNameToken, unauthorizedPlaceNameToken);
     }
 
     @Override

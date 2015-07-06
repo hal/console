@@ -19,21 +19,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.bootstrap.functions;
+package org.jboss.hal.client.bootstrap;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
-import com.gwtplatform.mvp.client.PreBootstrapper;
+import com.google.gwt.user.client.ui.Composite;
 
 /**
  * @author Harald Pehl
  */
-@SuppressWarnings("unused")
-public class HalPreBootstrapper implements PreBootstrapper {
+//@Templated("#content")
+//@Page(path = "bootstrap-failed")
+public class BootstrapFailed extends Composite {
 
-    @Override
-    public void onPreBootstrap() {
-        // TODO Show a dedicated page like "Bootstrap Failed"
-        GWT.setUncaughtExceptionHandler(e -> Window.alert("Unable to load HAL management console!"));
-    }
+//    @Inject @DataField Label reason;
+
+//    @PageShown
+//    public void onShow(HistoryToken token) {
+//        reason.setText(token.getState().get(BootstrapContext.ERROR).iterator().next());
+//    }
 }

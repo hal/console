@@ -24,5 +24,7 @@
 <module>
     <inherits name="com.google.gwt.user.User"/>
 
-    <source path="spi"/>
+    <source path="spi">
+      <include name="**/*"/>
+    </source>
 </module>

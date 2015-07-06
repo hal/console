@@ -19,19 +19,22 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.bootstrap.functions;
+package org.jboss.hal.client;
 
-import com.google.gwt.inject.client.AbstractGinModule;
-import org.jboss.hal.spi.GinModule;
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
+import com.gwtplatform.mvp.client.ApplicationController;
+import org.jboss.hal.spi.Entrypoint;
 
 /**
  * @author Harald Pehl
  */
-@GinModule
-public class BootstrapModule extends AbstractGinModule {
+@Entrypoint
+public class Console implements EntryPoint {
 
-    @Override
-    protected void configure() {
+    private static final ApplicationController controller = GWT.create(ApplicationController.class);
 
+    public void onModuleLoad() {
+        controller.init();
     }
 }

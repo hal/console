@@ -50,7 +50,17 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-ballroom</artifactId>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
             <artifactId>hal-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-config</artifactId>
+            <classifier>sources</classifier>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
@@ -58,11 +68,26 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-core</artifactId>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
             <artifactId>hal-dmr</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-dmr</artifactId>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
             <artifactId>hal-flow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-flow</artifactId>
+            <classifier>sources</classifier>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
@@ -74,7 +99,17 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-resources</artifactId>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
             <artifactId>hal-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-spi</artifactId>
+            <classifier>sources</classifier>
         </dependency>
 
         <!-- GWT -->
@@ -194,11 +229,10 @@
                 <extensions>true</extensions>
                 <configuration>
                     <moduleName>${gwt.module}</moduleName>
-<!--
                     <compilerArgs>
-                        <compilerArg>-XjsInteropMode JS</compilerArg>
+                        <compilerArg>-XjsInteropMode</compilerArg>
+                        <compilerArg>JS</compilerArg>
                     </compilerArgs>
--->
                 </configuration>
             </plugin>
         </plugins>

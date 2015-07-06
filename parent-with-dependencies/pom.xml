@@ -47,11 +47,11 @@
         <gin.version>2.1.2</gin.version>
         <guava.version>18.0</guava.version>
         <gwt.version>2.8.0-SNAPSHOT</gwt.version>
-        <gwtp.version>1.5-SNAPSHOT</gwtp.version>
+        <gwtp.version>2.0-SNAPSHOT</gwtp.version>
         <junit.version>4.12</junit.version>
         <mockito.version>1.10.17</mockito.version>
-        <nodejs.version>v0.10.34</nodejs.version>
-        <npm.version>2.1.11</npm.version>
+        <nodejs.version>v0.12.5</nodejs.version>
+        <npm.version>2.11.2</npm.version>
         <slf4j-gwt.version>1.7.7.1</slf4j-gwt.version>
         <validation.version>1.0.0.GA</validation.version>
     </properties>

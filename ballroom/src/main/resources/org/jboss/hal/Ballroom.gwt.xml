@@ -31,5 +31,7 @@
     <inherits name="org.jboss.hal.Flow"/>
     <inherits name="org.jboss.hal.Resources"/>
 
-    <source path="ballroom"/>
+    <source path="ballroom">
+        <include name="**/*"/>
+    </source>
 </module>

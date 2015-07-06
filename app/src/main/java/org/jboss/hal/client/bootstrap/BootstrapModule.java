@@ -19,18 +19,19 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.bootstrap.functions;
+package org.jboss.hal.client.bootstrap;
+
+import com.google.gwt.inject.client.AbstractGinModule;
+import org.jboss.hal.spi.GinModule;
 
 /**
  * @author Harald Pehl
  */
-public class BootstrapOutcome {
+@GinModule
+public class BootstrapModule extends AbstractGinModule {
 
-    private final BootstrapContext bootstrapContext;
+    @Override
+    protected void configure() {
 
-    public BootstrapOutcome(final BootstrapContext bootstrapContext) {this.bootstrapContext = bootstrapContext;}
-
-    public BootstrapContext getBootstrapContext() {
-        return bootstrapContext;
     }
 }

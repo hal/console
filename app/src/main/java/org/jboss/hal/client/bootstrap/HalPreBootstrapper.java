@@ -19,18 +19,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.messaging;
+package org.jboss.hal.client.bootstrap;
 
-import com.gwtplatform.dispatch.annotation.GenEvent;
-import com.gwtplatform.dispatch.annotation.Order;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
+import com.gwtplatform.mvp.client.PreBootstrapper;
 
-@GenEvent
-public class Message {
+/**
+ * @author Harald Pehl
+ */
+@SuppressWarnings("unused")
+public class HalPreBootstrapper implements PreBootstrapper {
 
-    enum Level {
-        ERROR, WARNING, INFO
+    @Override
+    public void onPreBootstrap() {
+        // TODO Show a dedicated page like "Bootstrap Failed"
+        GWT.setUncaughtExceptionHandler(e -> Window.alert("Unable to load HAL management console!"));
     }
-
-    @Order(1) Level level;
-    @Order(2) String message;
 }

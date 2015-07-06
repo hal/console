@@ -5,9 +5,9 @@
   "license": "LGPL",
   "private": true,
   "devDependencies": {
-    "bower": "^1.3.12",
+    "bower": "^1.4.1",
     "del": "^1.1.1",
-    "gulp": "^3.8.11",
+    "gulp": "^3.9.0",
     "gulp-autoprefixer": "^2.1.0",
     "gulp-copy": "0.0.2",
     "gulp-less": "^3.0.2",

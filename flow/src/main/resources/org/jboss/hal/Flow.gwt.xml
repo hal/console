@@ -24,5 +24,7 @@
 <module>
     <inherits name="com.google.gwt.user.User"/>
 
-    <source path="flow"/>
+    <source path="flow">
+      <include name="**/*"/>
+    </source>
 </module>

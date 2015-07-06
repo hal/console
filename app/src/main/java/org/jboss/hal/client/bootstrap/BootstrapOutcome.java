@@ -19,21 +19,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.bootstrap.functions;
-
-import com.google.gwt.user.client.ui.Composite;
+package org.jboss.hal.client.bootstrap;
 
 /**
  * @author Harald Pehl
  */
-//@Templated("#content")
-//@Page(path = "bootstrap-failed")
-public class BootstrapFailed extends Composite {
+public class BootstrapOutcome {
 
-//    @Inject @DataField Label reason;
+    private final BootstrapContext bootstrapContext;
 
-//    @PageShown
-//    public void onShow(HistoryToken token) {
-//        reason.setText(token.getState().get(BootstrapContext.ERROR).iterator().next());
-//    }
+    public BootstrapOutcome(final BootstrapContext bootstrapContext) {this.bootstrapContext = bootstrapContext;}
+
+    public BootstrapContext getBootstrapContext() {
+        return bootstrapContext;
+    }
 }
