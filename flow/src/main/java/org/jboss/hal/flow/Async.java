@@ -43,7 +43,7 @@ public class Async<C> {
      * If any functions in the series pass an error to its callback,
      * no more functions are run and outcome for the series is immediately called with the value of the error.
      */
-    public void series(final C context, final Outcome<C> outcome, final Function<C>... functions) {
+    public void series(final C context, final Outcome<C> outcome, final Function... functions) {
         _series(context, outcome, functions);
     }
 
@@ -52,13 +52,14 @@ public class Async<C> {
      * However, if any of the functions pass an error to the callback,
      * the next function is not executed and the outcome is immediately called with the error.
      */
-    @SafeVarargs
-    public final void waterfall(final C context, final Outcome<C> outcome, final Function<C>... functions) {
+//    @SafeVarargs
+    public final void waterfall(final C context, final Outcome<C> outcome, final Function... functions) {
         _series(context, outcome, functions);
     }
 
-    @SafeVarargs
-    private final void _series(final C context, final Outcome<C> outcome, final Function<C>... functions) {
+//    @SafeVarargs
+    private void _series(final C context, final Outcome<C> outcome, final Function... functions) {
+        //noinspection unchecked
         final SequentialControl ctrl = new SequentialControl(context, functions);
 
         // reset progress
@@ -93,7 +94,7 @@ public class Async<C> {
      * If any of the functions pass an error to its callback, the outcome is immediately called with the value of the
      * error.
      */
-    public void parallel(final C context, final Outcome<C> outcome, final Function<C>... functions) {
+    public void parallel(final C context, final Outcome<C> outcome, final Function... functions) {
         final CountingControl ctrl = new CountingControl(context, functions);
         progress.reset(functions.length);
 
@@ -173,8 +174,8 @@ public class Async<C> {
         private boolean aborted;
         private boolean pending;
 
-        @SafeVarargs
-        SequentialControl(final C context, final Function<C>... functions) {
+        @SuppressWarnings("unchecked")
+        SequentialControl(final C context, final Function... functions) {
             this.context = context;
             this.functions = functions;
         }
@@ -230,8 +231,8 @@ public class Async<C> {
         private int index;
         private int finished;
 
-        @SafeVarargs
-        CountingControl(final C context, final Function<C>... functions) {
+        @SuppressWarnings("unchecked")
+        CountingControl(final C context, final Function... functions) {
             this.context = context;
             this.functions = functions;
         }

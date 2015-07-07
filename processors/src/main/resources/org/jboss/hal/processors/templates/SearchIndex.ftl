@@ -1,6 +1,6 @@
 <#-- @ftlvariable name="packageName" type="java.lang.String" -->
 <#-- @ftlvariable name="className" type="java.lang.String" -->
-<#-- @ftlvariable name="tokenInfos" type="java.util.Set<org.jboss.hal.processors.NameTokenProcessor.NameTokenInfo>" -->
+<#-- @ftlvariable name="tokenInfos" type="java.util.Set<org.jboss.hal.processors.NameTokenProcessor.TokenInfo>" -->
 package ${packageName};
 
 import com.google.common.collect.HashMultimap;
@@ -16,7 +16,7 @@ import static java.util.Arrays.asList;
 * WARNING! This class is generated. Do not modify.
 */
 @Generated("org.jboss.hal.processors.NameTokenProcessor")
-public class ${className} implements SearchIndexRegistry {
+public class ${className} implements org.jboss.hal.core.registry.SearchIndexRegistry {
 
     private final Set<String> standaloneTokens;
     private final Set<String> domainTokens;

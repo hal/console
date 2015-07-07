@@ -22,7 +22,5 @@
   -->
 
 <module>
-    <inherits name="com.google.gwt.user.User"/>
-
-    <source path="resources"/>
+    <source path="spi"/>
 </module>

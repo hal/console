@@ -1,6 +1,6 @@
 <#-- @ftlvariable name="packageName" type="java.lang.String" -->
 <#-- @ftlvariable name="className" type="java.lang.String" -->
-<#-- @ftlvariable name="pageInfos" type="java.util.Set<org.jboss.hal.processors.RequiredResourcesProcessor.PageInfo>" -->
+<#-- @ftlvariable name="tokenInfos" type="java.util.Set<org.jboss.hal.processors.NameTokenProcessor.TokenInfo>" -->
 package ${packageName};
 
 import com.google.common.collect.HashMultimap;
@@ -15,15 +15,17 @@ import static java.util.Arrays.asList;
 /*
 * WARNING! This class is generated. Do not modify.
 */
-@ApplicationScoped
 @Generated("org.jboss.hal.processors.RequiredResourcesProcessor")
-public class ${className} implements org.jboss.hal.client.registry.NameTokenRegistry {
+public class ${className} implements org.jboss.hal.core.registry.NameTokenRegistry {
 
     private final Set<String> tokens;
     private final Set<String> revealedTokens;
 
     public ${className}() {
         this.tokens = new HashSet<>();
+        <#list tokenInfos as tokenInfo>
+        this.tokens.add("${tokenInfo.token}");
+        </#list>
         this.revealedTokens = new HashSet<>();
     }
 

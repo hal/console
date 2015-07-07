@@ -24,7 +24,10 @@ package org.jboss.hal.client.homepage;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.client.NameTokens;
 
 import javax.inject.Inject;
 
@@ -33,12 +36,16 @@ import javax.inject.Inject;
  */
 public class HomepagePresenter extends Presenter<HomepagePresenter.MyView, HomepagePresenter.MyProxy> {
 
+    @ProxyStandard
+    @NameToken(NameTokens.Homepage)
     public interface MyProxy extends ProxyPlace<HomepagePresenter> {}
 
     public interface MyView extends View {}
 
     @Inject
-    public HomepagePresenter(final EventBus eventBus, final MyView view, final MyProxy proxy) {
+    public HomepagePresenter(final EventBus eventBus,
+            final MyView view,
+            final MyProxy proxy) {
         super(eventBus, view, proxy);
     }
 }

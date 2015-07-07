@@ -22,7 +22,7 @@
 package org.jboss.hal.processors;
 
 import com.google.auto.service.AutoService;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import org.jboss.hal.spi.RequiredResources;
@@ -36,6 +36,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -60,22 +61,22 @@ import static java.util.Arrays.asList;
 public class NameTokenProcessor extends AbstractHalProcessor {
 
     static final String NAME_TOKEN_TEMPLATE = "NameTokens.ftl";
-    static final String NAME_TOKEN_PACKAGE = "org.jboss.hal.client.registry";
+    static final String NAME_TOKEN_PACKAGE = "org.jboss.hal.core.registry";
     static final String NAME_TOKEN_CLASS = "NameTokenRegistryImpl";
 
     static final String REQUIRED_RESOURCES_TEMPLATE = "RequiredResources.ftl";
-    static final String REQUIRED_RESOURCES_PACKAGE = "org.jboss.hal.client.registry";
+    static final String REQUIRED_RESOURCES_PACKAGE = "org.jboss.hal.core.registry";
     static final String REQUIRED_RESOURCES_CLASS = "RequiredResourcesRegistryImpl";
 
     static final String SEARCH_INDEX_TEMPLATE = "SearchIndex.ftl";
-    static final String SEARCH_INDEX_PACKAGE = "org.jboss.hal.client.registry";
+    static final String SEARCH_INDEX_PACKAGE = "org.jboss.hal.core.registry";
     static final String SEARCH_INDEX_CLASS = "SearchIndexRegistryImpl";
 
     static final String REGISTRY_MODULE_TEMPLATE = "RegistryModule.ftl";
     static final String REGISTRY_MODULE_PACKAGE = "org.jboss.hal.client.gin";
     static final String REGISTRY_MODULE_CLASS = "GeneratedRegistryModule";
 
-    private final Set<NameTokenInfo> tokenInfos;
+    private final Set<TokenInfo> tokenInfos;
 
     public NameTokenProcessor() {
         tokenInfos = new HashSet<>();
@@ -86,7 +87,7 @@ public class NameTokenProcessor extends AbstractHalProcessor {
         for (Element e : roundEnv.getElementsAnnotatedWith(NameToken.class)) {
             TypeElement tokenElement = (TypeElement) e;
             NameToken nameToken = tokenElement.getAnnotation(NameToken.class);
-            NameTokenInfo tokenInfo = new NameTokenInfo(nameToken.value()[0]);
+            TokenInfo tokenInfo = new TokenInfo(nameToken.value()[0]);
             tokenInfos.add(tokenInfo);
 
             RequiredResources requiredResources = tokenElement.getAnnotation(RequiredResources.class);
@@ -125,11 +126,13 @@ public class NameTokenProcessor extends AbstractHalProcessor {
             code(SEARCH_INDEX_TEMPLATE, SEARCH_INDEX_PACKAGE, SEARCH_INDEX_CLASS,
                     context(SEARCH_INDEX_PACKAGE, SEARCH_INDEX_CLASS));
 
-            ImmutableMap<String, String> bindings = ImmutableMap.of(
-                    NAME_TOKEN_PACKAGE + ".NameTokenRegistry", NAME_TOKEN_PACKAGE + "." + NAME_TOKEN_CLASS,
-                    REQUIRED_RESOURCES_PACKAGE + ".RequiredResourcesRegistry",
-                    REQUIRED_RESOURCES_PACKAGE + "." + REQUIRED_RESOURCES_CLASS,
-                    SEARCH_INDEX_PACKAGE + ".SearchIndexRegistry", SEARCH_INDEX_PACKAGE + "." + SEARCH_INDEX_CLASS);
+            List<RegistryBinding> bindings = ImmutableList.of(
+                    new RegistryBinding(NAME_TOKEN_PACKAGE + ".NameTokenRegistry",
+                            NAME_TOKEN_PACKAGE + "." + NAME_TOKEN_CLASS),
+                    new RegistryBinding(REQUIRED_RESOURCES_PACKAGE + ".RequiredResourcesRegistry",
+                            REQUIRED_RESOURCES_PACKAGE + "." + REQUIRED_RESOURCES_CLASS),
+                    new RegistryBinding(SEARCH_INDEX_PACKAGE + ".SearchIndexRegistry",
+                            SEARCH_INDEX_PACKAGE + "." + SEARCH_INDEX_CLASS));
             debug("Generating code for registry module");
             code(REGISTRY_MODULE_TEMPLATE, REGISTRY_MODULE_PACKAGE, REGISTRY_MODULE_CLASS,
                     () -> {
@@ -158,7 +161,7 @@ public class NameTokenProcessor extends AbstractHalProcessor {
     }
 
 
-    public static class NameTokenInfo {
+    public static class TokenInfo {
 
         private final String token;
 
@@ -173,7 +176,7 @@ public class NameTokenProcessor extends AbstractHalProcessor {
         private boolean domainOnly;
         private boolean standaloneOnly;
 
-        public NameTokenInfo(String token) {
+        public TokenInfo(String token) {
             this.token = token;
             this.resources = new HashSet<>();
             this.operations = new HashSet<>();
@@ -187,9 +190,9 @@ public class NameTokenProcessor extends AbstractHalProcessor {
         @Override
         public boolean equals(Object o) {
             if (this == o) { return true; }
-            if (!(o instanceof NameTokenInfo)) { return false; }
+            if (!(o instanceof TokenInfo)) { return false; }
 
-            NameTokenInfo that = (NameTokenInfo) o;
+            TokenInfo that = (TokenInfo) o;
             return token.equals(that.token);
 
         }
@@ -201,7 +204,7 @@ public class NameTokenProcessor extends AbstractHalProcessor {
 
         @Override
         public String toString() {
-            return "NameTokenInfo{" + token + "}";
+            return "TokenInfo{" + token + "}";
         }
 
         public boolean isExclude() {
@@ -262,6 +265,26 @@ public class NameTokenProcessor extends AbstractHalProcessor {
 
         public void setStandaloneOnly(boolean standaloneOnly) {
             this.standaloneOnly = standaloneOnly;
+        }
+    }
+
+
+    public static class RegistryBinding {
+
+        private final String interface_;
+        private final String implementation;
+
+        public RegistryBinding(final String interface_, final String implementation) {
+            this.interface_ = interface_;
+            this.implementation = implementation;
+        }
+
+        public String getImplementation() {
+            return implementation;
+        }
+
+        public String getInterface() {
+            return interface_;
         }
     }
 }

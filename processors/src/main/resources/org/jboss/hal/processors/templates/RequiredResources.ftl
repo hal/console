@@ -1,6 +1,6 @@
 <#-- @ftlvariable name="packageName" type="java.lang.String" -->
 <#-- @ftlvariable name="className" type="java.lang.String" -->
-<#-- @ftlvariable name="pageInfos" type="java.util.Set<org.jboss.hal.processors.RequiredResourcesProcessor.PageInfo>" -->
+<#-- @ftlvariable name="tokenInfos" type="java.util.Set<org.jboss.hal.processors.NameTokenProcessor.TokenInfo>" -->
 package ${packageName};
 
 import com.google.common.collect.HashMultimap;
@@ -17,7 +17,7 @@ import static java.util.Arrays.asList;
 * WARNING! This class is generated. Do not modify.
 */
 @Generated("org.jboss.hal.processors.RequiredResourcesProcessor")
-public class ${className} implements org.jboss.hal.client.registry.RequiredResourcesRegistry {
+public class ${className} implements org.jboss.hal.core.registry.RequiredResourcesRegistry {
 
     private final HashMultimap<String, String> resources;
     private final HashMultimap<String, String> operations;
@@ -28,39 +28,39 @@ public class ${className} implements org.jboss.hal.client.registry.RequiredResou
         operations = HashMultimap.create();
         recursive = new HashMap<>();
 
-        <#list pageInfos as pageInfo>
-        <#if (pageInfo.resources?size > 0)>
-        resources.putAll("${pageInfo.pageType}", asList(<#list pageInfo.resources as resource>"${resource}"<#if resource_has_next>, </#if></#list>));
+        <#list tokenInfos as tokenInfo>
+        <#if (tokenInfo.resources?size > 0)>
+        resources.putAll("${tokenInfo.token}", asList(<#list tokenInfo.resources as resource>"${resource}"<#if resource_has_next>, </#if></#list>));
         </#if>
-        <#if (pageInfo.operations?size > 0)>
-        operations.putAll("${pageInfo.pageType}", asList(<#list pageInfo.operations as operation>"${operation}"<#if operation_has_next>, </#if></#list>));
+        <#if (tokenInfo.operations?size > 0)>
+        operations.putAll("${tokenInfo.token}", asList(<#list tokenInfo.operations as operation>"${operation}"<#if operation_has_next>, </#if></#list>));
         </#if>
-        recursive.put("${pageInfo.pageType}", ${pageInfo.recursive?c});
+        recursive.put("${tokenInfo.token}", ${tokenInfo.recursive?c});
         </#list>
     }
 
     @Override
-    public Set<String> getResources(String page) {
-        if (resources.containsKey(page)) {
-            return resources.get(page);
+    public Set<String> getResources(String token) {
+        if (resources.containsKey(token)) {
+            return resources.get(token);
         } else {
             return Collections.<String>emptySet();
         }
     }
 
     @Override
-    public Set<String> getOperations(String page) {
-        if (operations.containsKey(page)) {
-            return operations.get(page);
+    public Set<String> getOperations(String token) {
+        if (operations.containsKey(token)) {
+            return operations.get(token);
         } else {
             return Collections.<String>emptySet();
         }
     }
 
     @Override
-    public boolean isRecursive(String page) {
-        if (recursive.containsKey(page)) {
-            return recursive.get(page);
+    public boolean isRecursive(String token) {
+        if (recursive.containsKey(token)) {
+            return recursive.get(token);
         } else {
             return false;
         }

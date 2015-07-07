@@ -20,25 +20,7 @@
   ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
-<module rename-to="app">
-    <inherits name="elemental.Elemental"/>
-    <inherits name="com.gwtplatform.mvp.Mvp"/>
-    <inherits name="ru.finam.slf4jgwt.logging.gwt.Logging"/>
 
-    <inherits name="org.jboss.hal.Ballroom"/>
-    <inherits name="org.jboss.hal.Config"/>
-    <inherits name="org.jboss.hal.Core"/>
-    <inherits name="org.jboss.hal.DMR"/>
-    <inherits name="org.jboss.hal.Flow"/>
-    <inherits name="org.jboss.hal.Resources"/>
-
-    <set-configuration-property name="gwtp.prebootstrapper"
-                                value="org.jboss.hal.client.bootstrap.HalPreBootstrapper"/>
-    <set-configuration-property name="gwtp.bootstrapper"
-                                value="org.jboss.hal.client.bootstrap.functions.ErraiBootstrapper"/>
-    <extend-configuration-property name="gin.ginjector.modules"
-                                   value="org.jboss.hal.client.gin.CompositeModule"/>
-
-    <define-configuration-property name="hal.version" is-multi-valued="false"/>
-    <set-configuration-property name="CssResource.enableGss" value="true"/>
+<module>
+    <source path="core"/>
 </module>

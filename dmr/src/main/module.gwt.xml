@@ -22,7 +22,5 @@
   -->
 
 <module>
-    <inherits name="com.google.gwt.user.User"/>
-
-    <source path="flow"/>
+    <source path="dmr"/>
 </module>

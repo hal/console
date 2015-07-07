@@ -54,7 +54,7 @@ public class GinModuleProcessor extends AbstractHalProcessor {
      * However we cannot use {@link #onLastRound(RoundEnvironment)}, because code which is generated on last round
      * will not be processed by the compiler.
      */
-    static final int GENERATE_AT_ROUND = 0;
+    static final int GENERATE_AT_ROUND = 1;
 
     private final Set<String> modules;
 

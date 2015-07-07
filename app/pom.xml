@@ -39,7 +39,8 @@
     <packaging>gwt-app</packaging>
 
     <properties>
-        <gwt.module>org.jboss.hal.WildFlyDev</gwt.module>
+        <gwt.module>org.jboss.hal.Console</gwt.module>
+        <gwt.shortName>hal</gwt.shortName>
     </properties>
 
     <dependencies>
@@ -153,7 +154,6 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <options>
-                                <hal.version>${project.version}</hal.version>
                                 <!-- Uncomment to get more messages from the annotation processors -->
                                 <debug>true</debug>
                             </options>
@@ -165,7 +165,6 @@
                             <processors>
                                 <!-- List processors to exclude com.gwtplatform.dispatch.annotation.processor.GenEventProcessor -->
                                 <processor>org.jboss.hal.processors.GinModuleProcessor</processor>
-                                <processor>org.jboss.hal.processors.GwtModuleProcessor</processor>
                                 <processor>org.jboss.hal.processors.NameTokenProcessor</processor>
                                 <processor>org.jboss.hal.processors.StoreInitProcessor</processor>
                             </processors>
@@ -204,16 +203,24 @@
                 <artifactId>gwt-maven-plugin</artifactId>
                 <configuration>
                     <moduleName>${gwt.module}</moduleName>
+                    <moduleShortName>${gwt.shortName}</moduleShortName>
+                    <sourceLevel>1.8</sourceLevel>
                     <draftCompile>true</draftCompile>
-                    <logLevel>DEBUG</logLevel>
+                    <logLevel>INFO</logLevel>
                     <style>DETAILED</style>
                     <compilerArgs>
                         <compilerArg>-XjsInteropMode</compilerArg>
                         <compilerArg>JS</compilerArg>
+                        <compilerArg>-gen</compilerArg>
+                        <compilerArg>${project.build.directory}/generated-sources/gwt</compilerArg>
                     </compilerArgs>
                     <devmodeArgs>
                         <arg>-startupUrl</arg>
-                        <arg>app/index.html</arg>
+                        <arg>hal/index.html</arg>
+                        <compilerArg>-XjsInteropMode</compilerArg>
+                        <compilerArg>JS</compilerArg>
+                        <compilerArg>-gen</compilerArg>
+                        <compilerArg>${project.build.directory}/generated-sources/gwt</compilerArg>
                     </devmodeArgs>
                 </configuration>
             </plugin>
@@ -221,30 +228,6 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>EAP</id>
-            <properties>
-                <gwt.module>org.jboss.hal.EAP</gwt.module>
-            </properties>
-        </profile>
-        <profile>
-            <id>EAPDev</id>
-            <properties>
-                <gwt.module>org.jboss.hal.EAPDev</gwt.module>
-            </properties>
-        </profile>
-        <profile>
-            <id>WildFly</id>
-            <properties>
-                <gwt.module>org.jboss.hal.WildFly</gwt.module>
-            </properties>
-        </profile>
-        <profile>
-            <id>WildFlyFull</id>
-            <properties>
-                <gwt.module>org.jboss.hal.WildFlyFull</gwt.module>
-            </properties>
-        </profile>
         <profile>
             <!--
                 Activate this profile when running gwt:run|dev from the command line

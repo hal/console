@@ -22,7 +22,11 @@
   -->
 
 <module>
-    <inherits name="com.google.gwt.user.User"/>
+    <source path="config">
+        <exclude name="rebind/**"/>
+    </source>
 
-    <source path="spi"/>
+    <generate-with class="org.jboss.hal.config.rebind.EnvironmentGenerator">
+        <when-type-assignable class="org.jboss.hal.config.Environment"/>
+    </generate-with>
 </module>

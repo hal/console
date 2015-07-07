@@ -1,6 +1,6 @@
 <#-- @ftlvariable name="packageName" type="java.lang.String" -->
 <#-- @ftlvariable name="className" type="java.lang.String" -->
-<#-- @ftlvariable name="bindings" type="java.util.Map<String, String>" -->
+<#-- @ftlvariable name="bindings" type="java.util.List<org.jboss.hal.processors.NameTokenProcessor.RegistryBinding>" -->
 package ${packageName};
 
 import javax.annotation.Generated;
@@ -18,8 +18,8 @@ public class ${className} extends AbstractGinModule {
 
     @Override
     protected void configure() {
-        <#list bindings.entrySet() as binding>
-        bind(${binding.key}.class).to(${binding.value}).in(Singleton.class);
+        <#list bindings as binding>
+        bind(${binding.interface}.class).to(${binding.implementation}.class).in(Singleton.class);
         </#list>
     }
 }

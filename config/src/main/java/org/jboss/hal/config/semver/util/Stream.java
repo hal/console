@@ -218,6 +218,7 @@ public class Stream implements Iterable<Character> {
      * @return {@code true} if there is an element of the expected types
      *         until the specified position or {@code false} otherwise
      */
+    @SuppressWarnings("unchecked")
     public <T extends ElementType> boolean positiveLookaheadUntil(
         int until,
         T... expected

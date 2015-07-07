@@ -641,11 +641,11 @@ public final class Elements {
          *
          * @throws IllegalStateException If the hierarchy is unbalanced.
          */
+        @SuppressWarnings("unchecked")
         public <T extends Element> T build() {
             if (level != 0 && elements.size() != 1) {
                 throw new IllegalStateException("Unbalanced element hierarchy");
             }
-            //noinspection unchecked
             return (T) elements.pop().element;
         }
     }

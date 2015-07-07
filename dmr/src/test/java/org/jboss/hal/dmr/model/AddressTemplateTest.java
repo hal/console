@@ -1,9 +1,7 @@
 package org.jboss.hal.dmr.model;
 
 
-import org.jboss.hal.dmr.model.AddressTemplate;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.ResourceAddress;
 import org.junit.Test;
 
 import java.util.List;
@@ -117,14 +115,13 @@ public class AddressTemplateTest {
     }
 
     @Test
-    @SuppressWarnings("NullArgumentToVariableArgMethod")
     public void replaceWildcards() {
         AddressTemplate at = AddressTemplate.of("a=b");
         at = at.replaceWildcards(null);
         assertEquals("a=b", at.getTemplate());
 
         at = AddressTemplate.of("a=b");
-        at = at.replaceWildcards(null, null);
+        at = at.replaceWildcards(null, (String[])null);
         assertEquals("a=b", at.getTemplate());
 
         at = AddressTemplate.of("a=b");
@@ -140,7 +137,7 @@ public class AddressTemplateTest {
         assertEquals("a=b/c=*", at.getTemplate());
 
         at = AddressTemplate.of("a=*/c=*");
-        at = at.replaceWildcards("b", null);
+        at = at.replaceWildcards("b", (String[])null);
         assertEquals("a=b/c=*", at.getTemplate());
 
         at = AddressTemplate.of("a=*/c=*");
@@ -164,13 +161,12 @@ public class AddressTemplateTest {
     }
 
     @Test
-    @SuppressWarnings("NullArgumentToVariableArgMethod")
     public void resolveWildcards() {
         AddressTemplate at = AddressTemplate.of("a=*/c=*");
         ResourceAddress resolved = at.resolve(new EchoContext());
         assertResolved(new String[][]{{"a", "*"}, {"c", "*"}}, resolved);
 
-        resolved = at.resolve(new EchoContext(), null);
+        resolved = at.resolve(new EchoContext(), (String[])null);
         assertResolved(new String[][]{{"a", "*"}, {"c", "*"}}, resolved);
 
         resolved = at.resolve(new EchoContext(), "b");
