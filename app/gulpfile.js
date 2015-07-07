@@ -17,49 +17,49 @@ gulp.task('styles', function () {
         .pipe(autoprefixer({browsers: ['last 2 versions'], cascade: false}))
         .pipe(rename({suffix: '.min'}))
         .pipe(minifycss())
-        .pipe(gulp.dest('src/main/webapp/css'));
+        .pipe(gulp.dest('src/main/resources/org/jboss/hal/public/css'));
 });
 
 gulp.task('dependencies', function () {
     // Web Components
     gulp.src('bower_components/polymer/*.html')
-        .pipe(copy('src/main/webapp', {prefix: 1}));
+        .pipe(copy('src/main/resources/org/jboss/hal/public', {prefix: 1}));
     gulp.src('bower_components/webcomponentsjs/*.min.js')
-        .pipe(copy('src/main/webapp', {prefix: 1}));
+        .pipe(copy('src/main/resources/org/jboss/hal/public', {prefix: 1}));
 
     // Patternfly
     gulp.src('bower_components/patternfly/dist/css/*.min.css')
-        .pipe(copy('src/main/webapp', {prefix: 1}));
+        .pipe(copy('src/main/resources/org/jboss/hal/public', {prefix: 1}));
     gulp.src('bower_components/patternfly/dist/fonts/*')
-        .pipe(copy('src/main/webapp', {prefix: 1}));
+        .pipe(copy('src/main/resources/org/jboss/hal/public', {prefix: 1}));
     gulp.src('bower_components/patternfly/dist/img/*')
-        .pipe(copy('src/main/webapp', {prefix: 1}));
+        .pipe(copy('src/main/resources/org/jboss/hal/public', {prefix: 1}));
     gulp.src('bower_components/patternfly/dist/js/*.min.js')
-        .pipe(copy('src/main/webapp', {prefix: 1}));
+        .pipe(copy('src/main/resources/org/jboss/hal/public', {prefix: 1}));
 
     // JQuery
-    gulp.src('bower_components/patternfly/components/jquery/jquery.min.js')
-        .pipe(copy('src/main/webapp', {prefix: 1}));
+    gulp.src('bower_components/patternfly/components/jquery/dist/jquery.min.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public', {prefix: 1}));
 
     // Bootstrap
     gulp.src('bower_components/patternfly/components/bootstrap/dist/js/bootstrap.min.js')
-        .pipe(copy('src/main/webapp', {prefix: 1}));
+        .pipe(copy('src/main/resources/org/jboss/hal/public', {prefix: 1}));
     gulp.src('bower_components/patternfly/components/bootstrap-select/bootstrap-select.min.js')
-        .pipe(copy('src/main/webapp', {prefix: 1}));
+        .pipe(copy('src/main/resources/org/jboss/hal/public', {prefix: 1}));
 
     // Fonts
     gulp.src('bower_components/patternfly/components/bootstrap/dist/fonts/*')
-        .pipe(copy('src/main/webapp', {prefix: 1}));
+        .pipe(copy('src/main/resources/org/jboss/hal/public', {prefix: 1}));
     gulp.src('bower_components/patternfly/components/font-awesome/fonts/*')
-        .pipe(copy('src/main/webapp', {prefix: 1}));
+        .pipe(copy('src/main/resources/org/jboss/hal/public', {prefix: 1}));
 });
 
 // Clean
 gulp.task('clean', function (cb) {
-    del(['src/main/webapp/polymer/**',
-        'src/main/webapp/webcomponentsjs/**',
-        'src/main/webapp/patternfly/**',
-        'src/main/webapp/css/**'], cb)
+    del(['src/main/resources/org/jboss/hal/public/polymer/**',
+        'src/main/resources/org/jboss/hal/public/webcomponentsjs/**',
+        'src/main/resources/org/jboss/hal/public/patternfly/**',
+        'src/main/resources/org/jboss/hal/public/css/**'], cb)
 });
 
 // Default task

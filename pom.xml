@@ -131,6 +131,34 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>net.ltgt.gwt.maven</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>gwt-devmode</id>
+                        <goals>
+                            <goal>devmode</goal>
+                        </goals>
+                        <configuration>
+                            <devmodeArgs>
+                                <devmodeArg>-startupUrl</devmodeArg>
+                                <devmodeArg>hal/index.html</devmodeArg>
+                                <devmodeArg>-incremental</devmodeArg>
+                                <devmodeArg>-style</devmodeArg>
+                                <devmodeArg>DETAILED</devmodeArg>
+                                <devmodeArg>-XjsInteropMode</devmodeArg>
+                                <devmodeArg>JS</devmodeArg>
+                            </devmodeArgs>
+                            <failOnError>true</failOnError>
+                            <logLevel>INFO</logLevel>
+                            <sourceLevel>1.8</sourceLevel>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <repositories>

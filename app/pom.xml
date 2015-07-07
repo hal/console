@@ -202,100 +202,21 @@
                 <groupId>net.ltgt.gwt.maven</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
                 <configuration>
-                    <moduleName>${gwt.module}</moduleName>
-                    <moduleShortName>${gwt.shortName}</moduleShortName>
-                    <sourceLevel>1.8</sourceLevel>
-                    <draftCompile>true</draftCompile>
-                    <logLevel>INFO</logLevel>
-                    <style>DETAILED</style>
                     <compilerArgs>
                         <compilerArg>-XjsInteropMode</compilerArg>
                         <compilerArg>JS</compilerArg>
                         <compilerArg>-gen</compilerArg>
                         <compilerArg>${project.build.directory}/generated-sources/gwt</compilerArg>
                     </compilerArgs>
-                    <devmodeArgs>
-                        <arg>-startupUrl</arg>
-                        <arg>hal/index.html</arg>
-                        <compilerArg>-XjsInteropMode</compilerArg>
-                        <compilerArg>JS</compilerArg>
-                        <compilerArg>-gen</compilerArg>
-                        <compilerArg>${project.build.directory}/generated-sources/gwt</compilerArg>
-                    </devmodeArgs>
+                    <draftCompile>true</draftCompile>
+                    <failOnError>true</failOnError>
+                    <logLevel>INFO</logLevel>
+                    <moduleName>${gwt.module}</moduleName>
+                    <moduleShortName>${gwt.shortName}</moduleShortName>
+                    <sourceLevel>1.8</sourceLevel>
+                    <style>DETAILED</style>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <!--
-                Activate this profile when running gwt:run|dev from the command line
-                to enable browser refresh after changing (re)sources
-            -->
-            <id>dev</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>build-helper-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>add-source</id>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>add-source</goal>
-                                </goals>
-                                <configuration>
-                                    <sources>
-                                        <source>../ballroom/src/main/java</source>
-                                        <source>../config/src/main/java</source>
-                                        <source>../dmr/src/main/java</source>
-                                        <source>../flow/src/main/java</source>
-                                        <source>../resources/src/main/java</source>
-                                        <source>../spi/src/main/java</source>
-                                    </sources>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>add-resource</id>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>add-resource</goal>
-                                </goals>
-                                <configuration>
-                                    <resources>
-                                        <resource>
-                                            <directory>../ballroom/src/main/resources</directory>
-                                            <targetPath>resources</targetPath>
-                                        </resource>
-                                        <resource>
-                                            <directory>../config/src/main/resources</directory>
-                                            <targetPath>resources</targetPath>
-                                        </resource>
-                                        <resource>
-                                            <directory>../dmr/src/main/resources</directory>
-                                            <targetPath>resources</targetPath>
-                                        </resource>
-                                        <resource>
-                                            <directory>../flow/src/main/resources</directory>
-                                            <targetPath>resources</targetPath>
-                                        </resource>
-                                        <resource>
-                                            <directory>../resources/src/main/resources</directory>
-                                            <targetPath>resources</targetPath>
-                                        </resource>
-                                        <resource>
-                                            <directory>../spi/src/main/resources</directory>
-                                            <targetPath>resources</targetPath>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
