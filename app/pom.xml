@@ -38,11 +38,6 @@
     <description>The HAL application containing the GWT entry point and the UI.</description>
     <packaging>gwt-app</packaging>
 
-    <properties>
-        <gwt.module>org.jboss.hal.Console</gwt.module>
-        <gwt.shortName>hal</gwt.shortName>
-    </properties>
-
     <dependencies>
         <!-- HAL -->
         <dependency>
@@ -185,8 +180,7 @@
                 <executions>
                     <execution>
                         <id>add-source</id>
-                        <phase>prepare-package</phase>
-                        <!-- matches the gwt:compile phase -->
+                        <phase>process-classes</phase>
                         <goals>
                             <goal>add-source</goal>
                         </goals>
@@ -214,7 +208,6 @@
                     <moduleName>${gwt.module}</moduleName>
                     <moduleShortName>${gwt.shortName}</moduleShortName>
                     <sourceLevel>1.8</sourceLevel>
-                    <style>DETAILED</style>
                 </configuration>
             </plugin>
         </plugins>
