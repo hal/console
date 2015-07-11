@@ -133,8 +133,8 @@ public class HeaderView extends ViewImpl implements HeaderPresenter.MyView {
             .end();
         // @formatter:on
 
-        messagesLabel = toolsBuilder.referenceFor("messageLabel");
-        username = toolsBuilder.referenceFor("userName");
+        messagesLabel = toolsBuilder.referenceFor("messagesLabel");
+        username = toolsBuilder.referenceFor("username");
         roles = toolsBuilder.referenceFor("roles");
         connectedTo = toolsBuilder.referenceFor("connectedTo");
 

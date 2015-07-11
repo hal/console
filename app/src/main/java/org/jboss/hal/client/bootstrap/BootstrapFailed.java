@@ -21,19 +21,52 @@
  */
 package org.jboss.hal.client.bootstrap;
 
-import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.core.client.GWT;
+import elemental.dom.Element;
+import elemental.html.PreElement;
+import org.jboss.hal.ballroom.Elements;
+import org.jboss.hal.ballroom.IsElement;
+import org.jboss.hal.resources.HalConstants;
 
-/**
- * @author Harald Pehl
- */
-//@Templated("#content")
-//@Page(path = "bootstrap-failed")
-public class BootstrapFailed extends Composite {
+public class BootstrapFailed implements IsElement {
 
-//    @Inject @DataField Label reason;
+    private static final HalConstants CONSTANTS = GWT.create(HalConstants.class);
 
-//    @PageShown
-//    public void onShow(HistoryToken token) {
-//        reason.setText(token.getState().get(BootstrapContext.ERROR).iterator().next());
-//    }
+    private final Element element;
+
+    public BootstrapFailed(String message, String details, boolean asCode) {
+        // @formatter:off
+        Elements.Builder builder =  new Elements.Builder()
+            .div().css("container-fluid")
+                .div().css("row")
+                    .div().css("col-md-offset-2 col-md-8 bootstrap-error")
+                        .h(1).innerText(CONSTANTS.bootstrap_failed()).end()
+                        .div().css("panel panel-danger")
+                            .div().css("panel-heading")
+                                .h(3).css("panel-title").innerText(message).end()
+                            .end()
+                            .div().css("panel-body")
+                                .p().rememberAs("body").end()
+                                .start("pre").rememberAs("code").end()
+                            .end()
+                        .end()
+                    .end()
+                .end()
+            .end();
+        // @formatter:on
+
+        element = builder.build();
+        Element body = builder.referenceFor("body");
+        PreElement code = builder.referenceFor("code");
+        if (asCode) {
+            code.setInnerText(details);
+        } else {
+            body.setInnerText(details);
+        }
+    }
+
+    @Override
+    public Element asElement() {
+        return element;
+    }
 }

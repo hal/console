@@ -22,8 +22,11 @@
 package org.jboss.hal.client.bootstrap;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.gwtplatform.mvp.client.PreBootstrapper;
+import elemental.client.Browser;
+import org.jboss.hal.resources.HalConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Harald Pehl
@@ -31,9 +34,15 @@ import com.gwtplatform.mvp.client.PreBootstrapper;
 @SuppressWarnings("unused")
 public class HalPreBootstrapper implements PreBootstrapper {
 
+    private static final HalConstants CONSTANTS = GWT.create(HalConstants.class);
+    private static final Logger logger = LoggerFactory.getLogger(HalPreBootstrapper.class);
+
     @Override
     public void onPreBootstrap() {
-        // TODO Show a dedicated page like "Bootstrap Failed"
-        GWT.setUncaughtExceptionHandler(e -> Window.alert("Unable to load HAL management console!"));
+        GWT.setUncaughtExceptionHandler(e -> {
+            logger.error("Bootstrap error in {}: {}", HalPreBootstrapper.class.getSimpleName(), e.getMessage());
+            Browser.getDocument().getBody().appendChild(
+                    new BootstrapFailed(CONSTANTS.bootstrap_exception(), e.getMessage(), true).asElement());
+        });
     }
 }

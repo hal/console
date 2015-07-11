@@ -27,6 +27,7 @@ import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.OptionElement;
 import elemental.html.SelectElement;
+import org.jboss.hal.ballroom.Elements;
 
 import java.util.List;
 
@@ -91,9 +92,7 @@ public class SelectBoxItem extends FormItem<String> {
 
         void setValues(List<String> values, String defaultValue) {
             indexedValues.clear();
-            while (element.getFirstChild() != null) {
-                element.removeChild(element.getFirstChild());
-            }
+            Elements.removeChildrenFrom(element);
 
             int i = 0;
             defaultIndex = 0;

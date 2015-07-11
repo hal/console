@@ -25,7 +25,6 @@ import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
 import elemental.html.SpanElement;
 import org.jboss.hal.ballroom.Elements;
-import org.jboss.hal.ballroom.Id;
 import org.jboss.hal.ballroom.ProgressElement;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.registry.UIRegistry;
@@ -33,8 +32,6 @@ import org.jboss.hal.resources.HalIds;
 import org.jboss.hal.resources.I18n;
 
 import javax.inject.Inject;
-
-import static org.jboss.hal.ballroom.Elements.EventType.click;
 
 /**
  * @author Harald Pehl
@@ -68,6 +65,7 @@ public class FooterView extends ViewImpl implements FooterPresenter.MyView {
         // @formatter:off
         Elements.Builder builder = new Elements.Builder()
             .start("footer").css("footer")
+/*
                 .start("nav").css("navbar navbar-footer navbar-fixed-bottom")
                     .add(progressElement.asElement()).css("footer-progress")
                     .ul().css("nav navbar-nav footer-tools")
@@ -98,13 +96,14 @@ public class FooterView extends ViewImpl implements FooterPresenter.MyView {
                         .end()
                     .end()
                 .end()
+*/
             .end();
         // @formatter:on
 
-        halVersion = builder.referenceFor("halVersion");
-        updateAvailable = builder.referenceFor("updateAvailable");
-        Id.set(halVersion, ids.footer_version());
-        Elements.setVisible(updateAvailable, false);
+//        halVersion = builder.referenceFor("halVersion");
+//        updateAvailable = builder.referenceFor("updateAvailable");
+//        Id.set(halVersion, ids.footer_version());
+//        Elements.setVisible(updateAvailable, false);
 
         return builder.build();
     }

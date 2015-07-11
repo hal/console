@@ -166,7 +166,7 @@ public final class Elements {
 
         @Override
         public String toString() {
-            return (container ? "container" : "simple") + " @ " + level + ": " + element;
+            return (container ? "container" : "simple") + " @ " + level + ": " + element.getTagName();
         }
     }
 
@@ -297,21 +297,21 @@ public final class Elements {
          * Starts a new paragraph container. The element must be closed with {@link #end()}.
          */
         public Builder p() {
-            return start(document.createParagraphElement());
+            return start(document.createElement("p"));
         }
 
         /**
          * Starts a new ordered list container. The element must be closed with {@link #end()}.
          */
         public Builder ol() {
-            return start(document.createOListElement());
+            return start(document.createElement("ol"));
         }
 
         /**
          * Starts a new unordered list container. The element must be closed with {@link #end()}.
          */
         public Builder ul() {
-            return start(document.createUListElement());
+            return start(document.createElement("ul"));
         }
 
         /**
@@ -325,7 +325,7 @@ public final class Elements {
          * Starts a new anchor container. The element must be closed with {@link #end()}.
          */
         public Builder a() {
-            return start(document.createAnchorElement());
+            return start(document.createElement("a"));
         }
 
         /**
@@ -366,7 +366,7 @@ public final class Elements {
         public Builder end() {
             assertCurrent();
             if (level == 0) {
-                throw new IllegalStateException("Unbalanced element hierarchy");
+                throw new IllegalStateException("Unbalanced element hierarchy. Elements stack: " + dumpElements());
             }
 
             List<ElementInfo> children = new ArrayList<>();
@@ -385,6 +385,10 @@ public final class Elements {
 
             level--;
             return this;
+        }
+
+        private String dumpElements() {
+            return elements.toString();
         }
 
 
@@ -644,7 +648,7 @@ public final class Elements {
         @SuppressWarnings("unchecked")
         public <T extends Element> T build() {
             if (level != 0 && elements.size() != 1) {
-                throw new IllegalStateException("Unbalanced element hierarchy");
+                throw new IllegalStateException("Unbalanced element hierarchy. Elements stack: " + dumpElements());
             }
             return (T) elements.pop().element;
         }
@@ -652,6 +656,17 @@ public final class Elements {
 
 
     // ------------------------------------------------------ element helper methods
+
+    /**
+     * Removes all child elements from {@code element}
+     */
+    public static void removeChildrenFrom(final Element element) {
+        if (element != null) {
+            while (element.getFirstChild() != null) {
+                element.removeChild(element.getFirstChild());
+            }
+        }
+    }
 
     public static void setVisible(Element element, boolean visible) {
         element.getStyle().setDisplay(visible ? "" : "none");

@@ -34,17 +34,6 @@ import javax.inject.Inject;
  */
 public class HalBootstrapper implements Bootstrapper {
 
-    private final PlaceManager placeManager;
-
-    @Inject
-    public HalBootstrapper(final PlaceManager placeManager) {this.placeManager = placeManager;}
-
-    @Override
-    public void onBootstrap() {
-        placeManager.revealDefaultPlace();
-    }
-
-
     public static class BootstrapFailedCallback implements Dispatcher.FailedCallback {
 
         private final Control<BootstrapContext> control;
@@ -70,5 +59,17 @@ public class HalBootstrapper implements Bootstrapper {
             control.getContext().failed(exception);
             control.abort();
         }
+    }
+
+
+    private final PlaceManager placeManager;
+
+    @Inject
+    public HalBootstrapper(final PlaceManager placeManager) {this.placeManager = placeManager;}
+
+
+    @Override
+    public void onBootstrap() {
+        placeManager.revealDefaultPlace();
     }
 }

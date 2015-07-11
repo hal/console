@@ -1,0 +1,73 @@
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2010, Red Hat, Inc., and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+package org.jboss.hal.client;
+
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.Presenter;
+import com.gwtplatform.mvp.client.View;
+import com.gwtplatform.mvp.client.annotations.ContentSlot;
+import com.gwtplatform.mvp.client.annotations.ProxyStandard;
+import com.gwtplatform.mvp.client.presenter.slots.IsSingleSlot;
+import com.gwtplatform.mvp.client.presenter.slots.PermanentSlot;
+import com.gwtplatform.mvp.client.proxy.Proxy;
+import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
+import org.jboss.hal.client.widget.FooterPresenter;
+import org.jboss.hal.client.widget.HeaderPresenter;
+
+/**
+ * @author Harald Pehl
+ */
+public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView, ApplicationPresenter.MyProxy> {
+
+    @ProxyStandard
+    interface MyProxy extends Proxy<ApplicationPresenter> {}
+
+
+    interface MyView extends View {}
+
+
+    @ContentSlot
+    public static final GwtEvent.Type<RevealContentHandler<?>> SLOT_MAIN_CONTENT = new GwtEvent.Type<>();
+
+
+    public static final IsSingleSlot<HeaderPresenter> SLOT_HEADER_CONTENT = new PermanentSlot<>();
+    public static final IsSingleSlot<FooterPresenter> SLOT_FOOTER_CONTENT = new PermanentSlot<>();
+
+    private final HeaderPresenter headerPresenter;
+    private final FooterPresenter footerPresenter;
+
+    @Inject
+    public ApplicationPresenter(EventBus eventBus, MyView view, MyProxy proxy,
+            HeaderPresenter headerPresenter, FooterPresenter footerPresenter) {
+        super(eventBus, view, proxy, RevealType.RootLayout);
+        this.headerPresenter = headerPresenter;
+        this.footerPresenter = footerPresenter;
+    }
+
+    @Override
+    protected void onBind() {
+        setInSlot(SLOT_HEADER_CONTENT, headerPresenter);
+        setInSlot(SLOT_FOOTER_CONTENT, footerPresenter);
+    }
+}

@@ -37,7 +37,7 @@ import org.jboss.hal.core.HalPlaceManager;
 import org.jboss.hal.spi.GinModule;
 
 @GinModule
-public class AppModule extends AbstractPresenterModule {
+public class ApplicationModule extends AbstractPresenterModule {
 
     @Override
     protected void configure() {
@@ -58,6 +58,11 @@ public class AppModule extends AbstractPresenterModule {
         bindSingletonPresenterWidget(FooterPresenter.class,
                 FooterPresenter.MyView.class,
                 FooterView.class);
+
+        bindPresenter(ApplicationPresenter.class,
+                ApplicationPresenter.MyView.class,
+                ApplicationView.class,
+                ApplicationPresenter.MyProxy.class);
 
         bindPresenter(HomepagePresenter.class,
                 HomepagePresenter.MyView.class,

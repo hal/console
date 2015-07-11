@@ -155,7 +155,13 @@
                             <defaultOutputDirectory>${project.build.directory}/generated-sources/annotations
                             </defaultOutputDirectory>
                             <processSourceArtifacts>
-                                <processSourceArtifact>org.jboss.hal:*</processSourceArtifact>
+                                <processSourceArtifact>org.jboss.hal:hal-ballroom:sources</processSourceArtifact>
+                                <processSourceArtifact>org.jboss.hal:hal-config:sources</processSourceArtifact>
+                                <processSourceArtifact>org.jboss.hal:hal-core:sources</processSourceArtifact>
+                                <processSourceArtifact>org.jboss.hal:hal-dmr:sources</processSourceArtifact>
+                                <processSourceArtifact>org.jboss.hal:hal-flow:sources</processSourceArtifact>
+                                <processSourceArtifact>org.jboss.hal:hal-resources:sources</processSourceArtifact>
+                                <processSourceArtifact>org.jboss.hal:hal-spi:sources</processSourceArtifact>
                             </processSourceArtifacts>
                             <processors>
                                 <!-- List processors to exclude com.gwtplatform.dispatch.annotation.processor.GenEventProcessor -->
@@ -212,4 +218,43 @@
             </plugin>
         </plugins>
     </build>
+
+
+    <profiles>
+        <profile>
+            <!--
+                Activate this profile when running gwt:devmode from the command line
+                to enable browser refresh after changing sources
+            -->
+            <id>devmode</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>add-source</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>add-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources>
+                                        <source>../ballroom/src/main/java</source>
+                                        <source>../config/src/main/java</source>
+                                        <source>../core/src/main/java</source>
+                                        <source>../dmr/src/main/java</source>
+                                        <source>../flow/src/main/java</source>
+                                        <source>../resources/src/main/java</source>
+                                        <source>../spi/src/main/java</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
