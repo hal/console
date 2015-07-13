@@ -44,5 +44,6 @@ public interface HalConstants extends Constants {
     String settings();
     String toggle_navigation();
     String tools();
+    String update_available();
     //@formatter:on
 }

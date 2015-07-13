@@ -89,7 +89,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
 
         <plugin.version.frontend>0.0.23</plugin.version.frontend>
-        <plugin.version.gwt.maven>1.0-SNAPSHOT</plugin.version.gwt.maven>
+        <plugin.version.gwt.maven>1.0-rc-2</plugin.version.gwt.maven>
         <plugin.version.processor.plugin>3.1.0-beta1</plugin.version.processor.plugin>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -23,7 +23,6 @@ package org.jboss.hal.client.widget;
 
 import com.google.common.base.Joiner;
 import com.gwtplatform.mvp.client.ViewImpl;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import elemental.dom.Element;
 import elemental.html.SpanElement;
 import org.jboss.hal.ballroom.Elements;
@@ -37,6 +36,8 @@ import org.jboss.hal.resources.HalIds;
 import org.jboss.hal.resources.I18n;
 
 import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.jboss.hal.ballroom.Elements.EventType.click;
 import static org.jboss.hal.config.InstanceInfo.EAP;
@@ -49,9 +50,9 @@ public class HeaderView extends ViewImpl implements HeaderPresenter.MyView {
 
     private final static String TOGGLE_NAV_SELECTOR = "hal-header-collapse";
 
-    private final PlaceManager placeManager;
     private final I18n i18n;
     private final HalIds ids;
+    private final Map<String, Element> tlc;
 
     private HeaderPresenter presenter;
 
@@ -63,12 +64,11 @@ public class HeaderView extends ViewImpl implements HeaderPresenter.MyView {
     private SpanElement connectedTo;
 
     @Inject
-    public HeaderView(final PlaceManager placeManager,
-            final I18n i18n,
+    public HeaderView(final I18n i18n,
             final HalIds ids) {
-        this.placeManager = placeManager;
         this.i18n = i18n;
         this.ids = ids;
+        this.tlc = new HashMap<>();
 
         initWidget(Elements.asWidget(init()));
     }
@@ -83,7 +83,7 @@ public class HeaderView extends ViewImpl implements HeaderPresenter.MyView {
                     .span().css("icon-bar").end()
                     .span().css("icon-bar").end()
                 .end()
-                .a().css("navbar-brand logo").on(click, event -> presenter.navigateTo(NameTokens.Homepage))
+                .a().css("clickable navbar-brand logo").on(click, event -> presenter.navigateTo(NameTokens.Homepage))
                     .span().css("logo-text logo-text-first").rememberAs("logoFirst").end()
                     .span().css("logo-text logo-text-last").rememberAs("logoLast").end()
                 .end()
@@ -99,12 +99,12 @@ public class HeaderView extends ViewImpl implements HeaderPresenter.MyView {
             .ul().css("nav navbar-nav navbar-utility")
                 .li()
                     .a().css("clickable").on(click, event -> presenter.toggleMessages())
-                        .start("i").css("fa fa-align-left").end()
+                        .start("i").css("fa fa-envelope").end()
                         .span().rememberAs("messagesLabel").end()
                     .end()
                 .end()
                 .li().css("dropdown")
-                    .a().css("dropdown-toggle").data("toggle", "dropdown")
+                    .a().css("clickable dropdown-toggle").data("toggle", "dropdown")
                         .span().css("pficon pficon-user").end()
                         .span().rememberAs("username").end()
                         .start("b").css("caret").end()
@@ -118,7 +118,7 @@ public class HeaderView extends ViewImpl implements HeaderPresenter.MyView {
                     .end()
                 .end()
                 .li().css("dropdown")
-                    .a().css("dropdown-toggle").data("toggle", "dropdown")
+                    .a().css("clickable dropdown-toggle").data("toggle", "dropdown")
                         .span().css("fa fa-share-alt").end()
                         .start("b").css("caret").end()
                     .end()
@@ -146,26 +146,62 @@ public class HeaderView extends ViewImpl implements HeaderPresenter.MyView {
         Element tools = toolsBuilder.build();
 
         // @formatter:off
-        Element tlc = new Elements.Builder()
+        Elements.Builder tlcBuilder = new Elements.Builder()
             .ul().css("nav navbar-nav navbar-primary")
-                .li().a().id(ids.tlc_home()).on(click, event -> presenter.navigateTo(NameTokens.Homepage))
-                    .innerText("Homepage")
-                .end().end()
-                .li().a().id(ids.tlc_deployments()).on(click, event -> presenter.navigateTo(NameTokens.Deployments))
-                    .innerText("Deployments")
-                .end().end()
-                .li().a().id(ids.tlc_configuration()).on(click, event -> presenter.navigateTo(NameTokens.Configuration))
-                    .innerText("Configuration")
-                .end().end()
-                .li().a().id(ids.tlc_runtime()).on(click, event -> presenter.navigateTo(NameTokens.Runtime))
-                    .innerText("Runtime")
-                .end().end()
-                .li().a().id(ids.tlc_access_control()).on(click, event -> presenter.navigateTo(NameTokens.AccessControl))
-                    .innerText("Access Control")
-                .end().end()
-            .end()
-        .build();
+                .li()
+                    .a()
+                        .css("clickable")
+                        .id(ids.tlc_home())
+                        .rememberAs(ids.tlc_home())
+                        .on(click, event -> presenter.navigateTo(NameTokens.Homepage))
+                        .innerText("Homepage")
+                    .end()
+                .end()
+                .li()
+                    .a()
+                        .css("clickable")
+                        .id(ids.tlc_deployments())
+                        .rememberAs(ids.tlc_deployments())
+                        .on(click, event -> presenter.navigateTo(NameTokens.Deployments))
+                        .innerText("Deployments")
+                    .end()
+                .end()
+                .li()
+                    .a()
+                        .css("clickable")
+                        .id(ids.tlc_configuration())
+                        .rememberAs(ids.tlc_configuration())
+                        .on(click, event -> presenter.navigateTo(NameTokens.Configuration))
+                        .innerText("Configuration")
+                    .end()
+                .end()
+                .li()
+                    .a()
+                        .css("clickable")
+                        .id(ids.tlc_runtime())
+                        .rememberAs(ids.tlc_runtime())
+                        .on(click, event -> presenter.navigateTo(NameTokens.Runtime))
+                        .innerText("Runtime")
+                    .end()
+                .end()
+                .li()
+                    .a()
+                        .css("clickable")
+                        .id(ids.tlc_access_control())
+                        .rememberAs(ids.tlc_access_control())
+                        .on(click, event -> presenter.navigateTo(NameTokens.AccessControl))
+                        .innerText("Access Control")
+                    .end()
+                .end()
+            .end();
         // @formatter:on
+
+        Element tlcElement = tlcBuilder.build();
+        tlc.put(NameTokens.Homepage, tlcBuilder.referenceFor(ids.tlc_home()));
+        tlc.put(NameTokens.Deployments, tlcBuilder.referenceFor(ids.tlc_deployments()));
+        tlc.put(NameTokens.Configuration, tlcBuilder.referenceFor(ids.tlc_configuration()));
+        tlc.put(NameTokens.Runtime, tlcBuilder.referenceFor(ids.tlc_runtime()));
+        tlc.put(NameTokens.AccessControl, tlcBuilder.referenceFor(ids.tlc_access_control()));
 
         // @formatter:off
         return new Elements.Builder()
@@ -173,7 +209,7 @@ public class HeaderView extends ViewImpl implements HeaderPresenter.MyView {
                 .add(header)
                 .div().css("collapse navbar-collapse " + TOGGLE_NAV_SELECTOR)
                     .add(tools)
-                    .add(tlc)
+                    .add(tlcElement)
                 .end()
             .end()
         .build();
@@ -212,6 +248,19 @@ public class HeaderView extends ViewImpl implements HeaderPresenter.MyView {
     private void setLogo(String first, String last) {
         logoFirst.setInnerText(first);
         logoLast.setInnerText(last);
+    }
+
+    @Override
+    public void select(final String nameToken) {
+        for (String token : tlc.keySet()) {
+            if (token.equals(nameToken)) {
+                tlc.get(token).getClassList().add("active");
+                tlc.get(token).getParentElement().getClassList().add("active");
+            } else {
+                tlc.get(token).getClassList().remove("active");
+                tlc.get(token).getParentElement().getClassList().remove("active");
+            }
+        }
     }
 
     @Override

@@ -28,34 +28,48 @@ import elemental.dom.Element;
 import elemental.html.DivElement;
 import org.jboss.hal.ballroom.Elements;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.jboss.hal.client.ApplicationPresenter.SLOT_FOOTER_CONTENT;
+import static org.jboss.hal.client.ApplicationPresenter.SLOT_HEADER_CONTENT;
+import static org.jboss.hal.client.ApplicationPresenter.SLOT_MAIN_CONTENT;
+
 /**
  * @author Harald Pehl
  */
 public class ApplicationView extends ViewImpl implements ApplicationPresenter.MyView {
 
+    private final Map<Object, Element> slots;
     private final DivElement rootContainer;
-    private final Element body;
+    private boolean initialized;
 
     public ApplicationView() {
-        body = Browser.getDocument().getBody();
+        slots = new HashMap<>();
         rootContainer = new Elements.Builder().div().css("container-fluid root-container").end().build();
-        body.appendChild(rootContainer);
         initWidget(Elements.asWidget(rootContainer));
     }
 
     @Override
     public void setInSlot(Object slot, IsWidget content) {
-        Element contentElement = Elements.asElement(content);
+        Element element = Elements.asElement(content);
 
-        if (slot == ApplicationPresenter.SLOT_MAIN_CONTENT) {
+        if (slot == SLOT_HEADER_CONTENT || slot == SLOT_FOOTER_CONTENT) {
+            slots.put(slot, element);
+        }
+
+        else if (slot == SLOT_MAIN_CONTENT) {
             Elements.removeChildrenFrom(rootContainer);
-            rootContainer.appendChild(contentElement);
+            rootContainer.appendChild(element);
+        }
 
-        } else if (slot == ApplicationPresenter.SLOT_HEADER_CONTENT) {
-            body.insertBefore(contentElement, rootContainer);
-
-        } else if (slot == ApplicationPresenter.SLOT_FOOTER_CONTENT) {
-            body.insertBefore(contentElement, rootContainer.getNextElementSibling());
+        if (!initialized && slots.containsKey(SLOT_HEADER_CONTENT) && slots.containsKey(SLOT_FOOTER_CONTENT)) {
+            // append all three building blocks to the document body
+            Element body = Browser.getDocument().getBody();
+            body.appendChild(slots.get(SLOT_HEADER_CONTENT));
+            body.appendChild(rootContainer);
+            body.appendChild(slots.get(SLOT_FOOTER_CONTENT));
+            initialized = true;
         }
     }
 }

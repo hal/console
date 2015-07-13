@@ -49,8 +49,6 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
 
     @ContentSlot
     public static final GwtEvent.Type<RevealContentHandler<?>> SLOT_MAIN_CONTENT = new GwtEvent.Type<>();
-
-
     public static final IsSingleSlot<HeaderPresenter> SLOT_HEADER_CONTENT = new PermanentSlot<>();
     public static final IsSingleSlot<FooterPresenter> SLOT_FOOTER_CONTENT = new PermanentSlot<>();
 
@@ -60,7 +58,7 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
     @Inject
     public ApplicationPresenter(EventBus eventBus, MyView view, MyProxy proxy,
             HeaderPresenter headerPresenter, FooterPresenter footerPresenter) {
-        super(eventBus, view, proxy, RevealType.RootLayout);
+        super(eventBus, view, proxy, RevealType.Root);
         this.headerPresenter = headerPresenter;
         this.footerPresenter = footerPresenter;
     }

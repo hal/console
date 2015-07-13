@@ -155,13 +155,7 @@
                             <defaultOutputDirectory>${project.build.directory}/generated-sources/annotations
                             </defaultOutputDirectory>
                             <processSourceArtifacts>
-                                <processSourceArtifact>org.jboss.hal:hal-ballroom:sources</processSourceArtifact>
-                                <processSourceArtifact>org.jboss.hal:hal-config:sources</processSourceArtifact>
-                                <processSourceArtifact>org.jboss.hal:hal-core:sources</processSourceArtifact>
-                                <processSourceArtifact>org.jboss.hal:hal-dmr:sources</processSourceArtifact>
-                                <processSourceArtifact>org.jboss.hal:hal-flow:sources</processSourceArtifact>
-                                <processSourceArtifact>org.jboss.hal:hal-resources:sources</processSourceArtifact>
-                                <processSourceArtifact>org.jboss.hal:hal-spi:sources</processSourceArtifact>
+                                <processSourceArtifact>org.jboss.hal:*</processSourceArtifact>
                             </processSourceArtifacts>
                             <processors>
                                 <!-- List processors to exclude com.gwtplatform.dispatch.annotation.processor.GenEventProcessor -->

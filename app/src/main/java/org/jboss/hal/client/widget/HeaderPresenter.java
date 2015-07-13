@@ -46,6 +46,8 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
 
         void update(Environment environment, Endpoints endpoints, User user);
 
+        void select(String nameToken);
+
         void showMessage(Message.Level level, String message);
 
         void updateMessageCount(int messages);
@@ -65,22 +67,39 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
 
 
     private final PlaceManager placeManager;
+    private final Environment environment;
+    private final Endpoints endpoints;
+    private final User user;
     private final List<MessageHolder> messages;
 
     @Inject
     public HeaderPresenter(final EventBus eventBus,
             final MyView view,
-            final PlaceManager placeManager) {
+            final PlaceManager placeManager,
+            final Environment environment,
+            final Endpoints endpoints,
+            final User user) {
         super(eventBus, view);
         this.placeManager = placeManager;
+        this.environment = environment;
+        this.endpoints = endpoints;
+        this.user = user;
         this.messages = new ArrayList<>();
     }
 
     @Override
     protected void onBind() {
         super.onBind();
-        addHandler(MessageEvent.getType(), this);
+        addRegisteredHandler(MessageEvent.getType(), this);
         getView().setPresenter(this);
+        getView().update(environment, endpoints, user);
+    }
+
+    @Override
+    protected void onReset() {
+        super.onReset();
+        getView().select(placeManager.getCurrentPlaceRequest().getNameToken());
+        getView().updateMessageCount(messages.size());
     }
 
     public void navigateTo(final String place) {

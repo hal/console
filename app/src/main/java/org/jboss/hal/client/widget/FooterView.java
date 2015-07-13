@@ -25,6 +25,7 @@ import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
 import elemental.html.SpanElement;
 import org.jboss.hal.ballroom.Elements;
+import org.jboss.hal.ballroom.Id;
 import org.jboss.hal.ballroom.ProgressElement;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.registry.UIRegistry;
@@ -32,6 +33,8 @@ import org.jboss.hal.resources.HalIds;
 import org.jboss.hal.resources.I18n;
 
 import javax.inject.Inject;
+
+import static org.jboss.hal.ballroom.Elements.EventType.click;
 
 /**
  * @author Harald Pehl
@@ -65,45 +68,47 @@ public class FooterView extends ViewImpl implements FooterPresenter.MyView {
         // @formatter:off
         Elements.Builder builder = new Elements.Builder()
             .start("footer").css("footer")
-/*
                 .start("nav").css("navbar navbar-footer navbar-fixed-bottom")
                     .add(progressElement.asElement()).css("footer-progress")
                     .ul().css("nav navbar-nav footer-tools")
                         .li()
-                            .a().on(click, event -> presenter.onShowVersion())
+                            .a().css("clickable").on(click, event -> presenter.onShowVersion())
+                                .start("i")
+                                    .css("fa fa-bell-o")
+                                    .attr("title", i18n.constants().update_available())
+                                    .rememberAs("updateAvailable")
+                                .end()
                                 .span().rememberAs("halVersion").end()
-                                .start("i").rememberAs("updateAvailable").end()
                             .end()
                         .end()
                         .li().css("dropdown")
-                            .a().css("dropdown-toggle").data("toggle", "dropdown")
+                            .a().css("clickable dropdown-toggle").data("toggle", "dropdown")
                                 .span().css("fa fa-wrench").end()
                                 .span().innerText(i18n.constants().tools()).end()
                                 .start("b").css("caret").end()
                             .end()
                             .ul().css("dropdown-menu dropdown")
-                                .li().a().on(click, event -> presenter.onModelBrowser())
+                                .li().a().css("clickable").on(click, event -> presenter.onModelBrowser())
                                     .innerText(i18n.constants().model_browser())
                                 .end().end()
-                                .li().a().on(click, event -> presenter.onExpressionResolver())
+                                .li().a().css("clickable").on(click, event -> presenter.onExpressionResolver())
                                     .innerText(i18n.constants().expression_resolver())
                                 .end().end()
                             .end()
                         .end()
-                        .li().a().on(click, event -> presenter.onSettings())
+                        .li().a().css("clickable").on(click, event -> presenter.onSettings())
                             .span().css("pficon pficon-settings").end()
                             .span().innerText(i18n.constants().settings()).end()
-                        .end()
+                        .end().end()
                     .end()
                 .end()
-*/
             .end();
         // @formatter:on
 
-//        halVersion = builder.referenceFor("halVersion");
-//        updateAvailable = builder.referenceFor("updateAvailable");
-//        Id.set(halVersion, ids.footer_version());
-//        Elements.setVisible(updateAvailable, false);
+        halVersion = builder.referenceFor("halVersion");
+        updateAvailable = builder.referenceFor("updateAvailable");
+        Id.set(halVersion, ids.footer_version());
+        Elements.setVisible(updateAvailable, false);
 
         return builder.build();
     }

@@ -39,20 +39,26 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView> {
         void update(Environment environment);
     }
 
+
+    private final Environment environment;
+
     @Inject
     public FooterPresenter(final EventBus eventBus,
-            final MyView view) {
+            final MyView view,
+            final Environment environment) {
         super(eventBus, view);
+        this.environment = environment;
     }
 
     @Override
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
+        getView().update(environment);
     }
 
-    public void update(Environment environment) {
-        getView().update(environment);
+    @Override
+    public void onReset() {
     }
 
     public void onShowVersion() {
