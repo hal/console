@@ -21,17 +21,15 @@ package org.jboss.hal.client.bootstrap.functions;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Random;
-import org.jboss.hal.client.bootstrap.BootstrapContext;
-import org.jboss.hal.client.bootstrap.HalBootstrapper.BootstrapExceptionCallback;
-import org.jboss.hal.client.bootstrap.HalBootstrapper.BootstrapFailedCallback;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
+import org.jboss.hal.core.flow.FunctionCallbacks;
+import org.jboss.hal.core.flow.FunctionContext;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.flow.Control;
-import org.jboss.hal.flow.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +44,7 @@ import static org.jboss.hal.dmr.model.ResourceAddress.ROOT;
  * @author Heiko Braun
  * @date 5/19/11
  */
-public class ReadEnvironment implements Function<BootstrapContext> {
+public class ReadEnvironment implements BootstrapFunction {
 
     private static Logger logger = LoggerFactory.getLogger(ReadEnvironment.class);
 
@@ -65,7 +63,7 @@ public class ReadEnvironment implements Function<BootstrapContext> {
     }
 
     @Override
-    public void execute(final Control<BootstrapContext> control) {
+    public void execute(final Control<FunctionContext> control) {
 
         logger.debug("Bootstrap[ReadEnvironment]: Start");
         final List<Operation> ops = new ArrayList<>();
@@ -117,7 +115,7 @@ public class ReadEnvironment implements Function<BootstrapContext> {
                     }, wait);
                     //                    control.proceed();
                 },
-                new BootstrapFailedCallback(control),
-                new BootstrapExceptionCallback(control));
+                new FunctionCallbacks.Failed(control),
+                new FunctionCallbacks.Exception(control));
     }
 }

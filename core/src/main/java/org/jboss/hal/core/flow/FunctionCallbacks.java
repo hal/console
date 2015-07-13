@@ -19,20 +19,41 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.bootstrap.endpoint;
+package org.jboss.hal.core.flow;
 
-import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.inject.Singleton;
-import org.jboss.hal.spi.GinModule;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.flow.Control;
 
 /**
  * @author Harald Pehl
  */
-@GinModule
-public class EndpointModule extends AbstractGinModule {
+public class FunctionCallbacks {
 
-    @Override
-    protected void configure() {
-        bind(EndpointStorage.class).in(Singleton.class);
+    public static class Failed implements Dispatcher.FailedCallback {
+
+        private final Control<FunctionContext> control;
+
+        public Failed(final Control<FunctionContext> control) {this.control = control;}
+
+        @Override
+        public void onFailed(final Operation operation, final String failure) {
+            control.getContext().setErrorMessage(failure);
+            control.abort();
+        }
+    }
+
+
+    public static class Exception implements Dispatcher.ExceptionCallback {
+
+        private final Control<FunctionContext> control;
+
+        public Exception(final Control<FunctionContext> control) {this.control = control;}
+
+        @Override
+        public void onException(final Operation operation, final Throwable exception) {
+            control.getContext().setError(exception);
+            control.abort();
+        }
     }
 }

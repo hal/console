@@ -119,7 +119,7 @@ public class HeaderView extends ViewImpl implements HeaderPresenter.MyView {
                 .end()
                 .li().css("dropdown")
                     .a().css("clickable dropdown-toggle").data("toggle", "dropdown")
-                        .span().css("fa fa-share-alt").end()
+                        .span().css("fa fa-server").end()
                         .start("b").css("caret").end()
                     .end()
                     .ul().css("dropdown-menu")

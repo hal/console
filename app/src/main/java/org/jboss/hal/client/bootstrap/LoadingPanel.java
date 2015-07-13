@@ -21,56 +21,51 @@
  */
 package org.jboss.hal.client.bootstrap;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Widget;
+import elemental.client.Browser;
+import elemental.dom.Element;
+import org.jboss.hal.ballroom.Elements;
+import org.jboss.hal.ballroom.IsElement;
 
 /**
  * @author Harald Pehl
  */
-public class LoadingPanel implements IsWidget {
+public class LoadingPanel implements IsElement {
 
     static public LoadingPanel get() {
         if (instance == null) {
             instance = new LoadingPanel();
             instance.off();
-            RootPanel.get().add(instance);
+            Browser.getDocument().getBody().appendChild(instance.asElement());
         }
         return instance;
     }
 
     private static LoadingPanel instance;
 
-    static final Template TEMPLATE = GWT.create(Template.class);
-
-    private final HTML html;
+    private final Element loading;
 
     public LoadingPanel() {
-        html = new HTML(TEMPLATE.content());
-        html.addStyleName("loading-container");
+        // @formatter:off
+        loading = new Elements.Builder()
+            .div().css("loading-container")
+                .div().css("loading").end()
+                .h(3).innerText("Loading").end()
+                .div().css("spinner").end()
+            .end()
+        .build();
+        // @formatter:on
     }
 
     @Override
-    public Widget asWidget() {
-        return html;
+    public Element asElement() {
+        return loading;
     }
 
     public void on() {
-        html.setVisible(true);
+        Elements.setVisible(loading, true);
     }
 
     public void off() {
-        html.setVisible(false);
-    }
-
-
-    interface Template extends SafeHtmlTemplates {
-
-        @SafeHtmlTemplates.Template("<div class=\"loading\"><h3>Loading</h3><span class=\"fa-spin fa-2x pficon pficon-running\"></span></div>")
-        SafeHtml content();
+        Elements.setVisible(loading, false);
     }
 }

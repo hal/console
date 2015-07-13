@@ -23,9 +23,11 @@ package org.jboss.hal.client.bootstrap;
 
 import com.gwtplatform.mvp.client.Bootstrapper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.flow.Control;
+import org.jboss.hal.client.bootstrap.endpoint.EndpointSelection;
+import org.jboss.hal.client.bootstrap.functions.BootstrapFunctions;
+import org.jboss.hal.core.flow.FunctionContext;
+import org.jboss.hal.flow.Async;
+import org.jboss.hal.flow.Progress;
 
 import javax.inject.Inject;
 
@@ -34,42 +36,26 @@ import javax.inject.Inject;
  */
 public class HalBootstrapper implements Bootstrapper {
 
-    public static class BootstrapFailedCallback implements Dispatcher.FailedCallback {
-
-        private final Control<BootstrapContext> control;
-
-        public BootstrapFailedCallback(final Control<BootstrapContext> control) {this.control = control;}
-
-        @Override
-        public void onFailed(final Operation operation, final String failure) {
-            control.getContext().failed(failure);
-            control.abort();
-        }
-    }
-
-
-    public static class BootstrapExceptionCallback implements Dispatcher.ExceptionCallback {
-
-        private final Control<BootstrapContext> control;
-
-        public BootstrapExceptionCallback(final Control<BootstrapContext> control) {this.control = control;}
-
-        @Override
-        public void onException(final Operation operation, final Throwable exception) {
-            control.getContext().failed(exception);
-            control.abort();
-        }
-    }
-
-
     private final PlaceManager placeManager;
+    private final EndpointSelection endpointSelection;
+    private final BootstrapFunctions bootstrapFunctions;
 
     @Inject
-    public HalBootstrapper(final PlaceManager placeManager) {this.placeManager = placeManager;}
-
+    public HalBootstrapper(final PlaceManager placeManager,
+            final EndpointSelection endpointSelection,
+            final BootstrapFunctions bootstrapFunctions) {
+        this.placeManager = placeManager;
+        this.endpointSelection = endpointSelection;
+        this.bootstrapFunctions = bootstrapFunctions;
+    }
 
     @Override
     public void onBootstrap() {
-        placeManager.revealDefaultPlace();
+        endpointSelection.select(
+                () -> {
+                    LoadingPanel.get().on();
+                    new Async<FunctionContext>(Progress.NOOP).waterfall(
+                            new FunctionContext(), new BootstrapOutcome(placeManager), bootstrapFunctions.functions());
+                });
     }
 }

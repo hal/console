@@ -202,8 +202,14 @@
                         <compilerArg>-gen</compilerArg>
                         <compilerArg>${project.build.directory}/generated-sources/gwt</compilerArg>
                     </compilerArgs>
+                    <devmodeArgs>
+                        <devmodeArg>-startupUrl</devmodeArg>
+                        <devmodeArg>hal/index.html</devmodeArg>
+                        <devmodeArg>-incremental</devmodeArg>
+                        <devmodeArg>-XjsInteropMode</devmodeArg>
+                        <devmodeArg>JS</devmodeArg>
+                    </devmodeArgs>
                     <draftCompile>true</draftCompile>
-                    <failOnError>true</failOnError>
                     <logLevel>INFO</logLevel>
                     <moduleName>${gwt.module}</moduleName>
                     <moduleShortName>${gwt.shortName}</moduleShortName>

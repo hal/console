@@ -19,30 +19,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.bootstrap;
+package org.jboss.hal.client.bootstrap.functions;
 
-import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.inject.Singleton;
-import org.jboss.hal.client.bootstrap.endpoint.EndpointSelection;
-import org.jboss.hal.client.bootstrap.endpoint.EndpointStorage;
-import org.jboss.hal.client.bootstrap.functions.BootstrapFunctions;
-import org.jboss.hal.client.bootstrap.functions.CheckForUpdate;
-import org.jboss.hal.client.bootstrap.functions.ReadEnvironment;
-import org.jboss.hal.spi.GinModule;
+import org.jboss.hal.core.flow.FunctionContext;
+import org.jboss.hal.flow.Function;
 
 /**
  * @author Harald Pehl
  */
-@GinModule
-public class BootstrapModule extends AbstractGinModule {
-
-    @Override
-    protected void configure() {
-        bind(EndpointSelection.class).in(Singleton.class);
-        bind(EndpointStorage.class).in(Singleton.class);
-
-        bind(CheckForUpdate.class).in(Singleton.class);
-        bind(ReadEnvironment.class).in(Singleton.class);
-        bind(BootstrapFunctions.class).in(Singleton.class);
-    }
+public interface BootstrapFunction extends Function<FunctionContext> {
 }

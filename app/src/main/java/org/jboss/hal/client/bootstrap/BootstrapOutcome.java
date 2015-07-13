@@ -21,16 +21,37 @@
  */
 package org.jboss.hal.client.bootstrap;
 
-/**
- * @author Harald Pehl
- */
-public class BootstrapOutcome {
+import com.google.gwt.core.client.GWT;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import elemental.client.Browser;
+import org.jboss.hal.core.flow.FunctionContext;
+import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.resources.HalConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    private final BootstrapContext bootstrapContext;
+public class BootstrapOutcome implements Outcome<FunctionContext> {
 
-    public BootstrapOutcome(final BootstrapContext bootstrapContext) {this.bootstrapContext = bootstrapContext;}
+    private static final HalConstants CONSTANTS = GWT.create(HalConstants.class);
+    private static final Logger logger = LoggerFactory.getLogger(BootstrapOutcome.class);
 
-    public BootstrapContext getBootstrapContext() {
-        return bootstrapContext;
+    private final PlaceManager placeManager;
+
+    public BootstrapOutcome(final PlaceManager placeManager) {
+        this.placeManager = placeManager;
+    }
+
+    @Override
+    public void onFailure(final FunctionContext context) {
+        LoadingPanel.get().off();
+        logger.error("Bootstrap error in {}: {}", BootstrapOutcome.class.getSimpleName(), context.getErrorMessage());
+        Browser.getDocument().getBody().appendChild(
+                new BootstrapFailed(CONSTANTS.bootstrap_exception(), context.getErrorMessage(), true).asElement());
+    }
+
+    @Override
+    public void onSuccess(final FunctionContext context) {
+        LoadingPanel.get().off();
+        placeManager.revealDefaultPlace();
     }
 }

@@ -19,22 +19,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.bootstrap;
+package org.jboss.hal.client.bootstrap.functions;
 
-import org.jboss.hal.ballroom.ProgressElement;
+import javax.inject.Inject;
 
 /**
+ * Simple wrapper around an ordered array of HAL's bootstrap functions.
+ *
  * @author Harald Pehl
  */
-public class BootstrapProgress extends ProgressElement {
+public class BootstrapFunctions {
 
-    public BootstrapProgress() {
-        super();
-//        setVisible(true);
+    private final CheckForUpdate checkForUpdate;
+    private final ReadEnvironment readEnvironment;
+
+    @Inject
+    public BootstrapFunctions(final CheckForUpdate checkForUpdate,
+            final ReadEnvironment readEnvironment) {
+        this.checkForUpdate = checkForUpdate;
+        this.readEnvironment = readEnvironment;
     }
 
-    @Override
-    public void finish() {
-        // No need to hide the progress element on finish. The main UI will replace the loading panel
+    public BootstrapFunction[] functions() {
+        return new BootstrapFunction[]{
+                checkForUpdate,
+                readEnvironment
+        };
     }
 }
