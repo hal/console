@@ -21,7 +21,9 @@ package org.jboss.hal.ballroom;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
-import org.jboss.hal.flow.Progress;
+import org.jboss.gwt.flow.Progress;
+import org.jboss.gwt.waiwai.Elements;
+import org.jboss.gwt.waiwai.IsElement;
 
 /**
  * @author Harald Pehl

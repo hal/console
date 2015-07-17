@@ -25,6 +25,7 @@ import com.google.auto.service.AutoService;
 import com.google.common.collect.ImmutableList;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
+import org.jboss.auto.AbstractProcessor;
 import org.jboss.hal.spi.RequiredResources;
 import org.jboss.hal.spi.Scope;
 import org.jboss.hal.spi.SearchIndex;
@@ -58,7 +59,7 @@ import static java.util.Arrays.asList;
  */
 @AutoService(Processor.class)
 @SupportedAnnotationTypes("com.gwtplatform.mvp.client.annotations.NameToken")
-public class NameTokenProcessor extends AbstractHalProcessor {
+public class NameTokenProcessor extends AbstractProcessor {
 
     static final String NAME_TOKEN_TEMPLATE = "NameTokens.ftl";
     static final String NAME_TOKEN_PACKAGE = "org.jboss.hal.core.registry";
@@ -79,6 +80,7 @@ public class NameTokenProcessor extends AbstractHalProcessor {
     private final Set<TokenInfo> tokenInfos;
 
     public NameTokenProcessor() {
+        super(NameTokenProcessor.class, "templates");
         tokenInfos = new HashSet<>();
     }
 

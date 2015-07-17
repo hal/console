@@ -47,10 +47,6 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-generator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.hal</groupId>
             <artifactId>hal-spi</artifactId>
         </dependency>
         <dependency>
@@ -62,12 +58,12 @@
             <artifactId>gwtp-mvp-client</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.auto.service</groupId>
-            <artifactId>auto-service</artifactId>
+            <groupId>org.jboss.auto</groupId>
+            <artifactId>apt-tools</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.auto</groupId>
-            <artifactId>auto-common</artifactId>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service</artifactId>
         </dependency>
     </dependencies>
 </project>

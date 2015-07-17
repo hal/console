@@ -26,20 +26,17 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
+import org.jboss.gwt.flow.Control;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.InstanceInfo;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.config.semver.Versions;
 import org.jboss.hal.core.flow.FunctionContext;
-import org.jboss.hal.flow.Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
-/**
- * @author Harald Pehl
- */
 public class CheckForUpdate implements BootstrapFunction {
 
     public static final String UPDATE_URL = "http://access-halproject.rhcloud.com/latest";

@@ -45,11 +45,11 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-flow</artifactId>
+            <artifactId>hal-spi</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-spi</artifactId>
+            <groupId>org.jboss.gwt.flow</groupId>
+            <artifactId>flow</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

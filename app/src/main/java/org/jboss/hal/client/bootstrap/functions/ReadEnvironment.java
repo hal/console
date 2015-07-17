@@ -21,6 +21,7 @@ package org.jboss.hal.client.bootstrap.functions;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Random;
+import org.jboss.gwt.flow.Control;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
 import org.jboss.hal.core.flow.FunctionCallbacks;
@@ -29,7 +30,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.flow.Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,10 +40,6 @@ import java.util.List;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.model.ResourceAddress.ROOT;
 
-/**
- * @author Heiko Braun
- * @date 5/19/11
- */
 public class ReadEnvironment implements BootstrapFunction {
 
     private static Logger logger = LoggerFactory.getLogger(ReadEnvironment.class);

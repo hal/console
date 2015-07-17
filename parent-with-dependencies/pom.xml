@@ -40,10 +40,10 @@
     <packaging>pom</packaging>
 
     <properties>
+        <apt-tools.version>0.0.1</apt-tools.version>
         <auto-service.version>1.0-rc2</auto-service.version>
-        <auto-common.version>1.0-SNAPSHOT</auto-common.version>
         <circuit.version>0.1.3</circuit.version>
-        <freemarker.version>2.3.22</freemarker.version>
+        <flow.version>0.0.1</flow.version>
         <gin.version>2.1.2</gin.version>
         <guava.version>18.0</guava.version>
         <gwt.version>2.8.0-SNAPSHOT</gwt.version>
@@ -54,6 +54,7 @@
         <npm.version>2.11.2</npm.version>
         <slf4j-gwt.version>1.7.7.1</slf4j-gwt.version>
         <validation.version>1.0.0.GA</validation.version>
+        <waiwai.version>0.0.1</waiwai.version>
     </properties>
 
     <!-- Do not declare any build things here! Declare them in hal-parent. -->
@@ -106,8 +107,6 @@
                 <artifactId>gin</artifactId>
                 <version>${gin.version}</version>
             </dependency>
-
-            <!-- 3rd party -->
             <dependency>
                 <groupId>org.jboss.gwt.circuit</groupId>
                 <artifactId>circuit-meta</artifactId>
@@ -117,6 +116,16 @@
                 <groupId>org.jboss.gwt.circuit</groupId>
                 <artifactId>circuit-processor</artifactId>
                 <version>${circuit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.gwt.flow</groupId>
+                <artifactId>flow</artifactId>
+                <version>${flow.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.gwt.waiwai</groupId>
+                <artifactId>waiwai-core</artifactId>
+                <version>${flow.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -131,19 +140,14 @@
 
             <!-- APT Processors -->
             <dependency>
+                <groupId>org.jboss.auto</groupId>
+                <artifactId>apt-tools</artifactId>
+                <version>${apt-tools.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.google.auto.service</groupId>
                 <artifactId>auto-service</artifactId>
                 <version>${auto-service.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.auto</groupId>
-                <artifactId>auto-common</artifactId>
-                <version>${auto-common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.freemarker</groupId>
-                <artifactId>freemarker</artifactId>
-                <version>${freemarker.version}</version>
             </dependency>
 
             <!-- Test -->

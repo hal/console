@@ -21,7 +21,7 @@
  */
 package org.jboss.hal.core.registry;
 
-import org.jboss.hal.flow.Progress;
+import org.jboss.gwt.flow.Progress;
 
 /**
  * Registry which can be used to get references to global UI elements such as the progress bar in the footer.

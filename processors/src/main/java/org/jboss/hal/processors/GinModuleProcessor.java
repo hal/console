@@ -23,6 +23,7 @@ package org.jboss.hal.processors;
 
 import com.google.auto.service.AutoService;
 import com.google.common.base.Joiner;
+import org.jboss.auto.AbstractProcessor;
 import org.jboss.hal.spi.GinModule;
 
 import javax.annotation.processing.Processor;
@@ -42,7 +43,7 @@ import java.util.Set;
  */
 @AutoService(Processor.class)
 @SupportedAnnotationTypes("org.jboss.hal.spi.GinModule")
-public class GinModuleProcessor extends AbstractHalProcessor {
+public class GinModuleProcessor extends AbstractProcessor {
 
     static final String MODULE_TEMPLATE = "CompositeModule.ftl";
     static final String MODULE_PACKAGE = "org.jboss.hal.client.gin";
@@ -59,6 +60,7 @@ public class GinModuleProcessor extends AbstractHalProcessor {
     private final Set<String> modules;
 
     public GinModuleProcessor() {
+        super(GinModuleProcessor.class, "templates");
         modules = new HashSet<>();
     }
 

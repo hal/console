@@ -25,7 +25,7 @@ import com.google.common.base.Joiner;
 import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
 import elemental.html.SpanElement;
-import org.jboss.hal.ballroom.Elements;
+import org.jboss.gwt.waiwai.Elements;
 import org.jboss.hal.ballroom.Id;
 import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.config.Endpoints;
@@ -39,7 +39,7 @@ import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jboss.hal.ballroom.Elements.EventType.click;
+import static org.jboss.gwt.waiwai.Elements.EventType.click;
 import static org.jboss.hal.config.InstanceInfo.EAP;
 import static org.jboss.hal.config.InstanceInfo.WILDFLY;
 

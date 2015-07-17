@@ -103,8 +103,6 @@
         <module>core</module>
         <module>config</module>
         <module>dmr</module>
-        <module>flow</module>
-        <module>generator</module>
         <module>parent-with-dependencies</module>
         <module>processors</module>
         <module>resources</module>

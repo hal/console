@@ -21,7 +21,7 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import org.jboss.hal.ballroom.IsElement;
+import org.jboss.gwt.waiwai.IsElement;
 
 import java.util.Map;
 

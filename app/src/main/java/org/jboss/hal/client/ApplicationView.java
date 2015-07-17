@@ -26,14 +26,12 @@ import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.DivElement;
-import org.jboss.hal.ballroom.Elements;
+import org.jboss.gwt.waiwai.Elements;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jboss.hal.client.ApplicationPresenter.SLOT_FOOTER_CONTENT;
-import static org.jboss.hal.client.ApplicationPresenter.SLOT_HEADER_CONTENT;
-import static org.jboss.hal.client.ApplicationPresenter.SLOT_MAIN_CONTENT;
+import static org.jboss.hal.client.ApplicationPresenter.*;
 
 /**
  * @author Harald Pehl

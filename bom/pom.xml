@@ -74,16 +74,6 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
-                <artifactId>hal-flow</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.hal</groupId>
-                <artifactId>hal-generator</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-processors</artifactId>
                 <version>${project.version}</version>
             </dependency>

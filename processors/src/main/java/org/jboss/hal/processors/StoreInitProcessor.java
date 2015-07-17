@@ -22,6 +22,7 @@
 package org.jboss.hal.processors;
 
 import com.google.auto.service.AutoService;
+import org.jboss.auto.AbstractProcessor;
 import org.jboss.gwt.circuit.meta.Store;
 
 import javax.annotation.processing.Processor;
@@ -52,7 +53,7 @@ import java.util.Set;
  */
 @AutoService(Processor.class)
 @SupportedAnnotationTypes("org.jboss.gwt.circuit.meta.Store")
-public class StoreInitProcessor extends AbstractHalProcessor {
+public class StoreInitProcessor extends AbstractProcessor {
 
     static final String ADAPTER_SUFFIX = "Adapter";
 
@@ -63,6 +64,7 @@ public class StoreInitProcessor extends AbstractHalProcessor {
     private final Set<StoreInfo> storeInfos;
 
     public StoreInitProcessor() {
+        super(StoreInitProcessor.class, "templates");
         storeInfos = new HashSet<>();
     }
 

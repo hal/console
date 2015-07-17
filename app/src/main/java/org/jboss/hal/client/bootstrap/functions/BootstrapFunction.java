@@ -21,8 +21,8 @@
  */
 package org.jboss.hal.client.bootstrap.functions;
 
+import org.jboss.gwt.flow.Function;
 import org.jboss.hal.core.flow.FunctionContext;
-import org.jboss.hal.flow.Function;
 
 /**
  * @author Harald Pehl

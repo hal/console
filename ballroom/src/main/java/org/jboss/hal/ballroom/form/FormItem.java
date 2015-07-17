@@ -40,9 +40,9 @@ import elemental.html.ButtonElement;
 import elemental.html.DivElement;
 import elemental.html.LabelElement;
 import elemental.html.SpanElement;
-import org.jboss.hal.ballroom.Elements;
+import org.jboss.gwt.waiwai.Elements;
+import org.jboss.gwt.waiwai.IsElement;
 import org.jboss.hal.ballroom.Id;
-import org.jboss.hal.ballroom.IsElement;
 
 import java.util.LinkedList;
 import java.util.List;

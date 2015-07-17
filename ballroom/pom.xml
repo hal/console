@@ -45,11 +45,15 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-flow</artifactId>
+            <artifactId>hal-resources</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-resources</artifactId>
+            <groupId>org.jboss.gwt.flow</groupId>
+            <artifactId>flow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.gwt.waiwai</groupId>
+            <artifactId>waiwai-core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

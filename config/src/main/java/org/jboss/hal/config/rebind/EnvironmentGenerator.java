@@ -28,8 +28,8 @@ import com.google.gwt.core.ext.TreeLogger;
 import com.google.gwt.core.ext.UnableToCompleteException;
 import com.google.gwt.i18n.rebind.LocaleUtils;
 import com.google.gwt.i18n.shared.GwtLocale;
+import org.jboss.auto.CodeGenerator;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.generator.CodeGenerator;
 
 import java.io.PrintWriter;
 import java.util.HashMap;
