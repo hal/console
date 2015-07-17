@@ -141,8 +141,12 @@
             <plugin>
                 <groupId>org.bsc.maven</groupId>
                 <artifactId>maven-processor-plugin</artifactId>
+                <!--
+                    Execution order matters! Generate code for hal-app first, then generate the composite GIN module
+                -->
                 <executions>
                     <execution>
+                        <id>generate-app-code</id>
                         <goals>
                             <goal>process</goal>
                         </goals>
@@ -152,16 +156,32 @@
                                 <!-- Uncomment to get more messages from the annotation processors -->
                                 <debug>true</debug>
                             </options>
-                            <defaultOutputDirectory>${project.build.directory}/generated-sources/annotations
+                            <defaultOutputDirectory>${project.build.directory}/generated-sources/apt-app
                             </defaultOutputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-composite-gin</id>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <options>
+                                <!-- Uncomment to get more messages from the annotation processors -->
+                                <debug>true</debug>
+                            </options>
+                            <defaultOutputDirectory>${project.build.directory}/generated-sources/apt-gin
+                            </defaultOutputDirectory>
+                            <additionalSourceDirectories>
+                                <additionalSourceDirectory>${project.build.directory}/generated-sources/apt-app
+                                </additionalSourceDirectory>
+                            </additionalSourceDirectories>
                             <processSourceArtifacts>
                                 <processSourceArtifact>org.jboss.hal:*</processSourceArtifact>
                             </processSourceArtifacts>
                             <processors>
-                                <!-- List processors to exclude com.gwtplatform.dispatch.annotation.processor.GenEventProcessor -->
                                 <processor>org.jboss.hal.processors.GinModuleProcessor</processor>
-                                <processor>org.jboss.hal.processors.NameTokenProcessor</processor>
-                                <processor>org.jboss.hal.processors.StoreInitProcessor</processor>
                             </processors>
                         </configuration>
                     </execution>
@@ -186,7 +206,8 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.build.directory}/generated-sources/annotations</source>
+                                <source>${project.build.directory}/generated-sources/apt-app</source>
+                                <source>${project.build.directory}/generated-sources/apt-gin</source>
                             </sources>
                         </configuration>
                     </execution>

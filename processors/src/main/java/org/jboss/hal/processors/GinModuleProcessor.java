@@ -21,12 +21,10 @@
  */
 package org.jboss.hal.processors;
 
-import com.google.auto.service.AutoService;
 import com.google.common.base.Joiner;
 import org.jboss.auto.AbstractProcessor;
 import org.jboss.hal.spi.GinModule;
 
-import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.Element;
@@ -41,21 +39,14 @@ import java.util.Set;
  *
  * @author Harald Pehl
  */
-@AutoService(Processor.class)
+// Do not export this processor using @AutoService(Processor.class)
+// It's executed explicitly in hal-app processing all GIN modules in all maven modules.
 @SupportedAnnotationTypes("org.jboss.hal.spi.GinModule")
 public class GinModuleProcessor extends AbstractProcessor {
 
     static final String MODULE_TEMPLATE = "CompositeModule.ftl";
     static final String MODULE_PACKAGE = "org.jboss.hal.client.gin";
     static final String MODULE_CLASS = "CompositeModule";
-
-    /**
-     * Other processors like {@code StoreInitProcessor} generate code which contains {@code @GinModule} annotations.
-     * This processor needs to post pone code generation until all other processors finished their code generation.
-     * However we cannot use {@link #onLastRound(RoundEnvironment)}, because code which is generated on last round
-     * will not be processed by the compiler.
-     */
-    static final int GENERATE_AT_ROUND = 1;
 
     private final Set<String> modules;
 
@@ -72,23 +63,18 @@ public class GinModuleProcessor extends AbstractProcessor {
             debug("Added %s as GIN module", moduleElement.getQualifiedName());
         }
 
-        if (round() == GENERATE_AT_ROUND) {
-            debug("Matching round(%d)", round());
-            if (!modules.isEmpty()) {
-                debug("Generating composite GIN module");
-                code(MODULE_TEMPLATE, MODULE_PACKAGE, MODULE_CLASS, () -> {
-                    Map<String, Object> context = new HashMap<>();
-                    context.put("packageName", MODULE_PACKAGE);
-                    context.put("className", MODULE_CLASS);
-                    context.put("modules", modules);
-                    return context;
-                });
-                info("Successfully generated composite GIN module [%s] based on \n\t- %s.", MODULE_CLASS,
-                        Joiner.on("\n\t- ").join(modules));
-                modules.clear();
-            }
-        } else {
-            debug("round(%d) does not match GENERATE_AT_ROUND(%d)", round(), GENERATE_AT_ROUND);
+        if (!modules.isEmpty()) {
+            debug("Generating composite GIN module");
+            code(MODULE_TEMPLATE, MODULE_PACKAGE, MODULE_CLASS, () -> {
+                Map<String, Object> context = new HashMap<>();
+                context.put("packageName", MODULE_PACKAGE);
+                context.put("className", MODULE_CLASS);
+                context.put("modules", modules);
+                return context;
+            });
+            info("Successfully generated composite GIN module [%s] based on \n\t- %s.", MODULE_CLASS,
+                    Joiner.on("\n\t- ").join(modules));
+            modules.clear();
         }
         return false;
     }
