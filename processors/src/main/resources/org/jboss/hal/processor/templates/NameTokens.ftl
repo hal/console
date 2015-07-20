@@ -1,6 +1,6 @@
 <#-- @ftlvariable name="packageName" type="java.lang.String" -->
 <#-- @ftlvariable name="className" type="java.lang.String" -->
-<#-- @ftlvariable name="tokenInfos" type="java.util.Set<org.jboss.hal.processors.NameTokenProcessor.TokenInfo>" -->
+<#-- @ftlvariable name="tokenInfos" type="java.util.Set<org.jboss.hal.processor.NameTokenProcessor.TokenInfo>" -->
 package ${packageName};
 
 import com.google.common.collect.HashMultimap;

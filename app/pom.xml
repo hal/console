@@ -94,6 +94,13 @@
             <groupId>ru.finam</groupId>
             <artifactId>slf4j-gwt</artifactId>
         </dependency>
+
+        <!-- Misc -->
+        <dependency>
+            <groupId>org.jboss.gwt.circuit</groupId>
+            <artifactId>circuit-processor</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -181,7 +188,7 @@
                                 <processSourceArtifact>org.jboss.hal:*</processSourceArtifact>
                             </processSourceArtifacts>
                             <processors>
-                                <processor>org.jboss.hal.processors.GinModuleProcessor</processor>
+                                <processor>org.jboss.hal.processor.GinModuleProcessor</processor>
                             </processors>
                         </configuration>
                     </execution>

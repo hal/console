@@ -1,6 +1,6 @@
 <#-- @ftlvariable name="packageName" type="java.lang.String" -->
 <#-- @ftlvariable name="className" type="java.lang.String" -->
-<#-- @ftlvariable name="storeInfos" type="java.util.Set<org.jboss.hal.processors.StoreInitProcessor.StoreInfo>" -->
+<#-- @ftlvariable name="bindings" type="java.util.List<org.jboss.hal.processor.NameTokenProcessor.RegistryBinding>" -->
 package ${packageName};
 
 import javax.annotation.Generated;
@@ -13,14 +13,13 @@ import org.jboss.hal.spi.GinModule;
 * WARNING! This class is generated. Do not modify.
 */
 @GinModule
-@Generated("org.jboss.hal.processors.StoreInitProcessor")
+@Generated("org.jboss.hal.processors.NameTokenProcessor")
 public class ${className} extends AbstractGinModule {
 
     @Override
     protected void configure() {
-        <#list storeInfos as storeInfo>
-        bind(${storeInfo.packageName}.${storeInfo.storeDelegate}.class).in(Singleton.class);
-        bind(${storeInfo.packageName}.${storeInfo.storeAdapter}.class).asEagerSingleton();
+        <#list bindings as binding>
+        bind(${binding.interface}.class).to(${binding.implementation}.class).in(Singleton.class);
         </#list>
     }
 }
