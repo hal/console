@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.client.widget;
 
+import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
@@ -108,15 +109,15 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     }
 
     public void toggleMessages() {
-
+        Window.alert("Toggle messages not yet implemented");
     }
 
     public void reconnect() {
-
+        Window.alert("Reconnect not yet implemented");
     }
 
     public void logout() {
-
+        Window.alert("Logout not yet implemented");
     }
 
     @Override

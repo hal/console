@@ -24,7 +24,7 @@ package org.jboss.hal.client.widget;
 import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
 import elemental.html.SpanElement;
-import org.jboss.gwt.waiwai.Elements;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Id;
 import org.jboss.hal.ballroom.ProgressElement;
 import org.jboss.hal.config.Environment;
@@ -34,7 +34,7 @@ import org.jboss.hal.resources.I18n;
 
 import javax.inject.Inject;
 
-import static org.jboss.gwt.waiwai.Elements.EventType.click;
+import static org.jboss.gwt.elemento.core.EventType.click;
 
 /**
  * @author Harald Pehl

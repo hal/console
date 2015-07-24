@@ -34,7 +34,7 @@ import elemental.events.EventListener;
 import elemental.events.KeyboardEvent;
 import elemental.html.DivElement;
 import elemental.html.SpanElement;
-import org.jboss.gwt.waiwai.Elements;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.resources.HalConstants;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
-import static org.jboss.gwt.waiwai.Elements.EventType.click;
+import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Form.State.*;
 
 /**

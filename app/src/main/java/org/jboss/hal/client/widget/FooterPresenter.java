@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.client.widget;
 
+import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
@@ -62,18 +63,18 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView> {
     }
 
     public void onShowVersion() {
-
+        Window.alert("Show version not yet implemented");
     }
 
     public void onModelBrowser() {
-
+        Window.alert("Model browser not yet implemented");
     }
 
     public void onExpressionResolver() {
-
+        Window.alert("Expression resolver not yet implemented");
     }
 
     public void onSettings() {
-
+        Window.alert("Settings not yet implemented");
     }
 }

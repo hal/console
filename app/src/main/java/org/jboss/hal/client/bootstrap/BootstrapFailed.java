@@ -24,8 +24,8 @@ package org.jboss.hal.client.bootstrap;
 import com.google.gwt.core.client.GWT;
 import elemental.dom.Element;
 import elemental.html.PreElement;
-import org.jboss.gwt.waiwai.Elements;
-import org.jboss.gwt.waiwai.IsElement;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.HalConstants;
 
 public class BootstrapFailed implements IsElement {

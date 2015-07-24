@@ -27,7 +27,7 @@ import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.OptionElement;
 import elemental.html.SelectElement;
-import org.jboss.gwt.waiwai.Elements;
+import org.jboss.gwt.elemento.core.Elements;
 
 import java.util.List;
 

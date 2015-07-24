@@ -26,7 +26,7 @@ import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.DivElement;
-import org.jboss.gwt.waiwai.Elements;
+import org.jboss.gwt.elemento.core.Elements;
 
 import java.util.HashMap;
 import java.util.Map;

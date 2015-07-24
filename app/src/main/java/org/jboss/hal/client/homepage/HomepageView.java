@@ -23,7 +23,7 @@ package org.jboss.hal.client.homepage;
 
 import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
-import org.jboss.gwt.waiwai.Elements;
+import org.jboss.gwt.elemento.core.Elements;
 
 /**
  * @author Harald Pehl

@@ -23,8 +23,8 @@ package org.jboss.hal.client.bootstrap;
 
 import elemental.client.Browser;
 import elemental.dom.Element;
-import org.jboss.gwt.waiwai.Elements;
-import org.jboss.gwt.waiwai.IsElement;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.IsElement;
 
 /**
  * @author Harald Pehl

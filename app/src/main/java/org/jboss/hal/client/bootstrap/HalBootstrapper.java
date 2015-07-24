@@ -23,8 +23,6 @@ package org.jboss.hal.client.bootstrap;
 
 import com.gwtplatform.mvp.client.Bootstrapper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointSelection;
 import org.jboss.hal.client.bootstrap.functions.BootstrapFunctions;
 import org.jboss.hal.core.flow.FunctionContext;
@@ -51,11 +49,14 @@ public class HalBootstrapper implements Bootstrapper {
 
     @Override
     public void onBootstrap() {
+        new BootstrapOutcome(placeManager).onSuccess(new FunctionContext());
+/*
         endpointSelection.select(
                 () -> {
                     LoadingPanel.get().on();
                     new Async<FunctionContext>(Progress.NOOP).waterfall(
                             new FunctionContext(), new BootstrapOutcome(placeManager), bootstrapFunctions.functions());
                 });
+*/
     }
 }

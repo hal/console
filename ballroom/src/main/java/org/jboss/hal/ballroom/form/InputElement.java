@@ -25,7 +25,7 @@ import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasName;
 import com.google.gwt.user.client.ui.HasText;
-import org.jboss.gwt.waiwai.IsElement;
+import org.jboss.gwt.elemento.core.IsElement;
 
 /**
  * @author Harald Pehl

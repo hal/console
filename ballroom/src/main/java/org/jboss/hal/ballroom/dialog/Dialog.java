@@ -23,12 +23,12 @@ package org.jboss.hal.ballroom.dialog;
 
 import com.google.gwt.core.client.GWT;
 import elemental.dom.Element;
-import org.jboss.gwt.waiwai.Elements;
-import org.jboss.gwt.waiwai.IsElement;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Id;
 import org.jboss.hal.resources.HalConstants;
 
-import static org.jboss.gwt.waiwai.Elements.EventType.click;
+import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.dialog.Dialog.Size.LARGE;
 import static org.jboss.hal.ballroom.dialog.Dialog.Size.SMALL;
 
