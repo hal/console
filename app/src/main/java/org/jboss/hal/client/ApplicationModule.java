@@ -33,6 +33,7 @@ import org.jboss.hal.client.widget.FooterPresenter;
 import org.jboss.hal.client.widget.FooterView;
 import org.jboss.hal.client.widget.HeaderPresenter;
 import org.jboss.hal.client.widget.HeaderView;
+import org.jboss.hal.client.widget.Templated_HeaderView_Provider;
 import org.jboss.hal.core.HalPlaceManager;
 import org.jboss.hal.spi.GinModule;
 
@@ -51,6 +52,7 @@ public class ApplicationModule extends AbstractPresenterModule {
         bindConstant().annotatedWith(ErrorPlace.class).to(NameTokens.Homepage);
         bindConstant().annotatedWith(UnauthorizedPlace.class).to(NameTokens.Homepage);
 
+        bind(HeaderView.class).toProvider(Templated_HeaderView_Provider.class);
         bindSingletonPresenterWidget(HeaderPresenter.class,
                 HeaderPresenter.MyView.class,
                 HeaderView.class);

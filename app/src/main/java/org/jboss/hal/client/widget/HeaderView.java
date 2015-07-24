@@ -22,10 +22,14 @@
 package org.jboss.hal.client.widget;
 
 import com.google.common.base.Joiner;
+import com.google.gwt.user.client.Window;
 import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
-import elemental.html.SpanElement;
+import org.jboss.gwt.elemento.core.DataElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.EventHandler;
+import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.ballroom.Id;
 import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.config.Endpoints;
@@ -35,7 +39,7 @@ import org.jboss.hal.core.messaging.Message;
 import org.jboss.hal.resources.HalIds;
 import org.jboss.hal.resources.I18n;
 
-import javax.inject.Inject;
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,174 +50,50 @@ import static org.jboss.hal.config.InstanceInfo.WILDFLY;
 /**
  * @author Harald Pehl
  */
-public class HeaderView extends ViewImpl implements HeaderPresenter.MyView {
+@Templated("MainLayout.html#header")
+public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyView, IsElement {
 
-    private final static String TOGGLE_NAV_SELECTOR = "hal-header-collapse";
-
-    private final I18n i18n;
-    private final HalIds ids;
-    private final Map<String, Element> tlc;
-
-    private HeaderPresenter presenter;
-
-    private SpanElement logoFirst;
-    private SpanElement logoLast;
-    private SpanElement messagesLabel;
-    private SpanElement username;
-    private SpanElement roles;
-    private SpanElement connectedTo;
-
-    @Inject
-    public HeaderView(final I18n i18n,
-            final HalIds ids) {
-        this.i18n = i18n;
-        this.ids = ids;
-        this.tlc = new HashMap<>();
-
-        initWidget(Elements.asWidget(init()));
+    // @formatter:off
+    public static HeaderView create(final I18n i18n, final HalIds ids) {
+        return new Templated_HeaderView(i18n, ids);
     }
 
-    private Element init() {
-        // @formatter:off
-        Elements.Builder headerBuilder = new Elements.Builder()
-            .div().css("navbar-header")
-                .button().css("navbar-toggle").attr("type", "button").data("toggle", "collapse").data("target", "." + TOGGLE_NAV_SELECTOR)
-                    .span().css("sr-only").innerText(i18n.constants().toggle_navigation()).end()
-                    .span().css("icon-bar").end()
-                    .span().css("icon-bar").end()
-                    .span().css("icon-bar").end()
-                .end()
-                .a().css("clickable navbar-brand logo").on(click, event -> presenter.navigateTo(NameTokens.Homepage))
-                    .span().css("logo-text logo-text-first").rememberAs("logoFirst").end()
-                    .span().css("logo-text logo-text-last").rememberAs("logoLast").end()
-                .end()
-            .end();
-        // @formatter:on
+    public abstract I18n i18n();
+    public abstract HalIds ids();
+    // @formatter:off
 
-        logoFirst = headerBuilder.referenceFor("logoFirst");
-        logoLast = headerBuilder.referenceFor("logoLast");
-        Element header = headerBuilder.build();
 
-        // @formatter:off
-        Elements.Builder toolsBuilder = new Elements.Builder()
-            .ul().css("nav navbar-nav navbar-utility")
-                .li()
-                    .a().css("clickable").on(click, event -> presenter.toggleMessages())
-                        .start("i").css("fa fa-envelope").end()
-                        .span().rememberAs("messagesLabel").end()
-                    .end()
-                .end()
-                .li().css("dropdown")
-                    .a().css("clickable dropdown-toggle").data("toggle", "dropdown")
-                        .span().css("pficon pficon-user").end()
-                        .span().rememberAs("username").end()
-                        .start("b").css("caret").end()
-                    .end()
-                    .ul().css("dropdown-menu")
-                        .li().css("static").span().rememberAs("roles").end().end()
-                        .li().css("divider").end()
-                        .li().a().css("clickable").on(click, event -> presenter.logout())
-                            .innerText(i18n.constants().logout())
-                        .end().end()
-                    .end()
-                .end()
-                .li().css("dropdown")
-                    .a().css("clickable dropdown-toggle").data("toggle", "dropdown")
-                        .span().css("fa fa-server").end()
-                        .start("b").css("caret").end()
-                    .end()
-                    .ul().css("dropdown-menu")
-                        .li().css("static").span().rememberAs("connectedTo").end().end()
-                        .li().css("divider").end()
-                        .li().a().css("clickable").on(click, event -> presenter.reconnect())
-                            .innerText(i18n.constants().connect_to_server())
-                        .end().end()
-                    .end()
-                .end()
-            .end();
-        // @formatter:on
+    private Map<String, Element> tlc;
+    private HeaderPresenter presenter;
 
-        messagesLabel = toolsBuilder.referenceFor("messagesLabel");
-        username = toolsBuilder.referenceFor("username");
-        roles = toolsBuilder.referenceFor("roles");
-        connectedTo = toolsBuilder.referenceFor("connectedTo");
+    @DataElement Element logoFirst;
+    @DataElement Element logoLast;
+    @DataElement Element messagesLabel;
+    @DataElement Element userName;
+    @DataElement Element roles;
+    @DataElement Element connectedTo;
 
-        Id.set(messagesLabel, ids.header_messages());
-        Id.set(username, ids.header_username());
-        Id.set(roles, ids.header_roles());
-        Id.set(connectedTo, ids.header_connected_to());
+    @PostConstruct
+    public void init() {
+        Id.set(messagesLabel, ids().header_messages());
+        Id.set(userName, ids().header_username());
+        Id.set(roles, ids().header_roles());
+        Id.set(connectedTo, ids().header_connected_to());
 
-        Element tools = toolsBuilder.build();
+        Id.set(Elements.dataElement("homepage"), ids().tlc_home());
+        Id.set(Elements.dataElement("deployments"), ids().tlc_deployments());
+        Id.set(Elements.dataElement("configuration"), ids().tlc_configuration());
+        Id.set(Elements.dataElement("runtime"), ids().tlc_runtime());
+        Id.set(Elements.dataElement("accessControl"), ids().tlc_access_control());
 
-        // @formatter:off
-        Elements.Builder tlcBuilder = new Elements.Builder()
-            .ul().css("nav navbar-nav navbar-primary")
-                .li()
-                    .a()
-                        .css("clickable")
-                        .id(ids.tlc_home())
-                        .rememberAs(ids.tlc_home())
-                        .on(click, event -> presenter.navigateTo(NameTokens.Homepage))
-                        .innerText("Homepage")
-                    .end()
-                .end()
-                .li()
-                    .a()
-                        .css("clickable")
-                        .id(ids.tlc_deployments())
-                        .rememberAs(ids.tlc_deployments())
-                        .on(click, event -> presenter.navigateTo(NameTokens.Deployments))
-                        .innerText("Deployments")
-                    .end()
-                .end()
-                .li()
-                    .a()
-                        .css("clickable")
-                        .id(ids.tlc_configuration())
-                        .rememberAs(ids.tlc_configuration())
-                        .on(click, event -> presenter.navigateTo(NameTokens.Configuration))
-                        .innerText("Configuration")
-                    .end()
-                .end()
-                .li()
-                    .a()
-                        .css("clickable")
-                        .id(ids.tlc_runtime())
-                        .rememberAs(ids.tlc_runtime())
-                        .on(click, event -> presenter.navigateTo(NameTokens.Runtime))
-                        .innerText("Runtime")
-                    .end()
-                .end()
-                .li()
-                    .a()
-                        .css("clickable")
-                        .id(ids.tlc_access_control())
-                        .rememberAs(ids.tlc_access_control())
-                        .on(click, event -> presenter.navigateTo(NameTokens.AccessControl))
-                        .innerText("Access Control")
-                    .end()
-                .end()
-            .end();
-        // @formatter:on
+        tlc = new HashMap<>();
+        tlc.put(NameTokens.Homepage, Elements.dataElement("homepage"));
+        tlc.put(NameTokens.Deployments, Elements.dataElement("deployments"));
+        tlc.put(NameTokens.Configuration, Elements.dataElement("configuration"));
+        tlc.put(NameTokens.Runtime, Elements.dataElement("runtime"));
+        tlc.put(NameTokens.AccessControl, Elements.dataElement("accessControl"));
 
-        Element tlcElement = tlcBuilder.build();
-        tlc.put(NameTokens.Homepage, tlcBuilder.referenceFor(ids.tlc_home()));
-        tlc.put(NameTokens.Deployments, tlcBuilder.referenceFor(ids.tlc_deployments()));
-        tlc.put(NameTokens.Configuration, tlcBuilder.referenceFor(ids.tlc_configuration()));
-        tlc.put(NameTokens.Runtime, tlcBuilder.referenceFor(ids.tlc_runtime()));
-        tlc.put(NameTokens.AccessControl, tlcBuilder.referenceFor(ids.tlc_access_control()));
-
-        // @formatter:off
-        return new Elements.Builder()
-            .start("nav").css("navbar navbar-default navbar-pf navbar-fixed-top").attr("role", "navigation")
-                .add(header)
-                .div().css("collapse navbar-collapse " + TOGGLE_NAV_SELECTOR)
-                    .add(tools)
-                    .add(tlcElement)
-                .end()
-            .end()
-        .build();
-        // @formatter:on
+        initWidget(Elements.asWidget(asElement()));
     }
 
     @Override
@@ -233,16 +113,16 @@ public class HeaderView extends ViewImpl implements HeaderPresenter.MyView {
         }
 
         if (endpoints.isSameOrigin()) {
-            connectedTo.setInnerText(i18n.constants().same_origin());
+            connectedTo.setInnerText(i18n().constants().same_origin());
         } else {
-            connectedTo.setInnerText(i18n.messages().connected_to(endpoints.dmr()));
+            connectedTo.setInnerText(i18n().messages().connected_to(endpoints.dmr()));
         }
 
-        username.setInnerHTML(user.getName());
+        userName.setInnerHTML(user.getName());
         // Keep this in sync with the template!
         Elements.setVisible(roles.getParentElement(), !user.getRoles().isEmpty());
         Elements.setVisible(roles.getParentElement().getNextElementSibling(), !user.getRoles().isEmpty());
-        roles.setInnerText(i18n.messages().active_roles(Joiner.on(", ").join(user.getRoles())));
+        roles.setInnerText(i18n().messages().active_roles(Joiner.on(", ").join(user.getRoles())));
     }
 
     private void setLogo(String first, String last) {
@@ -265,11 +145,31 @@ public class HeaderView extends ViewImpl implements HeaderPresenter.MyView {
 
     @Override
     public void updateMessageCount(int count) {
-        messagesLabel.setInnerText(i18n.messages().messages(count));
+        messagesLabel.setInnerText(i18n().messages().messages(count));
     }
 
     @Override
     public void showMessage(final Message.Level level, final String message) {
 
+    }
+
+    @EventHandler(element = "logoLink", on = click)
+    void onLogo() {
+        presenter.navigateTo(NameTokens.Homepage);
+    }
+
+    @EventHandler(element = "messages", on = click)
+    void onMessages() {
+        Window.alert("Messages not yet implemented");
+    }
+
+    @EventHandler(element = "logout", on = click)
+    void onLogout() {
+        Window.alert("Logout not yet implemented");
+    }
+
+    @EventHandler(element = "reconnect", on = click)
+    void onReconnect() {
+        Window.alert("Reconnect not yet implemented");
     }
 }

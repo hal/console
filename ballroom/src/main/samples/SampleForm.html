@@ -5,12 +5,12 @@
     <title>Sample Form</title>
     <meta http-equiv="X-UA-Compatible" content="IE=9">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="../../../../../../../../../app/src/main/webapp/patternfly/dist/css/patternfly.min.css" rel="stylesheet">
-    <link href="../../../../../../../../../app/src/main/webapp/css/hal.min.css" rel="stylesheet">
-    <script src="../../../../../../../../../app/src/main/webapp/patternfly/components/jquery/jquery.min.js"></script>
-    <script src="../../../../../../../../../app/src/main/webapp/patternfly/components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="../../../../../../../../../app/src/main/webapp/patternfly/components/bootstrap-select/bootstrap-select.min.js"></script>
-    <script src="../../../../../../../../../app/src/main/webapp/patternfly/dist/js/patternfly.min.js"></script>
+    <link href="../../../../app/src/main/resources/org/jboss/hal/public/patternfly/dist/css/patternfly.min.css" rel="stylesheet">
+    <link href="../../../../app/src/main/resources/org/jboss/hal/public/css/hal.min.css" rel="stylesheet">
+    <script src="../../../../app/src/main/resources/org/jboss/hal/public/patternfly/components/jquery/dist/jquery.min.js"></script>
+    <script src="../../../../app/src/main/resources/org/jboss/hal/public/patternfly/components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../../../../app/src/main/resources/org/jboss/hal/public/patternfly/components/bootstrap-select/bootstrap-select.min.js"></script>
+    <script src="../../../../app/src/main/resources/org/jboss/hal/public/patternfly/dist/js/patternfly.min.js"></script>
 </head>
 <body>
 <div class="container-fluid">
@@ -86,8 +86,10 @@
                         <label class="col-md-3 control-label" for="passwordInput-markup">Password</label>
 
                         <div class="col-md-9">
-                            <input type="text" id="passwordInput-markup" class="form-control" value="The permissions for your role don't allow to access this data" placeholder="Password" readonly>
-                            <span class="fa fa-lock form-control-feedback" aria-hidden="true"></span>
+                            <div class="input-group">
+                                <input type="text" id="passwordInput-markup" class="form-control" value="The permissions for your role don't allow to access this data" placeholder="Password" readonly>
+                                <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
