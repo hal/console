@@ -31,7 +31,7 @@ public interface HalIds extends Constants {
     String tlc_access_control();
     String tlc_configuration();
     String tlc_deployments();
-    String tlc_home();
+    String tlc_homepage();
     String tlc_runtime();
     //@formatter:on
 }

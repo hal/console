@@ -60,7 +60,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     public abstract I18n i18n();
     public abstract HalIds ids();
-    // @formatter:off
+    // @formatter:on
 
 
     private Map<String, Element> tlc;
@@ -75,25 +75,33 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     @PostConstruct
     public void init() {
+        Element root = asElement();
+
         Id.set(messagesLabel, ids().header_messages());
         Id.set(userName, ids().header_username());
         Id.set(roles, ids().header_roles());
         Id.set(connectedTo, ids().header_connected_to());
 
-        Id.set(Elements.dataElement("homepage"), ids().tlc_home());
-        Id.set(Elements.dataElement("deployments"), ids().tlc_deployments());
-        Id.set(Elements.dataElement("configuration"), ids().tlc_configuration());
-        Id.set(Elements.dataElement("runtime"), ids().tlc_runtime());
-        Id.set(Elements.dataElement("accessControl"), ids().tlc_access_control());
+        Element homepage = Elements.dataElement(root, "homepage");
+        Element deployments = Elements.dataElement(root, "deployments");
+        Element configuration = Elements.dataElement(root, "configuration");
+        Element runtime = Elements.dataElement(root, "runtime");
+        Element accessControl = Elements.dataElement(root, "accessControl");
+
+        Id.set(homepage, ids().tlc_homepage());
+        Id.set(deployments, ids().tlc_deployments());
+        Id.set(configuration, ids().tlc_configuration());
+        Id.set(runtime, ids().tlc_runtime());
+        Id.set(accessControl, ids().tlc_access_control());
 
         tlc = new HashMap<>();
-        tlc.put(NameTokens.Homepage, Elements.dataElement("homepage"));
-        tlc.put(NameTokens.Deployments, Elements.dataElement("deployments"));
-        tlc.put(NameTokens.Configuration, Elements.dataElement("configuration"));
-        tlc.put(NameTokens.Runtime, Elements.dataElement("runtime"));
-        tlc.put(NameTokens.AccessControl, Elements.dataElement("accessControl"));
+        tlc.put(NameTokens.Homepage, homepage);
+        tlc.put(NameTokens.Deployments, deployments);
+        tlc.put(NameTokens.Configuration, configuration);
+        tlc.put(NameTokens.Runtime, runtime);
+        tlc.put(NameTokens.AccessControl, accessControl);
 
-        initWidget(Elements.asWidget(asElement()));
+        initWidget(Elements.asWidget(root));
     }
 
     @Override
@@ -120,8 +128,8 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
         userName.setInnerHTML(user.getName());
         // Keep this in sync with the template!
-        Elements.setVisible(roles.getParentElement(), !user.getRoles().isEmpty());
-        Elements.setVisible(roles.getParentElement().getNextElementSibling(), !user.getRoles().isEmpty());
+        Elements.setVisible(roles, !user.getRoles().isEmpty());
+        Elements.setVisible(roles.getNextElementSibling(), !user.getRoles().isEmpty());
         roles.setInnerText(i18n().messages().active_roles(Joiner.on(", ").join(user.getRoles())));
     }
 
