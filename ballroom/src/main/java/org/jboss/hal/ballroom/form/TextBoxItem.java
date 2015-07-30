@@ -60,7 +60,7 @@ public class TextBoxItem extends FormItem<String> {
 
     @Override
     public boolean supportsExpressions() {
-        return true;
+        return isExpressionAllowed();
     }
 
 

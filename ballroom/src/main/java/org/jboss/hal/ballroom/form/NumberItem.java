@@ -93,7 +93,7 @@ public class NumberItem extends FormItem<Long> {
 
     @Override
     public boolean supportsExpressions() {
-        return true;
+        return isExpressionAllowed();
     }
 
 

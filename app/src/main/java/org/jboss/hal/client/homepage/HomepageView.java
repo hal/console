@@ -21,12 +21,28 @@
  */
 package org.jboss.hal.client.homepage;
 
+import com.google.gwt.user.client.Window;
 import com.gwtplatform.mvp.client.ViewImpl;
+import org.jboss.gwt.elemento.core.DataElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
+import org.jboss.hal.ballroom.form.AbstractForm;
+import org.jboss.hal.ballroom.form.ButtonItem;
+import org.jboss.hal.ballroom.form.NumberItem;
+import org.jboss.hal.ballroom.form.PasswordItem;
+import org.jboss.hal.ballroom.form.SelectBoxItem;
+import org.jboss.hal.ballroom.form.TextAreaItem;
+import org.jboss.hal.ballroom.form.TextBoxItem;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+
+import static org.jboss.hal.ballroom.form.Form.State.EDIT;
+import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
+import static org.jboss.hal.ballroom.form.Form.State.VIEW;
 
 /**
  * @author Harald Pehl
@@ -34,9 +50,53 @@ import javax.annotation.PostConstruct;
 @Templated("Homepage.html#homepage")
 public abstract class HomepageView extends ViewImpl implements HomepagePresenter.MyView, IsElement {
 
+    static class HomepageForm extends AbstractForm<String> {
+
+        protected HomepageForm() {
+            super("homepage-form", EMPTY, VIEW, EDIT);
+
+            TextBoxItem name = new TextBoxItem("name", "Name");
+            name.setExpressionAllowed(false);
+            formItems.put("name", name);
+            formItems.put("formula", new TextBoxItem("formula", "Formula"));
+            formItems.put("password", new PasswordItem("password", "Password"));
+            formItems.put("age", new NumberItem("age", "Age"));
+            formItems.put("hobbies", new TextAreaItem("hobbies", "Hobbies"));
+            formItems.put("color", new SelectBoxItem("color", "Favorite Color", Arrays.asList("Red", "Green", "Blue")));
+            ButtonItem button = new ButtonItem("click", "Click Me");
+            button.onClick(event -> Window.alert("Clicked ;-)"));
+            formItems.put("click", button);
+
+            addHelp("Name", "Your name");
+            addHelp("Formula", "Try to enter an expression");
+            addHelp("Password", "Top secret");
+            addHelp("Age", "How old are you?");
+            addHelp("Hobbies", "Things you like to do in your spare time");
+            addHelp("Color", "Things you like to do in your spare time");
+        }
+
+        @Override
+        public String newModel() {
+            return "n/a";
+        }
+
+        @Override
+        public Map<String, Object> getChangedValues() {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        protected void updateModel(final Map<String, Object> changedValues) {}
+
+        @Override
+        protected void undefineModel() {}
+    }
+
     public static HomepageView create() {
         return new Templated_HomepageView();
     }
+
+    @DataElement HomepageForm form = new HomepageForm();
 
     @PostConstruct
     void init() {

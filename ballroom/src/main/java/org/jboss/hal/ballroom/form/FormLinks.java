@@ -26,7 +26,13 @@ import elemental.dom.Element;
 import elemental.events.EventListener;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.Id;
+import org.jboss.hal.ballroom.form.Form.State;
 import org.jboss.hal.resources.HalConstants;
+
+import java.util.Set;
+
+import static org.jboss.hal.ballroom.form.Form.State.*;
 
 /**
  * @author Harald Pehl
@@ -36,16 +42,14 @@ public class FormLinks implements IsElement, FormLayout {
     static class Builder {
 
         private final String formId;
-        private final boolean supportsUndefine;
-        private final boolean supportsHelp;
+        private final Set<State> supportedStates;
         private EventListener onAdd;
         private EventListener onEdit;
         private EventListener onUndefine;
 
-        Builder(final String formId, final boolean supportsUndefine, final boolean supportsHelp) {
+        Builder(final String formId, final Set<State> supportedStates) {
             this.formId = formId;
-            this.supportsUndefine = supportsUndefine;
-            this.supportsHelp = supportsHelp;
+            this.supportedStates = supportedStates;
         }
 
         Builder onAdd(EventListener onAdd) {
@@ -71,81 +75,95 @@ public class FormLinks implements IsElement, FormLayout {
 
     private final static HalConstants CONSTANTS = GWT.create(HalConstants.class);
 
-    private final boolean supportsHelp;
+    private final Set<State> supportedStates;
 
     private final Element root;
-    private final elemental.html.LIElement addElement;
-    private final elemental.html.LIElement editElement;
-    private final elemental.html.LIElement removeElement;
-    private Element helpContent;
+    private final Element helpLink;
+    private final Element helpContent;
 
-    public FormLinks(final Builder flb) {
-        this.supportsHelp = flb.supportsHelp;
+    private elemental.html.LIElement addElement;
+    private elemental.html.LIElement editElement;
+    private elemental.html.LIElement removeElement;
 
+    public FormLinks(final Builder builder) {
+        this.supportedStates = builder.supportedStates;
+
+        String linksId = Id.generate(builder.formId, "links");
+        String helpId = Id.generate(builder.formId, "help");
+
+        // @formatter:off
         Elements.Builder rootBuilder = new Elements.Builder()
-                .div().css("form form-horizontal")
-                .ul().css("form-links clearfix").rememberAs("links").end()
-                .end();
-        Element links = rootBuilder.referenceFor("links");
-        root = rootBuilder.build();
-
-        addElement = new Elements.Builder()
-                .li().rememberAs("add")
-                .a().start("i").css("pficon pficon-add").end().innerText(CONSTANTS.add()).end()
-                .end().build();
-        if (flb.onAdd != null) {
-            addElement.setOnclick(flb.onAdd);
-        }
-
-        editElement = new Elements.Builder()
-                .li().rememberAs("edit")
-                .a().start("i").css("pficon pficon-edit").end().innerText(CONSTANTS.edit()).end()
-                .end().build();
-        if (flb.onEdit != null) {
-            editElement.setOnclick(flb.onEdit);
-        }
-
-        removeElement = new Elements.Builder()
-                .li().rememberAs("remove")
-                .a().start("i").css("pficon pficon-delete").end().innerText(CONSTANTS.remove()).end()
-                .end().build();
-        if (flb.onUndefine != null) {
-            removeElement.setOnclick(flb.onUndefine);
-        }
-
-        if (flb.supportsUndefine) {
-            links.appendChild(addElement);
-            links.appendChild(editElement);
-            links.appendChild(removeElement);
-        } else {
-            links.appendChild(editElement);
-        }
-
-        if (flb.supportsHelp) {
-            String helpId = flb.formId + "-help";
-            // @formatter:off
-            Element helpLink = new Elements.Builder()
-                .li().css("pull-right")
-                    .a().attr("href", "#" + helpId + "")
-                            .data("toggle", "collapse")
-                            .aria("expanded", "false")
-                            .aria("controls", helpId)
-                        .start("i").css("pficon pficon-help").end()
-                        .innerText(CONSTANTS.help())
-                    .end()
-                .end().build();
-            // @formatter:on
-            links.appendChild(helpLink);
-
-            // @formatter:off
-            Elements.Builder helpContentBuilder = new Elements.Builder()
+            .div().css("form form-horizontal")
+                .ul().id(linksId).css("form-links clearfix").rememberAs("links").end()
                 .div().id(helpId).css("form-help-content collapse")
                     .div().rememberAs("helpContent").end()
-                .end();
-            // @formatter:on
-            helpContent = helpContentBuilder.referenceFor("helpContent");
-            root.appendChild(helpContentBuilder.build());
+                .end()
+            .end();
+        // @formatter:on
+
+        Element links = rootBuilder.referenceFor("links");
+        helpContent = rootBuilder.referenceFor("helpContent");
+
+        // EMPTY -> EDIT?
+        if (supports(EMPTY) && supports(EDIT)) {
+            addElement = new Elements.Builder()
+                    .li().rememberAs("add")
+                    .a().css("clickable")
+                    .start("i").css("pficon pficon-add").end()
+                    .span().css("form-link-label").innerText(CONSTANTS.add()).end()
+                    .end()
+                    .end().build();
+            if (builder.onAdd != null) {
+                addElement.setOnclick(builder.onAdd);
+            }
+            links.appendChild(addElement);
         }
+
+        // VIEW -> EDIT?
+        if (supports(VIEW) || supports(EDIT)) {
+            editElement = new Elements.Builder()
+                    .li().rememberAs("edit")
+                    .a().css("clickable")
+                    .start("i").css("pficon pficon-edit").end()
+                    .span().css("form-link-label").innerText(CONSTANTS.edit()).end()
+                    .end()
+                    .end().build();
+            if (builder.onEdit != null) {
+                editElement.setOnclick(builder.onEdit);
+            }
+            links.appendChild(editElement);
+        }
+
+        // EDIT -> EMPTY
+        if (supports(EDIT) && supports(EMPTY)) {
+            removeElement = new Elements.Builder()
+                    .li().rememberAs("remove")
+                    .a().css("clickable")
+                    .start("i").css("pficon pficon-delete").end()
+                    .span().css("form-link-label").innerText(CONSTANTS.remove()).end()
+                    .end()
+                    .end().build();
+            if (builder.onUndefine != null) {
+                removeElement.setOnclick(builder.onUndefine);
+            }
+            links.appendChild(removeElement);
+        }
+
+        // @formatter:off
+        helpLink = new Elements.Builder()
+            .li().css("pull-right")
+                .a().attr("href", "#" + helpId + "")
+                        .data("toggle", "collapse")
+                        .aria("expanded", "false")
+                        .aria("controls", helpId)
+                    .start("i").css("pficon pficon-help").end()
+                    .span().css("form-link-label").innerText(CONSTANTS.help()).end()
+                .end()
+            .end().build();
+        // @formatter:on
+        links.appendChild(helpLink);
+
+        root = rootBuilder.build();
     }
 
     @Override
@@ -153,44 +171,55 @@ public class FormLinks implements IsElement, FormLayout {
         return root;
     }
 
-    void switchTo(Form.State state) {
-        switch (state) {
-            case EMPTY:
-                Elements.setVisible(addElement, true);
-                Elements.setVisible(editElement, false);
-                Elements.setVisible(removeElement, false);
-                break;
+    void switchTo(State state) {
+        if (supports(state)) {
+            switch (state) {
+                case EMPTY:
+                    Elements.setVisible(addElement, true);
+                    Elements.setVisible(editElement, false);
+                    Elements.setVisible(removeElement, false);
+                    Elements.setVisible(helpLink, false);
+                    break;
 
-            case VIEW:
-                Elements.setVisible(addElement, false);
-                Elements.setVisible(editElement, true);
-                Elements.setVisible(removeElement, true);
-                break;
+                case VIEW:
+                    Elements.setVisible(addElement, false);
+                    Elements.setVisible(editElement, true);
+                    Elements.setVisible(removeElement, true);
+                    Elements.setVisible(helpLink, containsHelp());
+                    break;
 
-            case EDIT:
-                Elements.setVisible(addElement, false);
-                Elements.setVisible(editElement, false);
-                Elements.setVisible(removeElement, false);
-                break;
+                case EDIT:
+                    Elements.setVisible(addElement, false);
+                    Elements.setVisible(editElement, false);
+                    Elements.setVisible(removeElement, false);
+                    Elements.setVisible(helpLink, containsHelp());
+                    break;
+            }
         }
     }
 
     void addHelpText(String label, String description) {
-        if (supportsHelp && helpContent != null) {
-            // @formatter:off
-            Element content = new Elements.Builder()
-                .div().css("Form-group")
-                    .label().css("col-" + COLUMN_DISCRIMINATOR + "-" + LABEL_COLUMNS + " control-label")
-                        .innerText(label)
+        // @formatter:off
+        Element content = new Elements.Builder()
+            .div().css("form-group")
+                .label().css("col-" + COLUMN_DISCRIMINATOR + "-" + LABEL_COLUMNS + " control-label")
+                    .innerText(label)
+                .end()
+                .div().css("col-" + COLUMN_DISCRIMINATOR + "-" + INPUT_COLUMNS)
+                    .p().css("form-control-static")
+                        .innerText(description)
                     .end()
-                    .div().css("col-" + COLUMN_DISCRIMINATOR + "-" + INPUT_COLUMNS)
-                        .p().css("form-control-static")
-                            .innerText(description)
-                        .end()
-                    .end()
-                .end().build();
-            // @formatter:on
-            helpContent.appendChild(content);
-        }
+                .end()
+            .end().build();
+        // @formatter:on
+        helpContent.appendChild(content);
+    }
+
+    private boolean supports(State state) {
+        return supportedStates.contains(state);
+    }
+
+    private boolean containsHelp() {
+        return helpContent.getChildren().getLength() > 0;
     }
 }

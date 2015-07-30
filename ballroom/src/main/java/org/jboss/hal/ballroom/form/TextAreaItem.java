@@ -65,6 +65,7 @@ public class TextAreaItem extends FormItem<List<String>> {
 
         TextAreaElement() {
             element = Browser.getDocument().createTextAreaElement();
+            element.setRows(3);
         }
 
         @Override

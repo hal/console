@@ -57,8 +57,6 @@ public abstract class FormItem<T>
         implements IsElement, HasEnabled, Focusable, HasName, HasValue<T>, HasText /* for expression support */,
         FormLayout {
 
-    public static final String STYLE_NAME = "hal-FormItem";
-
     private final EventBus eventBus;
     private final List<FormItemValidation<T>> validationHandlers;
 
@@ -66,6 +64,7 @@ public abstract class FormItem<T>
     private boolean modified;
     private boolean undefined;
     private boolean restricted;
+    private boolean expressionAllowed;
 
     protected final DivElement container;
     protected final DivElement inputContainer;
@@ -88,6 +87,7 @@ public abstract class FormItem<T>
         this.modified = false;
         this.undefined = true;
         this.restricted = false;
+        this.expressionAllowed = true;
 
         this.eventBus = new SimpleEventBus();
         this.validationHandlers = new LinkedList<>();
@@ -96,7 +96,7 @@ public abstract class FormItem<T>
         // create UI elements
         Document document = Browser.getDocument();
         container = document.createDivElement();
-        container.setClassName(STYLE_NAME + " form-group");
+        container.setClassName("form-group");
 
         labelElement = document.createLabelElement();
         labelElement.setClassName("col-" + COLUMN_DISCRIMINATOR + "-" + LABEL_COLUMNS + " control-label");
@@ -412,6 +412,14 @@ public abstract class FormItem<T>
     public void setRestricted(final boolean restricted) {
         this.restricted = restricted;
         toggleRestricted(restricted);
+    }
+
+    public boolean isExpressionAllowed() {
+        return expressionAllowed;
+    }
+
+    public void setExpressionAllowed(final boolean expressionAllowed) {
+        this.expressionAllowed = expressionAllowed;
     }
 
     protected void toggleRestricted(final boolean on) {

@@ -22,12 +22,7 @@
 package org.jboss.hal.ballroom.form;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableMap;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.DeckPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Widget;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.events.EventListener;
@@ -35,9 +30,11 @@ import elemental.events.KeyboardEvent;
 import elemental.html.DivElement;
 import elemental.html.SpanElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.Id;
 import org.jboss.hal.resources.HalConstants;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,16 +51,14 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
     private final static HalConstants CONSTANTS = GWT.create(HalConstants.class);
 
     private final String id;
-    private final boolean supportsUndefine;
-    private final boolean supportsHelp;
-    private final Map<State, Integer> stateDeck;
+    private final EnumSet<State> supportedStates;
+    private final LinkedHashMap<State, Element> panels;
 
     private T model;
     private State state;
     private EventListener exitEditWithEsc;
 
     private FormLinks formLinks;
-    private DeckPanel deck;
     private DivElement errorPanel;
     private SpanElement errorMessage;
 
@@ -77,70 +72,99 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
 
     // ------------------------------------------------------ initialization / ui setup
 
-    protected AbstractForm(final String id, final boolean supportsUndefine, final boolean supportsHelp) {
+    protected AbstractForm(final String id, final State firstSupportedState, final State... otherSupportedStates) {
+
+        EnumSet<State> supportedStates = EnumSet.of(firstSupportedState, otherSupportedStates);
+        validateStates(supportedStates);
 
         this.id = id;
-        this.supportsUndefine = supportsUndefine;
-        this.supportsHelp = supportsHelp;
+        this.supportedStates = supportedStates;
+        this.panels = new LinkedHashMap<>();
 
-        this.state = EMPTY;
-        this.stateDeck = ImmutableMap.of(EMPTY, 0, VIEW, 1, EDIT, 2);
-        this.exitEditWithEsc = event -> {
-            if (event instanceof KeyboardEvent) {
-                KeyboardEvent keyboardEvent = (KeyboardEvent) event;
-                if (keyboardEvent.getKeyCode() == KeyboardEvent.KeyCode.ESC && getState() == EDIT && deck.getWidget(1)
-                        .isVisible()) {
-                    keyboardEvent.preventDefault();
-                    cancel();
+        if (supports(EDIT)) {
+            this.exitEditWithEsc = event -> {
+                if (event instanceof KeyboardEvent) {
+                    KeyboardEvent keyboardEvent = (KeyboardEvent) event;
+                    if (keyboardEvent.getKeyCode() == KeyboardEvent.KeyCode.ESC &&
+                            getState() == EDIT &&
+                            panels.get(EDIT) != null &&
+                            Elements.isVisible(panels.get(EDIT))) {
+                        keyboardEvent.preventDefault();
+                        cancel();
+                    }
                 }
-            }
-        };
+            };
+        }
 
         this.formItems = new LinkedHashMap<>();
         this.validationHandlers = new ArrayList<>();
-    }
-
-    @Override
-    public Element asElement() {
-        formLinks = new FormLinks.Builder(id, supportsUndefine, supportsHelp)
+        this.formLinks = new FormLinks.Builder(id, supportedStates)
                 .onAdd(event -> add())
                 .onEdit(event -> edit(getModel()))
                 .onUndefine(event -> undefine())
                 .build();
-
-        deck = new DeckPanel();
-        deck.add(emptyPanel());
-        deck.add(viewPanel());
-        deck.add(editPanel());
-        switchTo(EMPTY);
-
-        DivElement root = Browser.getDocument().createDivElement();
-        root.appendChild(formLinks.asElement());
-        root.appendChild(Elements.asElement(deck));
-        return root;
     }
 
-    protected Widget emptyPanel() {
-        FlowPanel panel = new FlowPanel();
-        panel.addStyleName("form form-horizontal");
-        panel.add(new HTMLPanel("<p>The model is undefined. Click 'Add' to create a new model.</p>"));
-        return panel;
+    private void validateStates(final EnumSet<State> supportedStates) {
+        if (supportedStates.contains(EMPTY)) {
+            // EMPTY requires all three states!
+            if (!supportedStates.contains(VIEW) && !supportedStates.contains(EDIT)) {
+                throw new IllegalStateException(
+                        "Illegal state combination: " + EMPTY + " withtout " + VIEW + " and " + EDIT);
+            }
+        }
     }
 
-    protected Widget viewPanel() {
-        FlowPanel panel = new FlowPanel();
-        panel.addStyleName("form form-horizontal");
-        panel.add(new HTMLPanel("<p>View panel not yet implemented.</p>"));
-        return panel;
+    @Override
+    public Element asElement() {
+        if (supports(EMPTY)) {
+            panels.put(EMPTY, emptyPanel());
+        }
+        if (supports(VIEW)) {
+            panels.put(VIEW, viewPanel());
+        }
+        if (supports(EDIT)) {
+            panels.put(EDIT, editPanel());
+        }
+
+        Element section = Browser.getDocument().createElement("section");
+        section.setId(id);
+        section.appendChild(formLinks.asElement());
+        for (Element element : panels.values()) {
+            section.appendChild(element);
+        }
+
+        if (supports(EMPTY)) {
+            state = EMPTY;
+            switchTo(EMPTY);
+        } else if (supports(VIEW)) {
+            state = VIEW;
+            switchTo(VIEW);
+        } else {
+            state = EDIT;
+            switchTo(EDIT);
+        }
+        return section;
     }
 
-    protected Widget editPanel() {
-        FlowPanel panel = new FlowPanel("form");
-        panel.addStyleName("form form-horizontal");
+    protected Element emptyPanel() {
+        return new Elements.Builder()
+                .div().id(Id.generate(id, "empty")).css("form form-horizontal")
+                .p().innerText("The model is undefined. Click 'Add' to create a new model.").end()
+                .end().build();
+    }
 
+    protected Element viewPanel() {
+        return new Elements.Builder()
+                .div().id(Id.generate(id, "view")).css("form form-horizontal")
+                .p().innerText("View panel not yet implemented.").end()
+                .end().build();
+    }
+
+    protected Element editPanel() {
         // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .div().css("alert alert-danger")
+        Elements.Builder errorPanelBuilder = new Elements.Builder()
+            .div().css("alert alert-danger").rememberAs("errorPanel")
                 .span().css("pficon-layered")
                     .span().css("pficon pficon-error-octagon").end()
                     .span().css("pficon pficon-error-exclamation").end()
@@ -148,38 +172,48 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
                 .span().rememberAs("errorMessage").end()
             .end();
         // @formatter:on
-        errorMessage = builder.referenceFor("errorMessage");
-        errorPanel = builder.build();
+        errorMessage = errorPanelBuilder.referenceFor("errorMessage");
+        errorPanel = errorPanelBuilder.build();
         clearErrors();
 
+        Element editPanel = new Elements.Builder()
+                .div().id(Id.generate(id, "edit")).css("form form-horizontal").end()
+                .build();
+        editPanel.appendChild(errorPanel);
         for (FormItem formItem : formItems.values()) {
-            Elements.asElement(panel).appendChild(formItem.asElement());
+            editPanel.appendChild(formItem.asElement());
         }
-
-        Elements.asElement(panel).appendChild(buttons());
-        return panel;
+        editPanel.appendChild(buttons());
+        return editPanel;
     }
 
     private Element buttons() {
         // @formatter:off
         return new Elements.Builder()
-            .div().css("col-" + COLUMN_DISCRIMINATOR + "-offset-" + LABEL_COLUMNS + " col-" + COLUMN_DISCRIMINATOR + "-" + INPUT_COLUMNS)
-                .div().css("pull-right form-buttons")
-                    .button().css("btn btn-default").on(click, event -> cancel())
-                        .innerText(CONSTANTS.cancel())
-                    .end()
-                    .button().css("btn btn-primary").on(click, event -> save())
-                        .innerText(CONSTANTS.save())
+            .div().css("form-group")
+                .div().css("col-" + COLUMN_DISCRIMINATOR + "-offset-" + LABEL_COLUMNS + " col-" + COLUMN_DISCRIMINATOR + "-" + INPUT_COLUMNS)
+                    .div().css("pull-right form-buttons")
+                        .button().css("btn btn-form btn-default").on(click, event -> cancel())
+                            .innerText(CONSTANTS.cancel())
+                        .end()
+                        .button().css("btn btn-form btn-primary").on(click, event -> save())
+                            .innerText(CONSTANTS.save())
+                        .end()
                     .end()
                 .end()
             .end()
-            .build();
+        .build();
         // @formatter:on
     }
 
     private void switchTo(State state) {
-        formLinks.switchTo(state);
-        deck.showWidget(stateDeck.get(state));
+        if (supports(state)) {
+            formLinks.switchTo(state);
+            for (Element panel : panels.values()) {
+                Elements.setVisible(panel, false);
+            }
+            Elements.setVisible(panels.get(state), true);
+        }
     }
 
 
@@ -234,13 +268,15 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
     /**
      * Gives subclasses a way to prepare the view state. Using {@link #model} is safe in this method.
      */
-    protected abstract void prepareViewState();
+    protected void prepareViewState() {}
 
     /**
      * Flips the deck panel so that the view panel is visible
      */
     protected void switchToViewState() {
-        Browser.getDocument().removeEventListener("keyup", exitEditWithEsc);
+        if (exitEditWithEsc != null) {
+            Browser.getDocument().removeEventListener("keyup", exitEditWithEsc);
+        }
         switchTo(VIEW);
     }
 
@@ -274,21 +310,28 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
     /**
      * Gives subclasses a way to prepare the edit state. Using {@link #model} is safe in this method.
      */
-    protected abstract void prepareEditState();
+    protected void prepareEditState() {}
 
     /**
      * Flips the deck panel so that the edit panel is visible
      */
     protected void switchToEditState() {
         switchTo(EDIT);
+        initSelectPickers();
 
         if (!formItems.isEmpty()) {
             formItems.values().iterator().next().setFocus(true);
         }
 
-        // Exit *this* edit state by pressing ESC
-        Browser.getDocument().setOnkeyup(exitEditWithEsc);
+        if (exitEditWithEsc != null) {
+            // Exit *this* edit state by pressing ESC
+            Browser.getDocument().setOnkeyup(exitEditWithEsc);
+        }
     }
+
+    private native void initSelectPickers() /*-{
+        $wnd.$('.selectpicker').selectpicker();
+    }-*/;
 
 
     // ------------------------------------------------------ save, cancel
@@ -374,7 +417,7 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
      */
     @Override
     public void undefine() {
-        if (supportsUndefine()) {
+        if (undefinePossible()) {
             assertState(VIEW, EDIT);
 
             undefineModel();
@@ -397,7 +440,7 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
      *
      * @return {@code false} if one of the form fields is required, {@code true} otherwise.
      */
-    protected boolean supportsUndefine() {
+    protected boolean undefinePossible() {
         for (FormItem formItem : formItems.values()) {
             if (formItem.isRequired()) {
                 return false;
@@ -409,13 +452,15 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
     /**
      * Gives subclasses a way to prepare the empty state.
      */
-    protected abstract void prepareEmptyState();
+    protected void prepareEmptyState() {}
 
     /**
      * Flips the deck panel so that the empty panel is visible
      */
     protected void switchToEmptyState() {
-        Browser.getDocument().removeEventListener("keyup", exitEditWithEsc);
+        if (exitEditWithEsc != null) {
+            Browser.getDocument().removeEventListener("keyup", exitEditWithEsc);
+        }
         switchTo(EMPTY);
     }
 
@@ -523,13 +568,15 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
     // ------------------------------------------------------ form help delegate
 
     protected void addHelp(String label, String description) {
-        if (supportsHelp && formLinks != null) {
-            formLinks.addHelpText(label, description);
-        }
+        formLinks.addHelpText(label, description);
     }
 
 
     // ------------------------------------------------------ helper methods
+
+    private boolean supports(State state) {
+        return supportedStates.contains(state);
+    }
 
     private void assertState(State... state) {
         for (State st : state) {
