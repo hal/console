@@ -27,7 +27,9 @@ import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.DivElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.resources.HalIds;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,9 +44,10 @@ public class ApplicationView extends ViewImpl implements ApplicationPresenter.My
     private final DivElement rootContainer;
     private boolean initialized;
 
-    public ApplicationView() {
+    @Inject
+    public ApplicationView(HalIds ids) {
         slots = new HashMap<>();
-        rootContainer = new Elements.Builder().div().css("container-fluid root-container").end().build();
+        rootContainer = new Elements.Builder().div().id(ids.root_container()).css("container-fluid").end().build();
         initWidget(Elements.asWidget(rootContainer));
     }
 

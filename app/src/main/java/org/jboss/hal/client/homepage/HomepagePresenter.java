@@ -38,12 +38,15 @@ import javax.inject.Inject;
  */
 public class HomepagePresenter extends Presenter<HomepagePresenter.MyView, HomepagePresenter.MyProxy> {
 
+    // @formatter:off
     @NoGatekeeper
     @ProxyStandard
     @NameToken(NameTokens.Homepage)
     public interface MyProxy extends ProxyPlace<HomepagePresenter> {}
 
     public interface MyView extends View {}
+    // @formatter:on
+
 
     @Inject
     public HomepagePresenter(final EventBus eventBus,

@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.widget;
+package org.jboss.hal.client.skeleton;
 
 import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
@@ -43,18 +43,18 @@ import java.util.List;
  */
 public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> implements MessageEvent.MessageHandler {
 
+    // @formatter:off
     public interface MyView extends View, HasPresenter<HeaderPresenter> {
-
         void update(Environment environment, Endpoints endpoints, User user);
-
         void select(String nameToken);
-
         void showMessage(Message.Level level, String message);
-
         void updateMessageCount(int messages);
     }
+    // @formatter:on
+
 
     static class MessageHolder {
+
         final Message.Level level;
         final String message;
         boolean new_;
@@ -94,13 +94,13 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         addRegisteredHandler(MessageEvent.getType(), this);
         getView().setPresenter(this);
         getView().update(environment, endpoints, user);
+        getView().updateMessageCount(messages.size());
     }
 
     @Override
     protected void onReset() {
         super.onReset();
         getView().select(placeManager.getCurrentPlaceRequest().getNameToken());
-        getView().updateMessageCount(messages.size());
     }
 
     public void navigateTo(final String place) {

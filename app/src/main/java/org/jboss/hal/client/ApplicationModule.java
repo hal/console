@@ -24,21 +24,20 @@ package org.jboss.hal.client;
 import com.gwtplatform.mvp.client.annotations.DefaultPlace;
 import com.gwtplatform.mvp.client.annotations.ErrorPlace;
 import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
-import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
 import com.gwtplatform.mvp.shared.proxy.RouteTokenFormatter;
 import org.jboss.hal.client.homepage.HomepagePresenter;
-import org.jboss.hal.client.homepage.HomepageView;
-import org.jboss.hal.client.widget.FooterPresenter;
-import org.jboss.hal.client.widget.FooterView;
-import org.jboss.hal.client.widget.HeaderPresenter;
-import org.jboss.hal.client.widget.HeaderView;
-import org.jboss.hal.client.widget.Templated_HeaderView_Provider;
+import org.jboss.hal.client.homepage.Templated_HomepageView_Provider;
+import org.jboss.hal.client.skeleton.FooterPresenter;
+import org.jboss.hal.client.skeleton.HeaderPresenter;
+import org.jboss.hal.client.skeleton.Templated_FooterView_Provider;
+import org.jboss.hal.client.skeleton.Templated_HeaderView_Provider;
 import org.jboss.hal.core.HalPlaceManager;
+import org.jboss.hal.core.gin.AbstractTemplatedPresenterModule;
 import org.jboss.hal.spi.GinModule;
 
 @GinModule
-public class ApplicationModule extends AbstractPresenterModule {
+public class ApplicationModule extends AbstractTemplatedPresenterModule {
 
     @Override
     protected void configure() {
@@ -52,23 +51,22 @@ public class ApplicationModule extends AbstractPresenterModule {
         bindConstant().annotatedWith(ErrorPlace.class).to(NameTokens.Homepage);
         bindConstant().annotatedWith(UnauthorizedPlace.class).to(NameTokens.Homepage);
 
-        bind(HeaderView.class).toProvider(Templated_HeaderView_Provider.class);
-        bindSingletonPresenterWidget(HeaderPresenter.class,
+        bindTemplatedSingletonPresenterWidget(HeaderPresenter.class,
                 HeaderPresenter.MyView.class,
-                HeaderView.class);
+                Templated_HeaderView_Provider.class);
 
-        bindSingletonPresenterWidget(FooterPresenter.class,
+        bindTemplatedSingletonPresenterWidget(FooterPresenter.class,
                 FooterPresenter.MyView.class,
-                FooterView.class);
+                Templated_FooterView_Provider.class);
 
         bindPresenter(ApplicationPresenter.class,
                 ApplicationPresenter.MyView.class,
                 ApplicationView.class,
                 ApplicationPresenter.MyProxy.class);
 
-        bindPresenter(HomepagePresenter.class,
+        bindTemplatedPresenter(HomepagePresenter.class,
                 HomepagePresenter.MyView.class,
-                HomepageView.class,
+                Templated_HomepageView_Provider.class,
                 HomepagePresenter.MyProxy.class);
     }
 }

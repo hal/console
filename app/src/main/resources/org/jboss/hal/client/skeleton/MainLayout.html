@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>HAL Management Console</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../../public/patternfly/dist/css/patternfly.min.css" rel="stylesheet">
+    <link href="../../public/css/hal.min.css" rel="stylesheet">
+    <script src="../../public/patternfly/components/jquery/dist/jquery.min.js"></script>
+    <script src="../../public/patternfly/components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../../public/patternfly/dist/js/patternfly.min.js"></script>
+</head>
+<body>
+<nav data-element="header" class="navbar navbar-default navbar-pf navbar-fixed-top" role="navigation">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".hal-header-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+        </button>
+        <a data-element="logoLink" class="navbar-brand logo clickable">
+            <span data-element="logoFirst" class="logo-text logo-text-first">Wild</span><span data-element="logoLast" class="logo-text logo-text-last">Fly</span>
+        </a>
+    </div>
+    <div class="collapse navbar-collapse hal-header-collapse">
+        <ul class="nav navbar-nav navbar-utility">
+            <li>
+                <a data-element="messages" class="clickable">
+                    <i class="fa fa-align-left"></i><span data-element="messagesLabel">Messages (23)</span>
+                </a>
+            </li>
+            <li class="dropdown">
+                <a class="clickable dropdown-toggle" data-toggle="dropdown">
+                    <i class="pficon pficon-user"></i><span data-element="userName">John Doe</span><b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li data-element="roles" class="static">Active Roles: Administrator</li>
+                    <li class="divider"></li>
+                    <li><a data-element="logout" class="clickable">Logout</a></li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a class="clickable dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa fa-globe"></i><b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li data-element="connectedTo" class="static">Connected to localhost</li>
+                    <li class="divider"></li>
+                    <li><a data-element="reconnect" class="clickable">Connect to different server</a></li>
+                </ul>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-primary">
+            <li class="active"><a data-element="homepage" class="active">Homepage</a></li>
+            <li><a data-element="deployments" class="clickable">Deployments</a></li>
+            <li><a data-element="configuration" class="clickable">Configuration</a></li>
+            <li><a data-element="runtime" class="clickable">Runtime</a></li>
+            <li><a data-element="accessControl" class="clickable">Access Control</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <!-- Main content starts with this row -->
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Main Content</h1>
+            <p>This is a placeholder for the main content</p>
+        </div>
+    </div>
+</div>
+
+<footer data-element="footer" class="footer">
+    <nav class="navbar navbar-footer navbar-fixed-bottom">
+        <div data-element="progress"></div>
+        <ul class="nav navbar-nav footer-tools">
+            <li>
+                <a data-element="showVersion" class="clickable">
+                    <span data-element="halVersion">0.8.15</span><i data-element="updateAvailable" class="fa fa-bell"></i>
+                </a>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <span class="fa fa-wrench"></span><span data-element="tools">Tools</span> <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu dropdown">
+                    <li>
+                        <a data-element="modelBrowser" class="clickable">Management Model</a>
+                    </li>
+                    <li>
+                        <a data-element="expressionResolver" class="clickable">Expression Resolver</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a data-element="settings" class="clickable"><span class="pficon pficon-settings"></span>Settings</a>
+            </li>
+        </ul>
+    </nav>
+</footer>
+</body>
+</html>

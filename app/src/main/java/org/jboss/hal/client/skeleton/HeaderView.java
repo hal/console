@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.widget;
+package org.jboss.hal.client.skeleton;
 
 import com.google.common.base.Joiner;
 import com.google.gwt.user.client.Window;
@@ -74,7 +74,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     @DataElement Element connectedTo;
 
     @PostConstruct
-    public void init() {
+    void init() {
         Element root = asElement();
 
         Id.set(messagesLabel, ids().header_messages());

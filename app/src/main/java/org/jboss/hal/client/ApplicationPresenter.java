@@ -32,19 +32,20 @@ import com.gwtplatform.mvp.client.presenter.slots.IsSingleSlot;
 import com.gwtplatform.mvp.client.presenter.slots.PermanentSlot;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
-import org.jboss.hal.client.widget.FooterPresenter;
-import org.jboss.hal.client.widget.HeaderPresenter;
+import org.jboss.hal.client.skeleton.FooterPresenter;
+import org.jboss.hal.client.skeleton.HeaderPresenter;
 
 /**
  * @author Harald Pehl
  */
 public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView, ApplicationPresenter.MyProxy> {
 
+    // @formatter:off
     @ProxyStandard
     interface MyProxy extends Proxy<ApplicationPresenter> {}
 
-
     interface MyView extends View {}
+    // @formatter:on
 
 
     @ContentSlot

@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.widget;
+package org.jboss.hal.client.skeleton;
 
 import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
@@ -35,10 +35,11 @@ import javax.inject.Inject;
  */
 public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView> {
 
+    // @formatter:off
     public interface MyView extends View, HasPresenter<FooterPresenter> {
-
         void update(Environment environment);
     }
+    // @formatter:on
 
 
     private final Environment environment;
@@ -56,10 +57,6 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView> {
         super.onBind();
         getView().setPresenter(this);
         getView().update(environment);
-    }
-
-    @Override
-    public void onReset() {
     }
 
     public void onShowVersion() {
