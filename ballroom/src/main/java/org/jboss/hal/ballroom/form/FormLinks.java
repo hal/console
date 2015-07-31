@@ -27,6 +27,7 @@ import elemental.events.EventListener;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Id;
+import org.jboss.hal.ballroom.LayoutSpec;
 import org.jboss.hal.ballroom.form.Form.State;
 import org.jboss.hal.resources.HalConstants;
 
@@ -37,7 +38,7 @@ import static org.jboss.hal.ballroom.form.Form.State.*;
 /**
  * @author Harald Pehl
  */
-public class FormLinks implements IsElement, FormLayout {
+public class FormLinks implements IsElement, LayoutSpec {
 
     static class Builder {
 

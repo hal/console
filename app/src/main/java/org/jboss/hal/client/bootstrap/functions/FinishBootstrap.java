@@ -21,29 +21,24 @@
  */
 package org.jboss.hal.client.bootstrap.functions;
 
-import javax.inject.Inject;
+import com.google.gwt.core.client.GWT;
+import org.jboss.gwt.flow.Control;
+import org.jboss.hal.core.flow.FunctionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Simple wrapper around an ordered array of HAL's bootstrap functions.
- *
  * @author Harald Pehl
  */
-public class BootstrapFunctions {
+public class FinishBootstrap implements BootstrapFunction {
 
-    private final BootstrapFunction[] functions;
+    private static final Logger logger = LoggerFactory.getLogger(FinishBootstrap.class);
 
-    @Inject
-    public BootstrapFunctions(final CheckForUpdate checkForUpdate,
-            final ReadEnvironment readEnvironment,
-            final FinishBootstrap finishBootstrap) {
-        this.functions = new BootstrapFunction[]{
-                checkForUpdate,
-//                readEnvironment,
-                finishBootstrap
-        };
-    }
-
-    public BootstrapFunction[] functions() {
-        return functions;
+    @Override
+    public void execute(final Control<FunctionContext> control) {
+        // reset the uncaught exception handler setup in HalPreBootstrapper
+        // TODO Emit an error message
+        GWT.setUncaughtExceptionHandler(e -> logger.error("Uncaught exception: {}", e.getMessage()));
+        control.proceed();
     }
 }

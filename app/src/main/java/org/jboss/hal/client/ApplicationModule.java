@@ -26,6 +26,8 @@ import com.gwtplatform.mvp.client.annotations.ErrorPlace;
 import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
 import com.gwtplatform.mvp.shared.proxy.RouteTokenFormatter;
+import org.jboss.hal.client.deployment.DeploymentPresenter;
+import org.jboss.hal.client.deployment.DeploymentView;
 import org.jboss.hal.client.homepage.HomepagePresenter;
 import org.jboss.hal.client.homepage.Templated_HomepageView_Provider;
 import org.jboss.hal.client.skeleton.FooterPresenter;
@@ -68,5 +70,10 @@ public class ApplicationModule extends AbstractTemplatedPresenterModule {
                 HomepagePresenter.MyView.class,
                 Templated_HomepageView_Provider.class,
                 HomepagePresenter.MyProxy.class);
+
+        bindPresenter(DeploymentPresenter.class,
+                DeploymentPresenter.MyView.class,
+                DeploymentView.class,
+                DeploymentPresenter.MyProxy.class);
     }
 }

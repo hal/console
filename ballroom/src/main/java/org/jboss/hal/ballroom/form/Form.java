@@ -40,8 +40,8 @@ public interface Form<T> extends IsElement {
      *   +-----+  EMPTY  <-----+-------+-------+
      *   |     |         |     |       |       |
      *   |     +----+----+     |       |       |
-     *   |          |          undefine()      |
-     *   |        view()       |       |       |
+     *   |          |          |       |       |
+     *   |        view()       undefine()      |
      *   |          |          |       |       |
      *   |     +----v----+     |       |       |
      *   |     |         +-----+       |       |

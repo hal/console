@@ -180,4 +180,29 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     void onReconnect() {
         Window.alert("Reconnect not yet implemented");
     }
+
+    @EventHandler(element = "homepage", on = click)
+    void onHomepage() {
+        presenter.navigateTo(NameTokens.Homepage);
+    }
+
+    @EventHandler(element = "deployments", on = click)
+    void onDeployments() {
+        presenter.navigateTo(NameTokens.Deployments);
+    }
+
+    @EventHandler(element = "configuration", on = click)
+    void onConfiguration() {
+        presenter.navigateTo(NameTokens.Configuration);
+    }
+
+    @EventHandler(element = "runtime", on = click)
+    void onRuntime() {
+        presenter.navigateTo(NameTokens.Runtime);
+    }
+
+    @EventHandler(element = "accessControl", on = click)
+    void onAccessControl() {
+        presenter.navigateTo(NameTokens.AccessControl);
+    }
 }

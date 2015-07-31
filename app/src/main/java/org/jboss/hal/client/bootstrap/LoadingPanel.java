@@ -48,9 +48,10 @@ public class LoadingPanel implements IsElement {
         // @formatter:off
         loading = new Elements.Builder()
             .div().css("loading-container")
-                .div().css("loading").end()
-                .h(3).innerText("Loading").end()
-                .div().css("spinner").end()
+                .div().css("loading")
+                    .h(3).innerText("Loading").end()
+                    .span().css("spinner").end()
+                .end()
             .end()
         .build();
         // @formatter:on

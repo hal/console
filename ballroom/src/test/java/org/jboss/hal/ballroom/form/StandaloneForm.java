@@ -25,13 +25,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static org.jboss.hal.ballroom.form.Form.State.EDIT;
+import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
+import static org.jboss.hal.ballroom.form.Form.State.VIEW;
+
 /**
  * @author Harald Pehl
  */
 public class StandaloneForm extends AbstractForm<String> {
 
     protected StandaloneForm() {
-        super("test", true, true);
+        super("test", EMPTY, VIEW, EDIT);
     }
 
     @Override

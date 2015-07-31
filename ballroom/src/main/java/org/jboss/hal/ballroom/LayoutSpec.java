@@ -19,31 +19,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.bootstrap.functions;
-
-import javax.inject.Inject;
+package org.jboss.hal.ballroom;
 
 /**
- * Simple wrapper around an ordered array of HAL's bootstrap functions.
- *
  * @author Harald Pehl
  */
-public class BootstrapFunctions {
+public interface LayoutSpec {
 
-    private final BootstrapFunction[] functions;
-
-    @Inject
-    public BootstrapFunctions(final CheckForUpdate checkForUpdate,
-            final ReadEnvironment readEnvironment,
-            final FinishBootstrap finishBootstrap) {
-        this.functions = new BootstrapFunction[]{
-                checkForUpdate,
-//                readEnvironment,
-                finishBootstrap
-        };
-    }
-
-    public BootstrapFunction[] functions() {
-        return functions;
-    }
+    String COLUMN_DISCRIMINATOR = "md";
+    int LABEL_COLUMNS = 3;
+    int INPUT_COLUMNS = 9;
 }

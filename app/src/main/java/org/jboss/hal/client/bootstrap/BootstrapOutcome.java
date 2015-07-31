@@ -52,6 +52,6 @@ public class BootstrapOutcome implements Outcome<FunctionContext> {
     @Override
     public void onSuccess(final FunctionContext context) {
         LoadingPanel.get().off();
-        placeManager.revealDefaultPlace();
+        placeManager.revealCurrentPlace();
     }
 }

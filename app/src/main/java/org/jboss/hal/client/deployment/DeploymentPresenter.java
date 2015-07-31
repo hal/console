@@ -19,14 +19,37 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.ballroom.form;
+package org.jboss.hal.client.deployment;
+
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.Presenter;
+import com.gwtplatform.mvp.client.View;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyStandard;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.client.ApplicationPresenter;
+import org.jboss.hal.client.NameTokens;
+
+import javax.inject.Inject;
 
 /**
  * @author Harald Pehl
  */
-public interface FormLayout {
+public class DeploymentPresenter extends Presenter<DeploymentPresenter.MyView, DeploymentPresenter.MyProxy> {
 
-    String COLUMN_DISCRIMINATOR = "md";
-    int LABEL_COLUMNS = 3;
-    int INPUT_COLUMNS = 9;
+    // @formatter:off
+    @ProxyStandard
+    @NameToken(NameTokens.Deployments)
+    public interface MyProxy extends ProxyPlace<DeploymentPresenter> {}
+
+    public interface MyView extends View {}
+    // @formatter:on
+
+
+    @Inject
+    public DeploymentPresenter(final EventBus eventBus,
+            final MyView view,
+            final MyProxy proxy) {
+        super(eventBus, view, proxy, ApplicationPresenter.SLOT_MAIN_CONTENT);
+    }
 }

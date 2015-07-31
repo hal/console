@@ -27,12 +27,13 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import org.jboss.hal.ballroom.LayoutSpec;
 import org.jboss.hal.resources.HalConstants;
 
 /**
  * @author Harald Pehl
  */
-class FormHelp extends Composite implements FormLayout {
+class FormHelp extends Composite implements LayoutSpec {
 
     interface Templates extends SafeHtmlTemplates {
 

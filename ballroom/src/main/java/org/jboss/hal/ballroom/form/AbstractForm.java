@@ -31,6 +31,7 @@ import elemental.html.DivElement;
 import elemental.html.SpanElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Id;
+import org.jboss.hal.ballroom.LayoutSpec;
 import org.jboss.hal.resources.HalConstants;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ import static org.jboss.hal.ballroom.form.Form.State.*;
 /**
  * @author Harald Pehl
  */
-public abstract class AbstractForm<T> implements Form<T>, FormLayout {
+public abstract class AbstractForm<T> implements Form<T>, LayoutSpec {
 
     private final static HalConstants CONSTANTS = GWT.create(HalConstants.class);
 
@@ -56,6 +57,7 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
 
     private T model;
     private State state;
+    private State lastState;
     private EventListener exitEditWithEsc;
 
     private FormLinks formLinks;
@@ -81,7 +83,7 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
         this.supportedStates = supportedStates;
         this.panels = new LinkedHashMap<>();
 
-        if (supports(EDIT)) {
+        if (supports(EDIT) && (supports(VIEW) || supports(EMPTY))) {
             this.exitEditWithEsc = event -> {
                 if (event instanceof KeyboardEvent) {
                     KeyboardEvent keyboardEvent = (KeyboardEvent) event;
@@ -135,14 +137,14 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
         }
 
         if (supports(EMPTY)) {
-            state = EMPTY;
-            switchTo(EMPTY);
+            switchToEmptyState();
+            changeState(EMPTY);
         } else if (supports(VIEW)) {
-            state = VIEW;
-            switchTo(VIEW);
+            switchToViewState();
+            changeState(VIEW);
         } else {
-            state = EDIT;
-            switchTo(EDIT);
+            switchToEditState();
+            changeState(EDIT);
         }
         return section;
     }
@@ -206,16 +208,6 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
         // @formatter:on
     }
 
-    private void switchTo(State state) {
-        if (supports(state)) {
-            formLinks.switchTo(state);
-            for (Element panel : panels.values()) {
-                Elements.setVisible(panel, false);
-            }
-            Elements.setVisible(panels.get(state), true);
-        }
-    }
-
 
     // ------------------------------------------------------ add
 
@@ -236,7 +228,7 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
         this.model = newModel();
         prepareEditState();
         switchToEditState();
-        state = EDIT;
+        changeState(EDIT);
     }
 
 
@@ -257,12 +249,16 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
     @Override
     public void view(final T model) {
         if (model == null) { throw new NullPointerException("Model must not be null in view(T)"); }
-        assertState(EMPTY);
+        if (supports(EMPTY)) {
+            assertState(EMPTY);
+        } else {
+            assertState(VIEW);
+        }
 
         this.model = model;
         prepareViewState();
         switchToViewState();
-        state = VIEW;
+        changeState(VIEW);
     }
 
     /**
@@ -304,7 +300,7 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
         this.model = model;
         prepareEditState();
         switchToEditState();
-        state = EDIT;
+        changeState(EDIT);
     }
 
     /**
@@ -357,12 +353,12 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
         boolean valid = validate();
         if (valid) {
             updateModel(getChangedValues());
-            prepareViewState();
-            switchToViewState();
             if (saveCallback != null) {
                 saveCallback.onSave(getModel(), getChangedValues());
             }
-            state = VIEW;
+            prepareViewState();
+            switchToViewState();
+            changeState(VIEW);
         }
     }
 
@@ -379,10 +375,13 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
      * presses 'cancel'.
      * <ol>
      * <li>Clear errors: {@link #clearErrors()}</li>
-     * <li>Prepare the view state: {@link #prepareViewState()}</li>
-     * <li>Switch to view state: {@link #switchToViewState()}</li>
      * <li>Call registered cancel callbacks: {@link CancelCallback#onCancel(Object)}</li>
-     * <li>Change the state to {@link State#VIEW}</li>
+     * <li>Depending whether the last state was {@link State#EMPTY EMPTY} or {@link State#VIEW VIEW}</li>
+     * <ol>
+     * <li>Prepare the empty or view state</li>
+     * <li>Switch to empty or view state</li>
+     * <li>Change the state to {@link State#EMPTY} or {@link State#VIEW}</li>
+     * </ol>
      * </ol>
      * Please make sure to fulfill this contract in case you override this method.
      */
@@ -391,12 +390,18 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
         assertState(EDIT);
 
         clearErrors();
-        prepareViewState();
-        switchToViewState();
         if (cancelCallback != null) {
             cancelCallback.onCancel(getModel());
         }
-        state = VIEW;
+        if (lastState == EMPTY) {
+            prepareEmptyState();
+            switchToEmptyState();
+            changeState(EMPTY);
+        } else {
+            prepareViewState();
+            switchToViewState();
+            changeState(VIEW);
+        }
     }
 
 
@@ -406,11 +411,11 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
      * Implements the transition from [{@link State#VIEW VIEW}, {@link State#EDIT EDIT}] &rarr; {@link
      * State#EMPTY EMPTY}.
      * <ol>
-     * <li>Check whether this form supports 'undefine'</li>
+     * <li>Check whether this form can 'undefine' the model</li>
      * <li>Undefine the model: {@link #undefineModel()}</li>
+     * <li>Call registered undefine callbacks: {@link org.jboss.hal.ballroom.form.Form.UndefineCallback#onUndefine(Object)}</li>
      * <li>Prepare the empty state: {@link #prepareEmptyState()}</li>
      * <li>Switch to view state: {@link #switchToEmptyState()}</li>
-     * <li>Call registered undefine callbacks: {@link org.jboss.hal.ballroom.form.Form.UndefineCallback#onUndefine(Object)}</li>
      * <li>Change the state to {@link State#EMPTY}</li>
      * </ol>
      * Please make sure to stick with this contract in case you override this method.
@@ -421,12 +426,12 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
             assertState(VIEW, EDIT);
 
             undefineModel();
-            prepareEmptyState();
-            switchToEmptyState();
             if (undefineCallback != null) {
                 undefineCallback.onUndefine(getModel());
             }
-            state = EMPTY;
+            prepareEmptyState();
+            switchToEmptyState();
+            changeState(EMPTY);
         }
     }
 
@@ -465,6 +470,24 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
     }
 
 
+    // ------------------------------------------------------ state transition
+
+    private void switchTo(State state) {
+        if (supports(state)) {
+            formLinks.switchTo(state);
+            for (Element panel : panels.values()) {
+                Elements.setVisible(panel, false);
+            }
+            Elements.setVisible(panels.get(state), true);
+        }
+    }
+
+    private void changeState(State state) {
+        this.lastState = this.state;
+        this.state = state;
+    }
+
+
     // ------------------------------------------------------ properties
 
     @Override
@@ -480,6 +503,15 @@ public abstract class AbstractForm<T> implements Form<T>, FormLayout {
     @Override
     public State getState() {
         return state;
+    }
+
+    public boolean modified() {
+        for (FormItem formItem : formItems.values()) {
+            if (formItem.isModified()) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
