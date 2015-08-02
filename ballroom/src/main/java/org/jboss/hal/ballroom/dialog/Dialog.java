@@ -68,7 +68,7 @@ public class Dialog implements IsElement {
         // mandatory attributes
         private final String id;
         private final String title;
-        private final Element body;
+        private final Elements.Builder body;
 
         // optional attributes
         private Button primaryButton;
@@ -77,16 +77,16 @@ public class Dialog implements IsElement {
         private boolean closeIcon;
         private boolean fadeIn;
 
-        public Builder(final String id, final String title, final Element body) {
+        public Builder(final String id, final String title) {
             this.id = id;
             this.title = title;
-            this.body = body;
+            this.body = new Elements.Builder().div().css("modal-body");
 
             this.primaryButton = null;
             this.secondaryButton = null;
             this.size = Size.MEDIUM;
             this.closeIcon = true;
-            this.fadeIn = true;
+            this.fadeIn = false;
         }
 
         /**
@@ -142,6 +142,15 @@ public class Dialog implements IsElement {
             return this;
         }
 
+        public Builder add(Element... elements) {
+            if (elements != null) {
+                for (Element element : elements) {
+                    body.add(element);
+                }
+            }
+            return this;
+        }
+
         public Dialog build() {
             return new Dialog(this);
         }
@@ -162,7 +171,7 @@ public class Dialog implements IsElement {
     public Dialog(final Builder builder) {
         this.id = builder.id;
         this.title = builder.title;
-        this.body = builder.body;
+        this.body = builder.body.end().build();
         this.primaryButton = builder.primaryButton;
         this.secondaryButton = builder.secondaryButton;
         this.size = builder.size;
@@ -230,12 +239,12 @@ public class Dialog implements IsElement {
 
                         // body
                         .div().css("modal-body")
-                            .start(body).end()
+                            .add(body)
                         .end()
 
                         // footer
                         .div().css("modal-footer").rememberAs("footer")
-                            .start(footer)
+                            .add(footer)
                         .end()
                     .end()
                 .end()
@@ -265,11 +274,16 @@ public class Dialog implements IsElement {
         return root;
     }
 
-    public void show() {
+    public native void show() /*-{
+        $doc.body.appendChild(this.@org.jboss.hal.ballroom.dialog.Dialog::root);
+        $wnd.$(".selectpicker").selectpicker();
+        var dialogId = '#' + this.@org.jboss.hal.ballroom.dialog.Dialog::id;
+        $wnd.$(dialogId).modal('show');
+    }-*/;
 
-    }
-
-    private void close() {
-
-    }
+    private native void close() /*-{
+        var dialogId = '#' + this.@org.jboss.hal.ballroom.dialog.Dialog::id;
+        $wnd.$(dialogId).modal('hide');
+        $doc.body.removeChild(this.@org.jboss.hal.ballroom.dialog.Dialog::root);
+    }-*/;
 }

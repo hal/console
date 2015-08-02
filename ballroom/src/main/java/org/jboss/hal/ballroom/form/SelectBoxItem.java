@@ -59,13 +59,8 @@ public class SelectBoxItem extends FormItem<String> {
             setUndefined(isNullOrEmpty(newValue));
             signalChange(newValue);
         });
-        selectPicker(comboBox.getId());
         return comboBox;
     }
-
-    private native void selectPicker(String id) /*-{
-        $wnd.$("#" + id).selectpicker();
-    }-*/;
 
     public void setValues(List<String> values, String defaultValue) {
         comboBox.setValues(values, defaultValue);

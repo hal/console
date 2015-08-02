@@ -22,6 +22,7 @@
 package org.jboss.hal.ballroom.form;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import elemental.client.Browser;
 import elemental.dom.Element;
@@ -30,6 +31,7 @@ import elemental.events.KeyboardEvent;
 import elemental.html.DivElement;
 import elemental.html.SpanElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.LazyElement;
 import org.jboss.hal.ballroom.Id;
 import org.jboss.hal.ballroom.LayoutSpec;
 import org.jboss.hal.resources.HalConstants;
@@ -45,34 +47,40 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Form.State.*;
 
 /**
+ * An abstract form which implements a subset or all of the states described in {@link Form}.
+ * <p>
+ * Please note that all form items and help texts must be added to this form before it is added {@linkplain #asElement()
+ * as element} to the DOM.
+ *
  * @author Harald Pehl
  */
-public abstract class AbstractForm<T> implements Form<T>, LayoutSpec {
+public abstract class AbstractForm<T> extends LazyElement implements Form<T>, LayoutSpec {
 
     private final static HalConstants CONSTANTS = GWT.create(HalConstants.class);
 
     private final String id;
     private final EnumSet<State> supportedStates;
     private final LinkedHashMap<State, Element> panels;
+    private final LinkedHashMap<String, FormItem> formItems;
+    private final LinkedHashMap<String, String> helpTexts;
+    private final List<FormValidation> formValidations;
 
     private T model;
     private State state;
     private State lastState;
-    private EventListener exitEditWithEsc;
 
     private FormLinks formLinks;
     private DivElement errorPanel;
     private SpanElement errorMessage;
+    private EventListener exitEditWithEsc;
 
     // accessible in subclasses
-    protected final LinkedHashMap<String, FormItem> formItems;
-    protected final List<FormValidation> validationHandlers;
     protected SaveCallback<T> saveCallback;
     protected UndefineCallback<T> undefineCallback;
     protected CancelCallback<T> cancelCallback;
 
 
-    // ------------------------------------------------------ initialization / ui setup
+    // ------------------------------------------------------ initialization
 
     protected AbstractForm(final String id, final State firstSupportedState, final State... otherSupportedStates) {
 
@@ -82,9 +90,65 @@ public abstract class AbstractForm<T> implements Form<T>, LayoutSpec {
         this.id = id;
         this.supportedStates = supportedStates;
         this.panels = new LinkedHashMap<>();
+        this.formItems = new LinkedHashMap<>();
+        this.helpTexts = new LinkedHashMap<>();
+        this.formValidations = new ArrayList<>();
+    }
+
+    private void validateStates(final EnumSet<State> supportedStates) {
+        if (supportedStates.contains(EMPTY)) {
+            // EMPTY requires all three states!
+            if (!supportedStates.contains(VIEW) && !supportedStates.contains(EDIT)) {
+                throw new IllegalStateException(
+                        "Illegal state combination: " + EMPTY + " without " + VIEW + " and " + EDIT);
+            }
+        }
+    }
+
+    protected void addFormItem(FormItem formItem, FormItem... formItems) {
+        for (FormItem item : Lists.asList(formItem, formItems)) {
+            this.formItems.put(item.getName(), item);
+        }
+    }
+
+    protected void addHelp(String label, String description) {
+        helpTexts.put(label, description);
+    }
+
+    public void addFormValidation(FormValidation formValidation) {
+        formValidations.add(formValidation);
+    }
+
+
+    // ------------------------------------------------------ ui setup
+
+    @Override
+    protected Element lazyElement() {
+
+        Element section = Browser.getDocument().createElement("section");
+        section.setId(id);
+
+        formLinks = new FormLinks(id, supportedStates, helpTexts,
+                event -> add(),
+                event -> edit(getModel()),
+                event -> undefine());
+        section.appendChild(formLinks.asElement());
+
+        if (supports(EMPTY)) {
+            panels.put(EMPTY, emptyPanel());
+        }
+        if (supports(VIEW)) {
+            panels.put(VIEW, viewPanel());
+        }
+        if (supports(EDIT)) {
+            panels.put(EDIT, editPanel());
+        }
+        for (Element element : panels.values()) {
+            section.appendChild(element);
+        }
 
         if (supports(EDIT) && (supports(VIEW) || supports(EMPTY))) {
-            this.exitEditWithEsc = event -> {
+            exitEditWithEsc = event -> {
                 if (event instanceof KeyboardEvent) {
                     KeyboardEvent keyboardEvent = (KeyboardEvent) event;
                     if (keyboardEvent.getKeyCode() == KeyboardEvent.KeyCode.ESC &&
@@ -96,44 +160,6 @@ public abstract class AbstractForm<T> implements Form<T>, LayoutSpec {
                     }
                 }
             };
-        }
-
-        this.formItems = new LinkedHashMap<>();
-        this.validationHandlers = new ArrayList<>();
-        this.formLinks = new FormLinks.Builder(id, supportedStates)
-                .onAdd(event -> add())
-                .onEdit(event -> edit(getModel()))
-                .onUndefine(event -> undefine())
-                .build();
-    }
-
-    private void validateStates(final EnumSet<State> supportedStates) {
-        if (supportedStates.contains(EMPTY)) {
-            // EMPTY requires all three states!
-            if (!supportedStates.contains(VIEW) && !supportedStates.contains(EDIT)) {
-                throw new IllegalStateException(
-                        "Illegal state combination: " + EMPTY + " withtout " + VIEW + " and " + EDIT);
-            }
-        }
-    }
-
-    @Override
-    public Element asElement() {
-        if (supports(EMPTY)) {
-            panels.put(EMPTY, emptyPanel());
-        }
-        if (supports(VIEW)) {
-            panels.put(VIEW, viewPanel());
-        }
-        if (supports(EDIT)) {
-            panels.put(EDIT, editPanel());
-        }
-
-        Element section = Browser.getDocument().createElement("section");
-        section.setId(id);
-        section.appendChild(formLinks.asElement());
-        for (Element element : panels.values()) {
-            section.appendChild(element);
         }
 
         if (supports(EMPTY)) {
@@ -185,14 +211,10 @@ public abstract class AbstractForm<T> implements Form<T>, LayoutSpec {
         for (FormItem formItem : formItems.values()) {
             editPanel.appendChild(formItem.asElement());
         }
-        editPanel.appendChild(buttons());
-        return editPanel;
-    }
 
-    private Element buttons() {
         // @formatter:off
-        return new Elements.Builder()
-            .div().css("form-group")
+        Element buttons = new Elements.Builder()
+            .div().css("form-group edit-buttons")
                 .div().css("col-" + COLUMN_DISCRIMINATOR + "-offset-" + LABEL_COLUMNS + " col-" + COLUMN_DISCRIMINATOR + "-" + INPUT_COLUMNS)
                     .div().css("pull-right form-buttons")
                         .button().css("btn btn-form btn-default").on(click, event -> cancel())
@@ -206,6 +228,9 @@ public abstract class AbstractForm<T> implements Form<T>, LayoutSpec {
             .end()
         .build();
         // @formatter:on
+        editPanel.appendChild(buttons);
+
+        return editPanel;
     }
 
 
@@ -248,11 +273,17 @@ public abstract class AbstractForm<T> implements Form<T>, LayoutSpec {
      */
     @Override
     public void view(final T model) {
-        if (model == null) { throw new NullPointerException("Model must not be null in view(T)"); }
-        if (supports(EMPTY)) {
-            assertState(EMPTY);
-        } else {
-            assertState(VIEW);
+        assertState(EMPTY, VIEW);
+
+        if (model == null) {
+            if (supportsOnly(VIEW)) {
+                // Model can be null if this is a view only form.
+                // In this case just create a new one
+                this.model = newModel();
+            } else {
+                // Not ok for (add-)view-edit forms
+                throw new NullPointerException("Model must not be null in view(T)");
+            }
         }
 
         this.model = model;
@@ -294,8 +325,18 @@ public abstract class AbstractForm<T> implements Form<T>, LayoutSpec {
      */
     @Override
     public void edit(final T model) {
-        if (model == null) { throw new NullPointerException("Model must not be null in edit(T)"); }
         assertState(EMPTY, VIEW);
+
+        if (model == null) {
+            if (supportsOnly(EDIT)) {
+                // Model can be null if this is a edit only form.
+                // In this case just create a new one
+                this.model = newModel();
+            } else {
+                // Not ok for (add-)view-edit forms
+                throw new NullPointerException("Model must not be null in edit(T)");
+            }
+        }
 
         this.model = model;
         prepareEditState();
@@ -313,7 +354,6 @@ public abstract class AbstractForm<T> implements Form<T>, LayoutSpec {
      */
     protected void switchToEditState() {
         switchTo(EDIT);
-        initSelectPickers();
 
         if (!formItems.isEmpty()) {
             formItems.values().iterator().next().setFocus(true);
@@ -324,10 +364,6 @@ public abstract class AbstractForm<T> implements Form<T>, LayoutSpec {
             Browser.getDocument().setOnkeyup(exitEditWithEsc);
         }
     }
-
-    private native void initSelectPickers() /*-{
-        $wnd.$('.selectpicker').selectpicker();
-    }-*/;
 
 
     // ------------------------------------------------------ save, cancel
@@ -547,7 +583,7 @@ public abstract class AbstractForm<T> implements Form<T>, LayoutSpec {
 
         // validate form on its own
         List<String> messages = new ArrayList<>();
-        for (FormValidation validationHandler : validationHandlers) {
+        for (FormValidation validationHandler : formValidations) {
             ValidationResult validationResult = validationHandler.validate(formItems.values());
             if (!validationResult.isValid()) {
                 messages.add(validationResult.getMessage());
@@ -597,17 +633,14 @@ public abstract class AbstractForm<T> implements Form<T>, LayoutSpec {
     }
 
 
-    // ------------------------------------------------------ form help delegate
-
-    protected void addHelp(String label, String description) {
-        formLinks.addHelpText(label, description);
-    }
-
-
     // ------------------------------------------------------ helper methods
 
     private boolean supports(State state) {
         return supportedStates.contains(state);
+    }
+
+    private boolean supportsOnly(State state) {
+        return supportedStates.size() == 1 && supports(state);
     }
 
     private void assertState(State... state) {
