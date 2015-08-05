@@ -84,6 +84,7 @@ public abstract class FormItem<T>
 
     public FormItem(String name, String label) {
         this.inputElement = newInputElement();
+        this.inputElement.asElement().getDataset().setAt("form-item", name);
 
         this.required = false;
         this.modified = false;
