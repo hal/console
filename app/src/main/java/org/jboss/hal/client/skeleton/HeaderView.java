@@ -139,7 +139,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     }
 
     @Override
-    public void select(final String nameToken) {
+    public void selectTlc(final String nameToken) {
         for (String token : tlc.keySet()) {
             if (token.equals(nameToken)) {
                 tlc.get(token).getClassList().add("active");

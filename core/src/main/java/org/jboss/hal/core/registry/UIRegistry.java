@@ -25,11 +25,12 @@ import org.jboss.gwt.flow.Progress;
 
 /**
  * Registry which can be used to get references to global UI elements such as the progress bar in the footer.
+ *
  * @author Harald Pehl
  */
 public class UIRegistry {
 
-    private Progress progress;
+    private Progress progress = Progress.NOOP;
 
     public Progress getProgress() {
         return progress;

@@ -19,33 +19,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core;
+package org.jboss.hal.core.registry;
 
-import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.core.registry.Footer;
-import org.jboss.hal.core.registry.ResourceDescriptionRegistry;
-import org.jboss.hal.core.registry.UIRegistry;
-import org.jboss.hal.spi.GinModule;
+import javax.inject.Qualifier;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
 
-@GinModule
-public class CoreModule extends AbstractGinModule {
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-    @Override
-    protected void configure() {
-        bind(ResourceDescriptionRegistry.class).in(Singleton.class);
-        bind(UIRegistry.class).in(Singleton.class);
-    }
-
-    /**
-     * Convenience provider to make the global {@link Progress} implementation in HAL's footer injectable. Please use
-     * the qualifier {@code @Footer} for injections.
-     */
-    @Provides
-    @Footer
-    Progress provideProgress(UIRegistry uiRegistry) {
-        return uiRegistry.getProgress();
-    }
+/**
+ * Qualifier to select the progress implementation in HAL's footer.
+ *
+ * @author Harald Pehl
+ */
+@Documented
+@Retention(RUNTIME)
+@Qualifier
+public @interface Footer {
 }

@@ -84,7 +84,6 @@ public abstract class FormItem<T>
 
     public FormItem(String name, String label) {
         this.inputElement = newInputElement();
-        this.inputElement.asElement().getDataset().setAt("form-item", name);
 
         this.required = false;
         this.modified = false;
@@ -168,7 +167,7 @@ public abstract class FormItem<T>
     }
 
 
-    // ------------------------------------------------------ state, id, name & text
+    // ------------------------------------------------------ state, name & text
 
     @Override
     public T getValue() {
@@ -237,6 +236,15 @@ public abstract class FormItem<T>
     @Override
     public void setText(final String text) {
         inputElement.setText(text);
+    }
+
+    public void identifyAs(String id, String... additionalIds) {
+        String fq = Id.generate(id, additionalIds);
+        setId(fq);
+        setName(fq);
+        asElement().getDataset().setAt("formItemGroup", fq);
+        labelElement.getDataset().setAt("formItemLabel", fq);
+        inputElement.asElement().getDataset().setAt("formItemControl", fq);
     }
 
 

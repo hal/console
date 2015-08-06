@@ -32,6 +32,7 @@ public interface HalConstants extends Constants {
     String connect_to_server();
     String edit();
     String expression_resolver();
+    String form_errors();
     String help();
     String logout();
     String model_browser();

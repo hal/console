@@ -46,7 +46,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     // @formatter:off
     public interface MyView extends View, HasPresenter<HeaderPresenter> {
         void update(Environment environment, Endpoints endpoints, User user);
-        void select(String nameToken);
+        void selectTlc(String nameToken);
         void showMessage(Message.Level level, String message);
         void updateMessageCount(int messages);
     }
@@ -100,7 +100,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     @Override
     protected void onReset() {
         super.onReset();
-        getView().select(placeManager.getCurrentPlaceRequest().getNameToken());
+        getView().selectTlc(placeManager.getCurrentPlaceRequest().getNameToken());
     }
 
     public void navigateTo(final String place) {

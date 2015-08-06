@@ -61,16 +61,9 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
 
     @PostConstruct
     void init() {
-        Element root = asElement();
-
         uiRegistry().register(progress);
-
         Elements.setVisible(updateAvailable, false);
-        Elements.dataElement(root, "tools").setInnerText(i18n().constants().tools());
-        Elements.dataElement(root, "modelBrowser").setInnerText(i18n().constants().model_browser());
-        Elements.dataElement(root, "settings").setInnerText(i18n().constants().settings());
-
-        initWidget(Elements.asWidget(root));
+        initWidget(Elements.asWidget(asElement()));
     }
 
     @Override

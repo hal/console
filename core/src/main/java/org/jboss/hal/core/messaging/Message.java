@@ -22,6 +22,7 @@
 package org.jboss.hal.core.messaging;
 
 import com.gwtplatform.dispatch.annotation.GenEvent;
+import com.gwtplatform.dispatch.annotation.Optional;
 import com.gwtplatform.dispatch.annotation.Order;
 
 @GenEvent
@@ -31,6 +32,8 @@ public class Message {
         ERROR, WARNING, INFO
     }
 
+
     @Order(1) Level level;
     @Order(2) String message;
+    @Order(3) @Optional boolean sticky;
 }

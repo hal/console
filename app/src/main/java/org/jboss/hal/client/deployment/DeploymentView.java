@@ -37,6 +37,7 @@ import org.jboss.hal.ballroom.layout.LayoutBuilder;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Map;
 
 import static org.jboss.hal.ballroom.form.Form.State.*;
@@ -48,8 +49,8 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
 
     class SampleForm extends AbstractForm<String> {
 
-        protected SampleForm(final String id, final State firstSupportedState, final State... otherSupportedStates) {
-            super(id, firstSupportedState, otherSupportedStates);
+        protected SampleForm(final String id, final EnumSet<State> supportedStates) {
+            super(id, supportedStates);
 
             TextBoxItem name = new TextBoxItem("name", "Name");
             name.setRequired(true);
@@ -88,23 +89,20 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
 
         @Override
         protected void updateModel(final Map<String, Object> changedValues) {}
-
-        @Override
-        protected void undefineModel() {}
     }
 
     private Dialog dialog;
 
     public DeploymentView() {
-        SampleForm dialogForm = new SampleForm("dialog-form", EDIT);
+        SampleForm dialogForm = new SampleForm("dialog", EnumSet.of(EDIT));
         Element dialogBody = new Elements.Builder().p().innerText("A form inside a dialog").end()
                 .add(dialogForm.asElement()).build();
         dialog = new Dialog.Builder("sample-dialog", "Sample Dialog").add(dialogBody).closeOnly().build();
 
         Element element = new LayoutBuilder()
                 .header("Sample Form")
-                .add(new SampleForm("homepage-form", EMPTY, VIEW, EDIT).asElement())
-                .build();
+                .add(new SampleForm("deployment", EnumSet.of(EMPTY, VIEW, EDIT)).asElement())
+                        .build();
         initWidget(Elements.asWidget(element));
     }
 }

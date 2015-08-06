@@ -21,17 +21,15 @@
  */
 package org.jboss.hal.client;
 
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
-import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.presenter.slots.IsSingleSlot;
+import com.gwtplatform.mvp.client.presenter.slots.NestedSlot;
 import com.gwtplatform.mvp.client.presenter.slots.PermanentSlot;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.hal.client.skeleton.FooterPresenter;
 import org.jboss.hal.client.skeleton.HeaderPresenter;
 
@@ -48,8 +46,7 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
     // @formatter:on
 
 
-    @ContentSlot
-    public static final GwtEvent.Type<RevealContentHandler<?>> SLOT_MAIN_CONTENT = new GwtEvent.Type<>();
+    public static final NestedSlot SLOT_MAIN_CONTENT = new NestedSlot();
     public static final IsSingleSlot<HeaderPresenter> SLOT_HEADER_CONTENT = new PermanentSlot<>();
     public static final IsSingleSlot<FooterPresenter> SLOT_FOOTER_CONTENT = new PermanentSlot<>();
 

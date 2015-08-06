@@ -30,6 +30,7 @@ import elemental.events.EventListener;
 import elemental.events.KeyboardEvent;
 import elemental.html.DivElement;
 import elemental.html.SpanElement;
+import elemental.html.UListElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.LazyElement;
 import org.jboss.hal.ballroom.Id;
@@ -49,7 +50,8 @@ import static org.jboss.hal.ballroom.form.Form.State.*;
 /**
  * An abstract form which implements a subset or all of the states described in {@link Form}.
  * <p>
- * Please note that all form items and help texts must be added to this form before it is added {@linkplain #asElement()
+ * Please note that all form items and help texts must be added to this form before it is added {@linkplain
+ * #asElement()
  * as element} to the DOM.
  *
  * @author Harald Pehl
@@ -68,10 +70,12 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
     private T model;
     private State state;
     private State lastState;
+    private boolean transient_;
 
     private FormLinks formLinks;
     private DivElement errorPanel;
     private SpanElement errorMessage;
+    private UListElement errorMessages;
     private EventListener exitEditWithEsc;
 
     // accessible in subclasses
@@ -82,9 +86,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
 
     // ------------------------------------------------------ initialization
 
-    protected AbstractForm(final String id, final State firstSupportedState, final State... otherSupportedStates) {
-
-        EnumSet<State> supportedStates = EnumSet.of(firstSupportedState, otherSupportedStates);
+    protected AbstractForm(final String id, EnumSet<State> supportedStates) {
         validateStates(supportedStates);
 
         this.id = id;
@@ -93,6 +95,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
         this.formItems = new LinkedHashMap<>();
         this.helpTexts = new LinkedHashMap<>();
         this.formValidations = new ArrayList<>();
+        this.transient_ = true;
     }
 
     private void validateStates(final EnumSet<State> supportedStates) {
@@ -123,7 +126,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
     // ------------------------------------------------------ ui setup
 
     @Override
-    protected Element lazyElement() {
+    protected Element createElement() {
 
         Element section = Browser.getDocument().createElement("section");
         section.setId(id);
@@ -193,14 +196,13 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
         // @formatter:off
         Elements.Builder errorPanelBuilder = new Elements.Builder()
             .div().css("alert alert-danger").rememberAs("errorPanel")
-                .span().css("pficon-layered")
-                    .span().css("pficon pficon-error-octagon").end()
-                    .span().css("pficon pficon-error-exclamation").end()
-                .end()
+                .span().css("pficon pficon-error-circle-o").end()
                 .span().rememberAs("errorMessage").end()
+                .ul().rememberAs("errorMessages").end()
             .end();
         // @formatter:on
         errorMessage = errorPanelBuilder.referenceFor("errorMessage");
+        errorMessages = errorPanelBuilder.referenceFor("errorMessages");
         errorPanel = errorPanelBuilder.build();
         clearErrors();
 
@@ -209,6 +211,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
                 .build();
         editPanel.appendChild(errorPanel);
         for (FormItem formItem : formItems.values()) {
+            formItem.identifyAs(id, "edit", formItem.getName());
             editPanel.appendChild(formItem.asElement());
         }
 
@@ -244,13 +247,13 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
      * <li>Switch to edit state: {@link #switchToEditState()}</li>
      * <li>Change the state to {@link State#EDIT}</li>
      * </ol>
-     * Please make sure to fulfill this contract in case you override this method.
      */
     @Override
-    public void add() {
+    public final void add() {
         assertState(EMPTY);
 
         this.model = newModel();
+        this.transient_ = true;
         prepareEditState();
         switchToEditState();
         changeState(EDIT);
@@ -267,12 +270,11 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
      * <li>Switch to view state: {@link #switchToViewState()}</li>
      * <li>Change the state to {@link State#VIEW}</li>
      * </ol>
-     * Please make sure to fulfill this contract in case you override this method.
      *
      * @param model the model to view
      */
     @Override
-    public void view(final T model) {
+    public final void view(final T model) {
         assertState(EMPTY, VIEW);
 
         if (model == null) {
@@ -280,6 +282,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
                 // Model can be null if this is a view only form.
                 // In this case just create a new one
                 this.model = newModel();
+                this.transient_ = true;
             } else {
                 // Not ok for (add-)view-edit forms
                 throw new NullPointerException("Model must not be null in view(T)");
@@ -301,8 +304,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
      * Flips the deck panel so that the view panel is visible
      */
     protected void switchToViewState() {
-        if (exitEditWithEsc != null) {
-            Browser.getDocument().removeEventListener("keyup", exitEditWithEsc);
+        if (exitEditWithEsc != null && panels.get(EDIT) != null) {
+            panels.get(EDIT).removeEventListener("keyup", exitEditWithEsc);
         }
         switchTo(VIEW);
     }
@@ -324,7 +327,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
      * @param model the model to edit
      */
     @Override
-    public void edit(final T model) {
+    public final void edit(final T model) {
         assertState(EMPTY, VIEW);
 
         if (model == null) {
@@ -332,6 +335,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
                 // Model can be null if this is a edit only form.
                 // In this case just create a new one
                 this.model = newModel();
+                this.transient_ = true;
             } else {
                 // Not ok for (add-)view-edit forms
                 throw new NullPointerException("Model must not be null in edit(T)");
@@ -359,9 +363,9 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
             formItems.values().iterator().next().setFocus(true);
         }
 
-        if (exitEditWithEsc != null) {
+        if (exitEditWithEsc != null && panels.get(EDIT) != null) {
             // Exit *this* edit state by pressing ESC
-            Browser.getDocument().setOnkeyup(exitEditWithEsc);
+            panels.get(EDIT).setOnkeyup(exitEditWithEsc);
         }
     }
 
@@ -374,27 +378,30 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
      * <ol>
      * <li>Validate the form and input fields: {@link #validate()}</li>
      * <li>Update the model with the changed values: {@link #updateModel(Map)}</li>
+     * <li>Call registered save callbacks: {@link SaveCallback#onSave(Object, boolean, Map)}</li>
+     * <li>If this form supports the {@link State#VIEW VIEW} state</li>
+     * <ol>
      * <li>Prepare view state: {@link #prepareViewState()}</li>
      * <li>Switch to view state: {@link #switchToViewState()}</li>
-     * <li>Call registered save callbacks: {@link SaveCallback#onSave(Object,
-     * Map)}</li>
-     * <li>Change the state to {@link State#VIEW}</li>
+     * <li>Change the state to {@link State#VIEW VIEW}</li>
      * </ol>
-     * Please make sure to stick with this contract in case you override this method.
+     * </ol>
      */
     @Override
-    public void save() {
+    public final void save() {
         assertState(EDIT);
 
         boolean valid = validate();
         if (valid) {
             updateModel(getChangedValues());
             if (saveCallback != null) {
-                saveCallback.onSave(getModel(), getChangedValues());
+                saveCallback.onSave(getModel(), transient_, getChangedValues());
             }
-            prepareViewState();
-            switchToViewState();
-            changeState(VIEW);
+            if (supports(VIEW)) {
+                prepareViewState();
+                switchToViewState();
+                changeState(VIEW);
+            }
         }
     }
 
@@ -411,23 +418,30 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
      * presses 'cancel'.
      * <ol>
      * <li>Clear errors: {@link #clearErrors()}</li>
-     * <li>Call registered cancel callbacks: {@link CancelCallback#onCancel(Object)}</li>
-     * <li>Depending whether the last state was {@link State#EMPTY EMPTY} or {@link State#VIEW VIEW}</li>
+     * <li>Call registered cancel callbacks: {@link CancelCallback#onCancel(Object, boolean)}</li>
+     * <li>If this form supports the {@link State#EMPTY EMPTY} state and the last state was {@link State#EMPTY
+     * EMPTY}</li>
      * <ol>
-     * <li>Prepare the empty or view state</li>
-     * <li>Switch to empty or view state</li>
-     * <li>Change the state to {@link State#EMPTY} or {@link State#VIEW}</li>
+     * <li>Prepare empty state: {@link #prepareEmptyState()}</li>
+     * <li>Switch to empty state: {@link #switchToEmptyState()}</li>
+     * <li>Change the state to {@link State#EMPTY EMPTY}</li>
+     * </ol>
+     * <li>If this form supports the {@link State#VIEW VIEW} state and the last state was {@link State#VIEW
+     * VIEW}</li>
+     * <ol>
+     * <li>Prepare view state: {@link #prepareViewState()}</li>
+     * <li>Switch to view state: {@link #switchToViewState()}</li>
+     * <li>Change the state to {@link State#VIEW VIEW}</li>
      * </ol>
      * </ol>
-     * Please make sure to fulfill this contract in case you override this method.
      */
     @Override
-    public void cancel() {
+    public final void cancel() {
         assertState(EDIT);
 
         clearErrors();
         if (cancelCallback != null) {
-            cancelCallback.onCancel(getModel());
+            cancelCallback.onCancel(getModel(), transient_);
         }
         if (lastState == EMPTY) {
             prepareEmptyState();
@@ -454,14 +468,13 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
      * <li>Switch to view state: {@link #switchToEmptyState()}</li>
      * <li>Change the state to {@link State#EMPTY}</li>
      * </ol>
-     * Please make sure to stick with this contract in case you override this method.
      */
     @Override
-    public void undefine() {
+    public final void undefine() {
         if (undefinePossible()) {
             assertState(VIEW, EDIT);
 
-            undefineModel();
+            model = undefineModel();
             if (undefineCallback != null) {
                 undefineCallback.onUndefine(getModel());
             }
@@ -472,9 +485,11 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
     }
 
     /**
-     * This method is called when the user undefined the model.
+     * This method is called when the user undefines the model. It delegate to {@link #newModel()} by default.
      */
-    protected abstract void undefineModel();
+    protected T undefineModel() {
+        return newModel();
+    }
 
     /**
      * Checks whether this form supports the transition to state {@link State#EMPTY}.
@@ -499,8 +514,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
      * Flips the deck panel so that the empty panel is visible
      */
     protected void switchToEmptyState() {
-        if (exitEditWithEsc != null) {
-            Browser.getDocument().removeEventListener("keyup", exitEditWithEsc);
+        if (exitEditWithEsc != null && panels.get(EDIT) != null) {
+            panels.get(EDIT).removeEventListener("keyup", exitEditWithEsc);
         }
         switchTo(EMPTY);
     }
@@ -606,6 +621,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
             formItem.clearError();
         }
         errorMessage.setInnerText("");
+        Elements.removeChildrenFrom(errorMessages);
         Elements.setVisible(errorPanel, false);
     }
 
@@ -619,8 +635,18 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
     }
 
     protected void showErrors(List<String> messages) {
-        errorMessage.setInnerText(Joiner.on(", ").join(messages));
-        Elements.setVisible(errorPanel, true);
+        if (!messages.isEmpty()) {
+            if (messages.size() == 1) {
+                errorMessage.setInnerText(messages.get(0));
+                Elements.removeChildrenFrom(errorMessages);
+            } else {
+                errorMessage.setInnerText(CONSTANTS.form_errors());
+                for (String message : messages) {
+                    errorMessages.appendChild(new Elements.Builder().li().innerText(message).end().build());
+                }
+            }
+            Elements.setVisible(errorPanel, true);
+        }
     }
 
     protected void reset() {

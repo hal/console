@@ -22,12 +22,10 @@
 package org.jboss.hal.ballroom.form;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.EnumSet;
 import java.util.Map;
 
-import static org.jboss.hal.ballroom.form.Form.State.EDIT;
-import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
-import static org.jboss.hal.ballroom.form.Form.State.VIEW;
+import static org.jboss.hal.ballroom.form.Form.State.*;
 
 /**
  * @author Harald Pehl
@@ -35,7 +33,7 @@ import static org.jboss.hal.ballroom.form.Form.State.VIEW;
 public class StandaloneForm extends AbstractForm<String> {
 
     protected StandaloneForm() {
-        super("test", EMPTY, VIEW, EDIT);
+        super("test", EnumSet.of(EMPTY, VIEW, EDIT));
     }
 
     @Override
@@ -44,55 +42,10 @@ public class StandaloneForm extends AbstractForm<String> {
     }
 
     @Override
-    protected void undefineModel() {
-
-    }
-
-    @Override
-    protected void updateModel(final Map<String, Object> changedValues) {
-
-    }
+    protected void updateModel(final Map<String, Object> changedValues) {}
 
     @Override
     public Map<String, Object> getChangedValues() {
         return Collections.emptyMap();
-    }
-
-    @Override
-    protected void prepareViewState() {
-        // noop
-    }
-
-    @Override
-    protected void prepareEditState() {
-        // noop
-    }
-
-    @Override
-    protected void prepareEmptyState() {
-        // noop
-    }
-
-
-    // ------------------------------------------------------ overridden widget related methods
-
-    @Override
-    public void clearErrors() {
-    }
-
-    @Override
-    protected void showErrors(final List<String> messages) {
-    }
-
-    @Override
-    protected void switchToViewState() {
-    }
-
-    @Override
-    protected void switchToEditState() {
-    }
-
-    @Override
-    protected void switchToEmptyState() {
     }
 }

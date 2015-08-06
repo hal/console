@@ -82,7 +82,7 @@ class FormLinks implements IsElement, LayoutSpec {
         Element helpContent = rootBuilder.referenceFor("helpContent");
 
         if (supports(EMPTY) && supports(EDIT)) {
-            addLink = link(CONSTANTS.add(), "pficon pficon-add", onAdd);
+            addLink = link(CONSTANTS.add(), "fa fa-plus", onAdd);
             links.appendChild(addLink);
         }
         if (supports(VIEW) || supports(EDIT)) {

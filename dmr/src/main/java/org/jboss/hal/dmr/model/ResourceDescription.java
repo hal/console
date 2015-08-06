@@ -52,6 +52,10 @@ public class ResourceDescription extends ModelNode {
         return hasDefined(ATTRIBUTES);
     }
 
+    public List<Property> getAttributes() {
+        return get(ATTRIBUTES).asPropertyList();
+    }
+
     public boolean hasAccessControl() {
         return hasDefined(ACCESS_CONTROL);
     }

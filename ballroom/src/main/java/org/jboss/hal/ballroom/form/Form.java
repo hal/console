@@ -66,7 +66,7 @@ public interface Form<T> extends IsElement {
     @FunctionalInterface
     interface SaveCallback<T> {
 
-        void onSave(T model, Map<String, Object> changedValues);
+        void onSave(T model, boolean isTransient, Map<String, Object> changedValues);
     }
 
 
@@ -80,7 +80,7 @@ public interface Form<T> extends IsElement {
     @FunctionalInterface
     interface CancelCallback<T> {
 
-        void onCancel(T model);
+        void onCancel(T model, boolean isTransient);
     }
 
 

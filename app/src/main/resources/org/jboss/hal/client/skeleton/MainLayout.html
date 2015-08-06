@@ -54,7 +54,7 @@
             </li>
         </ul>
         <ul class="nav navbar-nav navbar-primary">
-            <li class="active"><a data-element="homepage" class="active">Homepage</a></li>
+            <li class="active"><a data-element="homepage" class="clickable active">Homepage</a></li>
             <li><a data-element="deployments" class="clickable">Deployments</a></li>
             <li><a data-element="configuration" class="clickable">Configuration</a></li>
             <li><a data-element="runtime" class="clickable">Runtime</a></li>
@@ -79,24 +79,24 @@
         <ul class="nav navbar-nav footer-tools">
             <li>
                 <a data-element="showVersion" class="clickable">
-                    <span data-element="halVersion">0.8.15</span><i data-element="updateAvailable" class="fa fa-bell"></i>
+                    <i data-element="updateAvailable" class="fa fa-bell"></i><span data-element="halVersion">0.8.15</span>
                 </a>
             </li>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <span class="fa fa-wrench"></span><span data-element="tools">Tools</span> <b class="caret"></b>
+                    <span class="fa fa-wrench"></span><span data-element="tools">{{i18n().constants().tools()}}</span> <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu dropdown">
                     <li>
-                        <a data-element="modelBrowser" class="clickable">Management Model</a>
+                        <a data-element="modelBrowser" class="clickable">{{i18n().constants().model_browser()}}</a>
                     </li>
                     <li>
-                        <a data-element="expressionResolver" class="clickable">Expression Resolver</a>
+                        <a data-element="expressionResolver" class="clickable">{{i18n().constants().expression_resolver()}}</a>
                     </li>
                 </ul>
             </li>
             <li>
-                <a data-element="settings" class="clickable"><span class="pficon pficon-settings"></span>Settings</a>
+                <a data-element="settings" class="clickable"><span class="pficon pficon-settings"></span>{{i18n().constants().settings()}}</a>
             </li>
         </ul>
     </nav>
