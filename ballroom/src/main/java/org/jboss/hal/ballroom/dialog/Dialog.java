@@ -187,7 +187,7 @@ public class Dialog implements IsElement {
         Elements.Builder footerBuilder = new Elements.Builder();
         if (secondaryButton != null) {
             footerBuilder.button()
-                    .css("btn btn-default")
+                    .css("btn btn-hal btn-default")
                     .on(click, event -> {
                         if (secondaryButton.callback.execute()) {
                             close();
@@ -198,7 +198,7 @@ public class Dialog implements IsElement {
         }
         if (primaryButton != null) {
             footerBuilder.button()
-                    .css("btn btn-primary")
+                    .css("btn btn-hal btn-primary")
                     .on(click, event -> {
                         if (primaryButton.callback.execute()) {
                             close();
