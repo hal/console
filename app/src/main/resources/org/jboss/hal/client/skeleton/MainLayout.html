@@ -29,15 +29,15 @@
         <ul class="nav navbar-nav navbar-utility">
             <li>
                 <a data-element="messages" class="clickable">
-                    <i class="fa fa-align-left"></i><span data-element="messagesLabel">Messages (23)</span>
+                    <i class="fa fa-align-left"></i><span id="{{ids().header_messages()}}" data-element="messagesLabel">Messages (23)</span>
                 </a>
             </li>
             <li class="dropdown">
                 <a class="clickable dropdown-toggle" data-toggle="dropdown">
-                    <i class="pficon pficon-user"></i><span data-element="userName">John Doe</span><b class="caret"></b>
+                    <i class="pficon pficon-user"></i><span id="{{ids().header_username()}}" data-element="userName">John Doe</span><b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
-                    <li data-element="roles" class="static">Active Roles: Administrator</li>
+                    <li id="{{ids().header_roles()}}" data-element="roles" class="static">Active Roles: Administrator</li>
                     <li class="divider"></li>
                     <li><a data-element="logout" class="clickable">Logout</a></li>
                 </ul>
@@ -47,18 +47,18 @@
                     <i class="fa fa-globe"></i><b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
-                    <li data-element="connectedTo" class="static">Connected to localhost</li>
+                    <li id="{{ids().header_connected_to()}}" data-element="connectedTo" class="static">Connected to localhost</li>
                     <li class="divider"></li>
                     <li><a data-element="reconnect" class="clickable">Connect to different server</a></li>
                 </ul>
             </li>
         </ul>
         <ul class="nav navbar-nav navbar-primary">
-            <li class="active"><a data-element="homepage" class="clickable active">Homepage</a></li>
-            <li><a data-element="deployments" class="clickable">Deployments</a></li>
-            <li><a data-element="configuration" class="clickable">Configuration</a></li>
-            <li><a data-element="runtime" class="clickable">Runtime</a></li>
-            <li><a data-element="accessControl" class="clickable">Access Control</a></li>
+            <li class="active"><a id="{{ids().tlc_homepage()}}" data-element="homepage" class="clickable active">Homepage</a></li>
+            <li><a id="{{ids().tlc_deployments()}}" data-element="deployments" class="clickable">Deployments</a></li>
+            <li><a id="{{ids().tlc_configuration()}}" data-element="configuration" class="clickable">Configuration</a></li>
+            <li><a id="{{ids().tlc_runtime()}}" data-element="runtime" class="clickable">Runtime</a></li>
+            <li><a id="{{ids().tlc_access_control()}}" data-element="accessControl" class="clickable">Access Control</a></li>
         </ul>
     </div>
 </nav>

@@ -24,13 +24,14 @@ package org.jboss.hal.client.skeleton;
 import com.google.common.base.Joiner;
 import com.google.gwt.user.client.Window;
 import com.gwtplatform.mvp.client.ViewImpl;
+import elemental.client.Browser;
+import elemental.dom.Document;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.DataElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventHandler;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
-import org.jboss.hal.ballroom.Id;
 import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
@@ -76,30 +77,14 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     @PostConstruct
     void init() {
         Element root = asElement();
-
-        Id.set(messagesLabel, ids().header_messages());
-        Id.set(userName, ids().header_username());
-        Id.set(roles, ids().header_roles());
-        Id.set(connectedTo, ids().header_connected_to());
-
-        Element homepage = Elements.dataElement(root, "homepage");
-        Element deployments = Elements.dataElement(root, "deployments");
-        Element configuration = Elements.dataElement(root, "configuration");
-        Element runtime = Elements.dataElement(root, "runtime");
-        Element accessControl = Elements.dataElement(root, "accessControl");
-
-        Id.set(homepage, ids().tlc_homepage());
-        Id.set(deployments, ids().tlc_deployments());
-        Id.set(configuration, ids().tlc_configuration());
-        Id.set(runtime, ids().tlc_runtime());
-        Id.set(accessControl, ids().tlc_access_control());
+        Document document = Browser.getDocument();
 
         tlc = new HashMap<>();
-        tlc.put(NameTokens.Homepage, homepage);
-        tlc.put(NameTokens.Deployments, deployments);
-        tlc.put(NameTokens.Configuration, configuration);
-        tlc.put(NameTokens.Runtime, runtime);
-        tlc.put(NameTokens.AccessControl, accessControl);
+        tlc.put(NameTokens.Homepage, document.getElementById(ids().tlc_homepage()));
+        tlc.put(NameTokens.Deployments, document.getElementById(ids().tlc_deployments()));
+        tlc.put(NameTokens.Configuration, document.getElementById(ids().tlc_configuration()));
+        tlc.put(NameTokens.Runtime, document.getElementById(ids().tlc_runtime()));
+        tlc.put(NameTokens.AccessControl, document.getElementById(ids().tlc_access_control()));
 
         initWidget(Elements.asWidget(root));
     }
