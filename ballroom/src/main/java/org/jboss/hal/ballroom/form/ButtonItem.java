@@ -40,7 +40,7 @@ public class ButtonItem extends FormItem<Void> {
     @Override
     protected InputElement<Void> newInputElement() {
         button = new ButtonElement();
-        button.setClassName("btn btn-default btn-form");
+        button.setClassName("btn btn-default btn-hal");
         return button;
     }
 
