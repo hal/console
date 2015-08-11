@@ -46,7 +46,7 @@
         <elemento.version>0.1.0</elemento.version>
         <flow.version>0.0.1</flow.version>
         <gin.version>2.1.2</gin.version>
-        <guava.version>18.0</guava.version>
+        <guava.version>19.0-SNAPSHOT</guava.version>
         <gwt.version>2.8.0-SNAPSHOT</gwt.version>
         <gwtp.version>1.5-SNAPSHOT</gwtp.version>
         <junit.version>4.12</junit.version>
