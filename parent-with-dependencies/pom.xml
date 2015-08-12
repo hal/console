@@ -40,7 +40,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <apt-tools.version>0.0.1</apt-tools.version>
+        <apt-tools.version>0.0.2</apt-tools.version>
         <auto-service.version>1.0-rc2</auto-service.version>
         <circuit.version>0.1.4</circuit.version>
         <elemento.version>0.1.0</elemento.version>

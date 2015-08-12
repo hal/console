@@ -6,19 +6,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=9">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link href="../../public/patternfly/dist/css/patternfly.min.css" rel="stylesheet">
-    <link href="../../public/patternfly/dist/css/patternfly-additions.min.css" rel="stylesheet">
-    <link href="../../public/css/hal.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../public/patternfly/dist/css/patternfly.min.css" media="screen, print">
+    <link rel="stylesheet" href="../../public/patternfly/dist/css/patternfly-additions.min.css" media="screen, print">
+    <link rel="stylesheet" href="../../public/css/hal.min.css" media="screen">
 
     <script src="../../public/patternfly/components/jquery/dist/jquery.min.js"></script>
     <script src="../../public/patternfly/components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../../public/patternfly/components/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
     <script src="../../public/patternfly/dist/js/patternfly.min.js"></script>
 </head>
 <body>
 <nav data-element="header" class="navbar navbar-default navbar-pf navbar-fixed-top" role="navigation">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".hal-header-collapse">
-            <span class="sr-only">Toggle navigation</span>
+            <span class="sr-only">{{i18n().constants().toggle_navigation()}}</span>
             <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
         </button>
         <a data-element="logoLink" class="navbar-brand logo clickable">
@@ -39,7 +40,7 @@
                 <ul class="dropdown-menu">
                     <li id="{{ids().header_roles()}}" data-element="roles" class="static">Active Roles: Administrator</li>
                     <li class="divider"></li>
-                    <li><a data-element="logout" class="clickable">Logout</a></li>
+                    <li><a data-element="logout" class="clickable">{{i18n().constants().logout()}}</a></li>
                 </ul>
             </li>
             <li class="dropdown">
@@ -49,16 +50,16 @@
                 <ul class="dropdown-menu">
                     <li id="{{ids().header_connected_to()}}" data-element="connectedTo" class="static">Connected to localhost</li>
                     <li class="divider"></li>
-                    <li><a data-element="reconnect" class="clickable">Connect to different server</a></li>
+                    <li><a data-element="reconnect" class="clickable">{{i18n().constants().connect_to_server()}}</a></li>
                 </ul>
             </li>
         </ul>
         <ul class="nav navbar-nav navbar-primary">
-            <li class="active"><a id="{{ids().tlc_homepage()}}" data-element="homepage" class="clickable active">Homepage</a></li>
-            <li><a id="{{ids().tlc_deployments()}}" data-element="deployments" class="clickable">Deployments</a></li>
-            <li><a id="{{ids().tlc_configuration()}}" data-element="configuration" class="clickable">Configuration</a></li>
-            <li><a id="{{ids().tlc_runtime()}}" data-element="runtime" class="clickable">Runtime</a></li>
-            <li><a id="{{ids().tlc_access_control()}}" data-element="accessControl" class="clickable">Access Control</a></li>
+            <li class="active"><a id="{{ids().tlc_homepage()}}" href="{{historyToken(org.jboss.hal.client.NameTokens.Homepage)}}" class="active">Homepage</a></li>
+            <li><a id="{{ids().tlc_deployments()}}" href="{{historyToken(org.jboss.hal.client.NameTokens.Deployments)}}">Deployments</a></li>
+            <li><a id="{{ids().tlc_configuration()}}" href="{{historyToken(org.jboss.hal.client.NameTokens.Configuration)}}">Configuration</a></li>
+            <li><a id="{{ids().tlc_runtime()}}" href="{{historyToken(org.jboss.hal.client.NameTokens.Runtime)}}">Runtime</a></li>
+            <li><a id="{{ids().tlc_access_control()}}" href="{{historyToken(org.jboss.hal.client.NameTokens.AccessControl)}}">Access Control</a></li>
         </ul>
     </div>
 </nav>

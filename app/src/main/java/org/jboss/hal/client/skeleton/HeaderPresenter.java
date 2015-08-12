@@ -103,8 +103,8 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         getView().selectTlc(placeManager.getCurrentPlaceRequest().getNameToken());
     }
 
-    public void navigateTo(final String place) {
-        PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(place).build();
+    public void navigateTo(final String token) {
+        PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token).build();
         placeManager.revealPlace(placeRequest);
     }
 

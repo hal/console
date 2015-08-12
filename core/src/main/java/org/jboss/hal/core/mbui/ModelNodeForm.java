@@ -51,6 +51,9 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
         private final Set<String> excludes;
         private final Map<String, ModelNodeFormItemFactory> factories;
         private final Map<String, SaveOperationProvider> saveOperations;
+        private SaveCallback<ModelNode> saveCallback;
+        private CancelCallback<ModelNode> cancelCallback;
+        private UndefineCallback<ModelNode> undefineCallback;
 
         public Builder(final String id, final ResourceDescription resourceDescription) {
             this.id = id;
@@ -88,6 +91,21 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
             return this;
         }
 
+        public Builder onSave(final SaveCallback<ModelNode> saveCallback) {
+            this.saveCallback = saveCallback;
+            return this;
+        }
+
+        public Builder onCancel(final CancelCallback<ModelNode> cancelCallback) {
+            this.cancelCallback = cancelCallback;
+            return this;
+        }
+
+        public Builder onUndefine(final UndefineCallback<ModelNode> undefineCallback) {
+            this.undefineCallback = undefineCallback;
+            return this;
+        }
+
         public ModelNodeForm build() {
             return new ModelNodeForm(this);
         }
@@ -104,9 +122,12 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
 
         this.factories = builder.factories;
         this.saveOperations = builder.saveOperations;
+        this.saveCallback = builder.saveCallback;
+        this.cancelCallback = builder.cancelCallback;
+        this.undefineCallback = builder.undefineCallback;
+
         this.reflection = new ResourceDescriptionReflection(builder.resourceDescription,
                 builder.includes, builder.excludes, factories);
-
         for (FormItem formItem : reflection.getFormItems()) {
             addFormItem(formItem);
         }

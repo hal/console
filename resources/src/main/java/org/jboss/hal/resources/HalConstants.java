@@ -26,7 +26,6 @@ public interface HalConstants extends Constants {
     String add();
     String bootstrap_failed();
     String bootstrap_exception();
-    String bootstrap_execution_mode();
     String cancel();
     String close();
     String connect_to_server();
@@ -45,6 +44,5 @@ public interface HalConstants extends Constants {
     String settings();
     String toggle_navigation();
     String tools();
-    String update_available();
     //@formatter:on
 }

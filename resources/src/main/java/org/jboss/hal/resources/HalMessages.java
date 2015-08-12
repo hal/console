@@ -20,11 +20,6 @@ package org.jboss.hal.resources;
 
 import com.google.gwt.i18n.client.Messages;
 
-/**
- * @author Heiko Braun
- * @author David Bosschaert
- * @date 5/2/11
- */
 public interface HalMessages extends Messages {
 
     //@formatter:off

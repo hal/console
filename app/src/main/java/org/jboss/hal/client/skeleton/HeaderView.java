@@ -24,8 +24,8 @@ package org.jboss.hal.client.skeleton;
 import com.google.common.base.Joiner;
 import com.google.gwt.user.client.Window;
 import com.gwtplatform.mvp.client.ViewImpl;
-import elemental.client.Browser;
-import elemental.dom.Document;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.DataElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -41,6 +41,7 @@ import org.jboss.hal.resources.HalIds;
 import org.jboss.hal.resources.I18n;
 
 import javax.annotation.PostConstruct;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,10 +56,11 @@ import static org.jboss.hal.config.InstanceInfo.WILDFLY;
 public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyView, IsElement {
 
     // @formatter:off
-    public static HeaderView create(final I18n i18n, final HalIds ids) {
-        return new Templated_HeaderView(i18n, ids);
+    public static HeaderView create(final TokenFormatter tokenFormatter, final I18n i18n, final HalIds ids) {
+        return new Templated_HeaderView(tokenFormatter, i18n, ids);
     }
 
+    public abstract TokenFormatter tokenFormatter();
     public abstract I18n i18n();
     public abstract HalIds ids();
     // @formatter:on
@@ -77,16 +79,20 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     @PostConstruct
     void init() {
         Element root = asElement();
-        Document document = Browser.getDocument();
 
         tlc = new HashMap<>();
-        tlc.put(NameTokens.Homepage, document.getElementById(ids().tlc_homepage()));
-        tlc.put(NameTokens.Deployments, document.getElementById(ids().tlc_deployments()));
-        tlc.put(NameTokens.Configuration, document.getElementById(ids().tlc_configuration()));
-        tlc.put(NameTokens.Runtime, document.getElementById(ids().tlc_runtime()));
-        tlc.put(NameTokens.AccessControl, document.getElementById(ids().tlc_access_control()));
+        tlc.put(NameTokens.Homepage, root.querySelector("#" + ids().tlc_homepage()));
+        tlc.put(NameTokens.Deployments, root.querySelector("#" + ids().tlc_deployments()));
+        tlc.put(NameTokens.Configuration, root.querySelector("#" + ids().tlc_configuration()));
+        tlc.put(NameTokens.Runtime, root.querySelector("#" + ids().tlc_runtime()));
+        tlc.put(NameTokens.AccessControl, root.querySelector("#" + ids().tlc_access_control()));
 
         initWidget(Elements.asWidget(root));
+    }
+
+    String historyToken(String token) {
+        PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token).build();
+        return "#" + tokenFormatter().toHistoryToken(Collections.singletonList(placeRequest));
     }
 
     @Override
@@ -143,7 +149,6 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     @Override
     public void showMessage(final Message.Level level, final String message) {
-
     }
 
     @EventHandler(element = "logoLink", on = click)
@@ -164,30 +169,5 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     @EventHandler(element = "reconnect", on = click)
     void onReconnect() {
         Window.alert("Reconnect not yet implemented");
-    }
-
-    @EventHandler(element = "homepage", on = click)
-    void onHomepage() {
-        presenter.navigateTo(NameTokens.Homepage);
-    }
-
-    @EventHandler(element = "deployments", on = click)
-    void onDeployments() {
-        presenter.navigateTo(NameTokens.Deployments);
-    }
-
-    @EventHandler(element = "configuration", on = click)
-    void onConfiguration() {
-        presenter.navigateTo(NameTokens.Configuration);
-    }
-
-    @EventHandler(element = "runtime", on = click)
-    void onRuntime() {
-        presenter.navigateTo(NameTokens.Runtime);
-    }
-
-    @EventHandler(element = "accessControl", on = click)
-    void onAccessControl() {
-        presenter.navigateTo(NameTokens.AccessControl);
     }
 }

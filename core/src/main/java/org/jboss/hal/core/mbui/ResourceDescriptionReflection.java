@@ -101,15 +101,15 @@ class ResourceDescriptionReflection {
         }
     }
 
-    public Map<String, ModelNode> getDefaults() {
+    Map<String, ModelNode> getDefaults() {
         return defaults;
     }
 
-    public List<FormItem> getFormItems() {
+    List<FormItem> getFormItems() {
         return formItems;
     }
 
-    public Map<String, String> getHelpTexts() {
+    Map<String, String> getHelpTexts() {
         return helpTexts;
     }
 }
