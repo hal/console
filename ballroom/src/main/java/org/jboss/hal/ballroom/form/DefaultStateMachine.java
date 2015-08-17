@@ -75,7 +75,7 @@ public class DefaultStateMachine extends AbstractStateMachine implements StateMa
 
             case EDIT:
                 if (current != null) {
-                    assertState(EDITING);
+                    assertState(READONLY, EDITING);
                 }
                 transitionTo(EDITING);
                 break;

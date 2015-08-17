@@ -29,10 +29,12 @@ import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemFactory;
 import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceDescription;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -168,7 +170,10 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
         this.cancelCallback = builder.cancelCallback;
         this.resetCallback = builder.resetCallback;
 
-        this.reflection = new ResourceDescriptionReflection(builder.resourceDescription,
+        List<Property> properties = builder.createResource ?
+                builder.resourceDescription.get(REQUEST_PROPERTIES).asPropertyList() :
+                builder.resourceDescription.get(ATTRIBUTES).asPropertyList();
+        this.reflection = new ResourceDescriptionReflection(properties,
                 builder.includes, builder.excludes, builder.includeRuntime, builder.factories);
         for (FormItem formItem : reflection.getFormItems().values()) {
             addFormItem(formItem);

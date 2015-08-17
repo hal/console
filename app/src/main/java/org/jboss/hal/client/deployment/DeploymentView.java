@@ -27,6 +27,8 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.AbstractForm;
 import org.jboss.hal.ballroom.form.ButtonItem;
+import org.jboss.hal.ballroom.form.DefaultStateMachine;
+import org.jboss.hal.ballroom.form.EditOnlyStateMachine;
 import org.jboss.hal.ballroom.form.NumberItem;
 import org.jboss.hal.ballroom.form.PasswordItem;
 import org.jboss.hal.ballroom.form.SelectBoxItem;
@@ -36,11 +38,6 @@ import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Map;
-
-import static org.jboss.hal.ballroom.form.Form.State.*;
 
 /**
  * @author Harald Pehl
@@ -49,8 +46,8 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
 
     class SampleForm extends AbstractForm<String> {
 
-        protected SampleForm(final String id, final EnumSet<State> supportedStates) {
-            super(id, supportedStates);
+        protected SampleForm(final String id, boolean editOnly) {
+            super(id, editOnly ? new EditOnlyStateMachine() : new DefaultStateMachine());
 
             TextBoxItem name = new TextBoxItem("name", "Name");
             name.setRequired(true);
@@ -76,33 +73,23 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
             addHelp("Hobbies", "Things you like to do in your spare time");
             addHelp("Color", "What's your favorite color?");
         }
-
-        @Override
-        public String newModel() {
-            return "n/a";
-        }
-
-        @Override
-        public Map<String, Object> getChangedValues() {
-            return Collections.emptyMap();
-        }
-
-        @Override
-        protected void updateModel(final Map<String, Object> changedValues) {}
     }
+
 
     private Dialog dialog;
 
     public DeploymentView() {
-        SampleForm dialogForm = new SampleForm("dialog", EnumSet.of(EDITING));
+        SampleForm dialogForm = new SampleForm("dialog", true);
         Element dialogBody = new Elements.Builder().p().innerText("A form inside a dialog").end()
                 .add(dialogForm.asElement()).build();
         dialog = new Dialog.Builder("sample-dialog", "Sample Dialog").add(dialogBody).closeOnly().build();
 
+        SampleForm form = new SampleForm("deployment", false);
         Element element = new LayoutBuilder()
                 .header("Sample Form")
-                .add(new SampleForm("deployment", EnumSet.of(EMPTY, READONLY, EDITING)).asElement())
-                        .build();
+                .add(form.asElement())
+                .build();
         initWidget(Elements.asWidget(element));
+        form.view("foo");
     }
 }

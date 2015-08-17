@@ -95,4 +95,20 @@ public class DefaultStateMachineTest {
         stateMachine.execute(RESET);
         assertEquals(READONLY, stateMachine.current());
     }
+
+    @Test
+    public void viewEditSave() {
+        stateMachine.execute(VIEW);
+        stateMachine.execute(EDIT);
+        stateMachine.execute(SAVE);
+        assertEquals(READONLY, stateMachine.current());
+    }
+
+    @Test
+    public void viewEditCancel() {
+        stateMachine.execute(VIEW);
+        stateMachine.execute(EDIT);
+        stateMachine.execute(CANCEL);
+        assertEquals(READONLY, stateMachine.current());
+    }
 }

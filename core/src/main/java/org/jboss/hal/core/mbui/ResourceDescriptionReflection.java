@@ -30,9 +30,6 @@ import org.jboss.hal.ballroom.form.FormItemFactory;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.ResourceDescription;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -46,8 +43,6 @@ import java.util.Set;
  */
 class ResourceDescriptionReflection {
 
-    private static final Logger logger = LoggerFactory.getLogger(ResourceDescriptionReflection.class);
-
     private final FormItemFactory defaultFormItemFactory;
 
     private int numRequired;
@@ -57,7 +52,7 @@ class ResourceDescriptionReflection {
     private Map<String, String> helpTexts;
     private Map<String, ModelNode> defaults;
 
-    ResourceDescriptionReflection(final ResourceDescription resourceDescription,
+    ResourceDescriptionReflection(final List<Property> properties,
             final Set<String> includes, final Set<String> excludes, final boolean includeRuntime,
             final Map<String, FormItemFactory> factories) {
 
@@ -70,11 +65,11 @@ class ResourceDescriptionReflection {
         this.helpTexts = new LinkedHashMap<>();
         this.defaults = new HashMap<>();
 
-        List<Property> attributes = filter(resourceDescription, includes, excludes, includeRuntime);
+        List<Property> attributes = filter(properties, includes, excludes, includeRuntime);
         analyze(attributes, factories);
     }
 
-    private List<Property> filter(final ResourceDescription resourceDescription, final Set<String> includes,
+    private List<Property> filter(final List<Property> properties, final Set<String> includes,
             final Set<String> excludes, final boolean includeRuntime) {
 
         Predicate<Property> includeExclude = includes.isEmpty() && excludes.isEmpty() ?
@@ -85,7 +80,7 @@ class ResourceDescriptionReflection {
                 .equals(property.getValue().get(ModelDescriptionConstants.STORAGE).asString());
 
         Predicate<Property> combined = includeRuntime ? Predicates.and(includeExclude, runtime) : includeExclude;
-        Collection<Property> filtered = Collections2.filter(resourceDescription.getAttributes(), combined);
+        Collection<Property> filtered = Collections2.filter(properties, combined);
 
         Ordering<Property> byName = new Ordering<Property>() {
             @Override

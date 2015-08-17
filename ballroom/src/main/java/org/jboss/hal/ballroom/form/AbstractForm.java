@@ -144,7 +144,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
             };
         }
 
-        flip();
+        flip(panels.keySet().iterator().next());
         return section;
     }
 
@@ -282,11 +282,11 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
 
     private void execute(final Operation operation) {
         stateMachine.execute(operation);
-        prepare();
-        flip();
+        prepare(stateMachine.current());
+        flip(stateMachine.current());
     }
 
-    private void prepare() {
+    private void prepare(State state) {
         switch (stateMachine.current()) {
             case READONLY:
                 prepareViewState();
@@ -307,8 +307,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
      */
     protected void prepareEditState() {}
 
-    private void flip() {
-        switch (stateMachine.current()) {
+    private void flip(State state) {
+        switch (state) {
             case READONLY:
                 if (exitEditWithEsc != null && panels.get(EDITING) != null) {
                     panels.get(EDITING).removeEventListener("keyup", exitEditWithEsc);
@@ -326,11 +326,11 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, La
                 break;
         }
 
-        formLinks.switchTo(stateMachine.current());
+        formLinks.switchTo(state);
         for (Element panel : panels.values()) {
             Elements.setVisible(panel, false);
         }
-        Elements.setVisible(panels.get(stateMachine.current()), true);
+        Elements.setVisible(panels.get(state), true);
     }
 
 
