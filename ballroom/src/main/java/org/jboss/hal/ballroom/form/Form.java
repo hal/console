@@ -26,146 +26,76 @@ import org.jboss.gwt.elemento.core.IsElement;
 import java.util.Map;
 
 /**
- * A form able to modify a specific model using a well defined state machine.
+ * A form using well defined states and operations.
  *
  * @author Harald Pehl
  */
 public interface Form<T> extends IsElement {
 
-    /**
-     * Defines the valid states for a form.
-     * <pre>
-     *         +---------+
-     *         |         |
-     *   +-----+  EMPTY  <-----+-------+-------+
-     *   |     |         |     |       |       |
-     *   |     +----+----+     |       |       |
-     *   |          |          |       |       |
-     *   |        view()       undefine()      |
-     *   |          |          |       |       |
-     *   |     +----v----+     |       |       |
-     *   |     |         +-----+       |       |
-     * add()   |  VIEW   |             |    cancel()
-     *   |     |         <-----+       |       |
-     *   |     +-+-----^-+     |       |       |
-     *   |       |     |       |       |       |
-     *   |    edit() cancel() save()   |       |
-     *   |       |     |       |       |       |
-     *   |     +-v-----+-+     |       |       |
-     *   |     |         |     |       |       |
-     *   +----->  EDIT   +-----+-------+-------+
-     *         |         |
-     *         +---------+
-     * </pre>
-     */
     enum State {
-        EMPTY, VIEW, EDIT
+        READONLY, EDITING
+    }
+
+    enum Operation {
+        VIEW, EDIT, CANCEL, SAVE, RESET
     }
 
 
     @FunctionalInterface
     interface SaveCallback<T> {
 
-        void onSave(T model, boolean isTransient, Map<String, Object> changedValues);
+        void onSave(Map<String, Object> changedValues);
     }
 
 
     @FunctionalInterface
-    interface UndefineCallback<T> {
+    interface ResetCallback<T> {
 
-        void onUndefine(T model);
+        void onReset();
     }
 
 
     @FunctionalInterface
     interface CancelCallback<T> {
 
-        void onCancel(T model, boolean isTransient);
+        void onCancel();
     }
 
 
     /**
-     * Creates a new transient model and switches to edit state.
-     * <dl>
-     * <dt>Precondition</dt>
-     * <dd>{@code state == EMPTY}</dd>
-     * <dt>Postcondition</dt>
-     * <dd>{@code state == EDIT}</dd>
-     * </dl>
-     */
-    void add();
-
-    /**
-     * Takes the specified model, updates the form with the values from the model and switches to view state.
-     * <dl>
-     * <dt>Precondition</dt>
-     * <dd>{@code state == EMPTY}</dd>
-     * <dt>Postcondition</dt>
-     * <dd>{@code state == VIEW}</dd>
-     * </dl>
+     * Takes the specified model and updates the form with the values from the model.
      *
      * @param model the model to view.
      */
     void view(T model);
 
     /**
-     * Takes the specified model, populate the form fields with the values from the model and switches to edit state.
-     * <dl>
-     * <dt>Precondition</dt>
-     * <dd>{@code state == EMPTY || VIEW}</dd>
-     * <dt>Postcondition</dt>
-     * <dd>{@code state == EDIT}</dd>
-     * </dl>
+     * Takes the specified model and populate the form fields with the values from the model.
      *
      * @param model the model to edit.
      */
     void edit(T model);
 
     /**
-     * Validates the form and the form fields, updates the model with changed values from the form fields and switches
-     * to view state.
-     * <dl>
-     * <dt>Precondition</dt>
-     * <dd>{@code state == EDIT}</dd>
-     * <dt>Postcondition</dt>
-     * <dd>{@code state == VIEW}</dd>
-     * </dl>
+     * Validates the form and its fields and calls the save callback with the changed values.
      */
     void save();
 
+    void setSaveCallback(SaveCallback<T> saveCallback);
+
     /**
-     * Cancels any modifications to the model and switches to view state.
-     * <dl>
-     * <dt>Precondition</dt>
-     * <dd>{@code state == EDIT}</dd>
-     * <dt>Postcondition</dt>
-     * <dd>{@code state == VIEW}</dd>
-     * </dl>
+     * Cancels any modifications to the model.
      */
     void cancel();
 
-    /**
-     * Undefines the model and switches to empty state.
-     * <dl>
-     * <dt>Precondition</dt>
-     * <dd>{@code (state == VIEW || EDIT) && (fields.noneMatch(field -&gt; field.isRequired()))}</dd>
-     * <dt>Postcondition</dt>
-     * <dd>{@code state == EMPTY}</dd>
-     * </dl>
-     */
-    void undefine();
+    void setCancelCallback(CancelCallback<T> cancelCallback);
 
     /**
-     * Creates a new model.
-     *
-     * @return a new model ready to be used in edit state.
+     * Resets the model.
      */
-    T newModel();
+    void reset();
 
-    /**
-     * @return the changed values made during edit state.
-     */
-    Map<String, Object> getChangedValues();
+    void setResetCallback(ResetCallback<T> resetCallback);
 
     /**
      * @return the current model.
@@ -176,11 +106,6 @@ public interface Form<T> extends IsElement {
      * @return an unique identifier for this form.
      */
     String getId();
-
-    /**
-     * @return the current state.
-     */
-    State getState();
 
     /**
      * Invalidates this form.

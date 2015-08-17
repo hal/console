@@ -19,18 +19,44 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.mbui;
+package org.jboss.hal.ballroom.form;
 
-import org.jboss.hal.ballroom.form.FormItem;
-import org.jboss.hal.dmr.ModelNode;
+import java.util.EnumSet;
+
+import static org.jboss.hal.ballroom.form.Form.Operation.EDIT;
+import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 
 /**
- * Factory to create custom form items for model node attributes.
- *
  * @author Harald Pehl
  */
-@FunctionalInterface
-public interface ModelNodeFormItemFactory {
+public class EditOnlyStateMachine extends AbstractStateMachine implements StateMachine {
 
-    FormItem<ModelNode> formItem(ModelNode attributeDescription);
+    public EditOnlyStateMachine() {
+        super(EnumSet.of(EDIT));
+        this.current = null;
+    }
+
+    @Override
+    public void execute(final Form.Operation operation) {
+        switch (operation) {
+
+            case EDIT:
+                if (current != null) {
+                    assertState(EDITING);
+                }
+                transitionTo(EDITING);
+                break;
+
+            case CANCEL:
+                assertState(EDITING);
+                break;
+
+            case SAVE:
+                assertState(EDITING);
+                break;
+
+            default:
+                unsupported(operation);
+        }
+    }
 }

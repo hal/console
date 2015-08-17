@@ -31,13 +31,12 @@ import org.jboss.hal.ballroom.LayoutSpec;
 import org.jboss.hal.ballroom.form.Form.State;
 import org.jboss.hal.resources.HalConstants;
 
-import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.ballroom.form.Form.State.*;
+import static org.jboss.hal.ballroom.form.Form.Operation.EDIT;
+import static org.jboss.hal.ballroom.form.Form.Operation.RESET;
 
 /**
  * @author Harald Pehl
@@ -46,23 +45,21 @@ class FormLinks implements IsElement, LayoutSpec {
 
     private final static HalConstants CONSTANTS = GWT.create(HalConstants.class);
 
-    private final Set<State> supportedStates;
+    private final StateMachine stateMachine;
     private final LinkedHashMap<String, String> helpTexts;
 
     private final Element root;
-    private Element addLink;
     private Element editLink;
-    private Element removeLink;
+    private Element resetLink;
     private Element helpLink;
 
     FormLinks(final String formId,
-            final EnumSet<State> supportedStates,
+            final StateMachine stateMachine,
             final LinkedHashMap<String, String> helpTexts,
-            final EventListener onAdd,
             final EventListener onEdit,
-            final EventListener onUndefine) {
+            final EventListener onReset) {
 
-        this.supportedStates = supportedStates;
+        this.stateMachine = stateMachine;
         this.helpTexts = helpTexts;
 
         String linksId = Id.generate(formId, "links");
@@ -81,17 +78,13 @@ class FormLinks implements IsElement, LayoutSpec {
         Element links = rootBuilder.referenceFor("links");
         Element helpContent = rootBuilder.referenceFor("helpContent");
 
-        if (supports(EMPTY) && supports(EDIT)) {
-            addLink = link(CONSTANTS.add(), "fa fa-plus", onAdd);
-            links.appendChild(addLink);
-        }
-        if (supports(VIEW) || supports(EDIT)) {
+        if (stateMachine.supports(EDIT)) {
             editLink = link(CONSTANTS.edit(), "pficon pficon-edit", onEdit);
             links.appendChild(editLink);
         }
-        if (supports(EDIT) && supports(EMPTY)) {
-            removeLink = link(CONSTANTS.remove(), "pficon pficon-delete", onUndefine);
-            links.appendChild(removeLink);
+        if (stateMachine.supports(RESET)) {
+            resetLink = link(CONSTANTS.remove(), "pficon pficon-delete", onReset);
+            links.appendChild(resetLink);
         }
         if (!helpTexts.isEmpty()) {
             // @formatter:off
@@ -145,40 +138,25 @@ class FormLinks implements IsElement, LayoutSpec {
 
     @Override
     public Element asElement() {
-        if (addLink == null && editLink == null && removeLink == null && helpTexts.isEmpty()) {
+        if (editLink == null && resetLink == null && helpTexts.isEmpty()) {
             Elements.setVisible(root, false);
         }
         return root;
     }
 
     void switchTo(State state) {
-        if (supports(state)) {
-            switch (state) {
-                case EMPTY:
-                    Elements.setVisible(addLink, true);
-                    Elements.setVisible(editLink, false);
-                    Elements.setVisible(removeLink, false);
-                    Elements.setVisible(helpLink, false);
-                    break;
+        switch (state) {
+            case READONLY:
+                Elements.setVisible(editLink, stateMachine.supports(EDIT));
+                Elements.setVisible(resetLink, stateMachine.supports(RESET));
+                Elements.setVisible(helpLink, !helpTexts.isEmpty());
+                break;
 
-                case VIEW:
-                    Elements.setVisible(addLink, false);
-                    Elements.setVisible(editLink, true);
-                    Elements.setVisible(removeLink, true);
-                    Elements.setVisible(helpLink, !helpTexts.isEmpty());
-                    break;
-
-                case EDIT:
-                    Elements.setVisible(addLink, false);
-                    Elements.setVisible(editLink, false);
-                    Elements.setVisible(removeLink, false);
-                    Elements.setVisible(helpLink, !helpTexts.isEmpty());
-                    break;
-            }
+            case EDITING:
+                Elements.setVisible(editLink, false);
+                Elements.setVisible(resetLink, false);
+                Elements.setVisible(helpLink, !helpTexts.isEmpty());
+                break;
         }
-    }
-
-    private boolean supports(State state) {
-        return supportedStates.contains(state);
     }
 }

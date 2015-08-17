@@ -21,16 +21,17 @@
  */
 package org.jboss.hal.core.mbui;
 
+import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.ballroom.form.FormItemFactory;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.Operation;
 
 /**
- * Provider for a custom save operation which becomes part of the composite save operation of a {@link ModelNodeForm}.
- *
  * @author Harald Pehl
  */
-@FunctionalInterface
-public interface SaveOperationProvider {
+public class DefaultFormItemFactory implements FormItemFactory {
 
-    Operation onSave(ModelNode value);
+    @Override
+    public FormItem<?> createFrom(final ModelNode attributeDescription) {
+        return null;
+    }
 }

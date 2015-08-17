@@ -94,14 +94,14 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
     private Dialog dialog;
 
     public DeploymentView() {
-        SampleForm dialogForm = new SampleForm("dialog", EnumSet.of(EDIT));
+        SampleForm dialogForm = new SampleForm("dialog", EnumSet.of(EDITING));
         Element dialogBody = new Elements.Builder().p().innerText("A form inside a dialog").end()
                 .add(dialogForm.asElement()).build();
         dialog = new Dialog.Builder("sample-dialog", "Sample Dialog").add(dialogBody).closeOnly().build();
 
         Element element = new LayoutBuilder()
                 .header("Sample Form")
-                .add(new SampleForm("deployment", EnumSet.of(EMPTY, VIEW, EDIT)).asElement())
+                .add(new SampleForm("deployment", EnumSet.of(EMPTY, READONLY, EDITING)).asElement())
                         .build();
         initWidget(Elements.asWidget(element));
     }

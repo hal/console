@@ -21,31 +21,21 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Map;
-
-import static org.jboss.hal.ballroom.form.Form.State.*;
+import org.jboss.hal.ballroom.form.Form.Operation;
+import org.jboss.hal.ballroom.form.Form.State;
 
 /**
+ * Defines how to transition between {@linkplain State states} based on {@linkplain Operation operations}.
+ *
  * @author Harald Pehl
  */
-public class StandaloneForm extends AbstractForm<String> {
+public interface StateMachine {
 
-    protected StandaloneForm() {
-        super("test", EnumSet.of(EMPTY, VIEW, EDIT));
-    }
+    State current();
 
-    @Override
-    public String newModel() {
-        return null;
-    }
+    void execute(Operation operation);
 
-    @Override
-    protected void updateModel(final Map<String, Object> changedValues) {}
+    boolean supports(Operation operation);
 
-    @Override
-    public Map<String, Object> getChangedValues() {
-        return Collections.emptyMap();
-    }
+    boolean supportsAny(Operation first, Operation... rest);
 }

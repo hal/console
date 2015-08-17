@@ -23,19 +23,21 @@ package org.jboss.hal.core.mbui;
 
 import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.form.AbstractForm;
-import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.DefaultStateMachine;
+import org.jboss.hal.ballroom.form.EditOnlyStateMachine;
 import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.ballroom.form.FormItemFactory;
+import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.ResourceDescription;
 
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jboss.hal.ballroom.form.Form.State.EDIT;
-import static org.jboss.hal.ballroom.form.Form.State.VIEW;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUEST_PROPERTIES;
 
 /**
  * @author Harald Pehl
@@ -46,29 +48,29 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
 
         private final String id;
         private final ResourceDescription resourceDescription;
-        private final EnumSet<Form.State> supportedStates;
         private final Set<String> includes;
         private final Set<String> excludes;
-        private final Map<String, ModelNodeFormItemFactory> factories;
-        private final Map<String, SaveOperationProvider> saveOperations;
+        private final Map<String, FormItemFactory> factories;
+        private final Map<String, SaveOperationStep> saveOperations;
+        private boolean createResource;
+        private boolean viewOnly;
+        private boolean editOnly;
+        private boolean includeRuntime;
         private SaveCallback<ModelNode> saveCallback;
         private CancelCallback<ModelNode> cancelCallback;
-        private UndefineCallback<ModelNode> undefineCallback;
+        private ResetCallback<ModelNode> resetCallback;
 
         public Builder(final String id, final ResourceDescription resourceDescription) {
             this.id = id;
             this.resourceDescription = resourceDescription;
-            this.supportedStates = EnumSet.of(VIEW, EDIT);
             this.includes = new HashSet<>();
             this.excludes = new HashSet<>();
             this.factories = new HashMap<>();
             this.saveOperations = new HashMap<>();
-        }
-
-        public Builder support(final State first, final State... rest) {
-            supportedStates.clear();
-            supportedStates.addAll(EnumSet.of(first, rest));
-            return this;
+            this.createResource = false;
+            this.viewOnly = false;
+            this.editOnly = false;
+            this.includeRuntime = false;
         }
 
         public Builder include(final String first, final String... rest) {
@@ -81,13 +83,36 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
             return this;
         }
 
-        public Builder customFormItem(final String attribute, final ModelNodeFormItemFactory factory) {
-            factories.put(attribute, factory);
+        public Builder createResource() {
+            this.createResource = true;
             return this;
         }
 
-        public Builder onSave(final String attribute, final SaveOperationProvider saveOperation) {
-            saveOperations.put(attribute, saveOperation);
+        public Builder viewOnly() {
+            this.viewOnly = true;
+            return this;
+        }
+
+        public Builder editOnly() {
+            this.editOnly = true;
+            return this;
+        }
+
+        public Builder includeRuntime() {
+            this.includeRuntime = true;
+            return this;
+        }
+
+        public Builder customFormItem(final String attribute, final FormItemFactory factory) {
+            return customFormItem(attribute, factory, null);
+        }
+
+        public Builder customFormItem(final String attribute, final FormItemFactory factory,
+                final SaveOperationStep saveOperation) {
+            factories.put(attribute, factory);
+            if (saveOperation != null) {
+                saveOperations.put(attribute, saveOperation);
+            }
             return this;
         }
 
@@ -101,8 +126,8 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
             return this;
         }
 
-        public Builder onUndefine(final UndefineCallback<ModelNode> undefineCallback) {
-            this.undefineCallback = undefineCallback;
+        public Builder onReset(final ResetCallback<ModelNode> resetCallback) {
+            this.resetCallback = resetCallback;
             return this;
         }
 
@@ -112,42 +137,44 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
     }
 
 
-    private final Map<String, ModelNodeFormItemFactory> factories;
-    private final Map<String, SaveOperationProvider> saveOperations;
+    private final Map<String, SaveOperationStep> saveOperations;
     private final ResourceDescriptionReflection reflection;
 
 
     ModelNodeForm(Builder builder) {
-        super(builder.id, builder.supportedStates);
+        super(builder.id, builder.createResource || builder.editOnly ?
+                new EditOnlyStateMachine() :
+                (builder.viewOnly ? new ViewOnlyStateMachine() : new DefaultStateMachine()));
 
-        this.factories = builder.factories;
+        if (builder.createResource && builder.viewOnly) {
+            throw new IllegalStateException("Illegal flag combination in " + formId() + ": createResource && viewOnly");
+        }
+        if (builder.viewOnly && builder.editOnly) {
+            throw new IllegalStateException("Illegal flag combination in " + formId() + ": viewOnly && editOnly");
+        }
+        if (builder.createResource &&
+                !builder.resourceDescription.hasDefined(REQUEST_PROPERTIES)) {
+            throw new IllegalStateException("No request properties found for " + formId() +
+                    " using resource description " + builder.resourceDescription);
+        }
+        if (!builder.createResource &&
+                !builder.resourceDescription.hasDefined(ATTRIBUTES)) {
+            throw new IllegalStateException("No attributes found for " + formId() +
+                    " using resource description " + builder.resourceDescription);
+        }
+
         this.saveOperations = builder.saveOperations;
         this.saveCallback = builder.saveCallback;
         this.cancelCallback = builder.cancelCallback;
-        this.undefineCallback = builder.undefineCallback;
+        this.resetCallback = builder.resetCallback;
 
         this.reflection = new ResourceDescriptionReflection(builder.resourceDescription,
-                builder.includes, builder.excludes, factories);
-        for (FormItem formItem : reflection.getFormItems()) {
+                builder.includes, builder.excludes, builder.includeRuntime, builder.factories);
+        for (FormItem formItem : reflection.getFormItems().values()) {
             addFormItem(formItem);
         }
         for (Map.Entry<String, String> entry : reflection.getHelpTexts().entrySet()) {
             addHelp(entry.getKey(), entry.getValue());
         }
-    }
-
-    @Override
-    protected void updateModel(final Map<String, Object> changedValues) {
-        ModelNode model = getModel();
-    }
-
-    @Override
-    public ModelNode newModel() {
-        return new ModelNode();
-    }
-
-    @Override
-    public Map<String, Object> getChangedValues() {
-        return new HashMap<>();
     }
 }
