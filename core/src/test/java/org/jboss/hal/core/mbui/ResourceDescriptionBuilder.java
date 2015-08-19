@@ -39,7 +39,7 @@ class ResourceDescriptionBuilder {
         ModelNode list = new ModelNode();
         if (attributes != null) {
             for (String attribute : attributes) {
-                list.set(attribute, new ModelNode());
+                list.get(attribute).set(new ModelNode());
             }
         }
         return new ResourceDescription(new ModelNode().set(ATTRIBUTES, list));
@@ -49,7 +49,7 @@ class ResourceDescriptionBuilder {
         ModelNode list = new ModelNode();
         if (requestProperties != null) {
             for (String requestProperty : requestProperties) {
-                list.set(requestProperty, new ModelNode());
+                list.get(requestProperty).set(new ModelNode());
             }
         }
         return new ResourceDescription(

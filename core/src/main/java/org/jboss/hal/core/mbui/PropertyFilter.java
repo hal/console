@@ -56,10 +56,13 @@ class PropertyFilter {
             }
 
         } else {
-            filter = builder.includes.isEmpty() && builder.excludes.isEmpty() ?
-                    Predicates.alwaysTrue() :
-                    (property -> builder.includes.contains(property.getName()) && !builder.excludes
-                            .contains(property.getName()));
+            if (builder.includes.isEmpty() && builder.excludes.isEmpty()) {
+                filter = Predicates.alwaysTrue();
+            } else if (!builder.excludes.isEmpty()) {
+                filter = property -> !builder.excludes.contains(property.getName());
+            } else {
+                filter = property -> builder.includes.contains(property.getName());
+            }
             if (builder.includeRuntime) {
                 filter = Predicates.and(filter,
                         property -> "runtime".equals(property.getValue().get(STORAGE).asString()));
