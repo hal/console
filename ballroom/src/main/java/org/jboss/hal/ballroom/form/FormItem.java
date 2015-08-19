@@ -167,7 +167,7 @@ public abstract class FormItem<T>
     }
 
 
-    // ------------------------------------------------------ state, name & text
+    // ------------------------------------------------------ state, name, text & help
 
     @Override
     public T getValue() {
@@ -245,6 +245,12 @@ public abstract class FormItem<T>
         asElement().getDataset().setAt("formItemGroup", fq);
         labelElement.getDataset().setAt("formItemLabel", fq);
         inputElement.asElement().getDataset().setAt("formItemControl", fq);
+    }
+
+    public void setHelp(String text) {
+        labelElement.getDataset().setAt("toggle", "tooltip");
+        labelElement.getDataset().setAt("placement", "bottom");
+        labelElement.setTitle(text);
     }
 
 
