@@ -83,7 +83,11 @@ class FormLinks implements IsElement, LayoutSpec {
             links.appendChild(editLink);
         }
         if (stateMachine.supports(RESET)) {
-            resetLink = link(CONSTANTS.remove(), "pficon pficon-delete", onReset);
+            resetLink = link(CONSTANTS.reset(), "fa fa-file-o", onReset);
+            resetLink.getDataset().setAt("toggle", "tooltip");
+            resetLink.getDataset().setAt("placement", "right");
+            resetLink.setTitle(CONSTANTS.form_reset_desc());
+
             links.appendChild(resetLink);
         }
         if (!helpTexts.isEmpty()) {

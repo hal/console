@@ -22,21 +22,20 @@
 package org.jboss.hal.client.deployment;
 
 import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.ballroom.form.Forms;
 import org.jboss.hal.client.ApplicationPresenter;
 import org.jboss.hal.client.NameTokens;
+import org.jboss.hal.core.PatternFlyPresenter;
 
 import javax.inject.Inject;
 
 /**
  * @author Harald Pehl
  */
-public class DeploymentPresenter extends Presenter<DeploymentPresenter.MyView, DeploymentPresenter.MyProxy> {
+public class DeploymentPresenter extends PatternFlyPresenter<DeploymentPresenter.MyView, DeploymentPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyStandard
@@ -52,11 +51,5 @@ public class DeploymentPresenter extends Presenter<DeploymentPresenter.MyView, D
             final MyView view,
             final MyProxy proxy) {
         super(eventBus, view, proxy, ApplicationPresenter.SLOT_MAIN_CONTENT);
-    }
-
-    @Override
-    protected void onReveal() {
-        super.onReveal();
-        Forms.initSelectPicker();
     }
 }

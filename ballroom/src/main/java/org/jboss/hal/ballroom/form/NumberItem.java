@@ -40,12 +40,12 @@ public class NumberItem extends FormItem<Long> {
     /**
      * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MIN_SAFE_INTEGER
      */
-    public static final long MIN_SAFE_INTEGER = -9007199254740991l;
+    public static final long MIN_SAFE_NUMBER = -9007199254740991l;
 
     /**
      * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
      */
-    public static final long MAX_SAFE_INTEGER = 9007199254740991l;
+    public static final long MAX_SAFE_NUMBER = 9007199254740991l;
 
     private final static HalConstants CONSTANTS = GWT.create(HalConstants.class);
     private final static HalMessages MESSAGES = GWT.create(HalMessages.class);
@@ -88,8 +88,8 @@ public class NumberItem extends FormItem<Long> {
     }
 
     public void setRange(long min, long max) {
-        this.min = Math.max(MIN_SAFE_INTEGER, min);
-        this.max = Math.min(MAX_SAFE_INTEGER, max);    }
+        this.min = Math.max(MIN_SAFE_NUMBER, min);
+        this.max = Math.min(MAX_SAFE_NUMBER, max);    }
 
     @Override
     public boolean supportsExpressions() {

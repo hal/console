@@ -32,11 +32,13 @@ public interface HalConstants extends Constants {
     String edit();
     String expression_resolver();
     String form_errors();
+    String form_reset_desc();
     String help();
     String logout();
     String model_browser();
     String not_a_number();
     String required();
+    String reset();
     String restricted();
     String remove();
     String same_origin();
@@ -44,5 +46,6 @@ public interface HalConstants extends Constants {
     String settings();
     String toggle_navigation();
     String tools();
+
     //@formatter:on
 }

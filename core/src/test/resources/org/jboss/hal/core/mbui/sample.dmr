@@ -1,0 +1,1125 @@
+{
+    "description" => "A sample resource description with a combination of all supported model types. The names of the attributes reflect the type and flags: <type>-rq-ex-[rw|ro]-[cf|rt]",
+    "attributes" => {
+        "big-decimal-rq-ex-rw-cf" => {
+            "type" => BIG_DECIMAL,
+            "description" => "Big decimal [required, expression support, read-write, configuration]",
+            "expressions-allowed" => true,
+            "nillable" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+        },
+        "allocation-retry-wait-millis" => {
+            "type" => LONG,
+            "description" => "The allocation retry wait millis element specifies the amount of time, in milliseconds, to wait between retrying to allocate a connection",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "allow-multiple-users" => {
+            "type" => BOOLEAN,
+            "description" => "Specifies if multiple users will access the datasource through the getConnection(user, password) method and hence if the internal pool type should account for that",
+            "expressions-allowed" => false,
+            "nillable" => true,
+            "default" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "background-validation" => {
+            "type" => BOOLEAN,
+            "description" => "An element to specify that connections should be validated on a background thread versus being validated prior to use. Changing this value can be done only on disabled datasource,  requires a server restart otherwise.",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "background-validation-millis" => {
+            "type" => LONG,
+            "description" => "The background-validation-millis element specifies the amount of time, in milliseconds, that background validation will run. Changing this value can be done only on disabled datasource,  requires a server restart otherwise",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "unit" => "MILLISECONDS",
+            "min" => 1L,
+            "max" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "blocking-timeout-wait-millis" => {
+            "type" => LONG,
+            "description" => "The blocking-timeout-millis element specifies the maximum time, in milliseconds, to block while waiting for a connection before throwing an exception. Note that this blocks only while waiting for locking a connection, and will never throw an exception if creating a new connection takes an inordinately long time",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "unit" => "MILLISECONDS",
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "capacity-decrementer-class" => {
+            "type" => STRING,
+            "description" => "Class defining the policy for decrementing connections in the pool",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "capacity-decrementer-properties" => {
+            "type" => OBJECT,
+            "description" => "Properties to be injected in class defining the policy for decrementing connections in the pool",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "value-type" => STRING,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "capacity-incrementer-class" => {
+            "type" => STRING,
+            "description" => "Class defining the policy for incrementing connections in the pool",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "capacity-incrementer-properties" => {
+            "type" => OBJECT,
+            "description" => "Properties to be injected in class defining the policy for incrementing connections in the pool",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "value-type" => STRING,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "check-valid-connection-sql" => {
+            "type" => STRING,
+            "description" => "Specify an SQL statement to check validity of a pool connection. This may be called when managed connection is obtained from the pool",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "connectable" => {
+            "type" => BOOLEAN,
+            "description" => "Enable the use of CMR. This feature means that a local resource can reliably participate in an XA transaction.",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "default" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "connection-listener-class" => {
+            "type" => STRING,
+            "description" => "Speciefies class name extending org.jboss.jca.adapters.jdbc.spi.listener.ConnectionListener that provides a possible to listen for connection activation and passivation in order to perform actions before the connection is returned to the application or returned to the pool.",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "connection-listener-property" => {
+            "type" => OBJECT,
+            "description" => "Properties to be injected in class specidied in connection-listener-class",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "value-type" => STRING,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "connection-properties" => {
+            "type" => OBJECT,
+            "description" => "The connection-properties element allows you to pass in arbitrary connection properties to the Driver.connect(url, props) method",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "value-type" => STRING,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "connection-url" => {
+            "type" => STRING,
+            "description" => "The JDBC driver connection URL",
+            "expressions-allowed" => true,
+            "nillable" => false,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "datasource-class" => {
+            "type" => STRING,
+            "description" => "The fully qualified name of the JDBC datasource class",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "driver-class" => {
+            "type" => STRING,
+            "description" => "The fully qualified name of the JDBC driver class",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "driver-name" => {
+            "type" => STRING,
+            "description" => "Defines the JDBC driver the datasource should use. It is a symbolic name matching the the name of installed driver. In case the driver is deployed as jar, the name is the name of deployment unit",
+            "expressions-allowed" => true,
+            "nillable" => false,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "enabled" => {
+            "type" => BOOLEAN,
+            "description" => "Specifies if the datasource should be enabled. Note this attribute will not be supported runtime in next versions.",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "default" => true,
+            "deprecated" => {
+                "since" => "3.0.0",
+                "reason" => "Specifies if the datasource should be enabled. Note this attribute will not be supported runtime in next versions."
+            },
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "exception-sorter-class-name" => {
+            "type" => STRING,
+            "description" => "An org.jboss.jca.adapters.jdbc.ExceptionSorter that provides an isExceptionFatal(SQLException) method to validate if an exception should broadcast an error",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "exception-sorter-properties" => {
+            "type" => OBJECT,
+            "description" => "The exception sorter properties",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "requires" => ["exception-sorter-class-name"],
+            "value-type" => STRING,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "flush-strategy" => {
+            "type" => STRING,
+            "description" => "Specifies how the pool should be flush in case of an error. Valid values are: FailingConnectionOnly (default), IdleConnections and EntirePool",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "default" => "FailingConnectionOnly",
+            "allowed" => [
+                "UNKNOWN",
+                "FailingConnectionOnly",
+                "InvalidIdleConnections",
+                "IdleConnections",
+                "Gracefully",
+                "EntirePool",
+                "AllInvalidIdleConnections",
+                "AllIdleConnections",
+                "AllGracefully",
+                "AllConnections"
+            ],
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "idle-timeout-minutes" => {
+            "type" => LONG,
+            "description" => "The idle-timeout-minutes elements specifies the maximum time, in minutes, a connection may be idle before being closed. The actual maximum time depends also on the IdleRemover scan time, which is half of the smallest idle-timeout-minutes value of any pool. Changing this value can be done only on disabled datasource, requires a server restart otherwise.",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "unit" => "MINUTES",
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "initial-pool-size" => {
+            "type" => INT,
+            "description" => "The initial-pool-size element indicates the initial number of connections a pool should hold.",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "jndi-name" => {
+            "type" => STRING,
+            "description" => "Specifies the JNDI name for the datasource",
+            "expressions-allowed" => true,
+            "nillable" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "jta" => {
+            "type" => BOOLEAN,
+            "description" => "Enable JTA integration",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "default" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "max-pool-size" => {
+            "type" => INT,
+            "description" => "The max-pool-size element specifies the maximum number of connections for a pool. No more connections will be created in each sub-pool",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "default" => 20,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "min-pool-size" => {
+            "type" => INT,
+            "description" => "The min-pool-size element specifies the minimum number of connections for a pool",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "default" => 0,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "new-connection-sql" => {
+            "type" => STRING,
+            "description" => "Specifies an SQL statement to execute whenever a connection is added to the connection pool",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "password" => {
+            "type" => STRING,
+            "description" => "Specifies the password used when creating a new connection",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "requires" => ["user-name"],
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-constraints" => {"sensitive" => {
+                "credential" => {"type" => "core"},
+                "data-source-security" => {"type" => "datasources"}
+            }},
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "pool-prefill" => {
+            "type" => BOOLEAN,
+            "description" => "Should the pool be prefilled. Changing this value can be done only on disabled datasource, requires a server restart otherwise.",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "default" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "pool-use-strict-min" => {
+            "type" => BOOLEAN,
+            "description" => "Specifies if the min-pool-size should be considered strictly",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "default" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "prepared-statements-cache-size" => {
+            "type" => LONG,
+            "description" => "The number of prepared statements per connection in an LRU cache",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "query-timeout" => {
+            "type" => LONG,
+            "description" => "Any configured query timeout in seconds. If not provided no timeout will be set",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "reauth-plugin-class-name" => {
+            "type" => STRING,
+            "description" => "The fully qualified class name of the reauthentication plugin implementation",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "reauth-plugin-properties" => {
+            "type" => OBJECT,
+            "description" => "The properties for the reauthentication plugin",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "requires" => ["reauth-plugin-class-name"],
+            "value-type" => STRING,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "security-domain" => {
+            "type" => STRING,
+            "description" => "Specifies the security domain which defines the javax.security.auth.Subject that are used to distinguish connections in the pool",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "alternatives" => ["user-name"],
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-constraints" => {"sensitive" => {
+                "security-domain-ref" => {"type" => "core"},
+                "data-source-security" => {"type" => "datasources"}
+            }},
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "set-tx-query-timeout" => {
+            "type" => BOOLEAN,
+            "description" => "Whether to set the query timeout based on the time remaining until transaction timeout. Any configured query timeout will be used if there is no transaction",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "default" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "share-prepared-statements" => {
+            "type" => BOOLEAN,
+            "description" => "Whether to share prepared statements, i.e. whether asking for same statement twice without closing uses the same underlying prepared statement",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "default" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "spy" => {
+            "type" => BOOLEAN,
+            "description" => "Enable spying of SQL statements",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "default" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "stale-connection-checker-class-name" => {
+            "type" => STRING,
+            "description" => "An org.jboss.jca.adapters.jdbc.StaleConnectionChecker that provides an isStaleConnection(SQLException) method which if it returns true will wrap the exception in an org.jboss.jca.adapters.jdbc.StaleConnectionException",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "stale-connection-checker-properties" => {
+            "type" => OBJECT,
+            "description" => "The stale connection checker properties",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "requires" => ["stale-connection-checker-class-name"],
+            "value-type" => STRING,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "statistics-enabled" => {
+            "type" => BOOLEAN,
+            "description" => "define if runtime statistics is enabled or not.",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "default" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "track-statements" => {
+            "type" => STRING,
+            "description" => "Whether to check for unclosed statements when a connection is returned to the pool, result sets are closed, a statement is closed or return to the prepared statement cache. Valid values are: \"false\" - do not track statements, \"true\" - track statements and result sets and warn when they are not closed, \"nowarn\" - track statements but do not warn about them being unclosed",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "default" => "NOWARN",
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "tracking" => {
+            "type" => BOOLEAN,
+            "description" => "Defines if IronJacamar should track connection handles across transaction boundaries",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "default" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "transaction-isolation" => {
+            "type" => STRING,
+            "description" => "Set the java.sql.Connection transaction isolation level. Valid values are: TRANSACTION_READ_UNCOMMITTED, TRANSACTION_READ_COMMITTED, TRANSACTION_REPEATABLE_READ, TRANSACTION_SERIALIZABLE and TRANSACTION_NONE",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "url-delimiter" => {
+            "type" => STRING,
+            "description" => "Specifies the delimiter for URLs in connection-url for HA datasources",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "url-selector-strategy-class-name" => {
+            "type" => STRING,
+            "description" => "A class that implements org.jboss.jca.adapters.jdbc.URLSelectorStrategy",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "use-ccm" => {
+            "type" => BOOLEAN,
+            "description" => "Enable the use of a cached connection manager",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "default" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "use-fast-fail" => {
+            "type" => BOOLEAN,
+            "description" => "Whether to fail a connection allocation on the first try if it is invalid (true) or keep trying until the pool is exhausted of all potential connections (false)",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "default" => false,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "use-java-context" => {
+            "type" => BOOLEAN,
+            "description" => "Setting this to false will bind the datasource into global JNDI",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "default" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "use-try-lock" => {
+            "type" => LONG,
+            "description" => "Any configured timeout for internal locks on the resource adapter objects in seconds",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "user-name" => {
+            "type" => STRING,
+            "description" => "Specify the user name used when creating a new connection",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "alternatives" => ["security-domain"],
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-constraints" => {"sensitive" => {
+                "credential" => {"type" => "core"},
+                "data-source-security" => {"type" => "datasources"}
+            }},
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "valid-connection-checker-class-name" => {
+            "type" => STRING,
+            "description" => "An org.jboss.jca.adapters.jdbc.ValidConnectionChecker that provides an isValidConnection(Connection) method to validate a connection. If an exception is returned that means the connection is invalid. This overrides the check-valid-connection-sql element",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "valid-connection-checker-properties" => {
+            "type" => OBJECT,
+            "description" => "The valid connection checker properties",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "requires" => ["valid-connection-checker-class-name"],
+            "value-type" => STRING,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        },
+        "validate-on-match" => {
+            "type" => BOOLEAN,
+            "description" => "The validate-on-match element specifies if connection validation should be done when a connection factory attempts to match a managed connection. This is typically exclusive to the use of background validation",
+            "expressions-allowed" => true,
+            "nillable" => true,
+            "access-type" => "read-write",
+            "storage" => "configuration",
+            "restart-required" => "no-services"
+        }
+    },
+    "operations" => {
+        "add" => {
+            "operation-name" => "add",
+            "description" => "Add a new data-source",
+            "request-properties" => {
+                "allocation-retry" => {
+                    "type" => INT,
+                    "description" => "The allocation retry element indicates the number of times that allocating a connection should be tried before throwing an exception",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true
+                },
+                "allocation-retry-wait-millis" => {
+                    "type" => LONG,
+                    "description" => "The allocation retry wait millis element specifies the amount of time, in milliseconds, to wait between retrying to allocate a connection",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true
+                },
+                "allow-multiple-users" => {
+                    "type" => BOOLEAN,
+                    "description" => "Specifies if multiple users will access the datasource through the getConnection(user, password) method and hence if the internal pool type should account for that",
+                    "expressions-allowed" => false,
+                    "required" => false,
+                    "nillable" => true,
+                    "default" => false
+                },
+                "background-validation" => {
+                    "type" => BOOLEAN,
+                    "description" => "An element to specify that connections should be validated on a background thread versus being validated prior to use. Changing this value can be done only on disabled datasource,  requires a server restart otherwise.",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true
+                },
+                "background-validation-millis" => {
+                    "type" => LONG,
+                    "description" => "The background-validation-millis element specifies the amount of time, in milliseconds, that background validation will run. Changing this value can be done only on disabled datasource,  requires a server restart otherwise",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "unit" => "MILLISECONDS",
+                    "min" => 1L,
+                    "max" => 2147483647L
+                },
+                "blocking-timeout-wait-millis" => {
+                    "type" => LONG,
+                    "description" => "The blocking-timeout-millis element specifies the maximum time, in milliseconds, to block while waiting for a connection before throwing an exception. Note that this blocks only while waiting for locking a connection, and will never throw an exception if creating a new connection takes an inordinately long time",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "unit" => "MILLISECONDS"
+                },
+                "capacity-decrementer-class" => {
+                    "type" => STRING,
+                    "description" => "Class defining the policy for decrementing connections in the pool",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L
+                },
+                "capacity-decrementer-properties" => {
+                    "type" => OBJECT,
+                    "description" => "Properties to be injected in class defining the policy for decrementing connections in the pool",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "value-type" => STRING
+                },
+                "capacity-incrementer-class" => {
+                    "type" => STRING,
+                    "description" => "Class defining the policy for incrementing connections in the pool",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L
+                },
+                "capacity-incrementer-properties" => {
+                    "type" => OBJECT,
+                    "description" => "Properties to be injected in class defining the policy for incrementing connections in the pool",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "value-type" => STRING
+                },
+                "check-valid-connection-sql" => {
+                    "type" => STRING,
+                    "description" => "Specify an SQL statement to check validity of a pool connection. This may be called when managed connection is obtained from the pool",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L
+                },
+                "connectable" => {
+                    "type" => BOOLEAN,
+                    "description" => "Enable the use of CMR. This feature means that a local resource can reliably participate in an XA transaction.",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "default" => false
+                },
+                "connection-listener-class" => {
+                    "type" => STRING,
+                    "description" => "Speciefies class name extending org.jboss.jca.adapters.jdbc.spi.listener.ConnectionListener that provides a possible to listen for connection activation and passivation in order to perform actions before the connection is returned to the application or returned to the pool.",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L
+                },
+                "connection-listener-property" => {
+                    "type" => OBJECT,
+                    "description" => "Properties to be injected in class specidied in connection-listener-class",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "value-type" => STRING
+                },
+                "connection-properties" => {
+                    "type" => OBJECT,
+                    "description" => "The connection-properties element allows you to pass in arbitrary connection properties to the Driver.connect(url, props) method",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "value-type" => STRING
+                },
+                "connection-url" => {
+                    "type" => STRING,
+                    "description" => "The JDBC driver connection URL",
+                    "expressions-allowed" => true,
+                    "required" => true,
+                    "nillable" => false,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L
+                },
+                "datasource-class" => {
+                    "type" => STRING,
+                    "description" => "The fully qualified name of the JDBC datasource class",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L
+                },
+                "driver-class" => {
+                    "type" => STRING,
+                    "description" => "The fully qualified name of the JDBC driver class",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L
+                },
+                "driver-name" => {
+                    "type" => STRING,
+                    "description" => "Defines the JDBC driver the datasource should use. It is a symbolic name matching the the name of installed driver. In case the driver is deployed as jar, the name is the name of deployment unit",
+                    "expressions-allowed" => true,
+                    "required" => true,
+                    "nillable" => false,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L
+                },
+                "enabled" => {
+                    "type" => BOOLEAN,
+                    "description" => "Specifies if the datasource should be enabled. Note this attribute will not be supported runtime in next versions.",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "default" => true,
+                    "deprecated" => {
+                        "since" => "3.0.0",
+                        "reason" => "Specifies if the datasource should be enabled. Note this attribute will not be supported runtime in next versions."
+                    }
+                },
+                "exception-sorter-class-name" => {
+                    "type" => STRING,
+                    "description" => "An org.jboss.jca.adapters.jdbc.ExceptionSorter that provides an isExceptionFatal(SQLException) method to validate if an exception should broadcast an error",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L
+                },
+                "exception-sorter-properties" => {
+                    "type" => OBJECT,
+                    "description" => "The exception sorter properties",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "requires" => ["exception-sorter-class-name"],
+                    "value-type" => STRING
+                },
+                "flush-strategy" => {
+                    "type" => STRING,
+                    "description" => "Specifies how the pool should be flush in case of an error. Valid values are: FailingConnectionOnly (default), IdleConnections and EntirePool",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "default" => "FailingConnectionOnly",
+                    "allowed" => [
+                        "UNKNOWN",
+                        "FailingConnectionOnly",
+                        "InvalidIdleConnections",
+                        "IdleConnections",
+                        "Gracefully",
+                        "EntirePool",
+                        "AllInvalidIdleConnections",
+                        "AllIdleConnections",
+                        "AllGracefully",
+                        "AllConnections"
+                    ]
+                },
+                "idle-timeout-minutes" => {
+                    "type" => LONG,
+                    "description" => "The idle-timeout-minutes elements specifies the maximum time, in minutes, a connection may be idle before being closed. The actual maximum time depends also on the IdleRemover scan time, which is half of the smallest idle-timeout-minutes value of any pool. Changing this value can be done only on disabled datasource, requires a server restart otherwise.",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "unit" => "MINUTES"
+                },
+                "initial-pool-size" => {
+                    "type" => INT,
+                    "description" => "The initial-pool-size element indicates the initial number of connections a pool should hold.",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true
+                },
+                "jndi-name" => {
+                    "type" => STRING,
+                    "description" => "Specifies the JNDI name for the datasource",
+                    "expressions-allowed" => true,
+                    "required" => true,
+                    "nillable" => false
+                },
+                "jta" => {
+                    "type" => BOOLEAN,
+                    "description" => "Enable JTA integration",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "default" => true
+                },
+                "max-pool-size" => {
+                    "type" => INT,
+                    "description" => "The max-pool-size element specifies the maximum number of connections for a pool. No more connections will be created in each sub-pool",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "default" => 20
+                },
+                "min-pool-size" => {
+                    "type" => INT,
+                    "description" => "The min-pool-size element specifies the minimum number of connections for a pool",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "default" => 0
+                },
+                "new-connection-sql" => {
+                    "type" => STRING,
+                    "description" => "Specifies an SQL statement to execute whenever a connection is added to the connection pool",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L
+                },
+                "password" => {
+                    "type" => STRING,
+                    "description" => "Specifies the password used when creating a new connection",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "requires" => ["user-name"],
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L
+                },
+                "pool-prefill" => {
+                    "type" => BOOLEAN,
+                    "description" => "Should the pool be prefilled. Changing this value can be done only on disabled datasource, requires a server restart otherwise.",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "default" => false
+                },
+                "pool-use-strict-min" => {
+                    "type" => BOOLEAN,
+                    "description" => "Specifies if the min-pool-size should be considered strictly",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "default" => false
+                },
+                "prepared-statements-cache-size" => {
+                    "type" => LONG,
+                    "description" => "The number of prepared statements per connection in an LRU cache",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true
+                },
+                "query-timeout" => {
+                    "type" => LONG,
+                    "description" => "Any configured query timeout in seconds. If not provided no timeout will be set",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true
+                },
+                "reauth-plugin-class-name" => {
+                    "type" => STRING,
+                    "description" => "The fully qualified class name of the reauthentication plugin implementation",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L
+                },
+                "reauth-plugin-properties" => {
+                    "type" => OBJECT,
+                    "description" => "The properties for the reauthentication plugin",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "requires" => ["reauth-plugin-class-name"],
+                    "value-type" => STRING
+                },
+                "security-domain" => {
+                    "type" => STRING,
+                    "description" => "Specifies the security domain which defines the javax.security.auth.Subject that are used to distinguish connections in the pool",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "alternatives" => ["user-name"],
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L
+                },
+                "set-tx-query-timeout" => {
+                    "type" => BOOLEAN,
+                    "description" => "Whether to set the query timeout based on the time remaining until transaction timeout. Any configured query timeout will be used if there is no transaction",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "default" => false
+                },
+                "share-prepared-statements" => {
+                    "type" => BOOLEAN,
+                    "description" => "Whether to share prepared statements, i.e. whether asking for same statement twice without closing uses the same underlying prepared statement",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "default" => false
+                },
+                "spy" => {
+                    "type" => BOOLEAN,
+                    "description" => "Enable spying of SQL statements",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "default" => false
+                },
+                "stale-connection-checker-class-name" => {
+                    "type" => STRING,
+                    "description" => "An org.jboss.jca.adapters.jdbc.StaleConnectionChecker that provides an isStaleConnection(SQLException) method which if it returns true will wrap the exception in an org.jboss.jca.adapters.jdbc.StaleConnectionException",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L
+                },
+                "stale-connection-checker-properties" => {
+                    "type" => OBJECT,
+                    "description" => "The stale connection checker properties",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "requires" => ["stale-connection-checker-class-name"],
+                    "value-type" => STRING
+                },
+                "statistics-enabled" => {
+                    "type" => BOOLEAN,
+                    "description" => "define if runtime statistics is enabled or not.",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "default" => false
+                },
+                "track-statements" => {
+                    "type" => STRING,
+                    "description" => "Whether to check for unclosed statements when a connection is returned to the pool, result sets are closed, a statement is closed or return to the prepared statement cache. Valid values are: \"false\" - do not track statements, \"true\" - track statements and result sets and warn when they are not closed, \"nowarn\" - track statements but do not warn about them being unclosed",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "default" => "NOWARN",
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L
+                },
+                "tracking" => {
+                    "type" => BOOLEAN,
+                    "description" => "Defines if IronJacamar should track connection handles across transaction boundaries",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "default" => false
+                },
+                "transaction-isolation" => {
+                    "type" => STRING,
+                    "description" => "Set the java.sql.Connection transaction isolation level. Valid values are: TRANSACTION_READ_UNCOMMITTED, TRANSACTION_READ_COMMITTED, TRANSACTION_REPEATABLE_READ, TRANSACTION_SERIALIZABLE and TRANSACTION_NONE",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L
+                },
+                "url-delimiter" => {
+                    "type" => STRING,
+                    "description" => "Specifies the delimiter for URLs in connection-url for HA datasources",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L
+                },
+                "url-selector-strategy-class-name" => {
+                    "type" => STRING,
+                    "description" => "A class that implements org.jboss.jca.adapters.jdbc.URLSelectorStrategy",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L
+                },
+                "use-ccm" => {
+                    "type" => BOOLEAN,
+                    "description" => "Enable the use of a cached connection manager",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "default" => true
+                },
+                "use-fast-fail" => {
+                    "type" => BOOLEAN,
+                    "description" => "Whether to fail a connection allocation on the first try if it is invalid (true) or keep trying until the pool is exhausted of all potential connections (false)",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "default" => false
+                },
+                "use-java-context" => {
+                    "type" => BOOLEAN,
+                    "description" => "Setting this to false will bind the datasource into global JNDI",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "default" => true
+                },
+                "use-try-lock" => {
+                    "type" => LONG,
+                    "description" => "Any configured timeout for internal locks on the resource adapter objects in seconds",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true
+                },
+                "user-name" => {
+                    "type" => STRING,
+                    "description" => "Specify the user name used when creating a new connection",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "alternatives" => ["security-domain"],
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L
+                },
+                "valid-connection-checker-class-name" => {
+                    "type" => STRING,
+                    "description" => "An org.jboss.jca.adapters.jdbc.ValidConnectionChecker that provides an isValidConnection(Connection) method to validate a connection. If an exception is returned that means the connection is invalid. This overrides the check-valid-connection-sql element",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L
+                },
+                "valid-connection-checker-properties" => {
+                    "type" => OBJECT,
+                    "description" => "The valid connection checker properties",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true,
+                    "requires" => ["valid-connection-checker-class-name"],
+                    "value-type" => STRING
+                },
+                "validate-on-match" => {
+                    "type" => BOOLEAN,
+                    "description" => "The validate-on-match element specifies if connection validation should be done when a connection factory attempts to match a managed connection. This is typically exclusive to the use of background validation",
+                    "expressions-allowed" => true,
+                    "required" => false,
+                    "nillable" => true
+                }
+            },
+            "reply-properties" => {}
+        }
+    }                
+}

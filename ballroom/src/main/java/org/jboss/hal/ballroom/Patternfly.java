@@ -19,16 +19,32 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.ballroom.form;
+package org.jboss.hal.ballroom;
+
+import com.google.gwt.core.client.Scheduler;
 
 /**
  * @author Harald Pehl
  */
-public final class Forms {
+public class PatternFly {
 
-    private Forms() {}
+    private PatternFly() {}
 
-    public static native void initSelectPicker() /*-{
+    /**
+     * Initialized the opt-in functionality from PatternFly / Bootstrap
+     */
+    public static void initOptIns() {
+        Scheduler.get().scheduleDeferred(() -> {
+            selectPicker();
+            tooltips();
+        });
+    }
+
+    private static native void selectPicker() /*-{
         $wnd.$(".selectpicker").selectpicker();
+    }-*/;
+
+    private static native void tooltips() /*-{
+        $wnd.$('[data-toggle="tooltip"]').tooltip();
     }-*/;
 }
