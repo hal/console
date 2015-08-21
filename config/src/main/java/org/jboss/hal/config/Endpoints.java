@@ -44,9 +44,8 @@ public class Endpoints {
     }
 
     private String dmr;
-    private String deployment;
     private String logout;
-    private String patch;
+    private String upload;
     private boolean sameOrigin;
 
     public Endpoints() {
@@ -59,21 +58,16 @@ public class Endpoints {
             safeUrl = baseUrl.substring(0, baseUrl.length() - 1);
         }
         dmr = safeUrl + "/management";
-        deployment = safeUrl + "/management/add-content";
         logout = safeUrl + "/logout";
-        patch = safeUrl + "/management-upload";
+        upload = safeUrl + "/management-upload";
     }
 
     public String dmr() {
         return dmr;
     }
 
-    public String deployment() {
-        return deployment;
-    }
-
-    public String patch() {
-        return patch;
+    public String upload() {
+        return upload;
     }
 
     public String logout() {

@@ -2,10 +2,9 @@ package org.jboss.hal.dmr.dispatch;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.dispatch.ServerState.State;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -22,8 +21,8 @@ public class DomainResponseProcessor implements ResponseProcessor {
     }
 
     @Override
-    public Map<String, ServerState> process(ModelNode response) {
-        Map<String, ServerState> serverStates = new HashMap<>();
+    public ProcessState process(ModelNode response) {
+        ProcessState processState = new ProcessState();
 
         List<Property> serverGroups = response.get(SERVER_GROUPS).asPropertyList();
         for (Property serverGroup : serverGroups) {
@@ -35,14 +34,14 @@ public class DomainResponseProcessor implements ResponseProcessor {
                 for (Property host : hosts) {
                     // host
                     ModelNode hostValue = host.getValue();
-                    parseHost(host.getName(), hostValue, serverStates);
+                    parseHost(host.getName(), hostValue, processState);
                 }
             }
         }
-        return serverStates;
+        return processState;
     }
 
-    private static void parseHost(final String hostName, ModelNode hostValue, Map<String, ServerState> serverStates) {
+    private static void parseHost(final String hostName, ModelNode hostValue, ProcessState processState) {
         List<Property> servers = hostValue.asPropertyList();
 
         for (Property server : servers) {
@@ -55,17 +54,14 @@ public class DomainResponseProcessor implements ResponseProcessor {
                 for (Property header : headers) {
                     if (PROCESS_STATE.equals(header.getName())) {
                         String headerValue = header.getValue().asString();
-                        String name = "Host: " + hostName + ", server: " + server.getName();
 
                         if (RESTART_REQUIRED.equals(headerValue)) {
-                            ServerState state = new ServerState(name);
-                            state.setRestartRequired(true);
-                            serverStates.put(name, state);
+                            ServerState serverState = new ServerState(hostName, server.getName(), State.RESTART_REQUIRED);
+                            processState.add(serverState);
 
                         } else if (RELOAD_REQUIRED.equals(headerValue)) {
-                            ServerState state = new ServerState(name);
-                            state.setReloadRequired(true);
-                            serverStates.put(name, state);
+                            ServerState serverState = new ServerState(hostName, server.getName(), State.RELOAD_REQUIRED);
+                            processState.add(serverState);
                         }
                     }
                 }

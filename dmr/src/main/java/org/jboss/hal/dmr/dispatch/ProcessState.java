@@ -19,42 +19,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.dmr;
+package org.jboss.hal.dmr.dispatch;
 
-import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.inject.Provides;
-import org.jboss.hal.config.Environment;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.dispatch.DomainResponseProcessor;
-import org.jboss.hal.dmr.dispatch.ResponseProcessor;
-import org.jboss.hal.dmr.dispatch.StandaloneResponseProcessor;
-import org.jboss.hal.spi.GinModule;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * @author Harald Pehl
  */
-@GinModule
-public class DmrModule extends AbstractGinModule {
+public class ProcessState implements Iterable<ServerState> {
 
-    private final ResponseProcessor standalone;
-    private final ResponseProcessor domain;
+    public static final ProcessState EMPTY = new ProcessState();
 
-    public DmrModule() {
-        standalone = new StandaloneResponseProcessor();
-        domain = new DomainResponseProcessor();
+    private final Set<ServerState> serverStates;
+
+    public ProcessState() {
+        serverStates = new HashSet<>();
+    }
+
+    public void add(ServerState serverState) {
+        serverStates.add(serverState);
     }
 
     @Override
-    protected void configure() {
-        bind(Dispatcher.class);
-    }
-
-    @Provides
-    public ResponseProcessor provideResponseProcessor(Environment environment) {
-        if (environment.isStandalone()) {
-            return standalone;
-        } else {
-            return domain;
-        }
+    public Iterator<ServerState> iterator() {
+        return serverStates.iterator();
     }
 }

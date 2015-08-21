@@ -2,10 +2,9 @@ package org.jboss.hal.dmr.dispatch;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.dispatch.ServerState.State;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Heiko Braun
@@ -21,8 +20,8 @@ public class StandaloneResponseProcessor implements ResponseProcessor {
     }
 
     @Override
-    public Map<String, ServerState> process(ModelNode response) {
-        Map<String, ServerState> serverStates = new HashMap<>();
+    public ProcessState process(ModelNode response) {
+        ProcessState processState = new ProcessState();
         List<Property> headers = response.get(RESPONSE_HEADERS).asPropertyList();
         //noinspection Convert2streamapi
         for (Property header : headers) {
@@ -30,17 +29,15 @@ public class StandaloneResponseProcessor implements ResponseProcessor {
 
                 String headerValue = header.getValue().asString();
                 if (RESTART_REQUIRED.equals(headerValue)) {
-                    ServerState state = new ServerState(STANDALONE_SERVER);
-                    state.setRestartRequired(true);
-                    serverStates.put(STANDALONE_SERVER, state);
+                    ServerState state = new ServerState(null, STANDALONE_SERVER, State.RESTART_REQUIRED);
+                    processState.add(state);
 
                 } else if (RELOAD_REQUIRED.equals(headerValue)) {
-                    ServerState state = new ServerState(STANDALONE_SERVER);
-                    state.setReloadRequired(true);
-                    serverStates.put(STANDALONE_SERVER, state);
+                    ServerState state = new ServerState(null, STANDALONE_SERVER, State.RELOAD_REQUIRED);
+                    processState.add(state);
                 }
             }
         }
-        return serverStates;
+        return processState;
     }
 }

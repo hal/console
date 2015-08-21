@@ -54,6 +54,7 @@
         <nodejs.version>v0.12.5</nodejs.version>
         <npm.version>2.11.2</npm.version>
         <slf4j-gwt.version>1.7.7.1</slf4j-gwt.version>
+        <super.eventbus>0.1.1</super.eventbus>
         <validation.version>1.0.0.GA</validation.version>
     </properties>
 
@@ -141,6 +142,11 @@
                 <groupId>ru.finam</groupId>
                 <artifactId>slf4j-gwt</artifactId>
                 <version>${slf4j-gwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ekuefler.supereventbus</groupId>
+                <artifactId>supereventbus</artifactId>
+                <version>${super.eventbus}</version>
             </dependency>
 
             <!-- APT Processors -->

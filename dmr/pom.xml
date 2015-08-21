@@ -59,6 +59,10 @@
             <groupId>ru.finam</groupId>
             <artifactId>slf4j-gwt</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.ekuefler.supereventbus</groupId>
+            <artifactId>supereventbus</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

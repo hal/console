@@ -2,9 +2,6 @@ package org.jboss.hal.dmr.dispatch;
 
 import org.jboss.hal.dmr.ModelNode;
 
-import java.util.Collections;
-import java.util.Map;
-
 /**
  * @author Heiko Braun
  * @date 1/17/12
@@ -18,7 +15,7 @@ public interface ResponseProcessor {
 
     boolean accepts(ModelNode response);
 
-    Map<String, ServerState> process(ModelNode response);
+    ProcessState process(ModelNode response);
 
     ResponseProcessor NOOP = new ResponseProcessor() {
         @Override
@@ -27,8 +24,8 @@ public interface ResponseProcessor {
         }
 
         @Override
-        public Map<String, ServerState> process(final ModelNode response) {
-            return Collections.emptyMap();
+        public ProcessState process(final ModelNode response) {
+            return ProcessState.EMPTY;
         }
     };
 }

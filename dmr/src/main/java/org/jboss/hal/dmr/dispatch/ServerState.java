@@ -6,31 +6,61 @@ package org.jboss.hal.dmr.dispatch;
  */
 public class ServerState {
 
-    private String name;
-    private boolean reloadRequired;
-    private boolean restartRequired;
-
-    public ServerState(String name) {
-        this.name = name;
+    public enum State {
+        RELOAD_REQUIRED, RESTART_REQUIRED
     }
 
-    public String getName() {
-        return name;
+    private final String host;
+    private final String server;
+    private final State state;
+
+    public ServerState(final String host, final String server, State state) {
+        this.host = host;
+        this.server = server;
+        this.state = state;
     }
 
-    public boolean isReloadRequired() {
-        return reloadRequired;
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) { return true; }
+        if (!(o instanceof ServerState)) { return false; }
+
+        ServerState that = (ServerState) o;
+
+        if (!host.equals(that.host)) { return false; }
+        if (!server.equals(that.server)) { return false; }
+        return state == that.state;
+
     }
 
-    public void setReloadRequired(boolean reloadRequired) {
-        this.reloadRequired = reloadRequired;
+    @Override
+    public int hashCode() {
+        int result = host.hashCode();
+        result = 31 * result + server.hashCode();
+        result = 31 * result + state.hashCode();
+        return result;
     }
 
-    public boolean isRestartRequired() {
-        return restartRequired;
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ServerState(");
+        if (host != null) {
+            builder.append(host).append(" / ");
+        }
+        builder.append(server).append(": " + state.name()).append(")");
+        return builder.toString();
     }
 
-    public void setRestartRequired(boolean restartRequired) {
-        this.restartRequired = restartRequired;
+    public String getServer() {
+        return server;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public State getState() {
+        return state;
     }
 }

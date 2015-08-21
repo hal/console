@@ -21,11 +21,15 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
+import com.ekuefler.supereventbus.EventBus;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
+import com.google.inject.Provider;
+import elemental.dom.Element;
+import elemental.html.InputElement;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
@@ -35,7 +39,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.Map;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -50,6 +53,34 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Harald Pehl
  */
 public class Dispatcher {
+
+    @FunctionalInterface
+    public interface SuccessCallback {
+
+        void onSuccess(ModelNode payload);
+    }
+
+
+    @FunctionalInterface
+    public interface FailedCallback {
+
+        void onFailed(Operation operation, String failure);
+    }
+
+
+    @FunctionalInterface
+    public interface ExceptionCallback {
+
+        void onException(Operation operation, Throwable exception);
+    }
+
+
+    @FunctionalInterface
+    private interface PayloadProcessor {
+
+        ModelNode processPayload(String method, String payload);
+    }
+
 
     private static final String HEADER_CONTENT_TYPE = "Content-Type";
     private static final String HEADER_ACCEPT = "Accept";
@@ -68,18 +99,52 @@ public class Dispatcher {
     private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
 
     private final Endpoints endpoints;
-    private ResponseProcessor responseProcessor;
+    private final EventBus eventBus;
+    private final Provider<ResponseProcessor> responseProcessor;
+    private final PayloadProcessor dmrPayloadProcessor;
+    private final PayloadProcessor uploadPayloadProcessor;
     private FailedCallback failedCallback;
     private ExceptionCallback exceptionCallback;
 
-
     @Inject
-    public Dispatcher(final Endpoints endpoints) {
+    public Dispatcher(final Endpoints endpoints, final EventBus eventBus,
+            Provider<ResponseProcessor> responseProcessor) {
         this.endpoints = endpoints;
-        this.responseProcessor = ResponseProcessor.NOOP;
+        this.eventBus = eventBus;
+        this.responseProcessor = responseProcessor;
+
+        this.dmrPayloadProcessor = (method, payload) -> {
+            ModelNode response;
+            try {
+                response = ModelNode.fromBase64(payload);
+                if ("GET".equals(method)) {
+                    // For GET request the response is purely the model nodes result. The outcome
+                    // is not send as part of the response but expressed with the HTTP status code.
+                    // In order to not break existing code, we repackage the payload into a
+                    // new model node with an "outcome" and "result" key.
+                    ModelNode repackaged = new ModelNode();
+                    repackaged.get(OUTCOME).set(SUCCESS);
+                    repackaged.get(RESULT).set(response);
+                    response = repackaged;
+                }
+            } catch (Throwable e) {
+                ModelNode err = new ModelNode();
+                err.get(OUTCOME).set(FAILED);
+                err.get(FAILURE_DESCRIPTION)
+                        .set("Failed to decode response: " + e.getClass().getName() + ": " + e.getMessage());
+                response = err;
+            }
+            return response;
+        };
+        this.uploadPayloadProcessor = (method, payload) -> {
+            // TODO Parse basic JSON properties like 'outcome' and 'failureDescription'.
+            // Repack the 'result' as 'payload' string model node
+            return new ModelNode();
+        };
+
         // TODO Come up with some more useful defaults
-        failedCallback = (operation, failure) -> logger.error("DMR operation {} failed: {}", operation, failure);
-        exceptionCallback = (operation, t) -> logger.error("Error while executing DRM operation {}: {}", operation,
+        this.failedCallback = (operation, failure) -> logger.error("DMR operation {} failed: {}", operation, failure);
+        this.exceptionCallback = (operation, t) -> logger.error("Error while executing DRM operation {}: {}", operation,
                 t.getMessage());
     }
 
@@ -101,46 +166,9 @@ public class Dispatcher {
         RequestCallback requestCallback = new RequestCallback() {
             @Override
             public void onResponseReceived(final Request request, final Response response) {
-                int statusCode = response.getStatusCode();
-                if (200 == statusCode) {
-                    ModelNode responseNode = parseResponse(requestBuilder.getHTTPMethod(), response.getText());
-                    if (!responseNode.isFailure()) {
-                        if (responseProcessor.accepts(responseNode)) {
-                            Map<String, ServerState> serverStates = responseProcessor.process(responseNode);
-                            if (!serverStates.isEmpty()) {
-                                // TODO emit notifications
-                            }
-                        }
-                        successCallback.onSuccess(responseNode.get(RESULT));
-                    } else {
-                        failedCallback.onFailed(operation, responseNode.getFailureDescription());
-                    }
-                } else if (401 == statusCode || 0 == statusCode) {
-                    exceptionCallback
-                            .onException(operation, new DispatchException("Authentication required.", statusCode));
-                } else if (403 == statusCode) {
-                    exceptionCallback
-                            .onException(operation, new DispatchException("Authentication required.", statusCode));
-                } else if (404 == statusCode) {
-                    exceptionCallback.onException(operation, new DispatchException(
-                            "Management interface at '" + requestBuilder.getUrl() + " not found'.", statusCode));
-                } else if (503 == statusCode) {
-                    exceptionCallback.onException(operation,
-                            new DispatchException("Service temporarily unavailable. Is the server is still booting?",
-                                    statusCode));
-                } else {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("Unexpected HTTP response").append(": ").append(statusCode);
-                    sb.append("\n\n");
-                    sb.append("Request\n");
-                    sb.append(operation.toString());
-                    sb.append("\n\nResponse\n\n");
-                    sb.append(response.getStatusText()).append("\n");
-                    String payload = response.getText().equals("") ? "No details" :
-                            ModelNode.fromBase64(response.getText()).toString();
-                    sb.append(payload);
-                    exceptionCallback.onException(operation, new DispatchException(sb.toString(), statusCode));
-                }
+                processResponse(response.getStatusCode(), requestBuilder.getUrl(), requestBuilder.getHTTPMethod(),
+                        response.getText(), operation, dmrPayloadProcessor, successCallback, failedCallback,
+                        exceptionCallback);
             }
 
             @Override
@@ -157,6 +185,66 @@ public class Dispatcher {
             logger.error("Error sending DMR request for operation {}: {}", operation, e.getMessage());
             exceptionCallback.onException(operation, e);
         }
+    }
+
+
+    // ------------------------------------------------------ upload
+
+    public void upload(final InputElement fileInput, final Operation operation, final SuccessCallback successCallback) {
+        upload(fileInput, operation, successCallback, failedCallback, exceptionCallback);
+    }
+
+    public void upload(final InputElement fileInput, final Operation operation, final SuccessCallback successCallback,
+            FailedCallback failedCallback) {
+        upload(fileInput, operation, successCallback, failedCallback, exceptionCallback);
+    }
+
+    public void upload(final InputElement fileInput, final Operation operation, final SuccessCallback successCallback,
+            final FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
+        uploadNative(endpoints.upload(), fileInput, operation.toJSONString(true), operation,
+                successCallback, failedCallback, exceptionCallback);
+    }
+
+    private native void uploadNative(String endpoint, Element fileInput, String operationValue, Operation operation,
+            SuccessCallback successCallback, FailedCallback failedCallback, ExceptionCallback exceptionCallback) /*-{
+        var that = this;
+
+        var formData = new FormData();
+        formData.append(fileInput.name, fileInput.files[0]);
+        formData.append("operation", operationValue);
+
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+        xhr.onreadystatechange = $entry(function (evt) {
+            var status, payload, readyState;
+            try {
+                readyState = evt.target.readyState;
+                payload = evt.target.responseText;
+                status = evt.target.status;
+            }
+            catch (e) {
+                that.@org.jboss.hal.dmr.dispatch.Dispatcher::processUploadException(*)(e.message, operation,
+                    exceptionCallback);
+            }
+            if (readyState == 4 && payload) {
+                that.@org.jboss.hal.dmr.dispatch.Dispatcher::processUploadResponse(*)(status, endpoint, "POST", payload,
+                    operation, exceptionCallback, successCallback, failedCallback);
+            }
+        });
+        xhr.open("POST", endpoint, true);
+        xhr.send(formData);
+    }-*/;
+
+    private void processUploadException(final String error, final Operation operation,
+            final ExceptionCallback exceptionCallback) {
+        exceptionCallback.onException(operation, new DispatchException(error, 500));
+    }
+
+    private void processUploadResponse(final int status, final String url, final String method, final String payload,
+            final Operation operation, final SuccessCallback successCallback, final FailedCallback failedCallback,
+            final ExceptionCallback exceptionCallback) {
+        processResponse(status, url, method, payload, operation, uploadPayloadProcessor, successCallback,
+                failedCallback, exceptionCallback);
     }
 
 
@@ -201,28 +289,37 @@ public class Dispatcher {
         return url.toString();
     }
 
-    private ModelNode parseResponse(String httpMethod, String responseText) {
-        ModelNode response;
-        try {
-            response = ModelNode.fromBase64(responseText);
-            if ("GET".equals(httpMethod)) {
-                // For GET request the response is purely the model nodes result. The outcome
-                // is not send as part of the response but expressed with the HTTP status code.
-                // In order to not break existing code, we repackage the payload into a
-                // new model node with an "outcome" and "result" key.
-                ModelNode repackaged = new ModelNode();
-                repackaged.get(OUTCOME).set(SUCCESS);
-                repackaged.get(RESULT).set(response);
-                response = repackaged;
+    private void processResponse(final int status, final String url, final String method, final String payload,
+            final Operation operation, final PayloadProcessor payloadProcessor, final SuccessCallback successCallback,
+            final FailedCallback failedCallback, final ExceptionCallback exceptionCallback) {
+        if (200 == status) {
+            ModelNode responseNode = payloadProcessor.processPayload(method, payload);
+            if (!responseNode.isFailure()) {
+                if (responseProcessor.get().accepts(responseNode)) {
+                    ProcessState processState = responseProcessor.get().process(responseNode);
+                    eventBus.post(processState);
+                }
+                successCallback.onSuccess(responseNode.get(RESULT));
+            } else {
+                failedCallback.onFailed(operation, responseNode.getFailureDescription());
             }
-        } catch (Throwable e) {
-            ModelNode err = new ModelNode();
-            err.get(OUTCOME).set(FAILED);
-            err.get(FAILURE_DESCRIPTION)
-                    .set("Failed to decode response: " + e.getClass().getName() + ": " + e.getMessage());
-            response = err;
+        } else if (401 == status || 0 == status) {
+            exceptionCallback
+                    .onException(operation, new DispatchException("Authentication required.", status));
+        } else if (403 == status) {
+            exceptionCallback
+                    .onException(operation, new DispatchException("Authentication required.", status));
+        } else if (404 == status) {
+            exceptionCallback.onException(operation, new DispatchException(
+                    "Management interface at '" + url + " not found'.", status));
+        } else if (503 == status) {
+            exceptionCallback.onException(operation,
+                    new DispatchException("Service temporarily unavailable. Is the server is still booting?",
+                            status));
+        } else {
+            exceptionCallback
+                    .onException(operation, new DispatchException("Unexpected status code + " + status, status));
         }
-        return response;
     }
 
 
@@ -234,26 +331,5 @@ public class Dispatcher {
 
     public void setExceptionCallback(final ExceptionCallback exceptionCallback) {
         this.exceptionCallback = exceptionCallback;
-    }
-
-
-    @FunctionalInterface
-    public interface SuccessCallback {
-
-        void onSuccess(ModelNode payload);
-    }
-
-
-    @FunctionalInterface
-    public interface FailedCallback {
-
-        void onFailed(Operation operation, String failure);
-    }
-
-
-    @FunctionalInterface
-    public interface ExceptionCallback {
-
-        void onException(Operation operation, Throwable exception);
     }
 }
