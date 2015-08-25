@@ -27,7 +27,7 @@ import org.jboss.hal.config.User;
 import org.jboss.hal.core.flow.FunctionCallbacks;
 import org.jboss.hal.core.flow.FunctionContext;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.core.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.Operation;
 import org.slf4j.Logger;
@@ -69,10 +69,8 @@ public class ReadEnvironment implements BootstrapFunction {
                 .build());
         ops.add(new Operation.Builder("whoami", ROOT).param("verbose", true).build());
 
-        Operation composite = new Composite(ops);
-        dispatcher.execute(
-                composite,
-                payload -> {
+        dispatcher
+                .onSuccess(payload -> {
                     logger.debug("Bootstrap[ReadEnvironment]: Parse root resource");
 
                     // server info
@@ -110,8 +108,9 @@ public class ReadEnvironment implements BootstrapFunction {
                         return false;
                     }, wait);
                     //                    control.proceed();
-                },
-                new FunctionCallbacks.Failed(control),
-                new FunctionCallbacks.Exception(control));
+                })
+                .onFailed(new FunctionCallbacks.Failed(control))
+                .onException(new FunctionCallbacks.Exception(control))
+                .execute(new Composite(ops));
     }
 }

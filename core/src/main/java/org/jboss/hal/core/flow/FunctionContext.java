@@ -19,7 +19,7 @@
 package org.jboss.hal.core.flow;
 
 import com.google.common.base.Function;
-import org.jboss.hal.dmr.dispatch.DispatchException;
+import org.jboss.hal.core.dispatch.DispatchException;
 
 import java.util.EmptyStackException;
 import java.util.HashMap;
@@ -121,7 +121,7 @@ public class FunctionContext {
     }
 
     /**
-     * @return {@code true} if the stored error is an instance of {@link org.jboss.hal.dmr.dispatch.DispatchException}
+     * @return {@code true} if the stored error is an instance of {@link org.jboss.hal.core.dispatch.DispatchException}
      * and its status code is 403.
      */
     public boolean isForbidden() {

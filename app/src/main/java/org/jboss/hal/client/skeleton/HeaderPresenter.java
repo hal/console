@@ -21,6 +21,8 @@
  */
 package org.jboss.hal.client.skeleton;
 
+import com.ekuefler.supereventbus.EventRegistration;
+import com.ekuefler.supereventbus.Subscribe;
 import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
@@ -32,69 +34,53 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
 import org.jboss.hal.core.HasPresenter;
 import org.jboss.hal.core.messaging.Message;
-import org.jboss.hal.core.messaging.MessageEvent;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Harald Pehl
  */
-public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> implements MessageEvent.MessageHandler {
+public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> {
 
     // @formatter:off
     public interface MyView extends View, HasPresenter<HeaderPresenter> {
         void update(Environment environment, Endpoints endpoints, User user);
         void selectTlc(String nameToken);
-        void showMessage(Message.Level level, String message);
-        void updateMessageCount(int messages);
+        void showMessage(Message message);
     }
+
+    interface MessageRegistration extends EventRegistration<HeaderPresenter> {}
     // @formatter:on
-
-
-    static class MessageHolder {
-
-        final Message.Level level;
-        final String message;
-        boolean new_;
-
-        MessageHolder(final Message.Level level, final String message) {
-            this.level = level;
-            this.message = message;
-            this.new_ = true;
-        }
-    }
 
 
     private final PlaceManager placeManager;
     private final Environment environment;
     private final Endpoints endpoints;
     private final User user;
-    private final List<MessageHolder> messages;
 
     @Inject
     public HeaderPresenter(final EventBus eventBus,
             final MyView view,
+            final com.ekuefler.supereventbus.EventBus superEventBus,
+            final MessageRegistration registration,
             final PlaceManager placeManager,
             final Environment environment,
             final Endpoints endpoints,
             final User user) {
         super(eventBus, view);
+        superEventBus.register(this, registration);
+
         this.placeManager = placeManager;
         this.environment = environment;
         this.endpoints = endpoints;
         this.user = user;
-        this.messages = new ArrayList<>();
     }
 
     @Override
     protected void onBind() {
         super.onBind();
-        addRegisteredHandler(MessageEvent.getType(), this);
         getView().setPresenter(this);
         getView().update(environment, endpoints, user);
-        getView().updateMessageCount(messages.size());
     }
 
     @Override
@@ -120,10 +106,8 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         Window.alert("Logout not yet implemented");
     }
 
-    @Override
-    public void onMessage(final MessageEvent event) {
-        getView().showMessage(event.getLevel(), event.getMessage());
-        messages.add(new MessageHolder(event.getLevel(), event.getMessage()));
-        getView().updateMessageCount(messages.size());
+    @Subscribe
+    public void onMessage(final Message message) {
+        getView().showMessage(message);
     }
 }

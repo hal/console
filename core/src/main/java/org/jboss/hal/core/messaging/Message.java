@@ -21,11 +21,6 @@
  */
 package org.jboss.hal.core.messaging;
 
-import com.gwtplatform.dispatch.annotation.GenEvent;
-import com.gwtplatform.dispatch.annotation.Optional;
-import com.gwtplatform.dispatch.annotation.Order;
-
-@GenEvent
 public class Message {
 
     public enum Level {
@@ -33,7 +28,68 @@ public class Message {
     }
 
 
-    @Order(1) Level level;
-    @Order(2) String message;
-    @Order(3) @Optional boolean sticky;
+    public static Message error(final String message) {
+        return error(message, null, false);
+    }
+
+    public static Message error(final String message, String details) {
+        return error(message, details, false);
+    }
+
+    public static Message error(final String message, final String details, boolean sticky) {
+        return new Message(Level.ERROR, message, details, sticky);
+    }
+
+    public static Message warning(final String message) {
+        return warning(message, null, false);
+    }
+
+    public static Message warning(final String message, String details) {
+        return warning(message, details, false);
+    }
+
+    public static Message warning(final String message, final String details, boolean sticky) {
+        return new Message(Level.WARNING, message, details, sticky);
+    }
+
+    public static Message info(final String message) {
+        return info(message, null, false);
+    }
+
+    public static Message info(final String message, final String details) {
+        return info(message, details, false);
+    }
+
+    public static Message info(final String message, final String details, boolean sticky) {
+        return new Message(Level.INFO, message, details, sticky);
+    }
+
+
+    private final Level level;
+    private final String message;
+    private String details;
+    private boolean sticky;
+
+    private Message(final Level level, final String message, final String details, final boolean sticky) {
+        this.level = level;
+        this.message = message;
+        this.details = details;
+        this.sticky = sticky;
+    }
+
+    public Level getLevel() {
+        return level;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public boolean isSticky() {
+        return sticky;
+    }
 }

@@ -99,11 +99,6 @@
                 <version>${gwtp.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.gwtplatform</groupId>
-                <artifactId>gwtp-processors</artifactId>
-                <version>${gwtp.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.google.gwt.inject</groupId>
                 <artifactId>gin</artifactId>
                 <version>${gin.version}</version>

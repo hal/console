@@ -25,18 +25,41 @@ import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.registry.Footer;
 import org.jboss.hal.core.registry.ResourceDescriptionRegistry;
 import org.jboss.hal.core.registry.UIRegistry;
+import org.jboss.hal.core.dispatch.Dispatcher;
+import org.jboss.hal.core.dispatch.DomainResponseProcessor;
+import org.jboss.hal.core.dispatch.ResponseProcessor;
+import org.jboss.hal.core.dispatch.StandaloneResponseProcessor;
 import org.jboss.hal.spi.GinModule;
 
 @GinModule
 public class CoreModule extends AbstractGinModule {
 
+    private final ResponseProcessor standalone;
+    private final ResponseProcessor domain;
+
+    public CoreModule() {
+        standalone = new StandaloneResponseProcessor();
+        domain = new DomainResponseProcessor();
+    }
+
     @Override
     protected void configure() {
+        bind(Dispatcher.class);
         bind(ResourceDescriptionRegistry.class).in(Singleton.class);
         bind(UIRegistry.class).in(Singleton.class);
+    }
+
+    @Provides
+    public ResponseProcessor provideResponseProcessor(Environment environment) {
+        if (environment.isStandalone()) {
+            return standalone;
+        } else {
+            return domain;
+        }
     }
 
     /**

@@ -22,7 +22,7 @@
 package org.jboss.hal.core.flow;
 
 import org.jboss.gwt.flow.Control;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.core.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 
 /**

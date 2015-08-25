@@ -143,12 +143,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     }
 
     @Override
-    public void updateMessageCount(int count) {
-        messagesLabel.setInnerText(i18n().messages().messages(count));
-    }
-
-    @Override
-    public void showMessage(final Message.Level level, final String message) {
+    public void showMessage(final Message message) {
     }
 
     @EventHandler(element = "logoLink", on = click)

@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.dmr.dispatch;
+package org.jboss.hal.core.dispatch;
 
 import com.ekuefler.supereventbus.EventBus;
 import com.google.gwt.http.client.Request;
@@ -31,6 +31,7 @@ import com.google.inject.Provider;
 import elemental.dom.Element;
 import elemental.html.InputElement;
 import org.jboss.hal.config.Endpoints;
+import org.jboss.hal.core.messaging.Message;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.Operation;
@@ -43,12 +44,12 @@ import java.util.List;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * The dispatcher executes operations against the management endpoint. You can register different callbacks to react on
- * failed management operations ({@link #setFailedCallback(FailedCallback)} or technical errors
- * {@link #setExceptionCallback(ExceptionCallback)}.
+ * The dispatcher executes operations / uploads against the management endpoints. You should register a callback for
+ * successful operations using {@link #onSuccess(SuccessCallback)}. You can register callbacks to react on failed
+ * management operations ({@link #onFailed(FailedCallback)} or technical errors {@link
+ * #onException(ExceptionCallback)}.
  * <p>
  * TODO Add a way to track the management operations.
- * TODO Handle bootstrap finished event and setup response processor based on operation mode
  *
  * @author Harald Pehl
  */
@@ -103,6 +104,7 @@ public class Dispatcher {
     private final Provider<ResponseProcessor> responseProcessor;
     private final PayloadProcessor dmrPayloadProcessor;
     private final PayloadProcessor uploadPayloadProcessor;
+    private SuccessCallback successCallback;
     private FailedCallback failedCallback;
     private ExceptionCallback exceptionCallback;
 
@@ -142,26 +144,21 @@ public class Dispatcher {
             return new ModelNode();
         };
 
-        // TODO Come up with some more useful defaults
-        this.failedCallback = (operation, failure) -> logger.error("DMR operation {} failed: {}", operation, failure);
-        this.exceptionCallback = (operation, t) -> logger.error("Error while executing DRM operation {}: {}", operation,
-                t.getMessage());
+        this.successCallback = payload -> logger.error("No success callback defined");
+        this.failedCallback = (operation, failure) -> {
+            logger.error("DMR operation {} failed: {}", operation, failure);
+            eventBus.post(Message.error("Last operation failed", failure)); // TODO I18N
+        };
+        this.exceptionCallback = (operation, t) -> {
+            logger.error("Error while executing DRM operation {}: {}", operation, t.getMessage());
+            eventBus.post(Message.error("Unable to execute last operation", t.getMessage())); // TODO I18N
+        };
     }
 
 
-    // ------------------------------------------------------ execute methods
+    // ------------------------------------------------------ execute dmr
 
-    public void execute(final Operation operation, final SuccessCallback successCallback) {
-        execute(operation, successCallback, failedCallback, exceptionCallback);
-    }
-
-    public void execute(final Operation operation, final SuccessCallback successCallback,
-            FailedCallback failedCallback) {
-        execute(operation, successCallback, failedCallback, exceptionCallback);
-    }
-
-    public void execute(final Operation operation, final SuccessCallback successCallback,
-            final FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
+    public void execute(final Operation operation) {
         final RequestBuilder requestBuilder = chooseRequestBuilder(operation);
         RequestCallback requestCallback = new RequestCallback() {
             @Override
@@ -190,17 +187,7 @@ public class Dispatcher {
 
     // ------------------------------------------------------ upload
 
-    public void upload(final InputElement fileInput, final Operation operation, final SuccessCallback successCallback) {
-        upload(fileInput, operation, successCallback, failedCallback, exceptionCallback);
-    }
-
-    public void upload(final InputElement fileInput, final Operation operation, final SuccessCallback successCallback,
-            FailedCallback failedCallback) {
-        upload(fileInput, operation, successCallback, failedCallback, exceptionCallback);
-    }
-
-    public void upload(final InputElement fileInput, final Operation operation, final SuccessCallback successCallback,
-            final FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
+    public void upload(final InputElement fileInput, final Operation operation) {
         uploadNative(endpoints.upload(), fileInput, operation.toJSONString(true), operation,
                 successCallback, failedCallback, exceptionCallback);
     }
@@ -209,25 +196,48 @@ public class Dispatcher {
             SuccessCallback successCallback, FailedCallback failedCallback, ExceptionCallback exceptionCallback) /*-{
         var that = this;
 
+        var fi = $doc.createElement('INPUT');
+        fi.type = 'file';
+        var fileApiSupport = 'files' in fi;
+
+        var xhr;
+        if ($wnd.XMLHttpRequest) {
+            xhr = new $wnd.XMLHttpRequest();
+        } else {
+            try {
+                xhr = new $wnd.ActiveXObject('MSXML2.XMLHTTP.3.0');
+            } catch (e) {
+                xhr = new $wnd.ActiveXObject("Microsoft.XMLHTTP");
+            }
+        }
+        var progressEventsSupport = !!(xhr && ('upload' in xhr) && ('onprogress' in xhr.upload));
+
+        var formDataSupport = !!$wnd.FormData;
+        if (!(fileApiSupport && progressEventsSupport && formDataSupport)) {
+            var msg = "Due to security reasons, your browser is not supported for uploads. When running IE, please make sure the page is not opened in compatibility mode. Otherwise please use a more recent browser.";
+            this.@org.jboss.hal.core.dispatch.Dispatcher::processUploadException(*)(msg, operation, exceptionCallback);
+        }
+
         var formData = new FormData();
         formData.append(fileInput.name, fileInput.files[0]);
         formData.append("operation", operationValue);
 
-        var xhr = new XMLHttpRequest();
-        xhr.withCredentials = true;
+        var ie = $wnd.navigator.userAgent.indexOf("MSIE ") > 0 || !!$wnd.navigator.userAgent.match(/Trident.*rv\:11\./);
+        xhr.open("POST", endpoint, !ie); // Cannot get async mode working in IE!?
+        xhr.withCredentials = true; // Do not set *before* xhr.open() - see https://xhr.spec.whatwg.org/#the-withcredentials-attribute
         xhr.onreadystatechange = $entry(function (evt) {
-            var status, payload, readyState;
+            var readyState, payload, status;
             try {
-                readyState = evt.target.readyState;
-                payload = evt.target.responseText;
-                status = evt.target.status;
+                readyState = xhr.readyState;
+                payload = xhr.responseText;
+                status = xhr.status;
             }
             catch (e) {
-                that.@org.jboss.hal.dmr.dispatch.Dispatcher::processUploadException(*)(e.message, operation,
+                that.@org.jboss.hal.core.dispatch.Dispatcher::processUploadException(*)(e.message, operation,
                     exceptionCallback);
             }
-            if (readyState == 4 && payload) {
-                that.@org.jboss.hal.dmr.dispatch.Dispatcher::processUploadResponse(*)(status, endpoint, "POST", payload,
+            if (readyState == 4) {
+                that.@org.jboss.hal.core.dispatch.Dispatcher::processUploadResponse(*)(status, endpoint, "POST", payload,
                     operation, exceptionCallback, successCallback, failedCallback);
             }
         });
@@ -325,11 +335,19 @@ public class Dispatcher {
 
     // ------------------------------------------------------ callbacks
 
-    public void setFailedCallback(final FailedCallback failedCallback) {
-        this.failedCallback = failedCallback;
+
+    public Dispatcher onSuccess(final SuccessCallback successCallback) {
+        this.successCallback = successCallback;
+        return this;
     }
 
-    public void setExceptionCallback(final ExceptionCallback exceptionCallback) {
+    public Dispatcher onFailed(final FailedCallback failedCallback) {
+        this.failedCallback = failedCallback;
+        return this;
+    }
+
+    public Dispatcher onException(final ExceptionCallback exceptionCallback) {
         this.exceptionCallback = exceptionCallback;
+        return this;
     }
 }

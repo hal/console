@@ -1,4 +1,4 @@
-package org.jboss.hal.dmr.dispatch;
+package org.jboss.hal.core.dispatch;
 
 /**
  * @author Heiko Braun
