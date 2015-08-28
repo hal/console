@@ -48,7 +48,7 @@
         <gin.version>2.1.2</gin.version>
         <guava.version>19.0-SNAPSHOT</guava.version>
         <gwt.version>2.8.0-SNAPSHOT</gwt.version>
-        <gwtp.version>1.5-SNAPSHOT</gwtp.version>
+        <gwtp.version>1.6-SNAPSHOT</gwtp.version>
         <junit.version>4.12</junit.version>
         <mockito.version>1.10.17</mockito.version>
         <nodejs.version>v0.12.5</nodejs.version>

@@ -9,11 +9,12 @@ public class DispatchException extends Exception {
     private int statusCode;
 
     public DispatchException(String message, int statusCode) {
-        super(message);
+        super(message + " Status " + statusCode);
         this.statusCode = statusCode;
     }
 
     public int getStatusCode() {
         return statusCode;
     }
+
 }

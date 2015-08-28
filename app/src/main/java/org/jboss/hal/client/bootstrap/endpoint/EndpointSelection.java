@@ -9,7 +9,6 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
-import org.jboss.hal.client.bootstrap.LoadingPanel;
 import org.jboss.hal.config.Endpoints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +18,8 @@ import org.slf4j.LoggerFactory;
  * endpoint. By default this class first tries to connect to the management endpoint the console was loaded from.
  * If no endpoint was found, the selection is triggered by {@link EndpointDialog}.
  * <p>
- * Please note: This class must run <em>before</em> any other bootstrap steps!
+ * Please note: This class must run <em>before</em> any {@linkplain org.jboss.hal.client.bootstrap.functions.BootstrapFunction
+ * bootstrap function}!
  *
  * @author Harald Pehl
  */
@@ -130,15 +130,10 @@ public class EndpointSelection {
     }
 
     void onConnect(Endpoint endpoint) {
-        // store selected server
         storage.saveSelection(endpoint);
-
         if (dialog != null) {
             dialog.hide();
-            LoadingPanel.get().on();
         }
-
-        // Trigger authentication using a hidden iframe. This way also Safari will show the login dialog
         endpoints.useBase(endpoint.getUrl());
         andThen.execute();
     }

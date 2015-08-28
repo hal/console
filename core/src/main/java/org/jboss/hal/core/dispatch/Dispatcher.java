@@ -22,25 +22,25 @@
 package org.jboss.hal.core.dispatch;
 
 import com.ekuefler.supereventbus.EventBus;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
 import com.google.inject.Provider;
-import elemental.dom.Element;
+import elemental.client.Browser;
+import elemental.html.FormData;
 import elemental.html.InputElement;
+import elemental.xml.XMLHttpRequest;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.core.messaging.Message;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.resources.I18n;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.List;
 
+import static org.jboss.hal.core.dispatch.Dispatcher.HttpMethod.GET;
+import static org.jboss.hal.core.dispatch.Dispatcher.HttpMethod.POST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
@@ -77,10 +77,13 @@ public class Dispatcher {
 
 
     @FunctionalInterface
-    private interface PayloadProcessor {
+    interface PayloadProcessor {
 
-        ModelNode processPayload(String method, String payload);
+        ModelNode processPayload(HttpMethod method, String payload);
     }
+
+
+    enum HttpMethod {GET, POST}
 
 
     private static final String HEADER_CONTENT_TYPE = "Content-Type";
@@ -102,56 +105,25 @@ public class Dispatcher {
     private final Endpoints endpoints;
     private final EventBus eventBus;
     private final Provider<ResponseProcessor> responseProcessor;
-    private final PayloadProcessor dmrPayloadProcessor;
-    private final PayloadProcessor uploadPayloadProcessor;
     private SuccessCallback successCallback;
     private FailedCallback failedCallback;
     private ExceptionCallback exceptionCallback;
 
     @Inject
-    public Dispatcher(final Endpoints endpoints, final EventBus eventBus,
+    public Dispatcher(final Endpoints endpoints, final EventBus eventBus, final I18n i18n,
             Provider<ResponseProcessor> responseProcessor) {
         this.endpoints = endpoints;
         this.eventBus = eventBus;
         this.responseProcessor = responseProcessor;
 
-        this.dmrPayloadProcessor = (method, payload) -> {
-            ModelNode response;
-            try {
-                response = ModelNode.fromBase64(payload);
-                if ("GET".equals(method)) {
-                    // For GET request the response is purely the model nodes result. The outcome
-                    // is not send as part of the response but expressed with the HTTP status code.
-                    // In order to not break existing code, we repackage the payload into a
-                    // new model node with an "outcome" and "result" key.
-                    ModelNode repackaged = new ModelNode();
-                    repackaged.get(OUTCOME).set(SUCCESS);
-                    repackaged.get(RESULT).set(response);
-                    response = repackaged;
-                }
-            } catch (Throwable e) {
-                ModelNode err = new ModelNode();
-                err.get(OUTCOME).set(FAILED);
-                err.get(FAILURE_DESCRIPTION)
-                        .set("Failed to decode response: " + e.getClass().getName() + ": " + e.getMessage());
-                response = err;
-            }
-            return response;
-        };
-        this.uploadPayloadProcessor = (method, payload) -> {
-            // TODO Parse basic JSON properties like 'outcome' and 'failureDescription'.
-            // Repack the 'result' as 'payload' string model node
-            return new ModelNode();
-        };
-
         this.successCallback = payload -> logger.error("No success callback defined");
         this.failedCallback = (operation, failure) -> {
-            logger.error("DMR operation {} failed: {}", operation, failure);
-            eventBus.post(Message.error("Last operation failed", failure)); // TODO I18N
+            logger.error("Dispatcher failed: {}, operation: {}", failure, operation);
+            eventBus.post(Message.error(i18n.constants().dispatcher_failed(), failure));
         };
         this.exceptionCallback = (operation, t) -> {
-            logger.error("Error while executing DRM operation {}: {}", operation, t.getMessage());
-            eventBus.post(Message.error("Unable to execute last operation", t.getMessage())); // TODO I18N
+            logger.error("Dispatcher exception: {}, operation {}", t.getMessage(), operation);
+            eventBus.post(Message.error(i18n.constants().dispatcher_exception(), t.getMessage()));
         };
     }
 
@@ -159,128 +131,42 @@ public class Dispatcher {
     // ------------------------------------------------------ execute dmr
 
     public void execute(final Operation operation) {
-        final RequestBuilder requestBuilder = chooseRequestBuilder(operation);
-        RequestCallback requestCallback = new RequestCallback() {
-            @Override
-            public void onResponseReceived(final Request request, final Response response) {
-                processResponse(response.getStatusCode(), requestBuilder.getUrl(), requestBuilder.getHTTPMethod(),
-                        response.getText(), operation, dmrPayloadProcessor, successCallback, failedCallback,
-                        exceptionCallback);
-            }
+        HttpMethod method;
+        String url;
+        String op = operation.get(OP).asString();
 
-            @Override
-            public void onError(final Request request, final Throwable throwable) {
-                logger.error("Error getting DMR response for operation {}: {}", operation, throwable.getMessage());
-                exceptionCallback.onException(operation, throwable);
-            }
-        };
-        requestBuilder.setCallback(requestCallback);
-
-        try {
-            requestBuilder.send();
-        } catch (RequestException e) {
-            logger.error("Error sending DMR request for operation {}: {}", operation, e.getMessage());
-            exceptionCallback.onException(operation, e);
-        }
-    }
-
-
-    // ------------------------------------------------------ upload
-
-    public void upload(final InputElement fileInput, final Operation operation) {
-        uploadNative(endpoints.upload(), fileInput, operation.toJSONString(true), operation,
-                successCallback, failedCallback, exceptionCallback);
-    }
-
-    private native void uploadNative(String endpoint, Element fileInput, String operationValue, Operation operation,
-            SuccessCallback successCallback, FailedCallback failedCallback, ExceptionCallback exceptionCallback) /*-{
-        var that = this;
-
-        var fi = $doc.createElement('INPUT');
-        fi.type = 'file';
-        var fileApiSupport = 'files' in fi;
-
-        var xhr;
-        if ($wnd.XMLHttpRequest) {
-            xhr = new $wnd.XMLHttpRequest();
-        } else {
-            try {
-                xhr = new $wnd.ActiveXObject('MSXML2.XMLHTTP.3.0');
-            } catch (e) {
-                xhr = new $wnd.ActiveXObject("Microsoft.XMLHTTP");
-            }
-        }
-        var progressEventsSupport = !!(xhr && ('upload' in xhr) && ('onprogress' in xhr.upload));
-
-        var formDataSupport = !!$wnd.FormData;
-        if (!(fileApiSupport && progressEventsSupport && formDataSupport)) {
-            var msg = "Due to security reasons, your browser is not supported for uploads. When running IE, please make sure the page is not opened in compatibility mode. Otherwise please use a more recent browser.";
-            this.@org.jboss.hal.core.dispatch.Dispatcher::processUploadException(*)(msg, operation, exceptionCallback);
-        }
-
-        var formData = new FormData();
-        formData.append(fileInput.name, fileInput.files[0]);
-        formData.append("operation", operationValue);
-
-        var ie = $wnd.navigator.userAgent.indexOf("MSIE ") > 0 || !!$wnd.navigator.userAgent.match(/Trident.*rv\:11\./);
-        xhr.open("POST", endpoint, !ie); // Cannot get async mode working in IE!?
-        xhr.withCredentials = true; // Do not set *before* xhr.open() - see https://xhr.spec.whatwg.org/#the-withcredentials-attribute
-        xhr.onreadystatechange = $entry(function (evt) {
-            var readyState, payload, status;
-            try {
-                readyState = xhr.readyState;
-                payload = xhr.responseText;
-                status = xhr.status;
-            }
-            catch (e) {
-                that.@org.jboss.hal.core.dispatch.Dispatcher::processUploadException(*)(e.message, operation,
-                    exceptionCallback);
-            }
-            if (readyState == 4) {
-                that.@org.jboss.hal.core.dispatch.Dispatcher::processUploadResponse(*)(status, endpoint, "POST", payload,
-                    operation, exceptionCallback, successCallback, failedCallback);
-            }
-        });
-        xhr.open("POST", endpoint, true);
-        xhr.send(formData);
-    }-*/;
-
-    private void processUploadException(final String error, final Operation operation,
-            final ExceptionCallback exceptionCallback) {
-        exceptionCallback.onException(operation, new DispatchException(error, 500));
-    }
-
-    private void processUploadResponse(final int status, final String url, final String method, final String payload,
-            final Operation operation, final SuccessCallback successCallback, final FailedCallback failedCallback,
-            final ExceptionCallback exceptionCallback) {
-        processResponse(status, url, method, payload, operation, uploadPayloadProcessor, successCallback,
-                failedCallback, exceptionCallback);
-    }
-
-
-    // ------------------------------------------------------ request / response handling
-
-    private RequestBuilder chooseRequestBuilder(final Operation operation) {
-        RequestBuilder requestBuilder;
-
-        final String op = operation.get(OP).asString();
         if (READ_RESOURCE_DESCRIPTION_OPERATION.equals(op)) {
             String endpoint = endpoints.dmr();
             if (endpoint.endsWith("/")) {
                 endpoint = endpoint.substring(0, endpoint.length() - 1);
             }
-            String descriptionUrl = endpoint + descriptionOperationToUrl(operation);
-            requestBuilder = new RequestBuilder(RequestBuilder.GET,
-                    com.google.gwt.http.client.URL.encode(descriptionUrl));
-            requestBuilder.setRequestData(null);
+            method = GET;
+            url = Browser.encodeURI(endpoint + descriptionOperationToUrl(operation));
         } else {
-            requestBuilder = new RequestBuilder(RequestBuilder.POST, endpoints.dmr());
-            requestBuilder.setRequestData(operation.toBase64String());
+            method = POST;
+            url = endpoints.dmr();
         }
-        requestBuilder.setIncludeCredentials(true);
-        requestBuilder.setHeader(HEADER_ACCEPT, DMR_ENCODED);
-        requestBuilder.setHeader(HEADER_CONTENT_TYPE, DMR_ENCODED);
-        return requestBuilder;
+
+        XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
+        xhr.setOnreadystatechange(event -> {
+            int readyState = xhr.getReadyState();
+            if (readyState == 4) {
+                processResponse(xhr.getStatus(), url, method, xhr.getResponseText(), operation,
+                        new DmrPayloadProcessor(), successCallback, failedCallback, exceptionCallback);
+            }
+        });
+        xhr.addEventListener("error", event -> exceptionCallback.onException(operation,
+                new DispatchException("Communication error.", xhr.getStatus())), false);
+
+        xhr.open(method.name(), url, true);
+        xhr.setWithCredentials(true);
+        xhr.setRequestHeader(HEADER_ACCEPT, DMR_ENCODED);
+        xhr.setRequestHeader(HEADER_CONTENT_TYPE, DMR_ENCODED);
+        if (method == GET) {
+            xhr.send();
+        } else {
+            xhr.send(operation.toBase64String());
+        }
     }
 
     private String descriptionOperationToUrl(final ModelNode operation) {
@@ -299,7 +185,38 @@ public class Dispatcher {
         return url.toString();
     }
 
-    private void processResponse(final int status, final String url, final String method, final String payload,
+
+    // ------------------------------------------------------ upload
+
+    public void upload(final InputElement fileInput, final Operation operation) {
+        FormData formData = createFormData(fileInput, operation.toJSONString(true));
+        XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
+        xhr.setOnreadystatechange(event -> {
+            int readyState = xhr.getReadyState();
+            if (readyState == 4) {
+                processResponse(xhr.getStatus(), endpoints.upload(), POST, xhr.getResponseText(), operation,
+                        new UploadPayloadProcessor(), successCallback, failedCallback, exceptionCallback);
+            }
+        });
+        xhr.addEventListener("error", event -> exceptionCallback.onException(operation,
+                new DispatchException("Communication error.", xhr.getStatus())), false);
+
+        xhr.open("POST", endpoints.upload(), true);
+        xhr.setWithCredentials(true);
+        xhr.send(formData);
+    }
+
+    private native FormData createFormData(InputElement fileInput, String operation) /*-{
+        var formData = new $wnd.FormData();
+        formData.append(fileInput.name, fileInput.files[0]);
+        formData.append("operation", operation);
+        return formData;
+    }-*/;
+
+
+    // ------------------------------------------------------ response handling
+
+    private void processResponse(final int status, final String url, final HttpMethod method, final String payload,
             final Operation operation, final PayloadProcessor payloadProcessor, final SuccessCallback successCallback,
             final FailedCallback failedCallback, final ExceptionCallback exceptionCallback) {
         if (200 == status) {
@@ -321,20 +238,19 @@ public class Dispatcher {
                     .onException(operation, new DispatchException("Authentication required.", status));
         } else if (404 == status) {
             exceptionCallback.onException(operation, new DispatchException(
-                    "Management interface at '" + url + " not found'.", status));
+                    "Management interface at '" + url + "' not found.", status));
         } else if (503 == status) {
             exceptionCallback.onException(operation,
                     new DispatchException("Service temporarily unavailable. Is the server is still booting?",
                             status));
         } else {
             exceptionCallback
-                    .onException(operation, new DispatchException("Unexpected status code + " + status, status));
+                    .onException(operation, new DispatchException("Unexpected status code.", status));
         }
     }
 
 
     // ------------------------------------------------------ callbacks
-
 
     public Dispatcher onSuccess(final SuccessCallback successCallback) {
         this.successCallback = successCallback;

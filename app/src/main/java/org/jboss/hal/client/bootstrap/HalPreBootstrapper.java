@@ -42,7 +42,7 @@ public class HalPreBootstrapper implements PreBootstrapper {
         GWT.setUncaughtExceptionHandler(e -> {
             logger.error("Bootstrap error in {}: {}", HalPreBootstrapper.class.getSimpleName(), e.getMessage());
             Browser.getDocument().getBody().appendChild(
-                    new BootstrapFailed(CONSTANTS.bootstrap_exception(), e.getMessage(), true).asElement());
+                    BootstrapFailed.create(CONSTANTS.bootstrap_exception(), e.getMessage(), true).asElement());
         });
     }
 }

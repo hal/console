@@ -23,50 +23,40 @@ package org.jboss.hal.client.bootstrap;
 
 import com.google.gwt.core.client.GWT;
 import elemental.dom.Element;
-import elemental.html.PreElement;
+import org.jboss.gwt.elemento.core.DataElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.resources.HalConstants;
 
-public class BootstrapFailed implements IsElement {
+import javax.annotation.PostConstruct;
 
-    private static final HalConstants CONSTANTS = GWT.create(HalConstants.class);
+@Templated
+public abstract class BootstrapFailed implements IsElement {
 
-    private final Element element;
+    static final HalConstants CONSTANTS = GWT.create(HalConstants.class);
 
-    public BootstrapFailed(String message, String details, boolean asCode) {
-        // @formatter:off
-        Elements.Builder builder =  new Elements.Builder()
-            .div().css("container-fluid")
-                .div().css("row")
-                    .div().css("col-md-offset-2 col-md-8 bootstrap-error")
-                        .h(1).innerText(CONSTANTS.bootstrap_failed()).end()
-                        .div().css("panel panel-danger")
-                            .div().css("panel-heading")
-                                .h(3).css("panel-title").innerText(message).end()
-                            .end()
-                            .div().css("panel-body")
-                                .p().rememberAs("body").end()
-                                .start("pre").rememberAs("code").end()
-                            .end()
-                        .end()
-                    .end()
-                .end()
-            .end();
-        // @formatter:on
-
-        element = builder.build();
-        Element body = builder.referenceFor("body");
-        PreElement code = builder.referenceFor("code");
-        if (asCode) {
-            code.setInnerText(details);
-        } else {
-            body.setInnerText(details);
-        }
+    // @formatter:off
+    public static BootstrapFailed create(String error, String details, boolean asCode) {
+        return new Templated_BootstrapFailed(error, details, asCode);
     }
 
-    @Override
-    public Element asElement() {
-        return element;
+    public abstract String error();
+    public abstract String details();
+    public abstract boolean asCode();
+    // @formatter:on
+
+    @DataElement Element body;
+    @DataElement Element code;
+
+    @PostConstruct
+    void init() {
+        Elements.setVisible(code, asCode());
+        Elements.setVisible(body, !asCode());
+        if (asCode()) {
+            code.setInnerText(details());
+        } else {
+            body.setInnerText(details());
+        }
     }
 }

@@ -29,6 +29,8 @@ public interface HalConstants extends Constants {
     String cancel();
     String close();
     String connect_to_server();
+    String dispatcher_exception();
+    String dispatcher_failed();
     String edit();
     String expression_resolver();
     String form_errors();
@@ -46,6 +48,5 @@ public interface HalConstants extends Constants {
     String settings();
     String toggle_navigation();
     String tools();
-
     //@formatter:on
 }
