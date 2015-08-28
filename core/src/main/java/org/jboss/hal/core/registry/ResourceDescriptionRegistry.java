@@ -44,7 +44,7 @@ public class ResourceDescriptionRegistry {
 
     public ResourceDescription lookup(AddressTemplate addressTemplate) {
         ResourceDescription resourceDescription = registry.get(addressTemplate);
-        if (null == resourceDescription) {
+        if (resourceDescription == null) {
             throw new RuntimeException("Failed to lookup resource description for " + addressTemplate.toString());
         }
         return resourceDescription;

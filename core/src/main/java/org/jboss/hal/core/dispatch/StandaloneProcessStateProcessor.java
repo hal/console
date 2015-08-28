@@ -10,7 +10,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 1/17/12
  */
-public class StandaloneResponseProcessor implements ResponseProcessor {
+public class StandaloneProcessStateProcessor implements ProcessStateProcessor {
 
     private static final String STANDALONE_SERVER = "Standalone Server";
 

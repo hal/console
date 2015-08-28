@@ -6,7 +6,7 @@ import org.jboss.hal.dmr.ModelNode;
  * @author Heiko Braun
  * @date 1/17/12
  */
-public interface ResponseProcessor {
+public interface ProcessStateProcessor {
 
     String RESPONSE_HEADERS = "response-headers";
     String PROCESS_STATE = "process-state";
@@ -17,7 +17,7 @@ public interface ResponseProcessor {
 
     ProcessState process(ModelNode response);
 
-    ResponseProcessor NOOP = new ResponseProcessor() {
+    ProcessStateProcessor NOOP = new ProcessStateProcessor() {
         @Override
         public boolean accepts(final ModelNode response) {
             return false;

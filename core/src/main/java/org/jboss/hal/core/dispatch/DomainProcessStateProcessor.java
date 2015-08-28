@@ -10,7 +10,7 @@ import java.util.List;
  * @author Heiko Braun
  * @date 1/17/12
  */
-public class DomainResponseProcessor implements ResponseProcessor {
+public class DomainProcessStateProcessor implements ProcessStateProcessor {
 
     private static final String SERVER_GROUPS = "server-groups";
     private static final String RESPONSE = "response";

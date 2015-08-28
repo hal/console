@@ -44,7 +44,7 @@ import static org.jboss.hal.core.dispatch.Dispatcher.HttpMethod.POST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * The dispatcher executes operations / uploads against the management endpoints. You should register a callback for
+ * The dispatcher executes operations / uploads against the management endpoint. You should register a callback for
  * successful operations using {@link #onSuccess(SuccessCallback)}. You can register callbacks to react on failed
  * management operations ({@link #onFailed(FailedCallback)} or technical errors {@link
  * #onException(ExceptionCallback)}.
@@ -58,7 +58,11 @@ public class Dispatcher {
     @FunctionalInterface
     public interface SuccessCallback {
 
-        void onSuccess(ModelNode payload);
+        /**
+         * Called for successful DMR operations.
+         * @param result The net result (value of the {@code result} attribute)
+         */
+        void onSuccess(ModelNode result);
     }
 
 
@@ -73,13 +77,6 @@ public class Dispatcher {
     public interface ExceptionCallback {
 
         void onException(Operation operation, Throwable exception);
-    }
-
-
-    @FunctionalInterface
-    interface PayloadProcessor {
-
-        ModelNode processPayload(HttpMethod method, String payload);
     }
 
 
@@ -104,19 +101,19 @@ public class Dispatcher {
 
     private final Endpoints endpoints;
     private final EventBus eventBus;
-    private final Provider<ResponseProcessor> responseProcessor;
+    private final Provider<ProcessStateProcessor> processStateProcessor;
     private SuccessCallback successCallback;
     private FailedCallback failedCallback;
     private ExceptionCallback exceptionCallback;
 
     @Inject
     public Dispatcher(final Endpoints endpoints, final EventBus eventBus, final I18n i18n,
-            Provider<ResponseProcessor> responseProcessor) {
+            Provider<ProcessStateProcessor> processStateProcessor) {
         this.endpoints = endpoints;
         this.eventBus = eventBus;
-        this.responseProcessor = responseProcessor;
+        this.processStateProcessor = processStateProcessor;
 
-        this.successCallback = payload -> logger.error("No success callback defined");
+        this.successCallback = result -> logger.warn("No success callback defined for last operation.");
         this.failedCallback = (operation, failure) -> {
             logger.error("Dispatcher failed: {}, operation: {}", failure, operation);
             eventBus.post(Message.error(i18n.constants().dispatcher_failed(), failure));
@@ -216,19 +213,19 @@ public class Dispatcher {
 
     // ------------------------------------------------------ response handling
 
-    private void processResponse(final int status, final String url, final HttpMethod method, final String payload,
+    private void processResponse(final int status, final String url, final HttpMethod method, final String responseText,
             final Operation operation, final PayloadProcessor payloadProcessor, final SuccessCallback successCallback,
             final FailedCallback failedCallback, final ExceptionCallback exceptionCallback) {
         if (200 == status) {
-            ModelNode responseNode = payloadProcessor.processPayload(method, payload);
-            if (!responseNode.isFailure()) {
-                if (responseProcessor.get().accepts(responseNode)) {
-                    ProcessState processState = responseProcessor.get().process(responseNode);
+            ModelNode payload = payloadProcessor.processPayload(method, responseText);
+            if (!payload.isFailure()) {
+                if (processStateProcessor.get().accepts(payload)) {
+                    ProcessState processState = processStateProcessor.get().process(payload);
                     eventBus.post(processState);
                 }
-                successCallback.onSuccess(responseNode.get(RESULT));
+                successCallback.onSuccess(payload.get(RESULT));
             } else {
-                failedCallback.onFailed(operation, responseNode.getFailureDescription());
+                failedCallback.onFailed(operation, payload.getFailureDescription());
             }
         } else if (401 == status || 0 == status) {
             exceptionCallback

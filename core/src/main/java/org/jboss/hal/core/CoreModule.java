@@ -26,24 +26,24 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.dispatch.DomainProcessStateProcessor;
 import org.jboss.hal.core.registry.Footer;
 import org.jboss.hal.core.registry.ResourceDescriptionRegistry;
 import org.jboss.hal.core.registry.UIRegistry;
 import org.jboss.hal.core.dispatch.Dispatcher;
-import org.jboss.hal.core.dispatch.DomainResponseProcessor;
-import org.jboss.hal.core.dispatch.ResponseProcessor;
-import org.jboss.hal.core.dispatch.StandaloneResponseProcessor;
+import org.jboss.hal.core.dispatch.ProcessStateProcessor;
+import org.jboss.hal.core.dispatch.StandaloneProcessStateProcessor;
 import org.jboss.hal.spi.GinModule;
 
 @GinModule
 public class CoreModule extends AbstractGinModule {
 
-    private final ResponseProcessor standalone;
-    private final ResponseProcessor domain;
+    private final ProcessStateProcessor standalone;
+    private final ProcessStateProcessor domain;
 
     public CoreModule() {
-        standalone = new StandaloneResponseProcessor();
-        domain = new DomainResponseProcessor();
+        standalone = new StandaloneProcessStateProcessor();
+        domain = new DomainProcessStateProcessor();
     }
 
     @Override
@@ -54,7 +54,7 @@ public class CoreModule extends AbstractGinModule {
     }
 
     @Provides
-    public ResponseProcessor provideResponseProcessor(Environment environment) {
+    public ProcessStateProcessor provideProcessStateProcessor(Environment environment) {
         if (environment.isStandalone()) {
             return standalone;
         } else {

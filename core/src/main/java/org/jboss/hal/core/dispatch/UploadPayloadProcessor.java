@@ -32,7 +32,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-class UploadPayloadProcessor implements Dispatcher.PayloadProcessor {
+class UploadPayloadProcessor implements PayloadProcessor {
 
     @Override
     public ModelNode processPayload(final HttpMethod method, final String payload) {
@@ -48,6 +48,7 @@ class UploadPayloadProcessor implements Dispatcher.PayloadProcessor {
             } else {
                 modelNode.get(RESULT).set(new ModelNode());
             }
+            // TODO What about "response-headers"?
         } else {
             String failure = extractFailure(jsonResponse);
             modelNode.get(FAILURE_DESCRIPTION).set(failure);
