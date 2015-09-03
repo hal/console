@@ -60,6 +60,7 @@ public class Dispatcher {
 
         /**
          * Called for successful DMR operations.
+         *
          * @param result The net result (value of the {@code result} attribute)
          */
         void onSuccess(ModelNode result);
@@ -83,9 +84,13 @@ public class Dispatcher {
     enum HttpMethod {GET, POST}
 
 
-    private static final String HEADER_CONTENT_TYPE = "Content-Type";
-    private static final String HEADER_ACCEPT = "Accept";
-    private static final String DMR_ENCODED = "application/dmr-encoded";
+    static final String APPLICATION_DMR_ENCODED = "application/dmr-encoded";
+    static final String APPLICATION_JSON = "application/json";
+
+    static final String HEADER_ACCEPT = "Accept";
+    static final String HEADER_CONTENT_TYPE = "Content-Type";
+    static final String HEADER_MANAGEMENT_CLIENT_NAME = "X-Management-Client-Name";
+    static final String HEADER_MANAGEMENT_CLIENT_VALUE = "HAL";
 
     /**
      * The read resource description supports the following parameters:
@@ -128,8 +133,8 @@ public class Dispatcher {
     // ------------------------------------------------------ execute dmr
 
     public void execute(final Operation operation) {
-        HttpMethod method;
         String url;
+        HttpMethod method;
         String op = operation.get(OP).asString();
 
         if (READ_RESOURCE_DESCRIPTION_OPERATION.equals(op)) {
@@ -144,21 +149,9 @@ public class Dispatcher {
             url = endpoints.dmr();
         }
 
-        XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
-        xhr.setOnreadystatechange(event -> {
-            int readyState = xhr.getReadyState();
-            if (readyState == 4) {
-                processResponse(xhr.getStatus(), url, method, xhr.getResponseText(), operation,
-                        new DmrPayloadProcessor(), successCallback, failedCallback, exceptionCallback);
-            }
-        });
-        xhr.addEventListener("error", event -> exceptionCallback.onException(operation,
-                new DispatchException("Communication error.", xhr.getStatus())), false);
-
-        xhr.open(method.name(), url, true);
-        xhr.setWithCredentials(true);
-        xhr.setRequestHeader(HEADER_ACCEPT, DMR_ENCODED);
-        xhr.setRequestHeader(HEADER_CONTENT_TYPE, DMR_ENCODED);
+        XMLHttpRequest xhr = newXhr(url, method, operation, new DmrPayloadProcessor());
+        xhr.setRequestHeader(HEADER_ACCEPT, APPLICATION_DMR_ENCODED);
+        xhr.setRequestHeader(HEADER_CONTENT_TYPE, APPLICATION_DMR_ENCODED);
         if (method == GET) {
             xhr.send();
         } else {
@@ -186,64 +179,79 @@ public class Dispatcher {
     // ------------------------------------------------------ upload
 
     public void upload(final InputElement fileInput, final Operation operation) {
-        FormData formData = createFormData(fileInput, operation.toJSONString(true));
-        XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
-        xhr.setOnreadystatechange(event -> {
-            int readyState = xhr.getReadyState();
-            if (readyState == 4) {
-                processResponse(xhr.getStatus(), endpoints.upload(), POST, xhr.getResponseText(), operation,
-                        new UploadPayloadProcessor(), successCallback, failedCallback, exceptionCallback);
-            }
-        });
-        xhr.addEventListener("error", event -> exceptionCallback.onException(operation,
-                new DispatchException("Communication error.", xhr.getStatus())), false);
-
-        xhr.open("POST", endpoints.upload(), true);
-        xhr.setWithCredentials(true);
+        FormData formData = createFormData(fileInput, operation.toBase64String());
+        XMLHttpRequest xhr = newXhr(endpoints.upload(), POST, operation, new UploadPayloadProcessor());
         xhr.send(formData);
     }
 
     private native FormData createFormData(InputElement fileInput, String operation) /*-{
         var formData = new $wnd.FormData();
         formData.append(fileInput.name, fileInput.files[0]);
-        formData.append("operation", operation);
+        formData.append("operation", new Blob([operation], {type: "application/dmr-encoded"}));
         return formData;
     }-*/;
 
 
-    // ------------------------------------------------------ response handling
+    // ------------------------------------------------------ create and setup xhr
 
-    private void processResponse(final int status, final String url, final HttpMethod method, final String responseText,
-            final Operation operation, final PayloadProcessor payloadProcessor, final SuccessCallback successCallback,
-            final FailedCallback failedCallback, final ExceptionCallback exceptionCallback) {
-        if (200 == status) {
-            ModelNode payload = payloadProcessor.processPayload(method, responseText);
-            if (!payload.isFailure()) {
-                if (processStateProcessor.get().accepts(payload)) {
-                    ProcessState processState = processStateProcessor.get().process(payload);
-                    eventBus.post(processState);
+    private XMLHttpRequest newXhr(final String url, final HttpMethod method, final Operation operation,
+            final PayloadProcessor payloadProcessor) {
+        XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
+
+        xhr.setOnreadystatechange(event -> {
+            int readyState = xhr.getReadyState();
+            if (readyState == 4) {
+                int status = xhr.getStatus();
+                String responseText = xhr.getResponseText();
+                String contentType = xhr.getResponseHeader(HEADER_CONTENT_TYPE);
+
+                switch (status) {
+                    case 200:
+                    case 500:
+                        ModelNode payload = payloadProcessor.processPayload(method, contentType, responseText);
+                        if (!payload.isFailure()) {
+                            if (processStateProcessor.get().accepts(payload)) {
+                                ProcessState processState = processStateProcessor.get().process(payload);
+                                eventBus.post(processState);
+                            }
+                            successCallback.onSuccess(payload.get(RESULT));
+                        } else {
+                            failedCallback.onFailed(operation, payload.getFailureDescription());
+                        }
+                        break;
+                    case 0:
+                    case 401:
+                        exceptionCallback.onException(operation,
+                                new DispatchException("Authentication required.", status));
+                        break;
+                    case 403:
+                        exceptionCallback.onException(operation,
+                                new DispatchException("Authentication required.", status));
+                        break;
+                    case 404:
+                        exceptionCallback.onException(operation, new DispatchException(
+                                "Management interface at '" + url + "' not found.", status));
+                        break;
+                    case 503:
+                        exceptionCallback.onException(operation, new DispatchException(
+                                "Service temporarily unavailable. Is the server is still booting?", status));
+                        break;
+                    default:
+                        exceptionCallback.onException(operation,
+                                new DispatchException("Unexpected status code.", status));
+                        break;
                 }
-                successCallback.onSuccess(payload.get(RESULT));
-            } else {
-                failedCallback.onFailed(operation, payload.getFailureDescription());
             }
-        } else if (401 == status || 0 == status) {
-            exceptionCallback
-                    .onException(operation, new DispatchException("Authentication required.", status));
-        } else if (403 == status) {
-            exceptionCallback
-                    .onException(operation, new DispatchException("Authentication required.", status));
-        } else if (404 == status) {
-            exceptionCallback.onException(operation, new DispatchException(
-                    "Management interface at '" + url + "' not found.", status));
-        } else if (503 == status) {
-            exceptionCallback.onException(operation,
-                    new DispatchException("Service temporarily unavailable. Is the server is still booting?",
-                            status));
-        } else {
-            exceptionCallback
-                    .onException(operation, new DispatchException("Unexpected status code.", status));
-        }
+        });
+
+        xhr.addEventListener("error", event -> exceptionCallback
+                .onException(operation, new DispatchException("Communication error.", xhr.getStatus())));
+
+        xhr.open(POST.name(), endpoints.upload(), true);
+        xhr.setRequestHeader(HEADER_MANAGEMENT_CLIENT_NAME, HEADER_MANAGEMENT_CLIENT_VALUE);
+        xhr.setWithCredentials(true);
+
+        return xhr;
     }
 
 

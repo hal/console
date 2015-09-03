@@ -29,5 +29,5 @@ import org.jboss.hal.dmr.ModelNode;
 @FunctionalInterface
 interface PayloadProcessor {
 
-    ModelNode processPayload(Dispatcher.HttpMethod method, String payload);
+    ModelNode processPayload(Dispatcher.HttpMethod method, String contentType, String payload);
 }

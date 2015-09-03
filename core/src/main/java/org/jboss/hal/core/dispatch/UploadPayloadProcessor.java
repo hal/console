@@ -35,25 +35,36 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 class UploadPayloadProcessor implements PayloadProcessor {
 
     @Override
-    public ModelNode processPayload(final HttpMethod method, final String payload) {
-        JsonObject jsonResponse = Json.parse(payload);
-        String jsonOutcome = jsonResponse.getString(OUTCOME);
+    public ModelNode processPayload(final HttpMethod method, final String contentType, final String payload) {
+        ModelNode node;
+        if (contentType.startsWith(Dispatcher.APPLICATION_DMR_ENCODED)) {
+            node = ModelNode.fromBase64(payload);
 
-        ModelNode modelNode = new ModelNode();
-        modelNode.get(OUTCOME).set(jsonOutcome);
+        } else if (contentType.startsWith(Dispatcher.APPLICATION_JSON)) {
+            node = new ModelNode();
 
-        if (SUCCESS.equals(jsonOutcome)) {
-            if (jsonResponse.hasKey(RESULT)) {
-                modelNode.get(RESULT).set(jsonResponse.get(RESULT).asString());
+            JsonObject jsonResponse = Json.parse(payload);
+            String jsonOutcome = jsonResponse.getString(OUTCOME);
+            node.get(OUTCOME).set(jsonOutcome);
+
+            if (SUCCESS.equals(jsonOutcome)) {
+                if (jsonResponse.hasKey(RESULT)) {
+                    node.get(RESULT).set(jsonResponse.get(RESULT).asString());
+                } else {
+                    node.get(RESULT).set(new ModelNode());
+                }
+                // TODO What about "response-headers"?
             } else {
-                modelNode.get(RESULT).set(new ModelNode());
+                String failure = extractFailure(jsonResponse);
+                node.get(FAILURE_DESCRIPTION).set(failure);
             }
-            // TODO What about "response-headers"?
+
         } else {
-            String failure = extractFailure(jsonResponse);
-            modelNode.get(FAILURE_DESCRIPTION).set(failure);
+            node = new ModelNode();
+            node.get(OUTCOME).set(FAILED);
+            node.get(FAILURE_DESCRIPTION).set("Unable to parse response with unexpected content-type " + contentType);
         }
-        return modelNode;
+        return node;
     }
 
     private String extractFailure(final JsonObject jsonResponse) {

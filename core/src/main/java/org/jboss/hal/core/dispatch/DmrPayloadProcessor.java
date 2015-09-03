@@ -33,27 +33,34 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 class DmrPayloadProcessor implements PayloadProcessor {
 
     @Override
-    public ModelNode processPayload(final HttpMethod method, final String payload) {
-        ModelNode response;
-        try {
-            response = ModelNode.fromBase64(payload);
-            if (method == GET) {
-                // For GET request the response is purely the model nodes result. The outcome
-                // is not send as part of the response but expressed with the HTTP status code.
-                // In order to not break existing code, we repackage the payload into a
-                // new model node with an "outcome" and "result" key.
-                ModelNode repackaged = new ModelNode();
-                repackaged.get(OUTCOME).set(SUCCESS);
-                repackaged.get(RESULT).set(response);
-                response = repackaged;
+    public ModelNode processPayload(final HttpMethod method, final String contentType, final String payload) {
+        ModelNode node;
+        if (contentType.startsWith(Dispatcher.APPLICATION_DMR_ENCODED)) {
+            try {
+                node = ModelNode.fromBase64(payload);
+                if (method == GET) {
+                    // For GET request the response is purely the model nodes result. The outcome
+                    // is not send as part of the response but expressed with the HTTP status code.
+                    // In order to not break existing code, we repackage the payload into a
+                    // new model node with an "outcome" and "result" key.
+                    ModelNode repackaged = new ModelNode();
+                    repackaged.get(OUTCOME).set(SUCCESS);
+                    repackaged.get(RESULT).set(node);
+                    node = repackaged;
+                }
+            } catch (Throwable e) {
+                ModelNode err = new ModelNode();
+                err.get(OUTCOME).set(FAILED);
+                err.get(FAILURE_DESCRIPTION)
+                        .set("Failed to decode response: " + e.getClass().getName() + ": " + e.getMessage());
+                node = err;
             }
-        } catch (Throwable e) {
-            ModelNode err = new ModelNode();
-            err.get(OUTCOME).set(FAILED);
-            err.get(FAILURE_DESCRIPTION)
-                    .set("Failed to decode response: " + e.getClass().getName() + ": " + e.getMessage());
-            response = err;
+
+        } else {
+            node = new ModelNode();
+            node.get(OUTCOME).set(FAILED);
+            node.get(FAILURE_DESCRIPTION).set("Unable to parse response with unexpected content-type " + contentType);
         }
-        return response;
+        return node;
     }
 }
