@@ -56,13 +56,15 @@ import static org.jboss.hal.config.InstanceInfo.WILDFLY;
 public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyView, IsElement {
 
     // @formatter:off
-    public static HeaderView create(final TokenFormatter tokenFormatter, final I18n i18n, final HalIds ids) {
-        return new Templated_HeaderView(tokenFormatter, i18n, ids);
+    public static HeaderView create(final TokenFormatter tokenFormatter, final I18n i18n, final HalIds ids,
+            final User user) {
+        return new Templated_HeaderView(tokenFormatter, i18n, ids, user);
     }
 
     public abstract TokenFormatter tokenFormatter();
     public abstract I18n i18n();
     public abstract HalIds ids();
+    public abstract User user();
     // @formatter:on
 
 
@@ -75,6 +77,8 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     @DataElement Element userName;
     @DataElement Element roles;
     @DataElement Element connectedTo;
+    @DataElement Element accessControl;
+    @DataElement Element patching;
 
     @PostConstruct
     void init() {
@@ -86,6 +90,11 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         tlc.put(NameTokens.Configuration, root.querySelector("#" + ids().tlc_configuration()));
         tlc.put(NameTokens.Runtime, root.querySelector("#" + ids().tlc_runtime()));
         tlc.put(NameTokens.AccessControl, root.querySelector("#" + ids().tlc_access_control()));
+        tlc.put(NameTokens.Patching, root.querySelector("#" + ids().tlc_patching()));
+
+        boolean su = user().isSuperuser() || user().isAdministrator();
+        Elements.setVisible(accessControl, su);
+        Elements.setVisible(patching, su);
 
         initWidget(Elements.asWidget(root));
     }
@@ -148,7 +157,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     @EventHandler(element = "logoLink", on = click)
     void onLogo() {
-        presenter.navigateTo(NameTokens.Homepage);
+        presenter.goTo(NameTokens.Homepage);
     }
 
     @EventHandler(element = "messages", on = click)

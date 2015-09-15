@@ -59,7 +59,8 @@
             <li><a id="{{ids().tlc_deployments()}}" href="{{historyToken(org.jboss.hal.client.NameTokens.Deployments)}}">Deployments</a></li>
             <li><a id="{{ids().tlc_configuration()}}" href="{{historyToken(org.jboss.hal.client.NameTokens.Configuration)}}">Configuration</a></li>
             <li><a id="{{ids().tlc_runtime()}}" href="{{historyToken(org.jboss.hal.client.NameTokens.Runtime)}}">Runtime</a></li>
-            <li><a id="{{ids().tlc_access_control()}}" href="{{historyToken(org.jboss.hal.client.NameTokens.AccessControl)}}">Access Control</a></li>
+            <li data-element="accessControl"><a id="{{ids().tlc_access_control()}}" href="{{historyToken(org.jboss.hal.client.NameTokens.AccessControl)}}">Access Control</a></li>
+            <li data-element="patching"><a id="{{ids().tlc_patching()}}" href="{{historyToken(org.jboss.hal.client.NameTokens.Patching)}}">Patching</a></li>
         </ul>
     </div>
 </nav>

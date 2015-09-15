@@ -25,6 +25,11 @@ public interface HalMessages extends Messages {
     //@formatter:off
     String active_roles(String roles);
     String connected_to(String url);
+
+    String homepage_patching_sub_header(String name);
+    String homepage_patching_standalone_step_intro(String name);
+    String homepage_patching_domain_step_intro(String name);
+
     String invalid_range(long value, long min, long max);
     String messages(@PluralCount int count);
     String pattern_mismatch(String pattern);

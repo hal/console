@@ -29,7 +29,7 @@ import com.gwtplatform.mvp.shared.proxy.RouteTokenFormatter;
 import org.jboss.hal.client.deployment.DeploymentPresenter;
 import org.jboss.hal.client.deployment.DeploymentView;
 import org.jboss.hal.client.homepage.HomepagePresenter;
-import org.jboss.hal.client.homepage.Templated_HomepageView_Provider;
+import org.jboss.hal.client.homepage.HomepageView;
 import org.jboss.hal.client.skeleton.FooterPresenter;
 import org.jboss.hal.client.skeleton.HeaderPresenter;
 import org.jboss.hal.client.skeleton.Templated_FooterView_Provider;
@@ -66,9 +66,9 @@ public class ApplicationModule extends AbstractTemplatedPresenterModule {
                 ApplicationView.class,
                 ApplicationPresenter.MyProxy.class);
 
-        bindTemplatedPresenter(HomepagePresenter.class,
+        bindPresenter(HomepagePresenter.class,
                 HomepagePresenter.MyView.class,
-                Templated_HomepageView_Provider.class,
+                HomepageView.class,
                 HomepagePresenter.MyProxy.class);
 
         bindPresenter(DeploymentPresenter.class,

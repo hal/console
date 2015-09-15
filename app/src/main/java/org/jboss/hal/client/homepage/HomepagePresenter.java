@@ -21,15 +21,19 @@
  */
 package org.jboss.hal.client.homepage;
 
+import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.client.ApplicationPresenter;
 import org.jboss.hal.client.NameTokens;
+import org.jboss.hal.core.HasPresenter;
 
 import javax.inject.Inject;
 
@@ -44,14 +48,33 @@ public class HomepagePresenter extends Presenter<HomepagePresenter.MyView, Homep
     @NameToken(NameTokens.Homepage)
     public interface MyProxy extends ProxyPlace<HomepagePresenter> {}
 
-    public interface MyView extends View {}
+    public interface MyView extends View, HasPresenter<HomepagePresenter> {}
     // @formatter:on
 
+
+    private final PlaceManager placeManager;
 
     @Inject
     public HomepagePresenter(final EventBus eventBus,
             final MyView view,
-            final MyProxy proxy) {
+            final MyProxy proxy,
+            final PlaceManager placeManager) {
         super(eventBus, view, proxy, ApplicationPresenter.SLOT_MAIN_CONTENT);
+        this.placeManager = placeManager;
+    }
+
+    @Override
+    protected void onBind() {
+        super.onBind();
+        getView().setPresenter(this);
+    }
+
+    public void goTo(final String token) {
+        PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token).build();
+        placeManager.revealPlace(placeRequest);
+    }
+
+    public void launchGuidedTour() {
+        Window.alert("Guided tour not yet implemented");
     }
 }

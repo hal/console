@@ -19,17 +19,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client;
+package org.jboss.hal.resources;
+
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.ImageResource;
 
 /**
  * @author Harald Pehl
  */
-public interface NameTokens {
+public interface HalImages extends ClientBundle {
 
-    String Homepage = "/home";
-    String Deployments = "/deployments";
-    String Configuration = "/configuration";
-    String Runtime = "/runtime";
-    String AccessControl = "/access-control";
-    String Patching = "/patching";
+    @Source("homepage/access_control.png")
+    ImageResource accessControl();
+
+    @Source("homepage/configuration.png")
+    ImageResource configuration();
+
+    @Source("homepage/deployments.png")
+    ImageResource deployments();
+
+    @Source("homepage/help.png")
+    ImageResource help();
+
+    @Source("homepage/patching.png")
+    ImageResource patching();
+
+    @Source("homepage/runtime.png")
+    ImageResource runtime();
 }

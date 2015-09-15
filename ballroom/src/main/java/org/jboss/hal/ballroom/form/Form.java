@@ -63,14 +63,14 @@ public interface Form<T> extends IsElement {
 
 
     /**
-     * Takes the specified model and updates the form with the values from the model.
+     * Takes the specified model and updates the read-only state with the values from the model.
      *
      * @param model the model to view.
      */
     void view(T model);
 
     /**
-     * Takes the specified model and populate the form fields with the values from the model.
+     * Takes the specified model and populates the editing state with the values from the model.
      *
      * @param model the model to edit.
      */

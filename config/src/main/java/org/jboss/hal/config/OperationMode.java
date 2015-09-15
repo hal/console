@@ -25,5 +25,5 @@ package org.jboss.hal.config;
  * @author Harald Pehl
  */
 public enum OperationMode {
-    STANDALONE, DOMAIN;
+    STANDALONE, DOMAIN
 }

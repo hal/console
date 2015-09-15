@@ -27,11 +27,14 @@ public interface HalIds extends Constants {
     String header_messages();
     String header_roles();
     String header_username();
+
     String root_container();
+
     String tlc_access_control();
     String tlc_configuration();
     String tlc_deployments();
     String tlc_homepage();
+    String tlc_patching();
     String tlc_runtime();
     //@formatter:on
 }

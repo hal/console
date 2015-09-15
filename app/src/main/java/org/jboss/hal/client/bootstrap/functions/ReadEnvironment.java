@@ -24,10 +24,10 @@ import com.google.gwt.user.client.Random;
 import org.jboss.gwt.flow.Control;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
+import org.jboss.hal.core.dispatch.Dispatcher;
 import org.jboss.hal.core.flow.FunctionCallbacks;
 import org.jboss.hal.core.flow.FunctionContext;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.core.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.Operation;
 import org.slf4j.Logger;
@@ -62,7 +62,7 @@ public class ReadEnvironment implements BootstrapFunction {
     public void execute(final Control<FunctionContext> control) {
 
         logger.debug("Bootstrap[ReadEnvironment]: Start");
-        final List<Operation> ops = new ArrayList<>();
+        List<Operation> ops = new ArrayList<>();
         ops.add(new Operation.Builder(READ_RESOURCE_OPERATION, ROOT)
                 .param("attributes-only", true)
                 .param(INCLUDE_RUNTIME, true)
@@ -95,7 +95,7 @@ public class ReadEnvironment implements BootstrapFunction {
                     if (whoami.hasDefined("mapped-roles")) {
                         List<ModelNode> roles = whoami.get("mapped-roles").asList();
                         for (ModelNode role : roles) {
-                            final String roleName = role.asString();
+                            String roleName = role.asString();
                             user.addRole(roleName);
                         }
                     }
@@ -107,7 +107,7 @@ public class ReadEnvironment implements BootstrapFunction {
                         control.proceed();
                         return false;
                     }, wait);
-                    //                    control.proceed();
+                    // control.proceed();
                 })
                 .onFailed(new FunctionCallbacks.Failed(control))
                 .onException(new FunctionCallbacks.Exception(control))

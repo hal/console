@@ -30,6 +30,7 @@ import java.util.Set;
 public class User {
 
     public static final String SUPER_USER = "SuperUser";
+    public static final String ADMINISTRTATOR = "Administrator";
     public static final User UNKNOWN = new User("Unknown", new HashSet<>());
     private static User current = UNKNOWN;
 
@@ -64,6 +65,15 @@ public class User {
     public boolean isSuperuser() {
         for (String role : roles) {
             if (SUPER_USER.equalsIgnoreCase(role)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isAdministrator() {
+        for (String role : roles) {
+            if (ADMINISTRTATOR.equalsIgnoreCase(role)) {
                 return true;
             }
         }
