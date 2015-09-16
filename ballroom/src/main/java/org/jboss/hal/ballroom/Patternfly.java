@@ -34,13 +34,22 @@ public class PatternFly {
      * Initialized the opt-in functionality from PatternFly / Bootstrap
      */
     public static void initOptIns() {
-        Scheduler.get().scheduleDeferred(() -> {
-            selectPicker();
-            tooltips();
-        });
+        initOptIns(true);
     }
 
-    private static native void selectPicker() /*-{
+    public static void initOptIns(boolean scheduled) {
+        if (scheduled) {
+            Scheduler.get().scheduleDeferred(() -> {
+                selectPicker();
+                tooltips();
+            });
+        } else {
+            selectPicker();
+            tooltips();
+        }
+    }
+
+        private static native void selectPicker() /*-{
         $wnd.$(".selectpicker").selectpicker();
     }-*/;
 

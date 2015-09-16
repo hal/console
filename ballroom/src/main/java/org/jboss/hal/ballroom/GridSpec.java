@@ -24,7 +24,7 @@ package org.jboss.hal.ballroom;
 /**
  * @author Harald Pehl
  */
-public interface LayoutSpec {
+public interface GridSpec {
 
     String COLUMN_DISCRIMINATOR = "md";
     int LABEL_COLUMNS = 3;

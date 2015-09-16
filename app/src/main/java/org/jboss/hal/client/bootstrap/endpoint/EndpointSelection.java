@@ -9,6 +9,8 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import elemental.client.Browser;
+import elemental.xml.XMLHttpRequest;
 import org.jboss.hal.config.Endpoints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +66,7 @@ public class EndpointSelection {
             }
 
         } else {
-            final String baseUrl = Endpoints.getBaseUrl();
+            String baseUrl = Endpoints.getBaseUrl();
             // Test whether this console is served from a WildFly / EAP instance
             RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, baseUrl + "/management");
             requestBuilder.setCallback(new RequestCallback() {
@@ -101,32 +103,26 @@ public class EndpointSelection {
 
     void pingServer(final Endpoint endpoint, final AsyncCallback<Void> callback) {
         String managementEndpoint = endpoint.getUrl() + "/management";
-        RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, managementEndpoint);
-        requestBuilder.setIncludeCredentials(true);
-        requestBuilder.setCallback(new RequestCallback() {
-            @Override
-            public void onResponseReceived(final Request request, final Response response) {
-                int statusCode = response.getStatusCode();
-                if (statusCode == 200) {
+        XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
+        xhr.setOnreadystatechange(event -> {
+            int readyState = xhr.getReadyState();
+            if (readyState == 4) {
+                int status = xhr.getStatus();
+                if (status == 200) {
                     callback.onSuccess(null);
                 } else {
-                    logger.error("Wrong status {} when pinging '{}'", statusCode, managementEndpoint);
+                    logger.error("Wrong status {} when pinging '{}'", status, managementEndpoint);
                     callback.onFailure(new IllegalStateException());
                 }
             }
-
-            @Override
-            public void onError(final Request request, final Throwable exception) {
-                logger.error("Ping.onError(): '{}': {}", managementEndpoint, exception.getMessage());
-                callback.onFailure(new IllegalStateException());
-            }
         });
-        try {
-            requestBuilder.send();
-        } catch (RequestException e) {
-            logger.error("Failed to ping '{}': {}", managementEndpoint, e.getMessage());
+        xhr.addEventListener("error", event -> {
+            logger.error("Failed to ping '{}'", managementEndpoint);
             callback.onFailure(new IllegalStateException());
-        }
+        });
+        xhr.open("GET", managementEndpoint, true);
+        xhr.setWithCredentials(true);
+        xhr.send();
     }
 
     void onConnect(Endpoint endpoint) {

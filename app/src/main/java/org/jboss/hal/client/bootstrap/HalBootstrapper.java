@@ -21,7 +21,6 @@
  */
 package org.jboss.hal.client.bootstrap;
 
-import com.google.gwt.core.client.GWT;
 import com.gwtplatform.mvp.client.Bootstrapper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import elemental.client.Browser;
@@ -31,7 +30,6 @@ import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointSelection;
 import org.jboss.hal.client.bootstrap.functions.BootstrapFunctions;
 import org.jboss.hal.core.flow.FunctionContext;
-import org.jboss.hal.resources.HalConstants;
 import org.jboss.hal.resources.I18n;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +41,6 @@ import javax.inject.Inject;
  */
 public class HalBootstrapper implements Bootstrapper {
 
-    private static final HalConstants CONSTANTS = GWT.create(HalConstants.class);
     private static final Logger logger = LoggerFactory.getLogger(HalBootstrapper.class);
 
     private final PlaceManager placeManager;
@@ -83,15 +80,7 @@ public class HalBootstrapper implements Bootstrapper {
             }
         };
 
-        new Async<FunctionContext>(Progress.NOOP).waterfall(
-                new FunctionContext(), outcome, bootstrapFunctions.functions());
-/*
-        endpointSelection.select(
-                () -> {
-                    LoadingPanel.get().on();
-                    new Async<FunctionContext>(Progress.NOOP).waterfall(
-                            new FunctionContext(), outcome, bootstrapFunctions.functions());
-                });
-*/
+        endpointSelection.select(() -> new Async<FunctionContext>(Progress.NOOP).waterfall(
+                        new FunctionContext(), outcome, bootstrapFunctions.functions()));
     }
 }

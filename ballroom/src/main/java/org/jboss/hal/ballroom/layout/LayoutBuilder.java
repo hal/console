@@ -23,12 +23,12 @@ package org.jboss.hal.ballroom.layout;
 
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.LayoutSpec;
+import org.jboss.hal.ballroom.GridSpec;
 
 /**
  * @author Harald Pehl
  */
-public class LayoutBuilder implements LayoutSpec {
+public class LayoutBuilder implements GridSpec {
 
     private final Elements.Builder eb;
 

@@ -33,7 +33,7 @@ import elemental.html.UListElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.LazyElement;
 import org.jboss.hal.ballroom.Id;
-import org.jboss.hal.ballroom.LayoutSpec;
+import org.jboss.hal.ballroom.GridSpec;
 import org.jboss.hal.resources.HalConstants;
 
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
  *
  * @author Harald Pehl
  */
-public abstract class AbstractForm<T> extends LazyElement implements Form<T>, LayoutSpec {
+public abstract class AbstractForm<T> extends LazyElement implements Form<T>, GridSpec {
 
     private final static HalConstants CONSTANTS = GWT.create(HalConstants.class);
 

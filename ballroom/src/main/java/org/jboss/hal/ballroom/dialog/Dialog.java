@@ -159,58 +159,46 @@ public class Dialog implements IsElement {
 
     private final Element root;
     private final String id;
-    private final String title;
-    private final Element body;
-
-    private Button primaryButton;
-    private Button secondaryButton;
-    private Size size;
-    private boolean closeIcon;
-    private boolean fadeIn;
+    private Element title;
+    private Element primaryButton;
+    private Element secondaryButton;
 
     public Dialog(final Builder builder) {
         this.id = builder.id;
-        this.title = builder.title;
-        this.body = builder.body.end().build();
-        this.primaryButton = builder.primaryButton;
-        this.secondaryButton = builder.secondaryButton;
-        this.size = builder.size;
-        this.closeIcon = builder.closeIcon;
-        this.fadeIn = builder.fadeIn;
-
-        this.root = init();
-    }
-
-    private Element init() {
         String labelId = Id.generate(id, "label");
 
+        Element body = builder.body.end().build();
         Elements.Builder footerBuilder = new Elements.Builder();
-        if (secondaryButton != null) {
+        if (builder.secondaryButton != null) {
             footerBuilder.button()
                     .css("btn btn-hal btn-default")
                     .on(click, event -> {
-                        if (secondaryButton.callback.execute()) {
+                        if (builder.secondaryButton.callback.execute()) {
                             close();
                         }
                     })
-                    .innerText(secondaryButton.label)
+                    .innerText(builder.secondaryButton.label)
+                    .rememberAs("secondaryButton")
                     .end();
+            secondaryButton = footerBuilder.referenceFor("secondaryButton");
         }
-        if (primaryButton != null) {
+        if (builder.primaryButton != null) {
             footerBuilder.button()
                     .css("btn btn-hal btn-primary")
                     .on(click, event -> {
-                        if (primaryButton.callback.execute()) {
+                        if (builder.primaryButton.callback.execute()) {
                             close();
                         }
                     })
-                    .innerText(primaryButton.label)
+                    .innerText(builder.primaryButton.label)
+                    .rememberAs("primaryButton")
                     .end();
+            primaryButton = footerBuilder.referenceFor("primaryButton");
         }
         Element footer = footerBuilder.build();
 
         // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
+        Elements.Builder dialogBuilder = new Elements.Builder()
             .div().id(id).css("modal")
                     .attr("role", "dialog")
                     .attr("tabindex", "-1")
@@ -222,10 +210,10 @@ public class Dialog implements IsElement {
                         .div().css("modal-header")
                             .button().css("close")
                                     .on(click, event -> {
-                                        if (secondaryButton == null) {
+                                        if (builder.secondaryButton == null) {
                                             close();
                                         } else {
-                                            if (secondaryButton.callback.execute()) {
+                                            if (builder.secondaryButton.callback.execute()) {
                                                 close();
                                             }
                                         }
@@ -234,7 +222,7 @@ public class Dialog implements IsElement {
                                     .rememberAs("closeIcon")
                                 .span().css("pficon pficon-close").aria("hidden", "true").end()
                             .end()
-                            .h(4).css("modal-title").id(labelId).innerText(title).end()
+                            .h(4).css("modal-title").id(labelId).innerText(builder.title).rememberAs("title").end()
                         .end()
 
                         // body
@@ -251,22 +239,22 @@ public class Dialog implements IsElement {
             .end();
         // @formatter:on
 
-        Element dialog = builder.build();
-        if (fadeIn) {
-            dialog.getClassList().add("fade");
+        title = dialogBuilder.referenceFor("title");
+        root = dialogBuilder.build();
+        if (builder.fadeIn) {
+            root.getClassList().add("fade");
         }
-        if (!closeIcon) {
-            Elements.setVisible(builder.referenceFor("closeIcon"), false);
+        if (!builder.closeIcon) {
+            Elements.setVisible(dialogBuilder.referenceFor("closeIcon"), false);
         }
-        if (size == SMALL) {
-            builder.referenceFor("dialog").getClassList().add("modal-lg");
-        } else if (size == LARGE) {
-            builder.referenceFor("dialog").getClassList().add("modal-sm");
+        if (builder.size == SMALL) {
+            dialogBuilder.referenceFor("dialog").getClassList().add("modal-lg");
+        } else if (builder.size == LARGE) {
+            dialogBuilder.referenceFor("dialog").getClassList().add("modal-sm");
         }
-        if (primaryButton == null && secondaryButton == null) {
-            Elements.setVisible(builder.referenceFor("footer"), false);
+        if (builder.primaryButton == null && builder.secondaryButton == null) {
+            Elements.setVisible(dialogBuilder.referenceFor("footer"), false);
         }
-        return dialog;
     }
 
     @Override
@@ -276,7 +264,7 @@ public class Dialog implements IsElement {
 
     public native void show() /*-{
         $doc.body.appendChild(this.@org.jboss.hal.ballroom.dialog.Dialog::root);
-        $wnd.$(".selectpicker").selectpicker();
+        @org.jboss.hal.ballroom.PatternFly::initOptIns(Z)(false);
         var dialogId = '#' + this.@org.jboss.hal.ballroom.dialog.Dialog::id;
         $wnd.$(dialogId).modal('show');
     }-*/;
@@ -286,4 +274,20 @@ public class Dialog implements IsElement {
         $wnd.$(dialogId).modal('hide');
         $doc.body.removeChild(this.@org.jboss.hal.ballroom.dialog.Dialog::root);
     }-*/;
+
+    public void setTitle(String title) {
+        this.title.setInnerHTML(title);
+    }
+
+    public void setPrimaryButtonLabel(String label) {
+        if (primaryButton != null) {
+            primaryButton.setInnerHTML(label);
+        }
+    }
+
+    public void setSecondaryButtonLabel(String label) {
+        if (secondaryButton != null) {
+            secondaryButton.setInnerHTML(label);
+        }
+    }
 }

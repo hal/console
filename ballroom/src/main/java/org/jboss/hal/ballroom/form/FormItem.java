@@ -41,7 +41,7 @@ import elemental.html.SpanElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Id;
-import org.jboss.hal.ballroom.LayoutSpec;
+import org.jboss.hal.ballroom.GridSpec;
 import org.jboss.hal.resources.HalConstants;
 
 import java.util.LinkedList;
@@ -57,7 +57,7 @@ import static org.jboss.gwt.elemento.core.InputType.text;
  */
 public abstract class FormItem<T>
         implements IsElement, HasEnabled, Focusable, HasName, HasValue<T>, HasText /* for expression support */,
-        LayoutSpec {
+        GridSpec {
 
     static final HalConstants CONSTANTS = GWT.create(HalConstants.class);
 

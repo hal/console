@@ -27,7 +27,7 @@ import elemental.events.EventListener;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Id;
-import org.jboss.hal.ballroom.LayoutSpec;
+import org.jboss.hal.ballroom.GridSpec;
 import org.jboss.hal.ballroom.form.Form.State;
 import org.jboss.hal.resources.HalConstants;
 
@@ -41,7 +41,7 @@ import static org.jboss.hal.ballroom.form.Form.Operation.RESET;
 /**
  * @author Harald Pehl
  */
-class FormLinks implements IsElement, LayoutSpec {
+class FormLinks implements IsElement, GridSpec {
 
     private final static HalConstants CONSTANTS = GWT.create(HalConstants.class);
 
