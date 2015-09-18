@@ -137,5 +137,6 @@ public interface HalConstants extends Constants {
     String start();
     String toggle_navigation();
     String tools();
+    String unknown_error();
     //@formatter:on
 }

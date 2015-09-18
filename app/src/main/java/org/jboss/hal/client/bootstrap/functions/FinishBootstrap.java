@@ -21,11 +21,16 @@
  */
 package org.jboss.hal.client.bootstrap.functions;
 
+import com.ekuefler.supereventbus.EventBus;
 import com.google.gwt.core.client.GWT;
 import org.jboss.gwt.flow.Control;
 import org.jboss.hal.core.flow.FunctionContext;
+import org.jboss.hal.core.messaging.Message;
+import org.jboss.hal.resources.I18n;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
 
 /**
  * @author Harald Pehl
@@ -34,11 +39,23 @@ public class FinishBootstrap implements BootstrapFunction {
 
     private static final Logger logger = LoggerFactory.getLogger(FinishBootstrap.class);
 
+    private final EventBus eventBus;
+    private final I18n i18n;
+
+    @Inject
+    public FinishBootstrap(EventBus eventBus,
+            I18n i18n) {
+        this.eventBus = eventBus;
+        this.i18n = i18n;
+    }
+
     @Override
     public void execute(final Control<FunctionContext> control) {
         // reset the uncaught exception handler setup in HalPreBootstrapper
-        // TODO Emit an error message
-        GWT.setUncaughtExceptionHandler(e -> logger.error("Uncaught exception: {}", e.getMessage()));
+        GWT.setUncaughtExceptionHandler(e -> {
+            logger.error("Uncaught exception: {}", e.getMessage());
+            eventBus.post(Message.error(i18n.constants().unknown_error(), e.getMessage()));
+        });
         control.proceed();
     }
 }

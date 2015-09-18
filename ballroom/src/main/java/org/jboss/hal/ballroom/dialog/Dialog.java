@@ -259,10 +259,11 @@ public class Dialog implements IsElement {
             Dialog.body.appendChild(element);
         }
 
-        if (builder.primaryButton != null || builder.secondaryButton != null) {
-            Elements.Builder footerBuilder = new Elements.Builder();
+        boolean buttons = builder.primaryButton != null || builder.secondaryButton != null;
+        if (buttons) {
+            Elements.Builder footerContentBuilder = new Elements.Builder();
             if (builder.secondaryButton != null) {
-                footerBuilder.button()
+                footerContentBuilder.button()
                         .css("btn btn-hal btn-default")
                         .on(click, event -> {
                             if (builder.secondaryButton.callback.execute()) {
@@ -272,10 +273,10 @@ public class Dialog implements IsElement {
                         .innerText(builder.secondaryButton.label)
                         .rememberAs("secondaryButton")
                         .end();
-                secondaryButton = footerBuilder.referenceFor("secondaryButton");
+                secondaryButton = footerContentBuilder.referenceFor("secondaryButton");
             }
             if (builder.primaryButton != null) {
-                footerBuilder.button()
+                footerContentBuilder.button()
                         .css("btn btn-hal btn-primary")
                         .on(click, event -> {
                             if (builder.primaryButton.callback.execute()) {
@@ -285,11 +286,12 @@ public class Dialog implements IsElement {
                         .innerText(builder.primaryButton.label)
                         .rememberAs("primaryButton")
                         .end();
-                primaryButton = footerBuilder.referenceFor("primaryButton");
+                primaryButton = footerContentBuilder.referenceFor("primaryButton");
             }
-            Element footer = footerBuilder.build();
-            Dialog.footer.appendChild(footer);
+            Element footerContent = footerContentBuilder.build();
+            Dialog.footer.appendChild(footerContent);
         }
+        Elements.setVisible(Dialog.footer, buttons);
     }
 
     @Override
