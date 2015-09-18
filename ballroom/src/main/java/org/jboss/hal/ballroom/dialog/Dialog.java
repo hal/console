@@ -200,6 +200,7 @@ public class Dialog implements IsElement {
                 .end()
             .end();
         // @formatter:on
+
         root = rootBuilder.build();
         dialog = rootBuilder.referenceFor("dialog");
         closeIcon = rootBuilder.referenceFor("closeIcon");
@@ -211,6 +212,14 @@ public class Dialog implements IsElement {
 
     private static native void init() /*-{
         $doc.body.appendChild(@org.jboss.hal.ballroom.dialog.Dialog::root);
+
+        var dialogId = @org.jboss.hal.ballroom.dialog.Dialog::SELECTOR_ID;
+        $wnd.$(dialogId).on('shown.bs.modal', function () {
+            @org.jboss.hal.ballroom.dialog.Dialog::open = true;
+        });
+        $wnd.$(dialogId).on('hidden.bs.modal', function () {
+            @org.jboss.hal.ballroom.dialog.Dialog::open = false;
+        });
     }-*/;
 
     private static void reset() {
@@ -236,6 +245,15 @@ public class Dialog implements IsElement {
         }
         Dialog.dialog.getClassList().add(builder.size.css);
         Elements.setVisible(Dialog.closeIcon, builder.closeIcon);
+        closeIcon.setOnclick(event -> {
+            if (builder.secondaryButton == null) {
+                close();
+            } else {
+                if (builder.secondaryButton.callback.execute()) {
+                    close();
+                }
+            }
+        });
         setTitle(builder.title);
         for (Element element : builder.elements) {
             Dialog.body.appendChild(element);
@@ -285,7 +303,6 @@ public class Dialog implements IsElement {
                     "Another dialog is still open. Only one dialog can be open at a time. Please close the other dialog!");
         }
         internalShow();
-        Dialog.open = true;
     }
 
     private native void internalShow() /*-{
@@ -294,12 +311,7 @@ public class Dialog implements IsElement {
         @org.jboss.hal.ballroom.PatternFly::initOptIns(Z)(false);
     }-*/;
 
-    private void close() {
-        internalClose();
-        Dialog.open = false;
-    }
-
-    private native void internalClose() /*-{
+    private native void close() /*-{
         var dialogId = @org.jboss.hal.ballroom.dialog.Dialog::SELECTOR_ID;
         $wnd.$(dialogId).modal('hide');
     }-*/;

@@ -80,7 +80,15 @@ public class HalBootstrapper implements Bootstrapper {
             }
         };
 
-        endpointSelection.select(() -> new Async<FunctionContext>(Progress.NOOP).waterfall(
-                        new FunctionContext(), outcome, bootstrapFunctions.functions()));
+        new Async<FunctionContext>(Progress.NOOP).waterfall(
+                new FunctionContext(), outcome, bootstrapFunctions.functions());
+/*
+        endpointSelection.select(
+                () -> {
+                    LoadingPanel.get().on();
+                    new Async<FunctionContext>(Progress.NOOP).waterfall(
+                            new FunctionContext(), outcome, bootstrapFunctions.functions());
+                });
+*/
     }
 }

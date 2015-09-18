@@ -31,7 +31,7 @@ public class PatternFly {
     private PatternFly() {}
 
     /**
-     * Initialized the opt-in functionality from PatternFly / Bootstrap
+     * Initializes the opt-in functionality from PatternFly / Bootstrap
      */
     public static void initOptIns() {
         initOptIns(true);

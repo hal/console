@@ -30,8 +30,8 @@ import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.hal.ballroom.PatternFly;
 
 /**
- * A presenter which calls {@link PatternFly#initOptIns()} when it's {@linkplain #onReveal() revealed}. Extends from
- * this presenter if its view uses opt-in features from PatternFly / Bootstrap like tooltips or select boxes.
+ * A presenter which calls {@link PatternFly#initOptIns()} when it's {@linkplain #onReveal() revealed}. Extend from
+ * this presenter if the view uses opt-in features from PatternFly / Bootstrap like tooltips or select boxes.
  *
  * @author Harald Pehl
  */
