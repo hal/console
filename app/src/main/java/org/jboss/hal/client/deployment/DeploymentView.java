@@ -82,7 +82,7 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
         SampleForm dialogForm = new SampleForm("dialog", true);
         Element dialogBody = new Elements.Builder().p().innerText("A form inside a dialog").end()
                 .add(dialogForm.asElement()).build();
-        dialog = new Dialog.Builder("sample-dialog", "Sample Dialog").add(dialogBody).closeOnly().build();
+        dialog = new Dialog.Builder("Sample Dialog").add(dialogBody).closeOnly().build();
 
         SampleForm form = new SampleForm("deployment", false);
         Element element = new LayoutBuilder()
