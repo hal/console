@@ -34,7 +34,6 @@ import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.resources.I18n;
 
 import javax.annotation.PostConstruct;
-
 import java.util.Collections;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -47,16 +46,19 @@ abstract class HomepageSection implements IsElement {
 
     // @formatter:off
     static HomepageSection create(final TokenFormatter tokenFormatter, final I18n i18n,
-            final String token, final String header, final String intro, final Iterable<String> steps) {
-        return new Templated_HomepageSection(tokenFormatter, i18n, token, header, intro, steps);
+            final String id, final String token, final String header, final String intro,
+            final Iterable<String> steps, final boolean open) {
+        return new Templated_HomepageSection(tokenFormatter, i18n, id, token, header, intro, steps, open);
     }
 
     abstract TokenFormatter tokenFormatter();
     abstract I18n i18n();
+    abstract String id();
     abstract String token();
     abstract String header();
     abstract String intro();
     abstract Iterable<String> steps();
+    abstract boolean open();
     // @formatter:on
 
 
@@ -68,8 +70,18 @@ abstract class HomepageSection implements IsElement {
 
     @PostConstruct
     void init() {
+        if (open()) {
+            toggleIcon.getClassList().remove("fa-angle-right");
+            toggleIcon.getClassList().add("fa-angle-down");
+            sectionBody.getClassList().add("in");
+        } else {
+            toggleIcon.getClassList().remove("fa-angle-down");
+            toggleIcon.getClassList().add("fa-angle-right");
+            sectionBody.getClassList().remove("in");
+        }
         sectionHeader.setInnerHTML(header());
         sectionIntro.setInnerHTML(intro());
+        sectionBody.setAttribute("aria-expanded", String.valueOf(open()));
 
         Elements.removeChildrenFrom(sectionSteps);
         Document document = Browser.getDocument();
@@ -91,11 +103,9 @@ abstract class HomepageSection implements IsElement {
         if (open) {
             toggleIcon.getClassList().remove("fa-angle-down");
             toggleIcon.getClassList().add("fa-angle-right");
-            Elements.setVisible(sectionBody, false);
         } else {
             toggleIcon.getClassList().remove("fa-angle-right");
             toggleIcon.getClassList().add("fa-angle-down");
-            Elements.setVisible(sectionBody, true);
         }
     }
 }

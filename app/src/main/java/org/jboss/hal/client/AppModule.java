@@ -61,10 +61,10 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 FooterPresenter.MyView.class,
                 Templated_FooterView_Provider.class);
 
-        bindPresenter(MainPresenter.class,
-                MainPresenter.MyView.class,
-                MainView.class,
-                MainPresenter.MyProxy.class);
+        bindPresenter(RootPresenter.class,
+                RootPresenter.MyView.class,
+                RootView.class,
+                RootPresenter.MyProxy.class);
 
         bindPresenter(HomepagePresenter.class,
                 HomepagePresenter.MyView.class,

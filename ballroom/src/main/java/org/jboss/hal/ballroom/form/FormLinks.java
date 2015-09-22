@@ -84,7 +84,7 @@ class FormLinks implements IsElement, GridSpec {
             links.appendChild(editLink);
         }
         if (stateMachine.supports(RESET)) {
-            resetLink = link(CONSTANTS.reset(), "fa fa-file-o", onReset);
+            resetLink = link(CONSTANTS.reset(), "pficon pficon-restart", onReset);
             resetLink.getDataset().setAt("toggle", "tooltip");
             resetLink.getDataset().setAt("placement", "right");
             resetLink.setTitle(CONSTANTS.form_reset_desc());

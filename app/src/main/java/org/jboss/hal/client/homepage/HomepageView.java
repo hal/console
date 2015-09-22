@@ -30,6 +30,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
+import org.jboss.hal.resources.HalIds;
 import org.jboss.hal.resources.HalImages;
 import org.jboss.hal.resources.I18n;
 
@@ -51,6 +52,7 @@ public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
     public HomepageView(Environment env,
             User user,
             I18n i18n,
+            HalIds ids,
             HalImages images,
             TokenFormatter tokenFormatter) {
 
@@ -93,11 +95,11 @@ public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
 
         if (standalone) {
             sections = Collections.singleton(HomepageSection.create(tokenFormatter, i18n,
-                    NameTokens.Deployments,
+                    ids.homepage_deployments(), NameTokens.Deployments,
                     i18n.constants().homepage_deployments_section(),
                     i18n.constants().homepage_deployments_standalone_step_intro(),
                     Arrays.asList(i18n.constants().homepage_deployments_standalone_step_1(),
-                            i18n.constants().homepage_deployments_step_enable())));
+                            i18n.constants().homepage_deployments_step_enable()), true));
             deployments = HomepageModule.create(tokenFormatter,
                     NameTokens.Deployments,
                     "Deployments",
@@ -106,13 +108,13 @@ public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
                     sections).asElement();
 
             sections = Collections.singleton(HomepageSection.create(tokenFormatter, i18n,
-                    NameTokens.Configuration,
+                    ids.homepage_configuration(), NameTokens.Configuration,
                     i18n.constants().homepage_configuration_section(),
                     i18n.constants().homepage_configuration_step_intro(),
                     Arrays.asList(
                             i18n.constants().homepage_configuration_standalone_step1(),
                             i18n.constants().homepage_configuration_step2(),
-                            i18n.constants().homepage_configuration_step3())));
+                            i18n.constants().homepage_configuration_step3()), true));
             configuration = HomepageModule.create(tokenFormatter,
                     NameTokens.Configuration,
                     "Configuration",
@@ -121,12 +123,12 @@ public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
                     sections).asElement();
 
             sections = Collections.singleton(HomepageSection.create(tokenFormatter, i18n,
-                    NameTokens.Runtime,
+                    ids.homepage_runtime(), NameTokens.Runtime,
                     i18n.constants().homepage_runtime_standalone_section(),
                     i18n.constants().homepage_runtime_step_intro(),
                     Arrays.asList(
                             i18n.constants().homepage_runtime_standalone_step1(),
-                            i18n.constants().homepage_runtime_standalone_step2())));
+                            i18n.constants().homepage_runtime_standalone_step2()), true));
             runtime = HomepageModule.create(tokenFormatter,
                     NameTokens.Runtime,
                     "Runtime",
@@ -136,13 +138,13 @@ public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
 
         } else {
             sections = Collections.singleton(HomepageSection.create(tokenFormatter, i18n,
-                    NameTokens.Deployments,
+                    ids.homepage_deployments(), NameTokens.Deployments,
                     i18n.constants().homepage_deployments_section(),
                     i18n.constants().homepage_deployments_domain_step_intro(),
                     Arrays.asList(
                             i18n.constants().homepage_deployments_domain_step_1(),
                             i18n.constants().homepage_deployments_domain_step_2(),
-                            i18n.constants().homepage_deployments_step_enable())));
+                            i18n.constants().homepage_deployments_step_enable()), true));
             deployments = HomepageModule.create(tokenFormatter,
                     NameTokens.Deployments,
                     "Deployments",
@@ -151,13 +153,13 @@ public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
                     sections).asElement();
 
             sections = Collections.singleton(HomepageSection.create(tokenFormatter, i18n,
-                    NameTokens.Configuration,
+                    ids.homepage_configuration(), NameTokens.Configuration,
                     i18n.constants().homepage_configuration_section(),
                     i18n.constants().homepage_configuration_step_intro(),
                     Arrays.asList(
                             i18n.constants().homepage_configuration_domain_step1(),
                             i18n.constants().homepage_configuration_step2(),
-                            i18n.constants().homepage_configuration_step3())));
+                            i18n.constants().homepage_configuration_step3()), true));
             configuration = HomepageModule.create(tokenFormatter,
                     NameTokens.Configuration,
                     "Configuration",
@@ -167,26 +169,26 @@ public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
 
             sections = Arrays.asList(
                     HomepageSection.create(tokenFormatter, i18n,
-                            NameTokens.Runtime,
+                            ids.homepage_runtime_server_group(), NameTokens.Runtime,
                             i18n.constants().homepage_runtime_domain_server_group_section(),
                             i18n.constants().homepage_runtime_domain_server_group_step_intro(),
                             Arrays.asList(
                                     i18n.constants().homepage_runtime_domain_server_group_step1(),
-                                    i18n.constants().homepage_runtime_domain_server_group_step2())),
+                                    i18n.constants().homepage_runtime_domain_server_group_step2()), true),
                     HomepageSection.create(tokenFormatter, i18n,
-                            NameTokens.Runtime,
+                            ids.homepage_runtime_server(), NameTokens.Runtime,
                             i18n.constants().homepage_runtime_domain_create_server_section(),
                             i18n.constants().homepage_runtime_domain_create_server_step_intro(),
                             Arrays.asList(
                                     i18n.constants().homepage_runtime_domain_create_server_step1(),
-                                    i18n.constants().homepage_runtime_domain_create_server_step2())),
+                                    i18n.constants().homepage_runtime_domain_create_server_step2()), true),
                     HomepageSection.create(tokenFormatter, i18n,
-                            NameTokens.Runtime,
+                            ids.homepage_runtime_monitor(), NameTokens.Runtime,
                             i18n.constants().homepage_runtime_domain_monitor_server_section(),
                             i18n.constants().homepage_runtime_step_intro(),
                             Arrays.asList(
                                     i18n.constants().homepage_runtime_domain_monitor_server_step1(),
-                                    i18n.constants().homepage_runtime_domain_monitor_server_step2())));
+                                    i18n.constants().homepage_runtime_domain_monitor_server_step2()), true));
             runtime = HomepageModule.create(tokenFormatter,
                     NameTokens.Runtime,
                     "Runtime",
@@ -197,12 +199,12 @@ public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
 
         if (su) {
             sections = Collections.singleton(HomepageSection.create(tokenFormatter, i18n,
-                    NameTokens.AccessControl,
+                    ids.homepage_access_control(), NameTokens.AccessControl,
                     i18n.constants().homepage_access_control_section(),
                     i18n.constants().homepage_access_control_step_intro(),
                     Arrays.asList(
                             i18n.constants().homepage_access_control_step1(),
-                            i18n.constants().homepage_access_control_step2())));
+                            i18n.constants().homepage_access_control_step2()), true));
             accessControl = HomepageModule.create(tokenFormatter,
                     NameTokens.AccessControl,
                     "Access Control",
@@ -212,21 +214,21 @@ public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
 
             if (standalone) {
                 sections = Collections.singleton(HomepageSection.create(tokenFormatter, i18n,
-                        NameTokens.Patching,
+                        ids.homepage_patching(), NameTokens.Patching,
                         i18n.constants().homepage_patching_section(),
                         i18n.messages().homepage_patching_standalone_step_intro(name),
                         Arrays.asList(
                                 i18n.constants().homepage_patching_step1(),
-                                i18n.constants().homepage_patching_step_apply())));
+                                i18n.constants().homepage_patching_step_apply()), true));
             } else {
                 sections = Collections.singleton(HomepageSection.create(tokenFormatter, i18n,
-                        NameTokens.Patching,
+                        ids.homepage_patching(), NameTokens.Patching,
                         i18n.constants().homepage_patching_section(),
                         i18n.messages().homepage_patching_domain_step_intro(name),
                         Arrays.asList(
                                 i18n.constants().homepage_patching_step1(),
                                 i18n.constants().homepage_patching_domain_step2(),
-                                i18n.constants().homepage_patching_step_apply())));
+                                i18n.constants().homepage_patching_step_apply()), true));
             }
             patching = HomepageModule.create(tokenFormatter,
                     NameTokens.Patching,

@@ -28,6 +28,15 @@ public interface HalIds extends Constants {
     String header_roles();
     String header_username();
 
+    String homepage_access_control();
+    String homepage_configuration();
+    String homepage_deployments();
+    String homepage_patching();
+    String homepage_runtime();
+    String homepage_runtime_server_group();
+    String homepage_runtime_server();
+    String homepage_runtime_monitor();
+
     String root_container();
 
     String tlc_access_control();

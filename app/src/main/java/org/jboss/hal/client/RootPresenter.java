@@ -31,15 +31,16 @@ import com.gwtplatform.mvp.client.presenter.slots.PermanentSlot;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.hal.client.skeleton.FooterPresenter;
 import org.jboss.hal.client.skeleton.HeaderPresenter;
+import org.jboss.hal.core.Slots;
 
 /**
  * @author Harald Pehl
  */
-public class MainPresenter extends Presenter<MainPresenter.MyView, MainPresenter.MyProxy> {
+public class RootPresenter extends Presenter<RootPresenter.MyView, RootPresenter.MyProxy> implements Slots {
 
     // @formatter:off
     @ProxyStandard
-    interface MyProxy extends Proxy<MainPresenter> {}
+    interface MyProxy extends Proxy<RootPresenter> {}
 
     interface MyView extends View {}
     // @formatter:on
@@ -52,7 +53,7 @@ public class MainPresenter extends Presenter<MainPresenter.MyView, MainPresenter
     private final FooterPresenter footerPresenter;
 
     @Inject
-    public MainPresenter(EventBus eventBus, MyView view, MyProxy proxy,
+    public RootPresenter(EventBus eventBus, MyView view, MyProxy proxy,
             HeaderPresenter headerPresenter, FooterPresenter footerPresenter) {
         super(eventBus, view, proxy, RevealType.Root);
         this.headerPresenter = headerPresenter;

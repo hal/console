@@ -33,10 +33,10 @@
                     <!-- HomepageSection template -->
                     <div data-element="homepage-section">
                         <div class="eap-toggle-controls">
-                            <a data-element="toggleSection" class="clickable"><i data-element="toggleIcon" class="fa fa-angle-down"></i>&nbsp;<span data-element="sectionHeader">Create a Deployment</span></a>
+                            <a href="#{{id()}}" data-element="toggleSection" data-toggle="collapse" aria-expanded="true" aria-controls="{{id}}"><i data-element="toggleIcon" class="eap-home-section-icon fa fa-angle-down"></i><span data-element="sectionHeader">Create a Deployment</span></a>
                             <a href="{{historyToken()}}"><span>{{i18n().constants().start()}} </span><i class="fa fa-arrow-circle-right"></i></a>
                         </div>
-                        <div data-element="sectionBody" class="eap-toggle-container">
+                        <div id="{{id}}" data-element="sectionBody" class="eap-toggle-container collapse">
                             <p data-element="sectionIntro">Deploy an application and assign it to one or more server groups.</p>
                             <ol data-element="sectionSteps">
                             </ol>

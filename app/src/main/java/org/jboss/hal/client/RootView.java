@@ -34,20 +34,20 @@ import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jboss.hal.client.MainPresenter.SLOT_FOOTER_CONTENT;
-import static org.jboss.hal.client.MainPresenter.SLOT_HEADER_CONTENT;
+import static org.jboss.hal.client.RootPresenter.SLOT_FOOTER_CONTENT;
+import static org.jboss.hal.client.RootPresenter.SLOT_HEADER_CONTENT;
 
 /**
  * @author Harald Pehl
  */
-public class MainView extends ViewImpl implements MainPresenter.MyView {
+public class RootView extends ViewImpl implements RootPresenter.MyView {
 
     private final Map<Object, Element> slots;
     private final DivElement rootContainer;
     private boolean initialized;
 
     @Inject
-    public MainView(HalIds ids) {
+    public RootView(HalIds ids) {
         slots = new HashMap<>();
         rootContainer = new Elements.Builder().div().id(ids.root_container()).css("container-fluid").end().build();
         initWidget(Elements.asWidget(rootContainer));
