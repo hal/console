@@ -27,13 +27,15 @@ import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.DivElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.core.Slots;
 import org.jboss.hal.resources.HalIds;
 
 import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jboss.hal.client.ApplicationPresenter.*;
+import static org.jboss.hal.client.ApplicationPresenter.SLOT_FOOTER_CONTENT;
+import static org.jboss.hal.client.ApplicationPresenter.SLOT_HEADER_CONTENT;
 
 /**
  * @author Harald Pehl
@@ -59,7 +61,7 @@ public class ApplicationView extends ViewImpl implements ApplicationPresenter.My
             slots.put(slot, element);
         }
 
-        else if (slot == SLOT_MAIN_CONTENT) {
+        else if (slot == Slots.SLOT_MAIN_CONTENT) {
             Elements.removeChildrenFrom(rootContainer);
             rootContainer.appendChild(element);
         }

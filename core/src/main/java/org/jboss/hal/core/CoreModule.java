@@ -26,12 +26,14 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.core.dispatch.DomainProcessStateProcessor;
-import org.jboss.hal.core.meta.ResourceDescriptionRegistry;
-import org.jboss.hal.core.meta.UIRegistry;
 import org.jboss.hal.core.dispatch.Dispatcher;
+import org.jboss.hal.core.dispatch.DomainProcessStateProcessor;
 import org.jboss.hal.core.dispatch.ProcessStateProcessor;
 import org.jboss.hal.core.dispatch.StandaloneProcessStateProcessor;
+import org.jboss.hal.core.meta.ResourceDescriptionRegistry;
+import org.jboss.hal.core.meta.SecurityFrameworkImpl;
+import org.jboss.hal.core.meta.UIRegistry;
+import org.jboss.hal.security.SecurityFramework;
 import org.jboss.hal.spi.GinModule;
 
 @GinModule
@@ -48,6 +50,7 @@ public class CoreModule extends AbstractGinModule {
     @Override
     protected void configure() {
         bind(Dispatcher.class);
+        bind(SecurityFramework.class).to(SecurityFrameworkImpl.class).in(Singleton.class);
         bind(ResourceDescriptionRegistry.class).in(Singleton.class);
         bind(UIRegistry.class).in(Singleton.class);
     }

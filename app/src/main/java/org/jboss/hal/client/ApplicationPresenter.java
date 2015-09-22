@@ -27,7 +27,6 @@ import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.presenter.slots.IsSingleSlot;
-import com.gwtplatform.mvp.client.presenter.slots.NestedSlot;
 import com.gwtplatform.mvp.client.presenter.slots.PermanentSlot;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.hal.client.skeleton.FooterPresenter;
@@ -46,9 +45,8 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
     // @formatter:on
 
 
-    public static final NestedSlot SLOT_MAIN_CONTENT = new NestedSlot();
-    public static final IsSingleSlot<HeaderPresenter> SLOT_HEADER_CONTENT = new PermanentSlot<>();
-    public static final IsSingleSlot<FooterPresenter> SLOT_FOOTER_CONTENT = new PermanentSlot<>();
+    static final IsSingleSlot<HeaderPresenter> SLOT_HEADER_CONTENT = new PermanentSlot<>();
+    static final IsSingleSlot<FooterPresenter> SLOT_FOOTER_CONTENT = new PermanentSlot<>();
 
     private final HeaderPresenter headerPresenter;
     private final FooterPresenter footerPresenter;
