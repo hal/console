@@ -31,6 +31,6 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 public abstract class ApplicationPresenter<V extends View, Proxy_ extends Proxy<?>> extends PatternFlyPresenter<V, Proxy_> {
 
     public ApplicationPresenter(final EventBus eventBus, final V view, final Proxy_ proxy) {
-        super(eventBus, view, proxy, Slots.SLOT_MAIN_CONTENT);
+        super(eventBus, view, proxy, Slots.APPLICATION);
     }
 }

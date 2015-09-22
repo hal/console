@@ -5,4 +5,5 @@ Fresh start of the HAL management console using the latest frameworks / librarie
 - Java 8
 - GWT 3.x (JsInterop, Elemental)
 - Latest GWTP build
+- PatternFly
 - Web Components

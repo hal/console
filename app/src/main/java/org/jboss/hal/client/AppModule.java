@@ -39,7 +39,7 @@ import org.jboss.hal.core.gin.AbstractTemplatedPresenterModule;
 import org.jboss.hal.spi.GinModule;
 
 @GinModule
-public class ApplicationModule extends AbstractTemplatedPresenterModule {
+public class AppModule extends AbstractTemplatedPresenterModule {
 
     @Override
     protected void configure() {
@@ -61,10 +61,10 @@ public class ApplicationModule extends AbstractTemplatedPresenterModule {
                 FooterPresenter.MyView.class,
                 Templated_FooterView_Provider.class);
 
-        bindPresenter(ApplicationPresenter.class,
-                ApplicationPresenter.MyView.class,
-                ApplicationView.class,
-                ApplicationPresenter.MyProxy.class);
+        bindPresenter(MainPresenter.class,
+                MainPresenter.MyView.class,
+                MainView.class,
+                MainPresenter.MyProxy.class);
 
         bindPresenter(HomepagePresenter.class,
                 HomepagePresenter.MyView.class,

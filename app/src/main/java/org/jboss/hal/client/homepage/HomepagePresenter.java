@@ -28,12 +28,12 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.client.ApplicationPresenter;
+import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.core.HasPresenter;
+import org.jboss.hal.core.PatternFlyPresenter;
+import org.jboss.hal.core.Slots;
 
 import javax.inject.Inject;
 
@@ -52,26 +52,17 @@ public class HomepagePresenter extends Presenter<HomepagePresenter.MyView, Homep
     // @formatter:on
 
 
-    private final PlaceManager placeManager;
-
     @Inject
     public HomepagePresenter(final EventBus eventBus,
             final MyView view,
-            final MyProxy proxy,
-            final PlaceManager placeManager) {
-        super(eventBus, view, proxy, ApplicationPresenter.SLOT_MAIN_CONTENT);
-        this.placeManager = placeManager;
+            final MyProxy proxy) {
+        super(eventBus, view, proxy, Slots.MAIN);
     }
 
     @Override
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-    }
-
-    public void goTo(final String token) {
-        PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token).build();
-        placeManager.revealPlace(placeRequest);
     }
 
     public void launchGuidedTour() {

@@ -35,11 +35,11 @@ import org.jboss.hal.client.skeleton.HeaderPresenter;
 /**
  * @author Harald Pehl
  */
-public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView, ApplicationPresenter.MyProxy> {
+public class MainPresenter extends Presenter<MainPresenter.MyView, MainPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyStandard
-    interface MyProxy extends Proxy<ApplicationPresenter> {}
+    interface MyProxy extends Proxy<MainPresenter> {}
 
     interface MyView extends View {}
     // @formatter:on
@@ -52,7 +52,7 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
     private final FooterPresenter footerPresenter;
 
     @Inject
-    public ApplicationPresenter(EventBus eventBus, MyView view, MyProxy proxy,
+    public MainPresenter(EventBus eventBus, MyView view, MyProxy proxy,
             HeaderPresenter headerPresenter, FooterPresenter footerPresenter) {
         super(eventBus, view, proxy, RevealType.Root);
         this.headerPresenter = headerPresenter;

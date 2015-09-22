@@ -406,14 +406,14 @@ public class AddressTemplate {
 
     private static class Memory<T> {
 
-        Map<String, LinkedList<T>> values = new HashMap<>();
+        Map<String, List<T>> values = new HashMap<>();
         Map<String, Integer> indexes = new HashMap<>();
 
         boolean contains(String key) {
             return values.containsKey(key);
         }
 
-        void memorize(String key, LinkedList<T> resolved) {
+        void memorize(String key, List<T> resolved) {
             int startIdx = resolved.isEmpty() ? 0 : resolved.size() - 1;
             values.put(key, resolved);
             indexes.put(key, startIdx);
@@ -422,7 +422,7 @@ public class AddressTemplate {
         T next(String key) {
             T result = null;
 
-            LinkedList<T> items = values.get(key);
+            List<T> items = values.get(key);
             Integer idx = indexes.get(key);
 
             if (!items.isEmpty() && idx >= 0) {

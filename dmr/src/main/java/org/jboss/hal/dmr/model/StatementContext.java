@@ -1,6 +1,6 @@
 package org.jboss.hal.dmr.model;
 
-import java.util.LinkedList;
+import java.util.List;
 
 public interface StatementContext {
 
@@ -17,10 +17,10 @@ public interface StatementContext {
     /**
      * Collects all values matching a key.
      */
-    LinkedList<String> collect(String key);
+    List<String> collect(String key);
 
     /**
      * Collects all tuples matching a key.
      */
-    LinkedList<String[]> collectTuples(String key);
+    List<String[]> collectTuples(String key);
 }

@@ -26,9 +26,9 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.client.ApplicationPresenter;
 import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.core.PatternFlyPresenter;
+import org.jboss.hal.core.Slots;
 
 import javax.inject.Inject;
 
@@ -50,6 +50,6 @@ public class DeploymentPresenter extends PatternFlyPresenter<DeploymentPresenter
     public DeploymentPresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy proxy) {
-        super(eventBus, view, proxy, ApplicationPresenter.SLOT_MAIN_CONTENT);
+        super(eventBus, view, proxy, Slots.MAIN);
     }
 }

@@ -34,20 +34,20 @@ import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jboss.hal.client.ApplicationPresenter.SLOT_FOOTER_CONTENT;
-import static org.jboss.hal.client.ApplicationPresenter.SLOT_HEADER_CONTENT;
+import static org.jboss.hal.client.MainPresenter.SLOT_FOOTER_CONTENT;
+import static org.jboss.hal.client.MainPresenter.SLOT_HEADER_CONTENT;
 
 /**
  * @author Harald Pehl
  */
-public class ApplicationView extends ViewImpl implements ApplicationPresenter.MyView {
+public class MainView extends ViewImpl implements MainPresenter.MyView {
 
     private final Map<Object, Element> slots;
     private final DivElement rootContainer;
     private boolean initialized;
 
     @Inject
-    public ApplicationView(HalIds ids) {
+    public MainView(HalIds ids) {
         slots = new HashMap<>();
         rootContainer = new Elements.Builder().div().id(ids.root_container()).css("container-fluid").end().build();
         initWidget(Elements.asWidget(rootContainer));
@@ -61,9 +61,17 @@ public class ApplicationView extends ViewImpl implements ApplicationPresenter.My
             slots.put(slot, element);
         }
 
-        else if (slot == Slots.SLOT_MAIN_CONTENT) {
+        else if (slot == Slots.MAIN) {
             Elements.removeChildrenFrom(rootContainer);
             rootContainer.appendChild(element);
+        }
+
+        else if (slot == Slots.APPLICATION) {
+            // TODO Hide top level tabs
+        }
+
+        else if (slot == Slots.PREVIEW) {
+            // TODO Implement preview
         }
 
         if (!initialized && slots.containsKey(SLOT_HEADER_CONTENT) && slots.containsKey(SLOT_FOOTER_CONTENT)) {

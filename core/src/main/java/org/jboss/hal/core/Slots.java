@@ -28,6 +28,7 @@ import com.gwtplatform.mvp.client.presenter.slots.NestedSlot;
  */
 public interface Slots {
 
-    NestedSlot SLOT_MAIN_CONTENT = new NestedSlot();
-    NestedSlot SLOT_PREVIEW = new NestedSlot();
+    NestedSlot MAIN = new NestedSlot();
+    NestedSlot APPLICATION = new NestedSlot();
+    NestedSlot PREVIEW = new NestedSlot();
 }
