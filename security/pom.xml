@@ -33,9 +33,9 @@
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
-    <artifactId>hal-ballroom</artifactId>
-    <name>HAL :: Ballroom</name>
-    <description>Ballroom widget library.</description>
+    <artifactId>hal-security</artifactId>
+    <name>HAL :: Security</name>
+    <description>Security related classes</description>
     <packaging>gwt-lib</packaging>
 
     <dependencies>
@@ -45,31 +45,23 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-resources</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.gwt.flow</groupId>
-            <artifactId>flow</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.gwt.elemento</groupId>
-            <artifactId>elemento-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava-gwt</artifactId>
+            <artifactId>hal-spi</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-user</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-elemental</artifactId>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava-gwt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gwt.inject</groupId>
+            <artifactId>gin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ru.finam</groupId>
+            <artifactId>slf4j-gwt</artifactId>
         </dependency>
     </dependencies>
 
@@ -80,7 +72,7 @@
                 <artifactId>gwt-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
-                    <moduleName>org.jboss.hal.Ballroom</moduleName>
+                    <moduleName>org.jboss.hal.Security</moduleName>
                 </configuration>
             </plugin>
         </plugins>

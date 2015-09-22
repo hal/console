@@ -58,7 +58,7 @@ public class ButtonItem extends FormItem<Void> {
 
     @Override
     protected void toggleRestricted(final boolean on) {
-        // noop
+        button.element.setDisabled(on);
     }
 
     public void onClick(EventListener listener) {

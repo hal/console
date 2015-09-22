@@ -62,15 +62,15 @@ import static java.util.Arrays.asList;
 public class NameTokenProcessor extends AbstractProcessor {
 
     static final String NAME_TOKEN_TEMPLATE = "NameTokens.ftl";
-    static final String NAME_TOKEN_PACKAGE = "org.jboss.hal.core.registry";
+    static final String NAME_TOKEN_PACKAGE = "org.jboss.hal.core.meta";
     static final String NAME_TOKEN_CLASS = "NameTokenRegistryImpl";
 
     static final String REQUIRED_RESOURCES_TEMPLATE = "RequiredResources.ftl";
-    static final String REQUIRED_RESOURCES_PACKAGE = "org.jboss.hal.core.registry";
+    static final String REQUIRED_RESOURCES_PACKAGE = "org.jboss.hal.core.meta";
     static final String REQUIRED_RESOURCES_CLASS = "RequiredResourcesRegistryImpl";
 
     static final String SEARCH_INDEX_TEMPLATE = "SearchIndex.ftl";
-    static final String SEARCH_INDEX_PACKAGE = "org.jboss.hal.core.registry";
+    static final String SEARCH_INDEX_PACKAGE = "org.jboss.hal.core.meta";
     static final String SEARCH_INDEX_CLASS = "SearchIndexRegistryImpl";
 
     static final String REGISTRY_MODULE_TEMPLATE = "RegistryModule.ftl";

@@ -104,6 +104,7 @@
         <module>parent-with-dependencies</module>
         <module>processors</module>
         <module>resources</module>
+        <module>security</module>
         <module>spi</module>
     </modules>
 

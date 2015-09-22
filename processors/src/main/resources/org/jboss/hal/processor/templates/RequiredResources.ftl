@@ -16,8 +16,8 @@ import static java.util.Arrays.asList;
 /*
 * WARNING! This class is generated. Do not modify.
 */
-@Generated("org.jboss.hal.processors.RequiredResourcesProcessor")
-public class ${className} implements org.jboss.hal.core.registry.RequiredResourcesRegistry {
+@Generated("org.jboss.hal.processors.NameTokenProcessor")
+public class ${className} implements org.jboss.hal.core.meta.RequiredResourcesRegistry {
 
     private final HashMultimap<String, String> resources;
     private final HashMultimap<String, String> operations;

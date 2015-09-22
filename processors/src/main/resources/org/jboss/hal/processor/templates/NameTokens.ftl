@@ -15,8 +15,8 @@ import static java.util.Arrays.asList;
 /*
 * WARNING! This class is generated. Do not modify.
 */
-@Generated("org.jboss.hal.processors.RequiredResourcesProcessor")
-public class ${className} implements org.jboss.hal.core.registry.NameTokenRegistry {
+@Generated("org.jboss.hal.processors.NameTokenProcessor")
+public class ${className} implements org.jboss.hal.core.meta.NameTokenRegistry {
 
     private final Set<String> tokens;
     private final Set<String> revealedTokens;

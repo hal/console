@@ -39,9 +39,8 @@ import elemental.html.DivElement;
 import elemental.html.LabelElement;
 import elemental.html.SpanElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.ballroom.Id;
 import org.jboss.hal.ballroom.GridSpec;
+import org.jboss.hal.ballroom.Id;
 import org.jboss.hal.resources.HalConstants;
 
 import java.util.LinkedList;
@@ -51,12 +50,14 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Collections.singletonList;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.InputType.text;
+import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 
 /**
+ * TODO Implement org.jboss.hal.ballroom.form.Form.State#READONLY
  * @author Harald Pehl
  */
 public abstract class FormItem<T>
-        implements IsElement, HasEnabled, Focusable, HasName, HasValue<T>, HasText /* for expression support */,
+        implements HasEnabled, Focusable, HasName, HasValue<T>, HasText /* for expression support */,
         GridSpec {
 
     static final HalConstants CONSTANTS = GWT.create(HalConstants.class);
@@ -161,8 +162,7 @@ public abstract class FormItem<T>
      */
     protected abstract InputElement<T> newInputElement();
 
-    @Override
-    public Element asElement() {
+    public Element asElement(Form.State state) {
         return container;
     }
 
@@ -242,7 +242,7 @@ public abstract class FormItem<T>
         String fq = Id.generate(id, additionalIds);
         setId(fq);
         setName(fq);
-        asElement().getDataset().setAt("formItemGroup", fq);
+        asElement(EDITING).getDataset().setAt("formItemGroup", fq);
         labelElement.getDataset().setAt("formItemLabel", fq);
         inputElement.asElement().getDataset().setAt("formItemControl", fq);
     }
@@ -323,6 +323,10 @@ public abstract class FormItem<T>
     }
 
     public abstract boolean supportsExpressions();
+
+    public void addResolveExpressionHandler(ResolveExpressionEvent.Handler handler) {
+        eventBus.addHandler(ResolveExpressionEvent.TYPE, handler);
+    }
 
     boolean hasExpressionScheme(String value) {
         return value != null && value.startsWith("${") && value.endsWith("}");
@@ -438,8 +442,10 @@ public abstract class FormItem<T>
     }
 
     public void setRestricted(final boolean restricted) {
-        this.restricted = restricted;
-        toggleRestricted(restricted);
+        if (this.restricted != restricted) {
+            this.restricted = restricted;
+            toggleRestricted(restricted);
+        }
     }
 
     protected void toggleRestricted(final boolean on) {

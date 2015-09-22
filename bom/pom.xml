@@ -84,6 +84,11 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-security</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-spi</artifactId>
                 <version>${project.version}</version>
             </dependency>

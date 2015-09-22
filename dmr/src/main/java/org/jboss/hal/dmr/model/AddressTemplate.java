@@ -37,7 +37,7 @@ import java.util.NoSuchElementException;
 
 /**
  * Wrapper for a DMR address which might contain multiple variable parts.
- * <p/>
+ * <p>
  * An address template can be defined using the following BNF:
  * <pre>
  * &lt;address template&gt; ::= "/" | &lt;segment&gt;
@@ -50,7 +50,7 @@ import java.util.NoSuchElementException;
  * &lt;upper&gt;            ::= "A" | "B" | … | "Z"
  * &lt;lower&gt;            ::= "a" | "b" | … | "z"
  * </pre>
- * <p/>
+ * <p>
  * Here are some examples for address templates:
  * <pre>
  *     AddressTemplate a1 = AddressTemplate.of("/");
@@ -58,8 +58,9 @@ import java.util.NoSuchElementException;
  *     AddressTemplate a3 = AddressTemplate.of("{selected.profile}/subsystem=mail");
  *     AddressTemplate a4 = AddressTemplate.of("{selected.profile}/subsystem=mail/mail-session=*");
  * </pre>
- * <p/>
- * To get a fully qualified address from an address template use the {@link #resolve(StatementContext, String...)} method.
+ * <p>
+ * To get a fully qualified address from an address template use the {@link #resolve(StatementContext, String...)}
+ * method.
  *
  * @author Harald Pehl
  */
@@ -122,8 +123,8 @@ public class AddressTemplate {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AddressTemplate)) return false;
+        if (this == o) { return true; }
+        if (!(o instanceof AddressTemplate)) { return false; }
 
         AddressTemplate that = (AddressTemplate) o;
         return optional == that.optional && template.equals(that.template);
@@ -143,10 +144,21 @@ public class AddressTemplate {
     }
 
     /**
+     * @return {@code true} if this template contains no tokens, {@code false} otherwise
+     */
+    public boolean isEmpty() {return tokens.isEmpty();}
+
+    /**
+     * @return the number of tokens
+     */
+    public int size() {return tokens.size();}
+
+    /**
      * Appends the specified template to this template and returns a new template. If the specified template does
      * not start with a slash, "/" is automatically appended.
      *
      * @param template the template to append (makes no difference whether it starts with "/" or not)
+     *
      * @return a new template
      */
     public AddressTemplate append(String template) {
@@ -159,10 +171,12 @@ public class AddressTemplate {
      *
      * @param fromIndex low endpoint (inclusive) of the sub template
      * @param toIndex   high endpoint (exclusive) of the sub template
+     *
      * @return a new address template containing the specified tokens.
+     *
      * @throws IndexOutOfBoundsException for an illegal endpoint index value
-     *         (<tt>fromIndex &lt; 0 || toIndex &gt; size ||
-     *         fromIndex &gt; toIndex</tt>)
+     *                                   (<tt>fromIndex &lt; 0 || toIndex &gt; size ||
+     *                                   fromIndex &gt; toIndex</tt>)
      */
     public AddressTemplate subTemplate(int fromIndex, int toIndex) {
         LinkedList<Token> subTokens = new LinkedList<>();
@@ -173,11 +187,12 @@ public class AddressTemplate {
     /**
      * Replaces one or more wildcards with the specified values starting from left to right and returns a new
      * address template.
-     * <p/>
+     * <p>
      * This method does <em>not</em> resolve the address template. The returned template is still unresolved.
      *
      * @param wildcard  the first wildcard (mandatory)
      * @param wildcards more wildcards (optional)
+     *
      * @return a new (still unresolved) address template with the wildcards replaced by the specified values.
      */
     public AddressTemplate replaceWildcards(String wildcard, String... wildcards) {
@@ -226,6 +241,7 @@ public class AddressTemplate {
      *
      * @param context   the statement context
      * @param wildcards An optional list of wildcards which are used to resolve any wildcards in this address template
+     *
      * @return a full qualified resource address which might be empty, but which does not contain any tokens
      */
     public ResourceAddress resolve(StatementContext context, String... wildcards) {
@@ -286,12 +302,13 @@ public class AddressTemplate {
                     resolvedValue = valueRef;
                 }
 
-                if (resolvedKey == null) resolvedKey = "_blank";
-                if (resolvedValue == null) resolvedValue = "_blank";
+                if (resolvedKey == null) { resolvedKey = "_blank"; }
+                if (resolvedValue == null) { resolvedValue = "_blank"; }
 
                 // wildcards
                 String addressValue = resolvedValue;
-                if ("*".equals(resolvedValue) && wildcards != null && wildcards.length > 0 && wildcardCount < wildcards.length) {
+                if ("*".equals(
+                        resolvedValue) && wildcards != null && wildcards.length > 0 && wildcardCount < wildcards.length) {
                     addressValue = wildcards[wildcardCount];
                     wildcardCount++;
                 }
@@ -304,7 +321,9 @@ public class AddressTemplate {
 
     // ------------------------------------------------------ inner classes
 
+
     private static class Token {
+
         String key;
         String value;
 
@@ -336,7 +355,9 @@ public class AddressTemplate {
         }
     }
 
+
     private static class StringTokenizer {
+
         private final String delim;
         private final String s;
         private final int len;
@@ -382,7 +403,9 @@ public class AddressTemplate {
         }
     }
 
+
     private static class Memory<T> {
+
         Map<String, LinkedList<T>> values = new HashMap<>();
         Map<String, Integer> indexes = new HashMap<>();
 

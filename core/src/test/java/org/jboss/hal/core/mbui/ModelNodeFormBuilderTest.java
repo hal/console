@@ -4,6 +4,7 @@ import org.jboss.hal.ballroom.form.DefaultStateMachine;
 import org.jboss.hal.ballroom.form.EditOnlyStateMachine;
 import org.jboss.hal.ballroom.form.StateMachine;
 import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
+import org.jboss.hal.security.SecurityContext;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -14,7 +15,7 @@ public class ModelNodeFormBuilderTest {
 
     @Test(expected = IllegalStateException.class)
     public void viewAndEdit() {
-        new ModelNodeForm.Builder("viewAndEdit", new ResourceDescriptionBuilder().empty())
+        new ModelNodeForm.Builder("viewAndEdit", SecurityContext.RWX, new ResourceDescriptionBuilder().empty())
                 .viewOnly()
                 .editOnly()
                 .build();
@@ -22,19 +23,21 @@ public class ModelNodeFormBuilderTest {
 
     @Test(expected = IllegalStateException.class)
     public void noAttributes() {
-        new ModelNodeForm.Builder("noAttributes", new ResourceDescriptionBuilder().empty()).build();
+        new ModelNodeForm.Builder("noAttributes", SecurityContext.RWX, new ResourceDescriptionBuilder().empty())
+                .build();
     }
 
     @Test(expected = IllegalStateException.class)
     public void noRequestProperties() {
-        new ModelNodeForm.Builder("noRequestProperties", new ResourceDescriptionBuilder().empty())
+        new ModelNodeForm.Builder("noRequestProperties", SecurityContext.RWX, new ResourceDescriptionBuilder().empty())
                 .createResource()
                 .build();
     }
 
     @Test(expected = IllegalStateException.class)
     public void viewAndCreateResource() {
-        new ModelNodeForm.Builder("viewAndCreateResource", new ResourceDescriptionBuilder().empty())
+        new ModelNodeForm.Builder("viewAndCreateResource", SecurityContext.RWX,
+                new ResourceDescriptionBuilder().empty())
                 .viewOnly()
                 .createResource()
                 .build();
@@ -43,6 +46,7 @@ public class ModelNodeFormBuilderTest {
     @Test
     public void createResourceStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("createResourceStateMachine",
+                SecurityContext.RWX,
                 new ResourceDescriptionBuilder().requestProperties()).createResource().stateMachine();
         Assert.assertTrue(stateMachine instanceof EditOnlyStateMachine);
     }
@@ -50,6 +54,7 @@ public class ModelNodeFormBuilderTest {
     @Test
     public void editOnlyStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("editOnlyStateMachine",
+                SecurityContext.RWX,
                 new ResourceDescriptionBuilder().attributes()).editOnly().stateMachine();
         Assert.assertTrue(stateMachine instanceof EditOnlyStateMachine);
     }
@@ -57,6 +62,7 @@ public class ModelNodeFormBuilderTest {
     @Test
     public void viewOnlyStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("viewOnlyStateMachine",
+                SecurityContext.RWX,
                 new ResourceDescriptionBuilder().attributes()).viewOnly().stateMachine();
         Assert.assertTrue(stateMachine instanceof ViewOnlyStateMachine);
     }
@@ -64,6 +70,7 @@ public class ModelNodeFormBuilderTest {
     @Test
     public void defaultStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("defaultStateMachine",
+                SecurityContext.RWX,
                 new ResourceDescriptionBuilder().attributes()).stateMachine();
         Assert.assertTrue(stateMachine instanceof DefaultStateMachine);
     }

@@ -32,9 +32,11 @@ import elemental.html.SpanElement;
 import elemental.html.UListElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.LazyElement;
-import org.jboss.hal.ballroom.Id;
 import org.jboss.hal.ballroom.GridSpec;
+import org.jboss.hal.ballroom.Id;
 import org.jboss.hal.resources.HalConstants;
+import org.jboss.hal.security.SecurityContext;
+import org.jboss.hal.security.SecurityContextAware;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,7 +56,7 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
  *
  * @author Harald Pehl
  */
-public abstract class AbstractForm<T> extends LazyElement implements Form<T>, GridSpec {
+public abstract class AbstractForm<T> extends LazyElement implements Form<T>, SecurityContextAware, GridSpec {
 
     private final static HalConstants CONSTANTS = GWT.create(HalConstants.class);
 
@@ -66,6 +68,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Gr
     private final List<FormValidation> formValidations;
 
     private T model;
+    private SecurityContext securityContext;
 
     private FormLinks formLinks;
     private DivElement errorPanel;
@@ -81,10 +84,12 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Gr
 
     // ------------------------------------------------------ initialization
 
-    protected AbstractForm(final String id, final StateMachine stateMachine) {
+    protected AbstractForm(final String id, final StateMachine stateMachine, final SecurityContext securityContext) {
         this.stateMachine = stateMachine;
+        this.securityContext = securityContext;
 
         this.id = id;
+        this.securityContext = securityContext;
         this.panels = new LinkedHashMap<>();
         this.formItems = new LinkedHashMap<>();
         this.helpTexts = new LinkedHashMap<>();
@@ -175,7 +180,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Gr
         editPanel.appendChild(errorPanel);
         for (FormItem formItem : formItems.values()) {
             formItem.identifyAs(id, "edit", formItem.getName());
-            editPanel.appendChild(formItem.asElement());
+            editPanel.appendChild(formItem.asElement(EDITING));
         }
 
         // @formatter:off
@@ -287,7 +292,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Gr
     }
 
     private void prepare(State state) {
-        switch (stateMachine.current()) {
+        switch (state) {
             case READONLY:
                 prepareViewState();
                 break;
@@ -326,11 +331,27 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Gr
                 break;
         }
 
-        formLinks.switchTo(state);
+        formLinks.switchTo(state, securityContext);
         for (Element panel : panels.values()) {
             Elements.setVisible(panel, false);
         }
         Elements.setVisible(panels.get(state), true);
+    }
+
+
+    // ------------------------------------------------------ security
+
+    @Override
+    public void updateSecurityContext(final SecurityContext securityContext) {
+        this.securityContext = securityContext;
+        if (stateMachine.current() == EDITING && !securityContext.isWritable()) {
+            execute(CANCEL);
+        } else {
+            formLinks.switchTo(stateMachine.current(), securityContext);
+        }
+        for (Map.Entry<String, FormItem> entry : formItems.entrySet()) {
+            entry.getValue().setRestricted(!securityContext.isWritable(entry.getKey()));
+        }
     }
 
 

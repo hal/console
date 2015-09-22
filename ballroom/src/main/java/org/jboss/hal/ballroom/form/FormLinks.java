@@ -26,10 +26,11 @@ import elemental.dom.Element;
 import elemental.events.EventListener;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.ballroom.Id;
 import org.jboss.hal.ballroom.GridSpec;
+import org.jboss.hal.ballroom.Id;
 import org.jboss.hal.ballroom.form.Form.State;
 import org.jboss.hal.resources.HalConstants;
+import org.jboss.hal.security.SecurityContext;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -55,7 +56,7 @@ class FormLinks implements IsElement, GridSpec {
 
     FormLinks(final String formId,
             final StateMachine stateMachine,
-            final LinkedHashMap<String, String> helpTexts,
+            final LinkedHashMap<String, String>helpTexts,
             final EventListener onEdit,
             final EventListener onReset) {
 
@@ -148,11 +149,11 @@ class FormLinks implements IsElement, GridSpec {
         return root;
     }
 
-    void switchTo(State state) {
+    void switchTo(State state, SecurityContext securityContext) {
         switch (state) {
             case READONLY:
-                Elements.setVisible(editLink, stateMachine.supports(EDIT));
-                Elements.setVisible(resetLink, stateMachine.supports(RESET));
+                Elements.setVisible(editLink, stateMachine.supports(EDIT) && securityContext.isWritable());
+                Elements.setVisible(resetLink, stateMachine.supports(RESET) && securityContext.isWritable());
                 Elements.setVisible(helpLink, !helpTexts.isEmpty());
                 break;
 
@@ -162,5 +163,7 @@ class FormLinks implements IsElement, GridSpec {
                 Elements.setVisible(helpLink, !helpTexts.isEmpty());
                 break;
         }
+        Elements.setVisible(root,
+                Elements.isVisible(editLink) || Elements.isVisible(resetLink) || Elements.isVisible(helpLink));
     }
 }

@@ -36,6 +36,7 @@ import org.jboss.hal.ballroom.form.TextAreaItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
+import org.jboss.hal.security.SecurityContext;
 
 import java.util.Arrays;
 
@@ -47,7 +48,7 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
     class SampleForm extends AbstractForm<String> {
 
         protected SampleForm(final String id, boolean editOnly) {
-            super(id, editOnly ? new EditOnlyStateMachine() : new DefaultStateMachine());
+            super(id, editOnly ? new EditOnlyStateMachine() : new DefaultStateMachine(), SecurityContext.RWX);
 
             TextBoxItem name = new TextBoxItem("name", "Name");
             name.setRequired(true);

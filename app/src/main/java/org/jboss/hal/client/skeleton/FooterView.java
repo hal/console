@@ -30,7 +30,7 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.ballroom.ProgressElement;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.core.registry.UIRegistry;
+import org.jboss.hal.core.meta.UIRegistry;
 import org.jboss.hal.resources.I18n;
 
 import javax.annotation.PostConstruct;

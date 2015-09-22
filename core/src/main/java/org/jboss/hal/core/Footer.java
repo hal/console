@@ -19,24 +19,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.registry;
+package org.jboss.hal.core;
 
-import org.jboss.gwt.flow.Progress;
+import javax.inject.Qualifier;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Registry which can be used to get references to global UI elements such as the progress bar in the footer.
+ * Qualifier to select the progress implementation in HAL's footer.
  *
  * @author Harald Pehl
  */
-public class UIRegistry {
-
-    private Progress progress = Progress.NOOP;
-
-    public Progress getProgress() {
-        return progress;
-    }
-
-    public void register(final Progress progress) {
-        this.progress = progress;
-    }
+@Documented
+@Retention(RUNTIME)
+@Qualifier
+public @interface Footer {
 }

@@ -33,6 +33,7 @@ import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceDescription;
+import org.jboss.hal.security.SecurityContext;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,6 +50,7 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
     public static class Builder {
 
         final String id;
+        final SecurityContext securityContext;
         final ResourceDescription resourceDescription;
         final Set<String> includes;
         final Set<String> excludes;
@@ -65,8 +67,10 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
 
         // ------------------------------------------------------ configure required and optional settings
 
-        public Builder(final String id, final ResourceDescription resourceDescription) {
+        public Builder(final String id, final SecurityContext securityContext,
+                final ResourceDescription resourceDescription) {
             this.id = id;
+            this.securityContext = securityContext;
             this.resourceDescription = resourceDescription;
             this.includes = new HashSet<>();
             this.excludes = new HashSet<>();
@@ -181,7 +185,7 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
     private final Map<String, SaveOperationStep> saveOperations;
 
     ModelNodeForm(final Builder builder) {
-        super(builder.id, builder.stateMachine());
+        super(builder.id, builder.stateMachine(), builder.securityContext);
 
         this.defaultFormItemFactory = new DefaultFormItemFactory();
         this.saveOperations = builder.saveOperations;

@@ -1,4 +1,4 @@
-package org.jboss.hal.core.registry;
+package org.jboss.hal.core.meta;
 
 import org.jboss.hal.spi.SearchIndex;
 

@@ -19,21 +19,15 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.registry;
+package org.jboss.hal.core.meta;
 
-import javax.inject.Qualifier;
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
+import java.util.Set;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+public interface NameTokenRegistry {
 
-/**
- * Qualifier to select the progress implementation in HAL's footer.
- *
- * @author Harald Pehl
- */
-@Documented
-@Retention(RUNTIME)
-@Qualifier
-public @interface Footer {
+    Set<String> getTokens();
+
+    boolean wasRevealed(String token);
+
+    void markedRevealed(String token);
 }
