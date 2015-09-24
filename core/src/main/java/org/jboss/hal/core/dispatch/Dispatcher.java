@@ -28,7 +28,7 @@ import elemental.html.FormData;
 import elemental.html.InputElement;
 import elemental.xml.XMLHttpRequest;
 import org.jboss.hal.config.Endpoints;
-import org.jboss.hal.core.messaging.Message;
+import org.jboss.hal.core.notification.Message;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.Operation;

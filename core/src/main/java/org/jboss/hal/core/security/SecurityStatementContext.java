@@ -19,16 +19,29 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.security;
+package org.jboss.hal.core.security;
 
-import org.jboss.hal.dmr.model.AddressTemplate;
+import com.google.inject.Inject;
+import org.jboss.hal.dmr.model.FilteringStatementContext;
+import org.jboss.hal.dmr.model.StatementContext;
 
 /**
  * @author Harald Pehl
  */
-public class UnresolvedSecurityContext extends RuntimeException {
+public class SecurityStatementContext extends FilteringStatementContext {
 
-    public UnresolvedSecurityContext(final AddressTemplate notFound) {
-        super("No security context found for " + notFound);
+    @Inject
+    public SecurityStatementContext(final StatementContext delegate) {
+        super(delegate, new Filter() {
+            @Override
+            public String filter(final String key) {
+                return null;
+            }
+
+            @Override
+            public String[] filterTuple(final String key) {
+                return new String[0];
+            }
+        });
     }
 }

@@ -21,20 +21,21 @@
  */
 package org.jboss.hal.security;
 
-import com.google.common.base.Supplier;
 import org.jboss.hal.dmr.model.AddressTemplate;
 
 /**
  * The entrypoint to the security system with a mapping between an {@link AddressTemplate} and a {@link
  * SecurityContext}.
  *
- * TODO How does the org.jboss.hal.dmr.model.StatementContext relate to this?
- *
  * @author Harald Pehl
  */
 public interface SecurityFramework {
 
-    SecurityContext lookup(AddressTemplate address) throws UnresolvedSecurityContext;
+    @FunctionalInterface
+    interface SecurityContextCallback {
 
-    SecurityContext lookup(AddressTemplate address, Supplier<SecurityContext> provider);
+        void onContext(SecurityContext securityContext);
+    }
+
+    void lookup(AddressTemplate template, SecurityContextCallback callback);
 }

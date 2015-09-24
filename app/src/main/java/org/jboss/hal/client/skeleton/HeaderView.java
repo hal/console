@@ -36,7 +36,7 @@ import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
-import org.jboss.hal.core.messaging.Message;
+import org.jboss.hal.core.notification.Message;
 import org.jboss.hal.resources.HalIds;
 import org.jboss.hal.resources.I18n;
 

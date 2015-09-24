@@ -22,6 +22,8 @@
 package org.jboss.hal.security;
 
 /**
+ * Interface meant to be implemented by widgets / elements which want to react upon a changed security context.
+ *
  * @author Harald Pehl
  */
 public interface SecurityContextAware {

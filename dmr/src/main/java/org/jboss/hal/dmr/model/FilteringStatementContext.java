@@ -19,17 +19,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.meta;
-
-import org.jboss.hal.dmr.model.StatementContext;
+package org.jboss.hal.dmr.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Intercepts the resolution and allows to filter/replace certain statement values.
- *
- * @author Heiko Braun
+ * Decorator around an existing {@code StatementContext}.
  */
 public class FilteringStatementContext implements StatementContext {
 

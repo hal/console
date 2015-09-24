@@ -4,6 +4,11 @@ import java.util.List;
 
 public interface StatementContext {
 
+    String SELECTED_PROFILE = "selected.profile";
+    String SELECTED_GROUP = "selected.group";
+    String SELECTED_HOST = "selected.host";
+    String SELECTED_SERVER = "selected.server";
+
     /**
      * Resolves a value matching the key.
      */

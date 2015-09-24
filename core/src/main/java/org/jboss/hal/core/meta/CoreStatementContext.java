@@ -35,11 +35,6 @@ import java.util.Map;
  */
 public class CoreStatementContext implements StatementContext {
 
-    public final static String SELECTED_PROFILE = "selected.profile";
-    public final static String SELECTED_GROUP = "selected.group";
-    public final static String SELECTED_HOST = "selected.host";
-    public final static String SELECTED_SERVER = "selected.server";
-
     private final Environment environment;
     private final Map<String, String> keys;
 

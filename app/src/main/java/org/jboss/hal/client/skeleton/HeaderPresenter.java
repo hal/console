@@ -33,7 +33,7 @@ import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
 import org.jboss.hal.core.HasPresenter;
-import org.jboss.hal.core.messaging.Message;
+import org.jboss.hal.core.notification.Message;
 
 import javax.inject.Inject;
 
