@@ -24,20 +24,11 @@ package org.jboss.hal.security;
 import org.jboss.hal.dmr.model.AddressTemplate;
 
 /**
- * The entrypoint to the security system with a mapping between an {@link AddressTemplate} and a {@link
- * SecurityContext}.
- *
  * @author Harald Pehl
  */
-public interface SecurityFramework {
+public class UnresolvedSecurityContext extends RuntimeException {
 
-    @FunctionalInterface
-    interface SecurityContextCallback {
-
-        void onContext(SecurityContext securityContext);
+    public UnresolvedSecurityContext(final AddressTemplate notFound) {
+        super("No security context found for " + notFound);
     }
-
-    SecurityContext lookup(AddressTemplate template) throws UnresolvedSecurityContext;
-
-    void lookupDeferred(AddressTemplate template, SecurityContextCallback callback);
 }

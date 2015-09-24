@@ -28,6 +28,7 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.dmr.model.StatementContext;
 import org.jboss.hal.security.SecurityContext;
 import org.jboss.hal.security.SecurityFramework;
+import org.jboss.hal.security.UnresolvedSecurityContext;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -66,9 +67,17 @@ public class SecurityFrameworkImpl implements SecurityFramework {
     }
 
     @Override
-    public void lookup(final AddressTemplate template, final SecurityContextCallback callback) {
-        ResourceAddress address = resolveTemplate(template);
-        SecurityContext securityContext = contextMap.get(address);
+    public SecurityContext lookup(final AddressTemplate template) throws UnresolvedSecurityContext {
+        SecurityContext securityContext = internalLookup(template);
+        if (securityContext == null) {
+            throw new UnresolvedSecurityContext(template);
+        }
+        return securityContext;
+    }
+
+    @Override
+    public void lookupDeferred(final AddressTemplate template, final SecurityContextCallback callback) {
+        SecurityContext securityContext = internalLookup(template);
         if (securityContext == null) {
             // TODO create and register the context asynchronously
         } else {
@@ -82,7 +91,7 @@ public class SecurityFrameworkImpl implements SecurityFramework {
     }
 
     private SecurityContext internalLookup(AddressTemplate template) {
-        ResourceAddress address = template.resolve(statementContext);
+        ResourceAddress address = resolveTemplate(template);
         return contextMap.get(address);
     }
 
