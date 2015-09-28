@@ -32,8 +32,8 @@ import org.jboss.hal.ballroom.form.StateMachine;
 import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.ResourceDescription;
-import org.jboss.hal.security.SecurityContext;
+import org.jboss.hal.meta.description.ResourceDescription;
+import org.jboss.hal.meta.security.SecurityContext;
 
 import java.util.HashMap;
 import java.util.HashSet;

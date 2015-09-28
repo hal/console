@@ -31,7 +31,7 @@ import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.core.notification.Message;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.meta.dmr.Operation;
 import org.jboss.hal.resources.I18n;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

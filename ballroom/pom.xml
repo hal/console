@@ -45,11 +45,11 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-resources</artifactId>
+            <artifactId>hal-meta</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-security</artifactId>
+            <artifactId>hal-resources</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.gwt.flow</groupId>

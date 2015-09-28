@@ -29,8 +29,8 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.GridSpec;
 import org.jboss.hal.ballroom.Id;
 import org.jboss.hal.ballroom.form.Form.State;
+import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.HalConstants;
-import org.jboss.hal.security.SecurityContext;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

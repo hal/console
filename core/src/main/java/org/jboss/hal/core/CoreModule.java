@@ -30,12 +30,11 @@ import org.jboss.hal.core.dispatch.Dispatcher;
 import org.jboss.hal.core.dispatch.DomainProcessStateProcessor;
 import org.jboss.hal.core.dispatch.ProcessStateProcessor;
 import org.jboss.hal.core.dispatch.StandaloneProcessStateProcessor;
-import org.jboss.hal.core.meta.CoreStatementContext;
-import org.jboss.hal.core.meta.ResourceDescriptionRegistry;
-import org.jboss.hal.core.meta.UIRegistry;
-import org.jboss.hal.core.security.SecurityFrameworkImpl;
-import org.jboss.hal.dmr.model.StatementContext;
-import org.jboss.hal.security.SecurityFramework;
+import org.jboss.hal.meta.security.SecurityFrameworkImpl;
+import org.jboss.hal.core.ui.UIRegistry;
+import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
+import org.jboss.hal.meta.security.SecurityFramework;
 import org.jboss.hal.spi.GinModule;
 
 @GinModule

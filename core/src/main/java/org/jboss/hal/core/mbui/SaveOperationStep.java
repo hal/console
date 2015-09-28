@@ -22,8 +22,8 @@
 package org.jboss.hal.core.mbui;
 
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.dmr.Operation;
+import org.jboss.hal.meta.dmr.ResourceAddress;
 
 /**
  * Provider for an operation which becomes part of the the composite save operation in a {@link ModelNodeForm}.

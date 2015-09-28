@@ -16,7 +16,7 @@ import static java.util.Arrays.asList;
 * WARNING! This class is generated. Do not modify.
 */
 @Generated("org.jboss.hal.processors.NameTokenProcessor")
-public class ${className} implements org.jboss.hal.core.meta.SearchIndexRegistry {
+public class ${className} implements org.jboss.hal.meta.search.SearchIndexRegistry {
 
     private final Set<String> standaloneTokens;
     private final Set<String> domainTokens;

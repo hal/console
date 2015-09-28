@@ -34,9 +34,9 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.LazyElement;
 import org.jboss.hal.ballroom.GridSpec;
 import org.jboss.hal.ballroom.Id;
+import org.jboss.hal.meta.security.SecurityContext;
+import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.HalConstants;
-import org.jboss.hal.security.SecurityContext;
-import org.jboss.hal.security.SecurityContextAware;
 
 import java.util.ArrayList;
 import java.util.HashMap;

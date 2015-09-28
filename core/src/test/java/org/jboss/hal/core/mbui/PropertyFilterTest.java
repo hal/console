@@ -2,8 +2,8 @@ package org.jboss.hal.core.mbui;
 
 import com.google.common.collect.ImmutableSortedSet;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.ResourceDescription;
-import org.jboss.hal.security.SecurityContext;
+import org.jboss.hal.meta.description.ResourceDescription;
+import org.jboss.hal.meta.security.SecurityContext;
 import org.junit.Test;
 
 import java.util.Iterator;

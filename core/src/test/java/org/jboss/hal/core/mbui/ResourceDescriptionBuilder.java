@@ -22,7 +22,7 @@
 package org.jboss.hal.core.mbui;
 
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.ResourceDescription;
+import org.jboss.hal.meta.description.ResourceDescription;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 

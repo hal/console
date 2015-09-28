@@ -101,10 +101,10 @@
         <module>core</module>
         <module>config</module>
         <module>dmr</module>
+        <module>meta</module>
         <module>parent-with-dependencies</module>
         <module>processors</module>
         <module>resources</module>
-        <module>security</module>
         <module>spi</module>
     </modules>
 

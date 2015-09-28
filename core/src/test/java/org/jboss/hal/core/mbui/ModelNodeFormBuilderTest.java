@@ -4,7 +4,7 @@ import org.jboss.hal.ballroom.form.DefaultStateMachine;
 import org.jboss.hal.ballroom.form.EditOnlyStateMachine;
 import org.jboss.hal.ballroom.form.StateMachine;
 import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
-import org.jboss.hal.security.SecurityContext;
+import org.jboss.hal.meta.security.SecurityContext;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -74,17 +74,17 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-meta</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-processors</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-resources</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.hal</groupId>
-                <artifactId>hal-security</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

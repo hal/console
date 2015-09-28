@@ -36,7 +36,7 @@ import org.jboss.hal.ballroom.form.TextAreaItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
-import org.jboss.hal.security.SecurityContext;
+import org.jboss.hal.meta.security.SecurityContext;
 
 import java.util.Arrays;
 

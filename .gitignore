@@ -5,6 +5,7 @@
 .settings
 .project
 .classpath
+.wakatime-project
 out
 target
 gwt-unitCache
