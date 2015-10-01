@@ -52,6 +52,10 @@
             <artifactId>hal-spi</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.jboss.gwt.flow</groupId>
+            <artifactId>flow</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-user</artifactId>
         </dependency>
@@ -64,8 +68,8 @@
             <artifactId>gin</artifactId>
         </dependency>
         <dependency>
-            <groupId>ru.finam</groupId>
-            <artifactId>slf4j-gwt</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
     </dependencies>
 

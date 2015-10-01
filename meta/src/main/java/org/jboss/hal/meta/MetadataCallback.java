@@ -19,13 +19,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.bootstrap.functions;
-
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
+package org.jboss.hal.meta;
 
 /**
  * @author Harald Pehl
  */
-public interface BootstrapFunction extends Function<FunctionContext> {
+@FunctionalInterface
+public interface MetadataCallback<T> {
+
+    void onContext(T metadata);
 }

@@ -30,11 +30,9 @@ import org.jboss.hal.core.dispatch.Dispatcher;
 import org.jboss.hal.core.dispatch.DomainProcessStateProcessor;
 import org.jboss.hal.core.dispatch.ProcessStateProcessor;
 import org.jboss.hal.core.dispatch.StandaloneProcessStateProcessor;
-import org.jboss.hal.meta.security.SecurityFrameworkImpl;
 import org.jboss.hal.core.ui.UIRegistry;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
-import org.jboss.hal.meta.security.SecurityFramework;
+import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.GinModule;
 
 @GinModule
@@ -52,8 +50,6 @@ public class CoreModule extends AbstractGinModule {
     protected void configure() {
         bind(Dispatcher.class);
         bind(StatementContext.class).to(CoreStatementContext.class).in(Singleton.class);
-        bind(SecurityFramework.class).to(SecurityFrameworkImpl.class).in(Singleton.class);
-        bind(ResourceDescriptionRegistry.class).in(Singleton.class);
         bind(UIRegistry.class).in(Singleton.class);
     }
 

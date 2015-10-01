@@ -1,0 +1,61 @@
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2010, Red Hat, Inc., and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+package org.jboss.hal.meta.functions;
+
+import org.jboss.gwt.flow.Control;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.description.ResourceDescriptions;
+import org.jboss.hal.meta.security.SecurityFramework;
+
+import javax.inject.Inject;
+
+import static org.jboss.hal.meta.functions.MetadataContext.RESOURCE_DESCRIPTION_PRESENT;
+import static org.jboss.hal.meta.functions.MetadataContext.SECURITY_CONTEXT_PRESENT;
+
+/**
+ * @author Harald Pehl
+ */
+public class LookupFunction implements MetadataFunction {
+
+    private final ResourceDescriptions descriptionRegistry;
+    private final SecurityFramework securityFramework;
+
+    @Inject
+    public LookupFunction(ResourceDescriptions descriptionRegistry, SecurityFramework securityFramework) {
+        this.descriptionRegistry = descriptionRegistry;
+        this.securityFramework = securityFramework;
+    }
+
+    @Override
+    public void execute(final Control<MetadataContext> control) {
+        MetadataContext metadataContext = control.getContext();
+        for (AddressTemplate template : metadataContext.templates()) {
+            if (descriptionRegistry.contains(template)) {
+                metadataContext.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
+            }
+            if (securityFramework.contains(template)) {
+                metadataContext.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
+            }
+        }
+        control.proceed();
+    }
+}

@@ -22,18 +22,18 @@
 package org.jboss.hal.meta.description;
 
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.MetadataCallback;
+import org.jboss.hal.meta.MissingMetadataException;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author Harald Pehl
- */
-public class ResourceDescriptionRegistry {
+public class ResourceDescriptions {
 
+    // TODO Replace map with local storage (constrained by language and management model version)
     private final Map<AddressTemplate, ResourceDescription> registry;
 
-    public ResourceDescriptionRegistry() {
+    public ResourceDescriptions() {
         registry = new HashMap<>();
     }
 
@@ -41,16 +41,21 @@ public class ResourceDescriptionRegistry {
         registry.put(addressTemplate, description);
     }
 
-    public ResourceDescription lookup(AddressTemplate addressTemplate) {
-        ResourceDescription resourceDescription = registry.get(addressTemplate);
+    public ResourceDescription lookup(AddressTemplate template) throws MissingMetadataException {
+        ResourceDescription resourceDescription = registry.get(template);
         if (resourceDescription == null) {
-            throw new RuntimeException("Failed to lookup resource description for " + addressTemplate.toString());
+            throw new MissingMetadataException("ResourceDescription", template);
         }
         return resourceDescription;
     }
 
-    public boolean has(AddressTemplate addressTemplate) {
-        return registry.containsKey(addressTemplate);
+    public void lookupDeferred(final AddressTemplate template, final MetadataCallback<ResourceDescription> callback) {
+        ResourceDescription resourceDescription = registry.get(template);
+        if (resourceDescription == null) {
+            // TODO create and register the context asynchronously
+        } else {
+            callback.onContext(resourceDescription);
+        }
     }
 
     public boolean contains(AddressTemplate addressTemplate) {

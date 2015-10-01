@@ -19,13 +19,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.bootstrap.functions;
+package org.jboss.hal.spi;
 
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
+import javax.inject.Qualifier;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
+ * Qualifier to select the progress implementation in HAL's footer.
+ *
  * @author Harald Pehl
  */
-public interface BootstrapFunction extends Function<FunctionContext> {
+@Documented
+@Retention(RUNTIME)
+@Qualifier
+public @interface Footer {
 }

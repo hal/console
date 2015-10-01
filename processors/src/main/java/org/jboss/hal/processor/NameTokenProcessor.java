@@ -26,9 +26,9 @@ import com.google.common.collect.ImmutableList;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import org.jboss.auto.AbstractProcessor;
-import org.jboss.hal.spi.RequiredResources;
+import org.jboss.hal.spi.Requires;
 import org.jboss.hal.spi.Scope;
-import org.jboss.hal.spi.SearchIndex;
+import org.jboss.hal.spi.Keywords;
 
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
@@ -47,13 +47,6 @@ import static java.util.Arrays.asList;
 /**
  * Processor which scans all {@code @NameToken}s annotations and generates several registry and helper classes based
  * on the additional annotations bound to each place.
- * <dl>
- * <dt>{@code @RequiredResources}</dt>
- * <dd>All required resources are collected and stored in implementations of {@code NameTokenRegistry} and
- * {@code RequiredResourcesRegistry}</dd>
- * <dt>{@code @SearchIndex}</dt>
- * <dd>All keywords are collected and stored in an implementation of {@code SearchIndexRegistry}</dd>
- * </dl>
  *
  * @author Harald Pehl
  */
@@ -63,15 +56,15 @@ public class NameTokenProcessor extends AbstractProcessor {
 
     static final String NAME_TOKEN_TEMPLATE = "NameTokens.ftl";
     static final String NAME_TOKEN_PACKAGE = "org.jboss.hal.meta.token";
-    static final String NAME_TOKEN_CLASS = "NameTokenRegistryImpl";
+    static final String NAME_TOKEN_CLASS = "NameTokensImpl";
 
     static final String REQUIRED_RESOURCES_TEMPLATE = "RequiredResources.ftl";
     static final String REQUIRED_RESOURCES_PACKAGE = "org.jboss.hal.meta.resource";
-    static final String REQUIRED_RESOURCES_CLASS = "RequiredResourcesRegistryImpl";
+    static final String REQUIRED_RESOURCES_CLASS = "RequiredResourcesImpl";
 
     static final String SEARCH_INDEX_TEMPLATE = "SearchIndex.ftl";
     static final String SEARCH_INDEX_PACKAGE = "org.jboss.hal.meta.search";
-    static final String SEARCH_INDEX_CLASS = "SearchIndexRegistryImpl";
+    static final String SEARCH_INDEX_CLASS = "SearchIndexImpl";
 
     static final String REGISTRY_MODULE_TEMPLATE = "RegistryModule.ftl";
     static final String REGISTRY_MODULE_PACKAGE = "org.jboss.hal.meta";
@@ -92,21 +85,20 @@ public class NameTokenProcessor extends AbstractProcessor {
             TokenInfo tokenInfo = new TokenInfo(nameToken.value()[0]);
             tokenInfos.add(tokenInfo);
 
-            RequiredResources requiredResources = tokenElement.getAnnotation(RequiredResources.class);
+            Requires requires = tokenElement.getAnnotation(Requires.class);
             NoGatekeeper noGatekeeper = tokenElement.getAnnotation(NoGatekeeper.class);
-            if (requiredResources != null) {
-                tokenInfo.addResources(requiredResources.resources());
-                tokenInfo.addOperations(requiredResources.operations());
-                tokenInfo.setRecursive(requiredResources.recursive());
+            if (requires != null) {
+                tokenInfo.addResources(requires.resources());
+                tokenInfo.setRecursive(requires.recursive());
             } else if (noGatekeeper == null) {
                 warning(e, "Proxy with token \"#%s\" is missing @%s annotation.",
-                        tokenInfo.getToken(), RequiredResources.class.getSimpleName());
+                        tokenInfo.getToken(), Requires.class.getSimpleName());
             }
 
-            SearchIndex searchIndex = tokenElement.getAnnotation(SearchIndex.class);
-            if (searchIndex != null) {
-                tokenInfo.addKeywords(searchIndex.keywords());
-                tokenInfo.setExclude(searchIndex.exclude());
+            Keywords keywords = tokenElement.getAnnotation(Keywords.class);
+            if (keywords != null) {
+                tokenInfo.addKeywords(keywords.value());
+                tokenInfo.setExclude(keywords.exclude());
                 Scope scope = tokenElement.getAnnotation(Scope.class);
                 if (scope != null) {
                     tokenInfo.setDomainOnly(scope.value() == Scope.Mode.DOMAIN);
@@ -129,11 +121,11 @@ public class NameTokenProcessor extends AbstractProcessor {
                     context(SEARCH_INDEX_PACKAGE, SEARCH_INDEX_CLASS));
 
             List<RegistryBinding> bindings = ImmutableList.of(
-                    new RegistryBinding(NAME_TOKEN_PACKAGE + ".NameTokenRegistry",
+                    new RegistryBinding(NAME_TOKEN_PACKAGE + ".NameTokens",
                             NAME_TOKEN_PACKAGE + "." + NAME_TOKEN_CLASS),
-                    new RegistryBinding(REQUIRED_RESOURCES_PACKAGE + ".RequiredResourcesRegistry",
+                    new RegistryBinding(REQUIRED_RESOURCES_PACKAGE + ".RequiredResources",
                             REQUIRED_RESOURCES_PACKAGE + "." + REQUIRED_RESOURCES_CLASS),
-                    new RegistryBinding(SEARCH_INDEX_PACKAGE + ".SearchIndexRegistry",
+                    new RegistryBinding(SEARCH_INDEX_PACKAGE + ".SearchIndex",
                             SEARCH_INDEX_PACKAGE + "." + SEARCH_INDEX_CLASS));
             debug("Generating code for registry module");
             code(REGISTRY_MODULE_TEMPLATE, REGISTRY_MODULE_PACKAGE, REGISTRY_MODULE_CLASS,
@@ -169,7 +161,6 @@ public class NameTokenProcessor extends AbstractProcessor {
 
         // required resources
         private Set<String> resources;
-        private Set<String> operations;
         private boolean recursive;
 
         // search index
@@ -181,7 +172,6 @@ public class NameTokenProcessor extends AbstractProcessor {
         public TokenInfo(String token) {
             this.token = token;
             this.resources = new HashSet<>();
-            this.operations = new HashSet<>();
             this.recursive = false;
             this.keywords = new HashSet<>();
             this.exclude = false;
@@ -223,14 +213,6 @@ public class NameTokenProcessor extends AbstractProcessor {
 
         public void addKeywords(String[] keywords) {
             this.keywords.addAll(asList(keywords));
-        }
-
-        public Set<String> getOperations() {
-            return operations;
-        }
-
-        public void addOperations(String[] operations) {
-            this.operations.addAll(asList(operations));
         }
 
         public boolean isRecursive() {

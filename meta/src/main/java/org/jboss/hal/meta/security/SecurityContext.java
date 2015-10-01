@@ -21,12 +21,16 @@
  */
 package org.jboss.hal.meta.security;
 
+import org.jboss.hal.dmr.ModelNode;
+
 /**
+ * Represents the RBAC related payload for the {@code r-r-d} operation.
+ *
  * @author Harald Pehl
  */
-public interface SecurityContext {
+public class SecurityContext extends ModelNode {
 
-    SecurityContext READ_ONLY = new SecurityContext() {
+    public static final SecurityContext READ_ONLY = new SecurityContext(new ModelNode()) {
         @Override
         public boolean isReadable() {
             return true;
@@ -53,7 +57,7 @@ public interface SecurityContext {
         }
     };
 
-    SecurityContext RWX = new SecurityContext() {
+    public static final SecurityContext RWX = new SecurityContext(new ModelNode()) {
         @Override
         public boolean isReadable() {
             return true;
@@ -80,14 +84,36 @@ public interface SecurityContext {
         }
     };
 
+    private static final String OPERATIONS = "operations";
+    private static final String ATTRIBUTES = "attributes";
 
-    boolean isReadable();
+    SecurityContext(ModelNode payload) {
+        set(payload);
+    }
 
-    boolean isWritable();
+    public boolean isReadable() {
+        return get("read").asBoolean();
+    }
 
-    boolean isReadable(final String attribute);
+    public boolean isWritable() {
+        return get("write").asBoolean();
+    }
 
-    boolean isWritable(final String attribute);
+    public boolean isReadable(final String attribute) {
+        return hasDefined(ATTRIBUTES) &&
+                get(ATTRIBUTES).hasDefined(attribute) &&
+                get(ATTRIBUTES).get(attribute).get("read").asBoolean();
+    }
 
-    boolean isExecutable(String operation);
+    public boolean isWritable(final String attribute) {
+        return hasDefined(ATTRIBUTES) &&
+                get(ATTRIBUTES).hasDefined(attribute) &&
+                get(ATTRIBUTES).get(attribute).get("write").asBoolean();
+    }
+
+    public boolean isExecutable(String operation) {
+        return hasDefined(OPERATIONS) &&
+                get(OPERATIONS).hasDefined(operation) &&
+                get(OPERATIONS).get(operation).get("execute").asBoolean();
+    }
 }

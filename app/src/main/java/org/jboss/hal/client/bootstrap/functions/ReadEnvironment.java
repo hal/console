@@ -22,11 +22,12 @@ package org.jboss.hal.client.bootstrap.functions;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Random;
 import org.jboss.gwt.flow.Control;
+import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
 import org.jboss.hal.core.dispatch.Dispatcher;
-import org.jboss.hal.core.flow.FunctionCallbacks;
-import org.jboss.hal.core.flow.FunctionContext;
+import org.jboss.hal.core.dispatch.ExceptionDispatcherFunction;
+import org.jboss.hal.core.dispatch.FailedDispatcherFunction;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.dmr.Composite;
 import org.jboss.hal.meta.dmr.Operation;
@@ -109,8 +110,8 @@ public class ReadEnvironment implements BootstrapFunction {
                     }, wait);
                     // control.proceed();
                 })
-                .onFailed(new FunctionCallbacks.Failed(control))
-                .onException(new FunctionCallbacks.Exception(control))
+                .onFailed(new FailedDispatcherFunction(control))
+                .onException(new ExceptionDispatcherFunction(control))
                 .execute(new Composite(ops));
     }
 }

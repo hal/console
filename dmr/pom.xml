@@ -56,8 +56,8 @@
             <artifactId>gin</artifactId>
         </dependency>
         <dependency>
-            <groupId>ru.finam</groupId>
-            <artifactId>slf4j-gwt</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
             <groupId>com.ekuefler.supereventbus</groupId>

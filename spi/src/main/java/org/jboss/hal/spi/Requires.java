@@ -11,17 +11,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Target(TYPE)
 @Retention(RUNTIME)
-public @interface RequiredResources {
+public @interface Requires {
 
     /**
      * Set of required resource to operate on (addressable privilege) within the presenter
      */
     String[] resources();
-
-    /**
-     * Set of required operations (execution privileges) upon initialisation of the presenter
-     */
-    String[] operations() default {};
 
     /**
      * Recursively parse child resources

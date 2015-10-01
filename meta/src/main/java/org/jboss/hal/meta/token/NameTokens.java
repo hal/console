@@ -23,7 +23,7 @@ package org.jboss.hal.meta.token;
 
 import java.util.Set;
 
-public interface NameTokenRegistry {
+public interface NameTokens {
 
     Set<String> getTokens();
 

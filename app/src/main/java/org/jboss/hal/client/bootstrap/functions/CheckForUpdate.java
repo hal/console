@@ -27,11 +27,11 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import org.jboss.gwt.flow.Control;
+import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.InstanceInfo;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.config.semver.Versions;
-import org.jboss.hal.core.flow.FunctionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

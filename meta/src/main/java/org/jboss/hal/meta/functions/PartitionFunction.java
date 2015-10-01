@@ -19,29 +19,36 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.meta.security;
+package org.jboss.hal.meta.functions;
 
-import com.google.inject.Inject;
-import org.jboss.hal.meta.FilteringStatementContext;
-import org.jboss.hal.meta.StatementContext;
+import com.google.common.collect.Lists;
+import org.jboss.gwt.flow.Control;
+import org.jboss.hal.meta.dmr.Composite;
+import org.jboss.hal.meta.dmr.Operation;
+
+import java.util.List;
 
 /**
  * @author Harald Pehl
  */
-public class SecurityStatementContext extends FilteringStatementContext {
+public class PartitionFunction implements MetadataFunction {
 
-    @Inject
-    public SecurityStatementContext(final StatementContext delegate) {
-        super(delegate, new Filter() {
-            @Override
-            public String filter(final String key) {
-                return null;
-            }
+    /**
+     * Number of r-r-d operations part of one composite operation.
+     */
+    private final static int BATCH_SIZE = 3;
 
-            @Override
-            public String[] filterTuple(final String key) {
-                return new String[0];
-            }
-        });
+    @Override
+    public void execute(final Control<MetadataContext> control) {
+        MetadataContext metadataContext = control.getContext();
+        List<Operation> operations = metadataContext.pop();
+
+        // create composite operations
+        List<List<Operation>> piles = Lists.partition(operations, BATCH_SIZE);
+        List<Composite> composites = Lists.transform(piles, Composite::new);
+
+        // next one please
+        metadataContext.push(composites);
+        control.proceed();
     }
 }

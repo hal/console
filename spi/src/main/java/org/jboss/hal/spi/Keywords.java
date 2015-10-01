@@ -25,7 +25,7 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Search index meta data for proxies. This annotation works as add-on for {@link RequiredResources} which is the
+ * Search index meta data for proxies. This annotation works as add-on for {@link Requires} which is the
  * primarily source for the search index. Without specifying {@code SearchIndex} on a proxy, the enclosing presenter
  * is indexed using the defaults specified here. Use {@code SearchIndex} on a presenter if you want to exclude the
  * presenter or if you want to boost the presenter by setting keywords.
@@ -34,7 +34,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Target(TYPE)
 @Retention(RUNTIME)
-public @interface SearchIndex {
+public @interface Keywords {
 
     /**
      * Set of keywords which will be added to the index for that presenter. Using keywords you can boost the presenter
@@ -42,7 +42,7 @@ public @interface SearchIndex {
      *
      * @return an array with keywords to include in the search index
      */
-    String[] keywords() default {};
+    String[] value() default {};
 
     /**
      * Using this flag you can exclude a presenter from the search index.

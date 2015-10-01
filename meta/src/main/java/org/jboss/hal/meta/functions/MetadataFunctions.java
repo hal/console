@@ -19,13 +19,29 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.bootstrap.functions;
+package org.jboss.hal.meta.functions;
 
-import org.jboss.gwt.flow.Function;
-import org.jboss.gwt.flow.FunctionContext;
+import javax.inject.Inject;
 
 /**
  * @author Harald Pehl
  */
-public interface BootstrapFunction extends Function<FunctionContext> {
+public class MetadataFunctions {
+
+    private final MetadataFunction[] functions;
+
+    @Inject
+    public MetadataFunctions(LookupFunction lookupFunction,
+            CreateRrdOpFunction createRrdOpFunction,
+            PartitionFunction partitionFunction) {
+        this.functions = new MetadataFunction[] {
+                lookupFunction,
+                createRrdOpFunction,
+                partitionFunction,
+        };
+    }
+
+    public MetadataFunction[] functions() {
+        return functions;
+    }
 }

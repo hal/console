@@ -37,15 +37,12 @@ public class ResourceDescription extends ModelNode {
 
     public final static ResourceDescription EMPTY = new ResourceDescription();
 
-    static final String ACCESS_CONTROL = "access-control";
-    static final String NOTIFICATIONS = "notifications";
-
     public ResourceDescription() {
         super();
     }
 
-    public ResourceDescription(ModelNode description) {
-        set(description);
+    public ResourceDescription(ModelNode payload) {
+        set(payload);
     }
 
     public boolean hasAttributes() {
@@ -54,57 +51,5 @@ public class ResourceDescription extends ModelNode {
 
     public List<Property> getAttributes() {
         return get(ATTRIBUTES).asPropertyList();
-    }
-
-    public boolean hasAccessControl() {
-        return hasDefined(ACCESS_CONTROL);
-    }
-
-    public boolean hasChildren() {
-        return hasDefined(CHILDREN);
-    }
-
-    public boolean hasOperations() {
-        return hasDefined(OPERATIONS);
-    }
-
-    public boolean hasNotifications() {
-        return hasDefined(NOTIFICATIONS);
-    }
-
-    /**
-     * Looks for the description of a child resource.
-     *
-     * @param resourceName The name of the child resource
-     *
-     * @return the description of the child resource or {@link #EMPTY} if no such resource exists.
-     */
-    public ResourceDescription getChildDescription(String resourceName) {
-        return getChildDescription(resourceName, "*");
-    }
-
-    /**
-     * Looks for the description of a specific child resource.
-     *
-     * @param resourceName The name of the child resource
-     * @param instanceName The name of the instance
-     *
-     * @return the description of the specific child resource or {@link #EMPTY} if no such resource exists.
-     */
-    public ResourceDescription getChildDescription(String resourceName, String instanceName) {
-        if (hasChildren()) {
-            List<Property> children = get("children").asPropertyList();
-            for (Property child : children) {
-                if (resourceName.equals(child.getName()) && child.getValue().hasDefined(MODEL_DESCRIPTION)) {
-                    List<Property> modelDescriptions = child.getValue().get(MODEL_DESCRIPTION).asPropertyList();
-                    for (Property modelDescription : modelDescriptions) {
-                        if (instanceName.equals(modelDescription.getName())) {
-                            return new ResourceDescription(modelDescription.getValue());
-                        }
-                    }
-                }
-            }
-        }
-        return EMPTY;
     }
 }

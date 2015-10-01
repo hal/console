@@ -65,7 +65,7 @@ import java.util.NoSuchElementException;
  *
  * @author Harald Pehl
  */
-public class AddressTemplate {
+public final class AddressTemplate {
 
     // ------------------------------------------------------ factory
 

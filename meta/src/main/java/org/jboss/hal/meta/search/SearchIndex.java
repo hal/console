@@ -1,13 +1,13 @@
 package org.jboss.hal.meta.search;
 
-import org.jboss.hal.spi.SearchIndex;
+import org.jboss.hal.spi.Keywords;
 
 import java.util.Set;
 
-public interface SearchIndexRegistry {
+public interface SearchIndex {
 
     /**
-     * Returns the tokens for the given operation mode which are not excluded by {@link SearchIndex#exclude()}.
+     * Returns the tokens for the given operation mode which are not excluded by {@link Keywords#exclude()}.
      *
      * @param standalone the execution mode
      *

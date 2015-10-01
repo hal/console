@@ -19,16 +19,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.meta.security;
-
-import org.jboss.hal.meta.AddressTemplate;
+package org.jboss.hal.meta;
 
 /**
  * @author Harald Pehl
  */
-public class UnresolvedSecurityContext extends RuntimeException {
+public class MissingMetadataException extends RuntimeException {
 
-    public UnresolvedSecurityContext(final AddressTemplate notFound) {
-        super("No security context found for " + notFound);
+    public MissingMetadataException(final String context, final AddressTemplate address) {
+        super("Missing metadata: [" + context + "] @ " + address);
     }
 }

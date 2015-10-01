@@ -21,8 +21,56 @@
  */
 package org.jboss.hal.meta;
 
+import com.google.common.collect.FluentIterable;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.gwt.flow.Async;
+import org.jboss.gwt.flow.Outcome;
+import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.meta.functions.MetadataContext;
+import org.jboss.hal.meta.functions.MetadataFunctions;
+import org.jboss.hal.meta.resource.RequiredResources;
+import org.jboss.hal.spi.Footer;
+
+import javax.inject.Inject;
+import java.util.Set;
+
 /**
  * @author Harald Pehl
  */
 public class MetadataProcessor {
+
+    private final RequiredResources rrr;
+    private final MetadataFunctions functions;
+    private final Progress progress;
+
+    @Inject
+    public MetadataProcessor(final RequiredResources rrr, final MetadataFunctions functions,
+            @Footer Progress progress) {
+        this.rrr = rrr;
+        this.functions = functions;
+        this.progress = progress;
+    }
+
+    public void process(String token, final AsyncCallback<Void> callback) {
+        Set<String> resources = rrr.getResources(token);
+        if (resources.isEmpty()) {
+            callback.onSuccess(null);
+
+        } else {
+            Set<AddressTemplate> templates = FluentIterable.from(resources).transform(AddressTemplate::of).toSet();
+            MetadataContext metadataContext = new MetadataContext(templates, rrr.isRecursive(token));
+            Outcome<MetadataContext> outcome = new Outcome<MetadataContext>() {
+                @Override
+                public void onFailure(final MetadataContext context) {
+                    callback.onFailure(context.getError());
+                }
+
+                @Override
+                public void onSuccess(final MetadataContext context) {
+                    callback.onSuccess(null);
+                }
+            };
+            new Async<MetadataContext>(progress).waterfall(metadataContext, outcome, functions.functions());
+        }
+    }
 }

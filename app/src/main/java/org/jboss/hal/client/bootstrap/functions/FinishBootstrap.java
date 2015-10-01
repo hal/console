@@ -24,7 +24,7 @@ package org.jboss.hal.client.bootstrap.functions;
 import com.ekuefler.supereventbus.EventBus;
 import com.google.gwt.core.client.GWT;
 import org.jboss.gwt.flow.Control;
-import org.jboss.hal.core.flow.FunctionContext;
+import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.core.notification.Message;
 import org.jboss.hal.resources.I18n;
 import org.slf4j.Logger;

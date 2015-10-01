@@ -19,13 +19,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.bootstrap.functions;
+package org.jboss.hal.core.dispatch;
 
-import org.jboss.gwt.flow.Function;
+import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
+import org.jboss.hal.meta.dmr.Operation;
 
 /**
  * @author Harald Pehl
  */
-public interface BootstrapFunction extends Function<FunctionContext> {
+public class FailedDispatcherFunction implements Dispatcher.FailedCallback {
+
+    private final Control<FunctionContext> control;
+
+    public FailedDispatcherFunction(final Control<FunctionContext> control) {this.control = control;}
+
+    @Override
+    public void onFailed(final Operation operation, final String failure) {
+        control.getContext().setErrorMessage(failure);
+        control.abort();
+    }
 }

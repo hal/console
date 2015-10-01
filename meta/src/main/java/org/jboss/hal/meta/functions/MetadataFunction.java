@@ -19,41 +19,12 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.flow;
+package org.jboss.hal.meta.functions;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.hal.core.dispatch.Dispatcher;
-import org.jboss.hal.meta.dmr.Operation;
+import org.jboss.gwt.flow.Function;
 
 /**
  * @author Harald Pehl
  */
-public class FunctionCallbacks {
-
-    public static class Failed implements Dispatcher.FailedCallback {
-
-        private final Control<FunctionContext> control;
-
-        public Failed(final Control<FunctionContext> control) {this.control = control;}
-
-        @Override
-        public void onFailed(final Operation operation, final String failure) {
-            control.getContext().setErrorMessage(failure);
-            control.abort();
-        }
-    }
-
-
-    public static class Exception implements Dispatcher.ExceptionCallback {
-
-        private final Control<FunctionContext> control;
-
-        public Exception(final Control<FunctionContext> control) {this.control = control;}
-
-        @Override
-        public void onException(final Operation operation, final Throwable exception) {
-            control.getContext().setError(exception);
-            control.abort();
-        }
-    }
+public interface MetadataFunction extends Function<MetadataContext> {
 }

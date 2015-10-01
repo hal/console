@@ -21,34 +21,62 @@
  */
 package org.jboss.hal.meta.security;
 
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.MetadataCallback;
+import org.jboss.hal.meta.MissingMetadataException;
+import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.dmr.ResourceAddress;
 
-/**
- * The entrypoint to the security system with a mapping between an {@link AddressTemplate} and a {@link
- * SecurityContext}.
- *
- * @author Harald Pehl
- */
-public interface SecurityFramework {
+import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Map;
 
-    @FunctionalInterface
-    interface SecurityContextCallback {
+public class SecurityFramework {
 
-        void onContext(SecurityContext securityContext);
+    private final Environment environment;
+    private final StatementContext statementContext;
+    private final Map<ResourceAddress, SecurityContext> contextMap;
+
+    @Inject
+    public SecurityFramework(final Environment environment, final StatementContext statementContext) {
+        this.environment = environment;
+        this.statementContext = statementContext;
+        this.contextMap = new HashMap<>();
     }
 
-    /**
-     *
-     * @param template
-     * @return
-     * @throws UnresolvedSecurityContext
-     */
-    SecurityContext lookup(AddressTemplate template) throws UnresolvedSecurityContext;
+    public SecurityContext lookup(final AddressTemplate template) throws MissingMetadataException {
+        SecurityContext securityContext = internalLookup(template);
+        if (securityContext == null) {
+            throw new MissingMetadataException("SecurityFramework", template);
+        }
+        return securityContext;
+    }
 
-    /**
-     *
-     * @param template
-     * @param callback
-     */
-    void lookupDeferred(AddressTemplate template, SecurityContextCallback callback);
+    public void lookupDeferred(final AddressTemplate template, final MetadataCallback<SecurityContext> callback) {
+        SecurityContext securityContext = internalLookup(template);
+        if (securityContext == null) {
+            // TODO create and register the context asynchronously
+        } else {
+            callback.onContext(securityContext);
+        }
+    }
+
+    public boolean contains(AddressTemplate template) {
+        return internalLookup(template) != null;
+    }
+
+    void assignContext(AddressTemplate template, SecurityContext securityContext) {
+        ResourceAddress address = resolveTemplate(template);
+        contextMap.put(address, securityContext);
+    }
+
+    private SecurityContext internalLookup(AddressTemplate template) {
+        ResourceAddress address = resolveTemplate(template);
+        return contextMap.get(address);
+    }
+
+    private ResourceAddress resolveTemplate(AddressTemplate template) {
+        return template.resolve(statementContext);
+    }
 }
