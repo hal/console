@@ -1,8 +1,8 @@
-package org.jboss.hal.core.dispatch;
+package org.jboss.hal.dmr.dispatch;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.core.dispatch.ServerState.State;
+import org.jboss.hal.dmr.dispatch.ServerState.State;
 
 import java.util.List;
 

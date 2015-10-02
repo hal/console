@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.meta.functions;
+package org.jboss.hal.meta.processing;
 
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.meta.AddressTemplate;
@@ -32,7 +32,7 @@ import java.util.Set;
 /**
  * @author Harald Pehl
  */
-public class MetadataContext extends FunctionContext {
+class LookupResult extends FunctionContext {
 
     /**
      * Bit mask for missing / present metadata. 0 means metadata missing, 1 means metadata present.
@@ -46,7 +46,7 @@ public class MetadataContext extends FunctionContext {
     private final Map<AddressTemplate, Integer> templates;
     private final boolean recursive;
 
-    public MetadataContext(final Set<AddressTemplate> templates, final boolean recursive) {
+    LookupResult(final Set<AddressTemplate> templates, final boolean recursive) {
         this.templates = new HashMap<>();
         for (AddressTemplate template : templates) {
             this.templates.put(template, NOTHING_PRESENT);

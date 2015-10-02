@@ -19,43 +19,40 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.meta.functions;
+package org.jboss.hal.meta.processing;
 
-import org.jboss.gwt.flow.Control;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.security.SecurityFramework;
 
-import javax.inject.Inject;
+import java.util.Set;
 
-import static org.jboss.hal.meta.functions.MetadataContext.RESOURCE_DESCRIPTION_PRESENT;
-import static org.jboss.hal.meta.functions.MetadataContext.SECURITY_CONTEXT_PRESENT;
+import static org.jboss.hal.meta.processing.LookupResult.RESOURCE_DESCRIPTION_PRESENT;
+import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESENT;
 
 /**
  * @author Harald Pehl
  */
-public class LookupFunction implements MetadataFunction {
+class Lookup {
 
     private final ResourceDescriptions descriptionRegistry;
     private final SecurityFramework securityFramework;
 
-    @Inject
-    public LookupFunction(ResourceDescriptions descriptionRegistry, SecurityFramework securityFramework) {
+    Lookup(ResourceDescriptions descriptionRegistry, SecurityFramework securityFramework) {
         this.descriptionRegistry = descriptionRegistry;
         this.securityFramework = securityFramework;
     }
 
-    @Override
-    public void execute(final Control<MetadataContext> control) {
-        MetadataContext metadataContext = control.getContext();
-        for (AddressTemplate template : metadataContext.templates()) {
+    LookupResult check(Set<AddressTemplate> templates, boolean recursive) {
+        LookupResult lookupResult = new LookupResult(templates, recursive);
+        for (AddressTemplate template : lookupResult.templates()) {
             if (descriptionRegistry.contains(template)) {
-                metadataContext.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
+                lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);
             }
             if (securityFramework.contains(template)) {
-                metadataContext.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
+                lookupResult.markMetadataPresent(template, SECURITY_CONTEXT_PRESENT);
             }
         }
-        control.proceed();
+        return lookupResult;
     }
 }

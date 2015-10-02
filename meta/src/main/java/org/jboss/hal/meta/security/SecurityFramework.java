@@ -26,7 +26,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.MetadataCallback;
 import org.jboss.hal.meta.MissingMetadataException;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.dmr.ResourceAddress;
+import org.jboss.hal.dmr.model.ResourceAddress;
 
 import javax.inject.Inject;
 import java.util.HashMap;

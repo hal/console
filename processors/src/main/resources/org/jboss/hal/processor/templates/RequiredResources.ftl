@@ -24,7 +24,6 @@ public class ${className} implements org.jboss.hal.meta.resource.RequiredResourc
 
     public ${className}() {
         resources = HashMultimap.create();
-        operations = HashMultimap.create();
         recursive = new HashMap<>();
 
         <#list tokenInfos as tokenInfo>

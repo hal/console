@@ -19,29 +19,29 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.meta.functions;
+package org.jboss.hal.dmr.model;
 
-import javax.inject.Inject;
+import org.jboss.hal.dmr.ModelNode;
 
 /**
+ * Represents a fully qualified DMR address ready to be put into a DMR operation.
+ *
  * @author Harald Pehl
  */
-public class MetadataFunctions {
+public class ResourceAddress extends ModelNode {
 
-    private final MetadataFunction[] functions;
+    public static final ResourceAddress ROOT = new ResourceAddress();
 
-    @Inject
-    public MetadataFunctions(LookupFunction lookupFunction,
-            CreateRrdOpFunction createRrdOpFunction,
-            PartitionFunction partitionFunction) {
-        this.functions = new MetadataFunction[] {
-                lookupFunction,
-                createRrdOpFunction,
-                partitionFunction,
-        };
+    public ResourceAddress() {
+        setEmptyList();
     }
 
-    public MetadataFunction[] functions() {
-        return functions;
+    public ResourceAddress(ModelNode address) {
+        set(address);
+    }
+
+    public ResourceAddress add(final String propertyName, final String propertyValue) {
+        add().set(propertyName, propertyValue);
+        return this;
     }
 }

@@ -19,24 +19,40 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.dispatch;
+package org.jboss.hal.dmr.model;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.hal.meta.dmr.Operation;
+import org.jboss.hal.dmr.ModelNode;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
  */
-public class FailedDispatcherFunction implements Dispatcher.FailedCallback {
+public class Composite extends Operation {
 
-    private final Control<FunctionContext> control;
+    public Composite(Operation first, Operation... rest) {
+        super(COMPOSITE, ResourceAddress.ROOT, new ModelNode(), null);
+        List<Operation> operations = new ArrayList<>();
+        operations.add(first);
+        if (rest != null) {
+            Collections.addAll(operations, rest);
+        }
+        addSteps(operations);
+    }
 
-    public FailedDispatcherFunction(final Control<FunctionContext> control) {this.control = control;}
+    public Composite(List<Operation> operations) {
+        super(COMPOSITE, ResourceAddress.ROOT, new ModelNode(), null);
+        addSteps(operations);
+    }
 
-    @Override
-    public void onFailed(final Operation operation, final String failure) {
-        control.getContext().setErrorMessage(failure);
-        control.abort();
+    private void addSteps(final List<Operation> operations) {
+        assert !operations.isEmpty() : "Steps for a composite operation must not be empty";
+        for (Operation operation : operations) {
+            get(STEPS).add(operation);
+        }
     }
 }

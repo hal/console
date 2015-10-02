@@ -2,7 +2,7 @@ package org.jboss.hal.meta;
 
 
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.meta.dmr.ResourceAddress;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.junit.Test;
 
 import java.util.List;

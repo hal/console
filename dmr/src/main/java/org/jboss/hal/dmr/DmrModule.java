@@ -19,15 +19,42 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.dispatch;
+package org.jboss.hal.dmr;
 
-import org.jboss.hal.dmr.ModelNode;
+import com.google.gwt.inject.client.AbstractGinModule;
+import com.google.inject.Provides;
+import org.jboss.hal.config.Environment;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.dispatch.DomainProcessStateProcessor;
+import org.jboss.hal.dmr.dispatch.ProcessStateProcessor;
+import org.jboss.hal.dmr.dispatch.StandaloneProcessStateProcessor;
+import org.jboss.hal.spi.GinModule;
 
 /**
  * @author Harald Pehl
  */
-@FunctionalInterface
-interface PayloadProcessor {
+@GinModule
+public class DmrModule extends AbstractGinModule {
 
-    ModelNode processPayload(Dispatcher.HttpMethod method, String contentType, String payload);
+    private final ProcessStateProcessor standalone;
+    private final ProcessStateProcessor domain;
+
+    public DmrModule() {
+        standalone = new StandaloneProcessStateProcessor();
+        domain = new DomainProcessStateProcessor();
+    }
+
+    @Override
+    protected void configure() {
+        bind(Dispatcher.class);
+    }
+
+    @Provides
+    public ProcessStateProcessor provideProcessStateProcessor(Environment environment) {
+        if (environment.isStandalone()) {
+            return standalone;
+        } else {
+            return domain;
+        }
+    }
 }

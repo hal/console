@@ -25,11 +25,6 @@ import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.config.Environment;
-import org.jboss.hal.core.dispatch.Dispatcher;
-import org.jboss.hal.core.dispatch.DomainProcessStateProcessor;
-import org.jboss.hal.core.dispatch.ProcessStateProcessor;
-import org.jboss.hal.core.dispatch.StandaloneProcessStateProcessor;
 import org.jboss.hal.core.ui.UIRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.spi.Footer;
@@ -38,28 +33,10 @@ import org.jboss.hal.spi.GinModule;
 @GinModule
 public class CoreModule extends AbstractGinModule {
 
-    private final ProcessStateProcessor standalone;
-    private final ProcessStateProcessor domain;
-
-    public CoreModule() {
-        standalone = new StandaloneProcessStateProcessor();
-        domain = new DomainProcessStateProcessor();
-    }
-
     @Override
     protected void configure() {
-        bind(Dispatcher.class);
         bind(StatementContext.class).to(CoreStatementContext.class).in(Singleton.class);
         bind(UIRegistry.class).in(Singleton.class);
-    }
-
-    @Provides
-    public ProcessStateProcessor provideProcessStateProcessor(Environment environment) {
-        if (environment.isStandalone()) {
-            return standalone;
-        } else {
-            return domain;
-        }
     }
 
     /**

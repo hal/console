@@ -1,8 +1,7 @@
-package org.jboss.hal.core.dispatch;
+package org.jboss.hal.dmr.dispatch;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.core.dispatch.ServerState.State;
 
 import java.util.List;
 
@@ -56,11 +55,11 @@ public class DomainProcessStateProcessor implements ProcessStateProcessor {
                         String headerValue = header.getValue().asString();
 
                         if (RESTART_REQUIRED.equals(headerValue)) {
-                            ServerState serverState = new ServerState(hostName, server.getName(), State.RESTART_REQUIRED);
+                            ServerState serverState = new ServerState(hostName, server.getName(), ServerState.State.RESTART_REQUIRED);
                             processState.add(serverState);
 
                         } else if (RELOAD_REQUIRED.equals(headerValue)) {
-                            ServerState serverState = new ServerState(hostName, server.getName(), State.RELOAD_REQUIRED);
+                            ServerState serverState = new ServerState(hostName, server.getName(), ServerState.State.RELOAD_REQUIRED);
                             processState.add(serverState);
                         }
                     }

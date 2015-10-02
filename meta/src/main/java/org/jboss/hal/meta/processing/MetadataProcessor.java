@@ -19,19 +19,27 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.meta;
+package org.jboss.hal.meta.processing;
 
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Lists;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.gwt.flow.Async;
+import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.meta.functions.MetadataContext;
-import org.jboss.hal.meta.functions.MetadataFunctions;
+import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.resource.RequiredResources;
+import org.jboss.hal.meta.security.SecurityFramework;
 import org.jboss.hal.spi.Footer;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -39,38 +47,53 @@ import java.util.Set;
  */
 public class MetadataProcessor {
 
-    private final RequiredResources rrr;
-    private final MetadataFunctions functions;
+    /**
+     * Number of r-r-d operations part of one composite operation.
+     */
+    final static int BATCH_SIZE = 3;
+
+    private final RequiredResources requiredResources;
+    private final Lookup lookup;
+    private final CreateRrdOps rrdOps;
     private final Progress progress;
 
     @Inject
-    public MetadataProcessor(final RequiredResources rrr, final MetadataFunctions functions,
-            @Footer Progress progress) {
-        this.rrr = rrr;
-        this.functions = functions;
+    public MetadataProcessor(final StatementContext statementContext,
+            final RequiredResources requiredResources,
+            final ResourceDescriptions descriptionRegistry,
+            final SecurityFramework securityFramework,
+            final @Footer Progress progress) {
+        this.requiredResources = requiredResources;
+        this.lookup = new Lookup(descriptionRegistry, securityFramework);
+        this.rrdOps = new CreateRrdOps(statementContext);
         this.progress = progress;
     }
 
     public void process(String token, final AsyncCallback<Void> callback) {
-        Set<String> resources = rrr.getResources(token);
+        Set<String> resources = requiredResources.getResources(token);
         if (resources.isEmpty()) {
             callback.onSuccess(null);
 
         } else {
             Set<AddressTemplate> templates = FluentIterable.from(resources).transform(AddressTemplate::of).toSet();
-            MetadataContext metadataContext = new MetadataContext(templates, rrr.isRecursive(token));
-            Outcome<MetadataContext> outcome = new Outcome<MetadataContext>() {
+            LookupResult lookupResult = lookup.check(templates, requiredResources.isRecursive(token));
+            List<Operation> operations = rrdOps.create(lookupResult);
+            List<List<Operation>> piles = Lists.partition(operations, BATCH_SIZE);
+            List<Composite> composites = Lists.transform(piles, Composite::new);
+            List<Function> functions = new ArrayList<>();
+
+            Outcome<LookupResult> outcome = new Outcome<LookupResult>() {
                 @Override
-                public void onFailure(final MetadataContext context) {
+                public void onFailure(final LookupResult context) {
                     callback.onFailure(context.getError());
                 }
 
                 @Override
-                public void onSuccess(final MetadataContext context) {
+                public void onSuccess(final LookupResult context) {
                     callback.onSuccess(null);
                 }
             };
-            new Async<MetadataContext>(progress).waterfall(metadataContext, outcome, functions.functions());
+            new Async<LookupResult>(progress).waterfall(lookupResult, outcome, functions.toArray(new Function[0]));
         }
     }
 }

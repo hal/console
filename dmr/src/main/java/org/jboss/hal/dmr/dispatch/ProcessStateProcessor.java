@@ -1,4 +1,4 @@
-package org.jboss.hal.core.dispatch;
+package org.jboss.hal.dmr.dispatch;
 
 import org.jboss.hal.dmr.ModelNode;
 

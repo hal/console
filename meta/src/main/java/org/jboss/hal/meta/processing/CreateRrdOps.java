@@ -19,39 +19,34 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.meta.functions;
+package org.jboss.hal.meta.processing;
 
-import org.jboss.gwt.flow.Control;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.dmr.Operation;
-import org.jboss.hal.meta.dmr.ResourceAddress;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.functions.MetadataContext.*;
+import static org.jboss.hal.meta.processing.LookupResult.*;
 
 /**
  * @author Harald Pehl
  */
-public class CreateRrdOpFunction implements MetadataFunction {
+class CreateRrdOps {
 
     private final StatementContext statementContext;
 
-    public CreateRrdOpFunction(final StatementContext statementContext) {
+    public CreateRrdOps(final StatementContext statementContext) {
         this.statementContext = statementContext;
     }
 
-    @Override
-    public void execute(final Control<MetadataContext> control) {
-        MetadataContext metadataContext = control.getContext();
-
-        // create operations
+    List<Operation> create(LookupResult lookupResult) {
         List<Operation> operations = new ArrayList<>();
-        for (AddressTemplate template : metadataContext.templates()) {
-            int missingMetadata = metadataContext.missingMetadata(template);
+        for (AddressTemplate template : lookupResult.templates()) {
+            int missingMetadata = lookupResult.missingMetadata(template);
             if (missingMetadata != ALL_PRESENT) {
                 ResourceAddress address = template.resolve(statementContext);
                 Operation.Builder builder = new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION, address);
@@ -68,14 +63,12 @@ public class CreateRrdOpFunction implements MetadataFunction {
                         // resource description missing: use defaults for the r-r-d op
                         break;
                 }
-                if (metadataContext.recursive()) {
+                if (lookupResult.recursive()) {
                     builder.param(RECURSIVE, true);
                 }
                 operations.add(builder.build());
             }
         }
-        // next one please
-        metadataContext.push(operations);
-        control.proceed();
+        return operations;
     }
 }

@@ -19,24 +19,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.dispatch;
+package org.jboss.hal.dmr.dispatch;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.hal.meta.dmr.Operation;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * @author Harald Pehl
  */
-public class ExceptionDispatcherFunction implements Dispatcher.ExceptionCallback {
+public class ProcessState implements Iterable<ServerState> {
 
-    private final Control<FunctionContext> control;
+    public static final ProcessState EMPTY = new ProcessState();
 
-    public ExceptionDispatcherFunction(final Control<FunctionContext> control) {this.control = control;}
+    private final Set<ServerState> serverStates;
+
+    public ProcessState() {
+        serverStates = new HashSet<>();
+    }
+
+    public void add(ServerState serverState) {
+        serverStates.add(serverState);
+    }
 
     @Override
-    public void onException(final Operation operation, final Throwable exception) {
-        control.getContext().setError(exception);
-        control.abort();
+    public Iterator<ServerState> iterator() {
+        return serverStates.iterator();
     }
 }

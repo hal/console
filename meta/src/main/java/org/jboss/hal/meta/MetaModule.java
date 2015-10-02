@@ -24,10 +24,7 @@ package org.jboss.hal.meta;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Singleton;
 import org.jboss.hal.meta.description.ResourceDescriptions;
-import org.jboss.hal.meta.functions.CreateRrdOpFunction;
-import org.jboss.hal.meta.functions.LookupFunction;
-import org.jboss.hal.meta.functions.MetadataFunctions;
-import org.jboss.hal.meta.functions.PartitionFunction;
+import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.meta.security.SecurityFramework;
 import org.jboss.hal.spi.GinModule;
 
@@ -39,12 +36,7 @@ public class MetaModule extends AbstractGinModule {
 
     @Override
     protected void configure() {
-        // a-z
-        bind(CreateRrdOpFunction.class).in(Singleton.class);
-        bind(LookupFunction.class).in(Singleton.class);
-        bind(MetadataFunctions.class).in(Singleton.class);
         bind(MetadataProcessor.class).in(Singleton.class);
-        bind(PartitionFunction.class).in(Singleton.class);
         bind(ResourceDescriptions.class).in(Singleton.class);
         bind(SecurityFramework.class).in(Singleton.class);
     }

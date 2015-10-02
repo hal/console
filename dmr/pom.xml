@@ -44,6 +44,10 @@
             <artifactId>hal-config</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.jboss.gwt.flow</groupId>
+            <artifactId>flow</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-user</artifactId>
         </dependency>

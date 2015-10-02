@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.dispatch;
+package org.jboss.hal.dmr.dispatch;
 
 import com.ekuefler.supereventbus.EventBus;
 import com.google.inject.Provider;
@@ -28,20 +28,18 @@ import elemental.html.FormData;
 import elemental.html.InputElement;
 import elemental.xml.XMLHttpRequest;
 import org.jboss.hal.config.Endpoints;
-import org.jboss.hal.core.notification.Message;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.meta.dmr.Operation;
-import org.jboss.hal.resources.I18n;
+import org.jboss.hal.dmr.model.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.List;
 
-import static org.jboss.hal.core.dispatch.Dispatcher.HttpMethod.GET;
-import static org.jboss.hal.core.dispatch.Dispatcher.HttpMethod.POST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
+import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
 
 /**
  * The dispatcher executes operations / uploads against the management endpoint. You should register a callback for
@@ -112,7 +110,7 @@ public class Dispatcher {
     private ExceptionCallback exceptionCallback;
 
     @Inject
-    public Dispatcher(final Endpoints endpoints, final EventBus eventBus, final I18n i18n,
+    public Dispatcher(final Endpoints endpoints, final EventBus eventBus,
             Provider<ProcessStateProcessor> processStateProcessor) {
         this.endpoints = endpoints;
         this.eventBus = eventBus;
@@ -121,11 +119,9 @@ public class Dispatcher {
         this.successCallback = result -> logger.warn("No success callback defined for last operation.");
         this.failedCallback = (operation, failure) -> {
             logger.error("Dispatcher failed: {}, operation: {}", failure, operation);
-            eventBus.post(Message.error(i18n.constants().dispatcher_failed(), failure));
         };
         this.exceptionCallback = (operation, t) -> {
             logger.error("Dispatcher exception: {}, operation {}", t.getMessage(), operation);
-            eventBus.post(Message.error(i18n.constants().dispatcher_exception(), t.getMessage()));
         };
     }
 

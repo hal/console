@@ -42,9 +42,6 @@ public class ${className} implements org.jboss.hal.meta.search.SearchIndex {
         <#if (tokenInfo.keywords?size > 0)>
         keywords.putAll("${tokenInfo.token}", asList(<#list tokenInfo.keywords as keyword>"${keyword}"<#if keyword_has_next>, </#if></#list>));
         </#if>
-        <#if (tokenInfo.operations?size > 0)>
-        resources.putAll("${tokenInfo.token}", asList(<#list tokenInfo.resources as resource>"${resource}"<#if resource_has_next>, </#if></#list>));
-        </#if>
         </#if>
         </#list>
     }

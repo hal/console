@@ -25,12 +25,12 @@ import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
-import org.jboss.hal.core.dispatch.Dispatcher;
-import org.jboss.hal.core.dispatch.ExceptionDispatcherFunction;
-import org.jboss.hal.core.dispatch.FailedDispatcherFunction;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.dispatch.ExceptionDispatcherFunction;
+import org.jboss.hal.dmr.dispatch.FailedDispatcherFunction;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.meta.dmr.Composite;
-import org.jboss.hal.meta.dmr.Operation;
+import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.dmr.ResourceAddress.ROOT;
+import static org.jboss.hal.dmr.model.ResourceAddress.ROOT;
 
 public class ReadEnvironment implements BootstrapFunction {
 

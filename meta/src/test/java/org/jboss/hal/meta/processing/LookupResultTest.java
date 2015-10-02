@@ -1,4 +1,4 @@
-package org.jboss.hal.meta.functions;
+package org.jboss.hal.meta.processing;
 
 import com.google.common.collect.Sets;
 import org.jboss.hal.meta.AddressTemplate;
@@ -6,22 +6,22 @@ import org.jboss.hal.meta.MissingMetadataException;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.jboss.hal.meta.functions.MetadataContext.RESOURCE_DESCRIPTION_PRESENT;
-import static org.jboss.hal.meta.functions.MetadataContext.SECURITY_CONTEXT_PRESENT;
+import static org.jboss.hal.meta.processing.LookupResult.RESOURCE_DESCRIPTION_PRESENT;
+import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESENT;
 import static org.junit.Assert.assertEquals;
 
 /**
  * @author Harald Pehl
  */
-public class MetadataContextTest {
+public class LookupResultTest {
 
-    private MetadataContext context;
+    private LookupResult context;
     private AddressTemplate foo;
 
     @Before
     public void setUp() {
         foo = AddressTemplate.of("foo");
-        context = new MetadataContext(Sets.newHashSet(foo), false);
+        context = new LookupResult(Sets.newHashSet(foo), false);
     }
 
     @Test

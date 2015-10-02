@@ -19,12 +19,12 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.dispatch;
+package org.jboss.hal.dmr.dispatch;
 
-import org.jboss.hal.core.dispatch.Dispatcher.HttpMethod;
+import org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod;
 import org.jboss.hal.dmr.ModelNode;
 
-import static org.jboss.hal.core.dispatch.Dispatcher.HttpMethod.GET;
+import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**

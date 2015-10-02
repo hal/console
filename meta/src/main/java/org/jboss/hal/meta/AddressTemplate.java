@@ -23,7 +23,7 @@ package org.jboss.hal.meta;
 
 import com.google.common.base.Joiner;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.meta.dmr.ResourceAddress;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
