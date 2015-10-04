@@ -19,24 +19,16 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.dmr.dispatch;
+package org.jboss.hal.meta.processing;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.ModelNode;
+
+import java.util.List;
 
 /**
  * @author Harald Pehl
  */
-public class ExceptionDispatcherFunction implements Dispatcher.ExceptionCallback {
+interface RrdResultParser {
 
-    private final Control<FunctionContext> control;
-
-    public ExceptionDispatcherFunction(final Control<FunctionContext> control) {this.control = control;}
-
-    @Override
-    public void onException(final Operation operation, final Throwable exception) {
-        control.getContext().setError(exception);
-        control.abort();
-    }
+    List<RrdResult> parse(ModelNode modelNode);
 }

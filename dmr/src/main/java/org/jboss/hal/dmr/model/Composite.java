@@ -27,32 +27,43 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.COMPOSITE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STEPS;
 
 /**
  * @author Harald Pehl
  */
 public class Composite extends Operation {
 
+    private int operations;
+
     public Composite(Operation first, Operation... rest) {
         super(COMPOSITE, ResourceAddress.ROOT, new ModelNode(), null);
+        this.operations = 0;
+
         List<Operation> operations = new ArrayList<>();
         operations.add(first);
         if (rest != null) {
             Collections.addAll(operations, rest);
         }
-        addSteps(operations);
+        add(operations);
     }
 
     public Composite(List<Operation> operations) {
         super(COMPOSITE, ResourceAddress.ROOT, new ModelNode(), null);
-        addSteps(operations);
+        this.operations = 0;
+        add(operations);
     }
 
-    private void addSteps(final List<Operation> operations) {
-        assert !operations.isEmpty() : "Steps for a composite operation must not be empty";
+    private void add(final List<Operation> operations) {
         for (Operation operation : operations) {
             get(STEPS).add(operation);
+            this.operations++;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Composite(" + operations + ")";
     }
 }

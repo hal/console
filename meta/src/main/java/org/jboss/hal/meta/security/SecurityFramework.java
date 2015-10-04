@@ -22,61 +22,37 @@
 package org.jboss.hal.meta.security;
 
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.MetadataCallback;
-import org.jboss.hal.meta.MissingMetadataException;
-import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.AbstractMetadataRegistry;
+import org.jboss.hal.meta.MetadataCallback;
+import org.jboss.hal.meta.StatementContext;
 
 import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SecurityFramework {
+public class SecurityFramework extends AbstractMetadataRegistry<SecurityContext> {
 
-    private final Environment environment;
-    private final StatementContext statementContext;
-    private final Map<ResourceAddress, SecurityContext> contextMap;
+    private final Map<ResourceAddress, SecurityContext> registry;
 
     @Inject
     public SecurityFramework(final Environment environment, final StatementContext statementContext) {
-        this.environment = environment;
-        this.statementContext = statementContext;
-        this.contextMap = new HashMap<>();
+        super(statementContext, "security context");
+        this.registry = new HashMap<>();
     }
 
-    public SecurityContext lookup(final AddressTemplate template) throws MissingMetadataException {
-        SecurityContext securityContext = internalLookup(template);
-        if (securityContext == null) {
-            throw new MissingMetadataException("SecurityFramework", template);
-        }
-        return securityContext;
+    @Override
+    protected SecurityContext lookupAddress(final ResourceAddress address) {
+        return registry.get(address);
     }
 
-    public void lookupDeferred(final AddressTemplate template, final MetadataCallback<SecurityContext> callback) {
-        SecurityContext securityContext = internalLookup(template);
-        if (securityContext == null) {
-            // TODO create and register the context asynchronously
-        } else {
-            callback.onContext(securityContext);
-        }
+    @Override
+    protected void addAddress(final ResourceAddress address, final SecurityContext metadata) {
+        registry.put(address, metadata);
     }
 
-    public boolean contains(AddressTemplate template) {
-        return internalLookup(template) != null;
-    }
-
-    void assignContext(AddressTemplate template, SecurityContext securityContext) {
-        ResourceAddress address = resolveTemplate(template);
-        contextMap.put(address, securityContext);
-    }
-
-    private SecurityContext internalLookup(AddressTemplate template) {
-        ResourceAddress address = resolveTemplate(template);
-        return contextMap.get(address);
-    }
-
-    private ResourceAddress resolveTemplate(AddressTemplate template) {
-        return template.resolve(statementContext);
+    @Override
+    protected void addDeferred(final ResourceAddress address, final MetadataCallback<SecurityContext> callback) {
+        // TODO
     }
 }

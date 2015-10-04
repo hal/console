@@ -19,14 +19,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.meta;
+package org.jboss.hal.meta.processing;
+
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.meta.AddressTemplate;
 
 /**
  * @author Harald Pehl
  */
-public class MissingMetadataException extends RuntimeException {
+class RrdInput {
 
-    public MissingMetadataException(final String type, final AddressTemplate address) {
-        super("Missing metadata: [" + type + "] @ " + address);
+    final AddressTemplate template;
+    final Operation operation;
+
+    RrdInput(final AddressTemplate template, final Operation operation) {
+        this.template = template;
+        this.operation = operation;
     }
 }

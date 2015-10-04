@@ -30,6 +30,7 @@ import elemental.xml.XMLHttpRequest;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,7 @@ import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
  * management operations ({@link #onFailed(FailedCallback)} or technical errors {@link
  * #onException(ExceptionCallback)}.
  * <p>
- * TODO Add a way to track the management operations.
+ * TODO Add a way to track management operations.
  *
  * @author Harald Pehl
  */
@@ -153,6 +154,10 @@ public class Dispatcher {
         } else {
             xhr.send(operation.toBase64String());
         }
+    }
+
+    public void execute(final Composite composite) {
+
     }
 
     private String descriptionOperationToUrl(final ModelNode operation) {

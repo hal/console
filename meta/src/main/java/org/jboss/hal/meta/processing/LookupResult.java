@@ -26,6 +26,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.MissingMetadataException;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,10 +44,12 @@ class LookupResult extends FunctionContext {
     final static int SECURITY_CONTEXT_PRESENT = 0b01;
     final static int ALL_PRESENT = 0b11;
 
+    private final String token;
     private final Map<AddressTemplate, Integer> templates;
     private final boolean recursive;
 
-    LookupResult(final Set<AddressTemplate> templates, final boolean recursive) {
+    LookupResult(final String token, final Set<AddressTemplate> templates, final boolean recursive) {
+        this.token = token;
         this.templates = new HashMap<>();
         for (AddressTemplate template : templates) {
             this.templates.put(template, NOTHING_PRESENT);
@@ -76,5 +79,35 @@ class LookupResult extends FunctionContext {
             throw new MissingMetadataException("MetadataContext", template);
         }
         return templates.get(template);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("LookupResult(").append(token).append(", ");
+        for (Iterator<Map.Entry<AddressTemplate, Integer>> iterator = templates.entrySet().iterator();
+                iterator.hasNext(); ) {
+            Map.Entry<AddressTemplate, Integer> entry = iterator.next();
+            builder.append(entry.getKey()).append(" -> ");
+            switch (entry.getValue()) {
+                case NOTHING_PRESENT:
+                    builder.append("nothing present");
+                    break;
+                case RESOURCE_DESCRIPTION_PRESENT:
+                    builder.append("resource description present");
+                    break;
+                case SECURITY_CONTEXT_PRESENT:
+                    builder.append("security context present");
+                    break;
+                case ALL_PRESENT:
+                    builder.append("all present");
+                    break;
+            }
+            if (iterator.hasNext()) {
+                builder.append(", ");
+            }
+        }
+        builder.append(")");
+        return builder.toString();
     }
 }

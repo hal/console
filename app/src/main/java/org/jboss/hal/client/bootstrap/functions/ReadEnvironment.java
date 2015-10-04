@@ -26,8 +26,8 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.dispatch.ExceptionDispatcherFunction;
-import org.jboss.hal.dmr.dispatch.FailedDispatcherFunction;
+import org.jboss.hal.dmr.dispatch.ExceptionalFunctionCallback;
+import org.jboss.hal.dmr.dispatch.FailedFunctionCallback;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.Operation;
@@ -110,8 +110,8 @@ public class ReadEnvironment implements BootstrapFunction {
                     }, wait);
                     // control.proceed();
                 })
-                .onFailed(new FailedDispatcherFunction(control))
-                .onException(new ExceptionDispatcherFunction(control))
+                .onFailed(new FailedFunctionCallback(control))
+                .onException(new ExceptionalFunctionCallback(control))
                 .execute(new Composite(ops));
     }
 }

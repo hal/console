@@ -24,9 +24,13 @@ package org.jboss.hal.meta;
 /**
  * @author Harald Pehl
  */
-public class MissingMetadataException extends RuntimeException {
+public interface MetadataRegistry<T> {
 
-    public MissingMetadataException(final String type, final AddressTemplate address) {
-        super("Missing metadata: [" + type + "] @ " + address);
-    }
+    T lookup(final AddressTemplate template) throws MissingMetadataException;
+
+    void lookupDeferred(final AddressTemplate template, final MetadataCallback<T> callback);
+
+    boolean contains(AddressTemplate template);
+
+    void add(AddressTemplate template, T metadata);
 }

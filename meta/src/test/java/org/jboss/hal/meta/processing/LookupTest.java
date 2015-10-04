@@ -36,7 +36,7 @@ public class LookupTest {
 
     @Test
     public void noTemplates() {
-        LookupResult lookupResult = lookup.check(Collections.<AddressTemplate>emptySet(), false);
+        LookupResult lookupResult = lookup.check("#token", Collections.<AddressTemplate>emptySet(), false);
         assertTrue(lookupResult.templates().isEmpty());
     }
 
@@ -45,7 +45,7 @@ public class LookupTest {
         when(descriptionRegistry.contains(foo)).thenReturn(false);
         when(securityFramework.contains(foo)).thenReturn(false);
 
-        LookupResult lookupResult = lookup.check(Sets.newHashSet(foo), false);
+        LookupResult lookupResult = lookup.check("#token", Sets.newHashSet(foo), false);
         assertEquals(NOTHING_PRESENT, lookupResult.missingMetadata(foo));
     }
 
@@ -54,7 +54,7 @@ public class LookupTest {
         when(descriptionRegistry.contains(foo)).thenReturn(true);
         when(securityFramework.contains(foo)).thenReturn(false);
 
-        LookupResult lookupResult = lookup.check(Sets.newHashSet(foo), false);
+        LookupResult lookupResult = lookup.check("#token", Sets.newHashSet(foo), false);
         assertEquals(RESOURCE_DESCRIPTION_PRESENT, lookupResult.missingMetadata(foo));
     }
 
@@ -63,7 +63,7 @@ public class LookupTest {
         when(descriptionRegistry.contains(foo)).thenReturn(false);
         when(securityFramework.contains(foo)).thenReturn(true);
 
-        LookupResult lookupResult = lookup.check(Sets.newHashSet(foo), false);
+        LookupResult lookupResult = lookup.check("#token", Sets.newHashSet(foo), false);
         assertEquals(SECURITY_CONTEXT_PRESENT, lookupResult.missingMetadata(foo));
     }
 
@@ -72,7 +72,7 @@ public class LookupTest {
         when(descriptionRegistry.contains(foo)).thenReturn(true);
         when(securityFramework.contains(foo)).thenReturn(true);
 
-        LookupResult lookupResult = lookup.check(Sets.newHashSet(foo), false);
+        LookupResult lookupResult = lookup.check("#token", Sets.newHashSet(foo), false);
         assertEquals(ALL_PRESENT, lookupResult.missingMetadata(foo));
     }
 }

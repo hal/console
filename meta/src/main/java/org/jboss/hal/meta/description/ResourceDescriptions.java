@@ -21,44 +21,38 @@
  */
 package org.jboss.hal.meta.description;
 
-import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.AbstractMetadataRegistry;
 import org.jboss.hal.meta.MetadataCallback;
-import org.jboss.hal.meta.MissingMetadataException;
+import org.jboss.hal.meta.StatementContext;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ResourceDescriptions {
+public class ResourceDescriptions extends AbstractMetadataRegistry<ResourceDescription> {
 
     // TODO Replace map with local storage (constrained by language and management model version)
-    private final Map<AddressTemplate, ResourceDescription> registry;
+    private final Map<ResourceAddress, ResourceDescription> registry;
 
-    public ResourceDescriptions() {
-        registry = new HashMap<>();
+    @Inject
+    public ResourceDescriptions(final StatementContext statementContext) {
+        super(statementContext, "resource description");
+        this.registry = new HashMap<>();
     }
 
-    public void add(AddressTemplate addressTemplate, ResourceDescription description) {
-        registry.put(addressTemplate, description);
+    @Override
+    protected ResourceDescription lookupAddress(final ResourceAddress address) {
+        return registry.get(address);
     }
 
-    public ResourceDescription lookup(AddressTemplate template) throws MissingMetadataException {
-        ResourceDescription resourceDescription = registry.get(template);
-        if (resourceDescription == null) {
-            throw new MissingMetadataException("ResourceDescription", template);
-        }
-        return resourceDescription;
+    @Override
+    protected void addAddress(final ResourceAddress address, final ResourceDescription metadata) {
+        registry.put(address, metadata);
     }
 
-    public void lookupDeferred(final AddressTemplate template, final MetadataCallback<ResourceDescription> callback) {
-        ResourceDescription resourceDescription = registry.get(template);
-        if (resourceDescription == null) {
-            // TODO create and register the context asynchronously
-        } else {
-            callback.onContext(resourceDescription);
-        }
-    }
-
-    public boolean contains(AddressTemplate addressTemplate) {
-        return registry.containsKey(addressTemplate);
+    @Override
+    protected void addDeferred(final ResourceAddress address, final MetadataCallback<ResourceDescription> callback) {
+        // TODO
     }
 }

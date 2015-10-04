@@ -28,6 +28,7 @@ import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.meta.AddressTemplate;
@@ -36,9 +37,10 @@ import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.resource.RequiredResources;
 import org.jboss.hal.meta.security.SecurityFramework;
 import org.jboss.hal.spi.Footer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -52,48 +54,70 @@ public class MetadataProcessor {
      */
     final static int BATCH_SIZE = 3;
 
+    private static final Logger logger = LoggerFactory.getLogger(MetadataProcessor.class);
+
+    private final Dispatcher dispatcher;
     private final RequiredResources requiredResources;
+    private final ResourceDescriptions resourceDescriptions;
+    private final SecurityFramework securityFramework;
     private final Lookup lookup;
     private final CreateRrdOps rrdOps;
     private final Progress progress;
 
     @Inject
-    public MetadataProcessor(final StatementContext statementContext,
+    public MetadataProcessor(final Dispatcher dispatcher,
+            final StatementContext statementContext,
             final RequiredResources requiredResources,
-            final ResourceDescriptions descriptionRegistry,
+            final ResourceDescriptions resourceDescriptions,
             final SecurityFramework securityFramework,
             final @Footer Progress progress) {
+        this.dispatcher = dispatcher;
         this.requiredResources = requiredResources;
-        this.lookup = new Lookup(descriptionRegistry, securityFramework);
+        this.resourceDescriptions = resourceDescriptions;
+        this.securityFramework = securityFramework;
+        this.lookup = new Lookup(resourceDescriptions, securityFramework);
         this.rrdOps = new CreateRrdOps(statementContext);
         this.progress = progress;
     }
 
     public void process(String token, final AsyncCallback<Void> callback) {
         Set<String> resources = requiredResources.getResources(token);
+        logger.debug("Process metadata on {}: {}", token, resources);
         if (resources.isEmpty()) {
+            logger.debug("No required resources found -> callback.onSuccess(null)");
             callback.onSuccess(null);
 
         } else {
             Set<AddressTemplate> templates = FluentIterable.from(resources).transform(AddressTemplate::of).toSet();
-            LookupResult lookupResult = lookup.check(templates, requiredResources.isRecursive(token));
+            LookupResult lookupResult = lookup.check(token, templates, requiredResources.isRecursive(token));
+            logger.debug("{}", lookupResult);
             List<Operation> operations = rrdOps.create(lookupResult);
-            List<List<Operation>> piles = Lists.partition(operations, BATCH_SIZE);
-            List<Composite> composites = Lists.transform(piles, Composite::new);
-            List<Function> functions = new ArrayList<>();
+            if (operations.isEmpty()) {
+                logger.debug("Everything present-> callback.onSuccess(null)");
+                callback.onSuccess(null);
 
-            Outcome<LookupResult> outcome = new Outcome<LookupResult>() {
-                @Override
-                public void onFailure(final LookupResult context) {
-                    callback.onFailure(context.getError());
-                }
+            } else {
+                List<List<Operation>> piles = Lists.partition(operations, BATCH_SIZE);
+                List<Composite> composites = Lists.transform(piles, Composite::new);
+                logger.debug("About to execute {} composite operations: {}", composites.size(), composites);
+                List<Function> functions = Lists.transform(composites,
+                        composite -> new RrdFunction(resourceDescriptions, securityFramework, dispatcher, composite));
 
-                @Override
-                public void onSuccess(final LookupResult context) {
-                    callback.onSuccess(null);
-                }
-            };
-            new Async<LookupResult>(progress).waterfall(lookupResult, outcome, functions.toArray(new Function[0]));
+                Outcome<LookupResult> outcome = new Outcome<LookupResult>() {
+                    @Override
+                    public void onFailure(final LookupResult context) {
+                        callback.onFailure(context.getError());
+                    }
+
+                    @Override
+                    public void onSuccess(final LookupResult context) {
+                        callback.onSuccess(null);
+                    }
+                };
+                //noinspection ToArrayCallWithZeroLengthArrayArgument
+                new Async<LookupResult>(progress).waterfall(lookupResult, outcome,
+                        functions.toArray(new Function[functions.size()]));
+            }
         }
     }
 }

@@ -21,7 +21,7 @@ public class LookupResultTest {
     @Before
     public void setUp() {
         foo = AddressTemplate.of("foo");
-        context = new LookupResult(Sets.newHashSet(foo), false);
+        context = new LookupResult("#token", Sets.newHashSet(foo), false);
     }
 
     @Test

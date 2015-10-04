@@ -19,14 +19,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.meta;
+package org.jboss.hal.dmr.dispatch;
+
+import org.jboss.gwt.flow.Control;
+import org.jboss.gwt.flow.FunctionContext;
+import org.jboss.hal.dmr.model.Operation;
 
 /**
  * @author Harald Pehl
  */
-public class MissingMetadataException extends RuntimeException {
+public class ExceptionalFunctionCallback implements Dispatcher.ExceptionCallback {
 
-    public MissingMetadataException(final String type, final AddressTemplate address) {
-        super("Missing metadata: [" + type + "] @ " + address);
+    private final Control<FunctionContext> control;
+
+    public ExceptionalFunctionCallback(final Control<FunctionContext> control) {this.control = control;}
+
+    @Override
+    public void onException(final Operation operation, final Throwable exception) {
+        control.getContext().setError(exception);
+        control.abort();
     }
 }

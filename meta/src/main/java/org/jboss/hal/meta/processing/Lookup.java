@@ -43,8 +43,8 @@ class Lookup {
         this.securityFramework = securityFramework;
     }
 
-    LookupResult check(Set<AddressTemplate> templates, boolean recursive) {
-        LookupResult lookupResult = new LookupResult(templates, recursive);
+    LookupResult check(String token, Set<AddressTemplate> templates, boolean recursive) {
+        LookupResult lookupResult = new LookupResult(token, templates, recursive);
         for (AddressTemplate template : lookupResult.templates()) {
             if (descriptionRegistry.contains(template)) {
                 lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);

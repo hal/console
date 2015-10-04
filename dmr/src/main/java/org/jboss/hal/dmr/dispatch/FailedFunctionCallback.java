@@ -28,11 +28,11 @@ import org.jboss.hal.dmr.model.Operation;
 /**
  * @author Harald Pehl
  */
-public class FailedDispatcherFunction implements Dispatcher.FailedCallback {
+public class FailedFunctionCallback implements Dispatcher.FailedCallback {
 
     private final Control<FunctionContext> control;
 
-    public FailedDispatcherFunction(final Control<FunctionContext> control) {this.control = control;}
+    public FailedFunctionCallback(final Control<FunctionContext> control) {this.control = control;}
 
     @Override
     public void onFailed(final Operation operation, final String failure) {

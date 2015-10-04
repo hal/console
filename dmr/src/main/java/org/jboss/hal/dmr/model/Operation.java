@@ -80,7 +80,10 @@ public class Operation extends ModelNode {
     }
 
 
-    protected Operation(final String name, final ResourceAddress address, final ModelNode parameter, final String role) {
+    public final static Operation UNDEFINED = new Operation("undefined", ResourceAddress.ROOT, new ModelNode(), null);
+
+    protected Operation(final String name, final ResourceAddress address, final ModelNode parameter,
+            final String role) {
         get(OP).set(name);
         get(ADDRESS).set(address);
         if (parameter.isDefined()) {
