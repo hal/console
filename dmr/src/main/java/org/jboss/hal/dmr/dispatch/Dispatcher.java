@@ -27,11 +27,16 @@ import elemental.client.Browser;
 import elemental.html.FormData;
 import elemental.html.InputElement;
 import elemental.xml.XMLHttpRequest;
+import org.jboss.gwt.flow.Control;
+import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.resources.I18n;
+import org.jboss.hal.spi.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,10 +48,7 @@ import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
 
 /**
- * The dispatcher executes operations / uploads against the management endpoint. You should register a callback for
- * successful operations using {@link #onSuccess(SuccessCallback)}. You can register callbacks to react on failed
- * management operations ({@link #onFailed(FailedCallback)} or technical errors {@link
- * #onException(ExceptionCallback)}.
+ * The dispatcher executes operations / uploads against the management endpoint.
  * <p>
  * TODO Add a way to track management operations.
  *
@@ -55,15 +57,18 @@ import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
 public class Dispatcher {
 
     @FunctionalInterface
-    public interface SuccessCallback {
+    public interface SuccessCallback<T> {
 
-        /**
-         * Called for successful DMR operations.
-         *
-         * @param result The net result (value of the {@code result} attribute)
-         */
-        void onSuccess(ModelNode result);
+        void onSuccess(T result);
     }
+
+
+    @FunctionalInterface
+    public interface OperationCallback extends SuccessCallback<ModelNode> {}
+
+
+    @FunctionalInterface
+    public interface CompositeCallback extends SuccessCallback<CompositeResult> {}
 
 
     @FunctionalInterface
@@ -106,30 +111,75 @@ public class Dispatcher {
     private final Endpoints endpoints;
     private final EventBus eventBus;
     private final Provider<ProcessStateProcessor> processStateProcessor;
-    private SuccessCallback successCallback;
     private FailedCallback failedCallback;
     private ExceptionCallback exceptionCallback;
 
     @Inject
-    public Dispatcher(final Endpoints endpoints, final EventBus eventBus,
+    public Dispatcher(final Endpoints endpoints, final EventBus eventBus, final I18n i18n,
             Provider<ProcessStateProcessor> processStateProcessor) {
         this.endpoints = endpoints;
         this.eventBus = eventBus;
         this.processStateProcessor = processStateProcessor;
 
-        this.successCallback = result -> logger.warn("No success callback defined for last operation.");
         this.failedCallback = (operation, failure) -> {
             logger.error("Dispatcher failed: {}, operation: {}", failure, operation);
+            eventBus.post(Message.error(i18n.constants().dispatcher_failed(), failure));
         };
         this.exceptionCallback = (operation, t) -> {
             logger.error("Dispatcher exception: {}, operation {}", t.getMessage(), operation);
+            eventBus.post(Message.error(i18n.constants().dispatcher_exception(), t.getMessage()));
         };
+    }
+
+
+    // ------------------------------------------------------ execute composite
+
+    public void execute(final Composite composite, final CompositeCallback callback) {
+        dmr(composite, callback, failedCallback, exceptionCallback);
+    }
+
+    public void execute(final Composite composite, final CompositeCallback callback,
+            final FailedCallback failedCallback) {
+        dmr(composite, callback, failedCallback, exceptionCallback);
+    }
+
+    public void execute(final Composite composite, final CompositeCallback callback,
+            final FailedCallback failedCallback, final ExceptionCallback exceptionCallback) {
+        dmr(composite, callback, failedCallback, exceptionCallback);
+    }
+
+    public void executeInFunction(final Control<FunctionContext> control, final Composite composite,
+            final CompositeCallback callback) {
+        dmr(composite, callback, new FailedFunctionCallback(control), new ExceptionalFunctionCallback(control));
+    }
+
+
+    // ------------------------------------------------------ execute operation
+
+    public void execute(final Operation operation, final OperationCallback callback) {
+        dmr(operation, callback, failedCallback, exceptionCallback);
+    }
+
+    public void execute(final Operation operation, final OperationCallback callback,
+            final FailedCallback failedCallback) {
+        dmr(operation, callback, failedCallback, exceptionCallback);
+    }
+
+    public void execute(final Operation operation, final OperationCallback callback,
+            final FailedCallback failedCallback, final ExceptionCallback exceptionCallback) {
+        dmr(operation, callback, failedCallback, exceptionCallback);
+    }
+
+    public void executeInFunction(final Control<FunctionContext> control, Operation operation,
+            final OperationCallback callback) {
+        dmr(operation, callback, new FailedFunctionCallback(control), new ExceptionalFunctionCallback(control));
     }
 
 
     // ------------------------------------------------------ execute dmr
 
-    public void execute(final Operation operation) {
+    private <T> void dmr(final Operation operation, final SuccessCallback<T> callback,
+            final FailedCallback failedCallback, final ExceptionCallback exceptionCallback) {
         String url;
         HttpMethod method;
         String op = operation.get(OP).asString();
@@ -146,7 +196,8 @@ public class Dispatcher {
             url = endpoints.dmr();
         }
 
-        XMLHttpRequest xhr = newXhr(url, method, operation, new DmrPayloadProcessor());
+        XMLHttpRequest xhr = newXhr(url, method, operation, new DmrPayloadProcessor(), callback, failedCallback,
+                exceptionCallback);
         xhr.setRequestHeader(HEADER_ACCEPT, APPLICATION_DMR_ENCODED);
         xhr.setRequestHeader(HEADER_CONTENT_TYPE, APPLICATION_DMR_ENCODED);
         if (method == GET) {
@@ -154,10 +205,6 @@ public class Dispatcher {
         } else {
             xhr.send(operation.toBase64String());
         }
-    }
-
-    public void execute(final Composite composite) {
-
     }
 
     private String descriptionOperationToUrl(final ModelNode operation) {
@@ -179,9 +226,20 @@ public class Dispatcher {
 
     // ------------------------------------------------------ upload
 
-    public void upload(final InputElement fileInput, final Operation operation) {
+    public void upload(final InputElement fileInput, final Operation operation, final OperationCallback callback) {
+        upload(fileInput, operation, callback, failedCallback, exceptionCallback);
+    }
+
+    public void upload(final InputElement fileInput, final Operation operation, final OperationCallback callback,
+            final FailedCallback failedCallback) {
+        upload(fileInput, operation, callback, failedCallback, exceptionCallback);
+    }
+
+    public void upload(final InputElement fileInput, final Operation operation, final OperationCallback callback,
+            final FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
         FormData formData = createFormData(fileInput, operation.toBase64String());
-        XMLHttpRequest xhr = newXhr(endpoints.upload(), POST, operation, new UploadPayloadProcessor());
+        XMLHttpRequest xhr = newXhr(endpoints.upload(), POST, operation, new UploadPayloadProcessor(), callback,
+                failedCallback, exceptionCallback);
         xhr.send(formData);
     }
 
@@ -195,8 +253,9 @@ public class Dispatcher {
 
     // ------------------------------------------------------ create and setup xhr
 
-    private XMLHttpRequest newXhr(final String url, final HttpMethod method, final Operation operation,
-            final PayloadProcessor payloadProcessor) {
+    private <T> XMLHttpRequest newXhr(final String url, final HttpMethod method, final Operation operation,
+            final PayloadProcessor payloadProcessor, SuccessCallback<T> callback, final FailedCallback failedCallback,
+            final ExceptionCallback exceptionCallback) {
         XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
 
         xhr.setOnreadystatechange(event -> {
@@ -215,7 +274,15 @@ public class Dispatcher {
                                 ProcessState processState = processStateProcessor.get().process(payload);
                                 eventBus.post(processState);
                             }
-                            successCallback.onSuccess(payload.get(RESULT));
+                            ModelNode result = payload.get(RESULT);
+                            if (operation instanceof Composite && callback instanceof CompositeCallback) {
+                                ((CompositeCallback) callback).onSuccess(new CompositeResult(result));
+                            } else if (callback instanceof OperationCallback) {
+                                ((OperationCallback) callback).onSuccess(result);
+                            } else {
+                                exceptionCallback.onException(operation,
+                                        new DispatchException("Wrong combination of operation and callback.", 500));
+                            }
                         } else {
                             failedCallback.onFailed(operation, payload.getFailureDescription());
                         }
@@ -235,7 +302,7 @@ public class Dispatcher {
                         break;
                     case 503:
                         exceptionCallback.onException(operation, new DispatchException(
-                                "Service temporarily unavailable. Is the server is still booting?", status));
+                                "Service temporarily unavailable. Is the server still booting?", status));
                         break;
                     default:
                         exceptionCallback.onException(operation,
@@ -253,23 +320,5 @@ public class Dispatcher {
         xhr.setWithCredentials(true);
 
         return xhr;
-    }
-
-
-    // ------------------------------------------------------ callbacks
-
-    public Dispatcher onSuccess(final SuccessCallback successCallback) {
-        this.successCallback = successCallback;
-        return this;
-    }
-
-    public Dispatcher onFailed(final FailedCallback failedCallback) {
-        this.failedCallback = failedCallback;
-        return this;
-    }
-
-    public Dispatcher onException(final ExceptionCallback exceptionCallback) {
-        this.exceptionCallback = exceptionCallback;
-        return this;
     }
 }

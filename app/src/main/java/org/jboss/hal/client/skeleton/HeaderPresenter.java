@@ -33,7 +33,7 @@ import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
 import org.jboss.hal.core.HasPresenter;
-import org.jboss.hal.core.notification.Message;
+import org.jboss.hal.spi.Message;
 
 import javax.inject.Inject;
 
@@ -53,6 +53,8 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> {
     // @formatter:on
 
 
+    private final com.ekuefler.supereventbus.EventBus superEventBus;
+    private final MessageRegistration registration;
     private final PlaceManager placeManager;
     private final Environment environment;
     private final Endpoints endpoints;
@@ -68,8 +70,8 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> {
             final Endpoints endpoints,
             final User user) {
         super(eventBus, view);
-        superEventBus.register(this, registration);
-
+        this.superEventBus = superEventBus;
+        this.registration = registration;
         this.placeManager = placeManager;
         this.environment = environment;
         this.endpoints = endpoints;
@@ -79,8 +81,15 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> {
     @Override
     protected void onBind() {
         super.onBind();
+        superEventBus.register(this, registration);
         getView().setPresenter(this);
         getView().update(environment, endpoints, user);
+    }
+
+    @Override
+    protected void onUnbind() {
+        super.onUnbind();
+        superEventBus.unregister(this);
     }
 
     @Override

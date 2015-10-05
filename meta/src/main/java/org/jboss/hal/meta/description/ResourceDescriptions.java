@@ -47,7 +47,8 @@ public class ResourceDescriptions extends AbstractMetadataRegistry<ResourceDescr
     }
 
     @Override
-    protected void addAddress(final ResourceAddress address, final ResourceDescription metadata) {
+    public void add(final ResourceAddress address, final ResourceDescription metadata) {
+        // TODO replace concrete addresses with wildcards
         registry.put(address, metadata);
     }
 

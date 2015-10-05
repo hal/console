@@ -26,8 +26,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Search index meta data for proxies. This annotation works as add-on for {@link Requires} which is the
- * primarily source for the search index. Without specifying {@code SearchIndex} on a proxy, the enclosing presenter
- * is indexed using the defaults specified here. Use {@code SearchIndex} on a presenter if you want to exclude the
+ * primarily source for the search index. Without specifying {@code Keywords} on a proxy, the enclosing presenter
+ * is indexed using the defaults specified here. Use {@code Keywords} on a presenter if you want to exclude the
  * presenter or if you want to boost the presenter by setting keywords.
  *
  * @author Harald Pehl

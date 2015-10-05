@@ -88,7 +88,7 @@ public class NameTokenProcessor extends AbstractProcessor {
             Requires requires = tokenElement.getAnnotation(Requires.class);
             NoGatekeeper noGatekeeper = tokenElement.getAnnotation(NoGatekeeper.class);
             if (requires != null) {
-                tokenInfo.addResources(requires.resources());
+                tokenInfo.addResources(requires.value());
                 tokenInfo.setRecursive(requires.recursive());
             } else if (noGatekeeper == null) {
                 warning(e, "Proxy with token \"#%s\" is missing @%s annotation.",

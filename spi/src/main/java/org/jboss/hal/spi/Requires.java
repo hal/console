@@ -16,7 +16,7 @@ public @interface Requires {
     /**
      * Set of required resource to operate on (addressable privilege) within the presenter
      */
-    String[] resources();
+    String[] value();
 
     /**
      * Recursively parse child resources

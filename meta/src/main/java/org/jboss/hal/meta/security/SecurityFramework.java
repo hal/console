@@ -47,7 +47,7 @@ public class SecurityFramework extends AbstractMetadataRegistry<SecurityContext>
     }
 
     @Override
-    protected void addAddress(final ResourceAddress address, final SecurityContext metadata) {
+    public void add(final ResourceAddress address, final SecurityContext metadata) {
         registry.put(address, metadata);
     }
 

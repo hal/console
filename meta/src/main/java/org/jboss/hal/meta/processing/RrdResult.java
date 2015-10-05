@@ -21,7 +21,7 @@
  */
 package org.jboss.hal.meta.processing;
 
-import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 
@@ -30,11 +30,9 @@ import org.jboss.hal.meta.security.SecurityContext;
  */
 public class RrdResult {
 
-    final AddressTemplate template;
+    final ResourceAddress address;
     ResourceDescription resourceDescription;
     SecurityContext securityContext;
 
-    public RrdResult(final AddressTemplate template) {
-        this.template = template;
-    }
+    public RrdResult(final ResourceAddress address) {this.address = address;}
 }

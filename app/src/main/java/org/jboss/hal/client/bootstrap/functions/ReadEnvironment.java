@@ -25,11 +25,10 @@ import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.dispatch.ExceptionalFunctionCallback;
-import org.jboss.hal.dmr.dispatch.FailedFunctionCallback;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,12 +69,12 @@ public class ReadEnvironment implements BootstrapFunction {
                 .build());
         ops.add(new Operation.Builder("whoami", ROOT).param("verbose", true).build());
 
-        dispatcher
-                .onSuccess(payload -> {
+        dispatcher.executeInFunction(control, new Composite(ops),
+                (CompositeResult result) -> {
                     logger.debug("Bootstrap[ReadEnvironment]: Parse root resource");
 
                     // server info
-                    ModelNode node = payload.get("step-1").get(RESULT);
+                    ModelNode node = result.step("step-1").get(RESULT);
                     environment.setInstanceInfo(node.get("product-name").asString(),
                             node.get("product-version").asString(),
                             node.get("release-codename").asString(), node.get("release-version").asString(),
@@ -90,7 +89,7 @@ public class ReadEnvironment implements BootstrapFunction {
                             node.get("management-minor-version").asString());
 
                     // user info
-                    ModelNode whoami = payload.get("step-2").get(RESULT);
+                    ModelNode whoami = result.step("step-2").get(RESULT);
                     String username = whoami.get("identity").get("username").asString();
                     user.setName(username);
                     if (whoami.hasDefined("mapped-roles")) {
@@ -109,9 +108,6 @@ public class ReadEnvironment implements BootstrapFunction {
                         return false;
                     }, wait);
                     // control.proceed();
-                })
-                .onFailed(new FailedFunctionCallback(control))
-                .onException(new ExceptionalFunctionCallback(control))
-                .execute(new Composite(ops));
+                });
     }
 }

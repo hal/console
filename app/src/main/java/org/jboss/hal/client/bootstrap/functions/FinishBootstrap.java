@@ -25,7 +25,7 @@ import com.ekuefler.supereventbus.EventBus;
 import com.google.gwt.core.client.GWT;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.hal.core.notification.Message;
+import org.jboss.hal.spi.Message;
 import org.jboss.hal.resources.I18n;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

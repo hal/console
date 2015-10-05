@@ -67,20 +67,11 @@ public abstract class AbstractMetadataRegistry<T> implements MetadataRegistry<T>
         return lookupAddress(address) != null;
     }
 
-    @Override
-    public void add(AddressTemplate template, T metadata) {
-        ResourceAddress address = resolveTemplate(template);
-        addAddress(address, metadata);
-        logger.debug("Added {} for template {} using address {}", type, template, address);
-    }
-
     private ResourceAddress resolveTemplate(AddressTemplate template) {
         return template.resolve(statementContext);
     }
 
     protected abstract T lookupAddress(ResourceAddress address);
-
-    protected abstract void addAddress(ResourceAddress address, T metadata);
 
     protected abstract void addDeferred(ResourceAddress address, final MetadataCallback<T> callback);
 }

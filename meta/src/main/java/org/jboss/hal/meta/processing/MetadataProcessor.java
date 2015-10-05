@@ -25,7 +25,7 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Function;
+import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -61,7 +61,7 @@ public class MetadataProcessor {
     private final ResourceDescriptions resourceDescriptions;
     private final SecurityFramework securityFramework;
     private final Lookup lookup;
-    private final CreateRrdOps rrdOps;
+    private final CreateRrdOperations rrdOps;
     private final Progress progress;
 
     @Inject
@@ -76,7 +76,7 @@ public class MetadataProcessor {
         this.resourceDescriptions = resourceDescriptions;
         this.securityFramework = securityFramework;
         this.lookup = new Lookup(resourceDescriptions, securityFramework);
-        this.rrdOps = new CreateRrdOps(statementContext);
+        this.rrdOps = new CreateRrdOperations(statementContext);
         this.progress = progress;
     }
 
@@ -90,33 +90,31 @@ public class MetadataProcessor {
         } else {
             Set<AddressTemplate> templates = FluentIterable.from(resources).transform(AddressTemplate::of).toSet();
             LookupResult lookupResult = lookup.check(token, templates, requiredResources.isRecursive(token));
-            logger.debug("{}", lookupResult);
             List<Operation> operations = rrdOps.create(lookupResult);
             if (operations.isEmpty()) {
-                logger.debug("Everything present-> callback.onSuccess(null)");
+                logger.debug("Everything present -> callback.onSuccess(null)");
                 callback.onSuccess(null);
 
             } else {
                 List<List<Operation>> piles = Lists.partition(operations, BATCH_SIZE);
                 List<Composite> composites = Lists.transform(piles, Composite::new);
-                logger.debug("About to execute {} composite operations: {}", composites.size(), composites);
-                List<Function> functions = Lists.transform(composites,
+                logger.debug("About to execute {} composite operations", composites.size());
+                List<RrdFunction> functions = Lists.transform(composites,
                         composite -> new RrdFunction(resourceDescriptions, securityFramework, dispatcher, composite));
 
-                Outcome<LookupResult> outcome = new Outcome<LookupResult>() {
+                Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
                     @Override
-                    public void onFailure(final LookupResult context) {
+                    public void onFailure(final FunctionContext context) {
                         callback.onFailure(context.getError());
                     }
 
                     @Override
-                    public void onSuccess(final LookupResult context) {
+                    public void onSuccess(final FunctionContext context) {
                         callback.onSuccess(null);
                     }
                 };
-                //noinspection ToArrayCallWithZeroLengthArrayArgument
-                new Async<LookupResult>(progress).waterfall(lookupResult, outcome,
-                        functions.toArray(new Function[functions.size()]));
+                new Async<FunctionContext>(progress).waterfall(new FunctionContext(), outcome,
+                        functions.toArray(new RrdFunction[functions.size()]));
             }
         }
     }

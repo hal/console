@@ -35,11 +35,11 @@ import static org.jboss.hal.meta.processing.LookupResult.*;
 /**
  * @author Harald Pehl
  */
-class CreateRrdOps {
+class CreateRrdOperations {
 
     private final StatementContext statementContext;
 
-    public CreateRrdOps(final StatementContext statementContext) {
+    public CreateRrdOperations(final StatementContext statementContext) {
         this.statementContext = statementContext;
     }
 

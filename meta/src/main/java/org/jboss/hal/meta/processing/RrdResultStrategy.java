@@ -22,13 +22,14 @@
 package org.jboss.hal.meta.processing;
 
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
  * @author Harald Pehl
  */
 class RrdResultStrategy {
 
-    RrdResultParser choose(ModelNode modelNode) {
+    RrdResultParser choose(final ResourceAddress address, ModelNode rrdResult) {
         return null;
     }
 }

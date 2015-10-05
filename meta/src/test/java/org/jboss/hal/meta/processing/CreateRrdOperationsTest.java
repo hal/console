@@ -20,16 +20,16 @@ import static org.junit.Assert.*;
 /**
  * @author Harald Pehl
  */
-public class CreateRrdOpsTest {
+public class CreateRrdOperationsTest {
 
-    private CreateRrdOps rrdOps;
+    private CreateRrdOperations rrdOps;
     private StatementContext statementContext;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
         statementContext = new EchoContext();
-        rrdOps = new CreateRrdOps(statementContext);
+        rrdOps = new CreateRrdOperations(statementContext);
     }
 
     @Test
@@ -54,18 +54,18 @@ public class CreateRrdOpsTest {
         lookupResult.markMetadataPresent(allPresent, RESOURCE_DESCRIPTION_PRESENT);
         lookupResult.markMetadataPresent(allPresent, SECURITY_CONTEXT_PRESENT);
 
-        List<Operation> operations = rrdOps.create(lookupResult);
-        assertEquals(3, operations.size());
+        List<Operation> inputs = rrdOps.create(lookupResult);
+        assertEquals(3, inputs.size());
 
-        Operation operation = findOperation(operations, nothingPresent);
+        Operation operation = findOperation(inputs, nothingPresent);
         assertEquals(COMBINED_DESCRIPTIONS, operation.get(ACCESS_CONTROL).asString());
         assertEquals(true, operation.get(OPERATIONS).asBoolean());
 
-        operation = findOperation(operations, descriptionPresent);
+        operation = findOperation(inputs, descriptionPresent);
         assertEquals("trim-descriptions", operation.get(ACCESS_CONTROL).asString());
         assertEquals(true, operation.get(OPERATIONS).asBoolean());
 
-        operation = findOperation(operations, securityContextPresent);
+        operation = findOperation(inputs, securityContextPresent);
         assertFalse(operation.get(ACCESS_CONTROL).isDefined());
         assertFalse(operation.get(OPERATIONS).isDefined());
     }

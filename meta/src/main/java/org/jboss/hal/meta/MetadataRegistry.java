@@ -21,6 +21,8 @@
  */
 package org.jboss.hal.meta;
 
+import org.jboss.hal.dmr.model.ResourceAddress;
+
 /**
  * @author Harald Pehl
  */
@@ -32,5 +34,5 @@ public interface MetadataRegistry<T> {
 
     boolean contains(AddressTemplate template);
 
-    void add(AddressTemplate template, T metadata);
+    void add(ResourceAddress address, T metadata);
 }

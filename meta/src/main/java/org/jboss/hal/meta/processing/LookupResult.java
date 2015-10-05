@@ -21,7 +21,6 @@
  */
 package org.jboss.hal.meta.processing;
 
-import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.MissingMetadataException;
 
@@ -33,7 +32,7 @@ import java.util.Set;
 /**
  * @author Harald Pehl
  */
-class LookupResult extends FunctionContext {
+class LookupResult {
 
     /**
      * Bit mask for missing / present metadata. 0 means metadata missing, 1 means metadata present.

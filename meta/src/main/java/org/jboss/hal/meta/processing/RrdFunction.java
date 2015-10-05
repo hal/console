@@ -26,9 +26,9 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.dispatch.ExceptionalFunctionCallback;
-import org.jboss.hal.dmr.dispatch.FailedFunctionCallback;
 import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.CompositeResult;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.security.SecurityFramework;
 
@@ -56,23 +56,27 @@ class RrdFunction implements Function<FunctionContext> {
 
     @Override
     public void execute(final Control<FunctionContext> control) {
-        dispatcher.onException(new ExceptionalFunctionCallback(control))
-                .onFailed(new FailedFunctionCallback(control))
-                .onSuccess(result -> {
-                    int index = 1;
-                    // for steps
-                    ModelNode stepResult = result.get("step-" + index);
-                    RrdResultParser parser = strategy.choose(stepResult);
-                    List<RrdResult> results = parser.parse(stepResult);
-                    for (RrdResult rr : results) {
-                        if (rr.resourceDescription != null) {
-                            resourceDescriptions.add(rr.template, rr.resourceDescription);
+        dispatcher.executeInFunction(control, composite,
+                (CompositeResult result) -> {
+                    int index = 0;
+                    for (ModelNode step : result) {
+                        RrdResultParser parser = strategy.choose(operationAddress(index), step);
+                        List<RrdResult> results = parser.parse(step);
+                        for (RrdResult rr : results) {
+                            if (rr.resourceDescription != null) {
+                                resourceDescriptions.add(rr.address, rr.resourceDescription);
+                            }
+                            if (rr.securityContext != null) {
+                                securityFramework.add(rr.address, rr.securityContext);
+                            }
                         }
-                        if (rr.securityContext != null) {
-                            securityFramework.add(rr.template, rr.securityContext);
-                        }
+                        index++;
                     }
-                })
-                .execute(composite);
+                });
+    }
+
+    private ResourceAddress operationAddress(int index) {
+        // TODO get operation address from composite
+        return null;
     }
 }
