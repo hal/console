@@ -30,5 +30,5 @@ import java.util.List;
  */
 interface RrdResultParser {
 
-    List<RrdResult> parse(ModelNode modelNode);
+    List<RrdResult> parse(ModelNode modelNode) throws ParserException;
 }

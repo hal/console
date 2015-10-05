@@ -87,7 +87,7 @@ public class SecurityContext extends ModelNode {
     private static final String OPERATIONS = "operations";
     private static final String ATTRIBUTES = "attributes";
 
-    SecurityContext(ModelNode payload) {
+    public SecurityContext(ModelNode payload) {
         set(payload);
     }
 

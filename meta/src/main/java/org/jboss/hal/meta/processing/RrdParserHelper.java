@@ -21,22 +21,28 @@
  */
 package org.jboss.hal.meta.processing;
 
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT;
+
 /**
  * @author Harald Pehl
  */
-class RrdResult {
+class RrdParserHelper {
 
-    final ResourceAddress address;
-    ResourceDescription resourceDescription;
-    SecurityContext securityContext;
-
-    RrdResult(final ResourceAddress address) {this.address = address;}
-
-    boolean isDefined() {
-        return resourceDescription != null || securityContext != null;
+    static RrdResult newRrdResult(ResourceAddress address, ModelNode payload) {
+        RrdResult rr = new RrdResult(address);
+        if (payload.hasDefined(DESCRIPTION)) {
+            rr.resourceDescription = new ResourceDescription(payload);
+        }
+        ModelNode accessControl = payload.get(ACCESS_CONTROL);
+        if (accessControl.isDefined() && accessControl.hasDefined(DEFAULT)) {
+            rr.securityContext = new SecurityContext(accessControl.get(DEFAULT));
+        }
+        return rr;
     }
 }

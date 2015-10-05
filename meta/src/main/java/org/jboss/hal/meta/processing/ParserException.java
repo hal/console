@@ -21,22 +21,12 @@
  */
 package org.jboss.hal.meta.processing;
 
-import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.description.ResourceDescription;
-import org.jboss.hal.meta.security.SecurityContext;
-
 /**
  * @author Harald Pehl
  */
-class RrdResult {
+public class ParserException extends RuntimeException {
 
-    final ResourceAddress address;
-    ResourceDescription resourceDescription;
-    SecurityContext securityContext;
-
-    RrdResult(final ResourceAddress address) {this.address = address;}
-
-    boolean isDefined() {
-        return resourceDescription != null || securityContext != null;
+    public ParserException(final String message) {
+        super(message);
     }
 }

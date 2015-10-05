@@ -92,7 +92,7 @@ public class MetadataProcessor {
             LookupResult lookupResult = lookup.check(token, templates, requiredResources.isRecursive(token));
             List<Operation> operations = rrdOps.create(lookupResult);
             if (operations.isEmpty()) {
-                logger.debug("Everything present -> callback.onSuccess(null)");
+                logger.debug("All required resources already processed -> callback.onSuccess(null)");
                 callback.onSuccess(null);
 
             } else {

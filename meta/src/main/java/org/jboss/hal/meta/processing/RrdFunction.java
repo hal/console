@@ -34,6 +34,10 @@ import org.jboss.hal.meta.security.SecurityFramework;
 
 import java.util.List;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STEPS;
+
 /**
  * @author Harald Pehl
  */
@@ -58,25 +62,36 @@ class RrdFunction implements Function<FunctionContext> {
     public void execute(final Control<FunctionContext> control) {
         dispatcher.executeInFunction(control, composite,
                 (CompositeResult result) -> {
-                    int index = 0;
-                    for (ModelNode step : result) {
-                        RrdResultParser parser = strategy.choose(operationAddress(index), step);
-                        List<RrdResult> results = parser.parse(step);
-                        for (RrdResult rr : results) {
-                            if (rr.resourceDescription != null) {
-                                resourceDescriptions.add(rr.address, rr.resourceDescription);
+                    try {
+                        int index = 0;
+                        for (ModelNode step : result) {
+                            ModelNode stepResult = step.get(RESULT);
+                            RrdResultParser parser = strategy.choose(operationAddress(index), stepResult);
+                            List<RrdResult> results = parser.parse(step);
+                            for (RrdResult rr : results) {
+                                if (rr.resourceDescription != null) {
+                                    resourceDescriptions.add(rr.address, rr.resourceDescription);
+                                }
+                                if (rr.securityContext != null) {
+                                    securityFramework.add(rr.address, rr.securityContext);
+                                }
                             }
-                            if (rr.securityContext != null) {
-                                securityFramework.add(rr.address, rr.securityContext);
-                            }
+                            index++;
                         }
-                        index++;
+                    } catch (ParserException e) {
+                        control.getContext().setError(e);
+                        control.abort();
                     }
                 });
     }
 
     private ResourceAddress operationAddress(int index) {
-        // TODO get operation address from composite
-        return null;
+        List<ModelNode> steps = composite.get(STEPS).asList();
+        if (index >= steps.size()) {
+            throw new ParserException(
+                    "Cannot get operation at index " + index + " from composite " + composite);
+        }
+        ModelNode operation = steps.get(index);
+        return new ResourceAddress(operation.get(ADDRESS));
     }
 }

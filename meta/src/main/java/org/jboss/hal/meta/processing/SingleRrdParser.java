@@ -22,20 +22,45 @@
 package org.jboss.hal.meta.processing;
 
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.List;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 
 /**
- * Analyzes a single step result of a composite rrd operation and returns a matching {@link RrdResultParser}.
+ * Parser for a single rrd result. The model node is expected to look like
+ * <pre>
+ * {
+ *     "outcome" => "success",
+ *     "result" => {
+ *         ....
+ *     }
+ * }
+ * </pre>
  *
  * @author Harald Pehl
  */
-class RrdResultStrategy {
+public class SingleRrdParser implements RrdResultParser {
 
-    RrdResultParser choose(final ResourceAddress operationAddress, ModelNode modelNode) {
-        if (modelNode.getType() == ModelType.LIST) {
+    private static final Logger logger = LoggerFactory.getLogger(ListRrdParser.class);
 
+    private final ResourceAddress operationAddress;
+
+    public SingleRrdParser(final ResourceAddress operationAddress) {this.operationAddress = operationAddress;}
+
+    @Override
+    public List<RrdResult> parse(final ModelNode modelNode) {
+        ModelNode payload = modelNode.get(RESULT);
+        if (payload.isDefined()) {
+            RrdResult rr = RrdParserHelper.newRrdResult(operationAddress, payload);
+            return rr.isDefined() ? Collections.singletonList(rr) : Collections.<RrdResult>emptyList();
+        } else {
+            logger.debug("Skip undefined rrd result at node " + modelNode);
+            return Collections.emptyList();
         }
-        return null;
     }
 }
