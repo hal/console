@@ -86,12 +86,14 @@ class SingleRrdParser {
             List<Property> children = modelNode.get(CHILDREN).asPropertyList();
             for (Property child : children) {
                 String addressKey = child.getName();
-                List<Property> modelDescriptions = child.getValue().get(MODEL_DESCRIPTION).asPropertyList();
-                for (Property modelDescription : modelDescriptions) {
-                    String addressValue = modelDescription.getName();
-                    ModelNode childNode = modelDescription.getValue();
-                    ResourceAddress childAddress = new ResourceAddress(address).add(addressKey, addressValue);
-                    parseSingle(childAddress, childNode, results);
+                if (child.getValue().hasDefined(MODEL_DESCRIPTION)) {
+                    List<Property> modelDescriptions = child.getValue().get(MODEL_DESCRIPTION).asPropertyList();
+                    for (Property modelDescription : modelDescriptions) {
+                        String addressValue = modelDescription.getName();
+                        ModelNode childNode = modelDescription.getValue();
+                        ResourceAddress childAddress = new ResourceAddress(address).add(addressKey, addressValue);
+                        parseSingle(childAddress, childNode, results);
+                    }
                 }
             }
         }

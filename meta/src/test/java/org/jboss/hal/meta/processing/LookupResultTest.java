@@ -6,51 +6,70 @@ import org.jboss.hal.meta.MissingMetadataException;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.jboss.hal.meta.processing.LookupResult.RESOURCE_DESCRIPTION_PRESENT;
-import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESENT;
-import static org.junit.Assert.assertEquals;
+import static org.jboss.hal.meta.processing.LookupResult.*;
+import static org.junit.Assert.*;
 
 /**
  * @author Harald Pehl
  */
 public class LookupResultTest {
 
-    private LookupResult context;
+    private LookupResult lookupResult;
     private AddressTemplate foo;
 
     @Before
     public void setUp() {
         foo = AddressTemplate.of("foo");
-        context = new LookupResult("#token", Sets.newHashSet(foo), false);
+        lookupResult = new LookupResult("#token", Sets.newHashSet(foo), false);
     }
 
     @Test
     public void initialState() {
-        assertEquals(1, context.templates().size());
-        assertEquals(0, context.missingMetadata(foo));
+        assertEquals(1, lookupResult.templates().size());
+        assertEquals(0, lookupResult.missingMetadata(foo));
     }
 
     @Test(expected = MissingMetadataException.class)
     public void missingMetadata() {
-        context.missingMetadata(AddressTemplate.of("bar"));
+        lookupResult.missingMetadata(AddressTemplate.of("bar"));
     }
 
     @Test
     public void markResourceDescriptionPresent() {
-        context.markMetadataPresent(foo, RESOURCE_DESCRIPTION_PRESENT);
-        assertEquals(0b10, context.missingMetadata(foo));
+        lookupResult.markMetadataPresent(foo, RESOURCE_DESCRIPTION_PRESENT);
+        assertEquals(0b10, lookupResult.missingMetadata(foo));
     }
 
     @Test
     public void markSecurityContextPresent() {
-        context.markMetadataPresent(foo, SECURITY_CONTEXT_PRESENT);
-        assertEquals(0b01, context.missingMetadata(foo));
+        lookupResult.markMetadataPresent(foo, SECURITY_CONTEXT_PRESENT);
+        assertEquals(0b01, lookupResult.missingMetadata(foo));
     }
 
     @Test
     public void markAllPresent() {
-        context.markMetadataPresent(foo, RESOURCE_DESCRIPTION_PRESENT);
-        context.markMetadataPresent(foo, SECURITY_CONTEXT_PRESENT);
-        assertEquals(0b11, context.missingMetadata(foo));
+        lookupResult.markMetadataPresent(foo, RESOURCE_DESCRIPTION_PRESENT);
+        lookupResult.markMetadataPresent(foo, SECURITY_CONTEXT_PRESENT);
+        assertEquals(0b11, lookupResult.missingMetadata(foo));
+    }
+
+    @Test
+    public void allPresent() {
+        final LookupResult localLookupResult = new LookupResult("#token",
+                Sets.newHashSet(
+                        AddressTemplate.of("one"),
+                        AddressTemplate.of("two"),
+                        AddressTemplate.of("three")),
+                false);
+
+        localLookupResult.markMetadataPresent(AddressTemplate.of("one"), ALL_PRESENT);
+        localLookupResult.markMetadataPresent(AddressTemplate.of("two"), RESOURCE_DESCRIPTION_PRESENT);
+        localLookupResult.markMetadataPresent(AddressTemplate.of("three"), SECURITY_CONTEXT_PRESENT);
+        assertFalse(localLookupResult.allPresent());
+
+        localLookupResult.markMetadataPresent(AddressTemplate.of("one"), ALL_PRESENT);
+        localLookupResult.markMetadataPresent(AddressTemplate.of("two"), ALL_PRESENT);
+        localLookupResult.markMetadataPresent(AddressTemplate.of("three"), ALL_PRESENT);
+        assertTrue(localLookupResult.allPresent());
     }
 }

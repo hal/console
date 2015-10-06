@@ -64,13 +64,22 @@ class LookupResult {
         return recursive;
     }
 
-    void markMetadataPresent(AddressTemplate template, int what) {
-        int combined = failFastGet(template) | what;
+    void markMetadataPresent(AddressTemplate template, int flag) {
+        int combined = failFastGet(template) | flag;
         templates.put(template, combined);
     }
 
     int missingMetadata(AddressTemplate template) {
         return failFastGet(template);
+    }
+
+    boolean allPresent() {
+        for (Integer flags : templates.values()) {
+            if (flags != ALL_PRESENT) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private int failFastGet(AddressTemplate template) {

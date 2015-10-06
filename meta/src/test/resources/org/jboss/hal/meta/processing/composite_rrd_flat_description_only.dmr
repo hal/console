@@ -1,0 +1,1444 @@
+{
+    "step-1" => {
+        "outcome" => "success",
+        "result" => {
+            "description" => "Undertow subsystem",
+            "attributes" => {
+                "default-server" => {
+                    "type" => STRING,
+                    "description" => "The default server to use for deployments",
+                    "expressions-allowed" => false,
+                    "nillable" => true,
+                    "default" => "default-server",
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L,
+                    "access-type" => "read-write",
+                    "storage" => "configuration",
+                    "restart-required" => "all-services"
+                },
+                "default-servlet-container" => {
+                    "type" => STRING,
+                    "description" => "The default servlet container to use for deployments",
+                    "expressions-allowed" => false,
+                    "nillable" => true,
+                    "default" => "default",
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L,
+                    "access-type" => "read-write",
+                    "storage" => "configuration",
+                    "restart-required" => "all-services"
+                },
+                "default-virtual-host" => {
+                    "type" => STRING,
+                    "description" => "The default virtual host to use for deployments",
+                    "expressions-allowed" => false,
+                    "nillable" => true,
+                    "default" => "default-host",
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L,
+                    "access-type" => "read-write",
+                    "storage" => "configuration",
+                    "restart-required" => "all-services"
+                },
+                "instance-id" => {
+                    "type" => STRING,
+                    "description" => "The cluster instance id",
+                    "expressions-allowed" => true,
+                    "nillable" => true,
+                    "default" => expression "${jboss.node.name}",
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L,
+                    "access-type" => "read-write",
+                    "storage" => "configuration",
+                    "restart-required" => "all-services"
+                },
+                "statistics-enabled" => {
+                    "type" => BOOLEAN,
+                    "description" => "Configures if are statistics enabled",
+                    "expressions-allowed" => true,
+                    "nillable" => true,
+                    "default" => false,
+                    "access-type" => "read-write",
+                    "storage" => "configuration",
+                    "restart-required" => "no-services"
+                }
+            },
+            "operations" => undefined,
+            "notifications" => undefined,
+            "children" => {
+                "configuration" => {
+                    "description" => "null",
+                    "model-description" => undefined
+                },
+                "servlet-container" => {
+                    "description" => "A servlet container",
+                    "model-description" => undefined
+                },
+                "server" => {
+                    "description" => "A server",
+                    "model-description" => undefined
+                },
+                "buffer-cache" => {
+                    "description" => "The buffer cache used to cache static content",
+                    "model-description" => undefined
+                }
+            }
+        }
+    },
+    "step-2" => {
+        "outcome" => "success",
+        "result" => [{
+            "address" => [
+                ("subsystem" => "undertow"),
+                ("server" => "*")
+            ],
+            "outcome" => "success",
+            "result" => {
+                "description" => "A server",
+                "attributes" => {
+                    "default-host" => {
+                        "type" => STRING,
+                        "description" => "The servers default virtual host",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => "default-host",
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "servlet-container" => {
+                        "type" => STRING,
+                        "description" => "The servers default servlet container",
+                        "expressions-allowed" => false,
+                        "nillable" => true,
+                        "default" => "default",
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    }
+                },
+                "operations" => undefined,
+                "notifications" => undefined,
+                "children" => {
+                    "host" => {
+                        "description" => "The servers host",
+                        "model-description" => undefined
+                    },
+                    "http-listener" => {
+                        "description" => "A HTTP listener",
+                        "model-description" => undefined
+                    },
+                    "https-listener" => {
+                        "description" => "A HTTPS listener",
+                        "model-description" => undefined
+                    },
+                    "ajp-listener" => {
+                        "description" => "An AJP listener",
+                        "model-description" => undefined
+                    }
+                }
+            }
+        }]
+    },
+    "step-3" => {
+        "outcome" => "success",
+        "result" => [{
+            "address" => [
+                ("subsystem" => "undertow"),
+                ("server" => "*"),
+                ("host" => "*")
+            ],
+            "outcome" => "success",
+            "result" => {
+                "description" => "An Undertow host",
+                "attributes" => {
+                    "alias" => {
+                        "type" => LIST,
+                        "description" => "Aliases for the host",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "value-type" => STRING,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "default-response-code" => {
+                        "type" => INT,
+                        "description" => "If set, this will be response code sent back in case requested context does not exist on server.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => 404,
+                        "min" => 400L,
+                        "max" => 599L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "resource-services"
+                    },
+                    "default-web-module" => {
+                        "type" => STRING,
+                        "description" => "Default web module",
+                        "expressions-allowed" => false,
+                        "nillable" => true,
+                        "default" => "ROOT.war",
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "resource-services"
+                    },
+                    "disable-console-redirect" => {
+                        "type" => BOOLEAN,
+                        "description" => "if set to true, /console redirect wont be enabled for this host, default is false",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => false,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "resource-services"
+                    }
+                },
+                "operations" => undefined,
+                "notifications" => undefined,
+                "children" => {
+                    "setting" => {
+                        "description" => "Settings",
+                        "model-description" => undefined
+                    },
+                    "location" => {
+                        "description" => "Holds configuration of location resource",
+                        "model-description" => undefined
+                    },
+                    "filter-ref" => {
+                        "description" => "Reference to filter",
+                        "model-description" => undefined
+                    }
+                }
+            }
+        }]
+    },
+    "step-4" => {
+        "outcome" => "success",
+        "result" => [{
+            "address" => [
+                ("subsystem" => "undertow"),
+                ("server" => "*"),
+                ("http-listener" => "*")
+            ],
+            "outcome" => "success",
+            "result" => {
+                "description" => "http listener",
+                " capabilities" => [{
+                    "name" => "org.wildfly.undertow.listener",
+                    "dynamic" => true
+                }],
+                "access-constraints" => {"sensitive" => {"web-connector" => {"type" => "undertow"}}},
+                "attributes" => {
+                    "allow-encoded-slash" => {
+                        "type" => BOOLEAN,
+                        "description" => "If a request comes in with encoded / characters (i.e. %2F), will these be decoded.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => false,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "allow-equals-in-cookie-value" => {
+                        "type" => BOOLEAN,
+                        "description" => "If this is true then Undertow will allow non-escaped equals characters in unquoted cookie values. Unquoted cookie values may not contain equals characters. If present the value ends before the equals sign. The remainder of the cookie value will be dropped.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => false,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "always-set-keep-alive" => {
+                        "type" => BOOLEAN,
+                        "description" => "If this is true then a Connection: keep-alive header will be added to responses, even when it is not strictly required by the specification.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "buffer-pipelined-data" => {
+                        "type" => BOOLEAN,
+                        "description" => "If we should buffer pipelined requests.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "buffer-pool" => {
+                        "type" => STRING,
+                        "description" => "The AJP listeners buffer pool",
+                        "expressions-allowed" => false,
+                        "nillable" => true,
+                        "default" => "default",
+                        "capability-reference" => "org.wildfly.io.buffer-pool",
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "bytes-received" => {
+                        "type" => LONG,
+                        "description" => "The number of bytes that have been received by this listener",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "access-type" => "metric",
+                        "storage" => "runtime"
+                    },
+                    "bytes-sent" => {
+                        "type" => LONG,
+                        "description" => "The number of bytes that have been sent out on this listener",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "access-type" => "metric",
+                        "storage" => "runtime"
+                    },
+                    "certificate-forwarding" => {
+                        "type" => BOOLEAN,
+                        "description" => "If certificate forwarding should be enabled. If this is enabled then the listener will take the certificate from the SSL_CLIENT_CERT attribute. This should only be enabled if behind a proxy, and the proxy is configured to always set these headers.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => false,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "resource-services"
+                    },
+                    "decode-url" => {
+                        "type" => BOOLEAN,
+                        "description" => "If this is true then the parser will decode the URL and query parameters using the selected character encoding (UTF-8 by default). If this is false they will not be decoded. This will allow a later handler to decode them into whatever charset is desired.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "disallowed-methods" => {
+                        "type" => LIST,
+                        "description" => "A comma separated list of HTTP methods that are not allowed",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => ["TRACE"],
+                        "value-type" => STRING,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "resource-services"
+                    },
+                    "enable-http2" => {
+                        "type" => BOOLEAN,
+                        "description" => "Enables HTTP2 support for this listener",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => false,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "enabled" => {
+                        "type" => BOOLEAN,
+                        "description" => "If the listener is enabled",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "error-count" => {
+                        "type" => LONG,
+                        "description" => "The number of 500 responses that have been sent by this listener",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "access-type" => "metric",
+                        "storage" => "runtime"
+                    },
+                    "max-buffered-request-size" => {
+                        "type" => INT,
+                        "description" => "Maximum size of a buffered request, in bytesRequests are not usually buffered, the most common case is when performing SSL renegotiation for a POST request, and the post data must be fullybuffered in order to perform the renegotiation.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => 16384,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-connections" => {
+                        "type" => INT,
+                        "description" => "The maximum number of concurrent connections.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-cookies" => {
+                        "type" => INT,
+                        "description" => "The maximum number of cookies that will be parsed. This is used to protect against hash vulnerabilities.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => 200,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-header-size" => {
+                        "type" => INT,
+                        "description" => "The maximum size in bytes of a http request header.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => 1048576,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-headers" => {
+                        "type" => INT,
+                        "description" => "The maximum number of headers that will be parsed. This is used to protect against hash vulnerabilities.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => 200,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-parameters" => {
+                        "type" => INT,
+                        "description" => "The maximum number of parameters that will be parsed. This is used to protect against hash vulnerabilities.This applies to both query parameters, and to POST data, but is not cumulative (i.e. you can potentially have max parameters * 2 total parameters).",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => 1000,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-post-size" => {
+                        "type" => LONG,
+                        "description" => "The maximum size of a post that will be accepted",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => 10485760L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-processing-time" => {
+                        "type" => LONG,
+                        "description" => "The maximum processing time taken by a request on this listener",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "access-type" => "metric",
+                        "storage" => "runtime"
+                    },
+                    "no-request-timeout" => {
+                        "type" => INT,
+                        "description" => "The length of time in milliseconds that the connection can be idle before it is closed by the container",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "unit" => "MILLISECONDS",
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "processing-time" => {
+                        "type" => LONG,
+                        "description" => "The total processing time of all requests handed by this listener",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "access-type" => "metric",
+                        "storage" => "runtime"
+                    },
+                    "proxy-address-forwarding" => {
+                        "type" => BOOLEAN,
+                        "description" => "enables x-forwarded-host and similar headers and set a remote ip address and hostname",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => false,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "resource-services"
+                    },
+                    "read-timeout" => {
+                        "type" => INT,
+                        "description" => "Configure a read timeout for a socket, in milliseconds.  If the given amount of time elapses without a successful read taking place, the socket's next read will throw a {@link ReadTimeoutException}.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "receive-buffer" => {
+                        "type" => INT,
+                        "description" => "The receive buffer size.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "record-request-start-time" => {
+                        "type" => BOOLEAN,
+                        "description" => "If this is true then Undertow will record the request start time, to allow for request time to be logged. This has a small but measurable performance impact",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => false,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "redirect-socket" => {
+                        "type" => STRING,
+                        "description" => "If this listener is supporting non-SSL requests, and a request is received for which a matching <security-constraint> requires SSL transport, undertow will automatically redirect the request to the socket binding port specified here.",
+                        "expressions-allowed" => false,
+                        "nillable" => true,
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "resource-services"
+                    },
+                    "request-count" => {
+                        "type" => LONG,
+                        "description" => "The number of requests this listener has served",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "access-type" => "metric",
+                        "storage" => "runtime"
+                    },
+                    "request-parse-timeout" => {
+                        "type" => INT,
+                        "description" => "The maximum amount of time (in milliseconds) that can be spent parsing the request",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "unit" => "MILLISECONDS",
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "resolve-peer-address" => {
+                        "type" => BOOLEAN,
+                        "description" => "Enables host dns lookup",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => false,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "resource-services"
+                    },
+                    "send-buffer" => {
+                        "type" => INT,
+                        "description" => "The send buffer size.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "socket-binding" => {
+                        "type" => STRING,
+                        "description" => "The AJP listener socket binder",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "capability-reference" => "org.wildfly.network.socket-binding",
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-constraints" => {"sensitive" => {"socket-binding-ref" => {"type" => "core"}}},
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "tcp-backlog" => {
+                        "type" => INT,
+                        "description" => "Configure a server with the specified backlog.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "tcp-keep-alive" => {
+                        "type" => BOOLEAN,
+                        "description" => "Configure a channel to send TCP keep-alive messages in an implementation-dependent manner.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "url-charset" => {
+                        "type" => STRING,
+                        "description" => "URL charset",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => "UTF-8",
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "worker" => {
+                        "type" => STRING,
+                        "description" => "The AJP listeners XNIO worker",
+                        "expressions-allowed" => false,
+                        "nillable" => true,
+                        "default" => "default",
+                        "capability-reference" => "org.wildfly.io.worker",
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "write-timeout" => {
+                        "type" => INT,
+                        "description" => "Configure a write timeout for a socket, in milliseconds.  If the given amount of time elapses without a successful write taking place, the socket's next write will throw a {@link WriteTimeoutException}.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    }
+                },
+                "operations" => undefined,
+                "notifications" => undefined,
+                "children" => {}
+            }
+        }]
+    },
+    "step-5" => {
+        "outcome" => "success",
+        "result" => [{
+            "address" => [
+                ("subsystem" => "undertow"),
+                ("server" => "*"),
+                ("https-listener" => "*")
+            ],
+            "outcome" => "success",
+            "result" => {
+                "description" => "http listener",
+                " capabilities" => [{
+                    "name" => "org.wildfly.undertow.listener",
+                    "dynamic" => true
+                }],
+                "access-constraints" => {"sensitive" => {"web-connector" => {"type" => "undertow"}}},
+                "attributes" => {
+                    "allow-encoded-slash" => {
+                        "type" => BOOLEAN,
+                        "description" => "If a request comes in with encoded / characters (i.e. %2F), will these be decoded.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => false,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "allow-equals-in-cookie-value" => {
+                        "type" => BOOLEAN,
+                        "description" => "If this is true then Undertow will allow non-escaped equals characters in unquoted cookie values. Unquoted cookie values may not contain equals characters. If present the value ends before the equals sign. The remainder of the cookie value will be dropped.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => false,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "always-set-keep-alive" => {
+                        "type" => BOOLEAN,
+                        "description" => "If this is true then a Connection: keep-alive header will be added to responses, even when it is not strictly required by the specification.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "buffer-pipelined-data" => {
+                        "type" => BOOLEAN,
+                        "description" => "If we should buffer pipelined requests.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "buffer-pool" => {
+                        "type" => STRING,
+                        "description" => "The AJP listeners buffer pool",
+                        "expressions-allowed" => false,
+                        "nillable" => true,
+                        "default" => "default",
+                        "capability-reference" => "org.wildfly.io.buffer-pool",
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "bytes-received" => {
+                        "type" => LONG,
+                        "description" => "The number of bytes that have been received by this listener",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "access-type" => "metric",
+                        "storage" => "runtime"
+                    },
+                    "bytes-sent" => {
+                        "type" => LONG,
+                        "description" => "The number of bytes that have been sent out on this listener",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "access-type" => "metric",
+                        "storage" => "runtime"
+                    },
+                    "decode-url" => {
+                        "type" => BOOLEAN,
+                        "description" => "If this is true then the parser will decode the URL and query parameters using the selected character encoding (UTF-8 by default). If this is false they will not be decoded. This will allow a later handler to decode them into whatever charset is desired.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "disallowed-methods" => {
+                        "type" => LIST,
+                        "description" => "A comma separated list of HTTP methods that are not allowed",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => ["TRACE"],
+                        "value-type" => STRING,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "resource-services"
+                    },
+                    "enable-http2" => {
+                        "type" => BOOLEAN,
+                        "description" => "Enables HTTP2 support for this listener",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => false,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "enable-spdy" => {
+                        "type" => BOOLEAN,
+                        "description" => "Enables SPDY support for this listener",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => false,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "enabled" => {
+                        "type" => BOOLEAN,
+                        "description" => "If the listener is enabled",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "enabled-cipher-suites" => {
+                        "type" => STRING,
+                        "description" => "Configures Enabled SSL cyphers",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "enabled-protocols" => {
+                        "type" => STRING,
+                        "description" => "Configures SSL protocols",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "error-count" => {
+                        "type" => LONG,
+                        "description" => "The number of 500 responses that have been sent by this listener",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "access-type" => "metric",
+                        "storage" => "runtime"
+                    },
+                    "max-buffered-request-size" => {
+                        "type" => INT,
+                        "description" => "Maximum size of a buffered request, in bytesRequests are not usually buffered, the most common case is when performing SSL renegotiation for a POST request, and the post data must be fullybuffered in order to perform the renegotiation.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => 16384,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-connections" => {
+                        "type" => INT,
+                        "description" => "The maximum number of concurrent connections.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-cookies" => {
+                        "type" => INT,
+                        "description" => "The maximum number of cookies that will be parsed. This is used to protect against hash vulnerabilities.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => 200,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-header-size" => {
+                        "type" => INT,
+                        "description" => "The maximum size in bytes of a http request header.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => 1048576,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-headers" => {
+                        "type" => INT,
+                        "description" => "The maximum number of headers that will be parsed. This is used to protect against hash vulnerabilities.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => 200,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-parameters" => {
+                        "type" => INT,
+                        "description" => "The maximum number of parameters that will be parsed. This is used to protect against hash vulnerabilities.This applies to both query parameters, and to POST data, but is not cumulative (i.e. you can potentially have max parameters * 2 total parameters).",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => 1000,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-post-size" => {
+                        "type" => LONG,
+                        "description" => "The maximum size of a post that will be accepted",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => 10485760L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-processing-time" => {
+                        "type" => LONG,
+                        "description" => "The maximum processing time taken by a request on this listener",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "access-type" => "metric",
+                        "storage" => "runtime"
+                    },
+                    "no-request-timeout" => {
+                        "type" => INT,
+                        "description" => "The length of time in milliseconds that the connection can be idle before it is closed by the container",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "unit" => "MILLISECONDS",
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "processing-time" => {
+                        "type" => LONG,
+                        "description" => "The total processing time of all requests handed by this listener",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "access-type" => "metric",
+                        "storage" => "runtime"
+                    },
+                    "read-timeout" => {
+                        "type" => INT,
+                        "description" => "Configure a read timeout for a socket, in milliseconds.  If the given amount of time elapses without a successful read taking place, the socket's next read will throw a {@link ReadTimeoutException}.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "receive-buffer" => {
+                        "type" => INT,
+                        "description" => "The receive buffer size.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "record-request-start-time" => {
+                        "type" => BOOLEAN,
+                        "description" => "If this is true then Undertow will record the request start time, to allow for request time to be logged. This has a small but measurable performance impact",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => false,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "request-count" => {
+                        "type" => LONG,
+                        "description" => "The number of requests this listener has served",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "access-type" => "metric",
+                        "storage" => "runtime"
+                    },
+                    "request-parse-timeout" => {
+                        "type" => INT,
+                        "description" => "The maximum amount of time (in milliseconds) that can be spent parsing the request",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "unit" => "MILLISECONDS",
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "resolve-peer-address" => {
+                        "type" => BOOLEAN,
+                        "description" => "Enables host dns lookup",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => false,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "resource-services"
+                    },
+                    "security-realm" => {
+                        "type" => STRING,
+                        "description" => "The listeners security realm",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "send-buffer" => {
+                        "type" => INT,
+                        "description" => "The send buffer size.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "socket-binding" => {
+                        "type" => STRING,
+                        "description" => "The AJP listener socket binder",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "capability-reference" => "org.wildfly.network.socket-binding",
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-constraints" => {"sensitive" => {"socket-binding-ref" => {"type" => "core"}}},
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "ssl-session-cache-size" => {
+                        "type" => INT,
+                        "description" => "The maximum number of active SSL sessions",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "ssl-session-timeout" => {
+                        "type" => INT,
+                        "description" => "The timeout for SSL sessions, in seconds",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "unit" => "SECONDS",
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "tcp-backlog" => {
+                        "type" => INT,
+                        "description" => "Configure a server with the specified backlog.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "tcp-keep-alive" => {
+                        "type" => BOOLEAN,
+                        "description" => "Configure a channel to send TCP keep-alive messages in an implementation-dependent manner.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "url-charset" => {
+                        "type" => STRING,
+                        "description" => "URL charset",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => "UTF-8",
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "verify-client" => {
+                        "type" => STRING,
+                        "description" => "The desired SSL client authentication mode for SSL channels",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => "NOT_REQUESTED",
+                        "allowed" => [
+                            "NOT_REQUESTED",
+                            "REQUESTED",
+                            "REQUIRED"
+                        ],
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "worker" => {
+                        "type" => STRING,
+                        "description" => "The AJP listeners XNIO worker",
+                        "expressions-allowed" => false,
+                        "nillable" => true,
+                        "default" => "default",
+                        "capability-reference" => "org.wildfly.io.worker",
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "write-timeout" => {
+                        "type" => INT,
+                        "description" => "Configure a write timeout for a socket, in milliseconds.  If the given amount of time elapses without a successful write taking place, the socket's next write will throw a {@link WriteTimeoutException}.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    }
+                },
+                "operations" => undefined,
+                "notifications" => undefined,
+                "children" => {}
+            }
+        }]
+    },
+    "step-6" => {
+        "outcome" => "success",
+        "result" => [{
+            "address" => [
+                ("subsystem" => "undertow"),
+                ("server" => "*"),
+                ("ajp-listener" => "*")
+            ],
+            "outcome" => "success",
+            "result" => {
+                "description" => "http listener",
+                " capabilities" => [{
+                    "name" => "org.wildfly.undertow.listener",
+                    "dynamic" => true
+                }],
+                "access-constraints" => {"sensitive" => {"web-connector" => {"type" => "undertow"}}},
+                "attributes" => {
+                    "allow-encoded-slash" => {
+                        "type" => BOOLEAN,
+                        "description" => "If a request comes in with encoded / characters (i.e. %2F), will these be decoded.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => false,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "allow-equals-in-cookie-value" => {
+                        "type" => BOOLEAN,
+                        "description" => "If this is true then Undertow will allow non-escaped equals characters in unquoted cookie values. Unquoted cookie values may not contain equals characters. If present the value ends before the equals sign. The remainder of the cookie value will be dropped.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => false,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "always-set-keep-alive" => {
+                        "type" => BOOLEAN,
+                        "description" => "If this is true then a Connection: keep-alive header will be added to responses, even when it is not strictly required by the specification.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "buffer-pipelined-data" => {
+                        "type" => BOOLEAN,
+                        "description" => "If we should buffer pipelined requests.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "buffer-pool" => {
+                        "type" => STRING,
+                        "description" => "The AJP listeners buffer pool",
+                        "expressions-allowed" => false,
+                        "nillable" => true,
+                        "default" => "default",
+                        "capability-reference" => "org.wildfly.io.buffer-pool",
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "bytes-received" => {
+                        "type" => LONG,
+                        "description" => "The number of bytes that have been received by this listener",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "access-type" => "metric",
+                        "storage" => "runtime"
+                    },
+                    "bytes-sent" => {
+                        "type" => LONG,
+                        "description" => "The number of bytes that have been sent out on this listener",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "access-type" => "metric",
+                        "storage" => "runtime"
+                    },
+                    "decode-url" => {
+                        "type" => BOOLEAN,
+                        "description" => "If this is true then the parser will decode the URL and query parameters using the selected character encoding (UTF-8 by default). If this is false they will not be decoded. This will allow a later handler to decode them into whatever charset is desired.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "disallowed-methods" => {
+                        "type" => LIST,
+                        "description" => "A comma separated list of HTTP methods that are not allowed",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => ["TRACE"],
+                        "value-type" => STRING,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "resource-services"
+                    },
+                    "enabled" => {
+                        "type" => BOOLEAN,
+                        "description" => "If the listener is enabled",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "error-count" => {
+                        "type" => LONG,
+                        "description" => "The number of 500 responses that have been sent by this listener",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "access-type" => "metric",
+                        "storage" => "runtime"
+                    },
+                    "max-buffered-request-size" => {
+                        "type" => INT,
+                        "description" => "Maximum size of a buffered request, in bytesRequests are not usually buffered, the most common case is when performing SSL renegotiation for a POST request, and the post data must be fullybuffered in order to perform the renegotiation.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => 16384,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-connections" => {
+                        "type" => INT,
+                        "description" => "The maximum number of concurrent connections.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-cookies" => {
+                        "type" => INT,
+                        "description" => "The maximum number of cookies that will be parsed. This is used to protect against hash vulnerabilities.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => 200,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-header-size" => {
+                        "type" => INT,
+                        "description" => "The maximum size in bytes of a http request header.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => 1048576,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-headers" => {
+                        "type" => INT,
+                        "description" => "The maximum number of headers that will be parsed. This is used to protect against hash vulnerabilities.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => 200,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-parameters" => {
+                        "type" => INT,
+                        "description" => "The maximum number of parameters that will be parsed. This is used to protect against hash vulnerabilities.This applies to both query parameters, and to POST data, but is not cumulative (i.e. you can potentially have max parameters * 2 total parameters).",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => 1000,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-post-size" => {
+                        "type" => LONG,
+                        "description" => "The maximum size of a post that will be accepted",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => 10485760L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "max-processing-time" => {
+                        "type" => LONG,
+                        "description" => "The maximum processing time taken by a request on this listener",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "access-type" => "metric",
+                        "storage" => "runtime"
+                    },
+                    "no-request-timeout" => {
+                        "type" => INT,
+                        "description" => "The length of time in milliseconds that the connection can be idle before it is closed by the container",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "unit" => "MILLISECONDS",
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "processing-time" => {
+                        "type" => LONG,
+                        "description" => "The total processing time of all requests handed by this listener",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "access-type" => "metric",
+                        "storage" => "runtime"
+                    },
+                    "read-timeout" => {
+                        "type" => INT,
+                        "description" => "Configure a read timeout for a socket, in milliseconds.  If the given amount of time elapses without a successful read taking place, the socket's next read will throw a {@link ReadTimeoutException}.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "receive-buffer" => {
+                        "type" => INT,
+                        "description" => "The receive buffer size.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "record-request-start-time" => {
+                        "type" => BOOLEAN,
+                        "description" => "If this is true then Undertow will record the request start time, to allow for request time to be logged. This has a small but measurable performance impact",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => false,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "redirect-socket" => {
+                        "type" => STRING,
+                        "description" => "If this listener is supporting non-SSL requests, and a request is received for which a matching <security-constraint> requires SSL transport, undertow will automatically redirect the request to the socket binding port specified here.",
+                        "expressions-allowed" => false,
+                        "nillable" => true,
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "resource-services"
+                    },
+                    "request-count" => {
+                        "type" => LONG,
+                        "description" => "The number of requests this listener has served",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "access-type" => "metric",
+                        "storage" => "runtime"
+                    },
+                    "request-parse-timeout" => {
+                        "type" => INT,
+                        "description" => "The maximum amount of time (in milliseconds) that can be spent parsing the request",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "unit" => "MILLISECONDS",
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "resolve-peer-address" => {
+                        "type" => BOOLEAN,
+                        "description" => "Enables host dns lookup",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => false,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "resource-services"
+                    },
+                    "scheme" => {
+                        "type" => STRING,
+                        "description" => "The listener scheme, can be HTTP or HTTPS. By default the scheme will be taken from the incoming AJP request.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "send-buffer" => {
+                        "type" => INT,
+                        "description" => "The send buffer size.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "socket-binding" => {
+                        "type" => STRING,
+                        "description" => "The AJP listener socket binder",
+                        "expressions-allowed" => false,
+                        "nillable" => false,
+                        "capability-reference" => "org.wildfly.network.socket-binding",
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-constraints" => {"sensitive" => {"socket-binding-ref" => {"type" => "core"}}},
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "tcp-backlog" => {
+                        "type" => INT,
+                        "description" => "Configure a server with the specified backlog.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "tcp-keep-alive" => {
+                        "type" => BOOLEAN,
+                        "description" => "Configure a channel to send TCP keep-alive messages in an implementation-dependent manner.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "url-charset" => {
+                        "type" => STRING,
+                        "description" => "URL charset",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "default" => "UTF-8",
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    },
+                    "worker" => {
+                        "type" => STRING,
+                        "description" => "The AJP listeners XNIO worker",
+                        "expressions-allowed" => false,
+                        "nillable" => true,
+                        "default" => "default",
+                        "capability-reference" => "org.wildfly.io.worker",
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "all-services"
+                    },
+                    "write-timeout" => {
+                        "type" => INT,
+                        "description" => "Configure a write timeout for a socket, in milliseconds.  If the given amount of time elapses without a successful write taking place, the socket's next write will throw a {@link WriteTimeoutException}.",
+                        "expressions-allowed" => true,
+                        "nillable" => true,
+                        "access-type" => "read-write",
+                        "storage" => "configuration",
+                        "restart-required" => "no-services"
+                    }
+                },
+                "operations" => undefined,
+                "notifications" => undefined,
+                "children" => {}
+            }
+        }]
+    }
+}

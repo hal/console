@@ -82,34 +82,36 @@ public class MetadataProcessor {
 
     public void process(String token, final AsyncCallback<Void> callback) {
         Set<String> resources = requiredResources.getResources(token);
-        logger.debug("Process metadata on {}: {}", token, resources);
+        logger.debug("Token {}: Process required resources on {}", token, resources);
         if (resources.isEmpty()) {
-            logger.debug("No required resources found -> callback.onSuccess(null)");
+            logger.debug("Token {}: No required resources found -> callback.onSuccess(null)", token);
             callback.onSuccess(null);
 
         } else {
             Set<AddressTemplate> templates = FluentIterable.from(resources).transform(AddressTemplate::of).toSet();
             LookupResult lookupResult = lookup.check(token, templates, requiredResources.isRecursive(token));
-            List<Operation> operations = rrdOps.create(lookupResult);
-            if (operations.isEmpty()) {
-                logger.debug("All required resources already processed -> callback.onSuccess(null)");
-                callback.onSuccess(null);
-
+            if (lookupResult.allPresent()) {
+                logger.debug("Token {}: All required resources have been processed -> callback.onSuccess(null)", token);
             } else {
+                logger.debug("Token {}: {}", token, lookupResult);
+                List<Operation> operations = rrdOps.create(lookupResult);
                 List<List<Operation>> piles = Lists.partition(operations, BATCH_SIZE);
                 List<Composite> composites = Lists.transform(piles, Composite::new);
-                logger.debug("About to execute {} composite operations", composites.size());
+
+                logger.debug("Token {}: About to execute {} composite operations", token, composites.size());
                 List<RrdFunction> functions = Lists.transform(composites,
                         composite -> new RrdFunction(resourceDescriptions, securityFramework, dispatcher, composite));
-
                 Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
                     @Override
                     public void onFailure(final FunctionContext context) {
+                        logger.debug("Token {}: Failed to process required resources: {}", token,
+                                context.getErrorMessage());
                         callback.onFailure(context.getError());
                     }
 
                     @Override
                     public void onSuccess(final FunctionContext context) {
+                        logger.debug("Token {}: Successfully processed required resources", token);
                         callback.onSuccess(null);
                     }
                 };
