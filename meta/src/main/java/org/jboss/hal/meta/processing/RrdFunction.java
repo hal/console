@@ -35,14 +35,14 @@ import java.util.Set;
 /**
  * @author Harald Pehl
  */
-class RrdFunction implements Function<FunctionContext> {
+public class RrdFunction implements Function<FunctionContext> {
 
     private final ResourceDescriptions resourceDescriptions;
     private final SecurityFramework securityFramework;
     private final Dispatcher dispatcher;
     private final Composite composite;
 
-    RrdFunction(final ResourceDescriptions resourceDescriptions, final SecurityFramework securityFramework,
+    public RrdFunction(final ResourceDescriptions resourceDescriptions, final SecurityFramework securityFramework,
             final Dispatcher dispatcher, final Composite composite) {
         this.resourceDescriptions = resourceDescriptions;
         this.securityFramework = securityFramework;

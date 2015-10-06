@@ -21,23 +21,70 @@
  */
 package org.jboss.hal.meta.description;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.hal.config.Environment;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AbstractMetadataRegistry;
-import org.jboss.hal.meta.MetadataCallback;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.processing.ParserException;
+import org.jboss.hal.meta.processing.RrdResult;
+import org.jboss.hal.meta.processing.SingleRrdParser;
 
 import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 public class ResourceDescriptions extends AbstractMetadataRegistry<ResourceDescription> {
 
+    /**
+     * Always use wildcards when resolving the supported keys. The descriptions do not differ between profiles,
+     * server groups, hosts or servers.
+     */
+    static class WildcardStatementContext implements StatementContext {
+
+        private final Environment environment;
+        private final Map<String, String[]> keys;
+
+        @Inject
+        public WildcardStatementContext(Environment environment) {
+            this.environment = environment;
+
+            keys = new HashMap<>();
+            keys.put(SELECTED_PROFILE, new String[]{"profile", "*"});
+            keys.put(SELECTED_GROUP, new String[]{"server-group", "*"});
+            keys.put(SELECTED_HOST, new String[]{"host", "*"});
+            keys.put(SELECTED_SERVER, new String[]{"server", "*"});
+        }
+
+        public String resolve(final String key) {
+            return null;
+        }
+
+        @Override
+        public String[] resolveTuple(final String key) {
+            if (!environment.isStandalone() && keys.containsKey(key)) {
+                return keys.get(key);
+            }
+            return null;
+        }
+    }
+
+
+    static final String RESOURCE_DESCRIPTION_TYPE = "resource description";
+
+    private final Dispatcher dispatcher;
     // TODO Replace map with local storage (constrained by language and management model version)
     private final Map<ResourceAddress, ResourceDescription> registry;
 
     @Inject
-    public ResourceDescriptions(final StatementContext statementContext) {
-        super(statementContext, "resource description");
+    public ResourceDescriptions(final Environment environment, final Dispatcher dispatcher) {
+        super(new WildcardStatementContext(environment), RESOURCE_DESCRIPTION_TYPE);
+        this.dispatcher = dispatcher;
         this.registry = new HashMap<>();
     }
 
@@ -48,12 +95,32 @@ public class ResourceDescriptions extends AbstractMetadataRegistry<ResourceDescr
 
     @Override
     public void add(final ResourceAddress address, final ResourceDescription metadata) {
-        // TODO replace concrete addresses with wildcards
         registry.put(address, metadata);
     }
 
     @Override
-    protected void addDeferred(final ResourceAddress address, final MetadataCallback<ResourceDescription> callback) {
-        // TODO
+    protected void addDeferred(final ResourceAddress address, final AsyncCallback<ResourceDescription> callback) {
+        Operation operation = new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION, address)
+                .param(OPERATIONS, true)
+                .param(RECURSIVE, true)
+                .build();
+        dispatcher.execute(operation,
+                result -> {
+                    try {
+                        Set<RrdResult> results = new SingleRrdParser().parse(address, result);
+                        for (RrdResult rr : results) {
+                            if (rr.resourceDescription != null) {
+                                add(rr.address, rr.resourceDescription);
+                            }
+                        }
+                    } catch (ParserException e) {
+                        callback.onFailure(e);
+                    }
+                },
+                (failedOp, failure) -> {
+                    callback.onFailure(new RuntimeException(
+                            "Unable to add a single " + RESOURCE_DESCRIPTION_TYPE + " for " + address));
+                },
+                (exceptionalOp, exception) -> { callback.onFailure(exception); });
     }
 }

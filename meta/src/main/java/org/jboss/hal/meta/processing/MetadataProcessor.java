@@ -80,7 +80,7 @@ public class MetadataProcessor {
         this.progress = progress;
     }
 
-    public void process(String token, final AsyncCallback<Void> callback) {
+    public void process(final String token, final AsyncCallback<Void> callback) {
         Set<String> resources = requiredResources.getResources(token);
         logger.debug("Token {}: Process required resources on {}", token, resources);
         if (resources.isEmpty()) {
@@ -101,6 +101,7 @@ public class MetadataProcessor {
                 logger.debug("Token {}: About to execute {} composite operations", token, composites.size());
                 List<RrdFunction> functions = Lists.transform(composites,
                         composite -> new RrdFunction(resourceDescriptions, securityFramework, dispatcher, composite));
+                //noinspection Duplicates
                 Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
                     @Override
                     public void onFailure(final FunctionContext context) {

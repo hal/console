@@ -33,17 +33,17 @@ import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESEN
 /**
  * @author Harald Pehl
  */
-class Lookup {
+public class Lookup {
 
     private final ResourceDescriptions descriptionRegistry;
     private final SecurityFramework securityFramework;
 
-    Lookup(ResourceDescriptions descriptionRegistry, SecurityFramework securityFramework) {
+    public Lookup(ResourceDescriptions descriptionRegistry, SecurityFramework securityFramework) {
         this.descriptionRegistry = descriptionRegistry;
         this.securityFramework = securityFramework;
     }
 
-    LookupResult check(String token, Set<AddressTemplate> templates, boolean recursive) {
+    public LookupResult check(String token, Set<AddressTemplate> templates, boolean recursive) {
         LookupResult lookupResult = new LookupResult(token, templates, recursive);
         for (AddressTemplate template : lookupResult.templates()) {
             if (descriptionRegistry.contains(template)) {

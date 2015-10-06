@@ -32,22 +32,22 @@ import java.util.Set;
 /**
  * @author Harald Pehl
  */
-class LookupResult {
+public class LookupResult {
 
     /**
      * Bit mask for missing / present metadata. 0 means metadata missing, 1 means metadata present.
      * First bit stands for resource description second one for security context.
      */
-    final static int NOTHING_PRESENT = 0b00;
-    final static int RESOURCE_DESCRIPTION_PRESENT = 0b10;
-    final static int SECURITY_CONTEXT_PRESENT = 0b01;
-    final static int ALL_PRESENT = 0b11;
+    public final static int NOTHING_PRESENT = 0b00;
+    public final static int RESOURCE_DESCRIPTION_PRESENT = 0b10;
+    public final static int SECURITY_CONTEXT_PRESENT = 0b01;
+    public final static int ALL_PRESENT = 0b11;
 
     private final String token;
     private final Map<AddressTemplate, Integer> templates;
     private final boolean recursive;
 
-    LookupResult(final String token, final Set<AddressTemplate> templates, final boolean recursive) {
+    public LookupResult(final String token, final Set<AddressTemplate> templates, final boolean recursive) {
         this.token = token;
         this.templates = new HashMap<>();
         for (AddressTemplate template : templates) {
@@ -56,24 +56,24 @@ class LookupResult {
         this.recursive = recursive;
     }
 
-    Set<AddressTemplate> templates() {
+    public Set<AddressTemplate> templates() {
         return templates.keySet();
     }
 
-    boolean recursive() {
+    public boolean recursive() {
         return recursive;
     }
 
-    void markMetadataPresent(AddressTemplate template, int flag) {
+    public void markMetadataPresent(AddressTemplate template, int flag) {
         int combined = failFastGet(template) | flag;
         templates.put(template, combined);
     }
 
-    int missingMetadata(AddressTemplate template) {
+    public int missingMetadata(AddressTemplate template) {
         return failFastGet(template);
     }
 
-    boolean allPresent() {
+    public boolean allPresent() {
         for (Integer flags : templates.values()) {
             if (flags != ALL_PRESENT) {
                 return false;

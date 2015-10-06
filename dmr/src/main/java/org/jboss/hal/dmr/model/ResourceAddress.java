@@ -44,4 +44,9 @@ public class ResourceAddress extends ModelNode {
         add().set(propertyName, propertyValue);
         return this;
     }
+
+    @Override
+    public String toString() {
+        return toJSONString(true);
+    }
 }

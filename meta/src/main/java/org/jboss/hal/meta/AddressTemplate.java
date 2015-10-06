@@ -22,6 +22,7 @@
 package org.jboss.hal.meta;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.slf4j.Logger;
@@ -261,7 +262,10 @@ public final class AddressTemplate {
                 if (tokenRef.startsWith("{")) {
                     tokenRef = tokenRef.substring(1, tokenRef.length() - 1);
                     if (!tupleMemory.contains(tokenRef)) {
-                        tupleMemory.memorize(tokenRef, context.collectTuples(tokenRef));
+                        if (context.resolveTuple(tokenRef) != null) {
+                            tupleMemory.memorize(tokenRef,
+                                    Lists.<String[]>newArrayList(context.resolveTuple(tokenRef)));
+                        }
                     }
                     resolvedValue = tupleMemory.next(tokenRef);
                 } else {
@@ -280,28 +284,8 @@ public final class AddressTemplate {
                 String keyRef = token.getKey();
                 String valueRef = token.getValue();
 
-                String resolvedKey;
-                String resolvedValue;
-
-                if (keyRef.startsWith("{")) {
-                    keyRef = keyRef.substring(1, keyRef.length() - 1);
-                    if (!valueMemory.contains(keyRef)) {
-                        valueMemory.memorize(keyRef, context.collect(keyRef));
-                    }
-                    resolvedKey = valueMemory.next(keyRef);
-                } else {
-                    resolvedKey = keyRef;
-                }
-
-                if (valueRef.startsWith("{")) {
-                    valueRef = valueRef.substring(1, valueRef.length() - 1);
-                    if (!valueMemory.contains(valueRef)) {
-                        valueMemory.memorize(valueRef, context.collect(valueRef));
-                    }
-                    resolvedValue = valueMemory.next(valueRef);
-                } else {
-                    resolvedValue = valueRef;
-                }
+                String resolvedKey = resolveSome(context, valueMemory, keyRef);
+                String resolvedValue = resolveSome(context, valueMemory, valueRef);
 
                 if (resolvedKey == null) { resolvedKey = "_blank"; }
                 if (resolvedValue == null) { resolvedValue = "_blank"; }
@@ -317,6 +301,22 @@ public final class AddressTemplate {
             }
         }
         return new ResourceAddress(model);
+    }
+
+    private String resolveSome(StatementContext context, Memory<String> memory, String input) {
+        String resolved;
+        if (input.startsWith("{")) {
+            input = input.substring(1, input.length() - 1);
+            if (!memory.contains(input)) {
+                if (context.resolve(input) != null) {
+                    memory.memorize(input, Lists.newArrayList(context.resolve(input)));
+                }
+            }
+            resolved = memory.next(input);
+        } else {
+            resolved = input;
+        }
+        return resolved;
     }
 
 

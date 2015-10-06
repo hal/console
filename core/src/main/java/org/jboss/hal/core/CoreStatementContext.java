@@ -25,9 +25,7 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.meta.StatementContext;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -77,21 +75,5 @@ public class CoreStatementContext implements StatementContext {
             return tuple;
         }
         return null;
-    }
-
-    @Override
-    public List<String> collect(final String key) {
-        List<String> items = new ArrayList<>();
-        String value = resolve(key);
-        if (value != null) { items.add(value); }
-        return items;
-    }
-
-    @Override
-    public List<String[]> collectTuples(final String key) {
-        List<String[]> items = new ArrayList<>();
-        String[] tuple = resolveTuple(key);
-        if (tuple != null) { items.add(tuple); }
-        return items;
     }
 }

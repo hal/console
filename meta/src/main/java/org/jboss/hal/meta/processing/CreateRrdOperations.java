@@ -35,7 +35,7 @@ import static org.jboss.hal.meta.processing.LookupResult.*;
 /**
  * @author Harald Pehl
  */
-class CreateRrdOperations {
+public class CreateRrdOperations {
 
     private final StatementContext statementContext;
 
@@ -43,7 +43,7 @@ class CreateRrdOperations {
         this.statementContext = statementContext;
     }
 
-    List<Operation> create(LookupResult lookupResult) {
+    public List<Operation> create(LookupResult lookupResult) {
         List<Operation> operations = new ArrayList<>();
         for (AddressTemplate template : lookupResult.templates()) {
             int missingMetadata = lookupResult.missingMetadata(template);

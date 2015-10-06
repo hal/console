@@ -21,16 +21,13 @@
  */
 package org.jboss.hal.meta;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Harald Pehl
  */
 public abstract class AbstractMetadataRegistry<T> implements MetadataRegistry<T> {
-
-    private static final Logger logger = LoggerFactory.getLogger(AbstractMetadataRegistry.class);
 
     private final StatementContext statementContext;
     private final String type;
@@ -41,7 +38,7 @@ public abstract class AbstractMetadataRegistry<T> implements MetadataRegistry<T>
     }
 
     @Override
-    public T lookup(AddressTemplate template) throws MissingMetadataException {
+    public T lookup(final AddressTemplate template) throws MissingMetadataException {
         ResourceAddress address = resolveTemplate(template);
         T metadata = lookupAddress(address);
         if (metadata == null) {
@@ -51,27 +48,27 @@ public abstract class AbstractMetadataRegistry<T> implements MetadataRegistry<T>
     }
 
     @Override
-    public void lookupDeferred(final AddressTemplate template, final MetadataCallback<T> callback) {
+    public void lookupDeferred(final AddressTemplate template, final AsyncCallback<T> callback) {
         ResourceAddress address = resolveTemplate(template);
         T metadata = lookupAddress(address);
         if (metadata == null) {
             addDeferred(address, callback);
         } else {
-            callback.onContext(metadata);
+            callback.onSuccess(metadata);
         }
     }
 
     @Override
-    public boolean contains(AddressTemplate template) {
+    public boolean contains(final AddressTemplate template) {
         ResourceAddress address = resolveTemplate(template);
         return lookupAddress(address) != null;
     }
 
-    private ResourceAddress resolveTemplate(AddressTemplate template) {
+    private ResourceAddress resolveTemplate(final AddressTemplate template) {
         return template.resolve(statementContext);
     }
 
-    protected abstract T lookupAddress(ResourceAddress address);
+    protected abstract T lookupAddress(final ResourceAddress address);
 
-    protected abstract void addDeferred(ResourceAddress address, final MetadataCallback<T> callback);
+    protected abstract void addDeferred(final ResourceAddress address, final AsyncCallback<T> callback);
 }

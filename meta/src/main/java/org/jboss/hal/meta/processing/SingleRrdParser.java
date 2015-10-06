@@ -37,9 +37,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-class SingleRrdParser {
+public class SingleRrdParser {
 
-    Set<RrdResult> parse(ResourceAddress address, ModelNode modelNode) throws ParserException {
+    public Set<RrdResult> parse(ResourceAddress address, ModelNode modelNode) throws ParserException {
         Set<RrdResult> results = new HashSet<>();
         if (modelNode.getType() == ModelType.LIST) {
             for (ModelNode nestedNode : modelNode.asList()) {

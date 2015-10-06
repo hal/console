@@ -38,13 +38,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.STEPS;
 /**
  * @author Harald Pehl
  */
-class CompositeRrdParser {
+public class CompositeRrdParser {
 
     private final Composite composite;
 
-    CompositeRrdParser(final Composite composite) {this.composite = composite;}
+    public CompositeRrdParser(final Composite composite) {this.composite = composite;}
 
-    Set<RrdResult> parse(CompositeResult compositeResult) throws ParserException {
+    public Set<RrdResult> parse(CompositeResult compositeResult) throws ParserException {
         int index = 0;
         Set<RrdResult> overallResults = new HashSet<>();
 

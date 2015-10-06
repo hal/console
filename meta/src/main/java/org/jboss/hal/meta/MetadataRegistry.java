@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.meta;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
@@ -30,9 +31,9 @@ public interface MetadataRegistry<T> {
 
     T lookup(final AddressTemplate template) throws MissingMetadataException;
 
-    void lookupDeferred(final AddressTemplate template, final MetadataCallback<T> callback);
+    void lookupDeferred(final AddressTemplate template, final AsyncCallback<T> callback);
 
-    boolean contains(AddressTemplate template);
+    boolean contains(final AddressTemplate template);
 
-    void add(ResourceAddress address, T metadata);
+    void add(final ResourceAddress address, final T metadata);
 }
