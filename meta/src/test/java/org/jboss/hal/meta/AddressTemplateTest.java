@@ -157,26 +157,26 @@ public class AddressTemplateTest {
     @Test
     public void resolve() {
         AddressTemplate at = AddressTemplate.of("{a}/b={c}");
-        ResourceAddress resolved = at.resolve(new EchoContext());
+        ResourceAddress resolved = at.resolve(StatementContext.NOOP);
         assertResolved(new String[][]{{"a", "a"}, {"b", "c"}}, resolved);
     }
 
     @Test
     public void resolveWildcards() {
         AddressTemplate at = AddressTemplate.of("a=*/c=*");
-        ResourceAddress resolved = at.resolve(new EchoContext());
+        ResourceAddress resolved = at.resolve(StatementContext.NOOP);
         assertResolved(new String[][]{{"a", "*"}, {"c", "*"}}, resolved);
 
-        resolved = at.resolve(new EchoContext(), (String[])null);
+        resolved = at.resolve(StatementContext.NOOP, (String[])null);
         assertResolved(new String[][]{{"a", "*"}, {"c", "*"}}, resolved);
 
-        resolved = at.resolve(new EchoContext(), "b");
+        resolved = at.resolve(StatementContext.NOOP, "b");
         assertResolved(new String[][]{{"a", "b"}, {"c", "*"}}, resolved);
 
-        resolved = at.resolve(new EchoContext(), "b", "d");
+        resolved = at.resolve(StatementContext.NOOP, "b", "d");
         assertResolved(new String[][]{{"a", "b"}, {"c", "d"}}, resolved);
 
-        resolved = at.resolve(new EchoContext(), "b", "d", "foo");
+        resolved = at.resolve(StatementContext.NOOP, "b", "d", "foo");
         assertResolved(new String[][]{{"a", "b"}, {"c", "d"}}, resolved);
     }
 

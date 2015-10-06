@@ -45,6 +45,10 @@ public class ResourceDescription extends ModelNode {
         set(payload);
     }
 
+    public String getDescription() {
+        return get(DESCRIPTION).asString();
+    }
+
     public boolean hasAttributes() {
         return hasDefined(ATTRIBUTES);
     }

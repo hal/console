@@ -24,19 +24,13 @@ package org.jboss.hal.meta.processing;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.security.SecurityFramework;
 
-import java.util.List;
-
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.STEPS;
+import java.util.Set;
 
 /**
  * @author Harald Pehl
@@ -47,7 +41,6 @@ class RrdFunction implements Function<FunctionContext> {
     private final SecurityFramework securityFramework;
     private final Dispatcher dispatcher;
     private final Composite composite;
-    private final RrdResultStrategy strategy;
 
     RrdFunction(final ResourceDescriptions resourceDescriptions, final SecurityFramework securityFramework,
             final Dispatcher dispatcher, final Composite composite) {
@@ -55,43 +48,26 @@ class RrdFunction implements Function<FunctionContext> {
         this.securityFramework = securityFramework;
         this.dispatcher = dispatcher;
         this.composite = composite;
-        this.strategy = new RrdResultStrategy();
     }
 
     @Override
     public void execute(final Control<FunctionContext> control) {
         dispatcher.executeInFunction(control, composite,
-                (CompositeResult result) -> {
+                (CompositeResult compositeResult) -> {
                     try {
-                        int index = 0;
-                        for (ModelNode step : result) {
-                            ModelNode stepResult = step.get(RESULT);
-                            RrdResultParser parser = strategy.choose(operationAddress(index), stepResult);
-                            List<RrdResult> results = parser.parse(step);
-                            for (RrdResult rr : results) {
-                                if (rr.resourceDescription != null) {
-                                    resourceDescriptions.add(rr.address, rr.resourceDescription);
-                                }
-                                if (rr.securityContext != null) {
-                                    securityFramework.add(rr.address, rr.securityContext);
-                                }
+                        Set<RrdResult> results = new CompositeRrdParser(composite).parse(compositeResult);
+                        for (RrdResult rr : results) {
+                            if (rr.resourceDescription != null) {
+                                resourceDescriptions.add(rr.address, rr.resourceDescription);
                             }
-                            index++;
+                            if (rr.securityContext != null) {
+                                securityFramework.add(rr.address, rr.securityContext);
+                            }
                         }
                     } catch (ParserException e) {
                         control.getContext().setError(e);
                         control.abort();
                     }
                 });
-    }
-
-    private ResourceAddress operationAddress(int index) {
-        List<ModelNode> steps = composite.get(STEPS).asList();
-        if (index >= steps.size()) {
-            throw new ParserException(
-                    "Cannot get operation at index " + index + " from composite " + composite);
-        }
-        ModelNode operation = steps.get(index);
-        return new ResourceAddress(operation.get(ADDRESS));
     }
 }

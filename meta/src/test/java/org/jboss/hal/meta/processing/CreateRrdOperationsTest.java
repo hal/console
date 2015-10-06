@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.EchoContext;
 import org.jboss.hal.meta.StatementContext;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +27,7 @@ public class CreateRrdOperationsTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
-        statementContext = new EchoContext();
+        statementContext = StatementContext.NOOP;
         rrdOps = new CreateRrdOperations(statementContext);
     }
 
@@ -59,15 +58,15 @@ public class CreateRrdOperationsTest {
 
         Operation operation = findOperation(inputs, nothingPresent);
         assertEquals(COMBINED_DESCRIPTIONS, operation.get(ACCESS_CONTROL).asString());
-        assertEquals(true, operation.get(OPERATIONS).asBoolean());
+        assertTrue(operation.get(OPERATIONS).asBoolean());
 
         operation = findOperation(inputs, descriptionPresent);
         assertEquals("trim-descriptions", operation.get(ACCESS_CONTROL).asString());
-        assertEquals(true, operation.get(OPERATIONS).asBoolean());
+        assertTrue(operation.get(OPERATIONS).asBoolean());
 
         operation = findOperation(inputs, securityContextPresent);
         assertFalse(operation.get(ACCESS_CONTROL).isDefined());
-        assertFalse(operation.get(OPERATIONS).isDefined());
+        assertTrue(operation.get(OPERATIONS).asBoolean());
     }
 
     private Operation findOperation(List<Operation> operations, AddressTemplate template) {

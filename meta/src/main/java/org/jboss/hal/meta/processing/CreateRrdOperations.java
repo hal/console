@@ -60,7 +60,8 @@ class CreateRrdOperations {
                         builder.param(ACCESS_CONTROL, "trim-descriptions").param(OPERATIONS, true);
                         break;
                     case SECURITY_CONTEXT_PRESENT:
-                        // resource description missing: use defaults for the r-r-d op
+                        // resource description missing
+                        builder.param(OPERATIONS, true);
                         break;
                 }
                 if (lookupResult.recursive()) {

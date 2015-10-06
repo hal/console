@@ -39,4 +39,20 @@ class RrdResult {
     boolean isDefined() {
         return resourceDescription != null || securityContext != null;
     }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) { return true; }
+        if (!(o instanceof RrdResult)) { return false; }
+
+        RrdResult rrdResult = (RrdResult) o;
+
+        return address.equals(rrdResult.address);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return address.hashCode();
+    }
 }
