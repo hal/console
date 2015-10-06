@@ -22,6 +22,7 @@
 package org.jboss.hal.meta.processing;
 
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.description.ResourceDescription;
@@ -40,7 +41,15 @@ class SingleRrdParser {
 
     Set<RrdResult> parse(ResourceAddress address, ModelNode modelNode) throws ParserException {
         Set<RrdResult> results = new HashSet<>();
-        parseSingle(address, modelNode, results);
+        if (modelNode.getType() == ModelType.LIST) {
+            for (ModelNode nestedNode : modelNode.asList()) {
+                ResourceAddress nestedAddress = new ResourceAddress(nestedNode.get(ADDRESS));
+                ModelNode nestedResult = nestedNode.get(RESULT);
+                parseSingle(nestedAddress, nestedResult, results);
+            }
+        } else {
+            parseSingle(address, modelNode, results);
+        }
         return results;
     }
 
@@ -65,7 +74,9 @@ class SingleRrdParser {
                 for (Property property : exceptions) {
                     ModelNode exception = property.getValue();
                     ResourceAddress exceptionAddress = new ResourceAddress(exception.get(ADDRESS));
-                    parseSingle(exceptionAddress, exception, results);
+                    RrdResult exceptionRr = new RrdResult(exceptionAddress);
+                    exceptionRr.securityContext = new SecurityContext(exception);
+                    results.add(exceptionRr);
                 }
             }
         }
@@ -75,11 +86,13 @@ class SingleRrdParser {
             List<Property> children = modelNode.get(CHILDREN).asPropertyList();
             for (Property child : children) {
                 String addressKey = child.getName();
-                Property modelDescription = child.getValue().get(MODEL_DESCRIPTION).asProperty();
-                String addressValue = modelDescription.getName();
-                ModelNode childNode = modelDescription.getValue();
-                ResourceAddress childAddress = new ResourceAddress(address).add(addressKey, addressValue);
-                parseSingle(childAddress, childNode, results);
+                List<Property> modelDescriptions = child.getValue().get(MODEL_DESCRIPTION).asPropertyList();
+                for (Property modelDescription : modelDescriptions) {
+                    String addressValue = modelDescription.getName();
+                    ModelNode childNode = modelDescription.getValue();
+                    ResourceAddress childAddress = new ResourceAddress(address).add(addressKey, addressValue);
+                    parseSingle(childAddress, childNode, results);
+                }
             }
         }
 

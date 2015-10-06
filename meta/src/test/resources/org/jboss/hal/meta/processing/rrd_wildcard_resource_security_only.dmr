@@ -1,0 +1,215 @@
+[
+    {
+        "address" => [
+            ("subsystem" => "mail"),
+            ("mail-session" => "*"),
+            ("server" => "smtp")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "description" => undefined,
+            "access-constraints" => {"application" => {"mail-session" => {"type" => "mail"}}},
+            "attributes" => undefined,
+            "operations" => undefined,
+            "notifications" => undefined,
+            "children" => {},
+            "access-control" => {
+                "default" => {
+                    "read" => true,
+                    "write" => true,
+                    "attributes" => {
+                        "outbound-socket-binding-ref" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "password" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "ssl" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "tls" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "username" => {
+                            "read" => true,
+                            "write" => true
+                        }
+                    },
+                    "operations" => {
+                        "add" => {"execute" => true},
+                        "read-children-types" => {"execute" => true},
+                        "whoami" => {"execute" => true},
+                        "map-clear" => {"execute" => true},
+                        "list-get" => {"execute" => true},
+                        "query" => {"execute" => true},
+                        "read-operation-description" => {"execute" => true},
+                        "write-attribute" => {"execute" => true},
+                        "map-get" => {"execute" => true},
+                        "list-clear" => {"execute" => true},
+                        "read-attribute" => {"execute" => true},
+                        "remove" => {"execute" => true},
+                        "map-remove" => {"execute" => true},
+                        "list-add" => {"execute" => true},
+                        "read-attribute-group" => {"execute" => true},
+                        "undefine-attribute" => {"execute" => true},
+                        "map-put" => {"execute" => true},
+                        "read-children-names" => {"execute" => true},
+                        "read-attribute-group-names" => {"execute" => true},
+                        "read-operation-names" => {"execute" => true},
+                        "list-remove" => {"execute" => true},
+                        "read-children-resources" => {"execute" => true},
+                        "read-resource-description" => {"execute" => true},
+                        "read-resource" => {"execute" => true}
+                    }
+                },
+                "exceptions" => {}
+            }
+        }
+    },
+    {
+        "address" => [
+            ("subsystem" => "mail"),
+            ("mail-session" => "*"),
+            ("server" => "pop3")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "description" => undefined,
+            "access-constraints" => {"application" => {"mail-session" => {"type" => "mail"}}},
+            "attributes" => undefined,
+            "operations" => undefined,
+            "notifications" => undefined,
+            "children" => {},
+            "access-control" => {
+                "default" => {
+                    "read" => true,
+                    "write" => true,
+                    "attributes" => {
+                        "outbound-socket-binding-ref" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "password" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "ssl" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "tls" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "username" => {
+                            "read" => true,
+                            "write" => true
+                        }
+                    },
+                    "operations" => {
+                        "add" => {"execute" => true},
+                        "read-children-types" => {"execute" => true},
+                        "whoami" => {"execute" => true},
+                        "map-clear" => {"execute" => true},
+                        "list-get" => {"execute" => true},
+                        "query" => {"execute" => true},
+                        "read-operation-description" => {"execute" => true},
+                        "write-attribute" => {"execute" => true},
+                        "map-get" => {"execute" => true},
+                        "list-clear" => {"execute" => true},
+                        "read-attribute" => {"execute" => true},
+                        "remove" => {"execute" => true},
+                        "map-remove" => {"execute" => true},
+                        "list-add" => {"execute" => true},
+                        "read-attribute-group" => {"execute" => true},
+                        "undefine-attribute" => {"execute" => true},
+                        "map-put" => {"execute" => true},
+                        "read-children-names" => {"execute" => true},
+                        "read-attribute-group-names" => {"execute" => true},
+                        "read-operation-names" => {"execute" => true},
+                        "list-remove" => {"execute" => true},
+                        "read-children-resources" => {"execute" => true},
+                        "read-resource-description" => {"execute" => true},
+                        "read-resource" => {"execute" => true}
+                    }
+                },
+                "exceptions" => {}
+            }
+        }
+    },
+    {
+        "address" => [
+            ("subsystem" => "mail"),
+            ("mail-session" => "*"),
+            ("server" => "imap")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "description" => undefined,
+            "access-constraints" => {"application" => {"mail-session" => {"type" => "mail"}}},
+            "attributes" => undefined,
+            "operations" => undefined,
+            "notifications" => undefined,
+            "children" => {},
+            "access-control" => {
+                "default" => {
+                    "read" => true,
+                    "write" => true,
+                    "attributes" => {
+                        "outbound-socket-binding-ref" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "password" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "ssl" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "tls" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "username" => {
+                            "read" => true,
+                            "write" => true
+                        }
+                    },
+                    "operations" => {
+                        "add" => {"execute" => true},
+                        "read-children-types" => {"execute" => true},
+                        "whoami" => {"execute" => true},
+                        "map-clear" => {"execute" => true},
+                        "list-get" => {"execute" => true},
+                        "query" => {"execute" => true},
+                        "read-operation-description" => {"execute" => true},
+                        "write-attribute" => {"execute" => true},
+                        "map-get" => {"execute" => true},
+                        "list-clear" => {"execute" => true},
+                        "read-attribute" => {"execute" => true},
+                        "remove" => {"execute" => true},
+                        "map-remove" => {"execute" => true},
+                        "list-add" => {"execute" => true},
+                        "read-attribute-group" => {"execute" => true},
+                        "undefine-attribute" => {"execute" => true},
+                        "map-put" => {"execute" => true},
+                        "read-children-names" => {"execute" => true},
+                        "read-attribute-group-names" => {"execute" => true},
+                        "read-operation-names" => {"execute" => true},
+                        "list-remove" => {"execute" => true},
+                        "read-children-resources" => {"execute" => true},
+                        "read-resource-description" => {"execute" => true},
+                        "read-resource" => {"execute" => true}
+                    }
+                },
+                "exceptions" => {}
+            }
+        }
+    }
+]
