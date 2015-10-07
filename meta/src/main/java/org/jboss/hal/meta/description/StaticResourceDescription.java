@@ -22,10 +22,7 @@
 package org.jboss.hal.meta.description;
 
 import com.google.gwt.resources.client.TextResource;
-import org.jboss.hal.dmr.DataInput;
 import org.jboss.hal.dmr.ModelNode;
-
-import java.io.IOException;
 
 /**
  * @author Harald Pehl
@@ -35,12 +32,6 @@ public final class StaticResourceDescription {
     private StaticResourceDescription() {}
 
     public static ResourceDescription from(TextResource resource) {
-        ModelNode description = new ModelNode();
-        try {
-            description.readExternal(new DataInput(ModelNode.toBytes(resource.getText())));
-            return new ResourceDescription(description);
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e);
-        }
+        return new ResourceDescription(ModelNode.fromBase64(resource.getText()));
     }
 }

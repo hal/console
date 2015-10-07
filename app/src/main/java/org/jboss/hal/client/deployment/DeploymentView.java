@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.client.deployment;
 
+import com.google.gwt.core.client.GWT;
 import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
@@ -36,6 +37,10 @@ import org.jboss.hal.ballroom.form.TextAreaItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
+import org.jboss.hal.client.bootstrap.endpoint.EndpointResources;
+import org.jboss.hal.core.mbui.ModelNodeForm;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 
 import java.util.Arrays;
@@ -85,12 +90,19 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
                 .add(dialogForm.asElement()).build();
         dialog = new Dialog.Builder("Sample Dialog").add(dialogBody).closeOnly().build();
 
+        EndpointResources endpointResources = GWT.create(EndpointResources.class);
+        ModelNodeForm mbuiForm = new ModelNodeForm.Builder("mbui-form", SecurityContext.RWX,
+                StaticResourceDescription.from(endpointResources.endpoint())).build();
+
         SampleForm form = new SampleForm("deployment", false);
         Element element = new LayoutBuilder()
                 .header("Sample Form")
                 .add(form.asElement())
+                .add(mbuiForm.asElement())
                 .build();
         initWidget(Elements.asWidget(element));
+
         form.view("foo");
+        mbuiForm.view(new ModelNode());
     }
 }

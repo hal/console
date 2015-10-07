@@ -29,6 +29,6 @@ import com.google.gwt.resources.client.TextResource;
  */
 public interface EndpointResources extends ClientBundle {
 
-    @Source("endpoint.dmr")
+    @Source("endpoint.base64")
     TextResource endpoint();
 }

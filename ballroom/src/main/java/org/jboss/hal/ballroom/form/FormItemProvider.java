@@ -19,19 +19,17 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.mbui;
+package org.jboss.hal.ballroom.form;
 
-import org.jboss.hal.ballroom.form.FormItem;
-import org.jboss.hal.ballroom.form.FormItemFactory;
-import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
 
 /**
+ * Provider to create form items based on attributes descriptions from a {@link org.jboss.hal.meta.description.ResourceDescription}.
+ *
  * @author Harald Pehl
  */
-public class DefaultFormItemFactory implements FormItemFactory {
+@FunctionalInterface
+public interface FormItemProvider {
 
-    @Override
-    public FormItem<?> createFrom(final ModelNode attributeDescription) {
-        return null;
-    }
+    FormItem<?> createFrom(Property attributeDescription);
 }

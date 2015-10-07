@@ -27,13 +27,15 @@ import org.jboss.hal.ballroom.form.AbstractForm;
 import org.jboss.hal.ballroom.form.DefaultStateMachine;
 import org.jboss.hal.ballroom.form.EditOnlyStateMachine;
 import org.jboss.hal.ballroom.form.FormItem;
-import org.jboss.hal.ballroom.form.FormItemFactory;
+import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.StateMachine;
 import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,7 +56,7 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
         final ResourceDescription resourceDescription;
         final Set<String> includes;
         final Set<String> excludes;
-        final Map<String, FormItemFactory> factories;
+        final Map<String, FormItemProvider> providers;
         final Map<String, SaveOperationStep> saveOperations;
         boolean createResource;
         boolean viewOnly;
@@ -74,7 +76,7 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
             this.resourceDescription = resourceDescription;
             this.includes = new HashSet<>();
             this.excludes = new HashSet<>();
-            this.factories = new HashMap<>();
+            this.providers = new HashMap<>();
             this.saveOperations = new HashMap<>();
             this.createResource = false;
             this.viewOnly = false;
@@ -112,13 +114,13 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
             return this;
         }
 
-        public Builder customFormItem(final String attribute, final FormItemFactory factory) {
-            return customFormItem(attribute, factory, null);
+        public Builder customFormItem(final String attribute, final FormItemProvider provider) {
+            return customFormItem(attribute, provider, null);
         }
 
-        public Builder customFormItem(final String attribute, final FormItemFactory factory,
+        public Builder customFormItem(final String attribute, final FormItemProvider provider,
                 final SaveOperationStep saveOperation) {
-            factories.put(attribute, factory);
+            providers.put(attribute, provider);
             if (saveOperation != null) {
                 saveOperations.put(attribute, saveOperation);
             }
@@ -153,7 +155,8 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
             }
             if (createResource) {
                 if (viewOnly) {
-                    throw new IllegalStateException("Illegal combination for " + formId() + ": createResource && viewOnly");
+                    throw new IllegalStateException(
+                            "Illegal combination for " + formId() + ": createResource && viewOnly");
                 }
                 if (!resourceDescription.hasDefined(OPERATIONS) ||
                         !resourceDescription.get(OPERATIONS).hasDefined(ADD) ||
@@ -181,31 +184,38 @@ public class ModelNodeForm extends AbstractForm<ModelNode> {
     }
 
 
-    private final FormItemFactory defaultFormItemFactory;
+    private static final Logger logger = LoggerFactory.getLogger(ModelNodeForm.class);
+
+    private final FormItemProvider defaultFormItemProvider;
     private final Map<String, SaveOperationStep> saveOperations;
 
     ModelNodeForm(final Builder builder) {
         super(builder.id, builder.stateMachine(), builder.securityContext);
 
-        this.defaultFormItemFactory = new DefaultFormItemFactory();
+        this.defaultFormItemProvider = new DefaultFormItemProvider();
         this.saveOperations = builder.saveOperations;
         this.saveCallback = builder.saveCallback;
         this.cancelCallback = builder.cancelCallback;
         this.resetCallback = builder.resetCallback;
 
+        LabelBuilder labelBuilder = new LabelBuilder();
         ImmutableSortedSet<Property> properties = new PropertyFilter(builder).filter();
         for (Property property : properties) {
             String name = property.getName();
             ModelNode attribute = property.getValue();
 
             FormItem formItem;
-            if (builder.factories.containsKey(name)) {
-                formItem = builder.factories.get(name).createFrom(attribute);
+            if (builder.providers.containsKey(name)) {
+                formItem = builder.providers.get(name).createFrom(property);
             } else {
-                formItem = defaultFormItemFactory.createFrom(attribute);
+                formItem = defaultFormItemProvider.createFrom(property);
             }
-            addFormItem(formItem);
-            // TODO addHelp(name, description);
+            if (formItem != null) {
+                addFormItem(formItem);
+                addHelp(labelBuilder.label(property), attribute.get(DESCRIPTION).asString());
+            } else {
+                logger.warn("Unable to create form item for '{}' in form '{}'", name, builder.id);
+            }
         }
     }
 }

@@ -23,6 +23,7 @@ package org.jboss.hal.ballroom.form;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.events.EventListener;
@@ -59,6 +60,7 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 public abstract class AbstractForm<T> extends LazyElement implements Form<T>, SecurityContextAware, GridSpec {
 
     private final static HalConstants CONSTANTS = GWT.create(HalConstants.class);
+    private final static String NOT_INITIALIZED = "Form element not initialized. Please add this form to the DOM before calling any of the form operations like view(), edit(), save(), cancel() or reset()";
 
     private final String id;
     private final StateMachine stateMachine;
@@ -212,6 +214,9 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
         if (model == null) {
             throw new NullPointerException("Model must not be null in " + formId() + ".view(T)");
         }
+        if (!initialized()) {
+            throw new IllegalStateException(NOT_INITIALIZED);
+        }
         this.model = model;
         execute(VIEW);
     }
@@ -221,12 +226,18 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
         if (model == null) {
             throw new NullPointerException("Model must not be null in " + formId() + ".edit(T)");
         }
+        if (!initialized()) {
+            throw new IllegalStateException(NOT_INITIALIZED);
+        }
         this.model = model;
         execute(EDIT);
     }
 
     @Override
     public final void save() {
+        if (!initialized()) {
+            throw new IllegalStateException(NOT_INITIALIZED);
+        }
         boolean valid = validate();
         if (valid) {
             if (saveCallback != null) {
@@ -253,6 +264,9 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
 
     @Override
     public final void cancel() {
+        if (!initialized()) {
+            throw new IllegalStateException(NOT_INITIALIZED);
+        }
         clearErrors();
         if (cancelCallback != null) {
             cancelCallback.onCancel();
@@ -267,6 +281,9 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
 
     @Override
     public final void reset() {
+        if (!initialized()) {
+            throw new IllegalStateException(NOT_INITIALIZED);
+        }
         if (resetCallback != null) {
             resetCallback.onReset();
         }
@@ -322,7 +339,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
 
             case EDITING:
                 if (!formItems.isEmpty()) {
-                    formItems.values().iterator().next().setFocus(true);
+                    Scheduler.get().scheduleDeferred(() -> formItems.values().iterator().next().setFocus(true));
                 }
                 if (exitEditWithEsc != null && panels.get(EDITING) != null) {
                     // Exit *this* edit state by pressing ESC
