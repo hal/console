@@ -57,7 +57,7 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
  *
  * @author Harald Pehl
  */
-public abstract class AbstractForm<T> extends LazyElement implements Form<T>, SecurityContextAware, GridSpec {
+public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityContextAware, GridSpec {
 
     private final static HalConstants CONSTANTS = GWT.create(HalConstants.class);
     private final static String NOT_INITIALIZED = "Form element not initialized. Please add this form to the DOM before calling any of the form operations like view(), edit(), save(), cancel() or reset()";
@@ -86,7 +86,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T>, Se
 
     // ------------------------------------------------------ initialization
 
-    protected AbstractForm(final String id, final StateMachine stateMachine, final SecurityContext securityContext) {
+    public DefaultForm(final String id, final StateMachine stateMachine, final SecurityContext securityContext) {
         this.stateMachine = stateMachine;
         this.securityContext = securityContext;
 

@@ -21,8 +21,10 @@
  */
 package org.jboss.hal.core.mbui;
 
+import org.jboss.hal.ballroom.form.CheckBoxItem;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemProvider;
+import org.jboss.hal.ballroom.form.NumberItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
@@ -43,33 +45,32 @@ public class DefaultFormItemProvider implements FormItemProvider {
         FormItem<?> formItem = null;
 
         String name = attributeDescription.getName();
+        String label = labelBuilder.label(attributeDescription);
         ModelNode modelNode = attributeDescription.getValue();
         ModelType type = modelNode.get(ModelDescriptionConstants.TYPE).asType();
         switch (type) {
             case BIG_DECIMAL:
-                break;
             case BIG_INTEGER:
+            case DOUBLE:
+            case INT:
+            case LONG:
+                formItem = new NumberItem(name, label);
                 break;
             case BOOLEAN:
+                formItem = new CheckBoxItem(name, label);
                 break;
             case BYTES:
                 break;
-            case DOUBLE:
-                break;
             case EXPRESSION:
                 break;
-            case INT:
-                break;
             case LIST:
-                break;
-            case LONG:
                 break;
             case OBJECT:
                 break;
             case PROPERTY:
                 break;
             case STRING:
-                formItem = new TextBoxItem(name, labelBuilder.label(attributeDescription));
+                formItem = new TextBoxItem(name, label);
                 break;
             case TYPE:
                 break;

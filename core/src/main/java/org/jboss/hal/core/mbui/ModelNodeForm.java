@@ -23,7 +23,7 @@ package org.jboss.hal.core.mbui;
 
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Lists;
-import org.jboss.hal.ballroom.form.AbstractForm;
+import org.jboss.hal.ballroom.form.DefaultForm;
 import org.jboss.hal.ballroom.form.DefaultStateMachine;
 import org.jboss.hal.ballroom.form.EditOnlyStateMachine;
 import org.jboss.hal.ballroom.form.FormItem;
@@ -47,7 +47,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-public class ModelNodeForm extends AbstractForm<ModelNode> {
+public class ModelNodeForm extends DefaultForm<ModelNode> {
 
     public static class Builder {
 

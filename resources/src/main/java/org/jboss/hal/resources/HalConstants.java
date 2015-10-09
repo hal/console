@@ -135,6 +135,11 @@ public interface HalConstants extends Constants {
     String save();
     String settings();
     String start();
+
+    String table_toolbar();
+    String table_default_group();
+    String table_info_empty();
+
     String toggle_navigation();
     String tools();
     String unknown_error();

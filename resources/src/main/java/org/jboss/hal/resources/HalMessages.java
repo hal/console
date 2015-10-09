@@ -19,6 +19,7 @@
 package org.jboss.hal.resources;
 
 import com.google.gwt.i18n.client.Messages;
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface HalMessages extends Messages {
 
@@ -33,6 +34,9 @@ public interface HalMessages extends Messages {
     String invalid_range(long value, long min, long max);
     String messages(@PluralCount int count);
     String pattern_mismatch(String pattern);
+    SafeHtml table_info(int from, int to, int size);
+    String table_named_group(String name);
+    SafeHtml table_pages(int pages);
     String update_available(String current, String update);
     //@formatter:on
 }

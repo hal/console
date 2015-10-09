@@ -26,7 +26,7 @@ import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.dialog.Dialog;
-import org.jboss.hal.ballroom.form.AbstractForm;
+import org.jboss.hal.ballroom.form.DefaultForm;
 import org.jboss.hal.ballroom.form.ButtonItem;
 import org.jboss.hal.ballroom.form.DefaultStateMachine;
 import org.jboss.hal.ballroom.form.EditOnlyStateMachine;
@@ -50,10 +50,10 @@ import java.util.Arrays;
  */
 public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyView {
 
-    class SampleForm extends AbstractForm<String> {
+    class SampleForm extends DefaultForm<String> {
 
-        protected SampleForm(final String id, boolean editOnly) {
-            super(id, editOnly ? new EditOnlyStateMachine() : new DefaultStateMachine(), SecurityContext.RWX);
+        protected SampleForm(final String id, boolean nested) {
+            super(id, nested ? new EditOnlyStateMachine() : new DefaultStateMachine(), SecurityContext.RWX);
 
             TextBoxItem name = new TextBoxItem("name", "Name");
             name.setRequired(true);
@@ -64,13 +64,15 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
                     ValidationResult.invalid("Please provide the magic expression"));
             NumberItem age = new NumberItem("age", "Age");
             age.setRestricted(true);
-            ButtonItem button = new ButtonItem("click", "Click Me");
-            button.onClick(event -> dialog.show());
 
             addFormItem(name, formula, new PasswordItem("password", "Password"), age,
                     new TextAreaItem("hobbies", "Hobbies"),
-                    new SelectBoxItem("color", "Favorite Color", Arrays.asList("Red", "Green", "Blue")),
-                    button);
+                    new SelectBoxItem("color", "Favorite Color", Arrays.asList("Red", "Green", "Blue")));
+            if (nested) {
+                ButtonItem button = new ButtonItem("click", "Click Me");
+                button.onClick(event -> dialog.show());
+                addFormItem(button);
+            }
 
             addHelp("Name", "Your name");
             addHelp("Formula", "Try to enter an expression");
