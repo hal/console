@@ -363,9 +363,8 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         this.securityContext = securityContext;
         if (stateMachine.current() == EDITING && !securityContext.isWritable()) {
             execute(CANCEL);
-        } else {
-            formLinks.switchTo(stateMachine.current(), securityContext);
         }
+        formLinks.switchTo(stateMachine.current(), securityContext);
         for (Map.Entry<String, FormItem> entry : formItems.entrySet()) {
             entry.getValue().setRestricted(!securityContext.isWritable(entry.getKey()));
         }
