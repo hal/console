@@ -236,7 +236,11 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
     public void setData(List<T> data) {
         dataProvider.getList().clear();
         dataProvider.getList().addAll(data);
-        enableDisableButtons();
+        if (selectionModel instanceof SingleSelectionModel) {
+            ((SingleSelectionModel<T>)selectionModel).clear();
+        } else if (selectionModel instanceof MultiSelectionModel) {
+            ((MultiSelectionModel<T>)selectionModel).clear();
+        }
     }
 
     @Override
@@ -248,6 +252,16 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
 
     public void onSelectionChange(SelectionChangeEvent.Handler handler) {
         selectionModel.addSelectionChangeHandler(handler);
+    }
+
+    public boolean hasSelection() {
+        boolean hasSelection = false;
+        if (selectionModel instanceof SingleSelectionModel) {
+            hasSelection = selectedElement() != null;
+        } else if (selectionModel instanceof MultiSelectionModel) {
+            hasSelection = !selectedElements().isEmpty();
+        }
+        return hasSelection;
     }
 
     public T selectedElement() {
@@ -273,9 +287,16 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
         return null;
     }
 
+    public void select(final T element) {
+        selectionModel.setSelected(element, true);
+    }
+
+
     // ------------------------------------------------------ columns
 
-    public void addColumn(final Column<T, ?> col, final String headerString) {cellTable.addColumn(col, headerString);}
+    public void addColumn(final Column<T, ?> col, final String headerString) {
+        cellTable.addColumn(col, headerString);
+    }
 
 
     // ------------------------------------------------------ buttons
@@ -306,12 +327,7 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
     }
 
     private void enableDisableButtons() {
-        boolean hasSelection = false;
-        if (selectionModel instanceof SingleSelectionModel) {
-            hasSelection = selectedElement() != null;
-        } else if (selectionModel instanceof MultiSelectionModel) {
-            hasSelection = !selectedElements().isEmpty();
-        }
+        boolean hasSelection = hasSelection();
         for (DataTableButton button : buttons) {
             if (button.getTarget() == DataTableButton.Target.ROW) {
                 button.setDisabled(!hasSelection);

@@ -28,8 +28,10 @@ import com.google.gwt.user.cellview.client.CellTable;
  */
 public class DataTableStyles implements CellTable.Style {
 
+    private static final String UNUSED = "hal-data-table-unused";    
+
     public String cellTableCell() {
-        return "";
+        return UNUSED;
     }
 
     @Override
@@ -39,32 +41,32 @@ public class DataTableStyles implements CellTable.Style {
 
     @Override
     public String cellTableEvenRowCell() {
-        return "";
+        return UNUSED;
     }
 
     @Override
     public String cellTableFirstColumn() {
-        return "";
+        return UNUSED;
     }
 
     @Override
     public String cellTableFirstColumnFooter() {
-        return "";
+        return UNUSED;
     }
 
     @Override
     public String cellTableFirstColumnHeader() {
-        return "";
+        return UNUSED;
     }
 
     @Override
     public String cellTableFooter() {
-        return "";
+        return UNUSED;
     }
 
     @Override
     public String cellTableHeader() {
-        return "";
+        return UNUSED;
     }
 
     @Override
@@ -74,12 +76,12 @@ public class DataTableStyles implements CellTable.Style {
 
     @Override
     public String cellTableHoveredRowCell() {
-        return "";
+        return UNUSED;
     }
 
     @Override
     public String cellTableKeyboardSelectedCell() {
-        return "";
+        return UNUSED;
     }
 
     @Override
@@ -89,27 +91,27 @@ public class DataTableStyles implements CellTable.Style {
 
     @Override
     public String cellTableKeyboardSelectedRowCell() {
-        return "";
+        return UNUSED;
     }
 
     @Override
     public String cellTableLastColumn() {
-        return "";
+        return UNUSED;
     }
 
     @Override
     public String cellTableLastColumnFooter() {
-        return "";
+        return UNUSED;
     }
 
     @Override
     public String cellTableLastColumnHeader() {
-        return "";
+        return UNUSED;
     }
 
     @Override
     public String cellTableLoading() {
-        return "";
+        return UNUSED;
     }
 
     @Override
@@ -119,7 +121,7 @@ public class DataTableStyles implements CellTable.Style {
 
     @Override
     public String cellTableOddRowCell() {
-        return "";
+        return UNUSED;
     }
 
     @Override
@@ -129,22 +131,22 @@ public class DataTableStyles implements CellTable.Style {
 
     @Override
     public String cellTableSelectedRowCell() {
-        return "";
+        return UNUSED;
     }
 
     @Override
     public String cellTableSortableHeader() {
-        return "";
+        return UNUSED;
     }
 
     @Override
     public String cellTableSortedHeaderAscending() {
-        return "";
+        return UNUSED;
     }
 
     @Override
     public String cellTableSortedHeaderDescending() {
-        return "";
+        return UNUSED;
     }
 
     @Override
@@ -159,7 +161,7 @@ public class DataTableStyles implements CellTable.Style {
 
     @Override
     public String getText() {
-        return "";
+        return UNUSED;
     }
 
     @Override
