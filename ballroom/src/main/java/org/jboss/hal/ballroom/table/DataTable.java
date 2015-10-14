@@ -174,8 +174,12 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
                 .css("hal-data-table-empty")
                 .innerText(constants.table_info_empty())
                 .build();
-        cellTable = new CellTable<>(DEFAULT_PAGE_SIZE, new DataTableResources(), keyProvider,
-                Elements.asWidget(loadingIndicator));
+        cellTable = new CellTable<T>(DEFAULT_PAGE_SIZE, new DataTableResources(), keyProvider,
+                Elements.asWidget(loadingIndicator)) {{
+            // Since the CellTable element not the widget gets attached to the DOM,
+            // we need to manually invoke the onAttach() method to wire the DOM events.
+            onAttach();
+        }};
         cellTable.setEmptyTableWidget(Elements.asWidget(empty));
         cellTable.setWidth("100%");
         cellTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
@@ -237,9 +241,9 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
         dataProvider.getList().clear();
         dataProvider.getList().addAll(data);
         if (selectionModel instanceof SingleSelectionModel) {
-            ((SingleSelectionModel<T>)selectionModel).clear();
+            ((SingleSelectionModel<T>) selectionModel).clear();
         } else if (selectionModel instanceof MultiSelectionModel) {
-            ((MultiSelectionModel<T>)selectionModel).clear();
+            ((MultiSelectionModel<T>) selectionModel).clear();
         }
     }
 
