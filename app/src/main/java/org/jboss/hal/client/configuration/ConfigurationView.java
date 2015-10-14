@@ -24,16 +24,19 @@ package org.jboss.hal.client.configuration;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.view.client.ProvidesKey;
 import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.Button;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.meta.security.SecurityContext;
+import org.jboss.hal.ballroom.table.DataTableButton;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.jboss.hal.ballroom.table.DataTableButton.Target.GLOBAL;
+import static org.jboss.hal.ballroom.table.DataTableButton.Target.ROW;
 
 /**
  * @author Harald Pehl
@@ -56,10 +59,11 @@ public class ConfigurationView extends ViewImpl implements ConfigurationPresente
     }
 
     public ConfigurationView() {
-        DataTable<FooBar> dataTable = new DataTable<>("foobar-table", FooBar::id, SecurityContext.RWX, true);
+        //noinspection Convert2MethodRef
+        DataTable<FooBar> dataTable = new DataTable<>("foobar-table", (ProvidesKey<FooBar>) fooBar -> fooBar.id());
 
-        dataTable.addButton(new Button("Foo", "btn btn-default"), event -> Window.alert("Bar"));
-        dataTable.addButton(new Button("Bar", "btn btn-default"), event -> Window.alert("Foo"));
+        dataTable.addButton(new DataTableButton("Foo", GLOBAL), event -> Window.alert("Bar"));
+        dataTable.addButton(new DataTableButton("Bar", ROW), event -> Window.alert("Foo"));
 
         dataTable.addColumn(new TextColumn<FooBar>() {
             @Override

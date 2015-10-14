@@ -25,29 +25,21 @@ import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.ButtonElement;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.meta.security.SecurityContextAware;
 
 /**
  * @author Harald Pehl
  */
-public class Button implements IsElement, SecurityContextAware {
+public class Button implements IsElement {
 
-    private final ButtonElement element;
-    private final String operation;
-    private SecurityContext securityContext;
+    public static final String DEFAULT_CSS = "btn btn-hal btn-default";
+
+    protected final ButtonElement element;
 
     public Button(final String label) {
-        this(label, null, null);
+        this(label, DEFAULT_CSS);
     }
 
     public Button(final String label, final String css) {
-        this(label, css, null);
-    }
-
-    public Button(final String label, final String css, final String operation) {
-        this.operation = operation;
-
         element = Browser.getDocument().createButtonElement();
         element.setInnerText(label);
         if (css != null) {
@@ -58,32 +50,5 @@ public class Button implements IsElement, SecurityContextAware {
     @Override
     public Element asElement() {
         return element;
-    }
-
-    @Override
-    public void updateSecurityContext(final SecurityContext securityContext) {
-        if (operation != null) {
-            this.securityContext = securityContext;
-            if (!securityContext.isExecutable(operation)) {
-                element.getDataset().setAt("rbac", "restricted");
-                element.setDisabled(true);
-            } else {
-                boolean wasRestricted = element.getDataset().at("rbac") != null;
-                if (wasRestricted) {
-                    element.getDataset().setAt("rbac", null);
-                    if (element.isDisabled()) {
-                        element.setDisabled(false);
-                    }
-                }
-            }
-        }
-    }
-
-    public void setDisabled(boolean disabled) {
-        if (operation != null && securityContext != null && !securityContext.isExecutable(operation)) {
-            element.setDisabled(true);
-        } else {
-            element.setDisabled(disabled);
-        }
     }
 }

@@ -23,15 +23,19 @@ package org.jboss.hal.ballroom.table;
 
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.AbstractPager;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
+import com.google.gwt.view.client.HasRows;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
@@ -41,12 +45,14 @@ import elemental.events.EventListener;
 import elemental.html.DivElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.ballroom.Button;
 import org.jboss.hal.meta.security.SecurityContext;
+import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.HalConstants;
 import org.jboss.hal.resources.HalMessages;
 import org.jboss.hal.resources.I18n;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -56,36 +62,103 @@ import static com.google.gwt.view.client.DefaultSelectionEventManager.SelectActi
 /**
  * @author Harald Pehl
  */
-public class DataTable<T> implements IsElement {
+public class DataTable<T> implements IsElement, SecurityContextAware {
 
     class Pager extends AbstractPager {
 
+        public Pager() {
+            appearance.navInfo.setInnerText(constants.table_info_empty());
+            appearance.navFirst.getClassList().add("disabled");
+            appearance.navPrev.getClassList().add("disabled");
+            appearance.navCurrentPage.setValue("");
+            appearance.navNext.getClassList().add("disabled");
+            appearance.navLast.getClassList().add("disabled");
+
+            appearance.navFirst.setOnclick(event -> firstPage());
+            appearance.navPrev.setOnclick(event -> previousPage());
+            appearance.navNext.setOnclick(event -> nextPage());
+            appearance.navLast.setOnclick(event -> lastPage());
+        }
+
         @Override
         protected void onRangeOrRowCountChanged() {
+            HasRows display = getDisplay();
+            if (display.getRowCount() == 0) {
+                appearance.navInfo.setInnerText(constants.table_info_empty());
+            } else {
+                appearance.navInfo.setInnerHTML(info().asString());
+            }
+            if (hasPreviousPage()) {
+                appearance.navFirst.getClassList().remove("disabled");
+                appearance.navPrev.getClassList().remove("disabled");
+            } else {
+                appearance.navFirst.getClassList().add("disabled");
+                appearance.navPrev.getClassList().add("disabled");
+            }
+            if (hasNextPage()) {
+                appearance.navNext.getClassList().remove("disabled");
+                appearance.navLast.getClassList().remove("disabled");
+            } else {
+                appearance.navNext.getClassList().add("disabled");
+                appearance.navLast.getClassList().add("disabled");
+            }
+        }
 
+        SafeHtml info() {
+            // Default text is 1 based.
+            HasRows display = getDisplay();
+            Range range = display.getVisibleRange();
+            int pageStart = range.getStart() + 1;
+            int pageSize = range.getLength();
+            int dataSize = display.getRowCount();
+            int endIndex = Math.min(dataSize, pageStart + pageSize - 1);
+            endIndex = Math.max(pageStart, endIndex);
+            return messages.table_info(pageStart, endIndex, dataSize);
+        }
+
+        void setPages(int pages) {
+            if (pages == 0) {
+
+            } else {
+                
+            }
+            appearance.navPages.setInnerText(String.valueOf(pages));
         }
     }
 
+
     public static final int DEFAULT_PAGE_SIZE = 7;
-    public static final String DEFAULT_BUTTON_GROUP = "hal.dataTable.defaultButtonGroup";
+    public static final String DEFAULT_BUTTON_GROUP = "hal-dataTable-defaultButtonGroup";
 
     private static HalConstants constants = GWT.create(HalConstants.class);
     private static HalMessages messages = GWT.create(HalMessages.class);
 
     private final String id;
-    private final SecurityContext securityContext;
+    private final boolean singleSelection;
+    private final Appearance appearance;
+    private final List<DataTableButton> buttons;
     private final ListDataProvider<T> dataProvider;
     private final SelectionModel<T> selectionModel;
     private final CellTable<T> cellTable;
     private final Pager pager;
-    private final Appearance appearance;
 
-    public DataTable(final String id, final ProvidesKey<T> keyProvider, final SecurityContext securityContext,
-            boolean singleSelection) {
+    public DataTable(final String id, final ProvidesKey<T> keyProvider) {
+        this(id, keyProvider, true);
+    }
+
+    public DataTable(final String id, final ProvidesKey<T> keyProvider, boolean singleSelection) {
         this.id = id;
-        this.securityContext = securityContext;
+        this.singleSelection = singleSelection;
 
+        appearance = Appearance.create(id, new I18n(constants, messages));
+        buttons = new ArrayList<>();
         cellTable = new CellTable<>(DEFAULT_PAGE_SIZE, keyProvider);
+        cellTable.setWidth("100%");
+        cellTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
+        cellTable.setAutoHeaderRefreshDisabled(true);
+        cellTable.setAutoFooterRefreshDisabled(true);
+        cellTable.setRowData(0, Collections.<T>emptyList());
+        cellTable.getElement().setAttribute("role", "grid");
         dataProvider = new ListDataProvider<>(keyProvider);
         dataProvider.addDataDisplay(cellTable);
         pager = new Pager();
@@ -120,8 +193,8 @@ public class DataTable<T> implements IsElement {
             cellTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
             cellTable.setColumnWidth(checkColumn, 40, PX);
         }
+        selectionModel.addSelectionChangeHandler(selectionChangeEvent -> enableDisableButtons(singleSelection));
 
-        appearance = Appearance.create(id, new I18n(constants, messages));
         appearance.cellTableHolder.appendChild(Elements.asElement(cellTable));
     }
 
@@ -136,6 +209,14 @@ public class DataTable<T> implements IsElement {
     public void setData(List<T> data) {
         dataProvider.getList().clear();
         dataProvider.getList().addAll(data);
+        enableDisableButtons(singleSelection);
+    }
+
+    @Override
+    public void updateSecurityContext(final SecurityContext securityContext) {
+        for (DataTableButton button : buttons) {
+            button.updateSecurityContext(securityContext);
+        }
     }
 
     public void onSelectionChange(SelectionChangeEvent.Handler handler) {
@@ -165,7 +246,6 @@ public class DataTable<T> implements IsElement {
         return null;
     }
 
-
     // ------------------------------------------------------ columns
 
     public void addColumn(final Column<T, ?> col, final String headerString) {cellTable.addColumn(col, headerString);}
@@ -173,18 +253,19 @@ public class DataTable<T> implements IsElement {
 
     // ------------------------------------------------------ buttons
 
-    public void addButton(Button button, EventListener listener) {
+    public void addButton(DataTableButton button, EventListener listener) {
         addButton(button, DEFAULT_BUTTON_GROUP, listener);
     }
 
-    public void addButton(Button button, String group, EventListener listener) {
+    public void addButton(DataTableButton button, String group, EventListener listener) {
         button.asElement().setOnclick(listener);
-        Element groupElement = Browser.getDocument().querySelector("[data-button-group='" + group + "']");
+        Element groupElement = appearance.asElement().querySelector("[data-button-group='" + group + "']");
         if (groupElement == null) {
             groupElement = buttonGroup(group);
             appearance.buttonToolbar.appendChild(groupElement);
         }
         groupElement.appendChild(button.asElement());
+        buttons.add(button);
     }
 
     private Element buttonGroup(String name) {
@@ -195,5 +276,19 @@ public class DataTable<T> implements IsElement {
         group.setAttribute("role", "group");
         group.setAttribute("aria-label", messages.table_named_group(name));
         return group;
+    }
+
+    private void enableDisableButtons(final boolean singleSelection) {
+        boolean hasSelection;
+        if (singleSelection) {
+            hasSelection = ((SingleSelectionModel<T>) selectionModel).getSelectedObject() != null;
+        } else {
+            hasSelection = !((MultiSelectionModel<T>) selectionModel).getSelectedSet().isEmpty();
+        }
+        for (DataTableButton button : buttons) {
+            if (button.getTarget() == DataTableButton.Target.ROW) {
+                button.setDisabled(!hasSelection);
+            }
+        }
     }
 }
