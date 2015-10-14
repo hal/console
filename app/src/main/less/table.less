@@ -1,209 +1,29 @@
+.table {
+  > tbody + tbody {
+    // disable multiple table bodies introduced in patternfly/components/bootstrap/less/tables.less
+    // if the table is empty GWT's CellTable adds an additional tbody with an empty message
+    // this rule makes sure we don't show a top border as defined by the original CSS rule
+    border-top: none;
+  }
+}
+
 .hal-data-table {
   margin: 0;
-  border: 1px solid #d1d1d1;
 }
 
-// TODO Replace with some meaningful colors
-@border2-color: white;
-@border3-color: white;
-@background1-color: white;
-@selection1-color: white;
-
-.empty-celltable {
-  text-align: center;
-  width: 100%;
-  height: 50px;
-  color: #cccccc;
-  padding-top: 22px;
-  border-left: 1px solid @border2-color;
+.hal-data-table-loading, .hal-data-table-empty {
+  padding: 1em 0;
 }
 
-.default-cell-table {
-  /*font-size:11px;*/
-  border-top: 1px solid @border2-color;
-  border-right: 1px solid @border2-color;
-  border-bottom: 1px solid @border2-color;
-  width: 100%;
-  background-color: #ffffff;
+.hal-data-table-empty {
+  color: #8b8d8f;
+  font-style: italic;
 }
 
-.cellTableHeader {
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  font-family: 'Open Sans', sans-serif;
-  font-style: normal;
-  font-size: 12px;
-  line-height: 1.67;
-  color: #333;
-  background-clip: padding-box;
-  font-weight: 600;
-  vertical-align: bottom;
-  border-left: 1px solid @border2-color;
-  border-bottom: 1px solid @border2-color;
-  padding: 2px 10px 3px;
-
-  /* fallback */
-  background-color: #f9f9f9;
-
-  /* Safari 4-5, Chrome 1-9 */
-  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#f9f9f9), to(#eeeeee));
-
-  /* Safari 5.1, Chrome 10+ */
-  background: -webkit-linear-gradient(top, #f9f9f9, #eeeeee);
-
-  /* Firefox 3.6+ */
-  background: -moz-linear-gradient(top, #f9f9f9, #eeeeee);
-
-  /* IE 10 */
-  background: -ms-linear-gradient(top, #f9f9f9, #eeeeee);
-
-  /* Opera 11.10+ */
-  background: -o-linear-gradient(top, #f9f9f9, #eeeeee);
+.hal-data-table-hovered-row {
+  background-color: #bee1f4;
 }
 
-.cellTableFirstColumnHeader {
-  border-left: 1px solid @border2-color;
-}
-
-.cellTableFirstColumn {
-  border-left: none !important;
-}
-
-.TreeFirstColumnHeader {
-  border-left: none;
-}
-
-.cellTableEvenRow td {
-  min-height: 20px;
-}
-
-.cellTableOddRow td {
-  min-height: 20px;
-}
-
-.cellTableCell {
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  font-family: 'Open Sans', sans-serif;
-  font-style: normal;
-  font-size: 12px;
-  line-height: 1.67;
-  color: #333;
-  vertical-align: top;
-  padding: 2px 10px 3px;
-  border-left: 1px solid @border3-color !important;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  max-width: 250px;
-}
-
-.cellTableLastColumn {
-  border-right: none;
-}
-
-.cellTableHoveredRow {
-  background-color: @background1-color;
-  -webkit-transition: background-color .1s ease-in-out;
-  -moz-transition: background-color .1s ease-in-out;
-  transition: background-color .1s ease-in-out;
-  cursor: pointer;
-}
-
-.cellTableSelectedRow {
-  background: @selection1-color; /* ddeef5 */
-}
-
-.cellTableSelectedRow .cellTableFirstColumn {
-  /* background-image: url(app/images/activerow.png);
-  background-repeat: no-repeat;
-  background-position: left;*/
-  border-left: none;
-  padding-left: 10px;
-}
-
-.default-cell-table .cellTableKeyboardSelectedRowCell {
-  border-top: 1px dotted #4E5255;
-  border-bottom: 1px dotted #4E5255;
-}
-
-.default-cell-table .cellTableKeyboardSelectedRow .cellTableFirstColumn {
-  border-left: 1px dotted #4E5255;
-  background-color: transparent;
-}
-
-.default-cell-table .cellTableKeyboardSelectedRow .cellTableLastColumn {
-  border-right: 1px dotted #4E5255;
-}
-
-.default-cell-table .cellTableSelectedRow .cellTableKeyboardSelectedRowCell {
-  border: none;
-}
-
-.default-cell-table .cellTableSelectedRow .cellTableKeyboardSelectedRow .cellTableFirstColumn {
-  border: none;
-}
-
-.default-cell-table .cellTableSelectedRow.cellTableKeyboardSelectedRow .cellTableLastColumn {
-  border: none;
-}
-
-/* CellTable toolstrip and pager customization */
-.cellTableToolstrip {
-  background-color: #F6F6F6 !important;
-  border: 1px solid #CFCFCF;
-  border-bottom: none;
-  padding-right: 0 !important;
-}
-
-.cellTablePager {
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  font-family: 'Open Sans', sans-serif;
-  font-style: normal;
-  font-size: 12px;
-  line-height: 1.67;
-  color: #333;
-  display: flex;
-  flex-direction: row-reverse;
-  border: 1px solid #CFCFCF;
-  border-top: none;
-  padding-right: 0 !important;
-}
-
-.cellTablePager .pagerButton, .cellTablePager .pagerButtonDisabled {
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  font-size: 16px;
-  height: 16px;
-  padding: 0;
-  text-align: center;
-  width: 31px;
-  border-left: 1px solid #CFCFCF;
-}
-
-.cellTablePager .pagerButton:hover {
-  border-color: #B7B7B7;
-  background: #eee none;
-}
-
-.cellTablePager .pagerDetails {
-  border-left: 1px solid #CFCFCF;
-}
-
-.cellTablePager .pagerButton {
-  background: #eee linear-gradient(to bottom, #FAFAFA 0%, #EDEDED 100%);
-}
-
-.cellTablePager .pagerButtonDisabled {
-  background: none repeat scroll 0 0 #F5F5F5;
-}
-
-.horizontalScroll {
-  overflow-x: auto;
-}
-
-.default-pager {
-  //  float: right;
-  padding-right: 15px;
+.hal-data-table-selected-row, .hal-data-table-keyboard-selected-row {
+ background-color: #7dc3e8;
 }

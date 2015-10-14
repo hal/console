@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.ballroom.table;
 
+import com.google.common.base.Strings;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -39,10 +40,8 @@ import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
-import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.events.EventListener;
-import elemental.html.DivElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.meta.security.SecurityContext;
@@ -50,9 +49,10 @@ import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.HalConstants;
 import org.jboss.hal.resources.HalMessages;
 import org.jboss.hal.resources.I18n;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -66,7 +66,9 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
 
     class Pager extends AbstractPager {
 
-        public Pager() {
+        public Pager(final int pageSize) {
+            setPageSize(pageSize);
+
             appearance.navInfo.setInnerText(constants.table_info_empty());
             appearance.navFirst.getClassList().add("disabled");
             appearance.navPrev.getClassList().add("disabled");
@@ -76,6 +78,7 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
 
             appearance.navFirst.setOnclick(event -> firstPage());
             appearance.navPrev.setOnclick(event -> previousPage());
+            appearance.navCurrentPage.setOnchange(event -> gotoPage());
             appearance.navNext.setOnclick(event -> nextPage());
             appearance.navLast.setOnclick(event -> lastPage());
         }
@@ -85,8 +88,12 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
             HasRows display = getDisplay();
             if (display.getRowCount() == 0) {
                 appearance.navInfo.setInnerText(constants.table_info_empty());
+                appearance.navCurrentPage.setValue("");
+                appearance.navPages.setInnerText("");
             } else {
                 appearance.navInfo.setInnerHTML(info().asString());
+                appearance.navCurrentPage.setValue(String.valueOf(1 + getPage()));
+                appearance.navPages.setInnerHTML(messages.table_pages(getPageCount()).asString());
             }
             if (hasPreviousPage()) {
                 appearance.navFirst.getClassList().remove("disabled");
@@ -104,7 +111,7 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
             }
         }
 
-        SafeHtml info() {
+        private SafeHtml info() {
             // Default text is 1 based.
             HasRows display = getDisplay();
             Range range = display.getVisibleRange();
@@ -116,13 +123,24 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
             return messages.table_info(pageStart, endIndex, dataSize);
         }
 
-        void setPages(int pages) {
-            if (pages == 0) {
-
-            } else {
-                
+        private void gotoPage() {
+            String value = appearance.navCurrentPage.getValue();
+            if (Strings.emptyToNull(value) != null) {
+                try {
+                    int pageIndex = Integer.parseInt(value) - 1;
+                    pageIndex = Math.max(0, pageIndex);
+                    pageIndex = Math.min(getPageCount() - 1, pageIndex);
+                    if (pageIndex != getPage()) {
+                        setPage(pageIndex);
+                        if (!String.valueOf(pageIndex + 1).equals(value)) {
+                            // set adjusted value
+                            appearance.navCurrentPage.setValue(String.valueOf(pageIndex + 1));
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    logger.error("Cannot go to page {}: {}", value, e.getMessage());
+                }
             }
-            appearance.navPages.setInnerText(String.valueOf(pages));
         }
     }
 
@@ -130,39 +148,50 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
     public static final int DEFAULT_PAGE_SIZE = 7;
     public static final String DEFAULT_BUTTON_GROUP = "hal-dataTable-defaultButtonGroup";
 
+    private static final Logger logger = LoggerFactory.getLogger(DataTable.class);
     private static HalConstants constants = GWT.create(HalConstants.class);
     private static HalMessages messages = GWT.create(HalMessages.class);
 
-    private final String id;
-    private final boolean singleSelection;
-    private final Appearance appearance;
     private final List<DataTableButton> buttons;
     private final ListDataProvider<T> dataProvider;
     private final SelectionModel<T> selectionModel;
     private final CellTable<T> cellTable;
-    private final Pager pager;
+    private final Appearance appearance;
 
     public DataTable(final String id, final ProvidesKey<T> keyProvider) {
         this(id, keyProvider, true);
     }
 
     public DataTable(final String id, final ProvidesKey<T> keyProvider, boolean singleSelection) {
-        this.id = id;
-        this.singleSelection = singleSelection;
-
-        appearance = Appearance.create(id, new I18n(constants, messages));
         buttons = new ArrayList<>();
-        cellTable = new CellTable<>(DEFAULT_PAGE_SIZE, keyProvider);
+
+        Element loadingIndicator = new Elements.Builder()
+                .div().css("hal-data-table-loading")
+                .div().css("spinner spinner-sm").end()
+                .end().build();
+        Element empty = new Elements.Builder()
+                .div()
+                .css("hal-data-table-empty")
+                .innerText(constants.table_info_empty())
+                .build();
+        cellTable = new CellTable<>(DEFAULT_PAGE_SIZE, new DataTableResources(), keyProvider,
+                Elements.asWidget(loadingIndicator));
+        cellTable.setEmptyTableWidget(Elements.asWidget(empty));
         cellTable.setWidth("100%");
         cellTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
         cellTable.setAutoHeaderRefreshDisabled(true);
         cellTable.setAutoFooterRefreshDisabled(true);
-        cellTable.setRowData(0, Collections.<T>emptyList());
+        cellTable.getElement().setId(id + "-data-table");
         cellTable.getElement().setAttribute("role", "grid");
+
         dataProvider = new ListDataProvider<>(keyProvider);
         dataProvider.addDataDisplay(cellTable);
-        pager = new Pager();
+
+        // pager constructor references appearance!
+        appearance = Appearance.create(id, new I18n(constants, messages));
+        Pager pager = new Pager(DEFAULT_PAGE_SIZE);
         pager.setDisplay(cellTable);
+        appearance.cellTableHolder.appendChild(Elements.asElement(cellTable));
 
         if (singleSelection) {
             selectionModel = new SingleSelectionModel<>(keyProvider);
@@ -193,9 +222,7 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
             cellTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
             cellTable.setColumnWidth(checkColumn, 40, PX);
         }
-        selectionModel.addSelectionChangeHandler(selectionChangeEvent -> enableDisableButtons(singleSelection));
-
-        appearance.cellTableHolder.appendChild(Elements.asElement(cellTable));
+        selectionModel.addSelectionChangeHandler(selectionChangeEvent -> enableDisableButtons());
     }
 
     @Override
@@ -209,7 +236,7 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
     public void setData(List<T> data) {
         dataProvider.getList().clear();
         dataProvider.getList().addAll(data);
-        enableDisableButtons(singleSelection);
+        enableDisableButtons();
     }
 
     @Override
@@ -270,20 +297,20 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
 
     private Element buttonGroup(String name) {
         // <div class="btn-group" data-button-group="<name>" role="group" aria-label="messages.table_named_group(<name>)">
-        DivElement group = Browser.getDocument().createDivElement();
-        group.getClassList().add("btn-group");
-        group.getDataset().setAt("buttonGroup", name);
-        group.setAttribute("role", "group");
-        group.setAttribute("aria-label", messages.table_named_group(name));
-        return group;
+        return new Elements.Builder().div()
+                .css("btn-group")
+                .data("buttonGroup", name)
+                .aria("label", messages.table_named_group(name))
+                .attr("role", "group")
+                .build();
     }
 
-    private void enableDisableButtons(final boolean singleSelection) {
-        boolean hasSelection;
-        if (singleSelection) {
-            hasSelection = ((SingleSelectionModel<T>) selectionModel).getSelectedObject() != null;
-        } else {
-            hasSelection = !((MultiSelectionModel<T>) selectionModel).getSelectedSet().isEmpty();
+    private void enableDisableButtons() {
+        boolean hasSelection = false;
+        if (selectionModel instanceof SingleSelectionModel) {
+            hasSelection = selectedElement() != null;
+        } else if (selectionModel instanceof MultiSelectionModel) {
+            hasSelection = !selectedElements().isEmpty();
         }
         for (DataTableButton button : buttons) {
             if (button.getTarget() == DataTableButton.Target.ROW) {
