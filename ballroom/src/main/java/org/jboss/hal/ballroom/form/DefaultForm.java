@@ -361,6 +361,10 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     @Override
     public void updateSecurityContext(final SecurityContext securityContext) {
         this.securityContext = securityContext;
+        applySecurity();
+    }
+
+    protected void applySecurity() {
         if (stateMachine.current() == EDITING && !securityContext.isWritable()) {
             execute(CANCEL);
         }

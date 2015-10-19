@@ -1,9 +1,11 @@
-package org.jboss.hal.core.mbui;
+package org.jboss.hal.core.mbui.form;
 
 import org.jboss.hal.ballroom.form.DefaultStateMachine;
 import org.jboss.hal.ballroom.form.EditOnlyStateMachine;
 import org.jboss.hal.ballroom.form.StateMachine;
 import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
+import org.jboss.hal.core.mbui.ResourceDescriptionBuilder;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.junit.Assert;
 import org.junit.Test;

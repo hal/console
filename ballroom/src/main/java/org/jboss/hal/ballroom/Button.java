@@ -23,6 +23,7 @@ package org.jboss.hal.ballroom;
 
 import elemental.client.Browser;
 import elemental.dom.Element;
+import elemental.events.EventListener;
 import elemental.html.ButtonElement;
 import org.jboss.gwt.elemento.core.IsElement;
 
@@ -35,16 +36,17 @@ public class Button implements IsElement {
 
     protected final ButtonElement element;
 
-    public Button(final String label) {
-        this(label, DEFAULT_CSS);
+    public Button(final String label, final EventListener listener) {
+        this(label, DEFAULT_CSS, listener);
     }
 
-    public Button(final String label, final String css) {
+    public Button(final String label, final String css, final EventListener listener) {
         element = Browser.getDocument().createButtonElement();
         element.setInnerText(label);
         if (css != null) {
             element.setClassName(css);
         }
+        element.setOnclick(listener);
     }
 
     @Override

@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.ballroom.table;
 
+import elemental.events.EventListener;
 import org.jboss.hal.ballroom.Button;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
@@ -38,12 +39,13 @@ public class DataTableButton extends Button implements SecurityContextAware {
     private final String operation;
     private SecurityContext securityContext;
 
-    public DataTableButton(final String label, final Target target) {
-        this(label, target, null);
+    public DataTableButton(final String label, final Target target, final EventListener listener) {
+        this(label, target, null, listener);
     }
 
-    public DataTableButton(final String label, final Target target, final String operation) {
-        super(label, DEFAULT_CSS);
+    public DataTableButton(final String label, final Target target, final String operation,
+            final EventListener listener) {
+        super(label, DEFAULT_CSS, listener);
         this.target = target;
         this.operation = operation;
     }

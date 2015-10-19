@@ -41,7 +41,6 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 import elemental.dom.Element;
-import elemental.events.EventListener;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.meta.security.SecurityContext;
@@ -157,12 +156,16 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
     private final SelectionModel<T> selectionModel;
     private final CellTable<T> cellTable;
     private final Appearance appearance;
+    private SecurityContext securityContext;
 
-    public DataTable(final String id, final ProvidesKey<T> keyProvider) {
-        this(id, keyProvider, true);
+    public DataTable(final String id, final ProvidesKey<T> keyProvider, final SecurityContext securityContext) {
+        this(id, keyProvider, true, securityContext);
     }
 
-    public DataTable(final String id, final ProvidesKey<T> keyProvider, boolean singleSelection) {
+    public DataTable(final String id, final ProvidesKey<T> keyProvider, boolean singleSelection,
+            final SecurityContext securityContext) {
+        this.securityContext = securityContext;
+
         buttons = new ArrayList<>();
 
         Element loadingIndicator = new Elements.Builder()
@@ -247,13 +250,6 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
         }
     }
 
-    @Override
-    public void updateSecurityContext(final SecurityContext securityContext) {
-        for (DataTableButton button : buttons) {
-            button.updateSecurityContext(securityContext);
-        }
-    }
-
     public void onSelectionChange(SelectionChangeEvent.Handler handler) {
         selectionModel.addSelectionChangeHandler(handler);
     }
@@ -302,15 +298,15 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
         cellTable.addColumn(col, headerString);
     }
 
+    public void addColumn(final Column<T, ?> col, final SafeHtml headerHtml) {cellTable.addColumn(col, headerHtml);}
 
     // ------------------------------------------------------ buttons
 
-    public void addButton(DataTableButton button, EventListener listener) {
-        addButton(button, DEFAULT_BUTTON_GROUP, listener);
+    public void addButton(DataTableButton button) {
+        addButton(button, DEFAULT_BUTTON_GROUP);
     }
 
-    public void addButton(DataTableButton button, String group, EventListener listener) {
-        button.asElement().setOnclick(listener);
+    public void addButton(DataTableButton button, String group) {
         Element groupElement = appearance.asElement().querySelector("[data-button-group='" + group + "']");
         if (groupElement == null) {
             groupElement = buttonGroup(group);
@@ -336,6 +332,21 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
             if (button.getTarget() == DataTableButton.Target.ROW) {
                 button.setDisabled(!hasSelection);
             }
+        }
+    }
+
+
+    // ------------------------------------------------------ security
+
+    @Override
+    public void updateSecurityContext(final SecurityContext securityContext) {
+        this.securityContext = securityContext;
+        applySecurity();
+    }
+
+    protected void applySecurity() {
+        for (DataTableButton button : buttons) {
+            button.updateSecurityContext(securityContext);
         }
     }
 }

@@ -1,6 +1,7 @@
-package org.jboss.hal.core.mbui;
+package org.jboss.hal.core.mbui.form;
 
 import com.google.common.collect.ImmutableSortedSet;
+import org.jboss.hal.core.mbui.ResourceDescriptionBuilder;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;

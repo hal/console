@@ -26,17 +26,28 @@ import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.view.client.ProvidesKey;
 import com.gwtplatform.mvp.client.ViewImpl;
+import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.DataTableButton;
+import org.jboss.hal.client.bootstrap.endpoint.EndpointResources;
+import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.meta.description.ResourceDescription;
+import org.jboss.hal.meta.description.StaticResourceDescription;
+import org.jboss.hal.meta.security.SecurityContext;
+import org.jboss.hal.resources.I18n;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jboss.hal.ballroom.table.DataTableButton.Target.GLOBAL;
 import static org.jboss.hal.ballroom.table.DataTableButton.Target.ROW;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
  * @author Harald Pehl
@@ -58,12 +69,14 @@ public class ConfigurationView extends ViewImpl implements ConfigurationPresente
         }
     }
 
-    public ConfigurationView() {
+    @Inject
+    public ConfigurationView(EndpointResources endpointResources, I18n i18n) {
         //noinspection Convert2MethodRef
-        DataTable<FooBar> dataTable = new DataTable<>("foobar-table", (ProvidesKey<FooBar>) fooBar -> fooBar.id());
+        DataTable<FooBar> dataTable = new DataTable<>("foobar-table", (ProvidesKey<FooBar>) fooBar -> fooBar.id(),
+                SecurityContext.RWX);
 
-        dataTable.addButton(new DataTableButton("Foo", GLOBAL), event -> Window.alert("Bar"));
-        dataTable.addButton(new DataTableButton("Bar", ROW), event -> Window.alert("Foo"));
+        dataTable.addButton(new DataTableButton("Foo", GLOBAL, event -> Window.alert("Bar")));
+        dataTable.addButton(new DataTableButton("Bar", ROW, event -> Window.alert("Foo")));
 
         dataTable.addColumn(new TextColumn<FooBar>() {
             @Override
@@ -85,9 +98,28 @@ public class ConfigurationView extends ViewImpl implements ConfigurationPresente
         }
         dataTable.setData(data);
 
+        ResourceDescription resourceDescription = StaticResourceDescription.from(endpointResources.endpoint());
+        ModelNodeTable modelNodeTable = new ModelNodeTable.Builder("endpoint", node -> node.get(NAME).asString(),
+                SecurityContext.RWX,
+                resourceDescription)
+                .addColumn("name", "host-name", "port")
+                .addButton(new DataTableButton(i18n.constants().add(), GLOBAL,
+                        event -> Browser.getWindow().alert("NYI")))
+                .addButton(new DataTableButton(i18n.constants().remove(), ROW,
+                        event -> Browser.getWindow().alert("NYI")))
+                .build();
+
+        ModelNode node = new ModelNode();
+        node.get("name").set("local");
+        node.get("host-name").set("127.0.0.1");
+        node.get("port").set("9990");
+        modelNodeTable.setData(Collections.singletonList(node));
+
         Element element = new LayoutBuilder()
-                .header("Sample Table")
+                .header("DataTable")
                 .add(dataTable.asElement())
+                .header("ModelNodeTable")
+                .add(modelNodeTable.asElement())
                 .build();
         initWidget(Elements.asWidget(element));
     }

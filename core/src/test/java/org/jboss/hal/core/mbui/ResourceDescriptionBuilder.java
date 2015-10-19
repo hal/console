@@ -29,13 +29,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-class ResourceDescriptionBuilder {
+public class ResourceDescriptionBuilder {
 
-    ResourceDescription empty() {
+    public ResourceDescription empty() {
         return new ResourceDescription(new ModelNode());
     }
 
-    ResourceDescription attributes(String... attributes) {
+    public ResourceDescription attributes(String... attributes) {
         ModelNode list = new ModelNode();
         if (attributes != null) {
             for (String attribute : attributes) {
@@ -45,7 +45,7 @@ class ResourceDescriptionBuilder {
         return new ResourceDescription(new ModelNode().set(ATTRIBUTES, list));
     }
 
-    ResourceDescription requestProperties(String... requestProperties) {
+    public ResourceDescription requestProperties(String... requestProperties) {
         ModelNode list = new ModelNode();
         if (requestProperties != null) {
             for (String requestProperty : requestProperties) {
