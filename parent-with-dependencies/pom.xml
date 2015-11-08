@@ -52,8 +52,8 @@
         <jboss.dmr.version>1.3.0.Final</jboss.dmr.version>
         <junit.version>4.12</junit.version>
         <mockito.version>1.10.17</mockito.version>
-        <nodejs.version>v0.12.5</nodejs.version>
-        <npm.version>2.11.2</npm.version>
+        <nodejs.version>v4.2.1</nodejs.version>
+        <npm.version>3.3.10</npm.version>
         <slf4j.version>1.7.12</slf4j.version>
         <slf4j-gwt.version>1.7.7.1</slf4j-gwt.version>
         <super.eventbus>0.1.1</super.eventbus>
@@ -129,6 +129,11 @@
                 <groupId>org.jboss.gwt.elemento</groupId>
                 <artifactId>elemento-gin</artifactId>
                 <version>${elemento.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>

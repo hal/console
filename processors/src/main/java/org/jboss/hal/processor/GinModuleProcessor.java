@@ -40,7 +40,7 @@ import java.util.Set;
  * @author Harald Pehl
  */
 // Do not export this processor using @AutoService(Processor.class)
-// It's executed explicitly in hal-app processing all GIN modules in all maven modules.
+// It's executed explicitly in hal-app to process all GIN modules in all maven modules.
 @SupportedAnnotationTypes("org.jboss.hal.spi.GinModule")
 public class GinModuleProcessor extends AbstractProcessor {
 

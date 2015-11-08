@@ -95,6 +95,10 @@
             <artifactId>gwt-elemental</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava-gwt</artifactId>
+        </dependency>
+        <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
         </dependency>
@@ -169,7 +173,7 @@
                         <configuration>
                             <options>
                                 <!-- Uncomment to get more messages from the annotation processors -->
-                                <debug>true</debug>
+                                <!--<debug>true</debug>-->
                             </options>
                             <defaultOutputDirectory>${project.build.directory}/generated-sources/apt-app
                             </defaultOutputDirectory>
@@ -184,17 +188,19 @@
                         <configuration>
                             <options>
                                 <!-- Uncomment to get more messages from the annotation processors -->
-                                <debug>true</debug>
+                                <!--<debug>true</debug>-->
                             </options>
                             <defaultOutputDirectory>${project.build.directory}/generated-sources/apt-gin
                             </defaultOutputDirectory>
                             <additionalSourceDirectories>
                                 <additionalSourceDirectory>${project.build.directory}/generated-sources/apt-app
                                 </additionalSourceDirectory>
+                                <additionalSourceDirectory>../config/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../core/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../dmr/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../meta/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../resources/src/main/java</additionalSourceDirectory>
                             </additionalSourceDirectories>
-                            <processSourceArtifacts>
-                                <processSourceArtifact>org.jboss.hal:*</processSourceArtifact>
-                            </processSourceArtifacts>
                             <processors>
                                 <processor>org.jboss.hal.processor.GinModuleProcessor</processor>
                             </processors>
@@ -243,7 +249,7 @@
                         <devmodeArg>hal/index.html</devmodeArg>
                         <devmodeArg>-incremental</devmodeArg>
                         <devmodeArg>-XjsInteropMode</devmodeArg>
-                        <devmodeArg>JS</devmodeArg>
+                        <devmodeArg>JS_RC</devmodeArg>
                     </devmodeArgs>
                     <draftCompile>true</draftCompile>
                     <logLevel>INFO</logLevel>
@@ -281,7 +287,7 @@
                                         <source>../config/src/main/java</source>
                                         <source>../core/src/main/java</source>
                                         <source>../dmr/src/main/java</source>
-                                        <source>../flow/src/main/java</source>
+                                        <source>../meta/src/main/java</source>
                                         <source>../resources/src/main/java</source>
                                         <source>../spi/src/main/java</source>
                                     </sources>

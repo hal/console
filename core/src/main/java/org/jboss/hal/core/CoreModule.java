@@ -45,7 +45,7 @@ public class CoreModule extends AbstractGinModule {
      */
     @Provides
     @Footer
-    Progress provideProgress(UIRegistry uiRegistry) {
+    public Progress provideProgress(UIRegistry uiRegistry) {
         return uiRegistry.getProgress();
     }
 }

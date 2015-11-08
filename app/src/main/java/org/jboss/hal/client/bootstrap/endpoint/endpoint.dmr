@@ -1,5 +1,5 @@
 {
-    "comment" => "This file is not used! It's just here to generate 'endpoint.base64'"
+    "comment" => "This file is not used! It's just here to generate the base64 encoded version using https://github.com/hal/dmr.cmd",
     "description" => "A definition of a management endpoint.",
     "attributes" => {
         "name" => {

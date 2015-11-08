@@ -36,7 +36,6 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.resource.RequiredResources;
 import org.jboss.hal.meta.security.SecurityFramework;
-import org.jboss.hal.spi.Footer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,25 +61,22 @@ public class MetadataProcessor {
     private final SecurityFramework securityFramework;
     private final Lookup lookup;
     private final CreateRrdOperations rrdOps;
-    private final Progress progress;
 
     @Inject
     public MetadataProcessor(final Dispatcher dispatcher,
             final StatementContext statementContext,
             final RequiredResources requiredResources,
             final ResourceDescriptions resourceDescriptions,
-            final SecurityFramework securityFramework,
-            final @Footer Progress progress) {
+            final SecurityFramework securityFramework) {
         this.dispatcher = dispatcher;
         this.requiredResources = requiredResources;
         this.resourceDescriptions = resourceDescriptions;
         this.securityFramework = securityFramework;
         this.lookup = new Lookup(resourceDescriptions, securityFramework);
         this.rrdOps = new CreateRrdOperations(statementContext);
-        this.progress = progress;
     }
 
-    public void process(final String token, final AsyncCallback<Void> callback) {
+    public void process(final String token, final Progress progress, final AsyncCallback<Void> callback) {
         Set<String> resources = requiredResources.getResources(token);
         logger.debug("Token {}: Process required resources on {}", token, resources);
         if (resources.isEmpty()) {
@@ -92,6 +88,7 @@ public class MetadataProcessor {
             LookupResult lookupResult = lookup.check(token, templates, requiredResources.isRecursive(token));
             if (lookupResult.allPresent()) {
                 logger.debug("Token {}: All required resources have been processed -> callback.onSuccess(null)", token);
+                callback.onSuccess(null);
             } else {
                 logger.debug("Token {}: {}", token, lookupResult);
                 List<Operation> operations = rrdOps.create(lookupResult);
