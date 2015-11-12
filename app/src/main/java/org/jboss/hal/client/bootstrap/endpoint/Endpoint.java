@@ -32,6 +32,16 @@ public class Endpoint extends ModelNode {
         set(endpoint);
     }
 
+    @Override
+    public int hashCode() {
+        return getName().hashCode();
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        return other instanceof Endpoint && getName().equals(((Endpoint) other).getName());
+    }
+
     public String getName() {
         return get("name").asString();
     }

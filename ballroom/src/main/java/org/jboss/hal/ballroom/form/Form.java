@@ -42,21 +42,21 @@ public interface Form<T> extends IsElement {
 
 
     @FunctionalInterface
-    interface SaveCallback<T> {
+    interface SaveCallback {
 
         void onSave(Map<String, Object> changedValues);
     }
 
 
     @FunctionalInterface
-    interface ResetCallback<T> {
+    interface ResetCallback {
 
         void onReset();
     }
 
 
     @FunctionalInterface
-    interface CancelCallback<T> {
+    interface CancelCallback {
 
         void onCancel();
     }
@@ -81,21 +81,21 @@ public interface Form<T> extends IsElement {
      */
     void save();
 
-    void setSaveCallback(SaveCallback<T> saveCallback);
+    void setSaveCallback(SaveCallback saveCallback);
 
     /**
      * Cancels any modifications to the model.
      */
     void cancel();
 
-    void setCancelCallback(CancelCallback<T> cancelCallback);
+    void setCancelCallback(CancelCallback cancelCallback);
 
     /**
      * Resets the model.
      */
     void reset();
 
-    void setResetCallback(ResetCallback<T> resetCallback);
+    void setResetCallback(ResetCallback resetCallback);
 
     /**
      * @return the current model.

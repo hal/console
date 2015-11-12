@@ -8,9 +8,9 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * @author Harald Pehl
  */
-class ConnectPage implements IsWidget {
+class ConnectWidget implements IsWidget {
 
-    private final EndpointSelection endpointSelection;
+    private final EndpointManager endpointManager;
     private final EndpointDialog endpointDialog;
     private final EndpointStorage storage;
 
@@ -18,11 +18,11 @@ class ConnectPage implements IsWidget {
 //    private HTML connectStatus;
 
 
-    ConnectPage(final EndpointDialog endpointDialog,
-            final EndpointSelection endpointSelection,
+    ConnectWidget(final EndpointDialog endpointDialog,
+            final EndpointManager endpointManager,
             final EndpointStorage storage) {
         this.endpointDialog = endpointDialog;
-        this.endpointSelection = endpointSelection;
+        this.endpointManager = endpointManager;
         this.storage = storage;
     }
 

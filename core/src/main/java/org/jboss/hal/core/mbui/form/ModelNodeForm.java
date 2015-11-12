@@ -48,9 +48,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-public class ModelNodeForm extends DefaultForm<ModelNode> {
+public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
-    public static class Builder {
+    public static class Builder<T extends ModelNode> {
 
         final String id;
         final SecurityContext securityContext;
@@ -63,9 +63,10 @@ public class ModelNodeForm extends DefaultForm<ModelNode> {
         boolean viewOnly;
         boolean editOnly;
         boolean includeRuntime;
-        SaveCallback<ModelNode> saveCallback;
-        CancelCallback<ModelNode> cancelCallback;
-        ResetCallback<ModelNode> resetCallback;
+        boolean hideButtons;
+        SaveCallback saveCallback;
+        CancelCallback cancelCallback;
+        ResetCallback resetCallback;
 
 
         // ------------------------------------------------------ configure required and optional settings
@@ -85,41 +86,41 @@ public class ModelNodeForm extends DefaultForm<ModelNode> {
             this.includeRuntime = false;
         }
 
-        public Builder include(final String first, final String... rest) {
+        public Builder<T> include(final String first, final String... rest) {
             includes.addAll(Lists.asList(first, rest));
             return this;
         }
 
-        public Builder exclude(final String first, final String... rest) {
+        public Builder<T> exclude(final String first, final String... rest) {
             excludes.addAll(Lists.asList(first, rest));
             return this;
         }
 
-        public Builder createResource() {
+        public Builder<T> createResource() {
             this.createResource = true;
             return this;
         }
 
-        public Builder viewOnly() {
+        public Builder<T> viewOnly() {
             this.viewOnly = true;
             return this;
         }
 
-        public Builder editOnly() {
+        public Builder<T> editOnly() {
             this.editOnly = true;
             return this;
         }
 
-        public Builder includeRuntime() {
+        public Builder<T> includeRuntime() {
             this.includeRuntime = true;
             return this;
         }
 
-        public Builder customFormItem(final String attribute, final FormItemProvider provider) {
+        public Builder<T> customFormItem(final String attribute, final FormItemProvider provider) {
             return customFormItem(attribute, provider, null);
         }
 
-        public Builder customFormItem(final String attribute, final FormItemProvider provider,
+        public Builder<T> customFormItem(final String attribute, final FormItemProvider provider,
                 final SaveOperationStep saveOperation) {
             providers.put(attribute, provider);
             if (saveOperation != null) {
@@ -128,26 +129,32 @@ public class ModelNodeForm extends DefaultForm<ModelNode> {
             return this;
         }
 
-        public Builder onSave(final SaveCallback<ModelNode> saveCallback) {
+        public Builder<T> onSave(final SaveCallback saveCallback) {
             this.saveCallback = saveCallback;
             return this;
         }
 
-        public Builder onCancel(final CancelCallback<ModelNode> cancelCallback) {
+        public Builder<T> onCancel(final CancelCallback cancelCallback) {
             this.cancelCallback = cancelCallback;
             return this;
         }
 
-        public Builder onReset(final ResetCallback<ModelNode> resetCallback) {
+        public Builder<T> onReset(final ResetCallback resetCallback) {
             this.resetCallback = resetCallback;
             return this;
         }
 
+        public Builder<T> hideButtons() {
+            this.hideButtons = true;
+            return this;
+        }
+
+
         // ------------------------------------------------------ build
 
-        public ModelNodeForm build() {
+        public ModelNodeForm<T> build() {
             validate();
-            return new ModelNodeForm(this);
+            return new ModelNodeForm<>(this);
         }
 
         void validate() {
@@ -190,7 +197,7 @@ public class ModelNodeForm extends DefaultForm<ModelNode> {
     private final FormItemProvider defaultFormItemProvider;
     private final Map<String, SaveOperationStep> saveOperations;
 
-    ModelNodeForm(final Builder builder) {
+    ModelNodeForm(final Builder<T> builder) {
         super(builder.id, builder.stateMachine(), builder.securityContext);
 
         this.defaultFormItemProvider = new DefaultFormItemProvider();

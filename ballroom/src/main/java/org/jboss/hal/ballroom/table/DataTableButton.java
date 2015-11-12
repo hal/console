@@ -31,7 +31,7 @@ import org.jboss.hal.meta.security.SecurityContextAware;
  */
 public class DataTableButton extends Button implements SecurityContextAware {
 
-    public enum Target { ROW, GLOBAL }
+    public enum Target { ROW, TABLE}
 
     public static final String DEFAULT_CSS = "btn btn-default";
 

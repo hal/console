@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
  */
 class ConfigurePage implements IsWidget {
 
-    private final EndpointSelection endpointSelection;
+    private final EndpointManager endpointManager;
     private final EndpointDialog endpointDialog;
     private final EndpointStorage storage;
 
@@ -21,10 +21,10 @@ class ConfigurePage implements IsWidget {
 
 
     ConfigurePage(final EndpointDialog endpointDialog,
-            final EndpointSelection endpointSelection,
+            final EndpointManager endpointManager,
             final EndpointStorage storage) {
         this.endpointDialog = endpointDialog;
-        this.endpointSelection = endpointSelection;
+        this.endpointManager = endpointManager;
         this.storage = storage;
     }
 
@@ -69,11 +69,11 @@ class ConfigurePage implements IsWidget {
                 FormValidation formValidation = form.validate();
                 if (!formValidation.hasErrors()) {
                     final BootstrapServer server = form.getUpdatedEntity();
-                    endpointSelection.pingServer(server, new AsyncCallback<Void>() {
+                    endpointManager.pingServer(server, new AsyncCallback<Void>() {
                         @Override
                         public void onFailure(final Throwable caught) {
                             status(StatusMessage
-                                    .warning(Console.MESSAGES.bs_interface_warning(endpointSelection.getBaseUrl())));
+                                    .warning(Console.MESSAGES.bs_interface_warning(endpointManager.getBaseUrl())));
                         }
 
                         @Override

@@ -23,7 +23,7 @@ package org.jboss.hal.client.bootstrap;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Singleton;
-import org.jboss.hal.client.bootstrap.endpoint.EndpointSelection;
+import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointStorage;
 import org.jboss.hal.client.bootstrap.functions.BootstrapFunctions;
 import org.jboss.hal.client.bootstrap.functions.CheckForUpdate;
@@ -39,7 +39,7 @@ public class BootstrapModule extends AbstractGinModule {
 
     @Override
     protected void configure() {
-        bind(EndpointSelection.class).in(Singleton.class);
+        bind(EndpointManager.class).in(Singleton.class);
         bind(EndpointStorage.class).in(Singleton.class);
 
         bind(CheckForUpdate.class).in(Singleton.class);

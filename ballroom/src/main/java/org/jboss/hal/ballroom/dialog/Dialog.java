@@ -23,6 +23,7 @@ package org.jboss.hal.ballroom.dialog;
 
 import com.google.gwt.core.client.GWT;
 import elemental.dom.Element;
+import elemental.html.ButtonElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Id;
@@ -87,6 +88,7 @@ public class Dialog implements IsElement {
         private Button secondaryButton;
         private Size size;
         private boolean closeIcon;
+        private boolean closeOnEsc;
         private boolean fadeIn;
 
         public Builder(final String title) {
@@ -145,6 +147,11 @@ public class Dialog implements IsElement {
 
         public Builder closeIcon(boolean closeIcon) {
             this.closeIcon = closeIcon;
+            return this;
+        }
+
+        public Builder closeOnEsc(boolean closeOnEsc) {
+            this.closeOnEsc = closeOnEsc;
             return this;
         }
 
@@ -234,8 +241,8 @@ public class Dialog implements IsElement {
 
     // ------------------------------------------------------ dialog instance
 
-    private Element primaryButton;
-    private Element secondaryButton;
+    private ButtonElement primaryButton;
+    private ButtonElement secondaryButton;
 
     public Dialog(final Builder builder) {
         reset();
@@ -318,6 +325,9 @@ public class Dialog implements IsElement {
         $wnd.$(dialogId).modal('hide');
     }-*/;
 
+
+    // ------------------------------------------------------ properties
+
     public void setTitle(String title) {
         Dialog.title.setInnerHTML(title);
     }
@@ -328,9 +338,21 @@ public class Dialog implements IsElement {
         }
     }
 
+    public void setPrimaryButtonDisabled(boolean disabled) {
+        if (primaryButton != null) {
+            primaryButton.setDisabled(disabled);
+        }
+    }
+
     public void setSecondaryButtonLabel(String label) {
         if (secondaryButton != null) {
             secondaryButton.setInnerHTML(label);
+        }
+    }
+
+    public void setSecondaryButtonDisabled(boolean disabled) {
+        if (secondaryButton != null) {
+            secondaryButton.setDisabled(disabled);
         }
     }
 }

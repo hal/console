@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jboss.hal.ballroom.table.DataTableButton.Target.GLOBAL;
+import static org.jboss.hal.ballroom.table.DataTableButton.Target.TABLE;
 import static org.jboss.hal.ballroom.table.DataTableButton.Target.ROW;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
@@ -75,7 +75,7 @@ public class ConfigurationView extends ViewImpl implements ConfigurationPresente
         DataTable<FooBar> dataTable = new DataTable<>("foobar-table", (ProvidesKey<FooBar>) fooBar -> fooBar.id(),
                 SecurityContext.RWX);
 
-        dataTable.addButton(new DataTableButton("Foo", GLOBAL, event -> Window.alert("Bar")));
+        dataTable.addButton(new DataTableButton("Foo", TABLE, event -> Window.alert("Bar")));
         dataTable.addButton(new DataTableButton("Bar", ROW, event -> Window.alert("Foo")));
 
         dataTable.addColumn(new TextColumn<FooBar>() {
@@ -99,11 +99,10 @@ public class ConfigurationView extends ViewImpl implements ConfigurationPresente
         dataTable.setData(data);
 
         ResourceDescription resourceDescription = StaticResourceDescription.from(endpointResources.endpoint());
-        ModelNodeTable modelNodeTable = new ModelNodeTable.Builder("endpoint", node -> node.get(NAME).asString(),
-                SecurityContext.RWX,
-                resourceDescription)
+        ModelNodeTable<ModelNode> modelNodeTable = new ModelNodeTable.Builder<>("endpoint",
+                node -> node.get(NAME).asString(), SecurityContext.RWX, resourceDescription)
                 .addColumn("name", "host-name", "port")
-                .addButton(new DataTableButton(i18n.constants().add(), GLOBAL,
+                .addButton(new DataTableButton(i18n.constants().add(), TABLE,
                         event -> Browser.getWindow().alert("NYI")))
                 .addButton(new DataTableButton(i18n.constants().remove(), ROW,
                         event -> Browser.getWindow().alert("NYI")))

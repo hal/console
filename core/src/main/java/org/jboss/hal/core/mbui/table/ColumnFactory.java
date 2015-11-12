@@ -38,12 +38,12 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 class ColumnFactory {
 
     // I want to have tuples!
-    static class HeaderColumn {
+    static class HeaderColumn<T extends ModelNode> {
 
         final SafeHtml header;
-        final Column<ModelNode, ?> column;
+        final Column<T, ?> column;
 
-        HeaderColumn(final SafeHtml header, final Column<ModelNode, ?> column) {
+        HeaderColumn(final SafeHtml header, final Column<T, ?> column) {
             this.header = header;
             this.column = column;
         }
@@ -66,7 +66,7 @@ class ColumnFactory {
         labelBuilder = new LabelBuilder();
     }
 
-    HeaderColumn createHeaderColumn(final Property attributeDescription) {
+    <T extends ModelNode> HeaderColumn<T> createHeaderColumn(final Property attributeDescription) {
         SafeHtml header;
         String label = labelBuilder.label(attributeDescription);
         if (attributeDescription.getValue().hasDefined(DESCRIPTION)) {
@@ -78,9 +78,9 @@ class ColumnFactory {
 
         String name = attributeDescription.getName();
         // TODO Think about other columns type depending on ModelType
-        TextColumn<ModelNode> column = new TextColumn<ModelNode>() {
+        TextColumn<T> column = new TextColumn<T>() {
             @Override
-            public String getValue(final ModelNode value) {
+            public String getValue(final T value) {
                 if (value.hasDefined(name)) {
                     return value.get(name).asString();
                 }
@@ -88,6 +88,6 @@ class ColumnFactory {
             }
         };
 
-        return new HeaderColumn(header, column);
+        return new HeaderColumn<>(header, column);
     }
 }

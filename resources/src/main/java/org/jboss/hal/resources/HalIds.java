@@ -23,6 +23,9 @@ import com.google.gwt.i18n.client.Constants;
 public interface HalIds extends Constants {
 
     //@formatter:off
+    String endpoints_table();
+    String endpoint_form();
+
     String header_connected_to();
     String header_messages();
     String header_roles();

@@ -1,11 +1,6 @@
 package org.jboss.hal.client.bootstrap.endpoint;
 
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
@@ -25,10 +20,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author Harald Pehl
  */
-public class EndpointSelection {
+public class EndpointManager {
 
     public final static String CONNECT_PARAMETER = "connect";
-    private static final Logger logger = LoggerFactory.getLogger(EndpointSelection.class);
+    private static final Logger logger = LoggerFactory.getLogger(EndpointManager.class);
 
     private final Endpoints endpoints;
     private final EndpointStorage storage;
@@ -37,7 +32,7 @@ public class EndpointSelection {
     private EndpointDialog dialog;
 
     @Inject
-    public EndpointSelection(Endpoints endpoints, EndpointStorage storage) {
+    public EndpointManager(Endpoints endpoints, EndpointStorage storage) {
         this.endpoints = endpoints;
         this.storage = storage;
     }
@@ -66,39 +61,36 @@ public class EndpointSelection {
             }
 
         } else {
-            String baseUrl = Endpoints.getBaseUrl();
             // Test whether this console is served from a WildFly / EAP instance
-            RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, baseUrl + "/management");
-            requestBuilder.setCallback(new RequestCallback() {
-                @Override
-                public void onResponseReceived(final Request request, final Response response) {
-                    int statusCode = response.getStatusCode();
-                    // anything but 404 is considered successful
-                    if (statusCode == 0 || statusCode == 200 || statusCode == 401) {
-                        endpoints.useBase(baseUrl);
-                        andThen.execute();
-                    } else {
-                        openDialog();
+            String managementEndpoint = Endpoints.getBaseUrl() + "/management";
+            XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
+            xhr.setOnreadystatechange(event -> {
+                int readyState = xhr.getReadyState();
+                if (readyState == 4) {
+                    int status = xhr.getStatus();
+                    switch (status) {
+                        case 0:
+                        case 200:
+                        case 401:
+                            endpoints.useBase(Endpoints.getBaseUrl());
+                            andThen.execute();
+                            break;
+                        default:
+                            logger.info("Unable to serve HAL from '{}'", managementEndpoint);
+                            openDialog();
+                            break;
                     }
                 }
-
-                @Override
-                public void onError(final Request request, final Throwable exception) {
-                    // This is a 'standalone' console. Show selection dialog
-                    openDialog();
-                }
             });
-            try {
-                requestBuilder.send();
-            } catch (RequestException e) {
-                openDialog();
-            }
+            xhr.open("GET", managementEndpoint, true);
+            xhr.setWithCredentials(true);
+            xhr.send();
         }
     }
 
     private void openDialog() {
         dialog = new EndpointDialog(this, storage);
-        dialog.open();
+        dialog.show();
     }
 
     void pingServer(final Endpoint endpoint, final AsyncCallback<Void> callback) {
@@ -116,10 +108,6 @@ public class EndpointSelection {
                 }
             }
         });
-        xhr.addEventListener("error", event -> {
-            logger.error("Failed to ping '{}'", managementEndpoint);
-            callback.onFailure(new IllegalStateException());
-        });
         xhr.open("GET", managementEndpoint, true);
         xhr.setWithCredentials(true);
         xhr.send();
@@ -127,9 +115,6 @@ public class EndpointSelection {
 
     void onConnect(Endpoint endpoint) {
         storage.saveSelection(endpoint);
-        if (dialog != null) {
-            dialog.hide();
-        }
         endpoints.useBase(endpoint.getUrl());
         andThen.execute();
     }

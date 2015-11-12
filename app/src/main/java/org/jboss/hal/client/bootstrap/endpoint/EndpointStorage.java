@@ -2,6 +2,8 @@ package org.jboss.hal.client.bootstrap.endpoint;
 
 import com.google.gwt.storage.client.Storage;
 import org.jboss.hal.dmr.ModelNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,33 +15,58 @@ import java.util.List;
  */
 public class EndpointStorage {
     private static final String KEY = "org.jboss.hal.bootstrap.endpoints";
+    private static final Logger logger = LoggerFactory.getLogger(EndpointStorage.class);
 
     private final Storage storage;
+    private final List<Endpoint> endpoints;
 
     public EndpointStorage() {
         storage = Storage.getLocalStorageIfSupported();
+        endpoints = load();
     }
 
-    public List<Endpoint> load() {
+    private List<Endpoint> load() {
         List<Endpoint> endpoints = new ArrayList<>();
         if (storage != null) {
             String payload = storage.getItem(KEY);
-            List<ModelNode> nodes = ModelNode.fromBase64(payload).asList();
-            for (ModelNode node : nodes) {
-                endpoints.add(new Endpoint(node));
+            if (payload != null) {
+                try {
+                    List<ModelNode> nodes = ModelNode.fromBase64(payload).asList();
+                    for (ModelNode node : nodes) {
+                        endpoints.add(new Endpoint(node));
+                    }
+                } catch (IllegalArgumentException e) {
+                    logger.error("Unable to read endpoints from local storage using key '{}': {}", KEY, e.getMessage());
+                }
             }
         }
         return endpoints;
     }
 
-    public void save(List<Endpoint> endpoints) {
+    private void save() {
         if (storage != null) {
-            storage.setItem(KEY, toBase64(endpoints));
+            storage.setItem(KEY, toBase64());
         }
     }
 
+    private String toBase64() {
+        ModelNode nodes = new ModelNode();
+        for (Endpoint endpoint : endpoints) {
+            nodes.add(endpoint);
+        }
+        return nodes.toBase64String();
+    }
+
+    public void add(Endpoint endpoint) {
+        endpoints.add(endpoint);
+        save();
+    }
+
+    public void remove(Endpoint endpoint) {
+        endpoints.remove(endpoint);
+    }
+
     public void saveSelection(Endpoint selected) {
-        List<Endpoint> endpoints = load();
         for (Endpoint endpoint : endpoints) {
             if (selected.getName().equals(endpoint.getName())) {
                 endpoint.setSelected(true);
@@ -47,11 +74,10 @@ public class EndpointStorage {
                 endpoint.setSelected(false);
             }
         }
-        save(endpoints);
+        save();
     }
 
     public Endpoint get(String name) {
-        List<Endpoint> endpoints = load();
         for (Endpoint endpoint : endpoints) {
             if (name.equals(endpoint.getName())) {
                 return endpoint;
@@ -60,11 +86,7 @@ public class EndpointStorage {
         return null;
     }
 
-    private String toBase64(List<Endpoint> endpoints) {
-        ModelNode nodes = new ModelNode();
-        for (Endpoint endpoint : endpoints) {
-            nodes.add(endpoint);
-        }
-        return nodes.toBase64String();
+    public List<Endpoint> list() {
+        return endpoints;
     }
 }

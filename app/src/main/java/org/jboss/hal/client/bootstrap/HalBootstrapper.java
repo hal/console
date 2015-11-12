@@ -28,7 +28,7 @@ import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.client.bootstrap.endpoint.EndpointSelection;
+import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
 import org.jboss.hal.client.bootstrap.functions.BootstrapFunctions;
 import org.jboss.hal.resources.I18n;
 import org.slf4j.Logger;
@@ -44,17 +44,17 @@ public class HalBootstrapper implements Bootstrapper {
     private static final Logger logger = LoggerFactory.getLogger(HalBootstrapper.class);
 
     private final PlaceManager placeManager;
-    private final EndpointSelection endpointSelection;
+    private final EndpointManager endpointManager;
     private final BootstrapFunctions bootstrapFunctions;
     private final I18n i18n;
 
     @Inject
     public HalBootstrapper(final PlaceManager placeManager,
-            final EndpointSelection endpointSelection,
+            final EndpointManager endpointManager,
             final BootstrapFunctions bootstrapFunctions,
             final I18n i18n) {
         this.placeManager = placeManager;
-        this.endpointSelection = endpointSelection;
+        this.endpointManager = endpointManager;
         this.bootstrapFunctions = bootstrapFunctions;
         this.i18n = i18n;
     }
@@ -80,15 +80,10 @@ public class HalBootstrapper implements Bootstrapper {
             }
         };
 
-        new Async<FunctionContext>(Progress.NOOP).waterfall(
-                new FunctionContext(), outcome, bootstrapFunctions.functions());
-/*
-        endpointSelection.select(
-                () -> {
-                    LoadingPanel.get().on();
-                    new Async<FunctionContext>(Progress.NOOP).waterfall(
-                            new FunctionContext(), outcome, bootstrapFunctions.functions());
-                });
-*/
+        endpointManager.select(() -> {
+            LoadingPanel.get().on();
+            new Async<FunctionContext>(Progress.NOOP).waterfall(
+                    new FunctionContext(), outcome, bootstrapFunctions.functions());
+        });
     }
 }

@@ -148,8 +148,8 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
     public static final String DEFAULT_BUTTON_GROUP = "hal-dataTable-defaultButtonGroup";
 
     private static final Logger logger = LoggerFactory.getLogger(DataTable.class);
-    private static HalConstants constants = GWT.create(HalConstants.class);
-    private static HalMessages messages = GWT.create(HalMessages.class);
+    private static final HalConstants constants = GWT.create(HalConstants.class);
+    private static final HalMessages messages = GWT.create(HalMessages.class);
 
     private final List<DataTableButton> buttons;
     private final ListDataProvider<T> dataProvider;
@@ -179,7 +179,7 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
                 .build();
         cellTable = new CellTable<T>(DEFAULT_PAGE_SIZE, new DataTableResources(), keyProvider,
                 Elements.asWidget(loadingIndicator)) {{
-            // Since the CellTable element not the widget gets attached to the DOM,
+            // Since the CellTable element gets attached to the DOM (not the widget),
             // we need to manually invoke the onAttach() method to wire the DOM events.
             onAttach();
         }};
@@ -194,7 +194,7 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
         dataProvider = new ListDataProvider<>(keyProvider);
         dataProvider.addDataDisplay(cellTable);
 
-        // pager constructor references appearance!
+        // Create appearance now -> pager constructor references appearance!
         appearance = Appearance.create(id, new I18n(constants, messages));
         Pager pager = new Pager(DEFAULT_PAGE_SIZE);
         pager.setDisplay(cellTable);
@@ -299,6 +299,7 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
     }
 
     public void addColumn(final Column<T, ?> col, final SafeHtml headerHtml) {cellTable.addColumn(col, headerHtml);}
+
 
     // ------------------------------------------------------ buttons
 

@@ -72,6 +72,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     private T model;
     private SecurityContext securityContext;
 
+    private Element buttons;
     private FormLinks formLinks;
     private DivElement errorPanel;
     private SpanElement errorMessage;
@@ -79,9 +80,9 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     private EventListener exitEditWithEsc;
 
     // accessible in subclasses
-    protected SaveCallback<T> saveCallback;
-    protected ResetCallback<T> resetCallback;
-    protected CancelCallback<T> cancelCallback;
+    protected SaveCallback saveCallback;
+    protected ResetCallback resetCallback;
+    protected CancelCallback cancelCallback;
 
 
     // ------------------------------------------------------ initialization
@@ -186,7 +187,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         }
 
         // @formatter:off
-        Element buttons = new Elements.Builder()
+        buttons = new Elements.Builder()
             .div().css("form-group edit-buttons")
                 .div().css("col-" + COLUMN_DISCRIMINATOR + "-offset-" + LABEL_COLUMNS + " col-" + COLUMN_DISCRIMINATOR + "-" + INPUT_COLUMNS)
                     .div().css("pull-right form-buttons")
@@ -204,6 +205,10 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         editPanel.appendChild(buttons);
 
         return editPanel;
+    }
+
+    protected void hideButtons() {
+        Elements.setVisible(buttons, false);
     }
 
 
@@ -248,7 +253,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     }
 
     @Override
-    public void setSaveCallback(final SaveCallback<T> saveCallback) {
+    public void setSaveCallback(final SaveCallback saveCallback) {
         this.saveCallback = saveCallback;
     }
 
@@ -275,7 +280,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     }
 
     @Override
-    public void setCancelCallback(final CancelCallback<T> cancelCallback) {
+    public void setCancelCallback(final CancelCallback cancelCallback) {
         this.cancelCallback = cancelCallback;
     }
 
@@ -291,7 +296,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     }
 
     @Override
-    public void setResetCallback(final ResetCallback<T> resetCallback) {
+    public void setResetCallback(final ResetCallback resetCallback) {
         this.resetCallback = resetCallback;
     }
 
@@ -480,7 +485,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         }
     }
 
-    protected void clearValues() {
+    public void clearValues() {
         for (FormItem formItem : formItems.values()) {
             formItem.clearValue();
             formItem.resetMetaData();

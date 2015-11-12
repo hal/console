@@ -42,18 +42,18 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 /**
  * @author Harald Pehl
  */
-public class ModelNodeTable extends DataTable<ModelNode> {
+public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
-    public static class Builder {
+    public static class Builder<T extends ModelNode> {
 
         final String id;
-        final ProvidesKey<ModelNode> keyProvider;
+        final ProvidesKey<T> keyProvider;
         final SecurityContext securityContext;
         final ResourceDescription resourceDescription;
         final List<String> columns;
         final LinkedListMultimap<String, DataTableButton> buttons;
 
-        public Builder(final String id, final ProvidesKey<ModelNode> keyProvider, final SecurityContext securityContext,
+        public Builder(final String id, final ProvidesKey<T> keyProvider, final SecurityContext securityContext,
                 final ResourceDescription resourceDescription) {
             this.id = id;
             this.keyProvider = keyProvider;
@@ -63,23 +63,23 @@ public class ModelNodeTable extends DataTable<ModelNode> {
             this.buttons = LinkedListMultimap.create();
         }
 
-        public Builder addColumn(final String first, final String... rest) {
+        public Builder<T> addColumn(final String first, final String... rest) {
             columns.addAll(Lists.asList(first, rest));
             return this;
         }
 
-        public Builder addButton(DataTableButton button) {
+        public Builder<T> addButton(DataTableButton button) {
             return addButton(button, DEFAULT_BUTTON_GROUP);
         }
 
-        public Builder addButton(DataTableButton button, String group) {
+        public Builder<T> addButton(DataTableButton button, String group) {
             buttons.put(group, button);
             return this;
         }
 
-        public ModelNodeTable build() {
+        public ModelNodeTable<T> build() {
             validate();
-            return new ModelNodeTable(this);
+            return new ModelNodeTable<>(this);
         }
 
         private void validate() {
@@ -102,7 +102,7 @@ public class ModelNodeTable extends DataTable<ModelNode> {
 
     private final ColumnFactory columnFactory;
 
-    ModelNodeTable(Builder builder) {
+    ModelNodeTable(Builder<T> builder) {
         super(builder.id, builder.keyProvider, builder.securityContext);
 
         columnFactory = new ColumnFactory();
@@ -113,7 +113,7 @@ public class ModelNodeTable extends DataTable<ModelNode> {
                         column, builder.resourceDescription, builder.tableId());
                 continue;
             }
-            ColumnFactory.HeaderColumn headerColumn = columnFactory.createHeaderColumn(attributeDescription);
+            ColumnFactory.HeaderColumn<T> headerColumn = columnFactory.createHeaderColumn(attributeDescription);
             addColumn(headerColumn.column, headerColumn.header);
         }
 

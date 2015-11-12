@@ -36,6 +36,13 @@ public interface HalConstants extends Constants {
     String dispatcher_failed();
 
     String edit();
+
+    String endpoint_select_title();
+    String endpoint_select_description();
+    String endpoint_connect();
+    String endpoint_add_title();
+    String endpoint_add_description();
+
     String expression_resolver();
 
     String form_errors();

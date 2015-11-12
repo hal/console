@@ -32,6 +32,10 @@ public final class StaticResourceDescription {
     private StaticResourceDescription() {}
 
     public static ResourceDescription from(TextResource resource) {
-        return new ResourceDescription(ModelNode.fromBase64(resource.getText()));
+        try {
+            return new ResourceDescription(ModelNode.fromBase64(resource.getText()));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Unable to read static resource description from " + resource.getName());
+        }
     }
 }
