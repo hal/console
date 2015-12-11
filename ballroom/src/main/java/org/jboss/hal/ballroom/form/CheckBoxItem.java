@@ -27,7 +27,7 @@ import elemental.dom.Element;
 /**
  * @author Harald Pehl
  */
-public class CheckBoxItem extends FormItem<Boolean> {
+public class CheckBoxItem extends AbstractFormItem<Boolean> {
 
     public CheckBoxItem(final String name, final String label) {
         super(name, label);
@@ -100,12 +100,12 @@ public class CheckBoxItem extends FormItem<Boolean> {
         }
 
         @Override
-        void setValue(final Boolean value) {
+        public void setValue(final Boolean value) {
             element.setChecked(value);
         }
 
         @Override
-        void clearValue() {
+        public void clearValue() {
             element.setChecked(false);
         }
 

@@ -36,7 +36,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 /**
  * @author Harald Pehl
  */
-public class SelectBoxItem extends FormItem<String> {
+public class SelectBoxItem extends AbstractFormItem<String> {
 
     private SelectBoxElement comboBox;
 
@@ -148,14 +148,14 @@ public class SelectBoxItem extends FormItem<String> {
         }
 
         @Override
-        void setValue(final String value) {
+        public void setValue(final String value) {
             if (indexedValues.containsValue(value)) {
                 element.setSelectedIndex(indexedValues.inverse().get(value));
             }
         }
 
         @Override
-        void clearValue() {
+        public void clearValue() {
             element.setSelectedIndex(defaultIndex);
         }
 

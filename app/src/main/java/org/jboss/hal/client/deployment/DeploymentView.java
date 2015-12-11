@@ -93,7 +93,7 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
         dialog = new Dialog.Builder("Sample Dialog").add(dialogBody).closeOnly().build();
 
         EndpointResources endpointResources = GWT.create(EndpointResources.class);
-        ModelNodeForm mbuiForm = new ModelNodeForm.Builder("mbui-form", SecurityContext.RWX,
+        ModelNodeForm<ModelNode> mbuiForm = new ModelNodeForm.Builder<>("mbui-form", SecurityContext.RWX,
                 StaticResourceDescription.from(endpointResources.endpoint())).build();
 
         SampleForm form = new SampleForm("deployment", false);

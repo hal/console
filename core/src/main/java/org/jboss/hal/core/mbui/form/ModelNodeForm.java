@@ -21,7 +21,8 @@
  */
 package org.jboss.hal.core.mbui.form;
 
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.base.Joiner;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.form.DefaultForm;
 import org.jboss.hal.ballroom.form.DefaultStateMachine;
@@ -32,6 +33,7 @@ import org.jboss.hal.ballroom.form.StateMachine;
 import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.core.mbui.LabelBuilder;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
@@ -40,6 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,6 +65,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         boolean createResource;
         boolean viewOnly;
         boolean editOnly;
+        boolean unsorted;
         boolean includeRuntime;
         boolean hideButtons;
         SaveCallback saveCallback;
@@ -83,6 +87,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             this.createResource = false;
             this.viewOnly = false;
             this.editOnly = false;
+            this.unsorted = false;
             this.includeRuntime = false;
         }
 
@@ -108,6 +113,11 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
         public Builder<T> editOnly() {
             this.editOnly = true;
+            return this;
+        }
+
+        public Builder<T> unsorted() {
+            this.unsorted = true;
             return this;
         }
 
@@ -166,11 +176,19 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                     throw new IllegalStateException(
                             "Illegal combination for " + formId() + ": createResource && viewOnly");
                 }
-                if (!resourceDescription.hasDefined(OPERATIONS) ||
-                        !resourceDescription.get(OPERATIONS).hasDefined(ADD) ||
-                        !resourceDescription.get(OPERATIONS).get(ADD).hasDefined(REQUEST_PROPERTIES)) {
+                String path = OPERATIONS + "." + ADD + "." + REQUEST_PROPERTIES;
+                if (!ModelNodeHelper.failSafeGet(resourceDescription, path).isDefined()) {
                     throw new IllegalStateException("No request properties found for " + formId() +
                             " / operation add in resource description " + resourceDescription);
+                }
+                if (!excludes.isEmpty()) {
+                    List<Property> requiredRequestProperties = resourceDescription.getRequiredRequestProperties();
+                    for (Property property : requiredRequestProperties) {
+                        if (excludes.contains(property.getName())) {
+                            throw new IllegalStateException("Required request property " + property.getName() +
+                                    " must not be excluded from " + formId() + " when using createMode == true");
+                        }
+                    }
                 }
             } else {
                 if (!resourceDescription.hasDefined(ATTRIBUTES)) {
@@ -206,9 +224,15 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         this.cancelCallback = builder.cancelCallback;
         this.resetCallback = builder.resetCallback;
 
+        String path = builder.createResource ? Joiner.on('.').join(OPERATIONS, ADD, REQUEST_PROPERTIES) : ATTRIBUTES;
+        Iterable<Property> allProperties = ModelNodeHelper.failSafeGet(builder.resourceDescription, path)
+                .asPropertyList();
+        FluentIterable<Property> fi = FluentIterable.from(allProperties).filter(new PropertyFilter(builder));
+        Iterable<Property> filtered = builder.unsorted ? fi.toList() :
+                fi.toSortedList((p1, p2) -> p1.getName().compareTo(p2.getName()));
+
         LabelBuilder labelBuilder = new LabelBuilder();
-        ImmutableSortedSet<Property> properties = new PropertyFilter(builder).filter();
-        for (Property property : properties) {
+        for (Property property : filtered) {
             String name = property.getName();
             ModelNode attribute = property.getValue();
 
@@ -220,7 +244,9 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             }
             if (formItem != null) {
                 addFormItem(formItem);
-                addHelp(labelBuilder.label(property), attribute.get(DESCRIPTION).asString());
+                if (attribute.hasDefined(DESCRIPTION)) {
+                    addHelp(labelBuilder.label(property), attribute.get(DESCRIPTION).asString());
+                }
             } else {
                 logger.warn("Unable to create form item for '{}' in form '{}'", name, builder.id);
             }

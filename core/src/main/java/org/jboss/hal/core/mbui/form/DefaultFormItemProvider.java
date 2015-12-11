@@ -27,10 +27,11 @@ import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.NumberItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.core.mbui.LabelBuilder;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 
 /**
  * @author Harald Pehl
@@ -48,35 +49,37 @@ public class DefaultFormItemProvider implements FormItemProvider {
         String name = attributeDescription.getName();
         String label = labelBuilder.label(attributeDescription);
         ModelNode modelNode = attributeDescription.getValue();
-        ModelType type = modelNode.get(ModelDescriptionConstants.TYPE).asType();
-        switch (type) {
-            case BIG_DECIMAL:
-            case BIG_INTEGER:
-            case DOUBLE:
-            case INT:
-            case LONG:
-                formItem = new NumberItem(name, label);
-                break;
-            case BOOLEAN:
-                formItem = new CheckBoxItem(name, label);
-                break;
-            case BYTES:
-                break;
-            case EXPRESSION:
-                break;
-            case LIST:
-                break;
-            case OBJECT:
-                break;
-            case PROPERTY:
-                break;
-            case STRING:
-                formItem = new TextBoxItem(name, label);
-                break;
-            case TYPE:
-                break;
-            case UNDEFINED:
-                break;
+        if (modelNode.hasDefined(TYPE)) {
+            ModelType type = modelNode.get(TYPE).asType();
+            switch (type) {
+                case BIG_DECIMAL:
+                case BIG_INTEGER:
+                case DOUBLE:
+                case INT:
+                case LONG:
+                    formItem = new NumberItem(name, label);
+                    break;
+                case BOOLEAN:
+                    formItem = new CheckBoxItem(name, label);
+                    break;
+                case BYTES:
+                    break;
+                case EXPRESSION:
+                    break;
+                case LIST:
+                    break;
+                case OBJECT:
+                    break;
+                case PROPERTY:
+                    break;
+                case STRING:
+                    formItem = new TextBoxItem(name, label);
+                    break;
+                case TYPE:
+                    break;
+                case UNDEFINED:
+                    break;
+            }
         }
         return formItem;
     }

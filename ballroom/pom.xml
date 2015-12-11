@@ -61,7 +61,7 @@
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
+            <artifactId>guava-gwt</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.gwt</groupId>

@@ -30,24 +30,24 @@ import org.jboss.gwt.elemento.core.IsElement;
 /**
  * @author Harald Pehl
  */
-abstract class InputElement<T>
+public abstract class InputElement<T>
         implements IsElement, HasEnabled, Focusable, HasName, HasText /* for expression support */ {
 
-    void setId(final String id) {
+    public void setId(final String id) {
         asElement().setId(id);
     }
 
-    String getId() {
+    public String getId() {
         return asElement().getId();
     }
 
-    void setClassName(final String classNames) {
+    public void setClassName(final String classNames) {
         asElement().setClassName(classNames);
     }
 
-    abstract T getValue();
+    public abstract T getValue();
 
-    abstract void setValue(T value);
+    public abstract void setValue(T value);
 
-    abstract void clearValue();
+    public abstract void clearValue();
 }

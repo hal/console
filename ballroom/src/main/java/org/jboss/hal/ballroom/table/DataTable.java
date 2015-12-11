@@ -68,7 +68,7 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
         public Pager(final int pageSize) {
             setPageSize(pageSize);
 
-            appearance.navInfo.setInnerText(constants.table_info_empty());
+            appearance.navInfo.setInnerHTML("&nbsp;");
             appearance.navFirst.getClassList().add("disabled");
             appearance.navPrev.getClassList().add("disabled");
             appearance.navCurrentPage.setValue("");
@@ -86,7 +86,7 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
         protected void onRangeOrRowCountChanged() {
             HasRows display = getDisplay();
             if (display.getRowCount() == 0) {
-                appearance.navInfo.setInnerText(constants.table_info_empty());
+                appearance.navInfo.setInnerHTML("&nbsp;");
                 appearance.navCurrentPage.setValue("");
                 appearance.navPages.setInnerText("");
             } else {
@@ -180,7 +180,7 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
         cellTable = new CellTable<T>(DEFAULT_PAGE_SIZE, new DataTableResources(), keyProvider,
                 Elements.asWidget(loadingIndicator)) {{
             // Since the CellTable element gets attached to the DOM (not the widget),
-            // we need to manually invoke the onAttach() method to wire the DOM events.
+            // we need to manually invoke the onAttach() method in order to wire the DOM events.
             onAttach();
         }};
         cellTable.setEmptyTableWidget(Elements.asWidget(empty));

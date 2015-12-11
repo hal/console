@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -383,16 +384,24 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     // ------------------------------------------------------ properties
 
     @Override
-    public T getModel() {
-        return model;
-    }
-
-    @Override
     public String getId() {
         return id;
     }
 
-    public boolean modified() {
+    @Override
+    public T getModel() {
+        return model;
+    }
+
+    public FormItem getFormItem(String name) {
+        return formItems.get(name);
+    }
+
+    public Iterable<FormItem> getFormItems() {
+        return ImmutableList.copyOf(formItems.values());
+    }
+
+    public boolean isModified() {
         for (FormItem formItem : formItems.values()) {
             if (formItem.isModified()) {
                 return true;

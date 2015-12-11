@@ -34,7 +34,7 @@ import static java.util.Collections.emptyList;
 /**
  * @author Harald Pehl
  */
-public class TextAreaItem extends FormItem<List<String>> {
+public class TextAreaItem extends AbstractFormItem<List<String>> {
 
     public TextAreaItem(final String name, final String label) {
         super(name, label);
@@ -113,7 +113,7 @@ public class TextAreaItem extends FormItem<List<String>> {
         }
 
         @Override
-        void clearValue() {
+        public void clearValue() {
             element.setValue("");
         }
 

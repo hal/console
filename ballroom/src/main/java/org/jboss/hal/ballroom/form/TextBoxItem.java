@@ -29,7 +29,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 /**
  * @author Harald Pehl
  */
-public class TextBoxItem extends FormItem<String> {
+public class TextBoxItem extends AbstractFormItem<String> {
 
     public TextBoxItem(final String name, final String label) {
         super(name, label);
@@ -117,12 +117,12 @@ public class TextBoxItem extends FormItem<String> {
         }
 
         @Override
-        void setValue(final String value) {
+        public void setValue(final String value) {
             element.setValue(value);
         }
 
         @Override
-        void clearValue() {
+        public void clearValue() {
             element.setValue("");
         }
 

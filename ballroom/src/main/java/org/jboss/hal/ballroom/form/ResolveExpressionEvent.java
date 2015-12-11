@@ -29,6 +29,11 @@ import com.google.web.bindery.event.shared.HandlerRegistration;
  */
 public class ResolveExpressionEvent extends GwtEvent<ResolveExpressionEvent.Handler> {
 
+    public interface Handler extends EventHandler {
+
+        void onResolve(ResolveExpressionEvent event);
+    }
+
     public static final Type<Handler> TYPE = new Type<>();
 
     public static void fire(HasHandlers source, String expression) {
@@ -54,14 +59,9 @@ public class ResolveExpressionEvent extends GwtEvent<ResolveExpressionEvent.Hand
         return TYPE;
     }
 
+
     @Override
     protected void dispatch(Handler handler) {
         handler.onResolve(this);
-    }
-
-
-    interface Handler extends EventHandler {
-
-        void onResolve(ResolveExpressionEvent event);
     }
 }

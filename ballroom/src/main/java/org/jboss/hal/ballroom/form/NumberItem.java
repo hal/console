@@ -35,7 +35,7 @@ import static java.util.Arrays.asList;
 /**
  * @author Harald Pehl
  */
-public class NumberItem extends FormItem<Long> {
+public class NumberItem extends AbstractFormItem<Long> {
 
     /**
      * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MIN_SAFE_INTEGER
@@ -183,12 +183,12 @@ public class NumberItem extends FormItem<Long> {
         }
 
         @Override
-        void setValue(final Long value) {
+        public void setValue(final Long value) {
             element.setValue(String.valueOf(value));
         }
 
         @Override
-        void clearValue() {
+        public void clearValue() {
             element.setValue("");
         }
 

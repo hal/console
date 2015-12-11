@@ -22,6 +22,7 @@
 package org.jboss.hal.ballroom.dialog;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.RootPanel;
 import elemental.dom.Element;
 import elemental.html.ButtonElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -214,12 +215,11 @@ public class Dialog implements IsElement {
         title = rootBuilder.referenceFor("title");
         body = rootBuilder.referenceFor("body");
         footer = rootBuilder.referenceFor("footer");
-        init();
+        RootPanel.get().add(Elements.asWidget(root));
+        initJsEvents();
     }
 
-    private static native void init() /*-{
-        $doc.body.appendChild(@org.jboss.hal.ballroom.dialog.Dialog::root);
-
+    private static native void initJsEvents() /*-{
         var dialogId = @org.jboss.hal.ballroom.dialog.Dialog::SELECTOR_ID;
         $wnd.$(dialogId).on('shown.bs.modal', function () {
             @org.jboss.hal.ballroom.dialog.Dialog::open = true;
@@ -241,11 +241,13 @@ public class Dialog implements IsElement {
 
     // ------------------------------------------------------ dialog instance
 
+    private final boolean closeOnEsc;
     private ButtonElement primaryButton;
     private ButtonElement secondaryButton;
 
     public Dialog(final Builder builder) {
         reset();
+        this.closeOnEsc = builder.closeOnEsc;
 
         if (builder.fadeIn) {
             Dialog.root.getClassList().add("fade");
@@ -268,9 +270,9 @@ public class Dialog implements IsElement {
 
         boolean buttons = builder.primaryButton != null || builder.secondaryButton != null;
         if (buttons) {
-            Elements.Builder footerContentBuilder = new Elements.Builder();
             if (builder.secondaryButton != null) {
-                footerContentBuilder.button()
+                secondaryButton = new Elements.Builder()
+                        .button()
                         .css("btn btn-hal btn-default")
                         .on(click, event -> {
                             if (builder.secondaryButton.callback.execute()) {
@@ -278,12 +280,12 @@ public class Dialog implements IsElement {
                             }
                         })
                         .innerText(builder.secondaryButton.label)
-                        .rememberAs("secondaryButton")
-                        .end();
-                secondaryButton = footerContentBuilder.referenceFor("secondaryButton");
+                        .end().build();
+                Dialog.footer.appendChild(secondaryButton);
             }
             if (builder.primaryButton != null) {
-                footerContentBuilder.button()
+                primaryButton = new Elements.Builder()
+                        .button()
                         .css("btn btn-hal btn-primary")
                         .on(click, event -> {
                             if (builder.primaryButton.callback.execute()) {
@@ -291,12 +293,9 @@ public class Dialog implements IsElement {
                             }
                         })
                         .innerText(builder.primaryButton.label)
-                        .rememberAs("primaryButton")
-                        .end();
-                primaryButton = footerContentBuilder.referenceFor("primaryButton");
+                        .end().build();
+                Dialog.footer.appendChild(primaryButton);
             }
-            Element footerContent = footerContentBuilder.build();
-            Dialog.footer.appendChild(footerContent);
         }
         Elements.setVisible(Dialog.footer, buttons);
     }
@@ -311,11 +310,15 @@ public class Dialog implements IsElement {
             throw new IllegalStateException(
                     "Another dialog is still open. Only one dialog can be open at a time. Please close the other dialog!");
         }
-        internalShow();
+        internalShow(closeOnEsc);
     }
 
-    private native void internalShow() /*-{
+    private native void internalShow(boolean closeOnEsc) /*-{
         var dialogId = @org.jboss.hal.ballroom.dialog.Dialog::SELECTOR_ID;
+        $wnd.$(dialogId).modal({
+            backdrop: "static", // does not close the dialog when clicking outside
+            keyboard: closeOnEsc
+        });
         $wnd.$(dialogId).modal('show');
         @org.jboss.hal.ballroom.PatternFly::initOptIns(Z)(false);
     }-*/;

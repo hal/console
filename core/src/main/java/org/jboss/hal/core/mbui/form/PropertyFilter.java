@@ -23,62 +23,46 @@ package org.jboss.hal.core.mbui.form;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableSortedSet;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STORAGE;
 
 /**
  * @author Harald Pehl
  */
-class PropertyFilter {
+class PropertyFilter implements Predicate<Property> {
 
     private final ModelNodeForm.Builder builder;
-    private final Iterable<Property> input;
 
     PropertyFilter(final ModelNodeForm.Builder builder) {
         this.builder = builder;
-        this.input = builder.createResource ?
-                builder.resourceDescription.get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES).asPropertyList() :
-                builder.resourceDescription.get(ATTRIBUTES).asPropertyList();
-
     }
 
-    ImmutableSortedSet<Property> filter() {
+    @Override
+    public boolean apply(final Property property) {
         Predicate<Property> filter;
 
         if (builder.createResource) {
-            filter = property -> isRequired(property.getValue());
+            // include *all* required properties plus the ones in builder.includes
+            filter = p -> p.getValue().hasDefined(REQUIRED) && p.getValue().get(REQUIRED).asBoolean();
             if (!builder.includes.isEmpty()) {
-                filter = Predicates.or(filter, property -> builder.includes.contains(property.getName()));
+                filter = Predicates.or(filter, p -> builder.includes.contains(p.getName()));
             }
 
         } else {
             if (builder.includes.isEmpty() && builder.excludes.isEmpty()) {
                 filter = Predicates.alwaysTrue();
             } else if (!builder.excludes.isEmpty()) {
-                filter = property -> !builder.excludes.contains(property.getName());
+                filter = p -> !builder.excludes.contains(p.getName());
             } else {
-                filter = property -> builder.includes.contains(property.getName());
+                filter = p -> builder.includes.contains(p.getName());
             }
             if (builder.includeRuntime) {
-                filter = Predicates.and(filter,
-                        property -> "runtime".equals(property.getValue().get(STORAGE).asString()));
+                filter = Predicates.and(filter, p -> "runtime".equals(p.getValue().get(STORAGE).asString()));
             }
         }
 
-        return FluentIterable.from(input)
-                .filter(filter)
-                .toSortedSet((p1, p2) -> p1.getName().compareTo(p2.getName())); // removes duplicates
-    }
-
-    private boolean isRequired(ModelNode modelNode) {
-        //noinspection SimplifiableConditionalExpression
-        boolean nillable = modelNode.hasDefined(NILLABLE) ? modelNode.get(NILLABLE).asBoolean() : true;
-        boolean alternatives = modelNode.hasDefined("alternatives") &&
-                !modelNode.get("alternatives").asList().isEmpty();
-        return !nillable && !alternatives;
+        return filter.apply(property);
     }
 }

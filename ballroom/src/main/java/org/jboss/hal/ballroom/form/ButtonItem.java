@@ -28,7 +28,7 @@ import elemental.events.EventListener;
 /**
  * @author Harald Pehl
  */
-public class ButtonItem extends FormItem<Void> {
+public class ButtonItem extends AbstractFormItem<Void> {
 
     private ButtonElement button;
 
@@ -109,17 +109,17 @@ public class ButtonItem extends FormItem<Void> {
         }
 
         @Override
-        Void getValue() {
+        public Void getValue() {
             return null;
         }
 
         @Override
-        void setValue(final Void value) {
+        public void setValue(final Void value) {
             // noop
         }
 
         @Override
-        void clearValue() {
+        public void clearValue() {
             // noop
         }
 

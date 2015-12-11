@@ -24,6 +24,8 @@ package org.jboss.hal.core.mbui;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.description.ResourceDescription;
 
+import java.util.Map;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
@@ -45,11 +47,11 @@ public class ResourceDescriptionBuilder {
         return new ResourceDescription(new ModelNode().set(ATTRIBUTES, list));
     }
 
-    public ResourceDescription requestProperties(String... requestProperties) {
+    public ResourceDescription requestProperties(Map<String, Boolean> requestProperties) {
         ModelNode list = new ModelNode();
         if (requestProperties != null) {
-            for (String requestProperty : requestProperties) {
-                list.get(requestProperty).set(new ModelNode());
+            for (Map.Entry<String, Boolean> entry : requestProperties.entrySet()) {
+                list.get(entry.getKey()).set(new ModelNode().set(REQUIRED, entry.getValue()));
             }
         }
         return new ResourceDescription(

@@ -76,7 +76,8 @@ public class EndpointManager {
                             andThen.execute();
                             break;
                         default:
-                            logger.info("Unable to serve HAL from '{}'", managementEndpoint);
+                            logger.info("Unable to serve HAL from '{}'. Please select another management interface.",
+                                    managementEndpoint);
                             openDialog();
                             break;
                     }

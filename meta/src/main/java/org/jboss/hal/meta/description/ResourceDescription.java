@@ -21,9 +21,13 @@
  */
 package org.jboss.hal.meta.description;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -55,5 +59,32 @@ public class ResourceDescription extends ModelNode {
 
     public List<Property> getAttributes() {
         return get(ATTRIBUTES).asPropertyList();
+    }
+
+    public List<Property> getRequiredRequestProperties() {
+        String path = OPERATIONS + "." + ADD + "." + REQUEST_PROPERTIES;
+        ModelNode requestProperties = ModelNodeHelper.failSafeGet(this, path);
+
+        if (requestProperties.isDefined()) {
+            Iterable<Property> required = Iterables.filter(requestProperties.asPropertyList(),
+                    requestProperty -> requestProperty.getValue().hasDefined(REQUIRED) &&
+                            requestProperty.getValue().get(REQUIRED).asBoolean());
+            return Lists.newArrayList(required);
+
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    public List<Property> getRequiredAttributes() {
+        if (hasAttributes()) {
+            Iterable<Property> required = Iterables.filter(get(ATTRIBUTES).asPropertyList(),
+                    requestProperty -> requestProperty.getValue().hasDefined(NILLABLE) &&
+                            !requestProperty.getValue().get(NILLABLE).asBoolean());
+            return Lists.newArrayList(required);
+
+        } else {
+            return Collections.emptyList();
+        }
     }
 }

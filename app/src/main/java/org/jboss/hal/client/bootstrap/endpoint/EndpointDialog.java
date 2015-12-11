@@ -51,17 +51,15 @@ class EndpointDialog {
         this.storage = storage;
 
         ResourceDescription description = StaticResourceDescription.from(RESOURCES.endpoint());
-        table = new ModelNodeTable.Builder<>(IDS.endpoints_table(),
-                Endpoint::getName, SecurityContext.RWX,
-                description)
+        table = new ModelNodeTable.Builder<>(IDS.endpoints_table(), Endpoint::getName, SecurityContext.RWX, description)
                 .addButton(new DataTableButton(CONSTANTS.add(), TABLE, event -> switchTo(ADD)))
-                .addButton(
-                        new DataTableButton(CONSTANTS.remove(), ROW, event -> {
-                            storage.remove(table.selectedElement());
-                            table.setData(storage.list());
-                        }))
+                .addButton(new DataTableButton(CONSTANTS.remove(), ROW, event -> {
+                    storage.remove(table.selectedElement());
+                    table.setData(storage.list());
+                }))
                 .addColumn("name")
                 .build();
+
         table.addColumn(new TextColumn<Endpoint>() {
             @Override
             public String getValue(final Endpoint endpoint) {
@@ -87,7 +85,9 @@ class EndpointDialog {
                     node.get("name").set(String.valueOf(changedValues.get("name")));
                     node.get("scheme").set(String.valueOf(changedValues.get("scheme")));
                     node.get("host-name").set(String.valueOf(changedValues.get("host-name")));
-                    node.get("port").set((Integer)changedValues.get("port"));
+                    if (changedValues.containsKey("port")) {
+                        node.get("port").set((Integer) changedValues.get("port"));
+                    }
                     storage.add(new Endpoint(node));
                     switchTo(SELECT);
                 })
@@ -104,6 +104,7 @@ class EndpointDialog {
                 .primary(CONSTANTS.endpoint_connect(), this::onPrimary)
                 .secondary(this::onSecondary)
                 .closeIcon(false)
+                .closeOnEsc(false)
                 .build();
     }
 
@@ -119,6 +120,7 @@ class EndpointDialog {
         } else if (mode == ADD) {
             dialog.setTitle(CONSTANTS.endpoint_add_title());
             form.clearValues();
+            form.edit(new Endpoint(new ModelNode()));
             dialog.setPrimaryButtonLabel(CONSTANTS.add());
             Elements.setVisible(selectPage, false);
             Elements.setVisible(addPage, true);
@@ -132,6 +134,7 @@ class EndpointDialog {
             return true;
         } else if (mode == ADD) {
             form.save();
+            switchTo(SELECT);
             return false;
         }
         return false;
@@ -141,7 +144,8 @@ class EndpointDialog {
         if (mode == SELECT) {
             // TODO Show an error message "You need to select a management interface"
         } else if (mode == ADD) {
-            form.save();
+            form.cancel();
+            switchTo(SELECT);
         }
         return false; // don't close the dialog!
     }
