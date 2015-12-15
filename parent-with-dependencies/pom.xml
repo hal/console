@@ -43,15 +43,15 @@
         <apt-tools.version>0.0.2</apt-tools.version>
         <auto-service.version>1.0-rc2</auto-service.version>
         <circuit.version>0.1.4</circuit.version>
-        <elemento.version>0.1.2</elemento.version>
+        <elemento.version>0.1.5</elemento.version>
         <flow.version>0.0.3</flow.version>
         <gin.version>2.1.2</gin.version>
-        <guava.version>19.0</guava.version>
+        <guava.version>19.0-gwt28</guava.version>
         <gwt.version>2.8.0-SNAPSHOT</gwt.version>
         <gwtp.version>1.6-SNAPSHOT</gwtp.version>
         <jboss.dmr.version>1.3.0.Final</jboss.dmr.version>
         <junit.version>4.12</junit.version>
-        <mockito.version>1.10.17</mockito.version>
+        <mockito.version>2.0.31-beta</mockito.version>
         <nodejs.version>v4.2.1</nodejs.version>
         <npm.version>3.3.10</npm.version>
         <slf4j.version>1.7.12</slf4j.version>
@@ -60,7 +60,7 @@
         <validation.version>1.0.0.GA</validation.version>
     </properties>
 
-    <!-- Do not declare any build things here! Declare them in hal-parent. -->
+    <!-- Do not declare any build settings here! Declare them in hal-parent. -->
     <build/>
 
     <dependencyManagement>
@@ -151,7 +151,7 @@
                 <version>${super.eventbus}</version>
             </dependency>
 
-            <!-- APT Processors -->
+            <!-- Annotation Processing -->
             <dependency>
                 <groupId>org.jboss.auto</groupId>
                 <artifactId>apt-tools</artifactId>
@@ -171,7 +171,7 @@
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
+                <artifactId>mockito-core</artifactId>
                 <version>${mockito.version}</version>
             </dependency>
             <dependency>
@@ -195,7 +195,7 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
