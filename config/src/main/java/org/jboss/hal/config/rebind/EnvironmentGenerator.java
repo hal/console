@@ -42,9 +42,9 @@ import static org.jboss.hal.config.rebind.GeneratorUtils.failSafeGetProperty;
 
 public class EnvironmentGenerator extends Generator {
 
-    static final String PRODUCT_INFO_TEMPLATE = "Environment.ftl";
-    static final String PRODUCT_INFO_PACKAGE = Environment.class.getPackage().getName();
-    static final String PRODUCT_INFO_CLASS = Environment.class.getSimpleName() + "Impl";
+    private static final String PRODUCT_INFO_TEMPLATE = "Environment.ftl";
+    private static final String PRODUCT_INFO_PACKAGE = Environment.class.getPackage().getName();
+    private static final String PRODUCT_INFO_CLASS = Environment.class.getSimpleName() + "Impl";
 
     private final CodeGenerator generator;
 

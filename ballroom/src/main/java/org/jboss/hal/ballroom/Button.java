@@ -26,13 +26,14 @@ import elemental.dom.Element;
 import elemental.events.EventListener;
 import elemental.html.ButtonElement;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.resources.CSS;
 
 /**
  * @author Harald Pehl
  */
 public class Button implements IsElement {
 
-    public static final String DEFAULT_CSS = "btn btn-hal btn-default";
+    public static final String DEFAULT_CSS = CSS.btn + " " + CSS.btnHal + " " + CSS.btnDefault;
 
     protected final ButtonElement element;
 

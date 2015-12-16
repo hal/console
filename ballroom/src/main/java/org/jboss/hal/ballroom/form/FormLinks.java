@@ -27,10 +27,10 @@ import elemental.events.EventListener;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.GridSpec;
-import org.jboss.hal.ballroom.Id;
+import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.form.Form.State;
 import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.resources.HalConstants;
+import org.jboss.hal.resources.Constants;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -44,7 +44,7 @@ import static org.jboss.hal.ballroom.form.Form.Operation.RESET;
  */
 class FormLinks implements IsElement, GridSpec {
 
-    private final static HalConstants CONSTANTS = GWT.create(HalConstants.class);
+    private final static Constants CONSTANTS = GWT.create(Constants.class);
 
     private final StateMachine stateMachine;
     private final LinkedHashMap<String, String> helpTexts;
@@ -63,8 +63,8 @@ class FormLinks implements IsElement, GridSpec {
         this.stateMachine = stateMachine;
         this.helpTexts = helpTexts;
 
-        String linksId = Id.generate(formId, "links");
-        String helpId = Id.generate(formId, "help");
+        String linksId = IdBuilder.build(formId, "links");
+        String helpId = IdBuilder.build(formId, "help");
 
         // @formatter:off
         Elements.Builder rootBuilder = new Elements.Builder()
@@ -87,7 +87,7 @@ class FormLinks implements IsElement, GridSpec {
             resetLink = link(CONSTANTS.reset(), "pficon pficon-restart", onReset);
             resetLink.getDataset().setAt("toggle", "tooltip");
             resetLink.getDataset().setAt("placement", "right");
-            resetLink.setTitle(CONSTANTS.form_reset_desc());
+            resetLink.setTitle(CONSTANTS.formResetDesc());
 
             links.appendChild(resetLink);
         }

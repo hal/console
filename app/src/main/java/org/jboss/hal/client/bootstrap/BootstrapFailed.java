@@ -24,39 +24,30 @@ package org.jboss.hal.client.bootstrap;
 import com.google.gwt.core.client.GWT;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.DataElement;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
-import org.jboss.hal.resources.HalConstants;
+import org.jboss.hal.resources.Constants;
 
 import javax.annotation.PostConstruct;
 
 @Templated
 public abstract class BootstrapFailed implements IsElement {
 
-    static final HalConstants CONSTANTS = GWT.create(HalConstants.class);
+    static final Constants CONSTANTS = GWT.create(Constants.class);
 
     // @formatter:off
-    public static BootstrapFailed create(String error, String details, boolean asCode) {
-        return new Templated_BootstrapFailed(error, details, asCode);
+    public static BootstrapFailed create(String error, String details) {
+        return new Templated_BootstrapFailed(error, details);
     }
 
     public abstract String error();
     public abstract String details();
-    public abstract boolean asCode();
     // @formatter:on
 
-    @DataElement Element body;
     @DataElement Element code;
 
     @PostConstruct
     void init() {
-        Elements.setVisible(code, asCode());
-        Elements.setVisible(body, !asCode());
-        if (asCode()) {
-            code.setInnerText(details());
-        } else {
-            body.setInnerText(details());
-        }
+        code.setInnerText(details());
     }
 }

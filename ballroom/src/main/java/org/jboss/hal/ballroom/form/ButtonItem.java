@@ -24,6 +24,8 @@ package org.jboss.hal.ballroom.form;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.events.EventListener;
+import org.jboss.hal.ballroom.Button;
+import org.jboss.hal.ballroom.GridSpec;
 
 /**
  * @author Harald Pehl
@@ -40,13 +42,13 @@ public class ButtonItem extends AbstractFormItem<Void> {
     @Override
     protected InputElement<Void> newInputElement() {
         button = new ButtonElement();
-        button.setClassName("btn btn-default btn-hal");
+        button.setClassName(Button.DEFAULT_CSS);
         return button;
     }
 
     @Override
     protected void assembleUI() {
-        inputContainer.getClassList().add("col-" + COLUMN_DISCRIMINATOR + "-offset-" + LABEL_COLUMNS);
+        inputContainer.getClassList().add(GridSpec.offset(COLUMN_DISCRIMINATOR, LABEL_COLUMNS));
         inputContainer.appendChild(inputElement.asElement());
         container.appendChild(inputContainer);
     }
@@ -68,6 +70,7 @@ public class ButtonItem extends AbstractFormItem<Void> {
 
     static class ButtonElement extends InputElement<Void> {
 
+        static final String DATA_NAME = "data-name";
         final elemental.html.ButtonElement element;
 
         ButtonElement() {
@@ -125,12 +128,12 @@ public class ButtonItem extends AbstractFormItem<Void> {
 
         @Override
         public void setName(final String s) {
-            element.setAttribute("data-name", s);
+            element.setAttribute(DATA_NAME, s);
         }
 
         @Override
         public String getName() {
-            return element.getAttribute("data-name");
+            return element.getAttribute(DATA_NAME);
         }
 
         @Override

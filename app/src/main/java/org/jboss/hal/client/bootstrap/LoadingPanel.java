@@ -44,7 +44,7 @@ public class LoadingPanel implements IsElement {
 
     private final Element loading;
 
-    public LoadingPanel() {
+    private LoadingPanel() {
         // @formatter:off
         loading = new Elements.Builder()
             .div().css("loading-container")

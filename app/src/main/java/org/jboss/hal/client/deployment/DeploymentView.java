@@ -84,7 +84,7 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
     }
 
 
-    private Dialog dialog;
+    private final Dialog dialog;
 
     public DeploymentView() {
         SampleForm dialogForm = new SampleForm("dialog", true);

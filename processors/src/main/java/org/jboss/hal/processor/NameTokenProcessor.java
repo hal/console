@@ -50,25 +50,26 @@ import static java.util.Arrays.asList;
  *
  * @author Harald Pehl
  */
+@SuppressWarnings("HardCodedStringLiteral")
 @AutoService(Processor.class)
 @SupportedAnnotationTypes("com.gwtplatform.mvp.client.annotations.NameToken")
 public class NameTokenProcessor extends AbstractProcessor {
 
-    static final String NAME_TOKEN_TEMPLATE = "NameTokens.ftl";
-    static final String NAME_TOKEN_PACKAGE = "org.jboss.hal.meta.token";
-    static final String NAME_TOKEN_CLASS = "NameTokensImpl";
+    private static final String NAME_TOKEN_TEMPLATE = "NameTokens.ftl";
+    private static final String NAME_TOKEN_PACKAGE = "org.jboss.hal.meta.token";
+    private static final String NAME_TOKEN_CLASS = "NameTokensImpl";
 
-    static final String REQUIRED_RESOURCES_TEMPLATE = "RequiredResources.ftl";
-    static final String REQUIRED_RESOURCES_PACKAGE = "org.jboss.hal.meta.resource";
-    static final String REQUIRED_RESOURCES_CLASS = "RequiredResourcesImpl";
+    private static final String REQUIRED_RESOURCES_TEMPLATE = "RequiredResources.ftl";
+    private static final String REQUIRED_RESOURCES_PACKAGE = "org.jboss.hal.meta.resource";
+    private static final String REQUIRED_RESOURCES_CLASS = "RequiredResourcesImpl";
 
-    static final String SEARCH_INDEX_TEMPLATE = "SearchIndex.ftl";
-    static final String SEARCH_INDEX_PACKAGE = "org.jboss.hal.meta.search";
-    static final String SEARCH_INDEX_CLASS = "SearchIndexImpl";
+    private static final String SEARCH_INDEX_TEMPLATE = "SearchIndex.ftl";
+    private static final String SEARCH_INDEX_PACKAGE = "org.jboss.hal.meta.search";
+    private static final String SEARCH_INDEX_CLASS = "SearchIndexImpl";
 
-    static final String REGISTRY_MODULE_TEMPLATE = "RegistryModule.ftl";
-    static final String REGISTRY_MODULE_PACKAGE = "org.jboss.hal.meta";
-    static final String REGISTRY_MODULE_CLASS = "GeneratedRegistryModule";
+    private static final String REGISTRY_MODULE_TEMPLATE = "RegistryModule.ftl";
+    private static final String REGISTRY_MODULE_PACKAGE = "org.jboss.hal.meta";
+    private static final String REGISTRY_MODULE_CLASS = "GeneratedRegistryModule";
 
     private final Set<TokenInfo> tokenInfos;
 
@@ -160,11 +161,11 @@ public class NameTokenProcessor extends AbstractProcessor {
         private final String token;
 
         // required resources
-        private Set<String> resources;
+        private final Set<String> resources;
         private boolean recursive;
 
         // search index
-        private Set<String> keywords;
+        private final Set<String> keywords;
         private boolean exclude;
         private boolean domainOnly;
         private boolean standaloneOnly;

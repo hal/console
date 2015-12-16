@@ -22,14 +22,13 @@ import org.slf4j.LoggerFactory;
  */
 public class EndpointManager {
 
-    public final static String CONNECT_PARAMETER = "connect";
+    private final static String CONNECT_PARAMETER = "connect";
     private static final Logger logger = LoggerFactory.getLogger(EndpointManager.class);
 
     private final Endpoints endpoints;
     private final EndpointStorage storage;
 
     private ScheduledCommand andThen;
-    private EndpointDialog dialog;
 
     @Inject
     public EndpointManager(Endpoints endpoints, EndpointStorage storage) {
@@ -90,11 +89,10 @@ public class EndpointManager {
     }
 
     private void openDialog() {
-        dialog = new EndpointDialog(this, storage);
-        dialog.show();
+        new EndpointDialog(this, storage).show();
     }
 
-    void pingServer(final Endpoint endpoint, final AsyncCallback<Void> callback) {
+    private void pingServer(final Endpoint endpoint, final AsyncCallback<Void> callback) {
         String managementEndpoint = endpoint.getUrl() + "/management";
         XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
         xhr.setOnreadystatechange(event -> {

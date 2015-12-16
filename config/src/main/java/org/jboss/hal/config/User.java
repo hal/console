@@ -30,16 +30,16 @@ import java.util.Set;
 public class User {
 
     public static final String SUPER_USER = "SuperUser";
-    public static final String ADMINISTRTATOR = "Administrator";
-    public static final User UNKNOWN = new User("Unknown", new HashSet<>());
-    private static User current = UNKNOWN;
+    public static final String ADMINISTRATOR = "Administrator";
+    public static final User UNKNOWN = new User("Unknown", new HashSet<>()); //NON-NLS
+    private static final User current = UNKNOWN;
 
     public static User current() {
         return current;
     }
 
+    private final Set<String> roles;
     private String name;
-    private Set<String> roles;
 
     public User(final String name, final Set<String> roles) {
         this.name = name;
@@ -73,7 +73,7 @@ public class User {
 
     public boolean isAdministrator() {
         for (String role : roles) {
-            if (ADMINISTRTATOR.equalsIgnoreCase(role)) {
+            if (ADMINISTRATOR.equalsIgnoreCase(role)) {
                 return true;
             }
         }

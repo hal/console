@@ -103,7 +103,7 @@ final class BigDecimalModelValue extends ModelValue {
 
     @Override
     void format(final StringBuilder target, final int indent, final boolean ignored) {
-        target.append("big decimal ").append(value);
+        target.append("big decimal ").append(value); //NON-NLS
     }
 
     /**

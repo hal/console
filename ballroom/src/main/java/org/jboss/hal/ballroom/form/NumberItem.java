@@ -24,8 +24,8 @@ package org.jboss.hal.ballroom.form;
 import com.google.gwt.core.client.GWT;
 import elemental.client.Browser;
 import elemental.dom.Element;
-import org.jboss.hal.resources.HalConstants;
-import org.jboss.hal.resources.HalMessages;
+import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Messages;
 
 import java.util.List;
 
@@ -40,15 +40,15 @@ public class NumberItem extends AbstractFormItem<Long> {
     /**
      * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MIN_SAFE_INTEGER
      */
-    public static final long MIN_SAFE_NUMBER = -9007199254740991l;
+    private static final long MIN_SAFE_NUMBER = -9007199254740991l;
 
     /**
      * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
      */
-    public static final long MAX_SAFE_NUMBER = 9007199254740991l;
+    private static final long MAX_SAFE_NUMBER = 9007199254740991l;
 
-    private final static HalConstants CONSTANTS = GWT.create(HalConstants.class);
-    private final static HalMessages MESSAGES = GWT.create(HalMessages.class);
+    private final static Constants CONSTANTS = GWT.create(Constants.class);
+    private final static Messages MESSAGES = GWT.create(Messages.class);
 
     private long min;
     private long max;
@@ -107,7 +107,7 @@ public class NumberItem extends AbstractFormItem<Long> {
                     Long.parseLong(getText());
                     return ValidationResult.OK;
                 } catch (NumberFormatException e) {
-                    return ValidationResult.invalid(CONSTANTS.not_a_number());
+                    return ValidationResult.invalid(CONSTANTS.notANumber());
                 }
             }
             return ValidationResult.OK;
@@ -121,7 +121,7 @@ public class NumberItem extends AbstractFormItem<Long> {
         public ValidationResult validate(final Long value) {
             if (!isExpressionValue()) {
                 if (value < min || value > max) {
-                    return ValidationResult.invalid(MESSAGES.invalid_range(value, min, max));
+                    return ValidationResult.invalid(MESSAGES.invalidRange(value, min, max));
                 }
             }
             return ValidationResult.OK;

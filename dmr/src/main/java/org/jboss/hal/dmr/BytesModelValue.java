@@ -147,6 +147,7 @@ final class BytesModelValue extends ModelValue {
     }
 
     @Override
+    @SuppressWarnings("HardCodedStringLiteral")
     void format(final StringBuilder builder, final int indent, final boolean multiLine) {
         builder.append("bytes {");
         if (multiLine) {

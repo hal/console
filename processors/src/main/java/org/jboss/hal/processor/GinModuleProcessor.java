@@ -41,12 +41,13 @@ import java.util.Set;
  */
 // Do not export this processor using @AutoService(Processor.class)
 // It's executed explicitly in hal-app to process all GIN modules in all maven modules.
+@SuppressWarnings("HardCodedStringLiteral")
 @SupportedAnnotationTypes("org.jboss.hal.spi.GinModule")
 public class GinModuleProcessor extends AbstractProcessor {
 
-    static final String MODULE_TEMPLATE = "CompositeModule.ftl";
-    static final String MODULE_PACKAGE = "org.jboss.hal.client.gin";
-    static final String MODULE_CLASS = "CompositeModule";
+    private static final String MODULE_TEMPLATE = "CompositeModule.ftl";
+    private static final String MODULE_PACKAGE = "org.jboss.hal.client.gin";
+    private static final String MODULE_CLASS = "CompositeModule";
 
     private final Set<String> modules;
 

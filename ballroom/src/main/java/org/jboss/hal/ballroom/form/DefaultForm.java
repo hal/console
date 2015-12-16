@@ -35,10 +35,10 @@ import elemental.html.UListElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.LazyElement;
 import org.jboss.hal.ballroom.GridSpec;
-import org.jboss.hal.ballroom.Id;
+import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
-import org.jboss.hal.resources.HalConstants;
+import org.jboss.hal.resources.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,7 +60,7 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
  */
 public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityContextAware, GridSpec {
 
-    private final static HalConstants CONSTANTS = GWT.create(HalConstants.class);
+    private final static Constants CONSTANTS = GWT.create(Constants.class);
     private final static String NOT_INITIALIZED = "Form element not initialized. Please add this form to the DOM before calling any of the form operations like view(), edit(), save(), cancel() or reset()";
 
     private final String id;
@@ -157,14 +157,14 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         return section;
     }
 
-    protected Element viewPanel() {
+    private Element viewPanel() {
         return new Elements.Builder()
-                .div().id(Id.generate(id, "view")).css("form form-horizontal")
+                .div().id(IdBuilder.build(id, "view")).css("form form-horizontal")
                 .p().innerText("View panel not yet implemented.").end()
                 .end().build();
     }
 
-    protected Element editPanel() {
+    private Element editPanel() {
         // @formatter:off
         Elements.Builder errorPanelBuilder = new Elements.Builder()
             .div().css("alert alert-danger").rememberAs("errorPanel")
@@ -179,7 +179,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         clearErrors();
 
         Element editPanel = new Elements.Builder()
-                .div().id(Id.generate(id, "edit")).css("form form-horizontal").end()
+                .div().id(IdBuilder.build(id, "edit")).css("form form-horizontal").end()
                 .build();
         editPanel.appendChild(errorPanel);
         for (FormItem formItem : formItems.values()) {
@@ -258,7 +258,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         this.saveCallback = saveCallback;
     }
 
-    protected Map<String, Object> getChangedValues() {
+    private Map<String, Object> getChangedValues() {
         Map<String, Object> changed = new HashMap<>();
         for (Map.Entry<String, FormItem> entry : formItems.entrySet()) {
             if (entry.getValue().isModified()) {
@@ -301,7 +301,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         this.resetCallback = resetCallback;
     }
 
-    protected String formId() {
+    private String formId() {
         return "form(" + id + ")";
     }
 
@@ -370,7 +370,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         applySecurity();
     }
 
-    protected void applySecurity() {
+    private void applySecurity() {
         if (stateMachine.current() == EDITING && !securityContext.isWritable()) {
             execute(CANCEL);
         }
@@ -479,13 +479,13 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         }
     }
 
-    protected void showErrors(List<String> messages) {
+    private void showErrors(List<String> messages) {
         if (!messages.isEmpty()) {
             if (messages.size() == 1) {
                 errorMessage.setInnerText(messages.get(0));
                 Elements.removeChildrenFrom(errorMessages);
             } else {
-                errorMessage.setInnerText(CONSTANTS.form_errors());
+                errorMessage.setInnerText(CONSTANTS.formErrors());
                 for (String message : messages) {
                     errorMessages.appendChild(new Elements.Builder().li().innerText(message).end().build());
                 }

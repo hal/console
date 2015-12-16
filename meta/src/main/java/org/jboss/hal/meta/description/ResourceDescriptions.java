@@ -75,7 +75,7 @@ public class ResourceDescriptions extends AbstractMetadataRegistry<ResourceDescr
     }
 
 
-    static final String RESOURCE_DESCRIPTION_TYPE = "resource description";
+    private static final String RESOURCE_DESCRIPTION_TYPE = "resource description";
 
     private final Dispatcher dispatcher;
     // TODO Replace map with local storage (constrained by language and management model version)

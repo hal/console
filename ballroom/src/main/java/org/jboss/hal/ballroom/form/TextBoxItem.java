@@ -42,7 +42,7 @@ public class TextBoxItem extends AbstractFormItem<String> {
         return textBox;
     }
 
-    protected final void setupInputElement(final TextBoxElement textBox) {
+    final void setupInputElement(final TextBoxElement textBox) {
         textBox.setClassName("form-control");
         textBox.element.setOnchange(event -> {
             String newValue = inputElement().getValue();

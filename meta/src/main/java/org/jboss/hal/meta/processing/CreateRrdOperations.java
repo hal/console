@@ -35,7 +35,7 @@ import static org.jboss.hal.meta.processing.LookupResult.*;
 /**
  * @author Harald Pehl
  */
-public class CreateRrdOperations {
+class CreateRrdOperations {
 
     private final StatementContext statementContext;
 
@@ -57,7 +57,7 @@ public class CreateRrdOperations {
                         break;
                     case RESOURCE_DESCRIPTION_PRESENT:
                         // security context missing
-                        builder.param(ACCESS_CONTROL, "trim-descriptions").param(OPERATIONS, true);
+                        builder.param(ACCESS_CONTROL, TRIM_DESCRIPTIONS).param(OPERATIONS, true);
                         break;
                     case SECURITY_CONTEXT_PRESENT:
                         // resource description missing

@@ -22,6 +22,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.user.client.ui.Widget;
+import org.jetbrains.annotations.NonNls;
 
 import java.util.List;
 
@@ -30,9 +31,9 @@ import java.util.List;
  *
  * @author Harald Pehl
  */
-public final class Id {
+public final class IdBuilder {
 
-    public static String generate(String id, String... additionalIds) {
+    public static String build(@NonNls String id, @NonNls String... additionalIds) {
         if (Strings.emptyToNull(id) == null) {
             throw new IllegalArgumentException("Id must not be null");
         }
@@ -45,17 +46,17 @@ public final class Id {
         return Joiner.on('-').skipNulls().join(ids);
     }
 
-    public static void set(Widget widget, String id) {
+    public static void set(Widget widget, @NonNls String id) {
         set(widget.getElement(), id);
     }
 
-    public static void set(com.google.gwt.dom.client.Element element, String id) {
+    public static void set(com.google.gwt.dom.client.Element element, @NonNls String id) {
         element.setId(id);
     }
 
-    public static void set(elemental.dom.Element element, String id) {
+    public static void set(elemental.dom.Element element, @NonNls String id) {
         element.setId(id);
     }
 
-    private Id() {}
+    private IdBuilder() {}
 }

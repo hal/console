@@ -28,9 +28,9 @@ import elemental.dom.Element;
 import elemental.html.DivElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.core.Slots;
-import org.jboss.hal.resources.HalIds;
+import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Ids;
 
-import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,10 +46,9 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
     private final DivElement rootContainer;
     private boolean initialized;
 
-    @Inject
-    public RootView(HalIds ids) {
+    public RootView() {
         slots = new HashMap<>();
-        rootContainer = new Elements.Builder().div().id(ids.root_container()).css("container-fluid").end().build();
+        rootContainer = new Elements.Builder().div().id(Ids.ROOT_CONTAINER).css(CSS.containerFluid).end().build();
         initWidget(Elements.asWidget(rootContainer));
     }
 

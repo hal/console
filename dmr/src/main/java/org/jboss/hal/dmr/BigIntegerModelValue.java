@@ -97,7 +97,7 @@ final class BigIntegerModelValue extends ModelValue {
 
     @Override
     void format(final StringBuilder target, final int indent, final boolean ignored) {
-        target.append("big integer ").append(value);
+        target.append("big integer ").append(value); //NON-NLS
     }
 
     /**

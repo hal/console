@@ -39,8 +39,8 @@ import javax.inject.Inject;
 
 public class CheckForUpdate implements BootstrapFunction {
 
-    public static final String UPDATE_URL = "http://access-halproject.rhcloud.com/latest";
-    private static Logger logger = LoggerFactory.getLogger(CheckForUpdate.class);
+    private static final String UPDATE_URL = "http://access-halproject.rhcloud.com/latest";
+    private static final Logger logger = LoggerFactory.getLogger(CheckForUpdate.class);
 
     private final Environment environment;
 
@@ -49,6 +49,7 @@ public class CheckForUpdate implements BootstrapFunction {
         this.environment = environment;
     }
 
+    @SuppressWarnings("HardCodedStringLiteral")
     public void execute(final Control<FunctionContext> control) {
         // only check for community updates
         if (environment.getInstanceInfo() == InstanceInfo.EAP) {

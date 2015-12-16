@@ -38,7 +38,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.resources.I18n;
+import org.jboss.hal.resources.Resources;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class ConfigurationView extends ViewImpl implements ConfigurationPresente
     }
 
     @Inject
-    public ConfigurationView(EndpointResources endpointResources, I18n i18n) {
+    public ConfigurationView(EndpointResources endpointResources, Resources resources) {
         //noinspection Convert2MethodRef
         DataTable<FooBar> dataTable = new DataTable<>("foobar-table", (ProvidesKey<FooBar>) fooBar -> fooBar.id(),
                 SecurityContext.RWX);
@@ -102,9 +102,9 @@ public class ConfigurationView extends ViewImpl implements ConfigurationPresente
         ModelNodeTable<ModelNode> modelNodeTable = new ModelNodeTable.Builder<>("endpoint",
                 node -> node.get(NAME).asString(), SecurityContext.RWX, resourceDescription)
                 .addColumn("name", "host-name", "port")
-                .addButton(new DataTableButton(i18n.constants().add(), TABLE,
+                .addButton(new DataTableButton(resources.constants().add(), TABLE,
                         event -> Browser.getWindow().alert("NYI")))
-                .addButton(new DataTableButton(i18n.constants().remove(), ROW,
+                .addButton(new DataTableButton(resources.constants().remove(), ROW,
                         event -> Browser.getWindow().alert("NYI")))
                 .build();
 

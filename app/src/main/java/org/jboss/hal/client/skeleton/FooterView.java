@@ -31,7 +31,7 @@ import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.ballroom.ProgressElement;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.ui.UIRegistry;
-import org.jboss.hal.resources.I18n;
+import org.jboss.hal.resources.Resources;
 
 import javax.annotation.PostConstruct;
 
@@ -44,12 +44,12 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 public abstract class FooterView extends ViewImpl implements FooterPresenter.MyView, IsElement {
 
     // @formatter:off
-    public static FooterView create(final UIRegistry uiRegistry, final I18n i18n) {
-        return new Templated_FooterView(uiRegistry, i18n);
+    public static FooterView create(final UIRegistry uiRegistry, final Resources resources) {
+        return new Templated_FooterView(uiRegistry, resources);
     }
 
     public abstract UIRegistry uiRegistry();
-    public abstract I18n i18n();
+    public abstract Resources resources();
     // @formatter:on
 
 
@@ -74,7 +74,7 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
     public void update(Environment environment) {
         halVersion.setInnerText(environment.getHalVersion().toString());
         if (environment.halUpdateAvailable()) {
-            halVersion.setTitle(i18n().messages().update_available(environment.getHalVersion().toString(),
+            halVersion.setTitle(resources().messages().updateAvailable(environment.getHalVersion().toString(),
                     environment.getLatestHalVersion().toString()));
             Elements.setVisible(updateAvailable, true);
         }

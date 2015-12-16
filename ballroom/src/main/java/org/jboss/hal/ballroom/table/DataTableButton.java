@@ -25,15 +25,19 @@ import elemental.events.EventListener;
 import org.jboss.hal.ballroom.Button;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
+import org.jboss.hal.resources.Names;
+
+import static org.jboss.hal.meta.security.SecurityContext.RBAC_DATA_KEY;
 
 /**
  * @author Harald Pehl
  */
 public class DataTableButton extends Button implements SecurityContextAware {
 
-    public enum Target { ROW, TABLE}
+    public enum Target {ROW, TABLE}
 
-    public static final String DEFAULT_CSS = "btn btn-default";
+
+    private static final String DEFAULT_CSS = "btn btn-default";
 
     private final Target target;
     private final String operation;
@@ -55,12 +59,12 @@ public class DataTableButton extends Button implements SecurityContextAware {
         if (operation != null) {
             this.securityContext = securityContext;
             if (!securityContext.isExecutable(operation)) {
-                element.getDataset().setAt("rbac", "restricted");
+                element.getDataset().setAt(RBAC_DATA_KEY, Names.RESTRICTED);
                 setDisabled(true);
             } else {
-                boolean wasRestricted = element.getDataset().at("rbac") != null;
+                boolean wasRestricted = element.getDataset().at(RBAC_DATA_KEY) != null;
                 if (wasRestricted) {
-                    element.getDataset().setAt("rbac", null);
+                    element.getDataset().setAt(RBAC_DATA_KEY, null);
                     if (element.isDisabled()) {
                         setDisabled(false);
                     }

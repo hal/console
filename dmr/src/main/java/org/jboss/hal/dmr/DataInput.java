@@ -26,8 +26,8 @@ import java.io.IOException;
  */
 public class DataInput {
 
+    private final byte[] bytes;
     private int pos = 0;
-    private byte[] bytes;
 
     public DataInput(byte[] bytes) {
         this.bytes = bytes;
@@ -94,6 +94,7 @@ public class DataInput {
         byte longBytes[] = new byte[8];
         readFully(longBytes);
 
+        //noinspection PointlessBitwiseExpression
         return (((long) longBytes[0] << 56) +
                 ((long) (longBytes[1] & 255) << 48) +
                 ((long) (longBytes[2] & 255) << 40) +

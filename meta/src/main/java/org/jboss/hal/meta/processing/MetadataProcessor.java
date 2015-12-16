@@ -51,7 +51,7 @@ public class MetadataProcessor {
     /**
      * Number of r-r-d operations part of one composite operation.
      */
-    final static int BATCH_SIZE = 3;
+    private final static int BATCH_SIZE = 3;
 
     private static final Logger logger = LoggerFactory.getLogger(MetadataProcessor.class);
 

@@ -33,7 +33,7 @@ import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESEN
 /**
  * @author Harald Pehl
  */
-public class Lookup {
+class Lookup {
 
     private final ResourceDescriptions descriptionRegistry;
     private final SecurityFramework securityFramework;

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--suppress HtmlUnknownTarget -->
 <html>
 <head lang="en">
     <meta charset="UTF-8">
@@ -17,7 +18,7 @@
 <nav data-element="header" class="navbar navbar-default navbar-pf navbar-fixed-top" role="navigation">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".hal-header-collapse">
-            <span class="sr-only">{{i18n().constants().toggle_navigation()}}</span>
+            <span class="sr-only">{{resources().constants().toggleNavigation()}}</span>
             <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
         </button>
         <a data-element="logoLink" class="navbar-brand logo clickable">
@@ -28,17 +29,17 @@
         <ul class="nav navbar-nav navbar-utility">
             <li>
                 <a data-element="messages" class="clickable">
-                    <i class="fa fa-align-left"></i><span id="{{ids().header_messages()}}" data-element="messagesLabel">Messages (23)</span>
+                    <i class="fa fa-align-left"></i><span id="{{resources().HEADER_MESSAGES}}" data-element="messagesLabel">Messages (23)</span>
                 </a>
             </li>
             <li class="dropdown">
                 <a class="clickable dropdown-toggle" data-toggle="dropdown">
-                    <i class="pficon pficon-user"></i><span id="{{ids().header_username()}}" data-element="userName">John Doe</span><b class="caret"></b>
+                    <i class="pficon pficon-user"></i><span id="{{resources().HEADER_USERNAME}}" data-element="userName">John Doe</span><b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
-                    <li id="{{ids().header_roles()}}" data-element="roles" class="static">Active Roles: Administrator</li>
+                    <li id="{{resources().HEADER_ROLES}}" data-element="roles" class="static">Active Roles: Administrator</li>
                     <li class="divider"></li>
-                    <li><a data-element="logout" class="clickable">{{i18n().constants().logout()}}</a></li>
+                    <li><a data-element="logout" class="clickable">{{resources().constants().logout()}}</a></li>
                 </ul>
             </li>
             <li class="dropdown">
@@ -46,19 +47,19 @@
                     <i class="fa fa-globe"></i><b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
-                    <li id="{{ids().header_connected_to()}}" data-element="connectedTo" class="static">Connected to localhost</li>
+                    <li id="{{resources().HEADER_CONNECTED_TO}}" data-element="connectedTo" class="static">Connected to localhost</li>
                     <li class="divider"></li>
-                    <li><a data-element="reconnect" class="clickable">{{i18n().constants().connect_to_server()}}</a></li>
+                    <li><a data-element="reconnect" class="clickable">{{resources().constants().connectToServer()}}</a></li>
                 </ul>
             </li>
         </ul>
         <ul class="nav navbar-nav navbar-primary">
-            <li class="active"><a id="{{ids().tlc_homepage()}}" href="{{historyToken(org.jboss.hal.client.NameTokens.Homepage)}}" class="active">Homepage</a></li>
-            <li><a id="{{ids().tlc_deployments()}}" href="{{historyToken(org.jboss.hal.client.NameTokens.Deployments)}}">Deployments</a></li>
-            <li><a id="{{ids().tlc_configuration()}}" href="{{historyToken(org.jboss.hal.client.NameTokens.Configuration)}}">Configuration</a></li>
-            <li><a id="{{ids().tlc_runtime()}}" href="{{historyToken(org.jboss.hal.client.NameTokens.Runtime)}}">Runtime</a></li>
-            <li data-element="accessControl"><a id="{{ids().tlc_access_control()}}" href="{{historyToken(org.jboss.hal.client.NameTokens.AccessControl)}}">Access Control</a></li>
-            <li data-element="patching"><a id="{{ids().tlc_patching()}}" href="{{historyToken(org.jboss.hal.client.NameTokens.Patching)}}">Patching</a></li>
+            <li class="active"><a id="{{resources().TLC_HOMEPAGE}}" href="{{historyToken(HOMEPAGE)}}" class="active">Homepage</a></li>
+            <li><a id="{{resources().TLC_DEPLOYMENTS}}" href="{{historyToken(DEPLOYMENTS)}}">Deployments</a></li>
+            <li><a id="{{resources().TLC_CONFIGURATION}}" href="{{historyToken(CONFIGURATION)}}">Configuration</a></li>
+            <li><a id="{{resources().TLC_RUNTIME}}" href="{{historyToken(RUNTIME)}}">Runtime</a></li>
+            <li data-element="accessControl"><a id="{{resources().TLC_ACCESS_CONTROL}}" href="{{historyToken(ACCESS_CONTROL)}}">Access Control</a></li>
+            <li data-element="patching"><a id="{{resources().TLC_PATCHING}}" href="{{historyToken(PATCHING)}}">Patching</a></li>
         </ul>
     </div>
 </nav>
@@ -84,19 +85,19 @@
             </li>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <span class="fa fa-wrench"></span><span data-element="tools">{{i18n().constants().tools()}}</span> <b class="caret"></b>
+                    <span class="fa fa-wrench"></span><span data-element="tools">{{resources().constants().tools()}}</span> <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu dropdown">
                     <li>
-                        <a data-element="modelBrowser" class="clickable">{{i18n().constants().model_browser()}}</a>
+                        <a data-element="modelBrowser" class="clickable">{{resources().constants().modelBrowser()}}</a>
                     </li>
                     <li>
-                        <a data-element="expressionResolver" class="clickable">{{i18n().constants().expression_resolver()}}</a>
+                        <a data-element="expressionResolver" class="clickable">{{resources().constants().expressionResolver()}}</a>
                     </li>
                 </ul>
             </li>
             <li>
-                <a data-element="settings" class="clickable"><span class="pficon pficon-settings"></span>{{i18n().constants().settings()}}</a>
+                <a data-element="settings" class="clickable"><span class="pficon pficon-settings"></span>{{resources().constants().settings()}}</a>
             </li>
         </ul>
     </nav>

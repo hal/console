@@ -23,12 +23,18 @@ package org.jboss.hal.meta.security;
 
 import org.jboss.hal.dmr.ModelNode;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATIONS;
+
 /**
  * Represents the RBAC related payload for the {@code r-r-d} operation.
  *
  * @author Harald Pehl
  */
+@SuppressWarnings("HardCodedStringLiteral")
 public class SecurityContext extends ModelNode {
+
+    public static final String RBAC_DATA_KEY = "rbac";
 
     public static final SecurityContext READ_ONLY = new SecurityContext(new ModelNode()) {
         @Override
@@ -83,9 +89,6 @@ public class SecurityContext extends ModelNode {
             return true;
         }
     };
-
-    private static final String OPERATIONS = "operations";
-    private static final String ATTRIBUTES = "attributes";
 
     public SecurityContext(ModelNode payload) {
         set(payload);

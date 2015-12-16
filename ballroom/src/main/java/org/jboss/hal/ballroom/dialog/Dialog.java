@@ -27,8 +27,9 @@ import elemental.dom.Element;
 import elemental.html.ButtonElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.ballroom.Id;
-import org.jboss.hal.resources.HalConstants;
+import org.jboss.hal.resources.CSS;
+import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.resources.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +45,7 @@ public class Dialog implements IsElement {
     // ------------------------------------------------------ inner classes
 
     public enum Size {
-        SMALL("modal-sm"), MEDIUM("modal-md"), LARGE("modal-lg"), MAX("modal-mx");
+        SMALL(CSS.modelSmall), MEDIUM(CSS.modalMedium), LARGE(CSS.modalLarge), MAX(CSS.modalMax);
 
         final String css;
 
@@ -78,13 +79,13 @@ public class Dialog implements IsElement {
 
     public static final class Builder {
 
-        static final HalConstants CONSTANTS = GWT.create(HalConstants.class);
+        static final Constants CONSTANTS = GWT.create(Constants.class);
 
         // mandatory attributes
         private final String title;
+        private final List<Element> elements;
 
         // optional attributes
-        private List<Element> elements;
         private Button primaryButton;
         private Button secondaryButton;
         private Size size;
@@ -178,16 +179,16 @@ public class Dialog implements IsElement {
 
     private final static String ID = "hal-modal";
     @SuppressWarnings("unused") private final static String SELECTOR_ID = "#" + ID;
-    private static Element root;
-    private static Element dialog;
-    private static Element closeIcon;
-    private static Element title;
-    private static Element body;
-    private static Element footer;
+    private static final Element root;
+    private static final Element dialog;
+    private static final Element closeIcon;
+    private static final Element title;
+    private static final Element body;
+    private static final Element footer;
     private static boolean open;
 
     static {
-        String labelId = Id.generate(ID, "label");
+        String labelId = IdBuilder.build(ID, "label");
         // @formatter:off
         Elements.Builder rootBuilder = new Elements.Builder()
             .div().id(ID).css("modal")
@@ -245,7 +246,7 @@ public class Dialog implements IsElement {
     private ButtonElement primaryButton;
     private ButtonElement secondaryButton;
 
-    public Dialog(final Builder builder) {
+    private Dialog(final Builder builder) {
         reset();
         this.closeOnEsc = builder.closeOnEsc;
 

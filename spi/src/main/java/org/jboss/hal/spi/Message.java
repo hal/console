@@ -67,8 +67,8 @@ public class Message {
 
     private final Level level;
     private final String message;
-    private String details;
-    private boolean sticky;
+    private final String details;
+    private final boolean sticky;
 
     private Message(final Level level, final String message, final String details, final boolean sticky) {
         this.level = level;

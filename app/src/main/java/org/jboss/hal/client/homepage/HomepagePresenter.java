@@ -29,10 +29,8 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.core.HasPresenter;
-import org.jboss.hal.core.PatternFlyPresenter;
 import org.jboss.hal.core.Slots;
 
 import javax.inject.Inject;
@@ -45,7 +43,7 @@ public class HomepagePresenter extends Presenter<HomepagePresenter.MyView, Homep
     // @formatter:off
     @NoGatekeeper
     @ProxyStandard
-    @NameToken(NameTokens.Homepage)
+    @NameToken(NameTokens.HOMEPAGE)
     public interface MyProxy extends ProxyPlace<HomepagePresenter> {}
 
     public interface MyView extends View, HasPresenter<HomepagePresenter> {}

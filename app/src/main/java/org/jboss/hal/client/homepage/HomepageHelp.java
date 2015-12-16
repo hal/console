@@ -28,8 +28,7 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.InstanceInfo;
-import org.jboss.hal.resources.HalImages;
-import org.jboss.hal.resources.I18n;
+import org.jboss.hal.resources.Resources;
 
 import javax.annotation.PostConstruct;
 
@@ -40,13 +39,12 @@ import javax.annotation.PostConstruct;
 abstract class HomepageHelp implements IsElement {
 
     // @formatter:off
-    static HomepageHelp create(final Environment env, final I18n i18n, HalImages images) {
-        return new Templated_HomepageHelp(env, i18n, images);
+    static HomepageHelp create(final Environment env, final Resources resources) {
+        return new Templated_HomepageHelp(env, resources);
     }
 
     abstract Environment env();
-    abstract I18n i18n();
-    abstract HalImages images();
+    abstract Resources resources();
     // @formatter:on
 
 
@@ -57,44 +55,44 @@ abstract class HomepageHelp implements IsElement {
     void init() {
         if (env().getInstanceInfo() == InstanceInfo.WILDFLY) {
             generalResources.appendChild(helpLink("http://www.wildfly.org",
-                    i18n().constants().homepage_help_wilfdfly_home_text()));
+                    resources().constants().homepageHelpWilfdflyHomeText()));
             generalResources.appendChild(helpLink("https://docs.jboss.org/author/display/WFLY10/Documentation",
-                    i18n().constants().homepage_help_wilfdfly_documentation_text()));
+                    resources().constants().homepageHelpWilfdflyDocumentationText()));
             generalResources.appendChild(helpLink("https://docs.jboss.org/author/display/WFLY10/Admin+Guide",
-                    i18n().constants().homepage_help_admin_guide_text()));
+                    resources().constants().homepageHelpAdminGuideText()));
             generalResources.appendChild(helpLink("http://wildscribe.github.io/index.html",
-                    i18n().constants().homepage_help_model_reference_text()));
+                    resources().constants().homepageHelpModelReferenceText()));
             generalResources.appendChild(helpLink("https://issues.jboss.org/browse/WFLY",
-                    i18n().constants().homepage_help_wildfly_issues_text()));
-            generalResources.appendChild(helpLink("http://wildfly.org/news/", i18n().constants().homepage_help_latest_news()));
+                    resources().constants().homepageHelpWildflyIssuesText()));
+            generalResources.appendChild(helpLink("http://wildfly.org/news/", resources().constants().homepageHelpLatestNews()));
 
             getHelp.appendChild(helpLink("http://www.jboss.org/developer-materials/",
-                    i18n().constants().homepage_help_tutorials_text()));
+                    resources().constants().homepageHelpTutorialsText()));
             getHelp.appendChild(helpLink("https://community.jboss.org/en/wildfly?view=discussions",
-                    i18n().constants().homepage_help_user_forums_text()));
-            getHelp.appendChild(helpLink("irc://freenode.org/#wildfly", i18n().constants().homepage_help_irc_text()));
+                    resources().constants().homepageHelpUserForumsText()));
+            getHelp.appendChild(helpLink("irc://freenode.org/#wildfly", resources().constants().homepageHelpIrcText()));
             getHelp.appendChild(helpLink("https://lists.jboss.org/mailman/listinfo/wildfly-dev",
-                    i18n().constants().homepage_help_developers_mailing_list_text()));
+                    resources().constants().homepageHelpDevelopersMailingListText()));
         } else {
-            generalResources.appendChild(helpLink(i18n().constants().homepage_help_eap_documentation_link(),
-                    i18n().constants().homepage_help_eap_documentation_text()));
-            generalResources.appendChild(helpLink(i18n().constants().homepage_help_learn_more_eap_link(),
-                    i18n().constants().homepage_help_learn_more_eap_text()));
-            generalResources.appendChild(helpLink(i18n().constants().homepage_help_trouble_ticket_link(),
-                    i18n().constants().homepage_help_trouble_ticket_text()));
-            generalResources.appendChild(helpLink(i18n().constants().homepage_help_training_link(),
-                    i18n().constants().homepage_help_training_text()));
+            generalResources.appendChild(helpLink(resources().constants().homepageHelpEapDocumentationLink(),
+                    resources().constants().homepageHelpEapDocumentationText()));
+            generalResources.appendChild(helpLink(resources().constants().homepageHelpLearnMoreEapLink(),
+                    resources().constants().homepageHelpLearnMoreEapText()));
+            generalResources.appendChild(helpLink(resources().constants().homepageHelpTroubleTicketLink(),
+                    resources().constants().homepageHelpTroubleTicketText()));
+            generalResources.appendChild(helpLink(resources().constants().homepageHelpTrainingLink(),
+                    resources().constants().homepageHelpTrainingText()));
 
-            getHelp.appendChild(helpLink(i18n().constants().homepage_help_tutorials_link(),
-                    i18n().constants().homepage_help_tutorials_text()));
-            getHelp.appendChild(helpLink(i18n().constants().homepage_help_eap_community_link(),
-                    i18n().constants().homepage_help_eap_community_text()));
-            getHelp.appendChild(helpLink(i18n().constants().homepage_help_eap_configurations_link(),
-                    i18n().constants().homepage_help_eap_configurations_text()));
-            getHelp.appendChild(helpLink(i18n().constants().homepage_help_knowledgebase_link(),
-                    i18n().constants().homepage_help_knowledgebase_text()));
-            getHelp.appendChild(helpLink(i18n().constants().homepage_help_consulting_link(),
-                    i18n().constants().homepage_help_consulting_text()));
+            getHelp.appendChild(helpLink(resources().constants().homepageHelpTutorialsLink(),
+                    resources().constants().homepageHelpTutorialsText()));
+            getHelp.appendChild(helpLink(resources().constants().homepageHelpEapCommunityLink(),
+                    resources().constants().homepageHelpEapCommunityText()));
+            getHelp.appendChild(helpLink(resources().constants().homepageHelpEapConfigurationsLink(),
+                    resources().constants().homepageHelpEapConfigurationsText()));
+            getHelp.appendChild(helpLink(resources().constants().homepageHelpKnowledgebaseLink(),
+                    resources().constants().homepageHelpKnowledgebaseText()));
+            getHelp.appendChild(helpLink(resources().constants().homepageHelpConsultingLink(),
+                    resources().constants().homepageHelpConsultingText()));
         }
     }
 

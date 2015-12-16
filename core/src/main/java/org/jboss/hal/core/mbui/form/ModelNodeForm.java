@@ -215,7 +215,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
     private final FormItemProvider defaultFormItemProvider;
     private final Map<String, SaveOperationStep> saveOperations;
 
-    ModelNodeForm(final Builder<T> builder) {
+    private ModelNodeForm(final Builder<T> builder) {
         super(builder.id, builder.stateMachine(), builder.securityContext);
 
         this.defaultFormItemProvider = new DefaultFormItemProvider();

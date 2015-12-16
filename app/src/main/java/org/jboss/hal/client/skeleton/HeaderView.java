@@ -36,9 +36,9 @@ import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
-import org.jboss.hal.resources.HalIds;
-import org.jboss.hal.resources.I18n;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
@@ -49,21 +49,21 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.config.InstanceInfo.EAP;
 import static org.jboss.hal.config.InstanceInfo.WILDFLY;
 
+
 /**
  * @author Harald Pehl
  */
 @Templated("MainLayout.html#header")
-public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyView, IsElement {
+public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyView, IsElement,
+        NameTokens /* makes it easier to reference the name tokens in the HTML template */ {
 
     // @formatter:off
-    public static HeaderView create(final TokenFormatter tokenFormatter, final I18n i18n, final HalIds ids,
-            final User user) {
-        return new Templated_HeaderView(tokenFormatter, i18n, ids, user);
+    public static HeaderView create(final TokenFormatter tokenFormatter, final Resources resources, final User user) {
+        return new Templated_HeaderView(tokenFormatter, resources, user);
     }
 
     public abstract TokenFormatter tokenFormatter();
-    public abstract I18n i18n();
-    public abstract HalIds ids();
+    public abstract Resources resources();
     public abstract User user();
     // @formatter:on
 
@@ -85,12 +85,13 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         Element root = asElement();
 
         tlc = new HashMap<>();
-        tlc.put(NameTokens.Homepage, root.querySelector("#" + ids().tlc_homepage()));
-        tlc.put(NameTokens.Deployments, root.querySelector("#" + ids().tlc_deployments()));
-        tlc.put(NameTokens.Configuration, root.querySelector("#" + ids().tlc_configuration()));
-        tlc.put(NameTokens.Runtime, root.querySelector("#" + ids().tlc_runtime()));
-        tlc.put(NameTokens.AccessControl, root.querySelector("#" + ids().tlc_access_control()));
-        tlc.put(NameTokens.Patching, root.querySelector("#" + ids().tlc_patching()));
+        resources();
+        tlc.put(HOMEPAGE, root.querySelector("#" + Ids.TLC_HOMEPAGE));
+        tlc.put(DEPLOYMENTS, root.querySelector("#" + Ids.TLC_DEPLOYMENTS));
+        tlc.put(CONFIGURATION, root.querySelector("#" + Ids.TLC_CONFIGURATION));
+        tlc.put(RUNTIME, root.querySelector("#" + Ids.TLC_RUNTIME));
+        tlc.put(ACCESS_CONTROL, root.querySelector("#" + Ids.TLC_ACCESS_CONTROL));
+        tlc.put(PATCHING, root.querySelector("#" + Ids.TLC_PATCHING));
 
         boolean su = user().isSuperuser() || user().isAdministrator();
         Elements.setVisible(accessControl, su);
@@ -121,16 +122,16 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         }
 
         if (endpoints.isSameOrigin()) {
-            connectedTo.setInnerText(i18n().constants().same_origin());
+            connectedTo.setInnerText(resources().constants().sameOrigin());
         } else {
-            connectedTo.setInnerText(i18n().messages().connected_to(endpoints.dmr()));
+            connectedTo.setInnerText(resources().messages().connectedTo(endpoints.dmr()));
         }
 
         userName.setInnerHTML(user.getName());
         // Keep this in sync with the template!
         Elements.setVisible(roles, !user.getRoles().isEmpty());
         Elements.setVisible(roles.getNextElementSibling(), !user.getRoles().isEmpty());
-        roles.setInnerText(i18n().messages().active_roles(Joiner.on(", ").join(user.getRoles())));
+        roles.setInnerText(resources().messages().activeRoles(Joiner.on(", ").join(user.getRoles())));
     }
 
     private void setLogo(String first, String last) {
@@ -157,7 +158,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     @EventHandler(element = "logoLink", on = click)
     void onLogo() {
-        presenter.goTo(NameTokens.Homepage);
+        presenter.goTo(HOMEPAGE);
     }
 
     @EventHandler(element = "messages", on = click)

@@ -18,35 +18,25 @@
  */
 package org.jboss.hal.resources;
 
-import com.google.gwt.i18n.client.Constants;
 
-public interface HalIds extends Constants {
+import com.google.gwt.safehtml.shared.SafeHtml;
+
+public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     //@formatter:off
-    String endpoints_table();
-    String endpoint_form();
+    String activeRoles(String roles);
+    String connectedTo(String url);
 
-    String header_connected_to();
-    String header_messages();
-    String header_roles();
-    String header_username();
+    String homepagePatchingSubHeader(String name);
+    String homepagePatchingStandaloneStepIntro(String name);
+    String homepagePatchingDomainStepIntro(String name);
 
-    String homepage_access_control();
-    String homepage_configuration();
-    String homepage_deployments();
-    String homepage_patching();
-    String homepage_runtime();
-    String homepage_runtime_server_group();
-    String homepage_runtime_server();
-    String homepage_runtime_monitor();
-
-    String root_container();
-
-    String tlc_access_control();
-    String tlc_configuration();
-    String tlc_deployments();
-    String tlc_homepage();
-    String tlc_patching();
-    String tlc_runtime();
+    String invalidRange(long value, long min, long max);
+    String messages(@PluralCount int count);
+    String patternMismatch(String pattern);
+    SafeHtml tableInfo(int from, int to, int size);
+    String tableNamedGroup(String name);
+    SafeHtml tablePages(int pages);
+    String updateAvailable(String current, String update);
     //@formatter:on
 }

@@ -26,7 +26,7 @@ import elemental.html.InputElement;
 import org.jboss.gwt.elemento.core.DataElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
-import org.jboss.hal.resources.I18n;
+import org.jboss.hal.resources.Resources;
 
 /**
  * @author Harald Pehl
@@ -35,12 +35,12 @@ import org.jboss.hal.resources.I18n;
 abstract class Appearance implements IsElement {
 
     // @formatter:off
-    static Appearance create(final String id, final I18n i18n) {
-        return new Templated_Appearance(id, i18n);
+    static Appearance create(final String id, final Resources resources) {
+        return new Templated_Appearance(id, resources);
     }
 
     abstract String id();
-    abstract I18n i18n();
+    abstract Resources i18n();
     // @formatter:on
 
 

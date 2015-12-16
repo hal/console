@@ -40,10 +40,11 @@
     <packaging>pom</packaging>
 
     <properties>
+        <annotations.version>15.0</annotations.version>
         <apt-tools.version>0.0.2</apt-tools.version>
         <auto-service.version>1.0-rc2</auto-service.version>
         <circuit.version>0.1.4</circuit.version>
-        <elemento.version>0.1.5</elemento.version>
+        <elemento.version>0.1.6</elemento.version>
         <flow.version>0.0.3</flow.version>
         <gin.version>2.1.2</gin.version>
         <guava.version>19.0-gwt28</guava.version>
@@ -149,6 +150,13 @@
                 <groupId>com.ekuefler.supereventbus</groupId>
                 <artifactId>supereventbus</artifactId>
                 <version>${super.eventbus}</version>
+            </dependency>
+
+            <!-- Misc -->
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>${annotations.version}</version>
             </dependency>
 
             <!-- Annotation Processing -->

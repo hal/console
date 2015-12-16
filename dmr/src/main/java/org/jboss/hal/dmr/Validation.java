@@ -22,12 +22,12 @@ package org.jboss.hal.dmr;
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
+@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public final class Validation {
 
     public static final ModelNode SCHEMA_DEFINITION;
 
     public static void validate(ModelNode schema, String rootType) throws IllegalArgumentException {
-
     }
 
     private Validation() {}
@@ -65,5 +65,4 @@ public final class Validation {
         schema.protect();
         SCHEMA_DEFINITION = schema;
     }
-
 }

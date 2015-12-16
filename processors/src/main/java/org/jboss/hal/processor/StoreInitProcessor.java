@@ -55,11 +55,11 @@ import java.util.Set;
 @SupportedAnnotationTypes("org.jboss.gwt.circuit.meta.Store")
 public class StoreInitProcessor extends AbstractProcessor {
 
-    static final String ADAPTER_SUFFIX = "Adapter";
+    private static final String ADAPTER_SUFFIX = "Adapter";
 
-    static final String STORE_MODULE_TEMPLATE = "StoreModule.ftl";
-    static final String STORE_MODULE_PACKAGE = "org.jboss.hal.client.gin";
-    static final String STORE_MODULE_CLASS = "StoreModule";
+    private static final String STORE_MODULE_TEMPLATE = "StoreModule.ftl";
+    private static final String STORE_MODULE_PACKAGE = "org.jboss.hal.client.gin";
+    private static final String STORE_MODULE_CLASS = "StoreModule";
 
     private final Set<StoreInfo> storeInfos;
 

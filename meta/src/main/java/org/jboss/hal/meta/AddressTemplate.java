@@ -77,7 +77,8 @@ public final class AddressTemplate {
 
     // ------------------------------------------------------ template methods
 
-    private static final String OPT = "opt:/";
+    private static final String BLANK = "_blank";
+    private static final String OPT = "opt:/"; //NON-NLS
     private static final Logger logger = LoggerFactory.getLogger(AddressTemplate.class);
 
     private final String template;
@@ -100,7 +101,7 @@ public final class AddressTemplate {
         }
 
         String normalized = template.startsWith(OPT) ? template.substring(5) : template;
-        StringTokenizer tok = new StringTokenizer(normalized, "/");
+        StringTokenizer tok = new StringTokenizer(normalized);
         while (tok.hasMoreTokens()) {
             String nextToken = tok.nextToken();
             if (nextToken.contains("=")) {
@@ -142,7 +143,7 @@ public final class AddressTemplate {
 
     @Override
     public String toString() {
-        return getTemplate();
+        return template;
     }
 
     /**
@@ -228,13 +229,14 @@ public final class AddressTemplate {
         return null;
     }
 
-    public String getTemplate() {
-        return template;
-    }
-
     public boolean isOptional() {
         return optional;
     }
+
+    String getTemplate() {
+        return template;
+    }
+
 
     // ------------------------------------------------------ resolve
 
@@ -274,7 +276,7 @@ public final class AddressTemplate {
                 }
 
                 if (resolvedValue == null) {
-                    logger.warn("Suppress token expression '{}'. It cannot be resolved", tokenRef);
+                    logger.warn("Suppress token expression '{}'. It cannot be resolved", tokenRef); //NON-NLS
                 } else {
                     model.add(resolvedValue[0], resolvedValue[1]);
                 }
@@ -287,8 +289,8 @@ public final class AddressTemplate {
                 String resolvedKey = resolveSome(context, valueMemory, keyRef);
                 String resolvedValue = resolveSome(context, valueMemory, valueRef);
 
-                if (resolvedKey == null) { resolvedKey = "_blank"; }
-                if (resolvedValue == null) { resolvedValue = "_blank"; }
+                if (resolvedKey == null) { resolvedKey = BLANK; }
+                if (resolvedValue == null) { resolvedValue = BLANK; }
 
                 // wildcards
                 String addressValue = resolvedValue;
@@ -325,8 +327,8 @@ public final class AddressTemplate {
 
     private static class Token {
 
-        String key;
-        String value;
+        final String key;
+        final String value;
 
         Token(String key, String value) {
             this.key = key;
@@ -366,9 +368,9 @@ public final class AddressTemplate {
         private int pos;
         private String next;
 
-        StringTokenizer(String s, String delim) {
+        StringTokenizer(String s) {
             this.s = s;
-            this.delim = delim;
+            this.delim = "/";
             len = s.length();
         }
 
@@ -407,8 +409,8 @@ public final class AddressTemplate {
 
     private static class Memory<T> {
 
-        Map<String, List<T>> values = new HashMap<>();
-        Map<String, Integer> indexes = new HashMap<>();
+        final Map<String, List<T>> values = new HashMap<>();
+        final Map<String, Integer> indexes = new HashMap<>();
 
         boolean contains(String key) {
             return values.containsKey(key);

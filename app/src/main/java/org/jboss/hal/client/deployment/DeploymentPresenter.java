@@ -39,7 +39,7 @@ public class DeploymentPresenter extends PatternFlyPresenter<DeploymentPresenter
 
     // @formatter:off
     @ProxyStandard
-    @NameToken(NameTokens.Deployments)
+    @NameToken(NameTokens.DEPLOYMENTS)
     public interface MyProxy extends ProxyPlace<DeploymentPresenter> {}
 
     public interface MyView extends View {}

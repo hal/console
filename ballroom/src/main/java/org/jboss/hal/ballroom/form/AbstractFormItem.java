@@ -34,9 +34,11 @@ import elemental.html.DivElement;
 import elemental.html.LabelElement;
 import elemental.html.SpanElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.resources.CSS;
 import org.jboss.hal.ballroom.GridSpec;
-import org.jboss.hal.ballroom.Id;
-import org.jboss.hal.resources.HalConstants;
+import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Names;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -54,30 +56,33 @@ import static org.jboss.hal.ballroom.form.Form.State.EDITING;
  */
 public abstract class AbstractFormItem<T> implements FormItem<T>, GridSpec {
 
-    static final HalConstants CONSTANTS = GWT.create(HalConstants.class);
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
+    private static final String EXPRESSION_CONTAINER = "expressionContainer"; //NON-NLS
+    private static final String RESTRICTED_ELEMENT = "restrictedElement"; //NON-NLS
 
     private final EventBus eventBus;
     private final List<FormItemValidation<T>> validationHandlers;
-
     private boolean required;
     private boolean modified;
     private boolean undefined;
     private boolean restricted;
     private boolean expressionAllowed;
 
-    protected final DivElement container;
-    protected final DivElement inputContainer;
-    protected final DivElement inputGroupContainer;
-    protected final LabelElement labelElement;
-    protected final InputElement<T> inputElement;
-    protected final SpanElement errorText;
-    protected final SpanElement expressionContainer;
-    protected final DivElement restrictedContainer;
+    private final DivElement inputGroupContainer;
+    private final LabelElement labelElement;
+    private final SpanElement errorText;
+    private final SpanElement expressionContainer;
+    private final DivElement restrictedContainer;
+    final DivElement container;
+    final DivElement inputContainer;
+    final InputElement<T> inputElement;
+
+
 
 
     // ------------------------------------------------------ initialization
 
-    protected AbstractFormItem(String name, String label) {
+    AbstractFormItem(String name, String label) {
         this.inputElement = newInputElement();
 
         this.required = false;
@@ -91,47 +96,47 @@ public abstract class AbstractFormItem<T> implements FormItem<T>, GridSpec {
         resetValidationHandlers();
 
         // create basic elements
-        container = new Elements.Builder().div().css("form-group").end().build();
+        container = new Elements.Builder().div().css(CSS.formGroup).end().build();
         labelElement = new Elements.Builder()
                 .label()
-                .css("col-" + COLUMN_DISCRIMINATOR + "-" + LABEL_COLUMNS + " control-label")
+                .css(GridSpec.column(COLUMN_DISCRIMINATOR, LABEL_COLUMNS), CSS.controlLabel)
                 .innerText(label).build();
         inputContainer = new Elements.Builder()
                 .div()
-                .css("col-" + COLUMN_DISCRIMINATOR + "-" + INPUT_COLUMNS).end().build();
-        errorText = new Elements.Builder().span().css("help-block").end().build();
+                .css(GridSpec.column(COLUMN_DISCRIMINATOR, INPUT_COLUMNS)).end().build();
+        errorText = new Elements.Builder().span().css(CSS.helpBlock).end().build();
         Elements.setVisible(errorText, false);
 
         // @formatter:off
         Elements.Builder inputGroupBuilder = new Elements.Builder()
-            .div().css("input-group")
-                .span().css("input-group-btn").rememberAs("expressionContainer")
-                    .button().css("btn btn-default")
+            .div().css(CSS.inputGroup)
+                .span().css(CSS.inputGroupBtn).rememberAs(EXPRESSION_CONTAINER)
+                    .button().css(CSS.btn,  CSS.btnDefault)
                         .on(click, event -> ResolveExpressionEvent.fire(this, getExpressionValue()))
-                        .title("Expression Resolver")
-                        .start("i").css("fa fa-link").end()
+                        .title(CONSTANTS.expressionResolver())
+                        .start("i").css(CSS.fontAwesome("link")).end()
                     .end()
                 .end()
             .end();
         // @formatter:on
         inputGroupContainer = inputGroupBuilder.build();
-        expressionContainer = inputGroupBuilder.referenceFor("expressionContainer");
+        expressionContainer = inputGroupBuilder.referenceFor(EXPRESSION_CONTAINER);
 
         // @formatter:off
         Elements.Builder restrictedBuilder = new Elements.Builder()
-            .div().css("input-group")
-                .input(text).id(Id.generate(name, "restricted")).css("form-control").rememberAs("restrictedElement")
-                .span().css("input-group-addon")
-                    .start("i").css("fa fa-lock").end()
+            .div().css(CSS.inputGroup)
+                .input(text).id(IdBuilder.build(name, Names.RESTRICTED)).css(CSS.formControl).rememberAs(RESTRICTED_ELEMENT)
+                .span().css(CSS.inputGroupAddon)
+                    .start("i").css(CSS.fontAwesome("lock")).end()
                 .end()
             .end();
         // @formatter:on
-        elemental.html.InputElement restrictedInput = restrictedBuilder.referenceFor("restrictedElement");
+        elemental.html.InputElement restrictedInput = restrictedBuilder.referenceFor(RESTRICTED_ELEMENT);
         restrictedInput.setReadOnly(true);
         restrictedInput.setValue(CONSTANTS.restricted());
         restrictedContainer = restrictedBuilder.build();
 
-        setId(Id.generate(name));
+        setId(IdBuilder.build(name));
         setName(name);
         assembleUI();
     }
@@ -140,7 +145,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T>, GridSpec {
      * Assembles the <strong>initial</strong> widgets / containers at creation time based on the default values of this
      * form item.
      */
-    protected void assembleUI() {
+    void assembleUI() {
         inputContainer.appendChild(inputElement.asElement());
         inputContainer.appendChild(errorText);
         container.appendChild(labelElement);
@@ -188,7 +193,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T>, GridSpec {
         inputElement.clearValue();
     }
 
-    protected void signalChange(final T value) {
+    void signalChange(final T value) {
         ValueChangeEvent.fire(this, value);
     }
 
@@ -209,7 +214,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T>, GridSpec {
 
     @Override
     public void setId(String id) {
-        Id.set(inputElement.asElement(), id);
+        IdBuilder.set(inputElement.asElement(), id);
         labelElement.setHtmlFor(id);
     }
 
@@ -235,28 +240,28 @@ public abstract class AbstractFormItem<T> implements FormItem<T>, GridSpec {
 
     @Override
     public void identifyAs(String id, String... additionalIds) {
-        String fq = Id.generate(id, additionalIds);
+        String fq = IdBuilder.build(id, additionalIds);
         setId(fq);
         setName(fq);
-        asElement(EDITING).getDataset().setAt("formItemGroup", fq);
-        labelElement.getDataset().setAt("formItemLabel", fq);
-        inputElement.asElement().getDataset().setAt("formItemControl", fq);
+        asElement(EDITING).getDataset().setAt("formItemGroup", fq); //NON-NLS
+        labelElement.getDataset().setAt("formItemLabel", fq); //NON-NLS
+        inputElement.asElement().getDataset().setAt("formItemControl", fq); //NON-NLS
     }
 
 
     // ------------------------------------------------------ validation
 
-    protected void resetValidationHandlers() {
+    private void resetValidationHandlers() {
         validationHandlers.clear();
         validationHandlers.addAll(defaultValidationHandlers());
     }
 
-    protected List<FormItemValidation<T>> defaultValidationHandlers() {
+    List<FormItemValidation<T>> defaultValidationHandlers() {
         return singletonList(new RequiredValidation<>(this));
     }
 
     @SuppressWarnings("SimplifiableIfStatement")
-    protected boolean requiresValidation() {
+    private boolean requiresValidation() {
         if (isRequired()) {
             return true;
         }
@@ -291,12 +296,12 @@ public abstract class AbstractFormItem<T> implements FormItem<T>, GridSpec {
     @Override
     public void clearError() {
         Elements.setVisible(errorText, false);
-        container.getClassList().remove("has-error");
+        container.getClassList().remove(CSS.hasError);
     }
 
     @Override
     public void showError(String message) {
-        container.getClassList().add("has-error");
+        container.getClassList().add(CSS.hasError);
         errorText.setInnerText(message);
         Elements.setVisible(errorText, true);
     }
@@ -330,7 +335,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T>, GridSpec {
         eventBus.addHandler(ResolveExpressionEvent.TYPE, handler);
     }
 
-    boolean hasExpressionScheme(String value) {
+    private boolean hasExpressionScheme(String value) {
         return value != null && value.startsWith("${") && value.endsWith("}");
     }
 
@@ -351,7 +356,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T>, GridSpec {
         return false;
     }
 
-    boolean inExpressionState() {
+    private boolean inExpressionState() {
         return inputContainer.contains(inputGroupContainer);
     }
 
@@ -463,14 +468,14 @@ public abstract class AbstractFormItem<T> implements FormItem<T>, GridSpec {
         }
     }
 
-    protected void toggleRestricted(final boolean on) {
+    void toggleRestricted(final boolean on) {
         if (on) {
-            container.getClassList().add("has-feedback");
+            container.getClassList().add(CSS.hasFeedback);
             Node firstChild = inputContainer.getChildren().item(0);
             inputContainer.removeChild(firstChild);
             inputContainer.appendChild(restrictedContainer);
         } else {
-            container.getClassList().remove("has-feedback");
+            container.getClassList().remove(CSS.hasFeedback);
             inputContainer.removeChild(restrictedContainer);
             if (isExpressionValue()) {
                 inputContainer.appendChild(inputGroupContainer);

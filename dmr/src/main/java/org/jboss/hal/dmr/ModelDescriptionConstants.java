@@ -143,7 +143,7 @@ public interface ModelDescriptionConstants {
     String REQUIRED = "required";
     String RESPONSE = "response";
     String RESULT = "result";
-    String ROLES = "header_roles";
+    String ROLES = "HEADER_ROLES";
     String ROLLBACK_ACROSS_GROUPS = "rollback-across-groups";
     String ROLLBACK_FAILURE_DESCRIPTION = "rollback-failure-description";
     String ROLLBACK_ON_RUNTIME_FAILURE = "rollback-on-runtime-failure";
@@ -173,6 +173,7 @@ public interface ModelDescriptionConstants {
     String SYSTEM_PROPERTY = "system-property";
     String SYSTEM_PROPERTIES = "system-properties";
     String TAIL_COMMENT_ALLOWED = "tail-comment-allowed";
+    String TRIM_DESCRIPTIONS = "trim-descriptions";
     String TO_REPLACE = "to-replace";
     String TYPE = "type";
     String URL = "url";

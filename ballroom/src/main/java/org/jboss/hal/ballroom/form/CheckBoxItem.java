@@ -57,7 +57,7 @@ public class CheckBoxItem extends AbstractFormItem<Boolean> {
 
         CheckBoxElement() {
             element = Browser.getDocument().createInputElement();
-            element.setType("checkbox");
+            element.setType("checkbox"); //NON-NLS
         }
 
         @Override

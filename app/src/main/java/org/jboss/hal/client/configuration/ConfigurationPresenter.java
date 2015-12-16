@@ -40,7 +40,7 @@ public class ConfigurationPresenter
 
     // @formatter:off
     @ProxyStandard
-    @NameToken(NameTokens.Configuration)
+    @NameToken(NameTokens.CONFIGURATION)
     public interface MyProxy extends ProxyPlace<ConfigurationPresenter> {}
 
     public interface MyView extends View {}

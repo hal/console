@@ -33,6 +33,6 @@ public class ResourcesModule extends AbstractGinModule {
 
     @Override
     protected void configure() {
-        bind(I18n.class).in(Singleton.class);
+        bind(Resources.class).in(Singleton.class);
     }
 }

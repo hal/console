@@ -48,7 +48,7 @@ public class CompositeResult implements Iterable<ModelNode> {
      * @return the related step result
      */
     public ModelNode step(int index) {
-        return step("step-" + (index + 1));
+        return step("step-" + (index + 1)); //NON-NLS
     }
 
     /**

@@ -51,9 +51,9 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 .build();
         install(defaultModule);
 
-        bindConstant().annotatedWith(DefaultPlace.class).to(NameTokens.Homepage);
-        bindConstant().annotatedWith(ErrorPlace.class).to(NameTokens.Homepage);
-        bindConstant().annotatedWith(UnauthorizedPlace.class).to(NameTokens.Homepage);
+        bindConstant().annotatedWith(DefaultPlace.class).to(NameTokens.HOMEPAGE);
+        bindConstant().annotatedWith(ErrorPlace.class).to(NameTokens.HOMEPAGE);
+        bindConstant().annotatedWith(UnauthorizedPlace.class).to(NameTokens.HOMEPAGE);
 
         bindTemplatedSingletonPresenterWidget(HeaderPresenter.class,
                 HeaderPresenter.MyView.class,

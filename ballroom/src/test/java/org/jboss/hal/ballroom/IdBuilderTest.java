@@ -7,25 +7,25 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Harald Pehl
  */
-public class IdTest {
+public class IdBuilderTest {
 
     @Test
     public void simple() {
-        assertEquals("foo", Id.generate("foo"));
+        assertEquals("foo", IdBuilder.build("foo"));
     }
 
     @Test
     public void complex() {
-        assertEquals("foo-bar-1-2-3", Id.generate("foo", "bar", "1-2", "3"));
+        assertEquals("foo-bar-1-2-3", IdBuilder.build("foo", "bar", "1-2", "3"));
     }
 
     @Test
     public void emptyNull() {
-        assertEquals("foo-bar", Id.generate("foo", "", null, "", "", "bar", ""));
+        assertEquals("foo-bar", IdBuilder.build("foo", "", null, "", "", "bar", ""));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void illegal() {
-        Id.generate(null);
+        IdBuilder.build(null);
     }
 }

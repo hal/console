@@ -26,10 +26,10 @@ package org.jboss.hal.client;
  */
 public interface NameTokens {
 
-    String Homepage = "/home";
-    String Deployments = "/deployments";
-    String Configuration = "/configuration";
-    String Runtime = "/runtime";
-    String AccessControl = "/access-control";
-    String Patching = "/patching";
+    String HOMEPAGE = "/home";
+    String DEPLOYMENTS = "/deployments";
+    String CONFIGURATION = "/configuration";
+    String RUNTIME = "/runtime";
+    String ACCESS_CONTROL = "/access-control";
+    String PATCHING = "/patching";
 }

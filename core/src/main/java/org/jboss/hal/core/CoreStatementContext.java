@@ -55,6 +55,7 @@ public class CoreStatementContext implements StatementContext {
     }
 
     @Override
+    @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
     public String[] resolveTuple(final String key) {
         if (!environment.isStandalone() && keys.containsKey(key)) {
             String[] tuple = null;

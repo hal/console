@@ -38,7 +38,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.STEPS;
 /**
  * @author Harald Pehl
  */
-public class CompositeRrdParser {
+class CompositeRrdParser {
 
     private final Composite composite;
 

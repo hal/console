@@ -35,7 +35,7 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.resources.I18n;
+import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +54,7 @@ import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
  *
  * @author Harald Pehl
  */
+@SuppressWarnings("HardCodedStringLiteral")
 public class Dispatcher {
 
     @FunctionalInterface
@@ -91,10 +92,10 @@ public class Dispatcher {
     static final String APPLICATION_DMR_ENCODED = "application/dmr-encoded";
     static final String APPLICATION_JSON = "application/json";
 
-    static final String HEADER_ACCEPT = "Accept";
-    static final String HEADER_CONTENT_TYPE = "Content-Type";
-    static final String HEADER_MANAGEMENT_CLIENT_NAME = "X-Management-Client-Name";
-    static final String HEADER_MANAGEMENT_CLIENT_VALUE = "HAL";
+    private static final String HEADER_ACCEPT = "Accept";
+    private static final String HEADER_CONTENT_TYPE = "Content-Type";
+    private static final String HEADER_MANAGEMENT_CLIENT_NAME = "X-Management-Client-Name";
+    private static final String HEADER_MANAGEMENT_CLIENT_VALUE = "HAL";
 
     /**
      * The read resource description supports the following parameters:
@@ -111,11 +112,11 @@ public class Dispatcher {
     private final Endpoints endpoints;
     private final EventBus eventBus;
     private final Provider<ProcessStateProcessor> processStateProcessor;
-    private FailedCallback failedCallback;
-    private ExceptionCallback exceptionCallback;
+    private final FailedCallback failedCallback;
+    private final ExceptionCallback exceptionCallback;
 
     @Inject
-    public Dispatcher(final Endpoints endpoints, final EventBus eventBus, final I18n i18n,
+    public Dispatcher(final Endpoints endpoints, final EventBus eventBus, final Resources resources,
             Provider<ProcessStateProcessor> processStateProcessor) {
         this.endpoints = endpoints;
         this.eventBus = eventBus;
@@ -123,11 +124,11 @@ public class Dispatcher {
 
         this.failedCallback = (operation, failure) -> {
             logger.error("Dispatcher failed: {}, operation: {}", failure, operation);
-            eventBus.post(Message.error(i18n.constants().dispatcher_failed(), failure));
+            eventBus.post(Message.error(resources.constants().dispatcherFailed(), failure));
         };
         this.exceptionCallback = (operation, t) -> {
             logger.error("Dispatcher exception: {}, operation {}", t.getMessage(), operation);
-            eventBus.post(Message.error(i18n.constants().dispatcher_exception(), t.getMessage()));
+            eventBus.post(Message.error(resources.constants().dispatcherException(), t.getMessage()));
         };
     }
 

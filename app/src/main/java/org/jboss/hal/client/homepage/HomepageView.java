@@ -27,12 +27,13 @@ import elemental.client.Browser;
 import elemental.dom.Document;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.resources.CSS;
 import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
-import org.jboss.hal.resources.HalIds;
-import org.jboss.hal.resources.HalImages;
-import org.jboss.hal.resources.I18n;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.Names;
 
 import javax.inject.Inject;
 import java.util.Arrays;
@@ -51,15 +52,13 @@ public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
     @Inject
     public HomepageView(Environment env,
             User user,
-            I18n i18n,
-            HalIds ids,
-            HalImages images,
+            Resources resources,
             TokenFormatter tokenFormatter) {
 
         boolean standalone = env.isStandalone();
         boolean community = env.getInstanceInfo() == WILDFLY;
         boolean su = user.isSuperuser() || user.isAdministrator();
-        String name = community ? "WildFly" : "JBoss EAP";
+        String name = community ? Names.WILDFLY : Names.JBOSS_EAP;
 
         Document document = Browser.getDocument();
         Iterable<HomepageSection> sections;
@@ -73,189 +72,189 @@ public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
 
         if (community) {
             header = new Elements.Builder()
-                    .div().css("eap-home-title")
-                    .h(1).innerText("WildFly").end()
+                    .div().css(CSS.eapHomeTitle)
+                    .h(1).innerText(Names.WILDFLY).end()
                     .end().build();
         } else {
             // @formatter:off
             header = new Elements.Builder()
-                .div().css("eap-home-title")
+                .div().css(CSS.eapHomeTitle)
                     .p()
-                        .span().innerText(i18n.constants().homepage_new_to_eap() + " ").end()
+                        .span().innerText(resources.constants().homepageNewToEap() + " ").end()
                         .a()
-                            .css("clickable")
+                            .css(CSS.clickable)
                             .on(click, event -> presenter.launchGuidedTour())
-                            .innerText(i18n.constants().homepage_take_a_tour())
+                            .innerText(resources.constants().homepageTakeATour())
                         .end()
                     .end()
-                    .h(1).innerText("Red Hat Jboss Enterprise Application Platform").end()
+                    .h(1).innerText("Red Hat JBoss Enterprise Application Platform").end() //NON-NLS
                 .end().build();
             // @formatter:on
         }
 
         if (standalone) {
-            sections = Collections.singleton(HomepageSection.create(tokenFormatter, i18n,
-                    ids.homepage_deployments(), NameTokens.Deployments,
-                    i18n.constants().homepage_deployments_section(),
-                    i18n.constants().homepage_deployments_standalone_step_intro(),
-                    Arrays.asList(i18n.constants().homepage_deployments_standalone_step_1(),
-                            i18n.constants().homepage_deployments_step_enable()), true));
+            sections = Collections.singleton(HomepageSection.create(tokenFormatter, resources,
+                    Ids.HOMEPAGE_DEPLOYMENTS_SECTION, NameTokens.DEPLOYMENTS,
+                    resources.constants().homepageDeploymentsSection(),
+                    resources.constants().homepageDeploymentsStandaloneStepIntro(),
+                    Arrays.asList(resources.constants().homepageDeploymentsStandaloneStep1(),
+                            resources.constants().homepageDeploymentsStepEnable()), true));
             deployments = HomepageModule.create(tokenFormatter,
-                    NameTokens.Deployments,
-                    "Deployments",
-                    i18n.constants().homepage_deployments_sub_header(),
-                    images.deployments(),
+                    NameTokens.DEPLOYMENTS,
+                    Names.DEPLOYMENTS,
+                    resources.constants().homepageDeploymentsSubHeader(),
+                    resources.images().deployments(),
                     sections).asElement();
 
-            sections = Collections.singleton(HomepageSection.create(tokenFormatter, i18n,
-                    ids.homepage_configuration(), NameTokens.Configuration,
-                    i18n.constants().homepage_configuration_section(),
-                    i18n.constants().homepage_configuration_step_intro(),
+            sections = Collections.singleton(HomepageSection.create(tokenFormatter, resources,
+                    Ids.HOMEPAGE_CONFIGURATION_SECTION, NameTokens.CONFIGURATION,
+                    resources.constants().homepageConfigurationSection(),
+                    resources.constants().homepageConfigurationStepIntro(),
                     Arrays.asList(
-                            i18n.constants().homepage_configuration_standalone_step1(),
-                            i18n.constants().homepage_configuration_step2(),
-                            i18n.constants().homepage_configuration_step3()), true));
+                            resources.constants().homepageConfigurationStandaloneStep1(),
+                            resources.constants().homepageConfigurationStep2(),
+                            resources.constants().homepageConfigurationStep3()), true));
             configuration = HomepageModule.create(tokenFormatter,
-                    NameTokens.Configuration,
+                    NameTokens.CONFIGURATION,
                     "Configuration",
-                    i18n.constants().homepage_configuration_standalone_sub_header(),
-                    images.configuration(),
+                    resources.constants().homepageConfigurationStandaloneSubHeader(),
+                    resources.images().configuration(),
                     sections).asElement();
 
-            sections = Collections.singleton(HomepageSection.create(tokenFormatter, i18n,
-                    ids.homepage_runtime(), NameTokens.Runtime,
-                    i18n.constants().homepage_runtime_standalone_section(),
-                    i18n.constants().homepage_runtime_step_intro(),
+            sections = Collections.singleton(HomepageSection.create(tokenFormatter, resources,
+                    Ids.HOMEPAGE_RUNTIME_SECTION, NameTokens.RUNTIME,
+                    resources.constants().homepageRuntimeStandaloneSection(),
+                    resources.constants().homepageRuntimeStepIntro(),
                     Arrays.asList(
-                            i18n.constants().homepage_runtime_standalone_step1(),
-                            i18n.constants().homepage_runtime_standalone_step2()), true));
+                            resources.constants().homepageRuntimeStandaloneStep1(),
+                            resources.constants().homepageRuntimeStandaloneStep2()), true));
             runtime = HomepageModule.create(tokenFormatter,
-                    NameTokens.Runtime,
+                    NameTokens.RUNTIME,
                     "Runtime",
-                    i18n.constants().homepage_runtime_standalone_sub_header(),
-                    images.runtime(),
+                    resources.constants().homepageRuntimeStandaloneSubHeader(),
+                    resources.images().runtime(),
                     sections).asElement();
 
         } else {
-            sections = Collections.singleton(HomepageSection.create(tokenFormatter, i18n,
-                    ids.homepage_deployments(), NameTokens.Deployments,
-                    i18n.constants().homepage_deployments_section(),
-                    i18n.constants().homepage_deployments_domain_step_intro(),
+            sections = Collections.singleton(HomepageSection.create(tokenFormatter, resources,
+                    Ids.HOMEPAGE_DEPLOYMENTS_SECTION, NameTokens.DEPLOYMENTS,
+                    resources.constants().homepageDeploymentsSection(),
+                    resources.constants().homepageDeploymentsDomainStepIntro(),
                     Arrays.asList(
-                            i18n.constants().homepage_deployments_domain_step_1(),
-                            i18n.constants().homepage_deployments_domain_step_2(),
-                            i18n.constants().homepage_deployments_step_enable()), true));
+                            resources.constants().homepageDeploymentsDomainStep1(),
+                            resources.constants().homepageDeploymentsDomainStep2(),
+                            resources.constants().homepageDeploymentsStepEnable()), true));
             deployments = HomepageModule.create(tokenFormatter,
-                    NameTokens.Deployments,
-                    "Deployments",
-                    i18n.constants().homepage_deployments_sub_header(),
-                    images.deployments(),
+                    NameTokens.DEPLOYMENTS,
+                    Names.DEPLOYMENTS, //NON-NLS
+                    resources.constants().homepageDeploymentsSubHeader(),
+                    resources.images().deployments(),
                     sections).asElement();
 
-            sections = Collections.singleton(HomepageSection.create(tokenFormatter, i18n,
-                    ids.homepage_configuration(), NameTokens.Configuration,
-                    i18n.constants().homepage_configuration_section(),
-                    i18n.constants().homepage_configuration_step_intro(),
+            sections = Collections.singleton(HomepageSection.create(tokenFormatter, resources,
+                    Ids.HOMEPAGE_CONFIGURATION_SECTION, NameTokens.CONFIGURATION,
+                    resources.constants().homepageConfigurationSection(),
+                    resources.constants().homepageConfigurationStepIntro(),
                     Arrays.asList(
-                            i18n.constants().homepage_configuration_domain_step1(),
-                            i18n.constants().homepage_configuration_step2(),
-                            i18n.constants().homepage_configuration_step3()), true));
+                            resources.constants().homepageConfigurationDomainStep1(),
+                            resources.constants().homepageConfigurationStep2(),
+                            resources.constants().homepageConfigurationStep3()), true));
             configuration = HomepageModule.create(tokenFormatter,
-                    NameTokens.Configuration,
+                    NameTokens.CONFIGURATION,
                     "Configuration",
-                    i18n.constants().homepage_configuration_domain_sub_header(),
-                    images.configuration(),
+                    resources.constants().homepageConfigurationDomainSubHeader(),
+                    resources.images().configuration(),
                     sections).asElement();
 
             sections = Arrays.asList(
-                    HomepageSection.create(tokenFormatter, i18n,
-                            ids.homepage_runtime_server_group(), NameTokens.Runtime,
-                            i18n.constants().homepage_runtime_domain_server_group_section(),
-                            i18n.constants().homepage_runtime_domain_server_group_step_intro(),
+                    HomepageSection.create(tokenFormatter, resources,
+                            Ids.HOMEPAGE_RUNTIME_SERVER_GROUP_SECTION, NameTokens.RUNTIME,
+                            resources.constants().homepageRuntimeDomainServerGroupSection(),
+                            resources.constants().homepageRuntimeDomainServerGroupStepIntro(),
                             Arrays.asList(
-                                    i18n.constants().homepage_runtime_domain_server_group_step1(),
-                                    i18n.constants().homepage_runtime_domain_server_group_step2()), true),
-                    HomepageSection.create(tokenFormatter, i18n,
-                            ids.homepage_runtime_server(), NameTokens.Runtime,
-                            i18n.constants().homepage_runtime_domain_create_server_section(),
-                            i18n.constants().homepage_runtime_domain_create_server_step_intro(),
+                                    resources.constants().homepageRuntimeDomainServerGroupStep1(),
+                                    resources.constants().homepageRuntimeDomainServerGroupStep2()), true),
+                    HomepageSection.create(tokenFormatter, resources,
+                            Ids.HOMEPAGE_RUNTIME_SERVER_SECTION, NameTokens.RUNTIME,
+                            resources.constants().homepageRuntimeDomainCreateServerSection(),
+                            resources.constants().homepageRuntimeDomainCreateServerStepIntro(),
                             Arrays.asList(
-                                    i18n.constants().homepage_runtime_domain_create_server_step1(),
-                                    i18n.constants().homepage_runtime_domain_create_server_step2()), true),
-                    HomepageSection.create(tokenFormatter, i18n,
-                            ids.homepage_runtime_monitor(), NameTokens.Runtime,
-                            i18n.constants().homepage_runtime_domain_monitor_server_section(),
-                            i18n.constants().homepage_runtime_step_intro(),
+                                    resources.constants().homepageRuntimeDomainCreateServerStep1(),
+                                    resources.constants().homepageRuntimeDomainCreateServerStep2()), true),
+                    HomepageSection.create(tokenFormatter, resources,
+                            Ids.HOMEPAGE_RUNTIME_MONITOR_SECTION, NameTokens.RUNTIME,
+                            resources.constants().homepageRuntimeDomainMonitorServerSection(),
+                            resources.constants().homepageRuntimeStepIntro(),
                             Arrays.asList(
-                                    i18n.constants().homepage_runtime_domain_monitor_server_step1(),
-                                    i18n.constants().homepage_runtime_domain_monitor_server_step2()), true));
+                                    resources.constants().homepageRuntimeDomainMonitorServerStep1(),
+                                    resources.constants().homepageRuntimeDomainMonitorServerStep2()), true));
             runtime = HomepageModule.create(tokenFormatter,
-                    NameTokens.Runtime,
+                    NameTokens.RUNTIME,
                     "Runtime",
-                    i18n.constants().homepage_runtime_domain_sub_header(),
-                    images.runtime(),
+                    resources.constants().homepageRuntimeDomainSubHeader(),
+                    resources.images().runtime(),
                     sections).asElement();
         }
 
         if (su) {
-            sections = Collections.singleton(HomepageSection.create(tokenFormatter, i18n,
-                    ids.homepage_access_control(), NameTokens.AccessControl,
-                    i18n.constants().homepage_access_control_section(),
-                    i18n.constants().homepage_access_control_step_intro(),
+            sections = Collections.singleton(HomepageSection.create(tokenFormatter, resources,
+                    Ids.HOMEPAGE_ACCESS_CONTROL_SECTION, NameTokens.ACCESS_CONTROL,
+                    resources.constants().homepageAccessControlSection(),
+                    resources.constants().homepageAccessControlStepIntro(),
                     Arrays.asList(
-                            i18n.constants().homepage_access_control_step1(),
-                            i18n.constants().homepage_access_control_step2()), true));
+                            resources.constants().homepageAccessControlStep1(),
+                            resources.constants().homepageAccessControlStep2()), true));
             accessControl = HomepageModule.create(tokenFormatter,
-                    NameTokens.AccessControl,
+                    NameTokens.ACCESS_CONTROL,
                     "Access Control",
-                    i18n.constants().homepage_access_control_sub_header(),
-                    images.accessControl(),
+                    resources.constants().homepageAccessControlSubHeader(),
+                    resources.images().accessControl(),
                     sections).asElement();
 
             if (standalone) {
-                sections = Collections.singleton(HomepageSection.create(tokenFormatter, i18n,
-                        ids.homepage_patching(), NameTokens.Patching,
-                        i18n.constants().homepage_patching_section(),
-                        i18n.messages().homepage_patching_standalone_step_intro(name),
+                sections = Collections.singleton(HomepageSection.create(tokenFormatter, resources,
+                        Ids.HOMEPAGE_PATCHING_SECTION, NameTokens.PATCHING,
+                        resources.constants().homepagePatchingSection(),
+                        resources.messages().homepagePatchingStandaloneStepIntro(name),
                         Arrays.asList(
-                                i18n.constants().homepage_patching_step1(),
-                                i18n.constants().homepage_patching_step_apply()), true));
+                                resources.constants().homepagePatchingStep1(),
+                                resources.constants().homepagePatchingStepApply()), true));
             } else {
-                sections = Collections.singleton(HomepageSection.create(tokenFormatter, i18n,
-                        ids.homepage_patching(), NameTokens.Patching,
-                        i18n.constants().homepage_patching_section(),
-                        i18n.messages().homepage_patching_domain_step_intro(name),
+                sections = Collections.singleton(HomepageSection.create(tokenFormatter, resources,
+                        Ids.HOMEPAGE_PATCHING_SECTION, NameTokens.PATCHING,
+                        resources.constants().homepagePatchingSection(),
+                        resources.messages().homepagePatchingDomainStepIntro(name),
                         Arrays.asList(
-                                i18n.constants().homepage_patching_step1(),
-                                i18n.constants().homepage_patching_domain_step2(),
-                                i18n.constants().homepage_patching_step_apply()), true));
+                                resources.constants().homepagePatchingStep1(),
+                                resources.constants().homepagePatchingDomainStep2(),
+                                resources.constants().homepagePatchingStepApply()), true));
             }
             patching = HomepageModule.create(tokenFormatter,
-                    NameTokens.Patching,
+                    NameTokens.PATCHING,
                     "Patching",
-                    i18n.messages().homepage_patching_sub_header(name),
-                    images.patching(),
+                    resources.messages().homepagePatchingSubHeader(name),
+                    resources.images().patching(),
                     sections).asElement();
         }
 
-        help = HomepageHelp.create(env, i18n, images).asElement();
+        help = HomepageHelp.create(env, resources).asElement();
         Elements.Builder rootBuilder = new Elements.Builder().div()
-                .div().css("eap-home-row")
+                .div().css(CSS.eapHomeRow)
                 .add(header)
                 .add(deployments)
                 .add(configuration)
                 .end();
         if (su) {
-            rootBuilder.div().css("eap-home-row")
+            rootBuilder.div().css(CSS.eapHomeRow)
                     .add(runtime)
                     .add(accessControl)
                     .end()
-                    .div().css("eap-home-row")
+                    .div().css(CSS.eapHomeRow)
                     .add(patching)
                     .add(help)
                     .end();
         } else {
-            rootBuilder.div().css("eap-home-row")
+            rootBuilder.div().css(CSS.eapHomeRow)
                     .add(runtime)
                     .add(help)
                     .end();

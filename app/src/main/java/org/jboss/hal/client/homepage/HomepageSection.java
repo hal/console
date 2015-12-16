@@ -31,7 +31,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventHandler;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
-import org.jboss.hal.resources.I18n;
+import org.jboss.hal.resources.Resources;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
@@ -45,14 +45,14 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 abstract class HomepageSection implements IsElement {
 
     // @formatter:off
-    static HomepageSection create(final TokenFormatter tokenFormatter, final I18n i18n,
+    static HomepageSection create(final TokenFormatter tokenFormatter, final Resources resources,
             final String id, final String token, final String header, final String intro,
             final Iterable<String> steps, final boolean open) {
-        return new Templated_HomepageSection(tokenFormatter, i18n, id, token, header, intro, steps, open);
+        return new Templated_HomepageSection(tokenFormatter, resources, id, token, header, intro, steps, open);
     }
 
     abstract TokenFormatter tokenFormatter();
-    abstract I18n i18n();
+    abstract Resources resources();
     abstract String id();
     abstract String token();
     abstract String header();

@@ -12,13 +12,14 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.resources.HalConstants;
-import org.jboss.hal.resources.HalIds;
+import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Ids;
 
 import static org.jboss.hal.ballroom.table.DataTableButton.Target.ROW;
 import static org.jboss.hal.ballroom.table.DataTableButton.Target.TABLE;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.ADD;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.SELECT;
+import static org.jboss.hal.resources.Names.NAME_KEY;
 
 /**
  * Modal dialog to manage bootstrap servers. The dialog offers a page to connect to an existing server and a page to
@@ -31,19 +32,20 @@ class EndpointDialog {
     enum Mode {SELECT, ADD}
 
 
-    private static final HalConstants CONSTANTS = GWT.create(HalConstants.class);
-    private static final HalIds IDS = GWT.create(HalIds.class);
+    private static final String HOST_NAME = "host-name";
+    private static final String PORT = "port";
+    private static final String SCHEME = "scheme";
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final EndpointResources RESOURCES = GWT.create(EndpointResources.class);
-
 
     private final EndpointManager manager;
     private final EndpointStorage storage;
+    private final Element selectPage;
+    private final Element addPage;
+    private final ModelNodeForm<Endpoint> form;
 
     private Mode mode;
-    private Element selectPage;
     private ModelNodeTable<Endpoint> table;
-    private Element addPage;
-    private ModelNodeForm<Endpoint> form;
     private Dialog dialog;
 
     EndpointDialog(final EndpointManager manager, final EndpointStorage storage) {
@@ -51,13 +53,13 @@ class EndpointDialog {
         this.storage = storage;
 
         ResourceDescription description = StaticResourceDescription.from(RESOURCES.endpoint());
-        table = new ModelNodeTable.Builder<>(IDS.endpoints_table(), Endpoint::getName, SecurityContext.RWX, description)
+        table = new ModelNodeTable.Builder<>(Ids.ENDPOINT_SELECT, Endpoint::getName, SecurityContext.RWX, description)
                 .addButton(new DataTableButton(CONSTANTS.add(), TABLE, event -> switchTo(ADD)))
                 .addButton(new DataTableButton(CONSTANTS.remove(), ROW, event -> {
                     storage.remove(table.selectedElement());
                     table.setData(storage.list());
                 }))
-                .addColumn("name")
+                .addColumn(NAME_KEY)
                 .build();
 
         table.addColumn(new TextColumn<Endpoint>() {
@@ -65,28 +67,28 @@ class EndpointDialog {
             public String getValue(final Endpoint endpoint) {
                 return endpoint.getUrl();
             }
-        }, "URL");
+        }, "URL"); //NON-NLS
         table.onSelectionChange(selectionChangeEvent -> dialog.setPrimaryButtonDisabled(!table.hasSelection()));
         table.setData(storage.list());
 
         selectPage = new Elements.Builder()
                 .div()
-                .p().innerText(CONSTANTS.endpoint_select_description()).end()
+                .p().innerText(CONSTANTS.endpointSelectDescription()).end()
                 .add(table.asElement())
                 .end().build();
 
-        form = new ModelNodeForm.Builder<Endpoint>(IDS.endpoint_form(), SecurityContext.RWX, description)
+        form = new ModelNodeForm.Builder<Endpoint>(Ids.ENDPOINT_ADD, SecurityContext.RWX, description)
                 .editOnly()
                 .hideButtons()
                 .onCancel(() -> switchTo(SELECT))
                 .onSave((changedValues) -> {
                     // form is valid here
                     ModelNode node = new ModelNode();
-                    node.get("name").set(String.valueOf(changedValues.get("name")));
-                    node.get("scheme").set(String.valueOf(changedValues.get("scheme")));
-                    node.get("host-name").set(String.valueOf(changedValues.get("host-name")));
-                    if (changedValues.containsKey("port")) {
-                        node.get("port").set((Integer) changedValues.get("port"));
+                    node.get(NAME_KEY).set(String.valueOf(changedValues.get(NAME_KEY)));
+                    node.get(SCHEME).set(String.valueOf(changedValues.get(SCHEME)));
+                    node.get(HOST_NAME).set(String.valueOf(changedValues.get(HOST_NAME)));
+                    if (changedValues.containsKey(PORT)) {
+                        node.get(PORT).set((Integer) changedValues.get(PORT));
                     }
                     storage.add(new Endpoint(node));
                     switchTo(SELECT);
@@ -95,13 +97,13 @@ class EndpointDialog {
 
         addPage = new Elements.Builder()
                 .div()
-                .p().innerText(CONSTANTS.endpoint_add_description()).end()
+                .p().innerText(CONSTANTS.endpointAddDescription()).end()
                 .add(form.asElement())
                 .end().build();
 
-        dialog = new Dialog.Builder(CONSTANTS.endpoint_select_title())
+        dialog = new Dialog.Builder(CONSTANTS.endpointSelectTitle())
                 .add(selectPage, addPage)
-                .primary(CONSTANTS.endpoint_connect(), this::onPrimary)
+                .primary(CONSTANTS.endpointConnect(), this::onPrimary)
                 .secondary(this::onSecondary)
                 .closeIcon(false)
                 .closeOnEsc(false)
@@ -110,15 +112,15 @@ class EndpointDialog {
 
     private void switchTo(final Mode mode) {
         if (mode == SELECT) {
-            dialog.setTitle(CONSTANTS.endpoint_select_title());
+            dialog.setTitle(CONSTANTS.endpointSelectTitle());
             table.setData(storage.list());
-            dialog.setPrimaryButtonLabel(CONSTANTS.endpoint_connect());
+            dialog.setPrimaryButtonLabel(CONSTANTS.endpointConnect());
             dialog.setPrimaryButtonDisabled(!table.hasSelection());
             Elements.setVisible(addPage, false);
             Elements.setVisible(selectPage, true);
 
         } else if (mode == ADD) {
-            dialog.setTitle(CONSTANTS.endpoint_add_title());
+            dialog.setTitle(CONSTANTS.endpointAddTitle());
             form.clearValues();
             form.edit(new Endpoint(new ModelNode()));
             dialog.setPrimaryButtonLabel(CONSTANTS.add());

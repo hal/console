@@ -45,9 +45,10 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
-import org.jboss.hal.resources.HalConstants;
-import org.jboss.hal.resources.HalMessages;
-import org.jboss.hal.resources.I18n;
+import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Images;
+import org.jboss.hal.resources.Messages;
+import org.jboss.hal.resources.Resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +93,7 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
             } else {
                 appearance.navInfo.setInnerHTML(info().asString());
                 appearance.navCurrentPage.setValue(String.valueOf(1 + getPage()));
-                appearance.navPages.setInnerHTML(messages.table_pages(getPageCount()).asString());
+                appearance.navPages.setInnerHTML(messages.tablePages(getPageCount()).asString());
             }
             if (hasPreviousPage()) {
                 appearance.navFirst.getClassList().remove("disabled");
@@ -119,7 +120,7 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
             int dataSize = display.getRowCount();
             int endIndex = Math.min(dataSize, pageStart + pageSize - 1);
             endIndex = Math.max(pageStart, endIndex);
-            return messages.table_info(pageStart, endIndex, dataSize);
+            return messages.tableInfo(pageStart, endIndex, dataSize);
         }
 
         private void gotoPage() {
@@ -148,8 +149,9 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
     public static final String DEFAULT_BUTTON_GROUP = "hal-dataTable-defaultButtonGroup";
 
     private static final Logger logger = LoggerFactory.getLogger(DataTable.class);
-    private static final HalConstants constants = GWT.create(HalConstants.class);
-    private static final HalMessages messages = GWT.create(HalMessages.class);
+    private static final Constants constants = GWT.create(Constants.class);
+    private static final Messages messages = GWT.create(Messages.class);
+    private static final Images images = GWT.create(Images.class);
 
     private final List<DataTableButton> buttons;
     private final ListDataProvider<T> dataProvider;
@@ -175,7 +177,7 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
         Element empty = new Elements.Builder()
                 .div()
                 .css("hal-data-table-empty")
-                .innerText(constants.table_info_empty())
+                .innerText(constants.tableInfoEmpty())
                 .build();
         cellTable = new CellTable<T>(DEFAULT_PAGE_SIZE, new DataTableResources(), keyProvider,
                 Elements.asWidget(loadingIndicator)) {{
@@ -195,7 +197,7 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
         dataProvider.addDataDisplay(cellTable);
 
         // Create appearance now -> pager constructor references appearance!
-        appearance = Appearance.create(id, new I18n(constants, messages));
+        appearance = Appearance.create(id, new Resources(constants, messages, images));
         Pager pager = new Pager(DEFAULT_PAGE_SIZE);
         pager.setDisplay(cellTable);
         appearance.cellTableHolder.appendChild(Elements.asElement(cellTable));
@@ -318,11 +320,11 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
     }
 
     private Element buttonGroup(String name) {
-        // <div class="btn-group" data-button-group="<name>" role="group" aria-label="messages.table_named_group(<name>)">
+        // <div class="btn-group" data-button-group="<name>" role="group" aria-label="messages.tableNamedGroup(<name>)">
         return new Elements.Builder().div()
                 .css("btn-group")
                 .data("buttonGroup", name)
-                .aria("label", messages.table_named_group(name))
+                .aria("label", messages.tableNamedGroup(name))
                 .attr("role", "group")
                 .build();
     }

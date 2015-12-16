@@ -24,7 +24,7 @@ package org.jboss.hal.client.bootstrap;
 import com.google.gwt.core.client.GWT;
 import com.gwtplatform.mvp.client.PreBootstrapper;
 import elemental.client.Browser;
-import org.jboss.hal.resources.HalConstants;
+import org.jboss.hal.resources.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("unused")
 public class HalPreBootstrapper implements PreBootstrapper {
 
-    private static final HalConstants CONSTANTS = GWT.create(HalConstants.class);
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Logger logger = LoggerFactory.getLogger(HalPreBootstrapper.class);
 
     @Override
@@ -42,7 +42,7 @@ public class HalPreBootstrapper implements PreBootstrapper {
         GWT.setUncaughtExceptionHandler(e -> {
             logger.error("Bootstrap error in {}: {}", HalPreBootstrapper.class.getSimpleName(), e.getMessage());
             Browser.getDocument().getBody().appendChild(
-                    BootstrapFailed.create(CONSTANTS.bootstrap_exception(), e.getMessage(), true).asElement());
+                    BootstrapFailed.create(CONSTANTS.bootstrapException(), e.getMessage()).asElement());
         });
     }
 }

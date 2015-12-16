@@ -41,9 +41,9 @@ import static org.jboss.hal.config.InstanceInfo.WILDFLY;
 public abstract class AbstractEnvironment implements Environment {
 
     private final Version halVersion;
-    private Version latestVersion;
     private final List<String> locales;
-    private InstanceInfo instanceInfo;
+    private final InstanceInfo instanceInfo;
+    private Version latestVersion;
     private OperationMode operationMode;
     private Version managementVersion;
 
@@ -105,7 +105,7 @@ public abstract class AbstractEnvironment implements Environment {
 
     @Override
     public void setOperationMode(final String launchType) {
-        operationMode = ("STANDALONE".equals(launchType)) ? STANDALONE : DOMAIN;
+        operationMode = (STANDALONE.name().equals(launchType)) ? STANDALONE : DOMAIN;
     }
 
     @Override

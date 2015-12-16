@@ -40,9 +40,10 @@ import java.util.List;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.model.ResourceAddress.ROOT;
 
+@SuppressWarnings("HardCodedStringLiteral")
 public class ReadEnvironment implements BootstrapFunction {
 
-    private static Logger logger = LoggerFactory.getLogger(ReadEnvironment.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReadEnvironment.class);
 
     private final Dispatcher dispatcher;
     private final Environment environment;

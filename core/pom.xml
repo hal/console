@@ -53,10 +53,6 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
-            <artifactId>hal-resources</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.hal</groupId>
             <artifactId>hal-spi</artifactId>
         </dependency>
         <dependency>

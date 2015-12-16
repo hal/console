@@ -6,7 +6,7 @@ package org.jboss.hal.dmr.dispatch;
  */
 public class DispatchException extends Exception {
 
-    private int statusCode;
+    private final int statusCode;
 
     public DispatchException(String message, int statusCode) {
         super(message + " Status " + statusCode);

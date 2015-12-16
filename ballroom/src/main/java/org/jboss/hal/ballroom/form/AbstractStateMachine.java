@@ -33,9 +33,9 @@ import java.util.EnumSet;
 public abstract class AbstractStateMachine implements StateMachine {
 
     private final EnumSet<Operation> supportedOperations;
-    protected State current;
+    State current;
 
-    public AbstractStateMachine(EnumSet<Operation> supportedOperations) {
+    AbstractStateMachine(EnumSet<Operation> supportedOperations) {
         this.supportedOperations = supportedOperations;
     }
 
@@ -60,7 +60,7 @@ public abstract class AbstractStateMachine implements StateMachine {
         return support;
     }
 
-    protected void transitionTo(State next) {
+    void transitionTo(State next) {
         current = next;
     }
 
@@ -70,7 +70,7 @@ public abstract class AbstractStateMachine implements StateMachine {
         }
     }
 
-    protected void assertState(State... state) {
+    void assertState(State... state) {
         for (State st : state) {
             if (current == st) {
                 return;
@@ -84,7 +84,7 @@ public abstract class AbstractStateMachine implements StateMachine {
         }
     }
 
-    protected void unsupported(Operation operation) {
+    void unsupported(Operation operation) {
         throw new UnsupportedOperationException(getClass().getName() + ": Unknown operation " + operation);
     }
 }

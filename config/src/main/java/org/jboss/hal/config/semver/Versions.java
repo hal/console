@@ -27,7 +27,7 @@ public class Versions {
     }
 
     public static Date parseDate(String dateString) throws Exception {
-        DateTimeFormat parser = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormat parser = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss"); //NON-NLS
         return parser.parse(dateString);
     }
 

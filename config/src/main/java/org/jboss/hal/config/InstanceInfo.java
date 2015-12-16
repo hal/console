@@ -24,6 +24,7 @@ package org.jboss.hal.config;
 /**
  * @author Harald Pehl
  */
+@SuppressWarnings("HardCodedStringLiteral")
 public enum InstanceInfo {
 
     WILDFLY("WildFly", "n/a", "WildFly", "na/", "n/a"),

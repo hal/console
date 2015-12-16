@@ -35,7 +35,7 @@ import java.util.Set;
 /**
  * @author Harald Pehl
  */
-public class RrdFunction implements Function<FunctionContext> {
+class RrdFunction implements Function<FunctionContext> {
 
     private final ResourceDescriptions resourceDescriptions;
     private final SecurityFramework securityFramework;

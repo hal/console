@@ -26,7 +26,17 @@ package org.jboss.hal.ballroom;
  */
 public interface GridSpec {
 
+    String COLUMN_PREFIX = "col-";
     String COLUMN_DISCRIMINATOR = "md";
+    String OFFSET = "offset";
     int LABEL_COLUMNS = 3;
     int INPUT_COLUMNS = 9;
+
+    static String column(String discriminator, int columns) {
+        return COLUMN_PREFIX + "-" + discriminator + "-" + String.valueOf(columns);
+    }
+
+    static String offset(String discriminator, int columns) {
+        return COLUMN_PREFIX + discriminator + "-" + OFFSET + "-" + String.valueOf(columns);
+    }
 }

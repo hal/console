@@ -30,6 +30,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +54,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         final List<String> columns;
         final LinkedListMultimap<String, DataTableButton> buttons;
 
-        public Builder(final String id, final ProvidesKey<T> keyProvider, final SecurityContext securityContext,
+        public Builder(@NonNls final String id, final ProvidesKey<T> keyProvider, final SecurityContext securityContext,
                 final ResourceDescription resourceDescription) {
             this.id = id;
             this.keyProvider = keyProvider;
@@ -102,7 +103,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
     private final ColumnFactory columnFactory;
 
-    ModelNodeTable(Builder<T> builder) {
+    private ModelNodeTable(Builder<T> builder) {
         super(builder.id, builder.keyProvider, builder.securityContext);
 
         columnFactory = new ColumnFactory();

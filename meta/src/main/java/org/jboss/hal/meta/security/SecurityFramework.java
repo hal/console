@@ -40,7 +40,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 public class SecurityFramework extends AbstractMetadataRegistry<SecurityContext> {
 
-    static final String SECURITY_CONTEXT_TYPE = "security context";
+    private static final String SECURITY_CONTEXT_TYPE = "security context";
 
     private final Dispatcher dispatcher;
     private final Map<ResourceAddress, SecurityContext> registry;

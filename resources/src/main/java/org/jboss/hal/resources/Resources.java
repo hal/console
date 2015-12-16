@@ -21,29 +21,33 @@
  */
 package org.jboss.hal.resources;
 
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.ImageResource;
+import javax.inject.Inject;
 
 /**
  * @author Harald Pehl
  */
-public interface HalImages extends ClientBundle {
+public class Resources implements Ids, Names, CSS {
 
-    @Source("homepage/access_control.png")
-    ImageResource accessControl();
+    private final Constants constants;
+    private final Messages messages;
+    private final Images images;
 
-    @Source("homepage/configuration.png")
-    ImageResource configuration();
+    @Inject
+    public Resources(final Constants constants, final Messages messages, final Images images) {
+        this.constants = constants;
+        this.messages = messages;
+        this.images = images;
+    }
 
-    @Source("homepage/deployments.png")
-    ImageResource deployments();
+    public Constants constants() {
+        return constants;
+    }
 
-    @Source("homepage/help.png")
-    ImageResource help();
+    public Messages messages() {
+        return messages;
+    }
 
-    @Source("homepage/patching.png")
-    ImageResource patching();
-
-    @Source("homepage/runtime.png")
-    ImageResource runtime();
+    public Images images() {
+        return images;
+    }
 }
