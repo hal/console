@@ -87,7 +87,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
 
         <plugin.version.frontend>0.0.26</plugin.version.frontend>
-        <plugin.version.gwt.maven>1.0-rc-4</plugin.version.gwt.maven>
+        <plugin.version.gwt.maven>1.0-rc-5</plugin.version.gwt.maven>
         <plugin.version.processor.plugin>3.1.0-beta1</plugin.version.processor.plugin>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -130,32 +130,6 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>net.ltgt.gwt.maven</groupId>
-                <artifactId>gwt-maven-plugin</artifactId>
-                <configuration>
-                    <devmodeArgs>
-                        <devmodeArg>-startupUrl</devmodeArg>
-                        <devmodeArg>hal/index.html</devmodeArg>
-                        <devmodeArg>-incremental</devmodeArg>
-                        <devmodeArg>-XjsInteropMode</devmodeArg>
-                        <devmodeArg>JS</devmodeArg>
-                    </devmodeArgs>
-                    <logLevel>INFO</logLevel>
-                    <moduleName>${gwt.module}</moduleName>
-                    <moduleShortName>${gwt.shortName}</moduleShortName>
-                    <sourceLevel>1.8</sourceLevel>
-                    <!-- Junit setup: No GWT tests please! -->
-                    <includes>
-                        <include>**/*Test.java</include>
-                    </includes>
-                    <excludes>
-                        <exclude>**/*GwtTest.java</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
 
     <repositories>
