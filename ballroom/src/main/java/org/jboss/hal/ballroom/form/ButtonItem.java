@@ -25,7 +25,9 @@ import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.events.EventListener;
 import org.jboss.hal.ballroom.Button;
-import org.jboss.hal.resources.CSS;
+
+import static org.jboss.hal.resources.CSS.labelColumns;
+import static org.jboss.hal.resources.CSS.offset;
 
 /**
  * @author Harald Pehl
@@ -48,7 +50,7 @@ public class ButtonItem extends AbstractFormItem<Void> {
 
     @Override
     protected void assembleUI() {
-        inputContainer.getClassList().add(CSS.offset(CSS.labelColumns));
+        inputContainer.getClassList().add(offset(labelColumns));
         inputContainer.appendChild(inputElement.asElement());
         container.appendChild(inputContainer);
     }

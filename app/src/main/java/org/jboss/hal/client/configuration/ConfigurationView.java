@@ -49,6 +49,9 @@ import java.util.List;
 import static org.jboss.hal.ballroom.table.DataTableButton.Target.TABLE;
 import static org.jboss.hal.ballroom.table.DataTableButton.Target.ROW;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.resources.Names.HOST;
+import static org.jboss.hal.resources.Names.NAME_KEY;
+import static org.jboss.hal.resources.Names.PORT;
 
 /**
  * @author Harald Pehl
@@ -103,7 +106,7 @@ public class ConfigurationView extends ViewImpl implements ConfigurationPresente
         ResourceDescription resourceDescription = StaticResourceDescription.from(endpointResources.endpoint());
         ModelNodeTable<ModelNode> modelNodeTable = new ModelNodeTable.Builder<>("endpoint",
                 node -> node.get(NAME).asString(), SecurityContext.RWX, resourceDescription)
-                .addColumn("name", "host-name", "port")
+                .addColumn(NAME_KEY, HOST, PORT)
                 .addButton(new DataTableButton(resources.constants().add(), TABLE,
                         event -> Browser.getWindow().alert(Names.NYI)))
                 .addButton(new DataTableButton(resources.constants().remove(), ROW,

@@ -192,7 +192,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         buttons = new Elements.Builder()
             .div().css(formGroup, editButtons)
                 .div().css(offset(labelColumns), column(inputColumns))
-                    .div().css(formButtons, pullRight)
+                    .div().css(pullRight, formButtons)
                         .button().css(btn, btnHal, btnDefault).on(click, event -> cancel())
                             .innerText(CONSTANTS.cancel())
                         .end()

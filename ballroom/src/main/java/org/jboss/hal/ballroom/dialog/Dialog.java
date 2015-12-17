@@ -22,7 +22,7 @@
 package org.jboss.hal.ballroom.dialog;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.RootPanel;
+import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.ButtonElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -218,7 +218,7 @@ public class Dialog implements IsElement {
         title = rootBuilder.referenceFor("title");
         body = rootBuilder.referenceFor("body");
         footer = rootBuilder.referenceFor("footer");
-        RootPanel.get().add(Elements.asWidget(root));
+        Browser.getDocument().getBody().appendChild(root);
         initJsEvents();
     }
 

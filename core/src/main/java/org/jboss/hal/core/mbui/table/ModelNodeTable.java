@@ -85,11 +85,10 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
         private void validate() {
             if (columns.isEmpty()) {
-                throw new IllegalStateException("No columns specified for " + tableId());
+                throw new IllegalStateException(tableId() + ": No columns specified");
             }
             if (!resourceDescription.hasDefined(ATTRIBUTES)) {
-                throw new IllegalStateException("No attributes found for " + tableId() +
-                        " in resource description " + resourceDescription);
+                throw new IllegalStateException(tableId() + ": No attributes found in resource description\n" + resourceDescription);
             }
         }
 
@@ -110,8 +109,8 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         for (String column : builder.columns) {
             Property attributeDescription = findDescription(builder.resourceDescription.getAttributes(), column);
             if (attributeDescription == null) {
-                logger.error("No attribute description for column {} found in resource description {} for {}", //NON-NLS
-                        column, builder.resourceDescription, builder.tableId());
+                logger.error("{}: No attribute description for column '{}' found in resource description\n{}", //NON-NLS
+                        builder.tableId(), column, builder.resourceDescription);
                 continue;
             }
             ColumnFactory.HeaderColumn<T> headerColumn = columnFactory.createHeaderColumn(attributeDescription);

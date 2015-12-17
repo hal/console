@@ -37,12 +37,12 @@ import javax.annotation.PostConstruct;
 import java.util.Collections;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.in;
 
 /**
  * @author Harald Pehl
  */
+@SuppressWarnings("HardCodedStringLiteral")
 @Templated("Homepage.html#homepage-section")
 abstract class HomepageSection implements IsElement {
 
@@ -73,12 +73,12 @@ abstract class HomepageSection implements IsElement {
     @PostConstruct
     void init() {
         if (open()) {
-            toggleIcon.getClassList().remove(fontAwesome("angle-right"));
-            toggleIcon.getClassList().add(fontAwesome("angle-down"));
+            toggleIcon.getClassList().remove("fa-angle-right");
+            toggleIcon.getClassList().add("fa-angle-down");
             sectionBody.getClassList().add(in);
         } else {
-            toggleIcon.getClassList().remove(fontAwesome("angle-down"));
-            toggleIcon.getClassList().add(fontAwesome("angle-right"));
+            toggleIcon.getClassList().remove("fa-angle-down");
+            toggleIcon.getClassList().add("fa-angle-right");
             sectionBody.getClassList().remove(in);
         }
         sectionHeader.setInnerHTML(header());
@@ -101,13 +101,13 @@ abstract class HomepageSection implements IsElement {
 
     @EventHandler(element = "toggleSection", on = click)
     void toggle() {
-        boolean open = toggleIcon.getClassList().contains(fontAwesome("angle-down"));
+        boolean open = toggleIcon.getClassList().contains("fa-angle-down");
         if (open) {
-            toggleIcon.getClassList().remove(fontAwesome("angle-down"));
-            toggleIcon.getClassList().add(fontAwesome("angle-right"));
+            toggleIcon.getClassList().remove("fa-angle-down");
+            toggleIcon.getClassList().add("fa-angle-right");
         } else {
-            toggleIcon.getClassList().remove(fontAwesome("angle-right"));
-            toggleIcon.getClassList().add(fontAwesome("angle-down"));
+            toggleIcon.getClassList().remove("fa-angle-right");
+            toggleIcon.getClassList().add("fa-angle-down");
         }
     }
 }

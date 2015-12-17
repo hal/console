@@ -26,8 +26,8 @@ import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.dialog.Dialog;
-import org.jboss.hal.ballroom.form.DefaultForm;
 import org.jboss.hal.ballroom.form.ButtonItem;
+import org.jboss.hal.ballroom.form.DefaultForm;
 import org.jboss.hal.ballroom.form.DefaultStateMachine;
 import org.jboss.hal.ballroom.form.EditOnlyStateMachine;
 import org.jboss.hal.ballroom.form.NumberItem;
@@ -68,7 +68,7 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
             addFormItem(name, formula, new PasswordItem("password", "Password"), age,
                     new TextAreaItem("hobbies", "Hobbies"),
                     new SelectBoxItem("color", "Favorite Color", Arrays.asList("Red", "Green", "Blue")));
-            if (nested) {
+            if (!nested) {
                 ButtonItem button = new ButtonItem("click", "Click Me");
                 button.onClick(event -> dialog.show());
                 addFormItem(button);

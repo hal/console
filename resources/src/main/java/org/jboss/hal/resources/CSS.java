@@ -41,7 +41,7 @@ public interface CSS {
     String btnDefault = "btn-default";
     String btnGroup = "btn-group";
     String btnPrimary = "btn-primary";
-    String btnHal = "btn-Hal";
+    String btnHal = "btn-hal";
     String clearfix = "clearfix";
     String clickable = "clickable";
     String close = "close";
