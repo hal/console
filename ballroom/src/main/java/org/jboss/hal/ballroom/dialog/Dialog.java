@@ -27,7 +27,6 @@ import elemental.dom.Element;
 import elemental.html.ButtonElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.resources.CSS;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.resources.Constants;
 
@@ -36,6 +35,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.Names.LABEL;
+import static org.jboss.hal.resources.Names.ROLE;
 
 /**
  * @author Harald Pehl
@@ -45,7 +47,7 @@ public class Dialog implements IsElement {
     // ------------------------------------------------------ inner classes
 
     public enum Size {
-        SMALL(CSS.modelSmall), MEDIUM(CSS.modalMedium), LARGE(CSS.modalLarge), MAX(CSS.modalMax);
+        SMALL(modelSmall), MEDIUM(modalMedium), LARGE(modalLarge), MAX(modalMax);
 
         final String css;
 
@@ -188,23 +190,23 @@ public class Dialog implements IsElement {
     private static boolean open;
 
     static {
-        String labelId = IdBuilder.build(ID, "label");
+        String labelId = IdBuilder.build(ID, LABEL);
         // @formatter:off
         Elements.Builder rootBuilder = new Elements.Builder()
-            .div().id(ID).css("modal")
-                    .attr("role", "dialog")
+            .div().id(ID).css(modal)
+                    .attr(ROLE, "dialog") //NON-NLS
                     .attr("tabindex", "-1")
                     .aria("labelledby", labelId)
-                .div().css("modal-dialog").attr("role", "document").rememberAs("dialog")
-                    .div().css("modal-content")
-                        .div().css("modal-header")
-                            .button().css("close").aria("label", "Close").rememberAs("closeIcon")
-                                .span().css("pficon pficon-close").aria("hidden", "true").end()
+                .div().css(modalDialog).attr("role", "document").rememberAs("dialog") //NON-NLS
+                    .div().css(modalContent)
+                        .div().css(modalHeader)
+                            .button().css(close).aria("label", "Close").rememberAs("closeIcon") //NON-NLS
+                                .span().css(pfIcon("close")).aria("hidden", "true").end() //NON-NLS
                             .end()
-                            .h(4).css("modal-title").id(labelId).rememberAs("title").end()
+                            .h(4).css(modalTitle).id(labelId).rememberAs("title").end()
                         .end()
-                        .div().css("modal-body").rememberAs("body").end()
-                        .div().css("modal-footer").rememberAs("footer").end()
+                        .div().css(modalBody).rememberAs("body").end()
+                        .div().css(modalFooter).rememberAs("footer").end()
                     .end()
                 .end()
             .end();
@@ -231,7 +233,7 @@ public class Dialog implements IsElement {
     }-*/;
 
     private static void reset() {
-        root.getClassList().remove("fade");
+        root.getClassList().remove(fade);
         for (Size size : Size.values()) {
             dialog.getClassList().remove(size.css);
         }
@@ -251,7 +253,7 @@ public class Dialog implements IsElement {
         this.closeOnEsc = builder.closeOnEsc;
 
         if (builder.fadeIn) {
-            Dialog.root.getClassList().add("fade");
+            Dialog.root.getClassList().add(fade);
         }
         Dialog.dialog.getClassList().add(builder.size.css);
         Elements.setVisible(Dialog.closeIcon, builder.closeIcon);
@@ -274,7 +276,7 @@ public class Dialog implements IsElement {
             if (builder.secondaryButton != null) {
                 secondaryButton = new Elements.Builder()
                         .button()
-                        .css("btn btn-hal btn-default")
+                        .css(btn, btnHal, btnDefault)
                         .on(click, event -> {
                             if (builder.secondaryButton.callback.execute()) {
                                 close();
@@ -287,7 +289,7 @@ public class Dialog implements IsElement {
             if (builder.primaryButton != null) {
                 primaryButton = new Elements.Builder()
                         .button()
-                        .css("btn btn-hal btn-primary")
+                        .css(btn, btnHal, btnPrimary)
                         .on(click, event -> {
                             if (builder.primaryButton.callback.execute()) {
                                 close();

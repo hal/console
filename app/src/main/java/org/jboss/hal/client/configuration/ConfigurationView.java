@@ -38,6 +38,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import javax.inject.Inject;
@@ -68,6 +69,7 @@ public class ConfigurationView extends ViewImpl implements ConfigurationPresente
             return foo + "-" + bar;
         }
     }
+
 
     @Inject
     public ConfigurationView(EndpointResources endpointResources, Resources resources) {
@@ -103,9 +105,9 @@ public class ConfigurationView extends ViewImpl implements ConfigurationPresente
                 node -> node.get(NAME).asString(), SecurityContext.RWX, resourceDescription)
                 .addColumn("name", "host-name", "port")
                 .addButton(new DataTableButton(resources.constants().add(), TABLE,
-                        event -> Browser.getWindow().alert("NYI")))
+                        event -> Browser.getWindow().alert(Names.NYI)))
                 .addButton(new DataTableButton(resources.constants().remove(), ROW,
-                        event -> Browser.getWindow().alert("NYI")))
+                        event -> Browser.getWindow().alert(Names.NYI)))
                 .build();
 
         ModelNode node = new ModelNode();

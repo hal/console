@@ -34,11 +34,11 @@ import elemental.html.SpanElement;
 import elemental.html.UListElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.LazyElement;
-import org.jboss.hal.ballroom.GridSpec;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Names;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,6 +51,7 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Form.Operation.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
+import static org.jboss.hal.resources.CSS.*;
 
 /**
  * An abstract form with some reasonable UI defaults. Please note that all form items and help texts must be setup
@@ -58,7 +59,7 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
  *
  * @author Harald Pehl
  */
-public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityContextAware, GridSpec {
+public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityContextAware {
 
     private final static Constants CONSTANTS = GWT.create(Constants.class);
     private final static String NOT_INITIALIZED = "Form element not initialized. Please add this form to the DOM before calling any of the form operations like view(), edit(), save(), cancel() or reset()";
@@ -120,7 +121,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     @Override
     protected Element createElement() {
 
-        Element section = Browser.getDocument().createElement("section");
+        Element section = Browser.getDocument().createElement("section"); //NON-NLS
         section.setId(id);
 
         formLinks = new FormLinks(id, stateMachine, helpTexts,
@@ -159,16 +160,16 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
 
     private Element viewPanel() {
         return new Elements.Builder()
-                .div().id(IdBuilder.build(id, "view")).css("form form-horizontal")
-                .p().innerText("View panel not yet implemented.").end()
+                .div().id(IdBuilder.build(id, "view")).css(form, formHorizontal)
+                .p().innerText(Names.NYI).end()
                 .end().build();
     }
 
     private Element editPanel() {
         // @formatter:off
         Elements.Builder errorPanelBuilder = new Elements.Builder()
-            .div().css("alert alert-danger").rememberAs("errorPanel")
-                .span().css("pficon pficon-error-circle-o").end()
+            .div().css(alert, alertDanger).rememberAs("errorPanel")
+                .span().css(pfIcon("error-circle-o")).end()
                 .span().rememberAs("errorMessage").end()
                 .ul().rememberAs("errorMessages").end()
             .end();
@@ -179,7 +180,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         clearErrors();
 
         Element editPanel = new Elements.Builder()
-                .div().id(IdBuilder.build(id, "edit")).css("form form-horizontal").end()
+                .div().id(IdBuilder.build(id, "edit")).css(form, formHorizontal).end()
                 .build();
         editPanel.appendChild(errorPanel);
         for (FormItem formItem : formItems.values()) {
@@ -189,13 +190,13 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
 
         // @formatter:off
         buttons = new Elements.Builder()
-            .div().css("form-group edit-buttons")
-                .div().css("col-" + COLUMN_DISCRIMINATOR + "-offset-" + LABEL_COLUMNS + " col-" + COLUMN_DISCRIMINATOR + "-" + INPUT_COLUMNS)
-                    .div().css("pull-right form-buttons")
-                        .button().css("btn btn-hal btn-default").on(click, event -> cancel())
+            .div().css(formGroup, editButtons)
+                .div().css(offset(labelColumns), column(inputColumns))
+                    .div().css(formButtons, pullRight)
+                        .button().css(btn, btnHal, btnDefault).on(click, event -> cancel())
                             .innerText(CONSTANTS.cancel())
                         .end()
-                        .button().css("btn btn-hal btn-primary").on(click, event -> save())
+                        .button().css(btn, btnHal, btnPrimary).on(click, event -> save())
                             .innerText(CONSTANTS.save())
                         .end()
                     .end()
@@ -302,7 +303,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     }
 
     private String formId() {
-        return "form(" + id + ")";
+        return "form(" + id + ")"; //NON-NLS
     }
 
 
@@ -339,7 +340,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         switch (state) {
             case READONLY:
                 if (exitEditWithEsc != null && panels.get(EDITING) != null) {
-                    panels.get(EDITING).removeEventListener("keyup", exitEditWithEsc);
+                    panels.get(EDITING).removeEventListener("keyup", exitEditWithEsc); //NON-NLS
                 }
                 break;
 

@@ -22,16 +22,26 @@
 package org.jboss.hal.resources;
 
 /**
- * Common names and terms used multiple times which are not meant to be translated.
+ * Common names and terms used multiple times and which are not meant to be translated.
  *
  * @author Harald Pehl
  */
 public interface Names {
 
-    String EAP = "EAP";
-    String JBOSS_EAP = "JBoss EAP";
-    String NAME_KEY = "name";
-    String WILDFLY = "WildFly";
+    String CONFIGURATION = "Configuration";
     String DEPLOYMENTS = "Deployments";
+    String FAILURE = "failure";
+    String GET = "GET";
+    String HOST = "host";
+    String LABEL = "label";
+    String NAME_KEY = "name";
+    String NYI = "not yet implemented";
+    String PORT = "port";
     String RESTRICTED = "restricted";
+    String ROLE = "role";
+    String RUNTIME = "Runtime";
+    String SCHEME = "scheme";
+    String SELECTED = "selected";
+    String UNDEFINED = "undefined";
+    String UNKNOWN = "unknown";
 }

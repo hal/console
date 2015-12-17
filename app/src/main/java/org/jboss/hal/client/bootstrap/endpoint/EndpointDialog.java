@@ -19,7 +19,7 @@ import static org.jboss.hal.ballroom.table.DataTableButton.Target.ROW;
 import static org.jboss.hal.ballroom.table.DataTableButton.Target.TABLE;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.ADD;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.SELECT;
-import static org.jboss.hal.resources.Names.NAME_KEY;
+import static org.jboss.hal.resources.Names.*;
 
 /**
  * Modal dialog to manage bootstrap servers. The dialog offers a page to connect to an existing server and a page to
@@ -32,9 +32,6 @@ class EndpointDialog {
     enum Mode {SELECT, ADD}
 
 
-    private static final String HOST_NAME = "host-name";
-    private static final String PORT = "port";
-    private static final String SCHEME = "scheme";
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final EndpointResources RESOURCES = GWT.create(EndpointResources.class);
 
@@ -86,7 +83,7 @@ class EndpointDialog {
                     ModelNode node = new ModelNode();
                     node.get(NAME_KEY).set(String.valueOf(changedValues.get(NAME_KEY)));
                     node.get(SCHEME).set(String.valueOf(changedValues.get(SCHEME)));
-                    node.get(HOST_NAME).set(String.valueOf(changedValues.get(HOST_NAME)));
+                    node.get(HOST).set(String.valueOf(changedValues.get(HOST)));
                     if (changedValues.containsKey(PORT)) {
                         node.get(PORT).set((Integer) changedValues.get(PORT));
                     }

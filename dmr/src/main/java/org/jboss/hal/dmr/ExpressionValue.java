@@ -24,6 +24,7 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
+@SuppressWarnings("HardCodedStringLiteral")
 final class ExpressionValue extends ModelValue {
 
     /**

@@ -29,5 +29,7 @@ import org.jboss.hal.dmr.ModelNode;
 @FunctionalInterface
 interface PayloadProcessor {
 
+    String PARSE_ERROR = "Unable to parse response with unexpected content-type ";
+
     ModelNode processPayload(Dispatcher.HttpMethod method, String contentType, String payload);
 }

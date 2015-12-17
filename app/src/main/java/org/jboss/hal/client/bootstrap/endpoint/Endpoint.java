@@ -23,6 +23,8 @@ package org.jboss.hal.client.bootstrap.endpoint;
 
 import org.jboss.hal.dmr.ModelNode;
 
+import static org.jboss.hal.resources.Names.*;
+
 /**
  * @author Harald Pehl
  */
@@ -43,21 +45,21 @@ public class Endpoint extends ModelNode {
     }
 
     public String getName() {
-        return get("name").asString();
+        return get(NAME_KEY).asString();
     }
 
     public boolean isSelected() {
-        return get("selected").asBoolean();
+        return get(SELECTED).asBoolean();
     }
 
     public void setSelected(boolean selected) {
-        get("selected").set(selected);
+        get(SELECTED).set(selected);
     }
 
     public String getUrl() {
         StringBuilder url = new StringBuilder();
-        url.append(get("scheme").asString()).append("://").append(get("host").asString());
-        ModelNode port = get("port");
+        url.append(get(SCHEME).asString()).append("://").append(get(HOST).asString());
+        ModelNode port = get(PORT);
         if (port.isDefined() && port.asInt() != 0 && port.asInt() != 80) {
             url.append(":").append(port);
         }

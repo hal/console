@@ -76,6 +76,7 @@ public class MetadataProcessor {
         this.rrdOps = new CreateRrdOperations(statementContext);
     }
 
+    @SuppressWarnings("HardCodedStringLiteral")
     public void process(final String token, final Progress progress, final AsyncCallback<Void> callback) {
         Set<String> resources = requiredResources.getResources(token);
         logger.debug("Token {}: Process required resources on {}", token, resources);

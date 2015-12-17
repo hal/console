@@ -29,6 +29,7 @@ import java.util.Set;
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
+@SuppressWarnings("HardCodedStringLiteral")
 abstract class ModelValue implements Cloneable {
 
     static final ModelValue UNDEFINED = new ModelValue(ModelType.UNDEFINED) {

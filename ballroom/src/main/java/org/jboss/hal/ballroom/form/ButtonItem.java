@@ -25,7 +25,7 @@ import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.events.EventListener;
 import org.jboss.hal.ballroom.Button;
-import org.jboss.hal.ballroom.GridSpec;
+import org.jboss.hal.resources.CSS;
 
 /**
  * @author Harald Pehl
@@ -48,7 +48,7 @@ public class ButtonItem extends AbstractFormItem<Void> {
 
     @Override
     protected void assembleUI() {
-        inputContainer.getClassList().add(GridSpec.offset(COLUMN_DISCRIMINATOR, LABEL_COLUMNS));
+        inputContainer.getClassList().add(CSS.offset(CSS.labelColumns));
         inputContainer.appendChild(inputElement.asElement());
         container.appendChild(inputContainer);
     }

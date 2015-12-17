@@ -52,14 +52,14 @@ class DmrPayloadProcessor implements PayloadProcessor {
                 ModelNode err = new ModelNode();
                 err.get(OUTCOME).set(FAILED);
                 err.get(FAILURE_DESCRIPTION)
-                        .set("Failed to decode response: " + e.getClass().getName() + ": " + e.getMessage());
+                        .set("Failed to decode response: " + e.getClass().getName() + ": " + e.getMessage()); //NON-NLS
                 node = err;
             }
 
         } else {
             node = new ModelNode();
             node.get(OUTCOME).set(FAILED);
-            node.get(FAILURE_DESCRIPTION).set("Unable to parse response with unexpected content-type " + contentType);
+            node.get(FAILURE_DESCRIPTION).set(PARSE_ERROR + contentType); //NON-NLS
         }
         return node;
     }

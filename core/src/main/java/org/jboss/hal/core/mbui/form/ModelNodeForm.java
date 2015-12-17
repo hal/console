@@ -205,7 +205,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         }
 
         private String formId() {
-            return "form(" + id + ")";
+            return "form(" + id + ")"; //NON-NLS
         }
     }
 
@@ -248,7 +248,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                     addHelp(labelBuilder.label(property), attribute.get(DESCRIPTION).asString());
                 }
             } else {
-                logger.warn("Unable to create form item for '{}' in form '{}'", name, builder.id);
+                logger.warn("Unable to create form item for '{}' in form '{}'", name, builder.id); //NON-NLS
             }
         }
     }

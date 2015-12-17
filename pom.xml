@@ -87,7 +87,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
 
         <plugin.version.frontend>0.0.26</plugin.version.frontend>
-        <plugin.version.gwt.maven>1.0-rc-5</plugin.version.gwt.maven>
+        <plugin.version.gwt.maven>1.0-SNAPSHOT</plugin.version.gwt.maven>
         <plugin.version.processor.plugin>3.1.0-beta1</plugin.version.processor.plugin>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -165,16 +165,6 @@
         </repository>
     </repositories>
     <pluginRepositories>
-        <pluginRepository>
-            <id>codehaus-plugins</id>
-            <url>http://nexus.codehaus.org/snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </pluginRepository>
         <pluginRepository>
             <id>sonatype-plugins</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>

@@ -27,13 +27,12 @@ import elemental.client.Browser;
 import elemental.dom.Document;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.resources.CSS;
 import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 
 import javax.inject.Inject;
 import java.util.Arrays;
@@ -41,6 +40,7 @@ import java.util.Collections;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.config.InstanceInfo.WILDFLY;
+import static org.jboss.hal.resources.CSS.*;
 
 /**
  * @author Harald Pehl
@@ -58,7 +58,7 @@ public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
         boolean standalone = env.isStandalone();
         boolean community = env.getInstanceInfo() == WILDFLY;
         boolean su = user.isSuperuser() || user.isAdministrator();
-        String name = community ? Names.WILDFLY : Names.JBOSS_EAP;
+        String name = env.getInstanceInfo().productName();
 
         Document document = Browser.getDocument();
         Iterable<HomepageSection> sections;
@@ -72,22 +72,22 @@ public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
 
         if (community) {
             header = new Elements.Builder()
-                    .div().css(CSS.eapHomeTitle)
-                    .h(1).innerText(Names.WILDFLY).end()
+                    .div().css(eapHomeTitle)
+                    .h(1).innerText(env.getInstanceInfo().description()).end()
                     .end().build();
         } else {
             // @formatter:off
             header = new Elements.Builder()
-                .div().css(CSS.eapHomeTitle)
+                .div().css(eapHomeTitle)
                     .p()
                         .span().innerText(resources.constants().homepageNewToEap() + " ").end()
                         .a()
-                            .css(CSS.clickable)
+                            .css(clickable)
                             .on(click, event -> presenter.launchGuidedTour())
                             .innerText(resources.constants().homepageTakeATour())
                         .end()
                     .end()
-                    .h(1).innerText("Red Hat JBoss Enterprise Application Platform").end() //NON-NLS
+                    .h(1).innerText(env.getInstanceInfo().description()).end()
                 .end().build();
             // @formatter:on
         }
@@ -116,7 +116,7 @@ public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
                             resources.constants().homepageConfigurationStep3()), true));
             configuration = HomepageModule.create(tokenFormatter,
                     NameTokens.CONFIGURATION,
-                    "Configuration",
+                    Names.CONFIGURATION,
                     resources.constants().homepageConfigurationStandaloneSubHeader(),
                     resources.images().configuration(),
                     sections).asElement();
@@ -130,7 +130,7 @@ public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
                             resources.constants().homepageRuntimeStandaloneStep2()), true));
             runtime = HomepageModule.create(tokenFormatter,
                     NameTokens.RUNTIME,
-                    "Runtime",
+                    Names.RUNTIME,
                     resources.constants().homepageRuntimeStandaloneSubHeader(),
                     resources.images().runtime(),
                     sections).asElement();
@@ -161,7 +161,7 @@ public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
                             resources.constants().homepageConfigurationStep3()), true));
             configuration = HomepageModule.create(tokenFormatter,
                     NameTokens.CONFIGURATION,
-                    "Configuration",
+                    Names.CONFIGURATION,
                     resources.constants().homepageConfigurationDomainSubHeader(),
                     resources.images().configuration(),
                     sections).asElement();
@@ -190,7 +190,7 @@ public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
                                     resources.constants().homepageRuntimeDomainMonitorServerStep2()), true));
             runtime = HomepageModule.create(tokenFormatter,
                     NameTokens.RUNTIME,
-                    "Runtime",
+                    Names.RUNTIME,
                     resources.constants().homepageRuntimeDomainSubHeader(),
                     resources.images().runtime(),
                     sections).asElement();
@@ -206,7 +206,7 @@ public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
                             resources.constants().homepageAccessControlStep2()), true));
             accessControl = HomepageModule.create(tokenFormatter,
                     NameTokens.ACCESS_CONTROL,
-                    "Access Control",
+                    "Access Control", //NON-NLS
                     resources.constants().homepageAccessControlSubHeader(),
                     resources.images().accessControl(),
                     sections).asElement();
@@ -231,7 +231,7 @@ public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
             }
             patching = HomepageModule.create(tokenFormatter,
                     NameTokens.PATCHING,
-                    "Patching",
+                    "Patching", //NON-NLS
                     resources.messages().homepagePatchingSubHeader(name),
                     resources.images().patching(),
                     sections).asElement();
@@ -239,22 +239,22 @@ public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
 
         help = HomepageHelp.create(env, resources).asElement();
         Elements.Builder rootBuilder = new Elements.Builder().div()
-                .div().css(CSS.eapHomeRow)
+                .div().css(eapHomeRow)
                 .add(header)
                 .add(deployments)
                 .add(configuration)
                 .end();
         if (su) {
-            rootBuilder.div().css(CSS.eapHomeRow)
+            rootBuilder.div().css(eapHomeRow)
                     .add(runtime)
                     .add(accessControl)
                     .end()
-                    .div().css(CSS.eapHomeRow)
+                    .div().css(eapHomeRow)
                     .add(patching)
                     .add(help)
                     .end();
         } else {
-            rootBuilder.div().css(CSS.eapHomeRow)
+            rootBuilder.div().css(eapHomeRow)
                     .add(runtime)
                     .add(help)
                     .end();

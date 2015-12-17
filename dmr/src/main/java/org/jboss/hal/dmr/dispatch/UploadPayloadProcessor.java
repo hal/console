@@ -24,10 +24,12 @@ package org.jboss.hal.dmr.dispatch;
 import elemental.json.Json;
 import elemental.json.JsonObject;
 import elemental.json.JsonType;
-import org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.resources.Names.FAILURE;
+import static org.jboss.hal.resources.Names.UNKNOWN;
 
 /**
  * @author Harald Pehl
@@ -62,20 +64,20 @@ class UploadPayloadProcessor implements PayloadProcessor {
         } else {
             node = new ModelNode();
             node.get(OUTCOME).set(FAILED);
-            node.get(FAILURE_DESCRIPTION).set("Unable to parse response with unexpected content-type " + contentType);
+            node.get(FAILURE_DESCRIPTION).set(PARSE_ERROR + contentType);
         }
         return node;
     }
 
     private String extractFailure(final JsonObject jsonResponse) {
-        String failure = "unknown";
+        String failure = UNKNOWN;
         JsonType type = jsonResponse.get(FAILURE_DESCRIPTION).getType();
         if (type == JsonType.STRING) {
             failure = jsonResponse.getString(FAILURE_DESCRIPTION);
         } else if (type == JsonType.OBJECT) {
             JsonObject failureObject = jsonResponse.getObject(FAILURE_DESCRIPTION);
             for (String key : failureObject.keys()) {
-                if (key.contains("failure") && failureObject.getString(key) != null) {
+                if (key.contains(FAILURE) && failureObject.getString(key) != null) {
                     failure = failureObject.getString(key);
                     break;
                 }

@@ -58,6 +58,9 @@ import java.util.Set;
 
 import static com.google.gwt.dom.client.Style.Unit.PX;
 import static com.google.gwt.view.client.DefaultSelectionEventManager.SelectAction.*;
+import static org.jboss.hal.resources.CSS.btnGroup;
+import static org.jboss.hal.resources.Names.LABEL;
+import static org.jboss.hal.resources.Names.ROLE;
 
 /**
  * @author Harald Pehl
@@ -191,7 +194,7 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
         cellTable.setAutoHeaderRefreshDisabled(true);
         cellTable.setAutoFooterRefreshDisabled(true);
         cellTable.getElement().setId(id + "-data-table");
-        cellTable.getElement().setAttribute("role", "grid");
+        cellTable.getElement().setAttribute(ROLE, "grid");
 
         dataProvider = new ListDataProvider<>(keyProvider);
         dataProvider.addDataDisplay(cellTable);
@@ -322,10 +325,10 @@ public class DataTable<T> implements IsElement, SecurityContextAware {
     private Element buttonGroup(String name) {
         // <div class="btn-group" data-button-group="<name>" role="group" aria-label="messages.tableNamedGroup(<name>)">
         return new Elements.Builder().div()
-                .css("btn-group")
+                .css(btnGroup)
                 .data("buttonGroup", name)
-                .aria("label", messages.tableNamedGroup(name))
-                .attr("role", "group")
+                .aria(LABEL, messages.tableNamedGroup(name))
+                .attr(ROLE, "group") //NON-NLS
                 .build();
     }
 

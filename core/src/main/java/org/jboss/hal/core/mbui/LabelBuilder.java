@@ -33,7 +33,8 @@ import java.util.Map;
  */
 public class LabelBuilder {
 
-    private final ImmutableMap<String, String> SPECIALS = ImmutableMap.of("jndi", "JNDI", "sql", "SQL", "url", "URL");
+    private final ImmutableMap<String, String> SPECIALS = ImmutableMap
+            .of("jndi", "JNDI", "sql", "SQL", "url", "URL"); //NON-NLS
 
     public String label(Property attributeDescription) {
         String label = attributeDescription.getName();

@@ -23,38 +23,40 @@ package org.jboss.hal.ballroom.layout;
 
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.GridSpec;
+
+import static org.jboss.hal.resources.CSS.column;
+import static org.jboss.hal.resources.CSS.row;
 
 /**
  * @author Harald Pehl
  */
-public class LayoutBuilder implements GridSpec {
+public class LayoutBuilder {
 
     private final Elements.Builder eb;
 
     public LayoutBuilder() {
         // start the top level "row" div
-        eb = new Elements.Builder().div().css("row");
+        eb = new Elements.Builder().div().css(row);
     }
 
     public LayoutBuilder header(String title) {
-        eb.div().css("col-" + COLUMN_DISCRIMINATOR + "-12").h(1).innerText(title).end().end();
+        eb.div().css(column(12)).h(1).innerText(title).end().end();
         return this;
     }
 
     public LayoutBuilder header(String title, Element element) {
-        eb.div().css("col-" + COLUMN_DISCRIMINATOR + "-12").h(1).innerText(title).end().add(element).end();
+        eb.div().css(column(12)).h(1).innerText(title).end().add(element).end();
         return this;
     }
 
     public LayoutBuilder header(Element element) {
-        eb.div().css("col-" + COLUMN_DISCRIMINATOR + "-12").add(element).end();
+        eb.div().css(column(12)).add(element).end();
         return this;
     }
 
     public LayoutBuilder add(Element... elements) {
         if (elements != null) {
-            eb.div().css("col-" + COLUMN_DISCRIMINATOR + "-12");
+            eb.div().css(column(12));
             for (Element element : elements) {
                 eb.add(element);
             }

@@ -34,8 +34,6 @@ import elemental.html.DivElement;
 import elemental.html.LabelElement;
 import elemental.html.SpanElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.resources.CSS;
-import org.jboss.hal.ballroom.GridSpec;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Names;
@@ -48,13 +46,14 @@ import static java.util.Collections.singletonList;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
+import static org.jboss.hal.resources.CSS.*;
 
 /**
  * TODO Implement org.jboss.hal.ballroom.form.Form.State#READONLY
  *
  * @author Harald Pehl
  */
-public abstract class AbstractFormItem<T> implements FormItem<T>, GridSpec {
+public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String EXPRESSION_CONTAINER = "expressionContainer"; //NON-NLS
@@ -78,8 +77,6 @@ public abstract class AbstractFormItem<T> implements FormItem<T>, GridSpec {
     final InputElement<T> inputElement;
 
 
-
-
     // ------------------------------------------------------ initialization
 
     AbstractFormItem(String name, String label) {
@@ -96,25 +93,25 @@ public abstract class AbstractFormItem<T> implements FormItem<T>, GridSpec {
         resetValidationHandlers();
 
         // create basic elements
-        container = new Elements.Builder().div().css(CSS.formGroup).end().build();
+        container = new Elements.Builder().div().css(formGroup).end().build();
         labelElement = new Elements.Builder()
                 .label()
-                .css(GridSpec.column(COLUMN_DISCRIMINATOR, LABEL_COLUMNS), CSS.controlLabel)
+                .css(column(labelColumns), controlLabel)
                 .innerText(label).build();
         inputContainer = new Elements.Builder()
                 .div()
-                .css(GridSpec.column(COLUMN_DISCRIMINATOR, INPUT_COLUMNS)).end().build();
-        errorText = new Elements.Builder().span().css(CSS.helpBlock).end().build();
+                .css(column(inputColumns)).end().build();
+        errorText = new Elements.Builder().span().css(helpBlock).end().build();
         Elements.setVisible(errorText, false);
 
         // @formatter:off
         Elements.Builder inputGroupBuilder = new Elements.Builder()
-            .div().css(CSS.inputGroup)
-                .span().css(CSS.inputGroupBtn).rememberAs(EXPRESSION_CONTAINER)
-                    .button().css(CSS.btn,  CSS.btnDefault)
+            .div().css(inputGroup)
+                .span().css(inputGroupBtn).rememberAs(EXPRESSION_CONTAINER)
+                    .button().css(btn, btnDefault)
                         .on(click, event -> ResolveExpressionEvent.fire(this, getExpressionValue()))
                         .title(CONSTANTS.expressionResolver())
-                        .start("i").css(CSS.fontAwesome("link")).end()
+                        .start("i").css(fontAwesome("link")).end()
                     .end()
                 .end()
             .end();
@@ -124,10 +121,10 @@ public abstract class AbstractFormItem<T> implements FormItem<T>, GridSpec {
 
         // @formatter:off
         Elements.Builder restrictedBuilder = new Elements.Builder()
-            .div().css(CSS.inputGroup)
-                .input(text).id(IdBuilder.build(name, Names.RESTRICTED)).css(CSS.formControl).rememberAs(RESTRICTED_ELEMENT)
-                .span().css(CSS.inputGroupAddon)
-                    .start("i").css(CSS.fontAwesome("lock")).end()
+            .div().css(inputGroup)
+                .input(text).id(IdBuilder.build(name, Names.RESTRICTED)).css(formControl).rememberAs(RESTRICTED_ELEMENT)
+                .span().css(inputGroupAddon)
+                    .start("i").css(fontAwesome("lock")).end()
                 .end()
             .end();
         // @formatter:on
@@ -296,12 +293,12 @@ public abstract class AbstractFormItem<T> implements FormItem<T>, GridSpec {
     @Override
     public void clearError() {
         Elements.setVisible(errorText, false);
-        container.getClassList().remove(CSS.hasError);
+        container.getClassList().remove(hasError);
     }
 
     @Override
     public void showError(String message) {
-        container.getClassList().add(CSS.hasError);
+        container.getClassList().add(hasError);
         errorText.setInnerText(message);
         Elements.setVisible(errorText, true);
     }
@@ -470,12 +467,12 @@ public abstract class AbstractFormItem<T> implements FormItem<T>, GridSpec {
 
     void toggleRestricted(final boolean on) {
         if (on) {
-            container.getClassList().add(CSS.hasFeedback);
+            container.getClassList().add(hasFeedback);
             Node firstChild = inputContainer.getChildren().item(0);
             inputContainer.removeChild(firstChild);
             inputContainer.appendChild(restrictedContainer);
         } else {
-            container.getClassList().remove(CSS.hasFeedback);
+            container.getClassList().remove(hasFeedback);
             inputContainer.removeChild(restrictedContainer);
             if (isExpressionValue()) {
                 inputContainer.appendChild(inputGroupContainer);

@@ -14,6 +14,7 @@ import java.util.List;
  * @author Harald Pehl
  */
 public class EndpointStorage {
+
     private static final String KEY = "org.jboss.hal.bootstrap.endpoints";
     private static final Logger logger = LoggerFactory.getLogger(EndpointStorage.class);
 
@@ -36,6 +37,7 @@ public class EndpointStorage {
                         endpoints.add(new Endpoint(node));
                     }
                 } catch (IllegalArgumentException e) {
+                    //noinspection HardCodedStringLiteral
                     logger.error("Unable to read endpoints from local storage using key '{}': {}", KEY, e.getMessage());
                 }
             }

@@ -24,26 +24,28 @@ package org.jboss.hal.config;
 /**
  * @author Harald Pehl
  */
-@SuppressWarnings("HardCodedStringLiteral")
+@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public enum InstanceInfo {
 
-    WILDFLY("WildFly", "n/a", "WildFly", "na/", "n/a"),
-    EAP("EAP", "n/a", "n/a", "EAP", "n/a");
+    WILDFLY("WildFly", "n/a", "WildFly", "na/", "n/a", "WildFly"),
+    EAP("JBoss EAP", "n/a", "n/a", "EAP", "n/a", "Red Hat JBoss Enterprise Application Platform");
 
     private String productName;
     private String productVersion;
     private String releaseName;
     private String releaseVersion;
     private String serverName;
+    private String description;
 
     InstanceInfo(final String productName, final String productVersion,
             final String releaseName, final String releaseVersion,
-            final String serverName) {
+            final String serverName, final String description) {
         this.productName = productName;
         this.productVersion = productVersion;
         this.releaseName = releaseName;
         this.releaseVersion = releaseVersion;
         this.serverName = serverName;
+        this.description = description;
     }
 
     public String productName() {
@@ -64,6 +66,10 @@ public enum InstanceInfo {
 
     public String serverName() {
         return serverName;
+    }
+
+    public String description() {
+        return description;
     }
 
     public void update(final String productName, final String productVersion,

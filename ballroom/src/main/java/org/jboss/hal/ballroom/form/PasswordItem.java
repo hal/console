@@ -35,7 +35,7 @@ public class PasswordItem extends TextBoxItem {
     @Override
     protected InputElement<String> newInputElement() {
         elemental.html.InputElement element = Browser.getDocument().createInputElement();
-        element.setType("password");
+        element.setType("password"); //NON-NLS
         TextBoxElement passwordElement = new TextBoxElement(element);
         setupInputElement(passwordElement);
         return passwordElement;

@@ -31,6 +31,7 @@ import java.util.List;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Arrays.asList;
+import static org.jboss.hal.resources.CSS.formControl;
 
 /**
  * @author Harald Pehl
@@ -70,7 +71,7 @@ public class NumberItem extends AbstractFormItem<Long> {
     @Override
     protected InputElement<Long> newInputElement() {
         NumberElement number = new NumberElement();
-        number.setClassName("form-control");
+        number.setClassName(formControl);
         number.element.setOnchange(event -> {
             String newText = inputElement.getText();
             Long newValue = inputElement().getValue();
@@ -136,7 +137,7 @@ public class NumberItem extends AbstractFormItem<Long> {
         NumberElement() {
             element = Browser.getDocument().createInputElement();
             // type="number" not possible because of expression support
-            element.setType("text");
+            element.setType("text"); //NON-NLS
         }
 
         @Override

@@ -59,7 +59,7 @@ class PropertyFilter implements Predicate<Property> {
                 filter = p -> builder.includes.contains(p.getName());
             }
             if (builder.includeRuntime) {
-                filter = Predicates.and(filter, p -> "runtime".equals(p.getValue().get(STORAGE).asString()));
+                filter = Predicates.and(filter, p -> "runtime".equals(p.getValue().get(STORAGE).asString())); //NON-NLS
             }
         }
 

@@ -25,6 +25,7 @@ import elemental.client.Browser;
 import elemental.dom.Element;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.jboss.hal.resources.CSS.formControl;
 
 /**
  * @author Harald Pehl
@@ -43,7 +44,7 @@ public class TextBoxItem extends AbstractFormItem<String> {
     }
 
     final void setupInputElement(final TextBoxElement textBox) {
-        textBox.setClassName("form-control");
+        textBox.setClassName(formControl);
         textBox.element.setOnchange(event -> {
             String newValue = inputElement().getValue();
             setModified(true);
@@ -70,7 +71,7 @@ public class TextBoxItem extends AbstractFormItem<String> {
 
         TextBoxElement() {
             element = Browser.getDocument().createInputElement();
-            element.setType("text");
+            element.setType("text"); //NON-NLS
         }
 
         TextBoxElement(final elemental.html.InputElement element) {

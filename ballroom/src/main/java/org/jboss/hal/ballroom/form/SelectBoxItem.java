@@ -32,6 +32,8 @@ import org.jboss.gwt.elemento.core.Elements;
 import java.util.List;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.jboss.hal.resources.CSS.formControl;
+import static org.jboss.hal.resources.CSS.selectpicker;
 
 /**
  * @author Harald Pehl
@@ -52,7 +54,8 @@ public class SelectBoxItem extends AbstractFormItem<String> {
     @Override
     protected InputElement<String> newInputElement() {
         comboBox = new SelectBoxElement();
-        comboBox.setClassName("form-control selectpicker");
+        comboBox.setClassName(formControl + " " + selectpicker);
+        //noinspection Duplicates
         comboBox.element.setOnchange(event -> {
             String newValue = inputElement().getValue();
             setModified(true);

@@ -31,28 +31,83 @@ import org.jetbrains.annotations.NonNls;
  */
 public interface CSS {
 
-    String controlLabel = "control-label";
-    String inputGroup = "input-group";
-    String formGroup = "form-group";
-    String inputGroupBtn = "input-group-btn";
-    String helpBlock = "help-block";
+    int labelColumns = 3;
+    int inputColumns = 9;
+
+    String active = "active";
+    String alert = "alert";
+    String alertDanger = "alert-danger";
     String btn = "btn";
     String btnDefault = "btn-default";
+    String btnGroup = "btn-group";
+    String btnPrimary = "btn-primary";
     String btnHal = "btn-Hal";
+    String clearfix = "clearfix";
+    String clickable = "clickable";
+    String close = "close";
+    String column = "col";
+    String columnMedium = "md";
+    String collapse = "collapse";
+    String containerFluid = "container-fluid";
+    String controlLabel = "control-label";
+    String eapHomeRow = "eap-home-row";
+    String eapHomeTitle = "eap-home-title";
+    String editButtons = "edit-buttons";
+    String fade = "fade";
+    String form = "form";
+    String formButtons = "form-buttons";
     String formControl = "form-control";
-    String inputGroupAddon = "input-group-addon";
+    String formControlStatic = "form-control-static";
+    String formGroup = "form-group";
+    String formHelpContent = "form-help-content";
+    String formHorizontal = "form-horizontal";
+    String formLinkLabel = "form-link-label";
+    String formLinks = "form-links";
     String hasError = "has-error";
     String hasFeedback = "has-feedback";
-    String modelSmall = "modal-sm";
-    String modalMedium = "modal-md";
+    String helpBlock = "help-block";
+    String in = "in";
+    String inputGroup = "input-group";
+    String inputGroupAddon = "input-group-addon";
+    String inputGroupBtn = "input-group-btn";
+    String loading = "loading";
+    String loadingContainer = "loading-container";
+    String modal = "modal";
+    String modalBody = "modal-body";
+    String modalContent = "modal-content";
+    String modalDialog = "modal-dialog";
+    String modalFooter = "modal-footer";
+    String modalHeader = "modal-header";
     String modalLarge = "modal-lg";
     String modalMax = "modal-mx";
-    String eapHomeTitle = "eap-home-title";
-    String clickable = "clickable";
-    String eapHomeRow = "eap-home-row";
-    String containerFluid = "container-fluid";
+    String modalMedium = "modal-md";
+    String modelSmall = "modal-sm";
+    String modalTitle = "modal-title";
+    String offset = "offset";
+    String progress = "progress";
+    String progressBar = "progress-bar";
+    String progressBarStriped = "progress-bar-striped";
+    String progressXs = "progress-xs";
+    String pullRight = "pull-right";
+    String row = "row";
+    String selectpicker = "selectpicker";
+    String spinner = "spinner";
+    String srOnly = "sr-only";
+
+
+    static String column(int columns) {
+        return column + "-" + columnMedium + "-" + String.valueOf(columns);
+    }
+
+    static String offset(int columns) {
+        return column + "-" + columnMedium + "-" + offset + "-" + String.valueOf(columns);
+    }
 
     static String fontAwesome(@NonNls String name) {
         return "fa fa-" + name; //NON-NLS
+    }
+
+    static String pfIcon(@NonNls String name) {
+        return "pficon pficon-" + name; //NON-NLS
     }
 }

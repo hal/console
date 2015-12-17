@@ -52,6 +52,7 @@ import java.util.Set;
  * @author Harald Pehl
  */
 @AutoService(Processor.class)
+@SuppressWarnings("HardCodedStringLiteral")
 @SupportedAnnotationTypes("org.jboss.gwt.circuit.meta.Store")
 public class StoreInitProcessor extends AbstractProcessor {
 

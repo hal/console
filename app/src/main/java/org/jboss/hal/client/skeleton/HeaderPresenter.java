@@ -37,6 +37,8 @@ import org.jboss.hal.spi.Message;
 
 import javax.inject.Inject;
 
+import static org.jboss.hal.resources.Names.NYI;
+
 /**
  * @author Harald Pehl
  */
@@ -104,15 +106,15 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> {
     }
 
     public void toggleMessages() {
-        Window.alert("Toggle messages not yet implemented");
+        Window.alert(NYI);
     }
 
     public void reconnect() {
-        Window.alert("Reconnect not yet implemented");
+        Window.alert(NYI);
     }
 
     public void logout() {
-        Window.alert("Logout not yet implemented");
+        Window.alert(NYI);
     }
 
     @Subscribe

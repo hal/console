@@ -30,6 +30,7 @@ import java.util.List;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Collections.emptyList;
+import static org.jboss.hal.resources.CSS.formControl;
 
 /**
  * @author Harald Pehl
@@ -43,7 +44,7 @@ public class TextAreaItem extends AbstractFormItem<List<String>> {
     @Override
     protected InputElement<List<String>> newInputElement() {
         TextAreaElement textArea = new TextAreaElement();
-        textArea.setClassName("form-control");
+        textArea.setClassName(formControl);
         textArea.element.setOnchange(event -> {
             List<String> newValue = inputElement().getValue();
             setModified(true);

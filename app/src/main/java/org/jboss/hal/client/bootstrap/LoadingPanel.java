@@ -21,15 +21,23 @@
  */
 package org.jboss.hal.client.bootstrap;
 
+import com.google.gwt.core.client.GWT;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Constants;
+
+import static org.jboss.hal.resources.CSS.loadingContainer;
+import static org.jboss.hal.resources.CSS.spinner;
 
 /**
  * @author Harald Pehl
  */
 public class LoadingPanel implements IsElement {
+
+    private final static Constants CONSTANTS = GWT.create(Constants.class);
 
     static public LoadingPanel get() {
         if (instance == null) {
@@ -47,10 +55,10 @@ public class LoadingPanel implements IsElement {
     private LoadingPanel() {
         // @formatter:off
         loading = new Elements.Builder()
-            .div().css("loading-container")
-                .div().css("loading")
-                    .h(3).innerText("Loading").end()
-                    .span().css("spinner").end()
+            .div().css(CSS.loading, loadingContainer)
+                .div().css(CSS.loading)
+                    .h(3).innerText(CONSTANTS.loading()).end()
+                    .span().css(spinner).end()
                 .end()
             .end()
         .build();

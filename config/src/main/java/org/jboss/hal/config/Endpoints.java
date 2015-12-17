@@ -23,6 +23,8 @@ package org.jboss.hal.config;
 
 import com.google.gwt.core.client.GWT;
 
+import static org.jboss.hal.resources.Urls.*;
+
 /**
  * Class for getting absolute URLs to the different endpoints used in HAL.
  *
@@ -57,9 +59,9 @@ public class Endpoints {
         if (baseUrl.endsWith("/")) {
             safeUrl = baseUrl.substring(0, baseUrl.length() - 1);
         }
-        dmr = safeUrl + "/management";
-        logout = safeUrl + "/logout";
-        upload = safeUrl + "/management-upload";
+        dmr = safeUrl + MANAGEMENT;
+        logout = safeUrl + LOGOUT;
+        upload = safeUrl + UPLOAD;
     }
 
     public String dmr() {

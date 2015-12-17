@@ -26,7 +26,6 @@ import elemental.dom.Element;
 import elemental.events.EventListener;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.ballroom.GridSpec;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.form.Form.State;
 import org.jboss.hal.meta.security.SecurityContext;
@@ -38,11 +37,12 @@ import java.util.Map;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Form.Operation.EDIT;
 import static org.jboss.hal.ballroom.form.Form.Operation.RESET;
+import static org.jboss.hal.resources.CSS.*;
 
 /**
  * @author Harald Pehl
  */
-class FormLinks implements IsElement, GridSpec {
+class FormLinks implements IsElement {
 
     private final static Constants CONSTANTS = GWT.create(Constants.class);
 
@@ -68,9 +68,9 @@ class FormLinks implements IsElement, GridSpec {
 
         // @formatter:off
         Elements.Builder rootBuilder = new Elements.Builder()
-            .div().css("form form-horizontal")
-                .ul().id(linksId).css("form-links clearfix").rememberAs("links").end()
-                .div().id(helpId).css("form-help-content collapse")
+            .div().css(form, formHorizontal)
+                .ul().id(linksId).css(formLinks, clearfix).rememberAs("links").end()
+                .div().id(helpId).css(formHelpContent, collapse)
                     .div().rememberAs("helpContent").end()
                 .end()
             .end();
@@ -80,13 +80,13 @@ class FormLinks implements IsElement, GridSpec {
         Element helpContent = rootBuilder.referenceFor("helpContent");
 
         if (stateMachine.supports(EDIT)) {
-            editLink = link(CONSTANTS.edit(), "pficon pficon-edit", onEdit);
+            editLink = link(CONSTANTS.edit(), pfIcon("edit"), onEdit);
             links.appendChild(editLink);
         }
         if (stateMachine.supports(RESET)) {
-            resetLink = link(CONSTANTS.reset(), "pficon pficon-restart", onReset);
-            resetLink.getDataset().setAt("toggle", "tooltip");
-            resetLink.getDataset().setAt("placement", "right");
+            resetLink = link(CONSTANTS.reset(), pfIcon("restart"), onReset);
+            resetLink.getDataset().setAt("toggle", "tooltip"); //NON-NLS
+            resetLink.getDataset().setAt("placement", "right"); //NON-NLS
             resetLink.setTitle(CONSTANTS.formResetDesc());
 
             links.appendChild(resetLink);
@@ -94,13 +94,13 @@ class FormLinks implements IsElement, GridSpec {
         if (!helpTexts.isEmpty()) {
             // @formatter:off
             helpLink = new Elements.Builder()
-                .li().css("pull-right")
+                .li().css(pullRight)
                     .a().attr("href", "#" + helpId + "")
-                            .data("toggle", "collapse")
-                            .aria("expanded", "false")
+                            .data("toggle", "collapse") //NON-NLS
+                            .aria("expanded", "false") //NON-NLS
                             .aria("controls", helpId)
-                        .start("i").css("pficon pficon-help").end()
-                        .span().css("form-link-label").innerText(CONSTANTS.help()).end()
+                        .start("i").css(pfIcon("help")).end()
+                        .span().css(formLinkLabel).innerText(CONSTANTS.help()).end()
                     .end()
                 .end().build();
             // @formatter:on
@@ -117,9 +117,9 @@ class FormLinks implements IsElement, GridSpec {
         // @formatter:off
         return new Elements.Builder()
             .li()
-                .a().css("clickable").on(click, onclick)
+                .a().css(clickable).on(click, onclick)
                     .start("i").css(css).end()
-                    .span().css("form-link-label").innerText(text).end()
+                    .span().css(formLinkLabel).innerText(text).end()
                 .end()
             .end().build();
         // @formatter:on
@@ -128,12 +128,12 @@ class FormLinks implements IsElement, GridSpec {
     private Element help(String label, String description) {
         // @formatter:off
         return new Elements.Builder()
-            .div().css("form-group")
-                .label().css("col-" + COLUMN_DISCRIMINATOR + "-" + LABEL_COLUMNS + " control-label")
+            .div().css(formGroup)
+                .label().css(column(labelColumns), controlLabel)
                     .innerText(label)
                 .end()
-                .div().css("col-" + COLUMN_DISCRIMINATOR + "-" + INPUT_COLUMNS)
-                    .p().css("form-control-static")
+                .div().css(column(inputColumns))
+                    .p().css(formControlStatic)
                         .innerText(description)
                     .end()
                 .end()

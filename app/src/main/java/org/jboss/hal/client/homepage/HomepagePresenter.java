@@ -35,6 +35,8 @@ import org.jboss.hal.core.Slots;
 
 import javax.inject.Inject;
 
+import static org.jboss.hal.resources.Names.NYI;
+
 /**
  * @author Harald Pehl
  */
@@ -64,6 +66,6 @@ public class HomepagePresenter extends Presenter<HomepagePresenter.MyView, Homep
     }
 
     public void launchGuidedTour() {
-        Window.alert("Guided tour not yet implemented");
+        Window.alert(NYI);
     }
 }

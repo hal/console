@@ -28,7 +28,6 @@ import elemental.dom.Element;
 import elemental.html.DivElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.core.Slots;
-import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
 import java.util.HashMap;
@@ -36,6 +35,7 @@ import java.util.Map;
 
 import static org.jboss.hal.client.RootPresenter.SLOT_FOOTER_CONTENT;
 import static org.jboss.hal.client.RootPresenter.SLOT_HEADER_CONTENT;
+import static org.jboss.hal.resources.CSS.containerFluid;
 
 /**
  * @author Harald Pehl
@@ -48,7 +48,7 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
 
     public RootView() {
         slots = new HashMap<>();
-        rootContainer = new Elements.Builder().div().id(Ids.ROOT_CONTAINER).css(CSS.containerFluid).end().build();
+        rootContainer = new Elements.Builder().div().id(Ids.ROOT_CONTAINER).css(containerFluid).end().build();
         initWidget(Elements.asWidget(rootContainer));
     }
 

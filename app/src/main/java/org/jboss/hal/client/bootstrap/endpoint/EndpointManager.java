@@ -10,6 +10,9 @@ import org.jboss.hal.config.Endpoints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.jboss.hal.resources.Names.GET;
+import static org.jboss.hal.resources.Urls.MANAGEMENT;
+
 /**
  * Class which connects to a running management endpoint or triggers the selection of an arbitrary management
  * endpoint. By default this class first tries to connect to the management endpoint the console was loaded from.
@@ -61,7 +64,7 @@ public class EndpointManager {
 
         } else {
             // Test whether this console is served from a WildFly / EAP instance
-            String managementEndpoint = Endpoints.getBaseUrl() + "/management";
+            String managementEndpoint = Endpoints.getBaseUrl() + MANAGEMENT;
             XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
             xhr.setOnreadystatechange(event -> {
                 int readyState = xhr.getReadyState();
@@ -75,6 +78,7 @@ public class EndpointManager {
                             andThen.execute();
                             break;
                         default:
+                            //noinspection HardCodedStringLiteral
                             logger.info("Unable to serve HAL from '{}'. Please select another management interface.",
                                     managementEndpoint);
                             openDialog();
@@ -82,7 +86,7 @@ public class EndpointManager {
                     }
                 }
             });
-            xhr.open("GET", managementEndpoint, true);
+            xhr.open(GET, managementEndpoint, true);
             xhr.setWithCredentials(true);
             xhr.send();
         }
@@ -93,7 +97,7 @@ public class EndpointManager {
     }
 
     private void pingServer(final Endpoint endpoint, final AsyncCallback<Void> callback) {
-        String managementEndpoint = endpoint.getUrl() + "/management";
+        String managementEndpoint = endpoint.getUrl() + MANAGEMENT;
         XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
         xhr.setOnreadystatechange(event -> {
             int readyState = xhr.getReadyState();
@@ -102,12 +106,12 @@ public class EndpointManager {
                 if (status == 200) {
                     callback.onSuccess(null);
                 } else {
-                    logger.error("Wrong status {} when pinging '{}'", status, managementEndpoint);
+                    logger.error("Wrong status {} when pinging '{}'", status, managementEndpoint); //NON-NLS
                     callback.onFailure(new IllegalStateException());
                 }
             }
         });
-        xhr.open("GET", managementEndpoint, true);
+        xhr.open(GET, managementEndpoint, true);
         xhr.setWithCredentials(true);
         xhr.send();
     }

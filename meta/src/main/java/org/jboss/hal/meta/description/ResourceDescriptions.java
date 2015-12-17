@@ -51,6 +51,7 @@ public class ResourceDescriptions extends AbstractMetadataRegistry<ResourceDescr
         private final Map<String, String[]> keys;
 
         @Inject
+        @SuppressWarnings("HardCodedStringLiteral")
         public WildcardStatementContext(Environment environment) {
             this.environment = environment;
 

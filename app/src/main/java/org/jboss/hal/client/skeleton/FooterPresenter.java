@@ -30,6 +30,8 @@ import org.jboss.hal.core.HasPresenter;
 
 import javax.inject.Inject;
 
+import static org.jboss.hal.resources.Names.NYI;
+
 /**
  * @author Harald Pehl
  */
@@ -60,18 +62,18 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView> {
     }
 
     public void onShowVersion() {
-        Window.alert("Show version not yet implemented");
+        Window.alert(NYI);
     }
 
     public void onModelBrowser() {
-        Window.alert("Model browser not yet implemented");
+        Window.alert(NYI);
     }
 
     public void onExpressionResolver() {
-        Window.alert("Expression resolver not yet implemented");
+        Window.alert(NYI);
     }
 
     public void onSettings() {
-        Window.alert("Settings not yet implemented");
+        Window.alert(NYI);
     }
 }

@@ -65,7 +65,7 @@ public class SecurityFramework extends AbstractMetadataRegistry<SecurityContext>
     @Override
     protected void addDeferred(final ResourceAddress address, final AsyncCallback<SecurityContext> callback) {
         Operation operation = new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION, address)
-                .param(ACCESS_CONTROL, "trim-descriptions")
+                .param(ACCESS_CONTROL, TRIM_DESCRIPTIONS)
                 .param(OPERATIONS, true)
                 .build();
         dispatcher.execute(operation,

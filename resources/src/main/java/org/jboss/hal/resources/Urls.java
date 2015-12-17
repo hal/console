@@ -19,24 +19,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.ballroom;
+package org.jboss.hal.resources;
 
 /**
  * @author Harald Pehl
  */
-public interface GridSpec {
+public interface Urls {
 
-    String COLUMN_PREFIX = "col-";
-    String COLUMN_DISCRIMINATOR = "md";
-    String OFFSET = "offset";
-    int LABEL_COLUMNS = 3;
-    int INPUT_COLUMNS = 9;
-
-    static String column(String discriminator, int columns) {
-        return COLUMN_PREFIX + "-" + discriminator + "-" + String.valueOf(columns);
-    }
-
-    static String offset(String discriminator, int columns) {
-        return COLUMN_PREFIX + discriminator + "-" + OFFSET + "-" + String.valueOf(columns);
-    }
+    String MANAGEMENT = "/management";
+    String LOGOUT = "/logout";
+    String UPLOAD = "/management-upload";
+    String WILDFLY_HOMEPAGE = "http://www.wildfly.org";
+    String WFLY10_DOCUMENTATION = "https://docs.jboss.org/author/display/WFLY10/Documentation";
+    String WFLY10_ADMIN_GUIDE = "https://docs.jboss.org/author/display/WFLY10/Admin+Guide";
+    String WILDSCRIBE_GITHUB_IO = "http://wildscribe.github.io/index.html";
+    String WILDFLY_ISSUES = "https://issues.jboss.org/browse/WFLY";
+    String WILDFLY_NEWS = "http://wildfly.org/news/";
+    String JBOSS_ORG_DEVELOPER_MATERIALS = "http://www.jboss.org/developer-materials/";
+    String JBOSS_COMMUNITY_DISCUSSIONS = "https://community.jboss.org/en/wildfly?view=discussions";
+    String WILDFLY_IRC = "irc://freenode.org/#wildfly";
+    String WILDFLY_DEV_MAILING_LIST = "https://lists.jboss.org/mailman/listinfo/wildfly-dev";
 }

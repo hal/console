@@ -35,6 +35,7 @@ import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.InstanceInfo;
 import org.jboss.hal.config.User;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
@@ -46,8 +47,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.config.InstanceInfo.EAP;
 import static org.jboss.hal.config.InstanceInfo.WILDFLY;
+import static org.jboss.hal.resources.CSS.active;
+import static org.jboss.hal.resources.Names.NYI;
 
 
 /**
@@ -112,13 +114,18 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     @Override
     public void update(Environment environment, Endpoints endpoints, User user) {
-        // TODO Find a way how to set the logo based on the server info from the environment
         if (environment.getInstanceInfo() == WILDFLY) {
-            setLogo("Wild", "Fly");
-        } else if (environment.getInstanceInfo() == EAP) {
-            setLogo("Red Hat JBoss", "Enterprise Application Platform");
+            setLogo(new String[]{
+                    environment.getInstanceInfo().description().substring(0, 4),
+                    environment.getInstanceInfo().description().substring(4),
+            });
+        } else if (environment.getInstanceInfo() == InstanceInfo.EAP) {
+            setLogo(new String[]{
+                    environment.getInstanceInfo().description().substring(0, 13),
+                    environment.getInstanceInfo().description().substring(13).trim(),
+            });
         } else {
-            setLogo("HAL", "Management Console");
+            setLogo(new String[]{"HAL", "Management Console"}); //NON-NLS
         }
 
         if (endpoints.isSameOrigin()) {
@@ -134,20 +141,20 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         roles.setInnerText(resources().messages().activeRoles(Joiner.on(", ").join(user.getRoles())));
     }
 
-    private void setLogo(String first, String last) {
-        logoFirst.setInnerText(first);
-        logoLast.setInnerText(last);
+    private void setLogo(String[] parts) {
+        logoFirst.setInnerText(parts[0]);
+        logoLast.setInnerText(parts[1]);
     }
 
     @Override
     public void selectTlc(final String nameToken) {
         for (String token : tlc.keySet()) {
             if (token.equals(nameToken)) {
-                tlc.get(token).getClassList().add("active");
-                tlc.get(token).getParentElement().getClassList().add("active");
+                tlc.get(token).getClassList().add(active);
+                tlc.get(token).getParentElement().getClassList().add(active);
             } else {
-                tlc.get(token).getClassList().remove("active");
-                tlc.get(token).getParentElement().getClassList().remove("active");
+                tlc.get(token).getClassList().remove(active);
+                tlc.get(token).getParentElement().getClassList().remove(active);
             }
         }
     }
@@ -163,16 +170,16 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     @EventHandler(element = "messages", on = click)
     void onMessages() {
-        Window.alert("Messages not yet implemented");
+        Window.alert(NYI);
     }
 
     @EventHandler(element = "logout", on = click)
     void onLogout() {
-        Window.alert("Logout not yet implemented");
+        Window.alert(NYI);
     }
 
     @EventHandler(element = "reconnect", on = click)
     void onReconnect() {
-        Window.alert("Reconnect not yet implemented");
+        Window.alert(NYI);
     }
 }

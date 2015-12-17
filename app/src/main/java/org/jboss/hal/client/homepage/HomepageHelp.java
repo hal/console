@@ -32,6 +32,8 @@ import org.jboss.hal.resources.Resources;
 
 import javax.annotation.PostConstruct;
 
+import static org.jboss.hal.resources.Urls.*;
+
 /**
  * @author Harald Pehl
  */
@@ -54,24 +56,24 @@ abstract class HomepageHelp implements IsElement {
     @PostConstruct
     void init() {
         if (env().getInstanceInfo() == InstanceInfo.WILDFLY) {
-            generalResources.appendChild(helpLink("http://www.wildfly.org",
+            generalResources.appendChild(helpLink(WILDFLY_HOMEPAGE,
                     resources().constants().homepageHelpWilfdflyHomeText()));
-            generalResources.appendChild(helpLink("https://docs.jboss.org/author/display/WFLY10/Documentation",
+            generalResources.appendChild(helpLink(WFLY10_DOCUMENTATION,
                     resources().constants().homepageHelpWilfdflyDocumentationText()));
-            generalResources.appendChild(helpLink("https://docs.jboss.org/author/display/WFLY10/Admin+Guide",
+            generalResources.appendChild(helpLink(WFLY10_ADMIN_GUIDE,
                     resources().constants().homepageHelpAdminGuideText()));
-            generalResources.appendChild(helpLink("http://wildscribe.github.io/index.html",
+            generalResources.appendChild(helpLink(WILDSCRIBE_GITHUB_IO,
                     resources().constants().homepageHelpModelReferenceText()));
-            generalResources.appendChild(helpLink("https://issues.jboss.org/browse/WFLY",
+            generalResources.appendChild(helpLink(WILDFLY_ISSUES,
                     resources().constants().homepageHelpWildflyIssuesText()));
-            generalResources.appendChild(helpLink("http://wildfly.org/news/", resources().constants().homepageHelpLatestNews()));
+            generalResources.appendChild(helpLink(WILDFLY_NEWS, resources().constants().homepageHelpLatestNews()));
 
-            getHelp.appendChild(helpLink("http://www.jboss.org/developer-materials/",
+            getHelp.appendChild(helpLink(JBOSS_ORG_DEVELOPER_MATERIALS,
                     resources().constants().homepageHelpTutorialsText()));
-            getHelp.appendChild(helpLink("https://community.jboss.org/en/wildfly?view=discussions",
+            getHelp.appendChild(helpLink(JBOSS_COMMUNITY_DISCUSSIONS,
                     resources().constants().homepageHelpUserForumsText()));
-            getHelp.appendChild(helpLink("irc://freenode.org/#wildfly", resources().constants().homepageHelpIrcText()));
-            getHelp.appendChild(helpLink("https://lists.jboss.org/mailman/listinfo/wildfly-dev",
+            getHelp.appendChild(helpLink(WILDFLY_IRC, resources().constants().homepageHelpIrcText()));
+            getHelp.appendChild(helpLink(WILDFLY_DEV_MAILING_LIST,
                     resources().constants().homepageHelpDevelopersMailingListText()));
         } else {
             generalResources.appendChild(helpLink(resources().constants().homepageHelpEapDocumentationLink(),

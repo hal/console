@@ -94,7 +94,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         }
 
         String tableId() {
-            return "dataTable(" + id + ")";
+            return "dataTable(" + id + ")"; //NON-NLS
         }
     }
 
@@ -110,7 +110,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         for (String column : builder.columns) {
             Property attributeDescription = findDescription(builder.resourceDescription.getAttributes(), column);
             if (attributeDescription == null) {
-                logger.error("No attribute description for column {} found in resource description {} for {}",
+                logger.error("No attribute description for column {} found in resource description {} for {}", //NON-NLS
                         column, builder.resourceDescription, builder.tableId());
                 continue;
             }
