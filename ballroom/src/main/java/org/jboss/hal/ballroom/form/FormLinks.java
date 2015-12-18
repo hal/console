@@ -38,6 +38,7 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Form.Operation.EDIT;
 import static org.jboss.hal.ballroom.form.Form.Operation.RESET;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.Names.*;
 
 /**
  * @author Harald Pehl
@@ -85,8 +86,8 @@ class FormLinks implements IsElement {
         }
         if (stateMachine.supports(RESET)) {
             resetLink = link(CONSTANTS.reset(), pfIcon("restart"), onReset);
-            resetLink.getDataset().setAt("toggle", "tooltip"); //NON-NLS
-            resetLink.getDataset().setAt("placement", "right"); //NON-NLS
+            resetLink.getDataset().setAt(TOGGLE, TOOLTIP);
+            resetLink.getDataset().setAt(PLACEMENT, "right"); //NON-NLS
             resetLink.setTitle(CONSTANTS.formResetDesc());
 
             links.appendChild(resetLink);
@@ -96,7 +97,7 @@ class FormLinks implements IsElement {
             helpLink = new Elements.Builder()
                 .li().css(pullRight)
                     .a().attr("href", "#" + helpId + "")
-                            .data("toggle", "collapse") //NON-NLS
+                            .data(TOGGLE, "collapse") //NON-NLS
                             .aria("expanded", "false") //NON-NLS
                             .aria("controls", helpId)
                         .start("i").css(pfIcon("help")).end()

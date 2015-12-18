@@ -21,22 +21,19 @@
  */
 package org.jboss.hal.core.mbui.table;
 
-import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
-import com.google.gwt.view.client.ProvidesKey;
+import org.jboss.hal.ballroom.table.Column;
+import org.jboss.hal.ballroom.table.GenericOptionsBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.ballroom.table.DataTableButton;
+import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
-import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 
@@ -45,89 +42,63 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
  */
 public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
-    public static class Builder<T extends ModelNode> {
+    public static class Builder<T extends ModelNode> extends GenericOptionsBuilder<Builder<T>, T> {
 
-        final String id;
-        final ProvidesKey<T> keyProvider;
-        final SecurityContext securityContext;
-        final ResourceDescription resourceDescription;
-        final List<String> columns;
-        final LinkedListMultimap<String, DataTableButton> buttons;
+        private final ResourceDescription resourceDescription;
+        private final ColumnFactory columnFactory;
 
-        public Builder(@NonNls final String id, final ProvidesKey<T> keyProvider, final SecurityContext securityContext,
-                final ResourceDescription resourceDescription) {
-            this.id = id;
-            this.keyProvider = keyProvider;
-            this.securityContext = securityContext;
+        public Builder(final ResourceDescription resourceDescription) {
             this.resourceDescription = resourceDescription;
-            this.columns = new ArrayList<>();
-            this.buttons = LinkedListMultimap.create();
+            this.columnFactory = new ColumnFactory();
         }
 
-        public Builder<T> addColumn(final String first, final String... rest) {
-            columns.addAll(Lists.asList(first, rest));
-            return this;
-        }
-
-        public Builder<T> addButton(DataTableButton button) {
-            return addButton(button, DEFAULT_BUTTON_GROUP);
-        }
-
-        public Builder<T> addButton(DataTableButton button, String group) {
-            buttons.put(group, button);
-            return this;
-        }
-
-        public ModelNodeTable<T> build() {
-            validate();
-            return new ModelNodeTable<>(this);
-        }
-
-        private void validate() {
-            if (columns.isEmpty()) {
-                throw new IllegalStateException(tableId() + ": No columns specified");
+        public Builder<T> columns(String first, String... rest) {
+            List<String> columns = Lists.asList(first, rest);
+            for (String column : columns) {
+                column(column);
             }
+            return that();
+        }
+
+        public Builder<T> column(String attribute) {
+            Property attributeDescription = findDescription(resourceDescription.getAttributes(), attribute);
+            if (attributeDescription != null) {
+                Column<T> column = columnFactory.createColumn(attributeDescription);
+                return column(column);
+            } else {
+                logger.error("No attribute description for column '{}' found in resource description\n{}", //NON-NLS
+                        attribute, resourceDescription);
+                return that();
+            }
+        }
+
+        private Property findDescription(final List<Property> attributeDescriptions, final String column) {
+            for (Property attributeDescription : attributeDescriptions) {
+                if (attributeDescription.getName().equals(column)) {
+                    return attributeDescription;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected Builder<T> that() {
+            return this;
+        }
+
+        @Override
+        protected void validate() {
+            super.validate();
             if (!resourceDescription.hasDefined(ATTRIBUTES)) {
-                throw new IllegalStateException(tableId() + ": No attributes found in resource description\n" + resourceDescription);
+                throw new IllegalStateException("No attributes found in resource description\n" + resourceDescription);
             }
-        }
-
-        String tableId() {
-            return "dataTable(" + id + ")"; //NON-NLS
         }
     }
 
 
     private static final Logger logger = LoggerFactory.getLogger(ModelNodeTable.class);
 
-    private final ColumnFactory columnFactory;
-
-    private ModelNodeTable(Builder<T> builder) {
-        super(builder.id, builder.keyProvider, builder.securityContext);
-
-        columnFactory = new ColumnFactory();
-        for (String column : builder.columns) {
-            Property attributeDescription = findDescription(builder.resourceDescription.getAttributes(), column);
-            if (attributeDescription == null) {
-                logger.error("{}: No attribute description for column '{}' found in resource description\n{}", //NON-NLS
-                        builder.tableId(), column, builder.resourceDescription);
-                continue;
-            }
-            ColumnFactory.HeaderColumn<T> headerColumn = columnFactory.createHeaderColumn(attributeDescription);
-            addColumn(headerColumn.column, headerColumn.header);
-        }
-
-        for (Map.Entry<String, DataTableButton> entry : builder.buttons.entries()) {
-            addButton(entry.getValue(), entry.getKey());
-        }
-    }
-
-    private Property findDescription(final List<Property> attributeDescriptions, final String column) {
-        for (Property attributeDescription : attributeDescriptions) {
-            if (attributeDescription.getName().equals(column)) {
-                return attributeDescription;
-            }
-        }
-        return null;
+    public ModelNodeTable(final String id, final SecurityContext securityContext, final Options<T> options) {
+        super(id, securityContext, options);
     }
 }

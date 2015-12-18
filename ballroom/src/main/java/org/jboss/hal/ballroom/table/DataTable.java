@@ -21,338 +21,117 @@
  */
 package org.jboss.hal.ballroom.table;
 
-import com.google.common.base.Strings;
-import com.google.gwt.cell.client.CheckboxCell;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.cellview.client.AbstractPager;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.view.client.CellPreviewEvent;
-import com.google.gwt.view.client.DefaultSelectionEventManager;
-import com.google.gwt.view.client.HasRows;
-import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.MultiSelectionModel;
-import com.google.gwt.view.client.ProvidesKey;
-import com.google.gwt.view.client.Range;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionModel;
-import com.google.gwt.view.client.SingleSelectionModel;
 import elemental.dom.Element;
+import elemental.html.TableElement;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.meta.security.SecurityContextAware;
-import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.Images;
-import org.jboss.hal.resources.Messages;
-import org.jboss.hal.resources.Resources;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jetbrains.annotations.NonNls;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import static com.google.gwt.dom.client.Style.Unit.PX;
-import static com.google.gwt.view.client.DefaultSelectionEventManager.SelectAction.*;
-import static org.jboss.hal.resources.CSS.btnGroup;
-import static org.jboss.hal.resources.Names.LABEL;
-import static org.jboss.hal.resources.Names.ROLE;
+import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.resources.CSS.*;
 
 /**
+ * Table element which implements the DataTables plugin for jQuery. Using the data table consists of multiple steps:
+ * <ol>
+ * <li>Create an instance passing an id, a security context and an {@linkplain Options options} instance</li>
+ * <li>Call {@link #attach()} <strong>after</strong> the data table element was attached to the DOM</li>
+ * <li>Call any of the API methods using the {@link #api()} getter</li>
+ * </ol>
+ * <p>
+ * Sample which uses a {@code FooBar} as row type:
+ * <pre>
+ * class FooBar {
+ *     final String foo;
+ *     final String bar;
+ *
+ *     FooBar() {
+ *         this.foo = "Foo-" + String.valueOf(Random.nextInt(12345));
+ *         this.bar = "Bar-" + String.valueOf(Random.nextInt(12345));
+ *     }
+ * }
+ *
+ * Options<FooBar> options = new OptionsBuilder&lt;FooBarBaz&gt;()
+ *     .button("Add Row", (event, api) -> api.row.add(new FooBar()).draw("full-reset"))
+ *     .column("foo", "Foo", (cell, type, row, meta) -> row.foo)
+ *     .column("bar", "Bar", (cell, type, row, meta) -> row.baz)
+ *     .build();
+ * DataTable&lt;FooBar&gt; dataTable = new DataTable&lt;&gt;("sample", SecurityContext.RWX, options);
+ * </pre>
+ *
+ * @param <T> the row type
+ *
  * @author Harald Pehl
+ * @see <a href="https://datatables.net/">https://datatables.net/</a>
  */
-public class DataTable<T> implements IsElement, SecurityContextAware {
+public class DataTable<T> implements IsElement {
 
-    class Pager extends AbstractPager {
+    // ------------------------------------------------------ jquery selector
 
-        public Pager(final int pageSize) {
-            setPageSize(pageSize);
+    @JsMethod(namespace = GLOBAL)
+    private native static <T> JQuery<T> $(@NonNls String selector);
 
-            appearance.navInfo.setInnerHTML("&nbsp;");
-            appearance.navFirst.getClassList().add("disabled");
-            appearance.navPrev.getClassList().add("disabled");
-            appearance.navCurrentPage.setValue("");
-            appearance.navNext.getClassList().add("disabled");
-            appearance.navLast.getClassList().add("disabled");
+    @JsType(isNative = true)
+    private static class JQuery<T> {
 
-            appearance.navFirst.setOnclick(event -> firstPage());
-            appearance.navPrev.setOnclick(event -> previousPage());
-            appearance.navCurrentPage.setOnchange(event -> gotoPage());
-            appearance.navNext.setOnclick(event -> nextPage());
-            appearance.navLast.setOnclick(event -> lastPage());
-        }
-
-        @Override
-        protected void onRangeOrRowCountChanged() {
-            HasRows display = getDisplay();
-            if (display.getRowCount() == 0) {
-                appearance.navInfo.setInnerHTML("&nbsp;");
-                appearance.navCurrentPage.setValue("");
-                appearance.navPages.setInnerText("");
-            } else {
-                appearance.navInfo.setInnerHTML(info().asString());
-                appearance.navCurrentPage.setValue(String.valueOf(1 + getPage()));
-                appearance.navPages.setInnerHTML(messages.tablePages(getPageCount()).asString());
-            }
-            if (hasPreviousPage()) {
-                appearance.navFirst.getClassList().remove("disabled");
-                appearance.navPrev.getClassList().remove("disabled");
-            } else {
-                appearance.navFirst.getClassList().add("disabled");
-                appearance.navPrev.getClassList().add("disabled");
-            }
-            if (hasNextPage()) {
-                appearance.navNext.getClassList().remove("disabled");
-                appearance.navLast.getClassList().remove("disabled");
-            } else {
-                appearance.navNext.getClassList().add("disabled");
-                appearance.navLast.getClassList().add("disabled");
-            }
-        }
-
-        private SafeHtml info() {
-            // Default text is 1 based.
-            HasRows display = getDisplay();
-            Range range = display.getVisibleRange();
-            int pageStart = range.getStart() + 1;
-            int pageSize = range.getLength();
-            int dataSize = display.getRowCount();
-            int endIndex = Math.min(dataSize, pageStart + pageSize - 1);
-            endIndex = Math.max(pageStart, endIndex);
-            return messages.tableInfo(pageStart, endIndex, dataSize);
-        }
-
-        private void gotoPage() {
-            String value = appearance.navCurrentPage.getValue();
-            if (Strings.emptyToNull(value) != null) {
-                try {
-                    int pageIndex = Integer.parseInt(value) - 1;
-                    pageIndex = Math.max(0, pageIndex);
-                    pageIndex = Math.min(getPageCount() - 1, pageIndex);
-                    if (pageIndex != getPage()) {
-                        setPage(pageIndex);
-                        if (!String.valueOf(pageIndex + 1).equals(value)) {
-                            // set adjusted value
-                            appearance.navCurrentPage.setValue(String.valueOf(pageIndex + 1));
-                        }
-                    }
-                } catch (NumberFormatException e) {
-                    logger.error("Cannot go to page {}: {}", value, e.getMessage());
-                }
-            }
-        }
+        @JsMethod(name = "DataTable")
+        private native Api<T> dataTable(Options options);
     }
 
 
-    public static final int DEFAULT_PAGE_SIZE = 7;
-    public static final String DEFAULT_BUTTON_GROUP = "hal-dataTable-defaultButtonGroup";
+    // ------------------------------------------------------ instance & lifecycle
 
-    private static final Logger logger = LoggerFactory.getLogger(DataTable.class);
-    private static final Constants constants = GWT.create(Constants.class);
-    private static final Messages messages = GWT.create(Messages.class);
-    private static final Images images = GWT.create(Images.class);
+    private final String id;
+    private final SecurityContext securityContext;
+    private final Options<T> options;
+    private final TableElement tableElement;
+    private Api<T> api;
 
-    private final List<DataTableButton> buttons;
-    private final ListDataProvider<T> dataProvider;
-    private final SelectionModel<T> selectionModel;
-    private final CellTable<T> cellTable;
-    private final Appearance appearance;
-    private SecurityContext securityContext;
-
-    public DataTable(final String id, final ProvidesKey<T> keyProvider, final SecurityContext securityContext) {
-        this(id, keyProvider, true, securityContext);
-    }
-
-    public DataTable(final String id, final ProvidesKey<T> keyProvider, boolean singleSelection,
-            final SecurityContext securityContext) {
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    public DataTable(final String id, final SecurityContext securityContext, final Options<T> options) {
+        this.id = id;
         this.securityContext = securityContext;
-
-        buttons = new ArrayList<>();
-
-        Element loadingIndicator = new Elements.Builder()
-                .div().css("hal-data-table-loading")
-                .div().css("spinner spinner-sm").end()
-                .end().build();
-        Element empty = new Elements.Builder()
-                .div()
-                .css("hal-data-table-empty")
-                .innerText(constants.tableInfoEmpty())
-                .build();
-        cellTable = new CellTable<T>(DEFAULT_PAGE_SIZE, new DataTableResources(), keyProvider,
-                Elements.asWidget(loadingIndicator)) {{
-            // Since the CellTable element gets attached to the DOM (not the widget),
-            // we need to manually invoke the onAttach() method in order to wire the DOM events.
-            onAttach();
-        }};
-        cellTable.setEmptyTableWidget(Elements.asWidget(empty));
-        cellTable.setWidth("100%");
-        cellTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
-        cellTable.setAutoHeaderRefreshDisabled(true);
-        cellTable.setAutoFooterRefreshDisabled(true);
-        cellTable.getElement().setId(id + "-data-table");
-        cellTable.getElement().setAttribute(ROLE, "grid");
-
-        dataProvider = new ListDataProvider<>(keyProvider);
-        dataProvider.addDataDisplay(cellTable);
-
-        // Create appearance now -> pager constructor references appearance!
-        appearance = Appearance.create(id, new Resources(constants, messages, images));
-        Pager pager = new Pager(DEFAULT_PAGE_SIZE);
-        pager.setDisplay(cellTable);
-        appearance.cellTableHolder.appendChild(Elements.asElement(cellTable));
-
-        if (singleSelection) {
-            selectionModel = new SingleSelectionModel<>(keyProvider);
-            cellTable.setSelectionModel(selectionModel);
-
-        } else {
-            this.selectionModel = new MultiSelectionModel<>(keyProvider);
-            cellTable.setSelectionModel(selectionModel, DefaultSelectionEventManager.createCustomManager(
-                    new DefaultSelectionEventManager.CheckboxEventTranslator<T>() {
-                        @Override
-                        public DefaultSelectionEventManager.SelectAction translateSelectionEvent(
-                                CellPreviewEvent<T> event) {
-                            DefaultSelectionEventManager.SelectAction action = super.translateSelectionEvent(event);
-                            if (action.equals(IGNORE)) {
-                                T value = event.getValue();
-                                boolean selected = selectionModel.isSelected(value);
-                                return selected ? DESELECT : SELECT;
-                            }
-                            return action;
-                        }
-                    }));
-            Column<T, Boolean> checkColumn = new Column<T, Boolean>(new CheckboxCell(true, false)) {
-                @Override
-                public Boolean getValue(T data) {
-                    return selectionModel.isSelected(data);
-                }
-            };
-            cellTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
-            cellTable.setColumnWidth(checkColumn, 40, PX);
-        }
-        selectionModel.addSelectionChangeHandler(selectionChangeEvent -> enableDisableButtons());
+        this.options = options;
+        this.tableElement = new Elements.Builder()
+                .start("table").id(id).css(dataTable, table, tableStriped, tableBordered, hover).end().build();
     }
 
-    @Override
     public Element asElement() {
-        return appearance.asElement();
+        return tableElement;
     }
 
-
-    // ------------------------------------------------------ data & selection
-
-    public void setData(List<T> data) {
-        dataProvider.getList().clear();
-        dataProvider.getList().addAll(data);
-        if (selectionModel instanceof SingleSelectionModel) {
-            ((SingleSelectionModel<T>) selectionModel).clear();
-        } else if (selectionModel instanceof MultiSelectionModel) {
-            ((MultiSelectionModel<T>) selectionModel).clear();
+    /**
+     * Initialized the {@link Api} instance using the {@link Options} given at constructor argument. Make sure to call
+     * this method before using any of the API methods. It's safe to call the methods multiple times (the
+     * initialization will happen only once).
+     *
+     * @return the API instance
+     */
+    public Api<T> attach() {
+        if (api == null) {
+            // TODO check security context and adjust options if necessary
+            api = DataTable.<T>$("#" + id).dataTable(options);
         }
+        return api;
     }
 
-    public void onSelectionChange(SelectionChangeEvent.Handler handler) {
-        selectionModel.addSelectionChangeHandler(handler);
-    }
 
-    public boolean hasSelection() {
-        boolean hasSelection = false;
-        if (selectionModel instanceof SingleSelectionModel) {
-            hasSelection = selectedElement() != null;
-        } else if (selectionModel instanceof MultiSelectionModel) {
-            hasSelection = !selectedElements().isEmpty();
+    // ------------------------------------------------------ API access
+
+    /**
+     * Getter for the {@link Api} instance.
+     *
+     * @return The data tables API
+     *
+     * @throws IllegalStateException if the API wasn't initialized using {@link #attach()}
+     */
+    public Api<T> api() {
+        if (api == null) {
+            throw new IllegalStateException(
+                    "DataTable('" + id + "') is not attached. Call DataTable.attach() before using any of the API methods!");
         }
-        return hasSelection;
-    }
-
-    public T selectedElement() {
-        if (selectionModel instanceof SingleSelectionModel) {
-            return ((SingleSelectionModel<T>) selectionModel).getSelectedObject();
-        } else if (selectionModel instanceof MultiSelectionModel) {
-            Set<T> selection = ((MultiSelectionModel<T>) selectionModel).getSelectedSet();
-            if (!selection.isEmpty()) {
-                return selection.iterator().next();
-            } else {
-                return null;
-            }
-        }
-        return null;
-    }
-
-    public Set<T> selectedElements() {
-        if (selectionModel instanceof SingleSelectionModel) {
-            return ((SingleSelectionModel<T>) selectionModel).getSelectedSet();
-        } else if (selectionModel instanceof MultiSelectionModel) {
-            return ((MultiSelectionModel<T>) selectionModel).getSelectedSet();
-        }
-        return null;
-    }
-
-    public void select(final T element) {
-        selectionModel.setSelected(element, true);
-    }
-
-
-    // ------------------------------------------------------ columns
-
-    public void addColumn(final Column<T, ?> col, final String headerString) {
-        cellTable.addColumn(col, headerString);
-    }
-
-    public void addColumn(final Column<T, ?> col, final SafeHtml headerHtml) {cellTable.addColumn(col, headerHtml);}
-
-
-    // ------------------------------------------------------ buttons
-
-    public void addButton(DataTableButton button) {
-        addButton(button, DEFAULT_BUTTON_GROUP);
-    }
-
-    public void addButton(DataTableButton button, String group) {
-        Element groupElement = appearance.asElement().querySelector("[data-button-group='" + group + "']");
-        if (groupElement == null) {
-            groupElement = buttonGroup(group);
-            appearance.buttonToolbar.appendChild(groupElement);
-        }
-        groupElement.appendChild(button.asElement());
-        buttons.add(button);
-    }
-
-    private Element buttonGroup(String name) {
-        // <div class="btn-group" data-button-group="<name>" role="group" aria-label="messages.tableNamedGroup(<name>)">
-        return new Elements.Builder().div()
-                .css(btnGroup)
-                .data("buttonGroup", name)
-                .aria(LABEL, messages.tableNamedGroup(name))
-                .attr(ROLE, "group") //NON-NLS
-                .build();
-    }
-
-    private void enableDisableButtons() {
-        boolean hasSelection = hasSelection();
-        for (DataTableButton button : buttons) {
-            if (button.getTarget() == DataTableButton.Target.ROW) {
-                button.setDisabled(!hasSelection);
-            }
-        }
-    }
-
-
-    // ------------------------------------------------------ security
-
-    @Override
-    public void updateSecurityContext(final SecurityContext securityContext) {
-        this.securityContext = securityContext;
-        applySecurity();
-    }
-
-    protected void applySecurity() {
-        for (DataTableButton button : buttons) {
-            button.updateSecurityContext(securityContext);
-        }
+        return api;
     }
 }

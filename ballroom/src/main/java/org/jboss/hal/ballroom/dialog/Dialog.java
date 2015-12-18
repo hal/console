@@ -28,6 +28,8 @@ import elemental.html.ButtonElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.ballroom.PatternFly;
+import org.jboss.hal.ballroom.dialog.Modal.ModalOptions;
 import org.jboss.hal.resources.Constants;
 
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.ballroom.dialog.Modal.$;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.LABEL;
 import static org.jboss.hal.resources.Names.ROLE;
@@ -45,6 +48,7 @@ import static org.jboss.hal.resources.Names.ROLE;
 public class Dialog implements IsElement {
 
     // ------------------------------------------------------ inner classes
+
 
     public enum Size {
         SMALL(modelSmall), MEDIUM(modalMedium), LARGE(modalLarge), MAX(modalMax);
@@ -78,6 +82,7 @@ public class Dialog implements IsElement {
 
 
     // ------------------------------------------------------ dialog builder
+
 
     public static final class Builder {
 
@@ -180,7 +185,7 @@ public class Dialog implements IsElement {
     // ------------------------------------------------------ dialog singleton
 
     private final static String ID = "hal-modal";
-    @SuppressWarnings("unused") private final static String SELECTOR_ID = "#" + ID;
+    private final static String SELECTOR_ID = "#" + ID;
     private static final Element root;
     private static final Element dialog;
     private static final Element closeIcon;
@@ -200,7 +205,7 @@ public class Dialog implements IsElement {
                 .div().css(modalDialog).attr("role", "document").rememberAs("dialog") //NON-NLS
                     .div().css(modalContent)
                         .div().css(modalHeader)
-                            .button().css(close).aria("label", "Close").rememberAs("closeIcon") //NON-NLS
+                            .button().css(close).aria(LABEL, "Close").rememberAs("closeIcon") //NON-NLS
                                 .span().css(pfIcon("close")).aria("hidden", "true").end() //NON-NLS
                             .end()
                             .h(4).css(modalTitle).id(labelId).rememberAs("title").end()
@@ -219,18 +224,13 @@ public class Dialog implements IsElement {
         body = rootBuilder.referenceFor("body");
         footer = rootBuilder.referenceFor("footer");
         Browser.getDocument().getBody().appendChild(root);
-        initJsEvents();
+        initEventHandler();
     }
 
-    private static native void initJsEvents() /*-{
-        var dialogId = @org.jboss.hal.ballroom.dialog.Dialog::SELECTOR_ID;
-        $wnd.$(dialogId).on('shown.bs.modal', function () {
-            @org.jboss.hal.ballroom.dialog.Dialog::open = true;
-        });
-        $wnd.$(dialogId).on('hidden.bs.modal', function () {
-            @org.jboss.hal.ballroom.dialog.Dialog::open = false;
-        });
-    }-*/;
+    private static void initEventHandler() {
+        $(SELECTOR_ID).on("shown.bs.modal", () -> Dialog.open = true);
+        $(SELECTOR_ID).on("hidden.bs.modal", () -> Dialog.open = false);
+    }
 
     private static void reset() {
         root.getClassList().remove(fade);
@@ -313,23 +313,14 @@ public class Dialog implements IsElement {
             throw new IllegalStateException(
                     "Another dialog is still open. Only one dialog can be open at a time. Please close the other dialog!");
         }
-        internalShow(closeOnEsc);
+        $(SELECTOR_ID).modal(ModalOptions.create(closeOnEsc));
+        $(SELECTOR_ID).modal("show");
+        PatternFly.initComponents(false);
     }
 
-    private native void internalShow(boolean closeOnEsc) /*-{
-        var dialogId = @org.jboss.hal.ballroom.dialog.Dialog::SELECTOR_ID;
-        $wnd.$(dialogId).modal({
-            backdrop: "static", // does not close the dialog when clicking outside
-            keyboard: closeOnEsc
-        });
-        $wnd.$(dialogId).modal('show');
-        @org.jboss.hal.ballroom.PatternFly::initOptIns(Z)(false);
-    }-*/;
-
-    private native void close() /*-{
-        var dialogId = @org.jboss.hal.ballroom.dialog.Dialog::SELECTOR_ID;
-        $wnd.$(dialogId).modal('hide');
-    }-*/;
+    private void close() {
+        $(SELECTOR_ID).modal("hide");
+    }
 
 
     // ------------------------------------------------------ properties

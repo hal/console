@@ -21,110 +21,99 @@
  */
 package org.jboss.hal.client.configuration;
 
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.view.client.ProvidesKey;
 import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.client.Browser;
 import elemental.dom.Element;
+import elemental.html.Console;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
+import org.jboss.hal.ballroom.table.Button.Scope;
+import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.ballroom.table.DataTableButton;
+import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.table.OptionsBuilder;
+import org.jboss.hal.client.bootstrap.endpoint.Endpoint;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointResources;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
-import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.Resources;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
-import static org.jboss.hal.ballroom.table.DataTableButton.Target.TABLE;
-import static org.jboss.hal.ballroom.table.DataTableButton.Target.ROW;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.resources.Names.HOST;
-import static org.jboss.hal.resources.Names.NAME_KEY;
-import static org.jboss.hal.resources.Names.PORT;
+import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
+import static org.jboss.hal.meta.security.SecurityContext.RWX;
+import static org.jboss.hal.resources.Names.*;
 
 /**
  * @author Harald Pehl
  */
+@SuppressWarnings("HardCodedStringLiteral")
 public class ConfigurationView extends ViewImpl implements ConfigurationPresenter.MyView {
 
-    static class FooBar {
+    static class FooBarBaz {
 
-        private final String foo;
-        private final String bar;
+        final String foo;
+        final String bar;
+        final String baz;
 
-        FooBar() {
+        FooBarBaz() {
             foo = "Foo-" + String.valueOf(Random.nextInt(12345));
             bar = "Bar-" + String.valueOf(Random.nextInt(12345));
+            baz = "Baz-" + String.valueOf(Random.nextInt(12345));
         }
 
-        String id() {
-            return foo + "-" + bar;
+        @Override
+        public String toString() {
+            return "(" + foo + ", " + bar + ", " + baz + ")";
         }
     }
 
 
+    private DataTable<FooBarBaz> fooBarBazTable;
+    private ModelNodeTable<Endpoint> endpointTable;
+
     @Inject
-    public ConfigurationView(EndpointResources endpointResources, Resources resources) {
-        //noinspection Convert2MethodRef
-        DataTable<FooBar> dataTable = new DataTable<>("foobar-table", (ProvidesKey<FooBar>) fooBar -> fooBar.id(),
-                SecurityContext.RWX);
-
-        dataTable.addButton(new DataTableButton("Foo", TABLE, event -> Window.alert("Bar")));
-        dataTable.addButton(new DataTableButton("Bar", ROW, event -> Window.alert("Foo")));
-
-        dataTable.addColumn(new TextColumn<FooBar>() {
-            @Override
-            public String getValue(final FooBar fooBar) {
-                return fooBar.foo;
-            }
-        }, "Foo");
-        dataTable.addColumn(new TextColumn<FooBar>() {
-            @Override
-            public String getValue(final FooBar fooBar) {
-                return fooBar.bar;
-            }
-        }, "Bar");
-
-        List<FooBar> data = new ArrayList<>();
-        int rows = 5 + Random.nextInt(12);
-        for (int i = 0; i < rows; i++) {
-            data.add(new FooBar());
-        }
-        dataTable.setData(data);
-
-        ResourceDescription resourceDescription = StaticResourceDescription.from(endpointResources.endpoint());
-        ModelNodeTable<ModelNode> modelNodeTable = new ModelNodeTable.Builder<>("endpoint",
-                node -> node.get(NAME).asString(), SecurityContext.RWX, resourceDescription)
-                .addColumn(NAME_KEY, HOST, PORT)
-                .addButton(new DataTableButton(resources.constants().add(), TABLE,
-                        event -> Browser.getWindow().alert(Names.NYI)))
-                .addButton(new DataTableButton(resources.constants().remove(), ROW,
-                        event -> Browser.getWindow().alert(Names.NYI)))
+    public ConfigurationView(EndpointResources endpointResources) {
+        Options<FooBarBaz> fooBarBazOptions = new OptionsBuilder<FooBarBaz>()
+                .button("Add row", (event, api) -> api.add(new FooBarBaz()).refresh(RESET))
+                .button("Select something", Scope.SELECTED, (event, api) -> Window.alert("Good job!"))
+                .column("foo", "Foo", (cell, type, row, meta) -> row.foo)
+                .column(new ColumnBuilder<FooBarBaz>("bar", "Bar", (cell, type, row, meta) -> row.bar)
+                        .orderable(false)
+                        .build())
+                .column("baz", "Baz", (cell, type, row, meta) -> row.baz)
+                .multiselect()
                 .build();
+        fooBarBazTable = new DataTable<>("foo-bar-baz-table", RWX, fooBarBazOptions);
 
-        ModelNode node = new ModelNode();
-        node.get("name").set("local");
-        node.get("host-name").set("127.0.0.1");
-        node.get("port").set("9990");
-        modelNodeTable.setData(Collections.singletonList(node));
+        ResourceDescription endpointDescription = StaticResourceDescription.from(endpointResources.endpoint());
+        Options<Endpoint> endpointOptions = new ModelNodeTable.Builder<Endpoint>(endpointDescription)
+                .columns(NAME_KEY, HOST, PORT)
+                .build();
+        endpointTable = new ModelNodeTable<>("endpoint-table", RWX, endpointOptions);
 
         Element element = new LayoutBuilder()
-                .header("DataTable")
-                .add(dataTable.asElement())
-                .header("ModelNodeTable")
-                .add(modelNodeTable.asElement())
+                .header("Data Table")
+                .add(fooBarBazTable.asElement())
+                .header("Endpoint Table")
+                .add(endpointTable.asElement())
                 .build();
         initWidget(Elements.asWidget(element));
+    }
+
+    @Override
+    public void attach() {
+        Console console = Browser.getWindow().getConsole();
+
+        fooBarBazTable.attach();
+        fooBarBazTable.api().onSelect((api, select) ->
+                console.log("Row was selected. Current selection:   " + api.selectedRows()));
+        fooBarBazTable.api().onDeselect((api) ->
+                console.log("Row was deselected. Current selection: " + api.selectedRows()));
+        endpointTable.attach();
+        PatternFly.initComponents();
     }
 }

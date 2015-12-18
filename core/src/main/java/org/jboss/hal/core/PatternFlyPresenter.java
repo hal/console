@@ -24,18 +24,18 @@ package org.jboss.hal.core;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
-import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import org.jboss.hal.ballroom.PatternFly;
 
 /**
- * A presenter which calls {@link PatternFly#initOptIns()} when it's {@linkplain #onReveal() revealed}. Extend from
- * this presenter if the view uses opt-in features from PatternFly / Bootstrap like tooltips or select boxes.
+ * A presenter which calls {@link PatternFly#initComponents()} when it's {@linkplain #onReveal() revealed}. Extend from
+ * this presenter if the view uses opt-in features from PatternFly / Bootstrap like data tables, tooltips or select
+ * boxes.
  *
  * @author Harald Pehl
  */
-public abstract class PatternFlyPresenter<V extends View, Proxy_ extends Proxy<?>> extends Presenter<V, Proxy_> {
+public abstract class PatternFlyPresenter<V extends PatternFlyView, Proxy_ extends Proxy<?>> extends Presenter<V, Proxy_> {
 
     public PatternFlyPresenter(final boolean autoBind, final EventBus eventBus, final V view, final Proxy_ proxy) {
         super(autoBind, eventBus, view, proxy);
@@ -62,6 +62,6 @@ public abstract class PatternFlyPresenter<V extends View, Proxy_ extends Proxy<?
     @Override
     protected void onReveal() {
         super.onReveal();
-        PatternFly.initOptIns();
+        getView().attach();
     }
 }

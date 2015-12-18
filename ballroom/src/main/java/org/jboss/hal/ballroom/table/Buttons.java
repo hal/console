@@ -19,37 +19,40 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.deployment;
+package org.jboss.hal.ballroom.table;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyStandard;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.client.NameTokens;
-import org.jboss.hal.core.PatternFlyPresenter;
-import org.jboss.hal.core.PatternFlyView;
-import org.jboss.hal.core.Slots;
+import jsinterop.annotations.JsType;
 
-import javax.inject.Inject;
+import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.resources.Names.OBJECT;
 
 /**
+ * Buttons options.
+ *
+ * @param <T> the row type
+ *
  * @author Harald Pehl
+ * @see <a href="https://datatables.net/reference/option/#buttons">https://datatables.net/reference/option/#buttons</a>
  */
-public class DeploymentPresenter extends PatternFlyPresenter<DeploymentPresenter.MyView, DeploymentPresenter.MyProxy> {
+@JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+class Buttons<T> {
 
-    // @formatter:off
-    @ProxyStandard
-    @NameToken(NameTokens.DEPLOYMENTS)
-    public interface MyProxy extends ProxyPlace<DeploymentPresenter> {}
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    static class Dom {
 
-    public interface MyView extends PatternFlyView {}
-    // @formatter:on
+        @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+        static class Factory {
+
+            public String tag;
+            public String className;
+        }
 
 
-    @Inject
-    public DeploymentPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy) {
-        super(eventBus, view, proxy, Slots.MAIN);
+        public Factory container;
+        public Factory button;
     }
+
+
+    public Button<T>[] buttons;
+    public Dom dom;
 }

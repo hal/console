@@ -36,12 +36,16 @@ public interface Names {
     String LABEL = "label";
     String NAME_KEY = "name";
     String NYI = "not yet implemented";
+    String OBJECT = "Object";
+    String PLACEMENT = "placement";
     String PORT = "port";
     String RESTRICTED = "restricted";
     String ROLE = "role";
     String RUNTIME = "Runtime";
     String SCHEME = "scheme";
     String SELECTED = "selected";
+    String TOGGLE = "toggle";
+    String TOOLTIP = "tooltip";
     String UNDEFINED = "undefined";
     String UNKNOWN = "unknown";
 }

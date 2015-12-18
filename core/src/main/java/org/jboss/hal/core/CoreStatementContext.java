@@ -28,6 +28,8 @@ import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.jboss.hal.resources.Names.UNKNOWN;
+
 /**
  * @author Harald Pehl
  */
@@ -61,16 +63,16 @@ public class CoreStatementContext implements StatementContext {
             String[] tuple = null;
             switch (key) {
                 case SELECTED_PROFILE:
-                    tuple = new String[]{"profile", "unknown"};
+                    tuple = new String[]{"profile", UNKNOWN};
                     break;
                 case SELECTED_GROUP:
-                    tuple = new String[]{"server-group", "unknown"};
+                    tuple = new String[]{"server-group", UNKNOWN};
                     break;
                 case SELECTED_HOST:
-                    tuple = new String[]{"host", "unknown"};
+                    tuple = new String[]{"host", UNKNOWN};
                     break;
                 case SELECTED_SERVER:
-                    tuple = new String[]{"server", "unknown"};
+                    tuple = new String[]{"server", UNKNOWN};
                     break;
             }
             return tuple;

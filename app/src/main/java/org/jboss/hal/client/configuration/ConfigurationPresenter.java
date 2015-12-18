@@ -22,12 +22,12 @@
 package org.jboss.hal.client.configuration;
 
 import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.core.PatternFlyPresenter;
+import org.jboss.hal.core.PatternFlyView;
 import org.jboss.hal.core.Slots;
 
 import javax.inject.Inject;
@@ -43,7 +43,7 @@ public class ConfigurationPresenter
     @NameToken(NameTokens.CONFIGURATION)
     public interface MyProxy extends ProxyPlace<ConfigurationPresenter> {}
 
-    public interface MyView extends View {}
+    public interface MyView extends PatternFlyView {}
     // @formatter:on
 
 

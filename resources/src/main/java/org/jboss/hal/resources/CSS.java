@@ -50,6 +50,7 @@ public interface CSS {
     String collapse = "collapse";
     String containerFluid = "container-fluid";
     String controlLabel = "control-label";
+    String dataTable = "datatable";
     String eapHomeRow = "eap-home-row";
     String eapHomeTitle = "eap-home-title";
     String editButtons = "edit-buttons";
@@ -66,6 +67,7 @@ public interface CSS {
     String hasError = "has-error";
     String hasFeedback = "has-feedback";
     String helpBlock = "help-block";
+    String hover = "hover";
     String in = "in";
     String inputGroup = "input-group";
     String inputGroupAddon = "input-group-addon";
@@ -93,6 +95,10 @@ public interface CSS {
     String selectpicker = "selectpicker";
     String spinner = "spinner";
     String srOnly = "sr-only";
+    String table = "table";
+    String tableBordered = "table-bordered";
+    String tableStriped = "table-striped";
+    String tooltip = "tooltip";
 
 
     static String column(int columns) {

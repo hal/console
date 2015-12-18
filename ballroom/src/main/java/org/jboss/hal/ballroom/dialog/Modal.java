@@ -19,52 +19,50 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.ballroom;
+package org.jboss.hal.ballroom.dialog;
 
-import com.google.gwt.core.client.Scheduler;
+import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
 import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.resources.CSS.selectpicker;
+import static org.jboss.hal.resources.Names.OBJECT;
 
 @JsType(isNative = true)
-public class PatternFly {
+abstract class Modal {
 
-    /**
-     * Same as {@code initComponents(true)}
-     */
-    @JsOverlay
-    public static void initComponents() {
-        initComponents(true);
+    @JsFunction
+    @FunctionalInterface
+    interface ModalHandler {
+
+        void handle();
     }
 
-    /**
-     * Initializes JavaScript based PatternFly components.
-     *
-     * @param scheduled whether to run the initialization using {@code Scheduler.get().scheduleDeferred()}
-     */
-    @JsOverlay
-    public static void initComponents(boolean scheduled) {
-        if (scheduled) {
-            Scheduler.get().scheduleDeferred(PatternFly::init);
-        } else {
-            init();
+
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    static class ModalOptions {
+
+        public String backdrop;
+        public boolean keyboard;
+
+        @JsOverlay
+        public static ModalOptions create(final boolean closeOnEsc) {
+            ModalOptions options = new ModalOptions();
+            options.backdrop = "static"; //NON-NLS
+            options.keyboard = closeOnEsc;
+            return options;
         }
     }
 
-    @JsOverlay
-    private static void init() {
-        $("." + selectpicker).selectpicker();
-        $("[data-toggle=tooltip]").tooltip();
-    }
 
     @JsMethod(namespace = GLOBAL)
-    private native static PatternFly $(@NonNls String selector);
+    native static Modal $(@NonNls String selector);
 
-    private native void selectpicker();
+    native void modal(ModalOptions modalOptions);
 
-    private native void tooltip();
+    native void modal(@NonNls String action);
+
+    native void on(@NonNls String event, ModalHandler handler);
 }

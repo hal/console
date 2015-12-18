@@ -21,16 +21,26 @@
  */
 package org.jboss.hal.core;
 
-import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.View;
-import com.gwtplatform.mvp.client.proxy.Proxy;
+import com.gwtplatform.mvp.client.ViewImpl;
+import org.jboss.hal.ballroom.PatternFly;
 
 /**
+ * Interface for views which use JavaScript based PatternFly components like select picker, tooltips or data tables.
+ *
  * @author Harald Pehl
  */
-public abstract class ApplicationPresenter<V extends View, Proxy_ extends Proxy<?>> extends PatternFlyPresenter<V, Proxy_> {
+public interface PatternFlyView extends View {
 
-    public ApplicationPresenter(final EventBus eventBus, final V view, final Proxy_ proxy) {
-        super(eventBus, view, proxy, Slots.APPLICATION);
+    /**
+     * This method should be called <em>after</em> the view's elements are attached to the DOM. Typically this method
+     * is called from {@link PatternFlyPresenter#onReveal()}. The default implementation calls {@link
+     * PatternFly#initComponents(boolean)}.
+     * <p>
+     * Please do <em>not</em> use {@link ViewImpl#onAttach()} to initialize Patternfly components. This works for
+     * widgets only, but not for elements!
+     */
+    default void attach() {
+        PatternFly.initComponents();
     }
 }

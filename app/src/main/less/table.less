@@ -1,33 +1,14 @@
-.table {
-  > tbody + tbody {
-    // disable multiple table bodies introduced in patternfly/components/bootstrap/less/tables.less
-    // if the table is empty GWT's CellTable adds an additional tbody with an empty message
-    // this rule makes sure we don't show a top border as defined by the original CSS rule
-    border-top: none;
+.datatable.hover {
+  tbody tr:hover {
+    background-color: #d1d1d1;
+  }
+  tbody td.dataTables_empty:hover {
+    background-color: #fff;
   }
 }
 
-.hal-data-table {
-  margin: 0;
-}
-
-.hal-data-table-loading, .hal-data-table-empty {
-  padding: 1em 0;
-}
-
-.hal-data-table-empty {
-  color: #8b8d8f;
-  font-style: italic;
-}
-
-.table > tbody > tr.hal-data-table-hovered-row {
-  background-color: #d1d1d1;
-}
-
-.table > tbody > tr.hal-data-table-selected-row, .table > tbody > tr.hal-data-table-keyboard-selected-row {
-  background-color: #bee1f4;
-}
-
-.hal-data-table-unused {
-
+.datatable {
+  tr.selected td {
+    background-color: #bee1f4;
+  }
 }

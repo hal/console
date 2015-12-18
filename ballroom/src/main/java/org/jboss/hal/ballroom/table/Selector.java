@@ -19,37 +19,30 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.deployment;
+package org.jboss.hal.ballroom.table;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyStandard;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.client.NameTokens;
-import org.jboss.hal.core.PatternFlyPresenter;
-import org.jboss.hal.core.PatternFlyView;
-import org.jboss.hal.core.Slots;
+import jsinterop.annotations.JsType;
 
-import javax.inject.Inject;
+import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.resources.Names.OBJECT;
 
 /**
+ * Options for how the row, column and cell selector should operate on rows.
+ *
  * @author Harald Pehl
+ * @see <a href="https://datatables.net/reference/type/selector-modifier">https://datatables.net/reference/type/selector-modifier</a>
  */
-public class DeploymentPresenter extends PatternFlyPresenter<DeploymentPresenter.MyView, DeploymentPresenter.MyProxy> {
+@JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+public class Selector {
 
     // @formatter:off
-    @ProxyStandard
-    @NameToken(NameTokens.DEPLOYMENTS)
-    public interface MyProxy extends ProxyPlace<DeploymentPresenter> {}
-
-    public interface MyView extends PatternFlyView {}
+    public enum Order {current, index}
+    public enum Page {all, current}
+    public enum Search {none, applied, removed}
     // @formatter:on
 
-
-    @Inject
-    public DeploymentPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy) {
-        super(eventBus, view, proxy, Slots.MAIN);
-    }
+    public String order;
+    public String page;
+    public String search;
+    public Boolean selected;
 }

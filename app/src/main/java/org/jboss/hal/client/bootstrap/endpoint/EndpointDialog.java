@@ -1,11 +1,11 @@
 package org.jboss.hal.client.bootstrap.endpoint;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.cellview.client.TextColumn;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.dialog.Dialog;
-import org.jboss.hal.ballroom.table.DataTableButton;
+import org.jboss.hal.ballroom.table.Button.Scope;
+import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.ModelNode;
@@ -15,10 +15,11 @@ import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 
-import static org.jboss.hal.ballroom.table.DataTableButton.Target.ROW;
-import static org.jboss.hal.ballroom.table.DataTableButton.Target.TABLE;
+import static org.jboss.hal.ballroom.table.Api.RefreshMode.HOLD;
+import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.ADD;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.SELECT;
+import static org.jboss.hal.meta.security.SecurityContext.RWX;
 import static org.jboss.hal.resources.Names.*;
 
 /**
@@ -50,23 +51,16 @@ class EndpointDialog {
         this.storage = storage;
 
         ResourceDescription description = StaticResourceDescription.from(RESOURCES.endpoint());
-        table = new ModelNodeTable.Builder<>(Ids.ENDPOINT_SELECT, Endpoint::getName, SecurityContext.RWX, description)
-                .addButton(new DataTableButton(CONSTANTS.add(), TABLE, event -> switchTo(ADD)))
-                .addButton(new DataTableButton(CONSTANTS.remove(), ROW, event -> {
-                    storage.remove(table.selectedElement());
-                    table.setData(storage.list());
-                }))
-                .addColumn(NAME_KEY)
+        Options<Endpoint> endpointOptions = new ModelNodeTable.Builder<Endpoint>(description)
+                .button(CONSTANTS.add(), (event, api) -> switchTo(ADD))
+                .button(CONSTANTS.remove(), Scope.SELECTED, (event, api) -> {
+                    storage.remove(api.selectedRow());
+                    api.clear().add(storage.list()).refresh(HOLD);
+                })
+                .column(NAME_KEY)
+                .column("url", "URL", (cell, type, row, meta) -> row.getUrl()) //NON-NLS
                 .build();
-
-        table.addColumn(new TextColumn<Endpoint>() {
-            @Override
-            public String getValue(final Endpoint endpoint) {
-                return endpoint.getUrl();
-            }
-        }, "URL"); //NON-NLS
-        table.onSelectionChange(selectionChangeEvent -> dialog.setPrimaryButtonDisabled(!table.hasSelection()));
-        table.setData(storage.list());
+        table = new ModelNodeTable<>(Ids.ENDPOINT_SELECT, RWX, endpointOptions);
 
         selectPage = new Elements.Builder()
                 .div()
@@ -76,6 +70,8 @@ class EndpointDialog {
 
         form = new ModelNodeForm.Builder<Endpoint>(Ids.ENDPOINT_ADD, SecurityContext.RWX, description)
                 .editOnly()
+                .include(NAME_KEY, SCHEME, HOST, PORT)
+                .unsorted()
                 .hideButtons()
                 .onCancel(() -> switchTo(SELECT))
                 .onSave((changedValues) -> {
@@ -110,9 +106,9 @@ class EndpointDialog {
     private void switchTo(final Mode mode) {
         if (mode == SELECT) {
             dialog.setTitle(CONSTANTS.endpointSelectTitle());
-            table.setData(storage.list());
+//            table.api().add(storage.list()).refresh(HOLD);
             dialog.setPrimaryButtonLabel(CONSTANTS.endpointConnect());
-            dialog.setPrimaryButtonDisabled(!table.hasSelection());
+            dialog.setPrimaryButtonDisabled(!table.api().hasSelection());
             Elements.setVisible(addPage, false);
             Elements.setVisible(selectPage, true);
 
@@ -129,7 +125,7 @@ class EndpointDialog {
 
     private boolean onPrimary() {
         if (mode == SELECT) {
-            manager.onConnect(table.selectedElement());
+            //            manager.onConnect(table.selectedElement());
             return true;
         } else if (mode == ADD) {
             form.save();
@@ -150,7 +146,10 @@ class EndpointDialog {
     }
 
     void show() {
-        switchTo(SELECT);
         dialog.show();
+        table.attach();
+        table.api().onSelectionChange(api -> dialog.setPrimaryButtonDisabled(!api.hasSelection()));
+        table.api().add(storage.list()).refresh(RESET);
+        switchTo(SELECT);
     }
 }

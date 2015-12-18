@@ -38,6 +38,12 @@ gulp.task('copy', function () {
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 4}));
     gulp.src('bower_components/patternfly/components/jquery/dist/jquery.min.js')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 5}));
+    gulp.src('bower_components/datatables.net/js/jquery.dataTables.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
+    gulp.src('bower_components/datatables.net-buttons/js/dataTables.buttons.min.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
+    gulp.src('bower_components/datatables.net-select/js/dataTables.select.min.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
     gulp.src('bower_components/patternfly/components/bootstrap/dist/js/bootstrap.min.js')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 6}));
     gulp.src('bower_components/patternfly/components/bootstrap-select/dist/js/bootstrap-select.min.js')

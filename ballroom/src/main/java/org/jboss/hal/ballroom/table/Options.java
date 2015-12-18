@@ -21,36 +21,27 @@
  */
 package org.jboss.hal.ballroom.table;
 
-import elemental.dom.Element;
-import elemental.html.InputElement;
-import org.jboss.gwt.elemento.core.DataElement;
-import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.gwt.elemento.core.Templated;
-import org.jboss.hal.resources.Resources;
+import jsinterop.annotations.JsType;
+
+import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.resources.Names.OBJECT;
 
 /**
+ * Options for a data table.
+ *
+ * @param <T> the row type
+ *
  * @author Harald Pehl
+ * @see <a href="https://datatables.net/reference/option/">https://datatables.net/reference/option/</a>
  */
-@Templated("Appearance.html#data-table")
-abstract class Appearance implements IsElement {
+@JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+public class Options<T> {
 
-    // @formatter:off
-    static Appearance create(final String id, final Resources resources) {
-        return new Templated_Appearance(id, resources);
-    }
-
-    abstract String id();
-    abstract Resources i18n();
-    // @formatter:on
-
-
-    @DataElement Element buttonToolbar;
-    @DataElement Element navInfo;
-    @DataElement Element cellTableHolder;
-    @DataElement Element navFirst;
-    @DataElement Element navPrev;
-    @DataElement InputElement navCurrentPage;
-    @DataElement Element navPages;
-    @DataElement Element navNext;
-    @DataElement Element navLast;
+    public Buttons<T> buttons;
+    public Column<T>[] columns;
+    public String dom;
+    public boolean paging;
+    public int pageLength;
+    public boolean searching;
+    public Select select;
 }

@@ -21,44 +21,16 @@
  */
 package org.jboss.hal.core.mbui.table;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.TextColumn;
+import org.jboss.hal.ballroom.table.Column;
+import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.core.mbui.LabelBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 
 /**
  * @author Harald Pehl
  */
 class ColumnFactory {
-
-    // I want to have tuples!
-    static class HeaderColumn<T extends ModelNode> {
-
-        final SafeHtml header;
-        final Column<T, ?> column;
-
-        HeaderColumn(final SafeHtml header, final Column<T, ?> column) {
-            this.header = header;
-            this.column = column;
-        }
-    }
-
-    interface Templates extends SafeHtmlTemplates {
-
-        @Template("<span>{0}</span>")
-        SafeHtml header(String label);
-
-        @Template("<span data-toggle=\"tooltip\" data-placement=\"top\" title=\"{1}\">{0}</span>")
-        SafeHtml headerWithDescription(String label, String description);
-    }
-
-    private static final Templates templates = GWT.create(Templates.class);
 
     private final LabelBuilder labelBuilder;
 
@@ -66,28 +38,17 @@ class ColumnFactory {
         labelBuilder = new LabelBuilder();
     }
 
-    <T extends ModelNode> HeaderColumn<T> createHeaderColumn(final Property attributeDescription) {
-        SafeHtml header;
-        String label = labelBuilder.label(attributeDescription);
-        if (attributeDescription.getValue().hasDefined(DESCRIPTION)) {
-            String description = attributeDescription.getValue().get(DESCRIPTION).asString();
-            header = templates.headerWithDescription(label, description);
-        } else {
-            header = templates.header(label);
-        }
-
+    <T extends ModelNode> Column<T> createColumn(final Property attributeDescription) {
         String name = attributeDescription.getName();
-        // TODO Think about other columns type depending on ModelType
-        TextColumn<T> column = new TextColumn<T>() {
-            @Override
-            public String getValue(final T value) {
-                if (value.hasDefined(name)) {
-                    return value.get(name).asString();
-                }
-                return null;
-            }
-        };
+        String title = labelBuilder.label(attributeDescription);
 
-        return new HeaderColumn<>(header, column);
+        // TODO Think about other columns type depending on ModelType
+        Column.RenderCallback<T, Object> render = (cell, type, row, meta) -> {
+            if (row.hasDefined(name)) {
+                return row.get(name).asString();
+            }
+            return null;
+        };
+        return new ColumnBuilder<>(name, title, render).build();
     }
 }

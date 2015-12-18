@@ -21,48 +21,30 @@
  */
 package org.jboss.hal.ballroom.table;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.cellview.client.CellTable;
-
 /**
+ * Builder for data table {@linkplain Options options}. It's highly recommended to use this builder instead of creating
+ * and assembling an options instance on your own:
+ * <pre>
+ * class FooBar {
+ *     String foo;
+ *     String bar;
+ * }
+ *
+ * Options&lt;FooBar&gt; options = new OptionsBuilder&lt;FooBar&gt;()
+ *     .button("Click Me", (event, api) -> Window.alert("Hello"))
+ *     .column("foo", "Foo", (cell, type, row, meta) -> row.foo)
+ *     .column("bar", "Bar", (cell, type, row, meta) -> row.baz)
+ *     .build();
+ * </pre>
+ *
+ * @param <T> the row type
+ *
  * @author Harald Pehl
  */
-public class DataTableResources implements CellTable.Resources {
-
-    CellTable.Resources builtIn = GWT.create(CellTable.Resources.class);
-
-    public ImageResource cellTableFooterBackground() {
-        return builtIn.cellTableFooterBackground();
-    }
+public class OptionsBuilder<T> extends GenericOptionsBuilder<OptionsBuilder<T>, T> {
 
     @Override
-    public ImageResource cellTableHeaderBackground() {
-        return builtIn.cellTableHeaderBackground();
-    }
-
-    @Override
-    public ImageResource cellTableLoading() {
-        return builtIn.cellTableLoading();
-    }
-
-    @Override
-    public ImageResource cellTableSelectedBackground() {
-        return builtIn.cellTableSelectedBackground();
-    }
-
-    @Override
-    public ImageResource cellTableSortAscending() {
-        return builtIn.cellTableSortAscending();
-    }
-
-    @Override
-    public ImageResource cellTableSortDescending() {
-        return builtIn.cellTableSortDescending();
-    }
-
-    @Override
-    public CellTable.Style cellTableStyle() {
-        return new DataTableStyles();
+    protected OptionsBuilder<T> that() {
+        return this;
     }
 }
