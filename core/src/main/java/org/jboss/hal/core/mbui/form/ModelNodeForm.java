@@ -34,12 +34,15 @@ import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.core.mbui.LabelBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
+import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -47,6 +50,9 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelType.BIG_DECIMAL;
+import static org.jboss.hal.dmr.ModelType.BIG_INTEGER;
+import static org.jboss.hal.dmr.ModelType.INT;
 
 /**
  * @author Harald Pehl
@@ -68,9 +74,9 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         boolean unsorted;
         boolean includeRuntime;
         boolean hideButtons;
-        SaveCallback saveCallback;
-        CancelCallback cancelCallback;
-        ResetCallback resetCallback;
+        SaveCallback<T> saveCallback;
+        CancelCallback<T> cancelCallback;
+        ResetCallback<T> resetCallback;
 
 
         // ------------------------------------------------------ configure required and optional settings
@@ -139,17 +145,17 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             return this;
         }
 
-        public Builder<T> onSave(final SaveCallback saveCallback) {
+        public Builder<T> onSave(final SaveCallback<T> saveCallback) {
             this.saveCallback = saveCallback;
             return this;
         }
 
-        public Builder<T> onCancel(final CancelCallback cancelCallback) {
+        public Builder<T> onCancel(final CancelCallback<T> cancelCallback) {
             this.cancelCallback = cancelCallback;
             return this;
         }
 
-        public Builder<T> onReset(final ResetCallback resetCallback) {
+        public Builder<T> onReset(final ResetCallback<T> resetCallback) {
             this.resetCallback = resetCallback;
             return this;
         }
@@ -212,12 +218,14 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelNodeForm.class);
 
+    private final ResourceDescription resourceDescription;
     private final FormItemProvider defaultFormItemProvider;
     private final Map<String, SaveOperationStep> saveOperations;
 
     private ModelNodeForm(final Builder<T> builder) {
         super(builder.id, builder.stateMachine(), builder.securityContext);
 
+        this.resourceDescription = builder.resourceDescription;
         this.defaultFormItemProvider = new DefaultFormItemProvider();
         this.saveOperations = builder.saveOperations;
         this.saveCallback = builder.saveCallback;
@@ -249,6 +257,75 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                 }
             } else {
                 logger.warn("Unable to create form item for '{}' in form '{}'", name, builder.id); //NON-NLS
+            }
+        }
+    }
+
+    @Override
+    public void persistModel() {
+        T model = getModel();
+
+        for (FormItem formItem : getFormItems()) {
+            String name = formItem.getName();
+            ModelNode attribute = model.get(name);
+
+            if (formItem.isUndefined()) {
+                attribute.set(ModelType.UNDEFINED);
+
+            } else if (formItem.isModified()) {
+                ModelNode attributeDescription = resourceDescription.find(name);
+                if (attributeDescription == null) {
+                    //noinspection HardCodedStringLiteral
+                    logger.error("{}: Unable to persist '{}': No attribute description found in\n{}", formId(), name,
+                            resourceDescription);
+                    continue;
+                }
+                ModelType type = attributeDescription.get(TYPE).asType();
+                Object value = formItem.getValue();
+                switch (type) {
+                    case BOOLEAN:
+                        attribute.set((Boolean) value);
+                        break;
+
+                    case BIG_INTEGER:
+                    case INT:
+                    case LONG:
+                        Long longValue = (Long) value;
+                        if (type == BIG_INTEGER) {
+                            attribute.set(BigInteger.valueOf(longValue));
+                        } else if (type == INT) {
+                            attribute.set(longValue.intValue());
+                        } else {
+                            attribute.set(longValue);
+                        }
+                        break;
+
+                    case BIG_DECIMAL:
+                    case DOUBLE:
+                        Double doubleValue = (Double) value;
+                        if (type == BIG_DECIMAL) {
+                            attribute.set(BigDecimal.valueOf(doubleValue));
+                        } else {
+                            attribute.set(doubleValue);
+                        }
+                        break;
+
+                    case STRING:
+                        attribute.set(String.valueOf(value));
+                        break;
+
+                    case BYTES:
+                    case EXPRESSION:
+                    case LIST:
+                    case OBJECT:
+                    case PROPERTY:
+                    case TYPE:
+                    case UNDEFINED:
+                        //noinspection HardCodedStringLiteral
+                        logger.warn("{}: persisting form field '{}' to type '{}' not yet implemented", formId(), name,
+                                type);
+                        break;
+                }
             }
         }
     }

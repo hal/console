@@ -36,6 +36,7 @@ import static org.jboss.hal.resources.CSS.formControl;
 import static org.jboss.hal.resources.CSS.selectpicker;
 
 /**
+ * TODO isModified() does not work!
  * @author Harald Pehl
  */
 public class SelectBoxItem extends AbstractFormItem<String> {
@@ -43,12 +44,8 @@ public class SelectBoxItem extends AbstractFormItem<String> {
     private SelectBoxElement comboBox;
 
     public SelectBoxItem(final String name, final String label, List<String> values) {
-        this(name, label, values, null);
-    }
-
-    public SelectBoxItem(final String name, final String label, List<String> values, String defaultValue) {
         super(name, label);
-        setValues(values, defaultValue);
+        setValues(values);
     }
 
     @Override
@@ -65,12 +62,19 @@ public class SelectBoxItem extends AbstractFormItem<String> {
         return comboBox;
     }
 
-    public void setValues(List<String> values, String defaultValue) {
-        comboBox.setValues(values, defaultValue);
+    public void setValues(List<String> values) {
+        comboBox.setValues(values);
     }
 
     @Override
     public boolean supportsExpressions() {
+        return false;
+    }
+
+    @Override
+    public boolean isUndefined() {
+        // As for now a select box has always a value and is as such never undefined
+        // TODO Check if there's a use case when the user wants to clear / undefine the select box
         return false;
     }
 
@@ -88,7 +92,9 @@ public class SelectBoxItem extends AbstractFormItem<String> {
             indexedValues = HashBiMap.create();
         }
 
-        void setValues(List<String> values, String defaultValue) {
+        void setValues(List<String> values) {
+            String currentValue = getValue();
+
             indexedValues.clear();
             Elements.removeChildrenFrom(element);
 
@@ -98,10 +104,10 @@ public class SelectBoxItem extends AbstractFormItem<String> {
                 OptionElement option = Browser.getDocument().createOptionElement();
                 option.setText(value);
                 element.appendChild(option);
-                if (defaultValue != null && defaultValue.equals(value)) {
+                indexedValues.put(i, value);
+                if (value.equals(currentValue)) {
                     defaultIndex = i;
                 }
-                indexedValues.put(i, value);
                 i++;
             }
             element.setSelectedIndex(defaultIndex);
@@ -145,7 +151,7 @@ public class SelectBoxItem extends AbstractFormItem<String> {
         public String getValue() {
             int selectedIndex = element.getSelectedIndex();
             if (indexedValues.containsKey(selectedIndex)) {
-                indexedValues.get(selectedIndex);
+                return indexedValues.get(selectedIndex);
             }
             return null;
         }

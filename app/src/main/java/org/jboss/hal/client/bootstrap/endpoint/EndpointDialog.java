@@ -56,6 +56,7 @@ class EndpointDialog {
                 .button(CONSTANTS.remove(), Scope.SELECTED, (event, api) -> {
                     storage.remove(api.selectedRow());
                     api.clear().add(storage.list()).refresh(HOLD);
+                    dialog.setPrimaryButtonDisabled(!table.api().hasSelection());
                 })
                 .column(NAME_KEY)
                 .column("url", "URL", (cell, type, row, meta) -> row.getUrl()) //NON-NLS
@@ -73,17 +74,9 @@ class EndpointDialog {
                 .include(NAME_KEY, SCHEME, HOST, PORT)
                 .unsorted()
                 .hideButtons()
-                .onCancel(() -> switchTo(SELECT))
-                .onSave((changedValues) -> {
-                    // form is valid here
-                    ModelNode node = new ModelNode();
-                    node.get(NAME_KEY).set(String.valueOf(changedValues.get(NAME_KEY)));
-                    node.get(SCHEME).set(String.valueOf(changedValues.get(SCHEME)));
-                    node.get(HOST).set(String.valueOf(changedValues.get(HOST)));
-                    if (changedValues.containsKey(PORT)) {
-                        node.get(PORT).set((Integer) changedValues.get(PORT));
-                    }
-                    storage.add(new Endpoint(node));
+                .onCancel((form) -> switchTo(SELECT))
+                .onSave((form, changedValues) -> {
+                    storage.add(form.getModel());
                     switchTo(SELECT);
                 })
                 .build();
@@ -106,7 +99,7 @@ class EndpointDialog {
     private void switchTo(final Mode mode) {
         if (mode == SELECT) {
             dialog.setTitle(CONSTANTS.endpointSelectTitle());
-//            table.api().add(storage.list()).refresh(HOLD);
+            table.api().clear().add(storage.list()).refresh(HOLD);
             dialog.setPrimaryButtonLabel(CONSTANTS.endpointConnect());
             dialog.setPrimaryButtonDisabled(!table.api().hasSelection());
             Elements.setVisible(addPage, false);
@@ -117,6 +110,7 @@ class EndpointDialog {
             form.clearValues();
             form.edit(new Endpoint(new ModelNode()));
             dialog.setPrimaryButtonLabel(CONSTANTS.add());
+            dialog.setPrimaryButtonDisabled(false);
             Elements.setVisible(selectPage, false);
             Elements.setVisible(addPage, true);
         }
@@ -125,11 +119,10 @@ class EndpointDialog {
 
     private boolean onPrimary() {
         if (mode == SELECT) {
-            //            manager.onConnect(table.selectedElement());
+            manager.onConnect(table.api().selectedRow());
             return true;
         } else if (mode == ADD) {
             form.save();
-            switchTo(SELECT);
             return false;
         }
         return false;

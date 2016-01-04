@@ -36,29 +36,30 @@ public interface Form<T> extends IsElement {
         READONLY, EDITING
     }
 
+
     enum Operation {
         VIEW, EDIT, CANCEL, SAVE, RESET
     }
 
 
     @FunctionalInterface
-    interface SaveCallback {
+    interface SaveCallback<T> {
 
-        void onSave(Map<String, Object> changedValues);
+        void onSave(Form<T> form, Map<String, Object> changedValues);
     }
 
 
     @FunctionalInterface
-    interface ResetCallback {
+    interface ResetCallback<T> {
 
-        void onReset();
+        void onReset(Form<T> form);
     }
 
 
     @FunctionalInterface
-    interface CancelCallback {
+    interface CancelCallback<T> {
 
-        void onCancel();
+        void onCancel(Form<T> form);
     }
 
 
@@ -81,21 +82,26 @@ public interface Form<T> extends IsElement {
      */
     void save();
 
-    void setSaveCallback(SaveCallback saveCallback);
+    /**
+     * Make the changes in edit mode persistent.
+     */
+    void persistModel();
+
+    void setSaveCallback(SaveCallback<T> saveCallback);
 
     /**
      * Cancels any modifications to the model.
      */
     void cancel();
 
-    void setCancelCallback(CancelCallback cancelCallback);
+    void setCancelCallback(CancelCallback<T> cancelCallback);
 
     /**
      * Resets the model.
      */
     void reset();
 
-    void setResetCallback(ResetCallback resetCallback);
+    void setResetCallback(ResetCallback<T> resetCallback);
 
     /**
      * @return the current model.
@@ -120,6 +126,8 @@ public interface Form<T> extends IsElement {
      * @param message an error message
      */
     void invalidate(String formItem, String message);
+
+    void clearValues();
 
     /**
      * Clears all error markers.

@@ -61,12 +61,34 @@ public class ResourceDescription extends ModelNode {
         return get(ATTRIBUTES).asPropertyList();
     }
 
+    public List<Property> getRequiredAttributes() {
+        if (hasAttributes()) {
+            Iterable<Property> required = Iterables.filter(getAttributes(),
+                    requestProperty -> requestProperty.getValue().hasDefined(NILLABLE) &&
+                            !requestProperty.getValue().get(NILLABLE).asBoolean());
+            return Lists.newArrayList(required);
+
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    public List<Property> getRequestProperties() {
+        String path = OPERATIONS + "." + ADD + "." + REQUEST_PROPERTIES;
+        ModelNode requestProperties = ModelNodeHelper.failSafeGet(this, path);
+        if (requestProperties.isDefined()) {
+            return requestProperties.asPropertyList();
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
     public List<Property> getRequiredRequestProperties() {
         String path = OPERATIONS + "." + ADD + "." + REQUEST_PROPERTIES;
         ModelNode requestProperties = ModelNodeHelper.failSafeGet(this, path);
 
         if (requestProperties.isDefined()) {
-            Iterable<Property> required = Iterables.filter(requestProperties.asPropertyList(),
+            Iterable<Property> required = Iterables.filter(getRequestProperties(),
                     requestProperty -> requestProperty.getValue().hasDefined(REQUIRED) &&
                             requestProperty.getValue().get(REQUIRED).asBoolean());
             return Lists.newArrayList(required);
@@ -76,15 +98,13 @@ public class ResourceDescription extends ModelNode {
         }
     }
 
-    public List<Property> getRequiredAttributes() {
-        if (hasAttributes()) {
-            Iterable<Property> required = Iterables.filter(get(ATTRIBUTES).asPropertyList(),
-                    requestProperty -> requestProperty.getValue().hasDefined(NILLABLE) &&
-                            !requestProperty.getValue().get(NILLABLE).asBoolean());
-            return Lists.newArrayList(required);
-
-        } else {
-            return Collections.emptyList();
+    public ModelNode find(String name) {
+        List<Property> properties = hasAttributes() ? getAttributes() : getRequestProperties();
+        for (Property property : properties) {
+            if (name.equals(property.getName())) {
+                return property.getValue();
+            }
         }
+        return null;
     }
 }

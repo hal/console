@@ -24,6 +24,7 @@ package org.jboss.hal.dmr;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
+import com.google.inject.Provider;
 
 /**
  * Static helper methods for dealing with {@link ModelNode}s.
@@ -62,5 +63,17 @@ public final class ModelNodeHelper {
         }
 
         return undefined;
+    }
+
+    public static <T> T getOrDefault(final ModelNode modelNode, Provider<T> provider, T defaultValue) {
+        T result = defaultValue;
+        if (modelNode != null) {
+            try {
+                result = provider.get();
+            } catch (Throwable t) {
+                result = defaultValue;
+            }
+        }
+        return result;
     }
 }

@@ -30,6 +30,7 @@ public interface Names {
 
     String CONFIGURATION = "Configuration";
     String DEPLOYMENTS = "Deployments";
+    String DESELECT = "deselect";
     String FAILURE = "failure";
     String GET = "GET";
     String HOST = "host";
@@ -41,8 +42,10 @@ public interface Names {
     String PORT = "port";
     String RESTRICTED = "restricted";
     String ROLE = "role";
+    String ROW = "row";
     String RUNTIME = "Runtime";
     String SCHEME = "scheme";
+    String SELECT = "select";
     String SELECTED = "selected";
     String TOGGLE = "toggle";
     String TOOLTIP = "tooltip";

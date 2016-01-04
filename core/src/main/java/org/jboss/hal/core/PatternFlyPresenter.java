@@ -26,7 +26,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
-import org.jboss.hal.ballroom.PatternFly;
 
 /**
  * A presenter which calls {@link PatternFly#initComponents()} when it's {@linkplain #onReveal() revealed}. Extend from

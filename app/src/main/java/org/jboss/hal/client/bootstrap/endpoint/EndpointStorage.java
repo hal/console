@@ -66,6 +66,7 @@ public class EndpointStorage {
 
     public void remove(Endpoint endpoint) {
         endpoints.remove(endpoint);
+        save();
     }
 
     public void saveSelection(Endpoint selected) {

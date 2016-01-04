@@ -21,17 +21,25 @@
  */
 package org.jboss.hal.core.mbui.form;
 
+import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.form.CheckBoxItem;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.NumberItem;
+import org.jboss.hal.ballroom.form.SelectBoxItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.core.mbui.LabelBuilder;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
+import java.util.List;
+
+import static java.util.Collections.emptyList;
+import static org.jboss.hal.ballroom.form.NumberItem.MAX_SAFE_NUMBER;
+import static org.jboss.hal.ballroom.form.NumberItem.MIN_SAFE_NUMBER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
@@ -49,6 +57,7 @@ public class DefaultFormItemProvider implements FormItemProvider {
         String name = attributeDescription.getName();
         String label = labelBuilder.label(attributeDescription);
         ModelNode modelNode = attributeDescription.getValue();
+
         if (modelNode.hasDefined(TYPE)) {
             ModelType type = modelNode.get(TYPE).asType();
             switch (type) {
@@ -57,8 +66,11 @@ public class DefaultFormItemProvider implements FormItemProvider {
                 case DOUBLE:
                 case INT:
                 case LONG:
-                    formItem = new NumberItem(name, label);
+                    long min = modelNode.get(MIN).asLong(MIN_SAFE_NUMBER);
+                    long max = modelNode.get(MAX).asLong(MAX_SAFE_NUMBER);
+                    formItem = new NumberItem(name, label, min, max);
                     break;
+
                 case BOOLEAN:
                     formItem = new CheckBoxItem(name, label);
                     break;
@@ -73,14 +85,29 @@ public class DefaultFormItemProvider implements FormItemProvider {
                 case PROPERTY:
                     break;
                 case STRING:
-                    formItem = new TextBoxItem(name, label);
+                    List<ModelNode> allowedNodes = ModelNodeHelper
+                            .getOrDefault(modelNode, () -> modelNode.get(ALLOWED).asList(), emptyList());
+                    List<String> allowedValues = Lists.transform(allowedNodes, ModelNode::asString);
+                    if (allowedValues.isEmpty()) {
+                        formItem = new TextBoxItem(name, label);
+                    } else {
+                        formItem = new SelectBoxItem(name, label, allowedValues);
+                    }
                     break;
                 case TYPE:
                     break;
                 case UNDEFINED:
                     break;
             }
+
+            if (formItem != null) {
+                formItem.setRequired(!modelNode.get(NILLABLE).asBoolean(true));
+                if (formItem.supportsExpressions()) {
+                    formItem.setExpressionAllowed(modelNode.get(EXPRESSION_ALLOWED).asBoolean(false));
+                }
+            }
         }
+
         return formItem;
     }
 }

@@ -239,7 +239,6 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     public void identifyAs(String id, String... additionalIds) {
         String fq = IdBuilder.build(id, additionalIds);
         setId(fq);
-        setName(fq);
         asElement(EDITING).getDataset().setAt("formItemGroup", fq); //NON-NLS
         labelElement.getDataset().setAt("formItemLabel", fq); //NON-NLS
         inputElement.asElement().getDataset().setAt("formItemControl", fq); //NON-NLS
@@ -395,7 +394,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public void resetMetaData() {
-        setExpressionValue(null);
+        setExpressionValue(null); // TODO Why?
         setModified(false);
         setUndefined(true);
         clearError();

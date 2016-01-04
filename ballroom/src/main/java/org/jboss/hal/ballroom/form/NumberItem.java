@@ -41,12 +41,12 @@ public class NumberItem extends AbstractFormItem<Long> {
     /**
      * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MIN_SAFE_INTEGER
      */
-    private static final long MIN_SAFE_NUMBER = -9007199254740991l;
+    public static final long MIN_SAFE_NUMBER = -9007199254740991l;
 
     /**
      * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
      */
-    private static final long MAX_SAFE_NUMBER = 9007199254740991l;
+    public static final long MAX_SAFE_NUMBER = 9007199254740991l;
 
     private final static Constants CONSTANTS = GWT.create(Constants.class);
     private final static Messages MESSAGES = GWT.create(Messages.class);

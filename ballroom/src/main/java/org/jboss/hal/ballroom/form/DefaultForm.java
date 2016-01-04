@@ -61,8 +61,11 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityContextAware {
 
-    private final static Constants CONSTANTS = GWT.create(Constants.class);
-    private final static String NOT_INITIALIZED = "Form element not initialized. Please add this form to the DOM before calling any of the form operations like view(), edit(), save(), cancel() or reset()";
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
+    private static final String ERROR_MESSAGE = "errorMessage";
+    private static final String ERROR_MESSAGES = "errorMessages";
+    private static final String MODEL_MUST_NOT_BE_NULL = "Model must not be null in ";
+    private static final String NOT_INITIALIZED = "Form element not initialized. Please add this form to the DOM before calling any of the form operations like view(), edit(), save(), cancel() or reset()";
 
     private final String id;
     private final StateMachine stateMachine;
@@ -82,9 +85,9 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     private EventListener exitEditWithEsc;
 
     // accessible in subclasses
-    protected SaveCallback saveCallback;
-    protected ResetCallback resetCallback;
-    protected CancelCallback cancelCallback;
+    protected SaveCallback<T> saveCallback;
+    protected ResetCallback<T> resetCallback;
+    protected CancelCallback<T> cancelCallback;
 
 
     // ------------------------------------------------------ initialization
@@ -170,12 +173,12 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         Elements.Builder errorPanelBuilder = new Elements.Builder()
             .div().css(alert, alertDanger).rememberAs("errorPanel")
                 .span().css(pfIcon("error-circle-o")).end()
-                .span().rememberAs("errorMessage").end()
-                .ul().rememberAs("errorMessages").end()
+                .span().rememberAs(ERROR_MESSAGE).end()
+                .ul().rememberAs(ERROR_MESSAGES).end()
             .end();
         // @formatter:on
-        errorMessage = errorPanelBuilder.referenceFor("errorMessage");
-        errorMessages = errorPanelBuilder.referenceFor("errorMessages");
+        errorMessage = errorPanelBuilder.referenceFor(ERROR_MESSAGE);
+        errorMessages = errorPanelBuilder.referenceFor(ERROR_MESSAGES);
         errorPanel = errorPanelBuilder.build();
         clearErrors();
 
@@ -219,7 +222,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     @Override
     public final void view(final T model) {
         if (model == null) {
-            throw new NullPointerException("Model must not be null in " + formId() + ".view(T)");
+            throw new NullPointerException(MODEL_MUST_NOT_BE_NULL + formId() + ".view(T)");
         }
         if (!initialized()) {
             throw new IllegalStateException(NOT_INITIALIZED);
@@ -231,7 +234,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     @Override
     public final void edit(final T model) {
         if (model == null) {
-            throw new NullPointerException("Model must not be null in " + formId() + ".edit(T)");
+            throw new NullPointerException(MODEL_MUST_NOT_BE_NULL + formId() + ".edit(T)");
         }
         if (!initialized()) {
             throw new IllegalStateException(NOT_INITIALIZED);
@@ -247,15 +250,26 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         }
         boolean valid = validate();
         if (valid) {
+            persistModel();
             if (saveCallback != null) {
-                saveCallback.onSave(getChangedValues());
+                saveCallback.onSave(this, getChangedValues());
+            }
+            for (FormItem formItem : formItems.values()) {
+                formItem.resetMetaData();
             }
             execute(SAVE);
         }
     }
 
+    /**
+     * Called from {@link #save()} if {@code validate() == true}. Empty implementation.
+     */
     @Override
-    public void setSaveCallback(final SaveCallback saveCallback) {
+    public void persistModel() {
+    }
+
+    @Override
+    public void setSaveCallback(final SaveCallback<T> saveCallback) {
         this.saveCallback = saveCallback;
     }
 
@@ -276,13 +290,13 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         }
         clearErrors();
         if (cancelCallback != null) {
-            cancelCallback.onCancel();
+            cancelCallback.onCancel(this);
         }
         execute(CANCEL);
     }
 
     @Override
-    public void setCancelCallback(final CancelCallback cancelCallback) {
+    public void setCancelCallback(final CancelCallback<T> cancelCallback) {
         this.cancelCallback = cancelCallback;
     }
 
@@ -292,17 +306,17 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             throw new IllegalStateException(NOT_INITIALIZED);
         }
         if (resetCallback != null) {
-            resetCallback.onReset();
+            resetCallback.onReset(this);
         }
         execute(RESET);
     }
 
     @Override
-    public void setResetCallback(final ResetCallback resetCallback) {
+    public void setResetCallback(final ResetCallback<T> resetCallback) {
         this.resetCallback = resetCallback;
     }
 
-    private String formId() {
+    protected String formId() {
         return "form(" + id + ")"; //NON-NLS
     }
 
@@ -462,6 +476,14 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     }
 
     @Override
+    public void clearValues() {
+        for (FormItem formItem : formItems.values()) {
+            formItem.clearValue();
+            formItem.resetMetaData();
+        }
+    }
+
+    @Override
     public void clearErrors() {
         for (FormItem formItem : formItems.values()) {
             formItem.clearError();
@@ -492,13 +514,6 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
                 }
             }
             Elements.setVisible(errorPanel, true);
-        }
-    }
-
-    public void clearValues() {
-        for (FormItem formItem : formItems.values()) {
-            formItem.clearValue();
-            formItem.resetMetaData();
         }
     }
 }

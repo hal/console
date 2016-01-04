@@ -61,6 +61,7 @@ public interface ModelDescriptionConstants {
     String DOMAIN_RESULTS = "domain-results";
     String EXCEPTIONS = "exceptions";
     String EXECUTE = "execute";
+    String EXPRESSION_ALLOWED = "expression-allowed";
     String EXTENSION = "extension";
     String FAILED = "failed";
     String FAILURE_DESCRIPTION = "failure-description";
