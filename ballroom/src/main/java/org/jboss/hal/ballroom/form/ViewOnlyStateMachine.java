@@ -27,6 +27,8 @@ import static org.jboss.hal.ballroom.form.Form.Operation.VIEW;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 
 /**
+ * A read-only state machine. Supports only the {@link Form.Operation#VIEW} operation.
+ *
  * @author Harald Pehl
  */
 public class ViewOnlyStateMachine extends AbstractStateMachine implements StateMachine {

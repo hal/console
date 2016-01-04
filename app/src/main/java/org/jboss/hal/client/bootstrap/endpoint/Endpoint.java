@@ -30,6 +30,10 @@ import static org.jboss.hal.resources.Names.*;
  */
 public class Endpoint extends ModelNode {
 
+    public Endpoint() {
+        this(new ModelNode());
+    }
+
     public Endpoint(ModelNode endpoint) {
         set(endpoint);
     }

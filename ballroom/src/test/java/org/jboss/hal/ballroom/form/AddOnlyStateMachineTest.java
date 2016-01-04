@@ -10,13 +10,13 @@ import static org.junit.Assert.*;
 /**
  * @author Harald Pehl
  */
-public class EditOnlyStateMachineTest {
+public class AddOnlyStateMachineTest {
 
     private StateMachine stateMachine;
 
     @Before
     public void setUp() {
-        stateMachine = new EditOnlyStateMachine();
+        stateMachine = new AddOnlyStateMachine();
     }
 
     @Test
@@ -27,7 +27,8 @@ public class EditOnlyStateMachineTest {
     @Test
     public void supports() {
         assertFalse(stateMachine.supports(VIEW));
-        assertTrue(stateMachine.supports(EDIT));
+        assertTrue(stateMachine.supports(ADD));
+        assertFalse(stateMachine.supports(EDIT));
         assertFalse(stateMachine.supports(CANCEL));
         assertFalse(stateMachine.supports(SAVE));
         assertFalse(stateMachine.supports(RESET));
@@ -38,16 +39,21 @@ public class EditOnlyStateMachineTest {
         stateMachine.execute(VIEW);
     }
 
-    @Test
-    public void initialEdit() {
+    @Test(expected = UnsupportedOperationException.class)
+    public void edit() {
         stateMachine.execute(EDIT);
+    }
+
+    @Test
+    public void initialAdd() {
+        stateMachine.execute(ADD);
         assertEquals(EDITING, stateMachine.current());
     }
 
     @Test
-    public void repeatedEdit() {
-        stateMachine.execute(EDIT);
-        stateMachine.execute(EDIT);
+    public void repeatedAdd() {
+        stateMachine.execute(ADD);
+        stateMachine.execute(ADD);
         assertEquals(EDITING, stateMachine.current());
     }
 
@@ -58,7 +64,7 @@ public class EditOnlyStateMachineTest {
 
     @Test
     public void cancel() {
-        stateMachine.execute(EDIT);
+        stateMachine.execute(ADD);
         stateMachine.execute(CANCEL);
         assertEquals(EDITING, stateMachine.current());
     }
@@ -70,7 +76,7 @@ public class EditOnlyStateMachineTest {
 
     @Test
     public void save() {
-        stateMachine.execute(EDIT);
+        stateMachine.execute(ADD);
         stateMachine.execute(SAVE);
         assertEquals(EDITING, stateMachine.current());
     }

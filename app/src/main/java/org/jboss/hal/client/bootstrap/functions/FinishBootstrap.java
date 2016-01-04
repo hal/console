@@ -27,8 +27,6 @@ import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
@@ -36,8 +34,6 @@ import javax.inject.Inject;
  * @author Harald Pehl
  */
 public class FinishBootstrap implements BootstrapFunction {
-
-    private static final Logger logger = LoggerFactory.getLogger(FinishBootstrap.class);
 
     private final EventBus eventBus;
     private final Resources resources;
@@ -53,9 +49,14 @@ public class FinishBootstrap implements BootstrapFunction {
     public void execute(final Control<FunctionContext> control) {
         // reset the uncaught exception handler setup in HalPreBootstrapper
         GWT.setUncaughtExceptionHandler(e -> {
-            logger.error("Uncaught exception: {}", e.getMessage()); //NON-NLS
+            logger.error("{}: Uncaught exception: {}", name(), e.getMessage()); //NON-NLS
             eventBus.post(Message.error(resources.constants().unknownError(), e.getMessage()));
         });
         control.proceed();
+    }
+
+    @Override
+    public String name() {
+        return "Bootstrap[FinishBootstrap]";
     }
 }

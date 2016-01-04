@@ -32,15 +32,12 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.InstanceInfo;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.config.semver.Versions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
 public class CheckForUpdate implements BootstrapFunction {
 
     private static final String UPDATE_URL = "http://access-halproject.rhcloud.com/latest";
-    private static final Logger logger = LoggerFactory.getLogger(CheckForUpdate.class);
 
     private final Environment environment;
 
@@ -51,12 +48,13 @@ public class CheckForUpdate implements BootstrapFunction {
 
     @SuppressWarnings("HardCodedStringLiteral")
     public void execute(final Control<FunctionContext> control) {
+        logStart();
         // only check for community updates
         if (environment.getInstanceInfo() == InstanceInfo.EAP) {
-            logger.debug("Bootstrap[CheckForUpdate]: Skip for EAP");
+            logger.debug("{}: Skip for EAP", name());
+            logDone();
             control.proceed();
         } else {
-            logger.debug("Bootstrap[CheckForUpdate]: Start");
             RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, UPDATE_URL);
             builder.setTimeoutMillis(500); // we're in bootstrap and need a response fast!
             builder.setCallback(new RequestCallback() {
@@ -65,26 +63,36 @@ public class CheckForUpdate implements BootstrapFunction {
                     try {
                         Version version = Versions.parseVersion(response.getText());
                         environment.setLatestHalVersion(version);
-                        logger.debug("Bootstrap[CheckForUpdate]: Version from update url {}", version);
+                        logger.debug("{}: Version from update url {}", name(), version);
                     } catch (Throwable t) {
-                        logger.warn("Cannot parse version from update server at {}: {}", UPDATE_URL, t.getMessage());
+                        logger.warn("{}: Cannot parse version from update server at {}: {}", name(), UPDATE_URL,
+                                t.getMessage());
                     } finally {
+                        logDone();
                         control.proceed();
                     }
                 }
 
                 @Override
                 public void onError(final Request request, final Throwable throwable) {
-                    logger.warn("Cannot read version from update server at {}: {}", UPDATE_URL, throwable.getMessage());
+                    logger.warn("{}: Cannot read version from update server at {}: {}", name(), UPDATE_URL,
+                            throwable.getMessage());
+                    logDone();
                     control.proceed();
                 }
             });
             try {
                 builder.send();
             } catch (RequestException e) {
-                logger.warn("Cannot contact update server at {}: {}", UPDATE_URL, e.getMessage());
+                logger.warn("{}: Cannot contact update server at {}: {}", name(), UPDATE_URL, e.getMessage());
+                logDone();
                 control.proceed();
             }
         }
+    }
+
+    @Override
+    public String name() {
+        return "Bootstrap[CheckForUpdate]";
     }
 }

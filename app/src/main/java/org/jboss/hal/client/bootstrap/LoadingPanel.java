@@ -26,11 +26,9 @@ import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 
-import static org.jboss.hal.resources.CSS.loadingContainer;
-import static org.jboss.hal.resources.CSS.spinner;
+import static org.jboss.hal.resources.CSS.*;
 
 /**
  * @author Harald Pehl
@@ -50,15 +48,15 @@ public class LoadingPanel implements IsElement {
 
     private static LoadingPanel instance;
 
-    private final Element loading;
+    private final Element root;
 
     private LoadingPanel() {
         // @formatter:off
-        loading = new Elements.Builder()
-            .div().css(CSS.loading, loadingContainer)
-                .div().css(CSS.loading)
+        root = new Elements.Builder()
+            .div().css(loadingContainer)
+                .div().css(loading)
                     .h(3).innerText(CONSTANTS.loading()).end()
-                    .span().css(spinner).end()
+                    .div().css(spinner).end()
                 .end()
             .end()
         .build();
@@ -67,14 +65,14 @@ public class LoadingPanel implements IsElement {
 
     @Override
     public Element asElement() {
-        return loading;
+        return root;
     }
 
     public void on() {
-        Elements.setVisible(loading, true);
+        Elements.setVisible(root, true);
     }
 
     public void off() {
-        Elements.setVisible(loading, false);
+        Elements.setVisible(root, false);
     }
 }

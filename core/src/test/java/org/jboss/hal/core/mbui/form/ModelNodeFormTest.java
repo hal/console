@@ -3,8 +3,8 @@ package org.jboss.hal.core.mbui.form;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.gwt.junit.GWTMockUtilities;
-import org.jboss.hal.ballroom.form.DefaultStateMachine;
-import org.jboss.hal.ballroom.form.EditOnlyStateMachine;
+import org.jboss.hal.ballroom.form.ExistingModelStateMachine;
+import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.StateMachine;
 import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
@@ -44,7 +44,7 @@ public class ModelNodeFormTest {
     public void viewAndEdit() {
         new ModelNodeForm.Builder("viewAndEdit", RWX, new ResourceDescriptionBuilder().empty())
                 .viewOnly()
-                .editOnly()
+                .addOnly()
                 .build();
     }
 
@@ -88,15 +88,15 @@ public class ModelNodeFormTest {
                 new ResourceDescriptionBuilder().requestProperties(Collections.emptyMap()))
                 .createResource()
                 .stateMachine();
-        Assert.assertTrue(stateMachine instanceof EditOnlyStateMachine);
+        Assert.assertTrue(stateMachine instanceof AddOnlyStateMachine);
     }
 
     @Test
     public void editOnlyStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("editOnlyStateMachine",
                 RWX,
-                new ResourceDescriptionBuilder().attributes()).editOnly().stateMachine();
-        Assert.assertTrue(stateMachine instanceof EditOnlyStateMachine);
+                new ResourceDescriptionBuilder().attributes()).addOnly().stateMachine();
+        Assert.assertTrue(stateMachine instanceof AddOnlyStateMachine);
     }
 
     @Test
@@ -112,7 +112,7 @@ public class ModelNodeFormTest {
         StateMachine stateMachine = new ModelNodeForm.Builder("defaultStateMachine",
                 RWX,
                 new ResourceDescriptionBuilder().attributes()).stateMachine();
-        Assert.assertTrue(stateMachine instanceof DefaultStateMachine);
+        Assert.assertTrue(stateMachine instanceof ExistingModelStateMachine);
     }
 
 

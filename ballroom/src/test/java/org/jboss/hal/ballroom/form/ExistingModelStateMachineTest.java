@@ -11,13 +11,13 @@ import static org.junit.Assert.*;
 /**
  * @author Harald Pehl
  */
-public class DefaultStateMachineTest {
+public class ExistingModelStateMachineTest {
 
     private StateMachine stateMachine;
 
     @Before
     public void setUp() {
-        stateMachine = new DefaultStateMachine();
+        stateMachine = new ExistingModelStateMachine();
     }
 
     @Test

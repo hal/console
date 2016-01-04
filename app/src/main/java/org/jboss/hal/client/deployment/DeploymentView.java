@@ -28,8 +28,8 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.ButtonItem;
 import org.jboss.hal.ballroom.form.DefaultForm;
-import org.jboss.hal.ballroom.form.DefaultStateMachine;
-import org.jboss.hal.ballroom.form.EditOnlyStateMachine;
+import org.jboss.hal.ballroom.form.ExistingModelStateMachine;
+import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
 import org.jboss.hal.ballroom.form.NumberItem;
 import org.jboss.hal.ballroom.form.PasswordItem;
 import org.jboss.hal.ballroom.form.SelectBoxItem;
@@ -53,7 +53,7 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
     class SampleForm extends DefaultForm<String> {
 
         protected SampleForm(final String id, boolean nested) {
-            super(id, nested ? new EditOnlyStateMachine() : new DefaultStateMachine(), SecurityContext.RWX);
+            super(id, nested ? new AddOnlyStateMachine() : new ExistingModelStateMachine(), SecurityContext.RWX);
 
             TextBoxItem name = new TextBoxItem("name", "Name");
             name.setRequired(true);

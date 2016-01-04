@@ -61,8 +61,6 @@ public class HalBootstrapper implements Bootstrapper {
 
     @Override
     public void onBootstrap() {
-        LoadingPanel.get().on();
-
         Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
             @Override
             public void onFailure(final FunctionContext context) {
@@ -79,9 +77,6 @@ public class HalBootstrapper implements Bootstrapper {
                 placeManager.revealCurrentPlace();
             }
         };
-
-//        new Async<FunctionContext>(Progress.NOOP).waterfall(
-//                new FunctionContext(), outcome, bootstrapFunctions.functions());
 
         endpointManager.select(() -> {
             LoadingPanel.get().on();

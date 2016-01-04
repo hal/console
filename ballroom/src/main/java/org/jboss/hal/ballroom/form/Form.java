@@ -38,7 +38,7 @@ public interface Form<T> extends IsElement {
 
 
     enum Operation {
-        VIEW, EDIT, CANCEL, SAVE, RESET
+        VIEW, ADD, EDIT, CANCEL, SAVE, RESET
     }
 
 
@@ -71,6 +71,13 @@ public interface Form<T> extends IsElement {
     void view(T model);
 
     /**
+     * Takes the transient model and enters the editing state.
+     *
+     * @param model the transient model
+     */
+    void add(T model);
+
+    /**
      * Takes the specified model and populates the editing state with the values from the model.
      *
      * @param model the model to edit.
@@ -81,11 +88,6 @@ public interface Form<T> extends IsElement {
      * Validates the form and its fields and calls the save callback with the changed values.
      */
     void save();
-
-    /**
-     * Make the changes in edit mode persistent.
-     */
-    void persistModel();
 
     void setSaveCallback(SaveCallback<T> saveCallback);
 
@@ -104,40 +106,12 @@ public interface Form<T> extends IsElement {
     void setResetCallback(ResetCallback<T> resetCallback);
 
     /**
-     * @return the current model.
-     */
-    T getModel();
-
-    /**
      * @return an unique identifier for this form.
      */
     String getId();
 
     /**
-     * Invalidates this form.
-     *
-     * @param message an error message
+     * @return the current model.
      */
-    void invalidate(String message);
-
-    /**
-     * Invalidates the specified form item.
-     *
-     * @param message an error message
-     */
-    void invalidate(String formItem, String message);
-
-    void clearValues();
-
-    /**
-     * Clears all error markers.
-     */
-    void clearErrors();
-
-    /**
-     * Clears the error marker for the specified form item
-     *
-     * @param formItem the form item
-     */
-    void clearError(String formItem);
+    T getModel();
 }

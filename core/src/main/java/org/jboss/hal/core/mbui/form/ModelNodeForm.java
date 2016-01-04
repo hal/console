@@ -25,8 +25,8 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.form.DefaultForm;
-import org.jboss.hal.ballroom.form.DefaultStateMachine;
-import org.jboss.hal.ballroom.form.EditOnlyStateMachine;
+import org.jboss.hal.ballroom.form.ExistingModelStateMachine;
+import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.StateMachine;
@@ -61,6 +61,8 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
     public static class Builder<T extends ModelNode> {
 
+        private static final String ILLEGAL_COMBINATION = "Illegal combination in ";
+
         final String id;
         final SecurityContext securityContext;
         final ResourceDescription resourceDescription;
@@ -70,7 +72,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         final Map<String, SaveOperationStep> saveOperations;
         boolean createResource;
         boolean viewOnly;
-        boolean editOnly;
+        boolean addOnly;
         boolean unsorted;
         boolean includeRuntime;
         boolean hideButtons;
@@ -92,7 +94,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             this.saveOperations = new HashMap<>();
             this.createResource = false;
             this.viewOnly = false;
-            this.editOnly = false;
+            this.addOnly = false;
             this.unsorted = false;
             this.includeRuntime = false;
         }
@@ -117,8 +119,8 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             return this;
         }
 
-        public Builder<T> editOnly() {
-            this.editOnly = true;
+        public Builder<T> addOnly() {
+            this.addOnly = true;
             return this;
         }
 
@@ -174,13 +176,13 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         }
 
         void validate() {
-            if (viewOnly && editOnly) {
-                throw new IllegalStateException("Illegal combination for " + formId() + ": viewOnly && editOnly");
+            if (viewOnly && addOnly) {
+                throw new IllegalStateException(ILLEGAL_COMBINATION + formId() + ": viewOnly && addOnly");
             }
             if (createResource) {
                 if (viewOnly) {
                     throw new IllegalStateException(
-                            "Illegal combination for " + formId() + ": createResource && viewOnly");
+                            ILLEGAL_COMBINATION + formId() + ": createResource && viewOnly");
                 }
                 String path = OPERATIONS + "." + ADD + "." + REQUEST_PROPERTIES;
                 if (!ModelNodeHelper.failSafeGet(resourceDescription, path).isDefined()) {
@@ -205,9 +207,9 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         }
 
         StateMachine stateMachine() {
-            return createResource || editOnly ?
-                    new EditOnlyStateMachine() :
-                    (viewOnly ? new ViewOnlyStateMachine() : new DefaultStateMachine());
+            return createResource || addOnly ?
+                    new AddOnlyStateMachine() :
+                    (viewOnly ? new ViewOnlyStateMachine() : new ExistingModelStateMachine());
         }
 
         private String formId() {

@@ -25,11 +25,12 @@ import org.jboss.hal.ballroom.form.Form.Operation;
 
 import java.util.EnumSet;
 
+import static org.jboss.hal.ballroom.form.Form.Operation.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 
 /**
- * A state machine for existing resources. Supports all {@linkplain Operation operations}.
+ * A state machine for existing models. Supports all {@linkplain Operation operations} except {@link Operation#ADD}.
  * <pre>
  *                             (O)
  *                              |
@@ -55,10 +56,10 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
  *
  * @author Harald Pehl
  */
-public class DefaultStateMachine extends AbstractStateMachine implements StateMachine {
+public class ExistingModelStateMachine extends AbstractStateMachine implements StateMachine {
 
-    public DefaultStateMachine() {
-        super(EnumSet.allOf(Operation.class));
+    public ExistingModelStateMachine() {
+        super(EnumSet.of(CANCEL, EDIT, RESET, SAVE, VIEW));
         this.current = null;
     }
 
@@ -72,6 +73,9 @@ public class DefaultStateMachine extends AbstractStateMachine implements StateMa
                 }
                 transitionTo(READONLY);
                 break;
+
+            case ADD:
+                unsupported(ADD);
 
             case EDIT:
                 if (current != null) {

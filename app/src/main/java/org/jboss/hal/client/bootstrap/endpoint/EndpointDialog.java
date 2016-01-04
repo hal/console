@@ -8,7 +8,6 @@ import org.jboss.hal.ballroom.table.Button.Scope;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
@@ -70,7 +69,7 @@ class EndpointDialog {
                 .end().build();
 
         form = new ModelNodeForm.Builder<Endpoint>(Ids.ENDPOINT_ADD, SecurityContext.RWX, description)
-                .editOnly()
+                .addOnly()
                 .include(NAME_KEY, SCHEME, HOST, PORT)
                 .unsorted()
                 .hideButtons()
@@ -107,8 +106,7 @@ class EndpointDialog {
 
         } else if (mode == ADD) {
             dialog.setTitle(CONSTANTS.endpointAddTitle());
-            form.clearValues();
-            form.edit(new Endpoint(new ModelNode()));
+            form.add(new Endpoint());
             dialog.setPrimaryButtonLabel(CONSTANTS.add());
             dialog.setPrimaryButtonDisabled(false);
             Elements.setVisible(selectPage, false);

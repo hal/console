@@ -23,16 +23,19 @@ package org.jboss.hal.ballroom.form;
 
 import java.util.EnumSet;
 
-import static org.jboss.hal.ballroom.form.Form.Operation.EDIT;
+import static org.jboss.hal.ballroom.form.Form.Operation.ADD;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 
 /**
+ * A state machine for transient models. Supports only the {@link Form.Operation#ADD}, {@link Form.Operation#CANCEL}
+ * and {@link Form.Operation#SAVE} operations.
+ *
  * @author Harald Pehl
  */
-public class EditOnlyStateMachine extends AbstractStateMachine implements StateMachine {
+public class AddOnlyStateMachine extends AbstractStateMachine implements StateMachine {
 
-    public EditOnlyStateMachine() {
-        super(EnumSet.of(EDIT));
+    public AddOnlyStateMachine() {
+        super(EnumSet.of(ADD));
         this.current = null;
     }
 
@@ -40,7 +43,7 @@ public class EditOnlyStateMachine extends AbstractStateMachine implements StateM
     public void execute(final Form.Operation operation) {
         switch (operation) {
 
-            case EDIT:
+            case ADD:
                 if (current != null) {
                     assertState(EDITING);
                 }

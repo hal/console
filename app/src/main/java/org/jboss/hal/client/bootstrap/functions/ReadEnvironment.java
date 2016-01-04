@@ -19,8 +19,6 @@
 
 package org.jboss.hal.client.bootstrap.functions;
 
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.user.client.Random;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Environment;
@@ -30,8 +28,6 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -42,8 +38,6 @@ import static org.jboss.hal.dmr.model.ResourceAddress.ROOT;
 
 @SuppressWarnings("HardCodedStringLiteral")
 public class ReadEnvironment implements BootstrapFunction {
-
-    private static final Logger logger = LoggerFactory.getLogger(ReadEnvironment.class);
 
     private final Dispatcher dispatcher;
     private final Environment environment;
@@ -62,7 +56,7 @@ public class ReadEnvironment implements BootstrapFunction {
     @Override
     public void execute(final Control<FunctionContext> control) {
 
-        logger.debug("Bootstrap[ReadEnvironment]: Start");
+        logStart();
         List<Operation> ops = new ArrayList<>();
         ops.add(new Operation.Builder(READ_RESOURCE_OPERATION, ROOT)
                 .param("attributes-only", true)
@@ -72,9 +66,8 @@ public class ReadEnvironment implements BootstrapFunction {
 
         dispatcher.executeInFunction(control, new Composite(ops),
                 (CompositeResult result) -> {
-                    logger.debug("Bootstrap[ReadEnvironment]: Parse root resource");
-
                     // server info
+                    logger.debug("{}: Parse root resource", name());
                     ModelNode node = result.step("step-1").get(RESULT);
                     environment.setInstanceInfo(node.get("product-name").asString(),
                             node.get("product-version").asString(),
@@ -90,6 +83,7 @@ public class ReadEnvironment implements BootstrapFunction {
                             node.get("management-minor-version").asString());
 
                     // user info
+                    logger.debug("{}: Parse whoami data", name());
                     ModelNode whoami = result.step("step-2").get(RESULT);
                     String username = whoami.get("identity").get("username").asString();
                     user.setName(username);
@@ -102,13 +96,19 @@ public class ReadEnvironment implements BootstrapFunction {
                     }
 
                     // Simulate network latency
-                    int wait = 333 + Random.nextInt(1111);
-                    Scheduler.get().scheduleFixedDelay(() -> {
-                        logger.info("Bootstrap[ReadEnvironment]: Done");
-                        control.proceed();
-                        return false;
-                    }, wait);
-                    // control.proceed();
+                    //                    int wait = 333 + Random.nextInt(1111);
+                    //                    Scheduler.get().scheduleFixedDelay(() -> {
+                    //                        logger.info("{}: Done", name());
+                    //                        control.proceed();
+                    //                        return false;
+                    //                    }, wait);
+                    logDone();
+                    control.proceed();
                 });
+    }
+
+    @Override
+    public String name() {
+        return "Bootstrap[ReadEnvironment]";
     }
 }

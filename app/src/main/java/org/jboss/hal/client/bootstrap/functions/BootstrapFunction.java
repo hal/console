@@ -23,9 +23,25 @@ package org.jboss.hal.client.bootstrap.functions;
 
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Harald Pehl
  */
 public interface BootstrapFunction extends Function<FunctionContext> {
+
+    Logger logger = LoggerFactory.getLogger(CheckForUpdate.class);
+
+    @NonNls
+    String name();
+
+    default void logStart() {
+        logger.info("{}: Start", name()); //NON-NLS
+    }
+
+    default void logDone() {
+        logger.info("{}: Done", name()); //NON-NLS
+    }
 }

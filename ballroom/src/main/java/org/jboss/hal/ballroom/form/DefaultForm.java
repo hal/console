@@ -46,7 +46,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Collections.singletonList;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Form.Operation.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
@@ -54,7 +53,7 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
- * An abstract form with some reasonable UI defaults. Please note that all form items and help texts must be setup
+ * A generic form with some reasonable UI defaults. Please note that all form items and help texts must be setup
  * before this form is added {@linkplain #asElement() as an element} to the DOM.
  *
  * @author Harald Pehl
@@ -65,7 +64,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     private static final String ERROR_MESSAGE = "errorMessage";
     private static final String ERROR_MESSAGES = "errorMessages";
     private static final String MODEL_MUST_NOT_BE_NULL = "Model must not be null in ";
-    private static final String NOT_INITIALIZED = "Form element not initialized. Please add this form to the DOM before calling any of the form operations like view(), edit(), save(), cancel() or reset()";
+    private static final String NOT_INITIALIZED = "Form element not initialized. Please add this form to the DOM before calling any of the form operations";
 
     private final String id;
     private final StateMachine stateMachine;
@@ -134,6 +133,9 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
 
         if (stateMachine.supports(VIEW)) {
             panels.put(READONLY, viewPanel());
+        }
+        if (stateMachine.supports(ADD)) {
+            panels.put(EDITING, editPanel());
         }
         if (stateMachine.supports(EDIT)) {
             panels.put(EDITING, editPanel());
@@ -228,7 +230,33 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             throw new IllegalStateException(NOT_INITIALIZED);
         }
         this.model = model;
-        execute(VIEW);
+        stateExec(VIEW);
+    }
+
+    @Override
+    public final void add(final T model) {
+        if (model == null) {
+            throw new NullPointerException(MODEL_MUST_NOT_BE_NULL + formId() + ".add(T)");
+        }
+        if (!initialized()) {
+            throw new IllegalStateException(NOT_INITIALIZED);
+        }
+        this.model = model;
+        clearFormItems();
+        stateExec(ADD);
+    }
+
+    /**
+     * Called from {@link #add(Object)} when a transient model is shown in {@link org.jboss.hal.ballroom.form.Form.State#EDITING}
+     * state.
+     */
+    protected void clearFormItems() {
+        for (FormItem formItem : formItems.values()) {
+            formItem.clearError();
+            formItem.clearValue();
+            formItem.setUndefined(true);
+            formItem.setModified(true);
+        }
     }
 
     @Override
@@ -240,7 +268,15 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             throw new IllegalStateException(NOT_INITIALIZED);
         }
         this.model = model;
-        execute(EDIT);
+        populateFormItems();
+        stateExec(EDIT);
+    }
+
+    /**
+     * Called from {@link #edit(Object)} in order to populate the form items with the values from the model. This class
+     * contains an empty implementation.
+     */
+    protected void populateFormItems() {
     }
 
     @Override
@@ -257,15 +293,17 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             for (FormItem formItem : formItems.values()) {
                 formItem.resetMetaData();
             }
-            execute(SAVE);
+            stateExec(SAVE);
         }
     }
 
     /**
-     * Called from {@link #save()} if {@code validate() == true}. Empty implementation.
+     * Called from {@link #save()} if {@code validate() == true}. {@code persistModel()} is executed before the
+     * registered
+     * {@linkplain org.jboss.hal.ballroom.form.Form.SaveCallback save callbacks} are called. This class contains an
+     * empty implementation.
      */
-    @Override
-    public void persistModel() {
+    protected void persistModel() {
     }
 
     @Override
@@ -292,7 +330,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         if (cancelCallback != null) {
             cancelCallback.onCancel(this);
         }
-        execute(CANCEL);
+        stateExec(CANCEL);
     }
 
     @Override
@@ -308,7 +346,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         if (resetCallback != null) {
             resetCallback.onReset(this);
         }
-        execute(RESET);
+        stateExec(RESET);
     }
 
     @Override
@@ -323,7 +361,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
 
     // ------------------------------------------------------ state transition
 
-    private void execute(final Operation operation) {
+    private void stateExec(final Operation operation) {
         stateMachine.execute(operation);
         prepare(stateMachine.current());
         flip(stateMachine.current());
@@ -387,7 +425,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
 
     private void applySecurity() {
         if (stateMachine.current() == EDITING && !securityContext.isWritable()) {
-            execute(CANCEL);
+            stateExec(CANCEL);
         }
         formLinks.switchTo(stateMachine.current(), securityContext);
         for (Map.Entry<String, FormItem> entry : formItems.entrySet()) {
@@ -428,23 +466,6 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
 
     // ------------------------------------------------------ validation
 
-    @Override
-    public void invalidate(final String message) {
-        if (stateMachine.current() == EDITING) {
-            showErrors(singletonList(message));
-        }
-    }
-
-    @Override
-    public void invalidate(final String field, final String message) {
-        if (stateMachine.current() == EDITING) {
-            FormItem formItem = formItems.get(field);
-            if (formItem != null) {
-                formItem.showError(message);
-            }
-        }
-    }
-
     @SuppressWarnings("unchecked")
     private boolean validate() {
         boolean valid = true;
@@ -475,31 +496,13 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         return valid;
     }
 
-    @Override
-    public void clearValues() {
-        for (FormItem formItem : formItems.values()) {
-            formItem.clearValue();
-            formItem.resetMetaData();
-        }
-    }
-
-    @Override
-    public void clearErrors() {
+    private void clearErrors() {
         for (FormItem formItem : formItems.values()) {
             formItem.clearError();
         }
         errorMessage.setInnerText("");
         Elements.removeChildrenFrom(errorMessages);
         Elements.setVisible(errorPanel, false);
-    }
-
-    @Override
-    public void clearError(final String formItem) {
-        for (FormItem item : formItems.values()) {
-            if (item.getName().equals(formItem)) {
-                item.clearError();
-            }
-        }
     }
 
     private void showErrors(List<String> messages) {

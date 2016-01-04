@@ -314,9 +314,8 @@ public class Dispatcher {
         });
 
         xhr.addEventListener("error", event -> exceptionCallback
-                .onException(operation, new DispatchException("Communication error.", xhr.getStatus())));
-
-        xhr.open(POST.name(), endpoints.upload(), true);
+                .onException(operation, new DispatchException("Communication error.", xhr.getStatus())), false);
+        xhr.open(method.name(), url, true);
         xhr.setRequestHeader(HEADER_MANAGEMENT_CLIENT_NAME, HEADER_MANAGEMENT_CLIENT_VALUE);
         xhr.setWithCredentials(true);
 

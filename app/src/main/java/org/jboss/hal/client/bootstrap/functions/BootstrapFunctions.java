@@ -38,7 +38,7 @@ public class BootstrapFunctions {
             final FinishBootstrap finishBootstrap) {
         this.functions = new BootstrapFunction[]{
                 checkForUpdate,
-//                readEnvironment,
+                readEnvironment,
                 finishBootstrap
         };
     }
