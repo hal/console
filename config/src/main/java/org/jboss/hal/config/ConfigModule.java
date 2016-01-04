@@ -35,6 +35,7 @@ public class ConfigModule extends AbstractGinModule {
     @Override
     protected void configure() {
         bind(Endpoints.class).in(Singleton.class);
+        bind(Environment.class).in(Singleton.class);
     }
 
     @Provides

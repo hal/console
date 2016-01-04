@@ -174,7 +174,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         // @formatter:off
         Elements.Builder errorPanelBuilder = new Elements.Builder()
             .div().css(alert, alertDanger).rememberAs("errorPanel")
-                .span().css(pfIcon("error-circle-o")).end()
+                .span().css(pfIcon(errorCircleO)).end()
                 .span().rememberAs(ERROR_MESSAGE).end()
                 .ul().rememberAs(ERROR_MESSAGES).end()
             .end();
@@ -446,10 +446,13 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         return model;
     }
 
-    public FormItem getFormItem(String name) {
+    @Override
+    @SuppressWarnings("unchecked")
+    public <I> FormItem<I> getFormItem(String name) {
         return formItems.get(name);
     }
 
+    @Override
     public Iterable<FormItem> getFormItems() {
         return ImmutableList.copyOf(formItems.values());
     }

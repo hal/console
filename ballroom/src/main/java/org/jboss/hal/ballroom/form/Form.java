@@ -114,4 +114,9 @@ public interface Form<T> extends IsElement {
      * @return the current model.
      */
     T getModel();
+
+    @SuppressWarnings("unchecked")
+    <I> FormItem<I> getFormItem(String name);
+
+    Iterable<FormItem> getFormItems();
 }

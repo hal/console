@@ -1,11 +1,13 @@
 package org.jboss.hal.client.bootstrap.endpoint;
 
 import com.google.gwt.core.client.GWT;
-import elemental.client.Browser;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.ButtonItem;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.table.Button.Scope;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -15,7 +17,10 @@ import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Messages;
 
+import static com.google.common.base.Strings.emptyToNull;
+import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.HOLD;
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.ADD;
@@ -33,15 +38,17 @@ class EndpointDialog {
 
     enum Mode {SELECT, ADD}
 
-
     private static final Constants CONSTANTS = GWT.create(Constants.class);
+    private static final Messages MESSAGES = GWT.create(Messages.class);
     private static final EndpointResources RESOURCES = GWT.create(EndpointResources.class);
 
     private final EndpointManager manager;
     private final EndpointStorage storage;
     private final Element selectPage;
     private final Element addPage;
-    private final ModelNodeForm<Endpoint> form;
+    private final Feedback feedback;
+    private final Form<Endpoint> form;
+    private final ButtonItem ping;
 
     private Mode mode;
     private ModelNodeTable<Endpoint> table;
@@ -70,8 +77,24 @@ class EndpointDialog {
                 .add(table.asElement())
                 .end().build();
 
-        ButtonItem ping = new ButtonItem(Ids.ENDPOINT_PING, CONSTANTS.ping());
-        ping.onClick((event) -> Browser.getWindow().alert(NYI));
+        feedback = new Feedback();
+        ping = new ButtonItem(Ids.ENDPOINT_PING, CONSTANTS.ping());
+        ping.onClick((event) -> {
+            Endpoint endpoint = transientEndpoint();
+            manager.pingServer(endpoint, new AsyncCallback<Void>() {
+                @Override
+                public void onFailure(final Throwable throwable) {
+                    feedback.error(MESSAGES.endpointError(endpoint.getUrl()));
+                }
+
+                @Override
+                public void onSuccess(final Void aVoid) {
+                    feedback.ok(MESSAGES.endpointOk(endpoint.getUrl()));
+                }
+            });
+        });
+        ping.setEnabled(false);
+
         form = new ModelNodeForm.Builder<Endpoint>(Ids.ENDPOINT_ADD, SecurityContext.RWX, description)
                 .addOnly()
                 .include(NAME_KEY, SCHEME, HOST, PORT)
@@ -88,6 +111,7 @@ class EndpointDialog {
         addPage = new Elements.Builder()
                 .div()
                 .p().innerText(CONSTANTS.endpointAddDescription()).end()
+                .add(feedback.asElement())
                 .add(form.asElement())
                 .end().build();
 
@@ -98,6 +122,20 @@ class EndpointDialog {
                 .closeIcon(false)
                 .closeOnEsc(false)
                 .build();
+    }
+
+    private Endpoint transientEndpoint() {
+        Endpoint endpoint = new Endpoint();
+        endpoint.get(NAME_KEY).set("__transientEndpoint__"); //NON-NLS
+        FormItem<String> scheme = form.getFormItem(SCHEME);
+        endpoint.get(SCHEME).set(scheme.getValue());
+        FormItem<String> host = form.getFormItem(HOST);
+        endpoint.get(HOST).set(host.getValue());
+        FormItem<Number> port = form.getFormItem(PORT);
+        if (port.getValue() != null) {
+            endpoint.get(PORT).set(port.getValue().intValue());
+        }
+        return endpoint;
     }
 
     private void switchTo(final Mode mode) {
@@ -111,6 +149,7 @@ class EndpointDialog {
 
         } else if (mode == ADD) {
             dialog.setTitle(CONSTANTS.endpointAddTitle());
+            feedback.reset();
             form.add(new Endpoint());
             dialog.setPrimaryButtonLabel(CONSTANTS.add());
             dialog.setPrimaryButtonDisabled(false);
@@ -143,9 +182,15 @@ class EndpointDialog {
 
     void show() {
         dialog.show();
+
+        FormItem<String> host = form.getFormItem(HOST);
+        host.asElement(EDITING).setOnkeyup(event -> ping.setEnabled(emptyToNull(host.getValue()) != null));
+//        host.addValueChangeHandler(event -> ping.setEnabled(emptyToNull(host.getValue()) != null));
+
         table.attach();
         table.api().onSelectionChange(api -> dialog.setPrimaryButtonDisabled(!api.hasSelection()));
         table.api().add(storage.list()).refresh(RESET);
+
         switchTo(SELECT);
     }
 }

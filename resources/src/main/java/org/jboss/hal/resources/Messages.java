@@ -27,6 +27,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String activeRoles(String roles);
     String connectedTo(String url);
 
+    SafeHtml endpointError(String url);
+    SafeHtml endpointOk(String url);
+
     String homepagePatchingSubHeader(String name);
     String homepagePatchingStandaloneStepIntro(String name);
     String homepagePatchingDomainStepIntro(String name);

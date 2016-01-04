@@ -37,6 +37,7 @@ public interface CSS {
     String active = "active";
     String alert = "alert";
     String alertDanger = "alert-danger";
+    String alertSuccess = "alert-success";
     String btn = "btn";
     String btnDefault = "btn-default";
     String btnGroup = "btn-group";
@@ -86,6 +87,7 @@ public interface CSS {
     String modelSmall = "modal-sm";
     String modalTitle = "modal-title";
     String offset = "offset";
+    String errorCircleO = "error-circle-o";
     String progress = "progress";
     String progressBar = "progress-bar";
     String progressBarStriped = "progress-bar-striped";
