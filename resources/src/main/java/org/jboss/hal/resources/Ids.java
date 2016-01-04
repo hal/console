@@ -24,6 +24,7 @@ package org.jboss.hal.resources;
 public interface Ids {
 
     String ENDPOINT_ADD = "endpoint-add";
+    String ENDPOINT_PING = "endpoint-ping";
     String ENDPOINT_SELECT = "endpoint-select";
 
     String HEADER_CONNECTED_TO = "header-connected-to";

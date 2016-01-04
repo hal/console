@@ -125,7 +125,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageHelpIrcText();
     String homepageHelpUserForumsText();
     String homepageHelpDevelopersMailingListText();
-    String homepageHelpWilfdflyHomeText();
+    String homepageHelpWildFlyHomeText();
     String homepageHelpModelReferenceText();
     String homepageHelpLatestNews();
 
@@ -133,6 +133,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String logout();
     String modelBrowser();
     String notANumber();
+    String ping();
     String required();
     String reset();
     String restricted();
@@ -142,11 +143,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String settings();
     String start();
 
-    String tableToolbar();
-    String tableInfoEmpty();
-
     String toggleNavigation();
     String tools();
     String unknownError();
+
     //@formatter:on
 }

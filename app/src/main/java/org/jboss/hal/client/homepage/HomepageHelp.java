@@ -57,7 +57,7 @@ abstract class HomepageHelp implements IsElement {
     void init() {
         if (env().getInstanceInfo() == InstanceInfo.WILDFLY) {
             generalResources.appendChild(helpLink(WILDFLY_HOMEPAGE,
-                    resources().constants().homepageHelpWilfdflyHomeText()));
+                    resources().constants().homepageHelpWildFlyHomeText()));
             generalResources.appendChild(helpLink(WFLY10_DOCUMENTATION,
                     resources().constants().homepageHelpWilfdflyDocumentationText()));
             generalResources.appendChild(helpLink(WFLY10_ADMIN_GUIDE,

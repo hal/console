@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -70,6 +71,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         final Set<String> excludes;
         final Map<String, FormItemProvider> providers;
         final Map<String, SaveOperationStep> saveOperations;
+        final List<FormItem> unboundFormItems;
         boolean createResource;
         boolean viewOnly;
         boolean addOnly;
@@ -92,6 +94,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             this.excludes = new HashSet<>();
             this.providers = new HashMap<>();
             this.saveOperations = new HashMap<>();
+            this.unboundFormItems = new ArrayList<>();
             this.createResource = false;
             this.viewOnly = false;
             this.addOnly = false;
@@ -144,6 +147,11 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             if (saveOperation != null) {
                 saveOperations.put(attribute, saveOperation);
             }
+            return this;
+        }
+
+        public Builder<T> unboundFormItem(final FormItem formItem) {
+            this.unboundFormItems.add(formItem);
             return this;
         }
 
@@ -260,6 +268,9 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             } else {
                 logger.warn("Unable to create form item for '{}' in form '{}'", name, builder.id); //NON-NLS
             }
+        }
+        for (FormItem unboundFormItem : builder.unboundFormItems) {
+            addFormItem(unboundFormItem);
         }
     }
 

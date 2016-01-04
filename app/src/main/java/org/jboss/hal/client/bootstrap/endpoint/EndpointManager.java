@@ -26,12 +26,12 @@ import static org.jboss.hal.resources.Urls.MANAGEMENT;
 public class EndpointManager {
 
     private final static String CONNECT_PARAMETER = "connect";
-    private static final Logger logger = LoggerFactory.getLogger(EndpointManager.class);
+    private final static Logger logger = LoggerFactory.getLogger(EndpointManager.class);
 
     private final Endpoints endpoints;
     private final EndpointStorage storage;
 
-    private ScheduledCommand andThen;
+    private ScheduledCommand next;
 
     @Inject
     public EndpointManager(Endpoints endpoints, EndpointStorage storage) {
@@ -39,26 +39,31 @@ public class EndpointManager {
         this.storage = storage;
     }
 
-    public void select(ScheduledCommand andThen) {
-        this.andThen = andThen;
+    @SuppressWarnings("HardCodedStringLiteral")
+    public void select(ScheduledCommand next) {
+        this.next = next;
 
         String connect = Window.Location.getParameter(CONNECT_PARAMETER);
         if (connect != null) {
             // Connect to a server given as a request parameter
             Endpoint endpoint = storage.get(connect);
             if (endpoint != null) {
+                logger.info("Try to connect to endpoint '{}'", endpoint.getUrl());
                 pingServer(endpoint, new AsyncCallback<Void>() {
                     @Override
                     public void onFailure(Throwable throwable) {
+                        logger.error("Unable to connect to specified endpoint '{}'", endpoint.getUrl());
                         openDialog();
                     }
 
                     @Override
                     public void onSuccess(Void whatever) {
+                        logger.info("Successfully connected to '{}'", endpoint.getUrl());
                         onConnect(endpoint);
                     }
                 });
             } else {
+                logger.error("Unable to get URL for named endpoint '{}' from local storage", connect);
                 openDialog();
             }
 
@@ -75,11 +80,10 @@ public class EndpointManager {
                         case 200:
                         case 401:
                             endpoints.useBase(Endpoints.getBaseUrl());
-                            andThen.execute();
+                            next.execute();
                             break;
                         default:
-                            //noinspection HardCodedStringLiteral
-                            logger.info("Unable to serve HAL from '{}'. Please select another management interface.",
+                            logger.info("Unable to serve HAL from '{}'. Please select a management interface.",
                                     managementEndpoint);
                             openDialog();
                             break;
@@ -96,7 +100,7 @@ public class EndpointManager {
         new EndpointDialog(this, storage).show();
     }
 
-    private void pingServer(final Endpoint endpoint, final AsyncCallback<Void> callback) {
+    void pingServer(final Endpoint endpoint, final AsyncCallback<Void> callback) {
         String managementEndpoint = endpoint.getUrl() + MANAGEMENT;
         XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
         xhr.setOnreadystatechange(event -> {
@@ -119,6 +123,6 @@ public class EndpointManager {
     void onConnect(Endpoint endpoint) {
         storage.saveSelection(endpoint);
         endpoints.useBase(endpoint.getUrl());
-        andThen.execute();
+        next.execute();
     }
 }

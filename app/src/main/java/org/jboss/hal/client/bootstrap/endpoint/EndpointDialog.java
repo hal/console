@@ -1,9 +1,11 @@
 package org.jboss.hal.client.bootstrap.endpoint;
 
 import com.google.gwt.core.client.GWT;
+import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.dialog.Dialog;
+import org.jboss.hal.ballroom.form.ButtonItem;
 import org.jboss.hal.ballroom.table.Button.Scope;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -68,9 +70,12 @@ class EndpointDialog {
                 .add(table.asElement())
                 .end().build();
 
+        ButtonItem ping = new ButtonItem(Ids.ENDPOINT_PING, CONSTANTS.ping());
+        ping.onClick((event) -> Browser.getWindow().alert(NYI));
         form = new ModelNodeForm.Builder<Endpoint>(Ids.ENDPOINT_ADD, SecurityContext.RWX, description)
                 .addOnly()
                 .include(NAME_KEY, SCHEME, HOST, PORT)
+                .unboundFormItem(ping)
                 .unsorted()
                 .hideButtons()
                 .onCancel((form) -> switchTo(SELECT))
