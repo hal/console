@@ -56,7 +56,7 @@ public class CheckForUpdate implements BootstrapFunction {
             control.proceed();
         } else {
             RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, UPDATE_URL);
-            builder.setTimeoutMillis(666); // we're in bootstrap and need a response fast!
+            builder.setTimeoutMillis(1000); // we're in bootstrap and need a response fast!
             builder.setCallback(new RequestCallback() {
                 @Override
                 public void onResponseReceived(final Request request, final Response response) {

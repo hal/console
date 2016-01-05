@@ -38,6 +38,7 @@ import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Names;
 
 import java.util.ArrayList;
@@ -61,6 +62,7 @@ import static org.jboss.hal.resources.CSS.*;
 public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityContextAware {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
+    private static final Messages MESSAGES = GWT.create(Messages.class);
     private static final String ERROR_MESSAGE = "errorMessage";
     private static final String ERROR_MESSAGES = "errorMessages";
     private static final String MODEL_MUST_NOT_BE_NULL = "Model must not be null in ";
@@ -188,9 +190,24 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
                 .div().id(IdBuilder.build(id, "edit")).css(form, formHorizontal).end()
                 .build();
         editPanel.appendChild(errorPanel);
+        boolean hasRequiredField = false;
         for (FormItem formItem : formItems.values()) {
             formItem.identifyAs(id, "edit", formItem.getName());
             editPanel.appendChild(formItem.asElement(EDITING));
+            hasRequiredField = hasRequiredField || formItem.isRequired();
+        }
+        if (hasRequiredField) {
+            // @formatter:off
+            editPanel.appendChild(new Elements.Builder()
+                .div().css(formGroup)
+                    .div().css(column(inputColumns), offset(labelColumns))
+                        .span().css(helpBlock)
+                            .innerHtml(MESSAGES.requiredHelp())
+                        .end()
+                    .end()
+                .end()
+            .build());
+            // @formatter:on
         }
 
         // @formatter:off

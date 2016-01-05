@@ -37,6 +37,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String invalidRange(long value, long min, long max);
     String messages(@PluralCount int count);
     String patternMismatch(String pattern);
+    SafeHtml requiredHelp();
+    SafeHtml requiredMarker();
     SafeHtml tableInfo(int from, int to, int size);
     String tableNamedGroup(String name);
     SafeHtml tablePages(int pages);

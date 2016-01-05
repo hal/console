@@ -36,6 +36,7 @@ import elemental.html.SpanElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Names;
 
 import java.util.LinkedList;
@@ -56,11 +57,13 @@ import static org.jboss.hal.resources.CSS.*;
 public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
+    private static final Messages MESSAGES = GWT.create(Messages.class);
     private static final String EXPRESSION_CONTAINER = "expressionContainer"; //NON-NLS
     private static final String RESTRICTED_ELEMENT = "restrictedElement"; //NON-NLS
 
     private final EventBus eventBus;
     private final List<FormItemValidation<T>> validationHandlers;
+    private final String label;
     private boolean required;
     private boolean modified;
     private boolean undefined;
@@ -82,6 +85,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     AbstractFormItem(String name, String label) {
         this.inputElement = newInputElement();
 
+        this.label = label;
         this.required = false;
         this.modified = false;
         this.undefined = true;
@@ -418,6 +422,13 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public void setRequired(boolean required) {
+        if (required != this.required) {
+            if (required) {
+                labelElement.setInnerHTML(label + " " + MESSAGES.requiredMarker().asString());
+            } else {
+                labelElement.setInnerHTML(label);
+            }
+        }
         this.required = required;
     }
 

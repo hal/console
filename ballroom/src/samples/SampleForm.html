@@ -6,12 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=9">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link href="../../../../app/src/main/resources/org/jboss/hal/public/css/hal.min.css" rel="stylesheet">
+    <link href="../../../app/src/main/resources/org/jboss/hal/public/css/hal.min.css" rel="stylesheet">
 
-    <script src="../../../../app/src/main/resources/org/jboss/hal/public/js/jquery.min.js"></script>
-    <script src="../../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap.min.js"></script>
-    <script src="../../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-select.min.js"></script>
-    <script src="../../../../app/src/main/resources/org/jboss/hal/public/js/patternfly.min.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.min.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap.min.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-select.min.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/patternfly.min.js"></script>
 </head>
 <body>
 <div class="container-fluid">
@@ -65,17 +65,18 @@
                     <div class="alert alert-danger">
                         <span class="pficon pficon-error-circle-o"></span>
                         <span>Something went wrong! What a mess!</span>
-<!--
-                        <ul>
-                            <li>First</li>
-                            <li>Second</li>
-                            <li>Third</li>
-                        </ul>
--->
+                        <!--
+                                                <ul>
+                                                    <li>First</li>
+                                                    <li>Second</li>
+                                                    <li>Third</li>
+                                                </ul>
+                        -->
                     </div>
                     <fieldset class="form-section"> <!-- One "anonymous" section -->
                         <div class="form-group">
-                            <label class="col-md-3 control-label" for="textInput-markup">Name</label>
+                            <label class="col-md-3 control-label" for="textInput-markup">Name
+                                <abbr class="req" title="required"><i class="fa fa-asterisk"></i></abbr></label>
 
                             <div class="col-md-9">
                                 <input type="text" id="textInput-markup" class="form-control" placeholder="Text input">
@@ -142,7 +143,12 @@
                         </div>
                         <div class="form-group">
                             <div class="col-md-9 col-md-offset-3">
-                                <button class="btn btn-default btn-hal">A button with a long text</button>
+                                <button class="btn btn-default btn-hal" title="A button with a long text">A button with a long text</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-3 col-md-9">
+                                <span class="help-block">Required fields are marked with <abbr class="req" title="required"><i class="fa fa-asterisk"></i></abbr></span>
                             </div>
                         </div>
                         <div class="form-group">

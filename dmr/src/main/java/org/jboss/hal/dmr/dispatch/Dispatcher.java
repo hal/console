@@ -100,7 +100,7 @@ public class Dispatcher {
     /**
      * The read resource description supports the following parameters:
      * recursive, proxies, operations, inherited plus one not documented: locale.
-     * See https://docs.jboss.org/author/display/AS72/Global+operations#Globaloperations-readresourcedescription
+     * See https://docs.jboss.org/author/display/WFLY9/Global+operations#Globaloperations-readresourcedescription
      * for a more detailed description
      */
     private static final String[] READ_RESOURCE_DESCRIPTION_OPTIONAL_PARAMETERS = new String[]{
@@ -259,6 +259,7 @@ public class Dispatcher {
             final ExceptionCallback exceptionCallback) {
         XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
 
+        // The order of the XHR methods is important! Do not rearrange the code unless you know what you're doing!
         xhr.setOnreadystatechange(event -> {
             int readyState = xhr.getReadyState();
             if (readyState == 4) {
@@ -290,9 +291,6 @@ public class Dispatcher {
                         break;
                     case 0:
                     case 401:
-                        exceptionCallback.onException(operation,
-                                new DispatchException("Authentication required.", status));
-                        break;
                     case 403:
                         exceptionCallback.onException(operation,
                                 new DispatchException("Authentication required.", status));

@@ -95,13 +95,6 @@ public class ReadEnvironment implements BootstrapFunction {
                         }
                     }
 
-                    // Simulate network latency
-                    //                    int wait = 333 + Random.nextInt(1111);
-                    //                    Scheduler.get().scheduleFixedDelay(() -> {
-                    //                        logger.info("{}: Done", name());
-                    //                        control.proceed();
-                    //                        return false;
-                    //                    }, wait);
                     logDone();
                     control.proceed();
                 });
