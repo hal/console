@@ -240,6 +240,11 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
+    public void setPlaceholder(final String placeholder) {
+
+    }
+
+    @Override
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> valueChangeHandler) {
         return null;
     }
