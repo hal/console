@@ -142,6 +142,7 @@ public interface ModelDescriptionConstants {
     String RECURSIVE = "recursive";
     String RECURSIVE_DEPTH = "recursive-depth";
     String REQUIRED = "required";
+    String REQUIRES = "requires";
     String RESPONSE = "response";
     String RESULT = "result";
     String ROLES = "HEADER_ROLES";

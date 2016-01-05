@@ -136,12 +136,19 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String ping();
     String required();
     String reset();
+
+    String restartAllServices();
+    String restartJvm();
+    String restartNoServices();
+    String restartResourceServices();
+
     String restricted();
     String remove();
     String sameOrigin();
     String save();
     String settings();
     String start();
+    String supportsExpressions();
 
     String toggleNavigation();
     String tools();
