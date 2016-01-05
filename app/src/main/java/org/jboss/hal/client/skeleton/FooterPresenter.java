@@ -25,6 +25,7 @@ import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
+import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.HasPresenter;
 
@@ -59,6 +60,12 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView> {
         super.onBind();
         getView().setPresenter(this);
         getView().update(environment);
+    }
+
+    @Override
+    protected void onReveal() {
+        super.onReveal();
+        PatternFly.initComponents();
     }
 
     public void onShowVersion() {

@@ -24,9 +24,9 @@ package org.jboss.hal.core.mbui.form;
 import com.google.common.base.Joiner;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
+import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
 import org.jboss.hal.ballroom.form.DefaultForm;
 import org.jboss.hal.ballroom.form.ExistingModelStateMachine;
-import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.StateMachine;
@@ -41,7 +41,6 @@ import org.jboss.hal.meta.security.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,7 +50,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.dmr.ModelType.BIG_DECIMAL;
 import static org.jboss.hal.dmr.ModelType.BIG_INTEGER;
 import static org.jboss.hal.dmr.ModelType.INT;
 
@@ -277,15 +275,72 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
     }
 
     @Override
-    public void persistModel() {
+    @SuppressWarnings("unchecked")
+    protected void populateFormItems() {
+        T model = getModel();
+        for (FormItem formItem : getFormItems()) {
+            String name = formItem.getName();
+            if (model.hasDefined(name)) {
+                ModelNode attributeDescription = resourceDescription.find(name);
+                if (attributeDescription == null) {
+                    //noinspection HardCodedStringLiteral
+                    logger.error("{}: Unable to populate '{}': No attribute description found in\n{}", formId(), name,
+                            resourceDescription);
+                    continue;
+                }
+
+                ModelNode value = model.get(formItem.getName());
+                ModelType type = attributeDescription.get(TYPE).asType();
+                switch (type) {
+                    case BOOLEAN:
+                        formItem.setValue(value.asBoolean());
+                        break;
+
+                    case INT:
+                        formItem.setValue((long) value.asInt());
+                        break;
+                    case BIG_INTEGER:
+                    case LONG:
+                        formItem.setValue(value.asLong());
+                        break;
+
+                    case STRING:
+                        formItem.setValue(value.asString());
+                        break;
+
+                    case BIG_DECIMAL:
+                    case DOUBLE:
+                    case BYTES:
+                    case EXPRESSION:
+                    case LIST:
+                    case OBJECT:
+                    case PROPERTY:
+                    case TYPE:
+                    case UNDEFINED:
+                        //noinspection HardCodedStringLiteral
+                        logger.warn("{}: populating form field '{}' of type '{}' not yet implemented", formId(), name,
+                                type);
+                        break;
+                }
+                formItem.setUndefined(false);
+
+            } else {
+                formItem.clearValue();
+                formItem.setUndefined(true);
+            }
+        }
+    }
+
+    @Override
+    protected void persistModel() {
         T model = getModel();
 
         for (FormItem formItem : getFormItems()) {
             String name = formItem.getName();
-            ModelNode attribute = model.get(name);
 
             if (formItem.isUndefined()) {
-                attribute.set(ModelType.UNDEFINED);
+                // TODO Check default value
+                model.remove(name);
 
             } else if (formItem.isModified()) {
                 ModelNode attributeDescription = resourceDescription.find(name);
@@ -299,36 +354,28 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                 Object value = formItem.getValue();
                 switch (type) {
                     case BOOLEAN:
-                        attribute.set((Boolean) value);
+                        model.get(name).set((Boolean) value);
                         break;
 
-                    case BIG_INTEGER:
                     case INT:
+                    case BIG_INTEGER:
                     case LONG:
                         Long longValue = (Long) value;
                         if (type == BIG_INTEGER) {
-                            attribute.set(BigInteger.valueOf(longValue));
+                            model.get(name).set(BigInteger.valueOf(longValue));
                         } else if (type == INT) {
-                            attribute.set(longValue.intValue());
+                            model.get(name).set(longValue.intValue());
                         } else {
-                            attribute.set(longValue);
-                        }
-                        break;
-
-                    case BIG_DECIMAL:
-                    case DOUBLE:
-                        Double doubleValue = (Double) value;
-                        if (type == BIG_DECIMAL) {
-                            attribute.set(BigDecimal.valueOf(doubleValue));
-                        } else {
-                            attribute.set(doubleValue);
+                            model.get(name).set(longValue);
                         }
                         break;
 
                     case STRING:
-                        attribute.set(String.valueOf(value));
+                        model.get(name).set(String.valueOf(value));
                         break;
 
+                    case BIG_DECIMAL:
+                    case DOUBLE:
                     case BYTES:
                     case EXPRESSION:
                     case LIST:

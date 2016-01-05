@@ -28,10 +28,12 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.SimpleEventBus;
+import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.dom.Node;
 import elemental.html.DivElement;
 import elemental.html.LabelElement;
+import elemental.html.ParagraphElement;
 import elemental.html.SpanElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.IdBuilder;
@@ -47,7 +49,9 @@ import static java.util.Collections.singletonList;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
+import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.Names.HIDDEN;
 
 /**
  * TODO Implement org.jboss.hal.ballroom.form.Form.State#READONLY
@@ -70,14 +74,22 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     private boolean restricted;
     private boolean expressionAllowed;
 
+    // Form.State#EDITING elements
     private final DivElement inputGroupContainer;
-    private final LabelElement labelElement;
+    private final LabelElement inputLabelElement;
     private final SpanElement errorText;
     private final SpanElement expressionContainer;
-    private final DivElement restrictedContainer;
-    final DivElement container;
+    private final DivElement editingRestricted;
+    final DivElement editingRoot;
     final DivElement inputContainer;
     final InputElement<T> inputElement;
+
+    // Form.State#READONLY elements
+    private final LabelElement readonlyLabelElement;
+    private final ParagraphElement valueElement;
+    private final DivElement valueContainer;
+    private final DivElement readonlyRoot;
+    private final SpanElement readonlyRestricted;
 
 
     // ------------------------------------------------------ initialization
@@ -96,15 +108,15 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         this.validationHandlers = new LinkedList<>();
         resetValidationHandlers();
 
-        // create basic elements
-        container = new Elements.Builder().div().css(formGroup).end().build();
-        labelElement = new Elements.Builder()
+        // create editing elements
+        editingRoot = new Elements.Builder().div().css(formGroup).end().build();
+        inputLabelElement = new Elements.Builder()
                 .label()
                 .css(column(labelColumns), controlLabel)
-                .innerText(label).build();
-        inputContainer = new Elements.Builder()
-                .div()
-                .css(column(inputColumns)).end().build();
+                .innerText(label)
+                .end()
+                .build();
+        inputContainer = new Elements.Builder().div().css(column(inputColumns)).end().build();
         errorText = new Elements.Builder().span().css(helpBlock).end().build();
         Elements.setVisible(errorText, false);
 
@@ -135,11 +147,29 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         elemental.html.InputElement restrictedInput = restrictedBuilder.referenceFor(RESTRICTED_ELEMENT);
         restrictedInput.setReadOnly(true);
         restrictedInput.setValue(CONSTANTS.restricted());
-        restrictedContainer = restrictedBuilder.build();
+        editingRestricted = restrictedBuilder.build();
 
+        // create readonly elements
+        readonlyRoot = new Elements.Builder().div().css(formGroup).end().build();
+        readonlyLabelElement = new Elements.Builder()
+                .label()
+                .css(column(labelColumns), controlLabel)
+                .innerText(label)
+                .end()
+                .build();
+        valueContainer = new Elements.Builder().div().css(column(inputColumns)).end().build();
+        valueElement = new Elements.Builder().p().css(formControlStatic).end().build();
+        readonlyRestricted = new Elements.Builder()
+                .span()
+                .css(fontAwesome("lock"))
+                .style("margin-right: .5em")
+                .aria(HIDDEN, "true") //NON-NLS
+                .end()
+                .build();
+
+        assembleUI();
         setId(IdBuilder.build(name));
         setName(name);
-        assembleUI();
     }
 
     /**
@@ -149,8 +179,12 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     void assembleUI() {
         inputContainer.appendChild(inputElement.asElement());
         inputContainer.appendChild(errorText);
-        container.appendChild(labelElement);
-        container.appendChild(inputContainer);
+        editingRoot.appendChild(inputLabelElement);
+        editingRoot.appendChild(inputContainer);
+
+        valueContainer.appendChild(valueElement);
+        readonlyRoot.appendChild(readonlyLabelElement);
+        readonlyRoot.appendChild(valueContainer);
     }
 
     /**
@@ -164,7 +198,13 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public Element asElement(Form.State state) {
-        return container;
+        if (state == EDITING) {
+            return editingRoot;
+        } else if (state == READONLY) {
+            return readonlyRoot;
+        } else {
+            throw new IllegalStateException("Unknown state in FormItem.asElement(" + state + ")");
+        }
     }
 
 
@@ -184,14 +224,21 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     public void setValue(final T value, final boolean fireEvent) {
         toggleExpressionSupport(false);
         inputElement.setValue(value);
+        setReadonlyValue(value);
         if (fireEvent) {
             signalChange(value);
         }
     }
 
+    protected void setReadonlyValue(final T value) {
+        String text = value == null ? "" : String.valueOf(value);
+        valueElement.setInnerText(text);
+    }
+
     @Override
     public void clearValue() {
         inputElement.clearValue();
+        setReadonlyValue(null);
     }
 
     void signalChange(final T value) {
@@ -215,8 +262,15 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public void setId(String id) {
-        IdBuilder.set(inputElement.asElement(), id);
-        labelElement.setHtmlFor(id);
+        String editId = IdBuilder.build(id, EDITING.name().toLowerCase());
+        String readonlyId = IdBuilder.build(id, READONLY.name().toLowerCase());
+
+        IdBuilder.set(inputElement.asElement(), editId);
+        inputLabelElement.setHtmlFor(editId);
+        valueElement.setId(readonlyId);
+
+        asElement(EDITING).getDataset().setAt("editingFormItemGroup", editId); //NON-NLS
+        asElement(READONLY).getDataset().setAt("readonlyFormItemGroup", readonlyId); //NON-NLS
     }
 
     @Override
@@ -237,15 +291,6 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     @Override
     public void setText(final String text) {
         inputElement.setText(text);
-    }
-
-    @Override
-    public void identifyAs(String id, String... additionalIds) {
-        String fq = IdBuilder.build(id, additionalIds);
-        setId(fq);
-        asElement(EDITING).getDataset().setAt("formItemGroup", fq); //NON-NLS
-        labelElement.getDataset().setAt("formItemLabel", fq); //NON-NLS
-        inputElement.asElement().getDataset().setAt("formItemControl", fq); //NON-NLS
     }
 
 
@@ -296,12 +341,12 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     @Override
     public void clearError() {
         Elements.setVisible(errorText, false);
-        container.getClassList().remove(hasError);
+        editingRoot.getClassList().remove(hasError);
     }
 
     @Override
     public void showError(String message) {
-        container.getClassList().add(hasError);
+        editingRoot.getClassList().add(hasError);
         errorText.setInnerText(message);
         Elements.setVisible(errorText, true);
     }
@@ -411,12 +456,12 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public String getLabel() {
-        return labelElement.getInnerText();
+        return inputLabelElement.getInnerText();
     }
 
     @Override
     public void setLabel(final String label) {
-        labelElement.setInnerText(label);
+        inputLabelElement.setInnerText(label);
     }
 
     @Override
@@ -428,9 +473,9 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     public void setRequired(boolean required) {
         if (required != this.required) {
             if (required) {
-                labelElement.setInnerHTML(label + " " + MESSAGES.requiredMarker().asString());
+                inputLabelElement.setInnerHTML(label + " " + MESSAGES.requiredMarker().asString());
             } else {
-                labelElement.setInnerHTML(label);
+                inputLabelElement.setInnerHTML(label);
             }
         }
         this.required = required;
@@ -481,18 +526,30 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     void toggleRestricted(final boolean on) {
         if (on) {
-            container.getClassList().add(hasFeedback);
+            editingRoot.getClassList().add(hasFeedback);
+            readonlyRoot.getClassList().add(hasFeedback);
             Node firstChild = inputContainer.getChildren().item(0);
             inputContainer.removeChild(firstChild);
-            inputContainer.appendChild(restrictedContainer);
+            inputContainer.appendChild(editingRestricted);
+
+            Elements.removeChildrenFrom(valueElement);
+            SpanElement span = Browser.getDocument().createSpanElement();
+            span.setInnerText(CONSTANTS.restricted());
+            valueElement.appendChild(readonlyRestricted);
+            valueElement.appendChild(span);
+
         } else {
-            container.getClassList().remove(hasFeedback);
-            inputContainer.removeChild(restrictedContainer);
+            editingRoot.getClassList().remove(hasFeedback);
+            readonlyRoot.getClassList().remove(hasFeedback);
+            inputContainer.removeChild(editingRestricted);
             if (isExpressionValue()) {
                 inputContainer.appendChild(inputGroupContainer);
             } else {
                 inputContainer.appendChild(inputElement.asElement());
             }
+
+            Elements.removeChildrenFrom(valueElement);
+            setReadonlyValue(getValue());
         }
     }
 

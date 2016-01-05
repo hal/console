@@ -39,7 +39,6 @@ import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
-import org.jboss.hal.resources.Names;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,7 +68,6 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     private static final String NOT_INITIALIZED = "Form element not initialized. Please add this form to the DOM before calling any of the form operations";
 
     private final String id;
-    private final StateMachine stateMachine;
     private final LinkedHashMap<State, Element> panels;
     private final LinkedHashMap<String, FormItem> formItems;
     private final LinkedHashMap<String, String> helpTexts;
@@ -86,6 +84,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     private EventListener exitEditWithEsc;
 
     // accessible in subclasses
+    protected final StateMachine stateMachine;
     protected SaveCallback<T> saveCallback;
     protected ResetCallback<T> resetCallback;
     protected CancelCallback<T> cancelCallback;
@@ -108,6 +107,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     protected void addFormItem(FormItem formItem, FormItem... formItems) {
         for (FormItem item : Lists.asList(formItem, formItems)) {
             this.formItems.put(item.getName(), item);
+            item.setId(IdBuilder.build(id, item.getName()));
         }
     }
 
@@ -166,10 +166,13 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     }
 
     private Element viewPanel() {
-        return new Elements.Builder()
+        Element viewPanel = new Elements.Builder()
                 .div().id(IdBuilder.build(id, "view")).css(form, formHorizontal)
-                .p().innerText(Names.NYI).end()
                 .end().build();
+        for (FormItem formItem : formItems.values()) {
+            viewPanel.appendChild(formItem.asElement(READONLY));
+        }
+        return viewPanel;
     }
 
     private Element editPanel() {
@@ -192,7 +195,6 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         editPanel.appendChild(errorPanel);
         boolean hasRequiredField = false;
         for (FormItem formItem : formItems.values()) {
-            formItem.identifyAs(id, "edit", formItem.getName());
             editPanel.appendChild(formItem.asElement(EDITING));
             hasRequiredField = hasRequiredField || formItem.isRequired();
         }
@@ -248,6 +250,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         }
         this.model = model;
         stateExec(VIEW);
+        populateFormItems();
     }
 
     @Override
@@ -285,8 +288,8 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             throw new IllegalStateException(NOT_INITIALIZED);
         }
         this.model = model;
-        populateFormItems();
         stateExec(EDIT);
+        populateFormItems();
     }
 
     /**
@@ -304,13 +307,14 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         boolean valid = validate();
         if (valid) {
             persistModel();
-            if (saveCallback != null) {
-                saveCallback.onSave(this, getChangedValues());
-            }
+            Map<String, Object> changedValues = getChangedValues();
             for (FormItem formItem : formItems.values()) {
                 formItem.resetMetaData();
             }
             stateExec(SAVE);
+            if (saveCallback != null) {
+                saveCallback.onSave(this, changedValues);
+            }
         }
     }
 
@@ -344,10 +348,10 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             throw new IllegalStateException(NOT_INITIALIZED);
         }
         clearErrors();
+        stateExec(CANCEL);
         if (cancelCallback != null) {
             cancelCallback.onCancel(this);
         }
-        stateExec(CANCEL);
     }
 
     @Override
@@ -360,10 +364,10 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         if (!initialized()) {
             throw new IllegalStateException(NOT_INITIALIZED);
         }
+        stateExec(RESET);
         if (resetCallback != null) {
             resetCallback.onReset(this);
         }
-        stateExec(RESET);
     }
 
     @Override

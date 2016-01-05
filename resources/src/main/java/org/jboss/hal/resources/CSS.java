@@ -59,6 +59,7 @@ public interface CSS {
     String form = "form";
     String formButtons = "form-buttons";
     String formControl = "form-control";
+    String formControlFeedback = "form-control-feedback";
     String formControlStatic = "form-control-static";
     String formGroup = "form-group";
     String formHelpContent = "form-help-content";

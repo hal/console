@@ -26,11 +26,15 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.client.NameTokens;
+import org.jboss.hal.client.bootstrap.endpoint.Endpoint;
+import org.jboss.hal.core.HasPresenter;
 import org.jboss.hal.core.PatternFlyPresenter;
 import org.jboss.hal.core.PatternFlyView;
 import org.jboss.hal.core.Slots;
 
 import javax.inject.Inject;
+
+import static org.jboss.hal.resources.Names.*;
 
 /**
  * @author Harald Pehl
@@ -42,14 +46,39 @@ public class DeploymentPresenter extends PatternFlyPresenter<DeploymentPresenter
     @NameToken(NameTokens.DEPLOYMENTS)
     public interface MyProxy extends ProxyPlace<DeploymentPresenter> {}
 
-    public interface MyView extends PatternFlyView {}
+    public interface MyView extends PatternFlyView, HasPresenter<DeploymentPresenter> {
+        void update(Endpoint endpoint);
+    }
     // @formatter:on
 
+    private Endpoint endpoint;
 
     @Inject
     public DeploymentPresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy proxy) {
         super(eventBus, view, proxy, Slots.MAIN);
+
+        endpoint = new Endpoint();
+        endpoint.get(NAME_KEY).set("foo");
+        endpoint.get(HOST).set("access-halproject.rhcloud.com");
+        endpoint.get(SCHEME).set("https");
+    }
+
+    @Override
+    protected void onBind() {
+        super.onBind();
+        getView().setPresenter(this);
+    }
+
+    @Override
+    protected void onReset() {
+        super.onReset();
+        getView().update(endpoint);
+    }
+
+    public void saveEndpoint(Endpoint endpoint) {
+        this.endpoint = endpoint;
+        getView().update(endpoint);
     }
 }

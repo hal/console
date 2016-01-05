@@ -60,11 +60,6 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void identifyAs(final String id, final String... additionalIds) {
-
-    }
-
-    @Override
     public void addValidationHandler(final FormItemValidation<String> validationHandler) {
 
     }

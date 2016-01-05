@@ -36,6 +36,9 @@ import org.jboss.hal.resources.Resources;
 import javax.annotation.PostConstruct;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.resources.Names.PLACEMENT;
+import static org.jboss.hal.resources.Names.TOGGLE;
+import static org.jboss.hal.resources.Names.TOOLTIP;
 
 /**
  * @author Harald Pehl
@@ -74,9 +77,13 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
     public void update(Environment environment) {
         halVersion.setInnerText(environment.getHalVersion().toString());
         if (environment.halUpdateAvailable()) {
-            halVersion.setTitle(resources().messages().updateAvailable(environment.getHalVersion().toString(),
-                    environment.getLatestHalVersion().toString()));
-            Elements.setVisible(updateAvailable, true);
+            String updateAvailable = resources().messages().updateAvailable(environment.getHalVersion().toString(),
+                    environment.getLatestHalVersion().toString());
+            this.updateAvailable.setTitle(updateAvailable);
+            this.updateAvailable.getDataset().setAt(TOGGLE, TOOLTIP);
+            this.updateAvailable.getDataset().setAt(PLACEMENT, "top");
+            this.updateAvailable.getDataset().setAt("container", "body"); //NON-NLS
+            Elements.setVisible(this.updateAvailable, true);
         }
     }
 

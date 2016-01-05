@@ -95,7 +95,7 @@ class FormLinks implements IsElement {
         if (!helpTexts.isEmpty()) {
             // @formatter:off
             helpLink = new Elements.Builder()
-                .li().css(pullRight)
+                .li()
                     .a().attr("href", "#" + helpId + "")
                             .data(TOGGLE, "collapse") //NON-NLS
                             .aria("expanded", "false") //NON-NLS

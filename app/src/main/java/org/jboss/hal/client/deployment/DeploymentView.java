@@ -26,10 +26,11 @@ import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.dialog.Dialog;
+import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
 import org.jboss.hal.ballroom.form.ButtonItem;
 import org.jboss.hal.ballroom.form.DefaultForm;
 import org.jboss.hal.ballroom.form.ExistingModelStateMachine;
-import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.NumberItem;
 import org.jboss.hal.ballroom.form.PasswordItem;
 import org.jboss.hal.ballroom.form.SelectBoxItem;
@@ -37,9 +38,9 @@ import org.jboss.hal.ballroom.form.TextAreaItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
+import org.jboss.hal.client.bootstrap.endpoint.Endpoint;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointResources;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 
@@ -85,6 +86,8 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
 
 
     private final Dialog dialog;
+    private final Form<Endpoint> endpointForm;
+    private DeploymentPresenter presenter;
 
     public DeploymentView() {
         SampleForm dialogForm = new SampleForm("dialog", true);
@@ -93,18 +96,28 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
         dialog = new Dialog.Builder("Sample Dialog").add(dialogBody).closeOnly().build();
 
         EndpointResources endpointResources = GWT.create(EndpointResources.class);
-        ModelNodeForm<ModelNode> mbuiForm = new ModelNodeForm.Builder<>("mbui-form", SecurityContext.RWX,
+        endpointForm = new ModelNodeForm.Builder<Endpoint>("mbui-form", SecurityContext.RWX,
                 StaticResourceDescription.from(endpointResources.endpoint())).build();
+        endpointForm.setSaveCallback((form, changedValues) -> presenter.saveEndpoint(form.getModel()));
 
         SampleForm form = new SampleForm("deployment", false);
         Element element = new LayoutBuilder()
                 .header("Sample Form")
                 .add(form.asElement())
-                .add(mbuiForm.asElement())
+                .add(endpointForm.asElement())
                 .build();
         initWidget(Elements.asWidget(element));
 
         form.view("foo");
-        mbuiForm.view(new ModelNode());
+    }
+
+    @Override
+    public void setPresenter(final DeploymentPresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    @Override
+    public void update(final Endpoint endpoint) {
+        endpointForm.view(endpoint);
     }
 }

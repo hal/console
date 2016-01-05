@@ -37,8 +37,8 @@ import org.jboss.hal.dmr.Property;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
-import static org.jboss.hal.ballroom.form.NumberItem.MAX_SAFE_NUMBER;
-import static org.jboss.hal.ballroom.form.NumberItem.MIN_SAFE_NUMBER;
+import static org.jboss.hal.ballroom.form.NumberItem.MAX_SAFE_LONG;
+import static org.jboss.hal.ballroom.form.NumberItem.MIN_SAFE_LONG;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
@@ -61,14 +61,21 @@ public class DefaultFormItemProvider implements FormItemProvider {
         if (modelNode.hasDefined(TYPE)) {
             ModelType type = modelNode.get(TYPE).asType();
             switch (type) {
-                case BIG_DECIMAL:
-                case BIG_INTEGER:
                 case DOUBLE:
+                case BIG_DECIMAL:
+                    break;
+
                 case INT:
+                    long iMin = modelNode.get(MIN).asLong(Integer.MIN_VALUE);
+                    long iMax = modelNode.get(MAX).asLong(Integer.MAX_VALUE);
+                    formItem = new NumberItem(name, label, iMin, iMax);
+                    break;
+
                 case LONG:
-                    long min = modelNode.get(MIN).asLong(MIN_SAFE_NUMBER);
-                    long max = modelNode.get(MAX).asLong(MAX_SAFE_NUMBER);
-                    formItem = new NumberItem(name, label, min, max);
+                case BIG_INTEGER:
+                    long lMin = modelNode.get(MIN).asLong(MIN_SAFE_LONG);
+                    long lMax = modelNode.get(MAX).asLong(MAX_SAFE_LONG);
+                    formItem = new NumberItem(name, label, lMin, lMax);
                     break;
 
                 case BOOLEAN:

@@ -39,8 +39,7 @@ import java.util.List;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.dialog.Modal.$;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.Names.LABEL;
-import static org.jboss.hal.resources.Names.ROLE;
+import static org.jboss.hal.resources.Names.*;
 
 /**
  * @author Harald Pehl
@@ -206,7 +205,7 @@ public class Dialog implements IsElement {
                     .div().css(modalContent)
                         .div().css(modalHeader)
                             .button().css(close).aria(LABEL, "Close").rememberAs("closeIcon") //NON-NLS
-                                .span().css(pfIcon("close")).aria("hidden", "true").end() //NON-NLS
+                                .span().css(pfIcon("close")).aria(HIDDEN, "true").end() //NON-NLS
                             .end()
                             .h(4).css(modalTitle).id(labelId).rememberAs("title").end()
                         .end()

@@ -24,10 +24,13 @@ package org.jboss.hal.ballroom.form;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.events.EventListener;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Button;
 
+import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.resources.CSS.labelColumns;
 import static org.jboss.hal.resources.CSS.offset;
+import static org.jboss.hal.resources.Names.NOT_SUPPORTED;
 
 /**
  * @author Harald Pehl
@@ -35,10 +38,25 @@ import static org.jboss.hal.resources.CSS.offset;
 public class ButtonItem extends AbstractFormItem<Void> {
 
     private ButtonElement button;
+    private Element readonlyNotSupported;
 
     public ButtonItem(final String name, final String label) {
         super(name, label);
         button.setText(label);
+    }
+
+    @Override
+    public Element asElement(final Form.State state) {
+        if (state == READONLY) {
+            if (readonlyNotSupported == null) {
+                readonlyNotSupported = Browser.getDocument().createDivElement();
+                readonlyNotSupported.setInnerText(NOT_SUPPORTED);
+                Elements.setVisible(readonlyNotSupported, false);
+            }
+            return readonlyNotSupported;
+        } else {
+            return super.asElement(state);
+        }
     }
 
     @Override
@@ -52,7 +70,7 @@ public class ButtonItem extends AbstractFormItem<Void> {
     protected void assembleUI() {
         inputContainer.getClassList().add(offset(labelColumns));
         inputContainer.appendChild(inputElement.asElement());
-        container.appendChild(inputContainer);
+        editingRoot.appendChild(inputContainer);
     }
 
     @Override

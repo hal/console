@@ -130,6 +130,22 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <!-- We want to have unit tests! Somehow the maven GWT plugin seems to turn them off -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unit-tests</id>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <phase>test</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <repositories>

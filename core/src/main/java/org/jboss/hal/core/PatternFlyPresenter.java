@@ -28,7 +28,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
 /**
- * A presenter which calls {@link PatternFly#initComponents()} when it's {@linkplain #onReveal() revealed}. Extend from
+ * A presenter which calls {@link PatternFlyView#attach()} when it's {@linkplain #onReveal() revealed}. Extend from
  * this presenter if the view uses opt-in features from PatternFly / Bootstrap like data tables, tooltips or select
  * boxes.
  *

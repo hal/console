@@ -33,9 +33,11 @@ public interface Names {
     String DESELECT = "deselect";
     String FAILURE = "failure";
     String GET = "GET";
+    String HIDDEN = "hidden";
     String HOST = "host";
     String LABEL = "label";
     String NAME_KEY = "name";
+    String NOT_SUPPORTED = "not supported";
     String NYI = "not yet implemented";
     String OBJECT = "Object";
     String PLACEMENT = "placement";
