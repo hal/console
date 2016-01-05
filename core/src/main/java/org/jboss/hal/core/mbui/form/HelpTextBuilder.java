@@ -21,8 +21,8 @@
  */
 package org.jboss.hal.core.mbui.form;
 
+import com.google.common.base.Joiner;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.thirdparty.guava.common.base.Joiner;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Constants;
@@ -70,7 +70,11 @@ class HelpTextBuilder {
 
     String helpText(FormItem formItem, ModelNode description) {
         StringBuilder help = new StringBuilder();
-        help.append(description.get(DESCRIPTION).asString());
+        String desc = description.get(DESCRIPTION).asString();
+        if (!desc.endsWith(".")) {
+            desc = desc + ".";
+        }
+        help.append(desc);
         RestartMode restartMode = restartRequired(description);
         if (restartMode == UNKNOWN) {
             logger.warn("Unknown restart mode in attribute description for '{}': '{}'", formItem.getName(), //NON-NLS
@@ -89,7 +93,7 @@ class HelpTextBuilder {
             textModules.add(restartMode.description());
         }
         if (!textModules.isEmpty()) {
-            help.append(" ").append(Joiner.on(", ").join(textModules)).append(".");
+            help.append(" ").append(Joiner.on(". ").join(textModules)).append(".");
         }
 
         return help.toString();

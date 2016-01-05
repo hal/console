@@ -250,6 +250,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                 fi.toSortedList((p1, p2) -> p1.getName().compareTo(p2.getName()));
 
         LabelBuilder labelBuilder = new LabelBuilder();
+        HelpTextBuilder helpTextBuilder = new HelpTextBuilder();
         for (Property property : filtered) {
             String name = property.getName();
             ModelNode attribute = property.getValue();
@@ -263,7 +264,8 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             if (formItem != null) {
                 addFormItem(formItem);
                 if (attribute.hasDefined(DESCRIPTION)) {
-                    addHelp(labelBuilder.label(property), attribute.get(DESCRIPTION).asString());
+                    String helpText = helpTextBuilder.helpText(formItem, attribute);
+                    addHelp(labelBuilder.label(property), helpText);
                 }
             } else {
                 logger.warn("Unable to create form item for '{}' in form '{}'", name, builder.id); //NON-NLS
