@@ -393,6 +393,10 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         inputElement.setFocus(focus);
     }
 
+    @Override
+    public void setPlaceholder(final String placeholder) {
+        inputElement.setPlaceholder(placeholder);
+    }
 
     // ------------------------------------------------------ properties
 

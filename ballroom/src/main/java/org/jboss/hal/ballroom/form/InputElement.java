@@ -50,4 +50,8 @@ public abstract class InputElement<T>
     public abstract void setValue(T value);
 
     public abstract void clearValue();
+
+    public void setPlaceholder(final String placeHolder) {
+        // empty
+    }
 }

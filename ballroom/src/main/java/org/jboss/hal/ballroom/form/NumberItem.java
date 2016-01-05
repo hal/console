@@ -214,6 +214,11 @@ public class NumberItem extends AbstractFormItem<Long> {
         }
 
         @Override
+        public void setPlaceholder(final String placeholder) {
+            element.setPlaceholder(placeholder);
+        }
+
+        @Override
         public Element asElement() {
             return element;
         }

@@ -148,6 +148,11 @@ public class TextBoxItem extends AbstractFormItem<String> {
         }
 
         @Override
+        public void setPlaceholder(final String placeholder) {
+            element.setPlaceholder(placeholder);
+        }
+
+        @Override
         public Element asElement() {
             return element;
         }

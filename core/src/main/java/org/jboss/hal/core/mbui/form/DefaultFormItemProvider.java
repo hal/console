@@ -105,6 +105,10 @@ public class DefaultFormItemProvider implements FormItemProvider {
                 if (formItem.supportsExpressions()) {
                     formItem.setExpressionAllowed(modelNode.get(EXPRESSION_ALLOWED).asBoolean(false));
                 }
+                if (modelNode.hasDefined(DEFAULT)) {
+                    String defaultValue = modelNode.get(DEFAULT).asString();
+                    formItem.setPlaceholder(defaultValue);
+                }
             }
         }
 

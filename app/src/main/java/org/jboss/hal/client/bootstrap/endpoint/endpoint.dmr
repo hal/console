@@ -26,7 +26,8 @@
             "description" => "The port of the management endpoint. Leave empty for the default ports.",
             "nillable" => true,
             "min" => 1L,
-            "max" => 65535L
+            "max" => 65535L,
+            "default" => 80
         }
     }
 }

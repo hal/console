@@ -139,6 +139,11 @@ public class TextAreaItem extends AbstractFormItem<List<String>> {
         }
 
         @Override
+        public void setPlaceholder(final String placeholder) {
+            element.setPlaceholder(placeholder);
+        }
+
+        @Override
         public Element asElement() {
             return element;
         }

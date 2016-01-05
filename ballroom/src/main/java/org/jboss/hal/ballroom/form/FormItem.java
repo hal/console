@@ -89,4 +89,6 @@ public interface FormItem<T> extends HasEnabled, Focusable, HasName, HasValue<T>
     boolean isRestricted();
 
     void setRestricted(boolean restricted);
+
+    void setPlaceholder(String placeHolder);
 }
