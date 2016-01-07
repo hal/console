@@ -19,19 +19,35 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.mbui.form;
-
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+package org.jboss.hal.ballroom.form;
 
 /**
- * Provider for an operation which becomes part of the the composite save operation in a {@link ModelNodeForm}.
- *
  * @author Harald Pehl
  */
-@FunctionalInterface
-public interface SaveOperationStep {
+public class DefaultMapping<T> implements DataMapping<T> {
 
-    Operation onSave(ResourceAddress address, String attribute, ModelNode value);
+    @Override
+    public void newModel(final T model, final Form<T> form) {
+        for (FormItem formItem : form.getFormItems()) {
+            formItem.clearError();
+            formItem.clearValue();
+            formItem.setUndefined(true);
+            formItem.setModified(true);
+        }
+    }
+
+    @Override
+    public void resetModel(final T model, Form<T> form) {
+        // empty
+    }
+
+    @Override
+    public void populateFormItems(final T model, final Form<T> form) {
+        // empty
+    }
+
+    @Override
+    public void persistModel(final T model, final Form<T> form) {
+        // empty
+    }
 }

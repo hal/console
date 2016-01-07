@@ -105,11 +105,6 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void resetMetaData() {
-
-    }
-
-    @Override
     public String getLabel() {
         return null;
     }

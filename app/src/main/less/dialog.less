@@ -12,7 +12,11 @@
   .form {
     background-color: white;
   }
-  .edit-buttons {
+  .form-buttons {
+    /*
+     * Do not show the form buttons inside a dialog.
+     * The form's save() & cancel() methods must be called manually from the dialog's button handlers.
+     */
     display: none;
   }
 }

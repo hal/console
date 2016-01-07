@@ -25,6 +25,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
+import org.jboss.hal.ballroom.form.DataMapping;
 import org.jboss.hal.ballroom.form.DefaultForm;
 import org.jboss.hal.ballroom.form.ExistingModelStateMachine;
 import org.jboss.hal.ballroom.form.FormItem;
@@ -34,14 +35,12 @@ import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.core.mbui.LabelBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
-import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,8 +49,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.dmr.ModelType.BIG_INTEGER;
-import static org.jboss.hal.dmr.ModelType.INT;
 
 /**
  * @author Harald Pehl
@@ -68,17 +65,16 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         final Set<String> includes;
         final Set<String> excludes;
         final Map<String, FormItemProvider> providers;
-        final Map<String, SaveOperationStep> saveOperations;
         final List<FormItem> unboundFormItems;
         boolean createResource;
         boolean viewOnly;
         boolean addOnly;
         boolean unsorted;
         boolean includeRuntime;
-        boolean hideButtons;
         SaveCallback<T> saveCallback;
         CancelCallback<T> cancelCallback;
         ResetCallback<T> resetCallback;
+        DataMapping<T> dataMapping;
 
 
         // ------------------------------------------------------ configure required and optional settings
@@ -91,13 +87,13 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             this.includes = new HashSet<>();
             this.excludes = new HashSet<>();
             this.providers = new HashMap<>();
-            this.saveOperations = new HashMap<>();
             this.unboundFormItems = new ArrayList<>();
             this.createResource = false;
             this.viewOnly = false;
             this.addOnly = false;
             this.unsorted = false;
             this.includeRuntime = false;
+            this.dataMapping = new ModelNodeMapping<>(resourceDescription);
         }
 
         public Builder<T> include(final String first, final String... rest) {
@@ -136,15 +132,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         }
 
         public Builder<T> customFormItem(final String attribute, final FormItemProvider provider) {
-            return customFormItem(attribute, provider, null);
-        }
-
-        public Builder<T> customFormItem(final String attribute, final FormItemProvider provider,
-                final SaveOperationStep saveOperation) {
             providers.put(attribute, provider);
-            if (saveOperation != null) {
-                saveOperations.put(attribute, saveOperation);
-            }
             return this;
         }
 
@@ -168,8 +156,8 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             return this;
         }
 
-        public Builder<T> hideButtons() {
-            this.hideButtons = true;
+        public Builder<T> dataMapping(DataMapping<T> dataMapping) {
+            this.dataMapping = dataMapping;
             return this;
         }
 
@@ -226,16 +214,12 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelNodeForm.class);
 
-    private final ResourceDescription resourceDescription;
-    private final FormItemProvider defaultFormItemProvider;
-    private final Map<String, SaveOperationStep> saveOperations;
+    private final FormItemProvider formItemProvider;
 
     private ModelNodeForm(final Builder<T> builder) {
-        super(builder.id, builder.stateMachine(), builder.securityContext);
+        super(builder.id, builder.stateMachine(), builder.dataMapping, builder.securityContext);
 
-        this.resourceDescription = builder.resourceDescription;
-        this.defaultFormItemProvider = new DefaultFormItemProvider();
-        this.saveOperations = builder.saveOperations;
+        this.formItemProvider = new DefaultFormItemProvider();
         this.saveCallback = builder.saveCallback;
         this.cancelCallback = builder.cancelCallback;
         this.resetCallback = builder.resetCallback;
@@ -257,7 +241,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             if (builder.providers.containsKey(name)) {
                 formItem = builder.providers.get(name).createFrom(property);
             } else {
-                formItem = defaultFormItemProvider.createFrom(property);
+                formItem = formItemProvider.createFrom(property);
             }
             if (formItem != null) {
                 addFormItem(formItem);
@@ -271,124 +255,6 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         }
         for (FormItem unboundFormItem : builder.unboundFormItems) {
             addFormItem(unboundFormItem);
-        }
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected void populateFormItems() {
-        T model = getModel();
-        for (FormItem formItem : getFormItems()) {
-            String name = formItem.getName();
-            if (model.hasDefined(name)) {
-                ModelNode attributeDescription = resourceDescription.find(name);
-                if (attributeDescription == null) {
-                    //noinspection HardCodedStringLiteral
-                    logger.error("{}: Unable to populate '{}': No attribute description found in\n{}", formId(), name,
-                            resourceDescription);
-                    continue;
-                }
-
-                ModelNode value = model.get(formItem.getName());
-                ModelType type = attributeDescription.get(TYPE).asType();
-                switch (type) {
-                    case BOOLEAN:
-                        formItem.setValue(value.asBoolean());
-                        break;
-
-                    case INT:
-                        formItem.setValue((long) value.asInt());
-                        break;
-                    case BIG_INTEGER:
-                    case LONG:
-                        formItem.setValue(value.asLong());
-                        break;
-
-                    case STRING:
-                        formItem.setValue(value.asString());
-                        break;
-
-                    case BIG_DECIMAL:
-                    case DOUBLE:
-                    case BYTES:
-                    case EXPRESSION:
-                    case LIST:
-                    case OBJECT:
-                    case PROPERTY:
-                    case TYPE:
-                    case UNDEFINED:
-                        //noinspection HardCodedStringLiteral
-                        logger.warn("{}: populating form field '{}' of type '{}' not yet implemented", formId(), name,
-                                type);
-                        break;
-                }
-                formItem.setUndefined(false);
-
-            } else {
-                formItem.clearValue();
-                formItem.setUndefined(true);
-            }
-        }
-    }
-
-    @Override
-    protected void persistModel() {
-        T model = getModel();
-
-        for (FormItem formItem : getFormItems()) {
-            String name = formItem.getName();
-
-            if (formItem.isUndefined()) {
-                // TODO Check default value
-                model.remove(name);
-
-            } else if (formItem.isModified()) {
-                ModelNode attributeDescription = resourceDescription.find(name);
-                if (attributeDescription == null) {
-                    //noinspection HardCodedStringLiteral
-                    logger.error("{}: Unable to persist '{}': No attribute description found in\n{}", formId(), name,
-                            resourceDescription);
-                    continue;
-                }
-                ModelType type = attributeDescription.get(TYPE).asType();
-                Object value = formItem.getValue();
-                switch (type) {
-                    case BOOLEAN:
-                        model.get(name).set((Boolean) value);
-                        break;
-
-                    case INT:
-                    case BIG_INTEGER:
-                    case LONG:
-                        Long longValue = (Long) value;
-                        if (type == BIG_INTEGER) {
-                            model.get(name).set(BigInteger.valueOf(longValue));
-                        } else if (type == INT) {
-                            model.get(name).set(longValue.intValue());
-                        } else {
-                            model.get(name).set(longValue);
-                        }
-                        break;
-
-                    case STRING:
-                        model.get(name).set(String.valueOf(value));
-                        break;
-
-                    case BIG_DECIMAL:
-                    case DOUBLE:
-                    case BYTES:
-                    case EXPRESSION:
-                    case LIST:
-                    case OBJECT:
-                    case PROPERTY:
-                    case TYPE:
-                    case UNDEFINED:
-                        //noinspection HardCodedStringLiteral
-                        logger.warn("{}: persisting form field '{}' to type '{}' not yet implemented", formId(), name,
-                                type);
-                        break;
-                }
-            }
         }
     }
 }

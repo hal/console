@@ -49,7 +49,7 @@ import java.util.Map;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.config.InstanceInfo.WILDFLY;
 import static org.jboss.hal.resources.CSS.active;
-import static org.jboss.hal.resources.Names.NYI;
+import static org.jboss.hal.resources.Names.*;
 
 
 /**
@@ -125,7 +125,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
                     environment.getInstanceInfo().description().substring(13).trim(),
             });
         } else {
-            setLogo(new String[]{"HAL", "Management Console"}); //NON-NLS
+            setLogo(new String[]{HAL, MANAGEMENT_CONSOLE});
         }
 
         if (endpoints.isSameOrigin()) {

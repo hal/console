@@ -54,7 +54,7 @@ public interface CSS {
     String dataTable = "datatable";
     String eapHomeRow = "eap-home-row";
     String eapHomeTitle = "eap-home-title";
-    String editButtons = "edit-buttons";
+    String editing = "editing";
     String fade = "fade";
     String form = "form";
     String formButtons = "form-buttons";
@@ -94,6 +94,8 @@ public interface CSS {
     String progressBarStriped = "progress-bar-striped";
     String progressXs = "progress-xs";
     String pullRight = "pull-right";
+    String readonly = "readonly";
+    String restricted = "restricted";
     String row = "row";
     String selectpicker = "selectpicker";
     String spinner = "spinner";

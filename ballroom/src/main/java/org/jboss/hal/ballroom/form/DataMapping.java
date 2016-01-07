@@ -19,40 +19,20 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.resources;
+package org.jboss.hal.ballroom.form;
 
 /**
- * Common names and terms used multiple times and which are not meant to be translated.
+ * Takes care of the mapping between form fields and the model.
  *
  * @author Harald Pehl
  */
-public interface Names {
+public interface DataMapping<T> {
 
-    String CONFIGURATION = "Configuration";
-    String DEPLOYMENTS = "Deployments";
-    String DESELECT = "deselect";
-    String FAILURE = "failure";
-    String GET = "GET";
-    String HAL = "HAL";
-    String HIDDEN = "hidden";
-    String HOST = "host";
-    String LABEL = "label";
-    String MANAGEMENT_CONSOLE = "Management Console";
-    String NAME_KEY = "name";
-    String NOT_SUPPORTED = "not supported";
-    String NYI = "not yet implemented";
-    String OBJECT = "Object";
-    String PLACEMENT = "placement";
-    String PORT = "port";
-    String RESTRICTED = "restricted";
-    String ROLE = "role";
-    String ROW = "row";
-    String RUNTIME = "Runtime";
-    String SCHEME = "scheme";
-    String SELECT = "select";
-    String SELECTED = "selected";
-    String TOGGLE = "toggle";
-    String TOOLTIP = "tooltip";
-    String UNDEFINED = "undefined";
-    String UNKNOWN = "unknown";
+    void newModel(T model, Form<T> form);
+
+    void resetModel(T model, Form<T> form);
+
+    void populateFormItems(T model, Form<T> form);
+
+    void persistModel(T model, Form<T> form);
 }

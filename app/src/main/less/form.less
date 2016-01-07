@@ -1,5 +1,22 @@
 .form {
   padding: 10px;
+
+  &.readonly {
+    .separator {
+      margin-top: -15px;
+      margin-bottom: 5px;
+      border-top: 1px solid @hal-light-gray;
+    }
+    .restricted {
+      margin-right: .5em
+    }
+  }
+
+  &.editing {
+    input.restricted {
+      cursor: not-allowed;
+    }
+  }
 }
 
 fieldset.form-section {
@@ -69,3 +86,4 @@ abbr.req {
   font-size: .6em;
   vertical-align: text-top;
 }
+

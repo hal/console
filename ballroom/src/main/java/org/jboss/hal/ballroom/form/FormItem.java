@@ -62,8 +62,6 @@ public interface FormItem<T> extends HasEnabled, Focusable, HasName, HasValue<T>
 
     void addResolveExpressionHandler(ResolveExpressionEvent.Handler handler);
 
-    void resetMetaData();
-
     String getLabel();
 
     void setLabel(String label);

@@ -100,7 +100,6 @@ class EndpointDialog {
                 .include(NAME_KEY, SCHEME, HOST, PORT)
                 .unboundFormItem(ping)
                 .unsorted()
-                .hideButtons()
                 .onCancel((form) -> switchTo(SELECT))
                 .onSave((form, changedValues) -> {
                     storage.add(form.getModel());

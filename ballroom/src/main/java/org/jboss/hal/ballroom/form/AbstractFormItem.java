@@ -37,9 +37,9 @@ import elemental.html.ParagraphElement;
 import elemental.html.SpanElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
-import org.jboss.hal.resources.Names;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -52,6 +52,7 @@ import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.HIDDEN;
+import static org.jboss.hal.resources.Names.RESTRICTED;
 
 /**
  * TODO Implement org.jboss.hal.ballroom.form.Form.State#READONLY
@@ -62,8 +63,9 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
-    private static final String EXPRESSION_CONTAINER = "expressionContainer"; //NON-NLS
-    private static final String RESTRICTED_ELEMENT = "restrictedElement"; //NON-NLS
+    private static final String EXPRESSION_CONTAINER = "expressionContainer";
+    private static final String RESTRICTED_ELEMENT = "restrictedElement";
+    private static final String FORM_ITEM_GROUP = "formItemGroup";
 
     private final EventBus eventBus;
     private final List<FormItemValidation<T>> validationHandlers;
@@ -138,7 +140,9 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         // @formatter:off
         Elements.Builder restrictedBuilder = new Elements.Builder()
             .div().css(inputGroup)
-                .input(text).id(IdBuilder.build(name, Names.RESTRICTED)).css(formControl).rememberAs(RESTRICTED_ELEMENT)
+                .input(text).id(IdBuilder.build(name, RESTRICTED))
+                    .css(formControl, CSS.restricted)
+                    .rememberAs(RESTRICTED_ELEMENT)
                 .span().css(inputGroupAddon)
                     .start("i").css(fontAwesome("lock")).end()
                 .end()
@@ -161,8 +165,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         valueElement = new Elements.Builder().p().css(formControlStatic).end().build();
         readonlyRestricted = new Elements.Builder()
                 .span()
-                .css(fontAwesome("lock"))
-                .style("margin-right: .5em")
+                .css(fontAwesome("lock"), CSS.restricted)
                 .aria(HIDDEN, "true") //NON-NLS
                 .end()
                 .build();
@@ -269,8 +272,8 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         inputLabelElement.setHtmlFor(editId);
         valueElement.setId(readonlyId);
 
-        asElement(EDITING).getDataset().setAt("editingFormItemGroup", editId); //NON-NLS
-        asElement(READONLY).getDataset().setAt("readonlyFormItemGroup", readonlyId); //NON-NLS
+        asElement(EDITING).getDataset().setAt(FORM_ITEM_GROUP, editId); //NON-NLS
+        asElement(READONLY).getDataset().setAt(FORM_ITEM_GROUP, readonlyId); //NON-NLS
     }
 
     @Override
@@ -355,6 +358,16 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     // ------------------------------------------------------ expressions
 
     @Override
+    public boolean isExpressionAllowed() {
+        return expressionAllowed;
+    }
+
+    @Override
+    public void setExpressionAllowed(final boolean expressionAllowed) {
+        this.expressionAllowed = expressionAllowed;
+    }
+
+    @Override
     public boolean isExpressionValue() {
         return supportsExpressions() && hasExpressionScheme(getText());
     }
@@ -406,6 +419,51 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
 
+    // ------------------------------------------------------ restricted
+
+    @Override
+    public boolean isRestricted() {
+        return restricted;
+    }
+
+    @Override
+    public void setRestricted(final boolean restricted) {
+        if (this.restricted != restricted) {
+            this.restricted = restricted;
+            toggleRestricted(restricted);
+        }
+    }
+
+    void toggleRestricted(final boolean on) {
+        if (on) {
+            editingRoot.getClassList().add(hasFeedback);
+            readonlyRoot.getClassList().add(hasFeedback);
+            Node firstChild = inputContainer.getChildren().item(0);
+            inputContainer.removeChild(firstChild);
+            inputContainer.appendChild(editingRestricted);
+
+            Elements.removeChildrenFrom(valueElement);
+            SpanElement span = Browser.getDocument().createSpanElement();
+            span.setInnerText(CONSTANTS.restricted());
+            valueElement.appendChild(readonlyRestricted);
+            valueElement.appendChild(span);
+
+        } else {
+            editingRoot.getClassList().remove(hasFeedback);
+            readonlyRoot.getClassList().remove(hasFeedback);
+            inputContainer.removeChild(editingRestricted);
+            if (isExpressionValue()) {
+                inputContainer.appendChild(inputGroupContainer);
+            } else {
+                inputContainer.appendChild(inputElement.asElement());
+            }
+
+            Elements.removeChildrenFrom(valueElement);
+            setReadonlyValue(getValue());
+        }
+    }
+
+
     // ------------------------------------------------------ input element delegates
 
     @Override
@@ -443,16 +501,8 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         inputElement.setPlaceholder(placeholder);
     }
 
-    // ------------------------------------------------------ properties
 
-    @Override
-    public void resetMetaData() {
-        setExpressionValue(null); // TODO Why?
-        setModified(false);
-        setUndefined(true);
-        clearError();
-        // restricted cannot be reset!
-    }
+    // ------------------------------------------------------ properties
 
     @Override
     public String getLabel() {
@@ -499,58 +549,6 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     @Override
     public void setUndefined(boolean undefined) {
         this.undefined = undefined;
-    }
-
-    @Override
-    public boolean isExpressionAllowed() {
-        return expressionAllowed;
-    }
-
-    @Override
-    public void setExpressionAllowed(final boolean expressionAllowed) {
-        this.expressionAllowed = expressionAllowed;
-    }
-
-    @Override
-    public boolean isRestricted() {
-        return restricted;
-    }
-
-    @Override
-    public void setRestricted(final boolean restricted) {
-        if (this.restricted != restricted) {
-            this.restricted = restricted;
-            toggleRestricted(restricted);
-        }
-    }
-
-    void toggleRestricted(final boolean on) {
-        if (on) {
-            editingRoot.getClassList().add(hasFeedback);
-            readonlyRoot.getClassList().add(hasFeedback);
-            Node firstChild = inputContainer.getChildren().item(0);
-            inputContainer.removeChild(firstChild);
-            inputContainer.appendChild(editingRestricted);
-
-            Elements.removeChildrenFrom(valueElement);
-            SpanElement span = Browser.getDocument().createSpanElement();
-            span.setInnerText(CONSTANTS.restricted());
-            valueElement.appendChild(readonlyRestricted);
-            valueElement.appendChild(span);
-
-        } else {
-            editingRoot.getClassList().remove(hasFeedback);
-            readonlyRoot.getClassList().remove(hasFeedback);
-            inputContainer.removeChild(editingRestricted);
-            if (isExpressionValue()) {
-                inputContainer.appendChild(inputGroupContainer);
-            } else {
-                inputContainer.appendChild(inputElement.asElement());
-            }
-
-            Elements.removeChildrenFrom(valueElement);
-            setReadonlyValue(getValue());
-        }
     }
 
     InputElement<T> inputElement() {

@@ -30,6 +30,7 @@ import elemental.dom.Element;
 import elemental.events.EventListener;
 import elemental.events.KeyboardEvent;
 import elemental.html.DivElement;
+import elemental.html.HRElement;
 import elemental.html.SpanElement;
 import elemental.html.UListElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -42,6 +43,7 @@ import org.jboss.hal.resources.Messages;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +70,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     private static final String NOT_INITIALIZED = "Form element not initialized. Please add this form to the DOM before calling any of the form operations";
 
     private final String id;
+    private final DataMapping<T> dataMapping;
     private final LinkedHashMap<State, Element> panels;
     private final LinkedHashMap<String, FormItem> formItems;
     private final LinkedHashMap<String, String> helpTexts;
@@ -93,7 +96,13 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     // ------------------------------------------------------ initialization
 
     public DefaultForm(final String id, final StateMachine stateMachine, final SecurityContext securityContext) {
+        this(id, stateMachine, new DefaultMapping<T>(), securityContext);
+    }
+
+    public DefaultForm(final String id, final StateMachine stateMachine, final DataMapping<T> dataMapping,
+            final SecurityContext securityContext) {
         this.stateMachine = stateMachine;
+        this.dataMapping = dataMapping;
         this.securityContext = securityContext;
 
         this.id = id;
@@ -167,10 +176,16 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
 
     private Element viewPanel() {
         Element viewPanel = new Elements.Builder()
-                .div().id(IdBuilder.build(id, "view")).css(form, formHorizontal)
+                .div().id(IdBuilder.build(id, READONLY.name().toLowerCase())).css(form, formHorizontal, readonly)
                 .end().build();
-        for (FormItem formItem : formItems.values()) {
+        for (Iterator<FormItem> iterator = formItems.values().iterator(); iterator.hasNext(); ) {
+            FormItem formItem = iterator.next();
             viewPanel.appendChild(formItem.asElement(READONLY));
+            if (iterator.hasNext()) {
+                HRElement hr = Browser.getDocument().createHRElement();
+                hr.getClassList().add("separator");
+                viewPanel.appendChild(hr);
+            }
         }
         return viewPanel;
     }
@@ -190,7 +205,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         clearErrors();
 
         Element editPanel = new Elements.Builder()
-                .div().id(IdBuilder.build(id, "edit")).css(form, formHorizontal).end()
+                .div().id(IdBuilder.build(id, EDITING.name().toLowerCase())).css(form, formHorizontal, editing).end()
                 .build();
         editPanel.appendChild(errorPanel);
         boolean hasRequiredField = false;
@@ -214,9 +229,9 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
 
         // @formatter:off
         buttons = new Elements.Builder()
-            .div().css(formGroup, editButtons)
+            .div().css(formGroup, formButtons)
                 .div().css(offset(labelColumns), column(inputColumns))
-                    .div().css(pullRight, formButtons)
+                    .div().css(pullRight)
                         .button().css(btn, btnHal, btnDefault).on(click, event -> cancel())
                             .innerText(CONSTANTS.cancel())
                         .end()
@@ -233,13 +248,15 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         return editPanel;
     }
 
-    protected void hideButtons() {
-        Elements.setVisible(buttons, false);
-    }
-
 
     // ------------------------------------------------------ form operations
 
+    /**
+     * Executes the {@link org.jboss.hal.ballroom.form.Form.Operation#VIEW} operation and calls {@link
+     * DataMapping#populateFormItems(Object, Form)}.
+     *
+     * @param model the model to view.
+     */
     @Override
     public final void view(final T model) {
         if (model == null) {
@@ -249,10 +266,16 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             throw new IllegalStateException(NOT_INITIALIZED);
         }
         this.model = model;
-        stateExec(VIEW);
-        populateFormItems();
+        stateExec(VIEW); // switch state before data mapping!
+        dataMapping.populateFormItems(model, this);
     }
 
+    /**
+     * Executes the {@link org.jboss.hal.ballroom.form.Form.Operation#ADD} operation and calls {@link
+     * DataMapping#newModel(Object, Form)}.
+     *
+     * @param model the transient model
+     */
     @Override
     public final void add(final T model) {
         if (model == null) {
@@ -262,23 +285,16 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             throw new IllegalStateException(NOT_INITIALIZED);
         }
         this.model = model;
-        clearFormItems();
-        stateExec(ADD);
+        stateExec(ADD); // switch state before data mapping!
+        dataMapping.newModel(model, this);
     }
 
     /**
-     * Called from {@link #add(Object)} when a transient model is shown in {@link org.jboss.hal.ballroom.form.Form.State#EDITING}
-     * state.
+     * Executes the {@link org.jboss.hal.ballroom.form.Form.Operation#EDIT} operation and calls {@link
+     * DataMapping#populateFormItems(Object, Form)}.
+     *
+     * @param model the model to edit.
      */
-    protected void clearFormItems() {
-        for (FormItem formItem : formItems.values()) {
-            formItem.clearError();
-            formItem.clearValue();
-            formItem.setUndefined(true);
-            formItem.setModified(true);
-        }
-    }
-
     @Override
     public final void edit(final T model) {
         if (model == null) {
@@ -288,17 +304,15 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             throw new IllegalStateException(NOT_INITIALIZED);
         }
         this.model = model;
-        stateExec(EDIT);
-        populateFormItems();
+        stateExec(EDIT); // switch state before data mapping!
+        dataMapping.populateFormItems(model, this);
     }
 
     /**
-     * Called from {@link #edit(Object)} in order to populate the form items with the values from the model. This class
-     * contains an empty implementation.
+     * Upon successful validation, executes the {@link org.jboss.hal.ballroom.form.Form.Operation#SAVE} operation,
+     * calls {@link DataMapping#persistModel(Object, Form)} and finally calls the registered {@linkplain
+     * org.jboss.hal.ballroom.form.Form.SaveCallback save callback} (if any).
      */
-    protected void populateFormItems() {
-    }
-
     @Override
     public final void save() {
         if (!initialized()) {
@@ -306,25 +320,12 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         }
         boolean valid = validate();
         if (valid) {
-            persistModel();
-            Map<String, Object> changedValues = getChangedValues();
-            for (FormItem formItem : formItems.values()) {
-                formItem.resetMetaData();
-            }
-            stateExec(SAVE);
+            stateExec(SAVE); // switch state before data mapping!
+            dataMapping.persistModel(model, this);
             if (saveCallback != null) {
-                saveCallback.onSave(this, changedValues);
+                saveCallback.onSave(this, getChangedValues());
             }
         }
-    }
-
-    /**
-     * Called from {@link #save()} if {@code validate() == true}. {@code persistModel()} is executed before the
-     * registered
-     * {@linkplain org.jboss.hal.ballroom.form.Form.SaveCallback save callbacks} are called. This class contains an
-     * empty implementation.
-     */
-    protected void persistModel() {
     }
 
     @Override
@@ -342,12 +343,15 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         return changed;
     }
 
+    /**
+     * Executes the {@link org.jboss.hal.ballroom.form.Form.Operation#CANCEL} operation and calls the registered
+     * {@linkplain org.jboss.hal.ballroom.form.Form.CancelCallback cancel callback} (if any).
+     */
     @Override
     public final void cancel() {
         if (!initialized()) {
             throw new IllegalStateException(NOT_INITIALIZED);
         }
-        clearErrors();
         stateExec(CANCEL);
         if (cancelCallback != null) {
             cancelCallback.onCancel(this);
@@ -359,12 +363,18 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         this.cancelCallback = cancelCallback;
     }
 
+    /**
+     * Executes the {@link org.jboss.hal.ballroom.form.Form.Operation#RESET} operation, calls {@link
+     * DataMapping#resetModel(Object, Form)} and finally calls the registered {@linkplain
+     * org.jboss.hal.ballroom.form.Form.ResetCallback reset callback} (if any).
+     */
     @Override
     public final void reset() {
         if (!initialized()) {
             throw new IllegalStateException(NOT_INITIALIZED);
         }
-        stateExec(RESET);
+        stateExec(RESET); // switch state before data mapping!
+        dataMapping.resetModel(model, this);
         if (resetCallback != null) {
             resetCallback.onReset(this);
         }
@@ -465,6 +475,11 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     @Override
     public T getModel() {
         return model;
+    }
+
+    @Override
+    public StateMachine getStateMachine() {
+        return stateMachine;
     }
 
     @Override

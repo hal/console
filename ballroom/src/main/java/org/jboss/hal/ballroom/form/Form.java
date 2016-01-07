@@ -28,6 +28,8 @@ import java.util.Map;
 /**
  * A form using well defined states and operations.
  *
+ * @param <T> The model for this form
+ *
  * @author Harald Pehl
  */
 public interface Form<T> extends IsElement {
@@ -71,7 +73,7 @@ public interface Form<T> extends IsElement {
     void view(T model);
 
     /**
-     * Takes the transient model and enters the editing state.
+     * Takes a new transient model and enters the editing state.
      *
      * @param model the transient model
      */
@@ -85,7 +87,8 @@ public interface Form<T> extends IsElement {
     void edit(T model);
 
     /**
-     * Validates the form and its fields and calls the save callback with the changed values.
+     * Validates the form and its fields and upon successful validation persists the changes to the model and
+     * calls the save callback.
      */
     void save();
 
@@ -115,8 +118,13 @@ public interface Form<T> extends IsElement {
      */
     T getModel();
 
+    /**
+     * @return the state machine which access to the current state.
+     */
+    StateMachine getStateMachine();
+
     @SuppressWarnings("unchecked")
-    <I> FormItem<I> getFormItem(String name);
+    <F> FormItem<F> getFormItem(String name);
 
     Iterable<FormItem> getFormItems();
 }
