@@ -23,46 +23,118 @@ package org.jboss.hal.ballroom.layout;
 
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.tab.Tabs;
 
-import static org.jboss.hal.resources.CSS.column;
-import static org.jboss.hal.resources.CSS.row;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.jboss.hal.resources.CSS.*;
 
 /**
  * @author Harald Pehl
  */
 public class LayoutBuilder {
 
+    private static final String TABS = "tabs";
+    private static final String TAB = "tab";
+    private static final String PANES = "panes";
+
     private final Elements.Builder eb;
+    private int offset;
+    private int columns;
+    private Tabs tabs;
 
     public LayoutBuilder() {
         // start the top level "row" div
-        eb = new Elements.Builder().div().css(row);
+        this.eb = new Elements.Builder().div().css(row);
+        this.offset = 0;
+        this.columns = 12;
+    }
+
+    public LayoutBuilder startRow() {
+        return startRow(0, 12);
+    }
+
+    public LayoutBuilder startRow(int offset, int columns) {
+        assertNoTabs();
+        this.offset = offset;
+        this.columns = columns;
+        eb.div().css(rowCss());
+        return this;
+    }
+
+    public LayoutBuilder endRow() {
+        assertNoTabs();
+        eb.end();
+        return this;
     }
 
     public LayoutBuilder header(String title) {
-        eb.div().css(column(12)).h(1).innerText(title).end().end();
+        assertNoTabs();
+        eb.h(1).innerText(title).end();
         return this;
     }
 
-    public LayoutBuilder header(String title, Element element) {
-        eb.div().css(column(12)).h(1).innerText(title).end().add(element).end();
+    public LayoutBuilder subheader(String title) {
+        assertNoTabs();
+        eb.h(3).innerText(title).end();
         return this;
     }
 
-    public LayoutBuilder header(Element element) {
-        eb.div().css(column(12)).add(element).end();
-        return this;
-    }
+    public LayoutBuilder add(Element first, Element... rest) {
+        assertNoTabs();
 
-    public LayoutBuilder add(Element... elements) {
-        if (elements != null) {
-            eb.div().css(column(12));
-            for (Element element : elements) {
-                eb.add(element);
-            }
-            eb.end();
+        List<Element> elements = new ArrayList<>();
+        elements.add(first);
+        if (rest != null) {
+            Collections.addAll(elements, rest);
+        }
+        for (Element element : elements) {
+            eb.add(element);
         }
         return this;
+    }
+
+    /**
+     * Enters the tab mode.
+     */
+    public LayoutBuilder startTabs() {
+        if (tabs != null) {
+            throw new IllegalStateException("Nested tabs are not supported");
+        }
+        tabs = new Tabs();
+        return this;
+    }
+
+    /**
+     * Adds a tab. The specified elements are added to the pane.
+     */
+    public LayoutBuilder tab(String id, String title, Element first, Element... rest) {
+        if (tabs == null) {
+            throw new IllegalStateException("Not in tab mode");
+        }
+        tabs.add(id, title, first, rest);
+        return this;
+    }
+
+    /**
+     * Exits the tab mode.
+     */
+    public LayoutBuilder endTabs() {
+        eb.add(tabs.asElement());
+        tabs = null;
+        return this;
+    }
+
+    private String rowCss() {
+        return offset == 0 ? column(columns) : offset(offset) + " " + column(columns);
+    }
+
+    private void assertNoTabs() {
+        if (tabs != null) {
+            throw new IllegalStateException("Not allowed inside tabs");
+        }
     }
 
     public Element build() {

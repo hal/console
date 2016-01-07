@@ -24,8 +24,8 @@ package org.jboss.hal.resources;
 import org.jetbrains.annotations.NonNls;
 
 /**
- * Contains common CSS classes from PatternFly & Bootstrap. The constants in this interface are not involved in any
- * kind of code generation or GWT magic. They're just here to have a them in one place.
+ * Contains common CSS classes from HAL, PatternFly & Bootstrap. The constants in this interface are not involved in
+ * any kind of code generation or GWT magic. They're just here to have them in one place.
  *
  * @author Harald Pehl
  */
@@ -59,7 +59,6 @@ public interface CSS {
     String form = "form";
     String formButtons = "form-buttons";
     String formControl = "form-control";
-    String formControlFeedback = "form-control-feedback";
     String formControlStatic = "form-control-static";
     String formGroup = "form-group";
     String formHelpContent = "form-help-content";
@@ -87,6 +86,10 @@ public interface CSS {
     String modalMedium = "modal-md";
     String modelSmall = "modal-sm";
     String modalTitle = "modal-title";
+    String nav = "nav";
+    String navTabs = "nav-tabs";
+    String navTabsHal = "nav-tabs-hal";
+    String navTabsPf = "nav-tabs-pf";
     String offset = "offset";
     String errorCircleO = "error-circle-o";
     String progress = "progress";
@@ -100,10 +103,11 @@ public interface CSS {
     String selectpicker = "selectpicker";
     String spinner = "spinner";
     String srOnly = "sr-only";
+    String tabContent = "tab-content";
+    String tabPane = "tab-pane";
     String table = "table";
     String tableBordered = "table-bordered";
     String tableStriped = "table-striped";
-    String tooltip = "tooltip";
 
 
     static String column(int columns) {
@@ -121,4 +125,5 @@ public interface CSS {
     static String pfIcon(@NonNls String name) {
         return "pficon pficon-" + name; //NON-NLS
     }
+
 }

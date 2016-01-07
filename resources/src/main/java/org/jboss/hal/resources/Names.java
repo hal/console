@@ -29,6 +29,7 @@ package org.jboss.hal.resources;
 public interface Names {
 
     String CONFIGURATION = "Configuration";
+    String CONTROLS = "controls";
     String DEPLOYMENTS = "Deployments";
     String DESELECT = "deselect";
     String FAILURE = "failure";

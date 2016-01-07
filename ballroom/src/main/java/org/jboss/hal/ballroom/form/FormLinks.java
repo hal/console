@@ -99,7 +99,7 @@ class FormLinks implements IsElement {
                     .a().attr("href", "#" + helpId + "")
                             .data(TOGGLE, "collapse") //NON-NLS
                             .aria("expanded", "false") //NON-NLS
-                            .aria("controls", helpId)
+                            .aria(CONTROLS, helpId)
                         .start("i").css(pfIcon("help")).end()
                         .span().css(formLinkLabel).innerText(CONSTANTS.help()).end()
                     .end()

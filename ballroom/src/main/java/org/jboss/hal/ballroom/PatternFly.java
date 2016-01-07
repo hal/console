@@ -62,9 +62,11 @@ public class PatternFly {
     }
 
     @JsMethod(namespace = GLOBAL)
-    private native static PatternFly $(@NonNls String selector);
+    public native static PatternFly $(@NonNls String selector);
 
-    private native void selectpicker();
+    public native void selectpicker();
 
-    private native void tooltip();
+    public native void tooltip();
+
+    public native void tab(String command);
 }

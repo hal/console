@@ -90,6 +90,7 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
     private DeploymentPresenter presenter;
 
     public DeploymentView() {
+        SampleForm sampleForm = new SampleForm("deployment", false);
         SampleForm dialogForm = new SampleForm("dialog", true);
         Element dialogBody = new Elements.Builder().p().innerText("A form inside a dialog").end()
                 .add(dialogForm.asElement()).build();
@@ -100,15 +101,20 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
                 StaticResourceDescription.from(endpointResources.endpoint())).build();
         endpointForm.setSaveCallback((form, changedValues) -> presenter.saveEndpoint(form.getModel()));
 
-        SampleForm form = new SampleForm("deployment", false);
+        // @formatter:off
         Element element = new LayoutBuilder()
-                .header("Sample Form")
-                .add(form.asElement())
+            .startRow()
+                .header("Sample Forms")
+                .subheader("Custom Form")
+                .add(sampleForm.asElement())
+                .subheader("MBUI Form")
                 .add(endpointForm.asElement())
-                .build();
+            .endRow()
+        .build();
+        // @formatter:on
         initWidget(Elements.asWidget(element));
 
-        form.view("foo");
+        sampleForm.view("foo");
     }
 
     @Override

@@ -95,12 +95,17 @@ public class ConfigurationView extends ViewImpl implements ConfigurationPresente
                 .build();
         endpointTable = new ModelNodeTable<>("endpoint-table", RWX, endpointOptions);
 
+        // @formatter:off
         Element element = new LayoutBuilder()
-                .header("Data Table")
+            .startRow()
+                .header("Tables")
+                .subheader("Custom Table")
                 .add(fooBarBazTable.asElement())
-                .header("Endpoint Table")
+                .subheader("MBUI Table")
                 .add(endpointTable.asElement())
-                .build();
+            .endRow()
+        .build();
+        // @formatter:on
         initWidget(Elements.asWidget(element));
     }
 
