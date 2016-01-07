@@ -113,9 +113,8 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         // create editing elements
         editingRoot = new Elements.Builder().div().css(formGroup).end().build();
         inputLabelElement = new Elements.Builder()
-                .label()
+                .label(label)
                 .css(column(labelColumns), controlLabel)
-                .innerText(label)
                 .end()
                 .build();
         inputContainer = new Elements.Builder().div().css(column(inputColumns)).end().build();

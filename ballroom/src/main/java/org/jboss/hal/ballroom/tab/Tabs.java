@@ -81,7 +81,7 @@ public class Tabs implements IsElement {
         // @formatter:off
         Element tab = new Elements.Builder()
             .li().attr(ROLE, "presentation") //NON-NLS
-                .a().attr("href", "#" + id).aria(CONTROLS, id).attr(ROLE, TAB).data(TOGGLE, TAB)
+                .a("#" + id).aria(CONTROLS, id).attr(ROLE, TAB).data(TOGGLE, TAB)
                     .on(click, event -> {
                         event.preventDefault();
                         showTab(id);
