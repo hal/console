@@ -1350,7 +1350,7 @@ public class ModelNode implements Cloneable {
         return clone;
     }
 
-    void format(final StringBuilder builder, final int indent, final boolean multiLine) {
+    protected void format(final StringBuilder builder, final int indent, final boolean multiLine) {
         value.format(builder, indent, multiLine);
     }
 

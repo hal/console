@@ -25,6 +25,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +71,7 @@ public final class AddressTemplate {
 
     // ------------------------------------------------------ factory
 
-    public static AddressTemplate of(String template) {
+    public static AddressTemplate of(@NonNls String template) {
         return new AddressTemplate(template);
     }
 
@@ -425,12 +426,14 @@ public final class AddressTemplate {
         T next(String key) {
             T result = null;
 
-            List<T> items = values.get(key);
-            Integer idx = indexes.get(key);
+            if (values.containsKey(key) && indexes.containsKey(key)) {
+                List<T> items = values.get(key);
+                Integer idx = indexes.get(key);
 
-            if (!items.isEmpty() && idx >= 0) {
-                result = items.get(idx);
-                indexes.put(key, --idx);
+                if (!items.isEmpty() && idx >= 0) {
+                    result = items.get(idx);
+                    indexes.put(key, --idx);
+                }
             }
             return result;
         }

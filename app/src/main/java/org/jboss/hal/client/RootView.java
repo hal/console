@@ -67,6 +67,8 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
 
         else if (slot == Slots.APPLICATION) {
             // TODO Hide top level tabs
+            Elements.removeChildrenFrom(rootContainer);
+            rootContainer.appendChild(element);
         }
 
         else if (slot == Slots.PREVIEW) {

@@ -21,8 +21,6 @@
  */
 package org.jboss.hal.client.skeleton;
 
-import com.ekuefler.supereventbus.EventRegistration;
-import com.ekuefler.supereventbus.Subscribe;
 import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
@@ -34,6 +32,8 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
 import org.jboss.hal.core.HasPresenter;
 import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
+import org.jboss.hal.spi.MessageEvent.MessageHandler;
 
 import javax.inject.Inject;
 
@@ -42,7 +42,7 @@ import static org.jboss.hal.resources.Names.NYI;
 /**
  * @author Harald Pehl
  */
-public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> {
+public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> implements MessageHandler {
 
     // @formatter:off
     public interface MyView extends View, HasPresenter<HeaderPresenter> {
@@ -50,13 +50,9 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> {
         void selectTlc(String nameToken);
         void showMessage(Message message);
     }
-
-    interface MessageRegistration extends EventRegistration<HeaderPresenter> {}
     // @formatter:on
 
 
-    private final com.ekuefler.supereventbus.EventBus superEventBus;
-    private final MessageRegistration registration;
     private final PlaceManager placeManager;
     private final Environment environment;
     private final Endpoints endpoints;
@@ -65,15 +61,11 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> {
     @Inject
     public HeaderPresenter(final EventBus eventBus,
             final MyView view,
-            final com.ekuefler.supereventbus.EventBus superEventBus,
-            final MessageRegistration registration,
             final PlaceManager placeManager,
             final Environment environment,
             final Endpoints endpoints,
             final User user) {
         super(eventBus, view);
-        this.superEventBus = superEventBus;
-        this.registration = registration;
         this.placeManager = placeManager;
         this.environment = environment;
         this.endpoints = endpoints;
@@ -83,7 +75,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> {
     @Override
     protected void onBind() {
         super.onBind();
-        superEventBus.register(this, registration);
+        registerHandler(getEventBus().addHandler(MessageEvent.getType(), this));
         getView().setPresenter(this);
         getView().update(environment, endpoints, user);
     }
@@ -91,7 +83,6 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> {
     @Override
     protected void onUnbind() {
         super.onUnbind();
-        superEventBus.unregister(this);
     }
 
     @Override
@@ -117,8 +108,8 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> {
         Window.alert(NYI);
     }
 
-    @Subscribe
-    public void onMessage(final Message message) {
-        getView().showMessage(message);
+    @Override
+    public void onMessage(final MessageEvent event) {
+        getView().showMessage(event.getMessage());
     }
 }

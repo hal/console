@@ -21,8 +21,8 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
-import com.ekuefler.supereventbus.EventBus;
 import com.google.inject.Provider;
+import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.html.FormData;
 import elemental.html.InputElement;
@@ -37,6 +37,7 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,11 +125,12 @@ public class Dispatcher {
 
         this.failedCallback = (operation, failure) -> {
             logger.error("Dispatcher failed: {}, operation: {}", failure, operation);
-            eventBus.post(Message.error(resources.constants().dispatcherFailed(), failure));
+            eventBus.fireEvent(new MessageEvent(Message.error(resources.constants().dispatcherFailed(), failure)));
         };
         this.exceptionCallback = (operation, t) -> {
             logger.error("Dispatcher exception: {}, operation {}", t.getMessage(), operation);
-            eventBus.post(Message.error(resources.constants().dispatcherException(), t.getMessage()));
+            eventBus.fireEvent(
+                    new MessageEvent(Message.error(resources.constants().dispatcherException(), t.getMessage())));
         };
     }
 
@@ -274,7 +276,7 @@ public class Dispatcher {
                         if (!payload.isFailure()) {
                             if (processStateProcessor.get().accepts(payload)) {
                                 ProcessState processState = processStateProcessor.get().process(payload);
-                                eventBus.post(processState);
+                                eventBus.fireEvent(new ProcessStateEvent(processState));
                             }
                             ModelNode result = payload.get(RESULT);
                             if (operation instanceof Composite && callback instanceof CompositeCallback) {

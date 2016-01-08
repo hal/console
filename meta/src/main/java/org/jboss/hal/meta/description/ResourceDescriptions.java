@@ -22,7 +22,6 @@
 package org.jboss.hal.meta.description;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -41,41 +40,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 public class ResourceDescriptions extends AbstractMetadataRegistry<ResourceDescription> {
 
-    /**
-     * Always use wildcards when resolving the supported keys. The descriptions do not differ between profiles,
-     * server groups, hosts or servers.
-     */
-    static class WildcardStatementContext implements StatementContext {
-
-        private final Environment environment;
-        private final Map<String, String[]> keys;
-
-        @Inject
-        @SuppressWarnings("HardCodedStringLiteral")
-        public WildcardStatementContext(Environment environment) {
-            this.environment = environment;
-
-            keys = new HashMap<>();
-            keys.put(SELECTED_PROFILE, new String[]{"profile", "*"});
-            keys.put(SELECTED_GROUP, new String[]{"server-group", "*"});
-            keys.put(SELECTED_HOST, new String[]{"host", "*"});
-            keys.put(SELECTED_SERVER, new String[]{"server", "*"});
-        }
-
-        public String resolve(final String key) {
-            return null;
-        }
-
-        @Override
-        public String[] resolveTuple(final String key) {
-            if (!environment.isStandalone() && keys.containsKey(key)) {
-                return keys.get(key);
-            }
-            return null;
-        }
-    }
-
-
     private static final String RESOURCE_DESCRIPTION_TYPE = "resource description";
 
     private final Dispatcher dispatcher;
@@ -83,8 +47,8 @@ public class ResourceDescriptions extends AbstractMetadataRegistry<ResourceDescr
     private final Map<ResourceAddress, ResourceDescription> registry;
 
     @Inject
-    public ResourceDescriptions(final Environment environment, final Dispatcher dispatcher) {
-        super(new WildcardStatementContext(environment), RESOURCE_DESCRIPTION_TYPE);
+    public ResourceDescriptions(final StatementContext statementContext, final Dispatcher dispatcher) {
+        super(statementContext, RESOURCE_DESCRIPTION_TYPE);
         this.dispatcher = dispatcher;
         this.registry = new HashMap<>();
     }
@@ -120,7 +84,7 @@ public class ResourceDescriptions extends AbstractMetadataRegistry<ResourceDescr
                 },
                 (failedOp, failure) -> {
                     callback.onFailure(new RuntimeException(
-                            "Unable to add a single " + RESOURCE_DESCRIPTION_TYPE + " for " + address));
+                            UNABLE_TO_BIND_SINGLE + RESOURCE_DESCRIPTION_TYPE + " for " + address));
                 },
                 (exceptionalOp, exception) -> { callback.onFailure(exception); });
     }

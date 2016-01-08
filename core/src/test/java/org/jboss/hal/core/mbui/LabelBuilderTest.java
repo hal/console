@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
  * Attributes taken from /subsystem=datasources/data-source=*:read-resource-description
  * @author Harald Pehl
  */
+@SuppressWarnings("HardCodedStringLiteral")
 public class LabelBuilderTest {
 
     private LabelBuilder builder;

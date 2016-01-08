@@ -29,6 +29,8 @@ import org.jboss.hal.dmr.model.ResourceAddress;
  */
 public abstract class AbstractMetadataRegistry<T> implements MetadataRegistry<T> {
 
+    protected static final String UNABLE_TO_BIND_SINGLE = "Unable to add a single ";
+
     private final StatementContext statementContext;
     private final String type;
 

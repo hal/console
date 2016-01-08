@@ -19,22 +19,43 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.spi;
+package org.jboss.hal.core;
 
-import com.google.inject.BindingAnnotation;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
 
 /**
- * Qualifier to select the progress implementation in HAL's footer.
- *
  * @author Harald Pehl
  */
-@Documented
-@BindingAnnotation
-@Retention(RUNTIME)
-public @interface Footer {
+public class ProfileSelectionEvent extends GwtEvent<ProfileSelectionEvent.ProfileSelectionHandler> {
+
+    public interface ProfileSelectionHandler extends EventHandler {
+
+        void onProfileSelected(ProfileSelectionEvent event);
+    }
+
+
+    private static final Type<ProfileSelectionHandler> TYPE = new Type<>();
+
+    public static Type<ProfileSelectionHandler> getType() {
+        return TYPE;
+    }
+
+    private final String profile;
+
+    public ProfileSelectionEvent(final String profile) {this.profile = profile;}
+
+    public String getProfile() {
+        return profile;
+    }
+
+    @Override
+    protected void dispatch(ProfileSelectionHandler handler) {
+        handler.onProfileSelected(this);
+    }
+
+    @Override
+    public Type<ProfileSelectionHandler> getAssociatedType() {
+        return TYPE;
+    }
 }

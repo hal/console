@@ -29,6 +29,8 @@ import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.security.SecurityFramework;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
@@ -36,6 +38,8 @@ import java.util.Set;
  * @author Harald Pehl
  */
 class RrdFunction implements Function<FunctionContext> {
+
+    private static final Logger logger = LoggerFactory.getLogger(RrdFunction.class);
 
     private final ResourceDescriptions resourceDescriptions;
     private final SecurityFramework securityFramework;
@@ -51,6 +55,7 @@ class RrdFunction implements Function<FunctionContext> {
     }
 
     @Override
+    @SuppressWarnings("HardCodedStringLiteral")
     public void execute(final Control<FunctionContext> control) {
         dispatcher.executeInFunction(control, composite,
                 (CompositeResult compositeResult) -> {
@@ -58,12 +63,15 @@ class RrdFunction implements Function<FunctionContext> {
                         Set<RrdResult> results = new CompositeRrdParser(composite).parse(compositeResult);
                         for (RrdResult rr : results) {
                             if (rr.resourceDescription != null) {
+                                logger.debug("Add resource description for {}", rr.address);
                                 resourceDescriptions.add(rr.address, rr.resourceDescription);
                             }
                             if (rr.securityContext != null) {
+                                logger.debug("Add security context for {}", rr.address);
                                 securityFramework.add(rr.address, rr.securityContext);
                             }
                         }
+                        control.proceed();
                     } catch (ParserException e) {
                         control.getContext().setError(e);
                         control.abort();

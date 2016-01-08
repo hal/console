@@ -19,22 +19,43 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.spi;
+package org.jboss.hal.dmr.dispatch;
 
-import com.google.inject.BindingAnnotation;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
 
 /**
- * Qualifier to select the progress implementation in HAL's footer.
- *
  * @author Harald Pehl
  */
-@Documented
-@BindingAnnotation
-@Retention(RUNTIME)
-public @interface Footer {
+public class ProcessStateEvent extends GwtEvent<ProcessStateEvent.ProcessStateHandler> {
+
+    public interface ProcessStateHandler extends EventHandler {
+
+        void onProcessState(ProcessStateEvent event);
+    }
+
+
+    private static final Type<ProcessStateHandler> TYPE = new Type<>();
+
+    public static Type<ProcessStateHandler> getType() {
+        return TYPE;
+    }
+
+    private final ProcessState processState;
+
+    public ProcessStateEvent(final ProcessState processState) {this.processState = processState;}
+
+    public ProcessState getProcessState() {
+        return processState;
+    }
+
+    @Override
+    protected void dispatch(ProcessStateHandler handler) {
+        handler.onProcessState(this);
+    }
+
+    @Override
+    public Type<ProcessStateHandler> getAssociatedType() {
+        return TYPE;
+    }
 }

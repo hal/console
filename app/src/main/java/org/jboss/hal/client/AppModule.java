@@ -28,6 +28,8 @@ import com.gwtplatform.mvp.client.gin.DefaultModule;
 import com.gwtplatform.mvp.shared.proxy.RouteTokenFormatter;
 import org.jboss.hal.client.configuration.ConfigurationPresenter;
 import org.jboss.hal.client.configuration.ConfigurationView;
+import org.jboss.hal.client.configuration.subsystem.jca.DataSourcePresenter;
+import org.jboss.hal.client.configuration.subsystem.jca.DataSourceView;
 import org.jboss.hal.client.deployment.DeploymentPresenter;
 import org.jboss.hal.client.deployment.DeploymentView;
 import org.jboss.hal.client.homepage.HomepagePresenter;
@@ -57,6 +59,8 @@ public class AppModule extends AbstractTemplatedPresenterModule {
         bindConstant().annotatedWith(ErrorPlace.class).to(NameTokens.HOMEPAGE);
         bindConstant().annotatedWith(UnauthorizedPlace.class).to(NameTokens.HOMEPAGE);
 
+        // ------------------------------------------------------ skeleton & root presenter
+
         bindTemplatedSingletonPresenterWidget(HeaderPresenter.class,
                 HeaderPresenter.MyView.class,
                 Templated_HeaderView_Provider.class);
@@ -70,20 +74,27 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 RootView.class,
                 RootPresenter.MyProxy.class);
 
-        bindPresenter(HomepagePresenter.class,
-                HomepagePresenter.MyView.class,
-                HomepageView.class,
-                HomepagePresenter.MyProxy.class);
+        // ------------------------------------------------------ remaining presenter (A-Z)
+
+        bindPresenter(ConfigurationPresenter.class,
+                ConfigurationPresenter.MyView.class,
+                ConfigurationView.class,
+                ConfigurationPresenter.MyProxy.class);
+
+        bindPresenter(DataSourcePresenter.class,
+                DataSourcePresenter.MyView.class,
+                DataSourceView.class,
+                DataSourcePresenter.MyProxy.class);
 
         bindPresenter(DeploymentPresenter.class,
                 DeploymentPresenter.MyView.class,
                 DeploymentView.class,
                 DeploymentPresenter.MyProxy.class);
 
-        bindPresenter(ConfigurationPresenter.class,
-                ConfigurationPresenter.MyView.class,
-                ConfigurationView.class,
-                ConfigurationPresenter.MyProxy.class);
+        bindPresenter(HomepagePresenter.class,
+                HomepagePresenter.MyView.class,
+                HomepageView.class,
+                HomepagePresenter.MyProxy.class);
 
         bindPresenter(RuntimePresenter.class,
                 RuntimePresenter.MyView.class,

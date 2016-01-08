@@ -35,7 +35,7 @@ public class CoreModule extends AbstractGinModule {
 
     @Override
     protected void configure() {
-        bind(StatementContext.class).to(CoreStatementContext.class).in(Singleton.class);
+        bind(StatementContext.class).to(CoreStatementContext.class).asEagerSingleton(); // to register the event
         bind(UIRegistry.class).in(Singleton.class);
     }
 

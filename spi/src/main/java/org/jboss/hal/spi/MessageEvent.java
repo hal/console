@@ -21,20 +21,41 @@
  */
 package org.jboss.hal.spi;
 
-import com.google.inject.BindingAnnotation;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
 
 /**
- * Qualifier to select the progress implementation in HAL's footer.
- *
  * @author Harald Pehl
  */
-@Documented
-@BindingAnnotation
-@Retention(RUNTIME)
-public @interface Footer {
+public class MessageEvent extends GwtEvent<MessageEvent.MessageHandler> {
+
+    public interface MessageHandler extends EventHandler {
+
+        void onMessage(MessageEvent event);
+    }
+
+
+    private static final Type<MessageHandler> TYPE = new Type<>();
+
+    public static Type<MessageHandler> getType() {
+        return TYPE;
+    }
+
+    private final Message message;
+
+    public MessageEvent(final Message message) {this.message = message;}
+
+    public Message getMessage() {
+        return message;
+    }
+
+    @Override
+    protected void dispatch(MessageHandler handler) {
+        handler.onMessage(this);
+    }
+
+    @Override
+    public Type<MessageHandler> getAssociatedType() {
+        return TYPE;
+    }
 }

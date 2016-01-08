@@ -47,6 +47,8 @@ public class ResourceAddress extends ModelNode {
 
     @Override
     public String toString() {
-        return toJSONString(true);
+        StringBuilder builder = new StringBuilder();
+        format(builder, 0, false);
+        return builder.toString();
     }
 }

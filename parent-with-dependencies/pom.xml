@@ -44,7 +44,7 @@
         <apt-tools.version>0.0.2</apt-tools.version>
         <auto-service.version>1.0-rc2</auto-service.version>
         <circuit.version>0.1.4</circuit.version>
-        <elemento.version>0.1.7</elemento.version>
+        <elemento.version>0.1.8</elemento.version>
         <flow.version>0.0.3</flow.version>
         <gin.version>2.1.2</gin.version>
         <guava.version>19.0-gwt28</guava.version>
@@ -57,7 +57,6 @@
         <npm.version>3.3.10</npm.version>
         <slf4j.version>1.7.12</slf4j.version>
         <slf4j-gwt.version>1.7.7.1</slf4j-gwt.version>
-        <super.eventbus>0.1.1</super.eventbus>
         <validation.version>1.0.0.GA</validation.version>
     </properties>
 
@@ -145,11 +144,6 @@
                 <groupId>ru.finam</groupId>
                 <artifactId>slf4j-gwt</artifactId>
                 <version>${slf4j-gwt.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.ekuefler.supereventbus</groupId>
-                <artifactId>supereventbus</artifactId>
-                <version>${super.eventbus}</version>
             </dependency>
 
             <!-- Misc -->

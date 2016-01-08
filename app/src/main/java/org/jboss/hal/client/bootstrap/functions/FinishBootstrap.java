@@ -21,12 +21,13 @@
  */
 package org.jboss.hal.client.bootstrap.functions;
 
-import com.ekuefler.supereventbus.EventBus;
 import com.google.gwt.core.client.GWT;
+import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 
 import javax.inject.Inject;
 
@@ -50,7 +51,7 @@ public class FinishBootstrap implements BootstrapFunction {
         // reset the uncaught exception handler setup in HalPreBootstrapper
         GWT.setUncaughtExceptionHandler(e -> {
             logger.error("{}: Uncaught exception: {}", name(), e.getMessage()); //NON-NLS
-            eventBus.post(Message.error(resources.constants().unknownError(), e.getMessage()));
+            eventBus.fireEvent(new MessageEvent(Message.error(resources.constants().unknownError(), e.getMessage())));
         });
         control.proceed();
     }

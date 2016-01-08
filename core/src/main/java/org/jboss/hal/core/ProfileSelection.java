@@ -19,22 +19,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.spi;
-
-import com.google.inject.BindingAnnotation;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+package org.jboss.hal.core;
 
 /**
- * Qualifier to select the progress implementation in HAL's footer.
- *
  * @author Harald Pehl
  */
-@Documented
-@BindingAnnotation
-@Retention(RUNTIME)
-public @interface Footer {
+public final class ProfileSelection {
+
+    private final String profile;
+
+    public ProfileSelection(final String profile) {this.profile = profile;}
+
+    public String getProfile() {
+        return profile;
+    }
 }

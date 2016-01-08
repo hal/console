@@ -1,6 +1,44 @@
 package org.jboss.hal.meta;
 
+import static org.jboss.hal.resources.Names.*;
+
 public interface StatementContext {
+
+    @SuppressWarnings("HardCodedStringLiteral")
+    enum Key {
+
+        ANY_PROFILE("any.profile", PROFILE),
+        SELECTED_PROFILE("selected.profile", PROFILE),
+        SELECTED_GROUP("selected.group", SERVER_GROUP),
+        SELECTED_HOST("selected.host", HOST),
+        SELECTED_SERVER("selected.server", SERVER);
+
+        private final String key;
+        private final String resource;
+
+        Key(final String key, final String resource) {
+            this.key = key;
+            this.resource = resource;
+        }
+
+        public String key() {
+            return key;
+        }
+
+        public String resource() {
+            return resource;
+        }
+
+        public static Key fromKey(String key) {
+            for (Key k : Key.values()) {
+                if (k.key().equals(key)) {
+                    return k;
+                }
+            }
+            return null;
+        }
+    }
+
 
     StatementContext NOOP = new StatementContext() {
 
@@ -17,11 +55,6 @@ public interface StatementContext {
         }
     };
 
-
-    String SELECTED_PROFILE = "selected.profile";
-    String SELECTED_GROUP = "selected.group";
-    String SELECTED_HOST = "selected.host";
-    String SELECTED_SERVER = "selected.server";
 
     /**
      * Resolves a value matching the key.

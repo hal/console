@@ -21,62 +21,60 @@
  */
 package org.jboss.hal.core;
 
+import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.ProfileSelectionEvent.ProfileSelectionHandler;
 import org.jboss.hal.meta.StatementContext;
 
 import javax.inject.Inject;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
-import static org.jboss.hal.resources.Names.UNKNOWN;
+import static org.jboss.hal.meta.StatementContext.Key.*;
 
 /**
  * @author Harald Pehl
  */
-public class CoreStatementContext implements StatementContext {
+public class CoreStatementContext implements StatementContext, ProfileSelectionHandler {
 
     private final Environment environment;
-    private final Map<String, String> keys;
+    private final Map<Key, String> context;
 
     @Inject
-    public CoreStatementContext(Environment environment) {
+    public CoreStatementContext(Environment environment, EventBus eventBus) {
         this.environment = environment;
 
-        keys = new HashMap<>();
-        keys.put(SELECTED_PROFILE, null);
-        keys.put(SELECTED_GROUP, null);
-        keys.put(SELECTED_HOST, null);
-        keys.put(SELECTED_SERVER, null);
+        context = new EnumMap<>(Key.class);
+        context.put(ANY_PROFILE, "*");
+        context.put(SELECTED_PROFILE, null);
+        context.put(SELECTED_GROUP, null);
+        context.put(SELECTED_HOST, null);
+        context.put(SELECTED_SERVER, null);
+
+        eventBus.addHandler(ProfileSelectionEvent.getType(), this);
     }
 
     public String resolve(final String key) {
-        if (!environment.isStandalone() && keys.containsKey(key)) {
-            return keys.get(key);
+        // not supported
+        return null;
+    }
+
+    @Override
+    public String[] resolveTuple(final String key) {
+        if (!environment.isStandalone()) {
+            Key validKey = Key.fromKey(key);
+            if (validKey != null && context.containsKey(validKey)) {
+                String value = context.get(validKey);
+                if (value != null) {
+                    return new String[]{validKey.resource(), value};
+                }
+            }
         }
         return null;
     }
 
     @Override
-    @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
-    public String[] resolveTuple(final String key) {
-        if (!environment.isStandalone() && keys.containsKey(key)) {
-            String[] tuple = null;
-            switch (key) {
-                case SELECTED_PROFILE:
-                    tuple = new String[]{"profile", UNKNOWN};
-                    break;
-                case SELECTED_GROUP:
-                    tuple = new String[]{"server-group", UNKNOWN};
-                    break;
-                case SELECTED_HOST:
-                    tuple = new String[]{"host", UNKNOWN};
-                    break;
-                case SELECTED_SERVER:
-                    tuple = new String[]{"server", UNKNOWN};
-                    break;
-            }
-            return tuple;
-        }
-        return null;
+    public void onProfileSelected(final ProfileSelectionEvent event) {
+        context.put(SELECTED_PROFILE, event.getProfile());
     }
 }

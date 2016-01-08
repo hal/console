@@ -83,7 +83,7 @@ public class SecurityFramework extends AbstractMetadataRegistry<SecurityContext>
                 },
                 (failedOp, failure) -> {
                     callback.onFailure(new RuntimeException(
-                            "Unable to add a single " + SECURITY_CONTEXT_TYPE + " for " + address));
+                            UNABLE_TO_BIND_SINGLE + SECURITY_CONTEXT_TYPE + " for " + address));
                 },
                 (exceptionalOp, exception) -> { callback.onFailure(exception); });
     }

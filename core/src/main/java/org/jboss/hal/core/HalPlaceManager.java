@@ -22,24 +22,60 @@
 package org.jboss.hal.core;
 
 import com.google.gwt.place.shared.PlaceHistoryHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.DefaultPlace;
 import com.gwtplatform.mvp.client.annotations.ErrorPlace;
 import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
 import com.gwtplatform.mvp.client.proxy.DefaultPlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
+import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.meta.processing.MetadataProcessor;
+import org.jboss.hal.resources.Constants;
+import org.jboss.hal.spi.Footer;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 
 import javax.inject.Inject;
 
 public class HalPlaceManager extends DefaultPlaceManager {
+
+    private final MetadataProcessor metadataProcessor;
+    private final Progress progress;
+    private final Constants constants;
 
     @Inject
     public HalPlaceManager(final EventBus eventBus,
             final TokenFormatter tokenFormatter,
             @DefaultPlace final String defaultPlaceNameToken,
             @ErrorPlace final String errorPlaceNameToken,
-            @UnauthorizedPlace final String unauthorizedPlaceNameToken) {
+            @UnauthorizedPlace final String unauthorizedPlaceNameToken,
+            final MetadataProcessor metadataProcessor,
+            @Footer final Progress progress,
+            final Constants constants) {
         super(eventBus, tokenFormatter, defaultPlaceNameToken, errorPlaceNameToken, unauthorizedPlaceNameToken,
                 new PlaceHistoryHandler.DefaultHistorian());
+        this.metadataProcessor = metadataProcessor;
+        this.progress = progress;
+        this.constants = constants;
+    }
+
+    @Override
+    protected void doRevealPlace(final PlaceRequest request, final boolean updateBrowserUrl) {
+        metadataProcessor.process(request.getNameToken(), progress, new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(final Throwable throwable) {
+                unlock();
+                revealDefaultPlace();
+                getEventBus().fireEvent(new MessageEvent(
+                        Message.error(constants.metadataError(), throwable.getMessage())));
+            }
+
+            @Override
+            public void onSuccess(final Void whatever) {
+                HalPlaceManager.super.doRevealPlace(request, updateBrowserUrl);
+            }
+        });
     }
 }

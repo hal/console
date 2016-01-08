@@ -83,13 +83,17 @@ public class LayoutBuilder {
     }
 
     public LayoutBuilder add(Element first, Element... rest) {
-        assertNoTabs();
-
         List<Element> elements = new ArrayList<>();
         elements.add(first);
         if (rest != null) {
             Collections.addAll(elements, rest);
         }
+        return add(elements);
+    }
+
+    public LayoutBuilder add(Iterable<Element> elements) {
+        assertNoTabs();
+
         for (Element element : elements) {
             eb.add(element);
         }

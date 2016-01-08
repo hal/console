@@ -24,6 +24,7 @@ package org.jboss.hal.dmr.model;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.Names;
+import org.jetbrains.annotations.NonNls;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -65,7 +66,7 @@ public class Operation extends ModelNode {
             return this;
         }
 
-        public Builder param(String name, String value) {
+        public Builder param(String name, @NonNls String value) {
             parameter.get(name).set(value);
             return this;
         }

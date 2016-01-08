@@ -40,6 +40,8 @@ import org.jboss.hal.config.User;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
@@ -69,6 +71,8 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     public abstract User user();
     // @formatter:on
 
+
+    private static final Logger logger = LoggerFactory.getLogger(HeaderView.class);
 
     private Map<String, Element> tlc;
     private HeaderPresenter presenter;
@@ -161,6 +165,17 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     @Override
     public void showMessage(final Message message) {
+        switch (message.getLevel()) {
+            case ERROR:
+                logger.error(message.getMessage());
+                break;
+            case WARNING:
+                logger.warn(message.getMessage());
+                break;
+            case INFO:
+                logger.info(message.getMessage());
+                break;
+        }
     }
 
     @EventHandler(element = "logoLink", on = click)
