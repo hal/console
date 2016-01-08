@@ -23,6 +23,12 @@ package org.jboss.hal.resources;
  */
 public interface Ids {
 
+    String DATA_SOURCE_ATTRIBUTES_FORM = "data-source-attributes-form";
+    String DATA_SOURCE_ATTRIBUTES_TAB = "data-source-attributes-tab";
+    String DATA_SOURCE_CONNECTION_FORM = "data-source-connection-form";
+    String DATA_SOURCE_CONNECTION_TAB = "data-source-connection-tab";
+    String DATA_SOURCE_TABLE = "data-source-table";
+
     String ENDPOINT_ADD = "endpoint-add";
     String ENDPOINT_PING = "endpoint-ping";
     String ENDPOINT_SELECT = "endpoint-select";

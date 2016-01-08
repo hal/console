@@ -40,14 +40,7 @@ public interface Form<T> extends IsElement {
 
 
     enum Operation {
-        VIEW, ADD, EDIT, CANCEL, SAVE, RESET
-    }
-
-
-    @FunctionalInterface
-    interface SaveCallback<T> {
-
-        void onSave(Form<T> form, Map<String, Object> changedValues);
+        ADD, VIEW, CLEAR, RESET, EDIT, SAVE, CANCEL
     }
 
 
@@ -59,11 +52,25 @@ public interface Form<T> extends IsElement {
 
 
     @FunctionalInterface
+    interface SaveCallback<T> {
+
+        void onSave(Form<T> form, Map<String, Object> changedValues);
+    }
+
+
+    @FunctionalInterface
     interface CancelCallback<T> {
 
         void onCancel(Form<T> form);
     }
 
+
+    /**
+     * Takes a new transient model and enters the editing state.
+     *
+     * @param model the transient model
+     */
+    void add(T model);
 
     /**
      * Takes the specified model and updates the read-only state with the values from the model.
@@ -73,11 +80,16 @@ public interface Form<T> extends IsElement {
     void view(T model);
 
     /**
-     * Takes a new transient model and enters the editing state.
-     *
-     * @param model the transient model
+     * Clears this form by removing the model reference and by clearing all form fields.
      */
-    void add(T model);
+    void clear();
+
+    /**
+     * Resets the model.
+     */
+    void reset();
+
+    void setResetCallback(ResetCallback<T> resetCallback);
 
     /**
      * Takes the specified model and populates the editing state with the values from the model.
@@ -100,13 +112,6 @@ public interface Form<T> extends IsElement {
     void cancel();
 
     void setCancelCallback(CancelCallback<T> cancelCallback);
-
-    /**
-     * Resets the model.
-     */
-    void reset();
-
-    void setResetCallback(ResetCallback<T> resetCallback);
 
     /**
      * @return an unique identifier for this form.

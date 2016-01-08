@@ -43,7 +43,7 @@ import static org.jboss.hal.resources.Names.*;
 /**
  * @author Harald Pehl
  */
-class FormLinks implements IsElement {
+class FormLinks<T> implements IsElement {
 
     private final static Constants CONSTANTS = GWT.create(Constants.class);
 
@@ -57,7 +57,7 @@ class FormLinks implements IsElement {
 
     FormLinks(final String formId,
             final StateMachine stateMachine,
-            final LinkedHashMap<String, String>helpTexts,
+            final LinkedHashMap<String, String> helpTexts,
             final EventListener onEdit,
             final EventListener onReset) {
 
@@ -150,11 +150,13 @@ class FormLinks implements IsElement {
         return root;
     }
 
-    void switchTo(State state, SecurityContext securityContext) {
+    void switchTo(State state, T model, SecurityContext securityContext) {
         switch (state) {
             case READONLY:
-                Elements.setVisible(editLink, stateMachine.supports(EDIT) && securityContext.isWritable());
-                Elements.setVisible(resetLink, stateMachine.supports(RESET) && securityContext.isWritable());
+                Elements.setVisible(editLink,
+                        model != null && stateMachine.supports(EDIT) && securityContext.isWritable());
+                Elements.setVisible(resetLink,
+                        model != null && stateMachine.supports(RESET) && securityContext.isWritable());
                 Elements.setVisible(helpLink, !helpTexts.isEmpty());
                 break;
 

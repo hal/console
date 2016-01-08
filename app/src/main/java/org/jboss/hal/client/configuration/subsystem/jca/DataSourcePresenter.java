@@ -44,7 +44,7 @@ import java.util.List;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
-import static org.jboss.hal.dmr.ModelNodeHelper.withNames;
+import static org.jboss.hal.dmr.ModelNodeHelper.asNodesWithNames;
 import static org.jboss.hal.resources.Names.PROFILE;
 
 /**
@@ -110,7 +110,7 @@ public class DataSourcePresenter extends
                 template.resolve(statementContext))
                 .param(CHILD_TYPE, "data-source")
                 .build();
-        dispatcher.execute(operation, result -> getView().update(withNames(result.asPropertyList())));
+        dispatcher.execute(operation, result -> getView().update(asNodesWithNames(result.asPropertyList())));
     }
 }
 

@@ -65,6 +65,7 @@ public interface CSS {
     String formHorizontal = "form-horizontal";
     String formLinkLabel = "form-link-label";
     String formLinks = "form-links";
+    String formSection = "form-section";
     String hasError = "has-error";
     String hasFeedback = "has-feedback";
     String helpBlock = "help-block";

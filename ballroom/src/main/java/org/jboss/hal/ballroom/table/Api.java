@@ -25,6 +25,7 @@ import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.resources.Names;
 
 import java.util.Collections;
@@ -268,5 +269,42 @@ public class Api<T> {
             return Collections.emptyList();
         }
         return asList(selection);
+    }
+
+    @JsOverlay
+    public final Api<T> bindForm(Form<T> form) {
+        // don't replace this with a lambda - it won't run in super dev mode
+        //noinspection Convert2Lambda
+        return onSelectionChange(new SelectionChangeHandler<T>() {
+            @Override
+            public void onSelectionChanged(final Api<T> api) {
+                if (api.hasSelection()) {
+                    form.view(api.selectedRow());
+                } else {
+                    form.clear();
+                }
+            }
+        });
+    }
+
+    @JsOverlay
+    public final Api<T> bindForms(final Iterable<Form<T>> forms) {
+        // don't replace this with a lambda - it won't run in super dev mode
+        //noinspection Convert2Lambda
+        return onSelectionChange(new SelectionChangeHandler<T>() {
+            @Override
+            public void onSelectionChanged(final Api<T> api) {
+                if (api.hasSelection()) {
+                    T selectedRow = api.selectedRow();
+                    for (Form<T> form : forms) {
+                        form.view(selectedRow);
+                    }
+                } else {
+                    for (Form<T> form : forms) {
+                        form.clear();
+                    }
+                }
+            }
+        });
     }
 }

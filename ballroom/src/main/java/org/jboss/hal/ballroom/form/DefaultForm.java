@@ -79,8 +79,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     private T model;
     private SecurityContext securityContext;
 
-    private Element buttons;
-    private FormLinks formLinks;
+    private FormLinks<T> formLinks;
     private DivElement errorPanel;
     private SpanElement errorMessage;
     private UListElement errorMessages;
@@ -136,8 +135,9 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
 
         Element section = Browser.getDocument().createElement("section"); //NON-NLS
         section.setId(id);
+        section.getClassList().add(formSection);
 
-        formLinks = new FormLinks(id, stateMachine, helpTexts,
+        formLinks = new FormLinks<>(id, stateMachine, helpTexts,
                 event -> edit(getModel()),
                 event -> reset());
         section.appendChild(formLinks.asElement());
@@ -228,7 +228,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         }
 
         // @formatter:off
-        buttons = new Elements.Builder()
+        Element buttons = new Elements.Builder()
             .div().css(formGroup, formButtons)
                 .div().css(offset(labelColumns), column(inputColumns))
                     .div().css(pullRight)
@@ -252,6 +252,25 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     // ------------------------------------------------------ form operations
 
     /**
+     * Executes the {@link org.jboss.hal.ballroom.form.Form.Operation#ADD} operation and calls {@link
+     * DataMapping#newModel(Object, Form)}.
+     *
+     * @param model the transient model
+     */
+    @Override
+    public final void add(final T model) {
+        if (model == null) {
+            throw new NullPointerException(MODEL_MUST_NOT_BE_NULL + formId() + ".add(T)");
+        }
+        if (!initialized()) {
+            throw new IllegalStateException(NOT_INITIALIZED);
+        }
+        this.model = model;
+        stateExec(ADD); // switch state before data mapping!
+        dataMapping.newModel(model, this);
+    }
+
+    /**
      * Executes the {@link org.jboss.hal.ballroom.form.Form.Operation#VIEW} operation and calls {@link
      * DataMapping#populateFormItems(Object, Form)}.
      *
@@ -271,22 +290,36 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     }
 
     /**
-     * Executes the {@link org.jboss.hal.ballroom.form.Form.Operation#ADD} operation and calls {@link
-     * DataMapping#newModel(Object, Form)}.
-     *
-     * @param model the transient model
+     * Removes the model reference, executes the {@link org.jboss.hal.ballroom.form.Form.Operation#CLEAR} operation and
+     * calls {@link DataMapping#clearFormItems(Form)}.
      */
     @Override
-    public final void add(final T model) {
-        if (model == null) {
-            throw new NullPointerException(MODEL_MUST_NOT_BE_NULL + formId() + ".add(T)");
-        }
+    public void clear() {
+        this.model = null;
+        stateExec(CLEAR);
+        dataMapping.clearFormItems(this);
+    }
+
+    /**
+     * Executes the {@link org.jboss.hal.ballroom.form.Form.Operation#RESET} operation, calls {@link
+     * DataMapping#resetModel(Object, Form)} and finally calls the registered {@linkplain
+     * org.jboss.hal.ballroom.form.Form.ResetCallback reset callback} (if any).
+     */
+    @Override
+    public final void reset() {
         if (!initialized()) {
             throw new IllegalStateException(NOT_INITIALIZED);
         }
-        this.model = model;
-        stateExec(ADD); // switch state before data mapping!
-        dataMapping.newModel(model, this);
+        stateExec(RESET); // switch state before data mapping!
+        dataMapping.resetModel(model, this);
+        if (resetCallback != null) {
+            resetCallback.onReset(this);
+        }
+    }
+
+    @Override
+    public void setResetCallback(final ResetCallback<T> resetCallback) {
+        this.resetCallback = resetCallback;
     }
 
     /**
@@ -363,28 +396,6 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         this.cancelCallback = cancelCallback;
     }
 
-    /**
-     * Executes the {@link org.jboss.hal.ballroom.form.Form.Operation#RESET} operation, calls {@link
-     * DataMapping#resetModel(Object, Form)} and finally calls the registered {@linkplain
-     * org.jboss.hal.ballroom.form.Form.ResetCallback reset callback} (if any).
-     */
-    @Override
-    public final void reset() {
-        if (!initialized()) {
-            throw new IllegalStateException(NOT_INITIALIZED);
-        }
-        stateExec(RESET); // switch state before data mapping!
-        dataMapping.resetModel(model, this);
-        if (resetCallback != null) {
-            resetCallback.onReset(this);
-        }
-    }
-
-    @Override
-    public void setResetCallback(final ResetCallback<T> resetCallback) {
-        this.resetCallback = resetCallback;
-    }
-
     protected String formId() {
         return "form(" + id + ")"; //NON-NLS
     }
@@ -438,7 +449,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
                 break;
         }
 
-        formLinks.switchTo(state, securityContext);
+        formLinks.switchTo(state, model, securityContext);
         for (Element panel : panels.values()) {
             Elements.setVisible(panel, false);
         }
@@ -458,7 +469,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         if (stateMachine.current() == EDITING && !securityContext.isWritable()) {
             stateExec(CANCEL);
         }
-        formLinks.switchTo(stateMachine.current(), securityContext);
+        formLinks.switchTo(stateMachine.current(), model, securityContext);
         for (Map.Entry<String, FormItem> entry : formItems.entrySet()) {
             entry.getValue().setRestricted(!securityContext.isWritable(entry.getKey()));
         }

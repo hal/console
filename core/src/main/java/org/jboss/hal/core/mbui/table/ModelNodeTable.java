@@ -30,6 +30,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +99,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelNodeTable.class);
 
-    public ModelNodeTable(final String id, final SecurityContext securityContext, final Options<T> options) {
+    public ModelNodeTable(@NonNls final String id, final SecurityContext securityContext, final Options<T> options) {
         super(id, securityContext, options);
     }
 }

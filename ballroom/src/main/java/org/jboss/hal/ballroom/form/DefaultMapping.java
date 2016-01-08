@@ -37,12 +37,19 @@ public class DefaultMapping<T> implements DataMapping<T> {
     }
 
     @Override
-    public void resetModel(final T model, Form<T> form) {
+    public void populateFormItems(final T model, final Form<T> form) {
         // empty
     }
 
     @Override
-    public void populateFormItems(final T model, final Form<T> form) {
+    public void clearFormItems(final Form<T> form) {
+        for (FormItem formItem : form.getFormItems()) {
+            formItem.clearValue();
+        }
+    }
+
+    @Override
+    public void resetModel(final T model, Form<T> form) {
         // empty
     }
 

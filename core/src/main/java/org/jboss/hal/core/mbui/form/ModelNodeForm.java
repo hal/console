@@ -38,6 +38,7 @@ import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +80,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
         // ------------------------------------------------------ configure required and optional settings
 
-        public Builder(final String id, final SecurityContext securityContext,
+        public Builder(@NonNls final String id, final SecurityContext securityContext,
                 final ResourceDescription resourceDescription) {
             this.id = id;
             this.securityContext = securityContext;

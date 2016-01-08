@@ -50,11 +50,11 @@ public class AddOnlyStateMachine extends AbstractStateMachine implements StateMa
                 transitionTo(EDITING);
                 break;
 
-            case CANCEL:
+            case SAVE:
                 assertState(EDITING);
                 break;
 
-            case SAVE:
+            case CANCEL:
                 assertState(EDITING);
                 break;
 

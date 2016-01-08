@@ -32,25 +32,27 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 /**
  * A state machine for existing models. Supports all {@linkplain Operation operations} except {@link Operation#ADD}.
  * <pre>
- *                             (O)
- *                              |
- *             +--------+       |
- *             |        |     view()
- *             |        |       |
- *          reset()     |       |
- *             |     +--v-------v--+
- *             |     |             |
- *             +-----+  READONLY   <-----+
- *                   |             |     |
- *                   +--+-------^--+     |
- *                      |       |        |
- *                   edit()  cancel()  save()
- *                      |       |        |
- *                   +--v-------+--+     |
- *                   |             |     |
- *  (O)----edit()---->   EDITING   +-----+
- *                   |             |
- *                   +-------------+
+ *            +--------+      (0)
+ *            |        |       |
+ *         clear()     |     view()
+ *         reset()     |       |
+ *            |     +--v-------v--+
+ *            |     |             |
+ *            +-----+  READONLY   <-----+-------+
+ *                  |             |     |       |
+ *                  +--+-------^--+     |       |
+ *                     |       |        |       |
+ *                  edit()  cancel()  save()    |
+ *                     |       |        |       |
+ *                  +--v-------+--+     |       |
+ *                  |             |     |       |
+ *   (0)---edit()--->   EDITING   +-----+     clear()
+ *                  |             |             |
+ *                  +------+------+             |
+ *                         |                    |
+ *                       clear()                |
+ *                         |                    |
+ *                         +--------------------+
  * </pre>
  * (0) Initial states
  *
@@ -59,13 +61,17 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 public class ExistingModelStateMachine extends AbstractStateMachine implements StateMachine {
 
     public ExistingModelStateMachine() {
-        super(EnumSet.of(CANCEL, EDIT, RESET, SAVE, VIEW));
+        super(EnumSet.of(VIEW, CLEAR, RESET, EDIT, SAVE, CANCEL));
         this.current = null;
     }
 
     @Override
     public void execute(final Operation operation) {
         switch (operation) {
+
+            case ADD:
+                unsupported(ADD);
+                break;
 
             case VIEW:
                 if (current != null) {
@@ -74,8 +80,14 @@ public class ExistingModelStateMachine extends AbstractStateMachine implements S
                 transitionTo(READONLY);
                 break;
 
-            case ADD:
-                unsupported(ADD);
+            case CLEAR:
+                transitionTo(READONLY);
+                break;
+
+            case RESET:
+                assertState(READONLY);
+                transitionTo(READONLY);
+                break;
 
             case EDIT:
                 if (current != null) {
@@ -84,18 +96,13 @@ public class ExistingModelStateMachine extends AbstractStateMachine implements S
                 transitionTo(EDITING);
                 break;
 
-            case CANCEL:
-                assertState(EDITING);
-                transitionTo(READONLY);
-                break;
-
             case SAVE:
                 assertState(EDITING);
                 transitionTo(READONLY);
                 break;
 
-            case RESET:
-                assertState(READONLY);
+            case CANCEL:
+                assertState(EDITING);
                 transitionTo(READONLY);
                 break;
 

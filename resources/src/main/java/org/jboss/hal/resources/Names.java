@@ -28,6 +28,7 @@ package org.jboss.hal.resources;
  */
 public interface Names {
 
+    String ATTRIBUTES = "Attributes";
     String CONFIGURATION = "Configuration";
     String CONTROLS = "controls";
     String DEPLOYMENTS = "Deployments";
@@ -42,6 +43,7 @@ public interface Names {
     String LABEL = "label";
     String MANAGEMENT_CONSOLE = "Management Console";
     String NAME_KEY = "name";
+    String NAME_LABEL = "Name";
     String NOT_SUPPORTED = "not supported";
     String NYI = "not yet implemented";
     String OBJECT = "Object";

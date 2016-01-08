@@ -86,7 +86,7 @@ public final class ModelNodeHelper {
      * Turns a list of properties into a list of model nodes which contain a {@link
      * org.jboss.hal.resources.Names#NAME_KEY} key with the properties name.
      */
-    public static List<ModelNode> withNames(List<Property> properties) {
+    public static List<ModelNode> asNodesWithNames(List<Property> properties) {
         List<ModelNode> nodes = new ArrayList<>(properties.size());
         for (Property property : properties) {
             property.getValue().get(NAME_KEY).set(property.getName());

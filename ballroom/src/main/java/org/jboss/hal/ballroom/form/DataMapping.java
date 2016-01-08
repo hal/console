@@ -30,9 +30,11 @@ public interface DataMapping<T> {
 
     void newModel(T model, Form<T> form);
 
-    void resetModel(T model, Form<T> form);
-
     void populateFormItems(T model, Form<T> form);
+
+    void clearFormItems(Form<T> form);
+
+    void resetModel(T model, Form<T> form);
 
     void persistModel(T model, Form<T> form);
 }

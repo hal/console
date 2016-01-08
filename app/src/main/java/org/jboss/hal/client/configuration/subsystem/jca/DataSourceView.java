@@ -24,8 +24,12 @@ package org.jboss.hal.client.configuration.subsystem.jca;
 import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
+import org.jboss.hal.ballroom.tab.Tabs;
+import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.description.ResourceDescription;
@@ -34,19 +38,20 @@ import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityFramework;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
-import static org.jboss.hal.resources.Names.ENABLED;
-import static org.jboss.hal.resources.Names.JNDI_NAME;
+import static org.jboss.hal.resources.Ids.*;
+import static org.jboss.hal.resources.Names.*;
 
 /**
  * @author Harald Pehl
  */
-@SuppressWarnings("HardCodedStringLiteral")
 public class DataSourceView extends ViewImpl implements DataSourcePresenter.MyView {
 
-    private final ModelNodeTable<ModelNode> dataSourcesTable;
+    private final DataTable<ModelNode> table;
+    private final List<Form<ModelNode>> forms;
     private DataSourcePresenter presenter;
 
     @Inject
@@ -56,18 +61,35 @@ public class DataSourceView extends ViewImpl implements DataSourcePresenter.MyVi
         ResourceDescription description = descriptions.lookup(DataSourcePresenter.ROOT_TEMPLATE);
         SecurityContext securityContext = securityFramework.lookup(DataSourcePresenter.ROOT_TEMPLATE);
 
+        Element info = new Elements.Builder().p().innerText(description.getDescription()).end().build();
         Options<ModelNode> options = new ModelNodeTable.Builder<>(description)
+                .column(NAME_KEY, NAME_LABEL, (cell, type, row, meta) -> row.get(NAME_KEY).asString())
                 .columns(JNDI_NAME, ENABLED)
                 .build();
-        dataSourcesTable = new ModelNodeTable<>("data-sources-table", securityContext, options);
+        table = new ModelNodeTable<>(DATA_SOURCE_TABLE, securityContext, options);
 
-        Element info = new Elements.Builder().p().innerText(description.getDescription()).end().build();
+        forms = new ArrayList<>();
+        Tabs tabs = new Tabs();
+        ModelNodeForm<ModelNode> currentForm;
+
+        currentForm = new ModelNodeForm.Builder<>(DATA_SOURCE_ATTRIBUTES_FORM, securityContext, description)
+                .include(JNDI_NAME, ENABLED, "statistics-enabled", "driver-name")
+                .build();
+        forms.add(currentForm);
+        tabs.add(DATA_SOURCE_ATTRIBUTES_TAB, ATTRIBUTES, currentForm.asElement());
+
+        currentForm = new ModelNodeForm.Builder<>(DATA_SOURCE_CONNECTION_FORM, securityContext, description)
+                .include("connection-url", "new-connection-sql", "transaction-isolation", "jta", "use-ccm")
+                .build();
+        forms.add(currentForm);
+        tabs.add(DATA_SOURCE_CONNECTION_TAB, "Connection", currentForm.asElement());
+
         // @formatter:off
         Element element = new LayoutBuilder()
             .startRow()
                 .header("DataSources")
                 .add(info)
-                .add(dataSourcesTable.asElement())
+                .add(table.asElement(), tabs.asElement())
             .endRow()
         .build();
         // @formatter:on
@@ -77,7 +99,8 @@ public class DataSourceView extends ViewImpl implements DataSourcePresenter.MyVi
 
     @Override
     public void attach() {
-        dataSourcesTable.attach();
+        table.attach();
+        table.api().bindForms(forms);
     }
 
     @Override
@@ -87,6 +110,6 @@ public class DataSourceView extends ViewImpl implements DataSourcePresenter.MyVi
 
     @Override
     public void update(final List<ModelNode> datasources) {
-        dataSourcesTable.api().clear().add(datasources).refresh(RESET);
+        table.api().clear().add(datasources).refresh(RESET);
     }
 }
