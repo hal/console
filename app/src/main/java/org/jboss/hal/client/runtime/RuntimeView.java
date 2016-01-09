@@ -32,11 +32,12 @@ import org.jboss.hal.ballroom.layout.LayoutBuilder;
 public class RuntimeView extends ViewImpl implements RuntimePresenter.MyView {
 
     public RuntimeView() {
+        Element someText = new Elements.Builder().p().innerText("First some text above the tabs.").end().build();
         // @formatter:off
         Element root = new LayoutBuilder()
             .startRow()
                 .header("Tabs Demo")
-                .add(new Elements.Builder().p().innerText("First some text above the tabs.").end().build())
+                .add(someText)
                 .startTabs()
                     .tab("first", "First", sampleContent(1))
                     .tab("second", "Second", sampleContent(2))
@@ -49,7 +50,7 @@ public class RuntimeView extends ViewImpl implements RuntimePresenter.MyView {
     }
 
     private Element sampleContent(int number) {
-        return new Elements.Builder().div().h(3).innerText("Sample Content #" + number).end().p()
-                .innerText("Lorem ipsum " + number).end().end().build();
+        return new Elements.Builder().div().h(3).innerText("Sample Content #" + number).end()
+                .p().innerText("Lorem ipsum " + number).end().end().build();
     }
 }

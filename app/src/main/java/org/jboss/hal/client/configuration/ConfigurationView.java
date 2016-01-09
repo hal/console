@@ -53,7 +53,7 @@ public class ConfigurationView extends ViewImpl implements ConfigurationPresente
                 .add(new Elements.Builder()
                         .p().innerText("Please select from one of the configuration links below").end()
                         .ul()
-                            .li().a(token).innerText("DataSources").end().end()
+                            .li().a(token).innerText("Profile (full) / DataSources").end().end()
                         .end()
                     .elements())
             .endRow()

@@ -41,7 +41,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
+import static org.jboss.hal.ballroom.table.Api.RefreshMode.HOLD;
 import static org.jboss.hal.resources.Ids.*;
 import static org.jboss.hal.resources.Names.*;
 
@@ -71,15 +71,23 @@ public class DataSourceView extends ViewImpl implements DataSourcePresenter.MyVi
         forms = new ArrayList<>();
         Tabs tabs = new Tabs();
         ModelNodeForm<ModelNode> currentForm;
+        Form.SaveCallback<ModelNode> saveCallback = (form, changedValues) -> {
+            ModelNode selectedRow = table.api().selectedRow();
+            if (selectedRow != null) {
+                presenter.saveDataSource(selectedRow.get(NAME_KEY).asString(), changedValues);
+            }
+        };
 
         currentForm = new ModelNodeForm.Builder<>(DATA_SOURCE_ATTRIBUTES_FORM, securityContext, description)
                 .include(JNDI_NAME, ENABLED, "statistics-enabled", "driver-name")
+                .onSave(saveCallback)
                 .build();
         forms.add(currentForm);
         tabs.add(DATA_SOURCE_ATTRIBUTES_TAB, ATTRIBUTES, currentForm.asElement());
 
         currentForm = new ModelNodeForm.Builder<>(DATA_SOURCE_CONNECTION_FORM, securityContext, description)
                 .include("connection-url", "new-connection-sql", "transaction-isolation", "jta", "use-ccm")
+                .onSave(saveCallback)
                 .build();
         forms.add(currentForm);
         tabs.add(DATA_SOURCE_CONNECTION_TAB, "Connection", currentForm.asElement());
@@ -110,6 +118,7 @@ public class DataSourceView extends ViewImpl implements DataSourcePresenter.MyVi
 
     @Override
     public void update(final List<ModelNode> datasources) {
-        table.api().clear().add(datasources).refresh(RESET);
+        // TODO Restore selection!
+        table.api().clear().add(datasources).refresh(HOLD);
     }
 }

@@ -184,5 +184,6 @@ public interface ModelDescriptionConstants {
     String WHOAMI = "whoami";
     String WRITE = "write";
     String WRITE_ATTRIBUTE_OPERATION = "write-attribute";
+    String UNDEFINE_ATTRIBUTE_OPERATION = "undefine-attribute";
 }
 

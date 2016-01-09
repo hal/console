@@ -165,7 +165,7 @@ public final class AddressTemplate {
      *
      * @return a new template
      */
-    public AddressTemplate append(String template) {
+    public AddressTemplate append(@NonNls String template) {
         String slashTemplate = template.startsWith("/") ? template : "/" + template;
         return AddressTemplate.of(this.template + slashTemplate);
     }

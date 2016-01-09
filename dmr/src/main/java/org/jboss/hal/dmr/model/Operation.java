@@ -82,7 +82,12 @@ public class Operation extends ModelNode {
     }
 
 
-    public final static Operation UNDEFINED = new Operation(Names.UNDEFINED, ResourceAddress.ROOT, new ModelNode(), null);
+    public final static Operation UNDEFINED = new Operation(Names.UNDEFINED, ResourceAddress.ROOT, new ModelNode(),
+            null);
+
+    private Operation(final ModelNode modelNode) {
+        set(modelNode);
+    }
 
     Operation(final String name, final ResourceAddress address, final ModelNode parameter,
             final String role) {
@@ -97,5 +102,10 @@ public class Operation extends ModelNode {
             // otherwise we get the replacement role
             get(OPERATION_HEADERS).get(ROLES).set(role);
         }
+    }
+
+    @Override
+    public Operation clone() {
+        return new Operation(super.clone());
     }
 }

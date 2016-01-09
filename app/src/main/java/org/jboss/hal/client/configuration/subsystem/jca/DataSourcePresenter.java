@@ -34,13 +34,20 @@ import org.jboss.hal.core.ProfileSelectionEvent;
 import org.jboss.hal.core.Slots;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.ChangeSetAdapter;
+import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.spi.Requires;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Map;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
@@ -55,6 +62,10 @@ public class DataSourcePresenter extends
 
     static final String ROOT_ADDRESS = "/{any.profile}/subsystem=datasources/data-source=*";
     static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
+    static final AddressTemplate DS_SUBSYSTEM_OF_SELECTED_PROFILE =
+            AddressTemplate.of("/{selected.profile}/subsystem=datasources");
+
+    private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
 
 
     // @formatter:off
@@ -71,6 +82,7 @@ public class DataSourcePresenter extends
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
+    private final ChangeSetAdapter changeSetAdapter;
 
     @Inject
     public DataSourcePresenter(final EventBus eventBus,
@@ -81,6 +93,7 @@ public class DataSourcePresenter extends
         super(eventBus, view, proxy, Slots.APPLICATION);
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
+        this.changeSetAdapter = new ChangeSetAdapter();
     }
 
     @Override
@@ -105,12 +118,23 @@ public class DataSourcePresenter extends
     }
 
     private void loadDataSources() {
-        AddressTemplate template = AddressTemplate.of("/{selected.profile}/subsystem=datasources");
         Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
-                template.resolve(statementContext))
+                DS_SUBSYSTEM_OF_SELECTED_PROFILE.resolve(statementContext))
                 .param(CHILD_TYPE, "data-source")
                 .build();
         dispatcher.execute(operation, result -> getView().update(asNodesWithNames(result.asPropertyList())));
     }
-}
 
+    void saveDataSource(final String dataSource, final Map<String, Object> changedValues) {
+        logger.debug("About to save changes for {}: {}", dataSource, changedValues); //NON-NLS
+
+        AddressTemplate template = DS_SUBSYSTEM_OF_SELECTED_PROFILE.append("data-source=" + dataSource);
+        ResourceAddress resourceAddress = template.resolve(statementContext);
+        Composite composite = changeSetAdapter.fromChangeSet(resourceAddress, changedValues);
+
+        dispatcher.execute(composite, (CompositeResult result) -> {
+            logger.debug("Datasource {} successfully modified", dataSource); //NON-NLS
+            loadDataSources();
+        });
+    }
+}
