@@ -27,7 +27,7 @@ package org.jboss.hal.client;
 public interface NameTokens {
 
     String HOMEPAGE = "/home";
-    String DATASOURCE = "/config/{profile}/datasource";
+    String DATASOURCE = "/configuration/{profile}/datasource";
     String DEPLOYMENTS = "/deployments";
     String CONFIGURATION = "/configuration";
     String RUNTIME = "/runtime";

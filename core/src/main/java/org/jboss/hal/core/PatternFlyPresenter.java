@@ -36,23 +36,6 @@ import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
  */
 public abstract class PatternFlyPresenter<V extends PatternFlyView, Proxy_ extends Proxy<?>> extends Presenter<V, Proxy_> {
 
-    public PatternFlyPresenter(final boolean autoBind, final EventBus eventBus, final V view, final Proxy_ proxy) {
-        super(autoBind, eventBus, view, proxy);
-    }
-
-    public PatternFlyPresenter(final EventBus eventBus, final V view, final Proxy_ proxy) {
-        super(eventBus, view, proxy);
-    }
-
-    public PatternFlyPresenter(final EventBus eventBus, final V view, final Proxy_ proxy, final RevealType revealType) {
-        super(eventBus, view, proxy, revealType);
-    }
-
-    public PatternFlyPresenter(final EventBus eventBus, final V view, final Proxy_ proxy, final RevealType revealType,
-            final GwtEvent.Type<RevealContentHandler<?>> slot) {
-        super(eventBus, view, proxy, revealType, slot);
-    }
-
     public PatternFlyPresenter(final EventBus eventBus, final V view, final Proxy_ proxy,
             final GwtEvent.Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, slot);

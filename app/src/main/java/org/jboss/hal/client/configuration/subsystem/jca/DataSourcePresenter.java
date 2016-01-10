@@ -62,16 +62,16 @@ public class DataSourcePresenter extends
 
     static final String ROOT_ADDRESS = "/{any.profile}/subsystem=datasources/data-source=*";
     static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
-    static final AddressTemplate DS_SUBSYSTEM_OF_SELECTED_PROFILE =
-            AddressTemplate.of("/{selected.profile}/subsystem=datasources");
+    static final AddressTemplate DATA_SOURCE_SUBSYSTEM = AddressTemplate
+            .of("/{selected.profile}/subsystem=datasources");
 
     private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
 
 
     // @formatter:off
     @ProxyStandard
-    @Requires(ROOT_ADDRESS)
     @NameToken(NameTokens.DATASOURCE)
+    @Requires(ROOT_ADDRESS)
     public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<DataSourcePresenter> {
@@ -119,7 +119,7 @@ public class DataSourcePresenter extends
 
     private void loadDataSources() {
         Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
-                DS_SUBSYSTEM_OF_SELECTED_PROFILE.resolve(statementContext))
+                DATA_SOURCE_SUBSYSTEM.resolve(statementContext))
                 .param(CHILD_TYPE, "data-source")
                 .build();
         dispatcher.execute(operation, result -> getView().update(asNodesWithNames(result.asPropertyList())));
@@ -128,7 +128,7 @@ public class DataSourcePresenter extends
     void saveDataSource(final String dataSource, final Map<String, Object> changedValues) {
         logger.debug("About to save changes for {}: {}", dataSource, changedValues); //NON-NLS
 
-        AddressTemplate template = DS_SUBSYSTEM_OF_SELECTED_PROFILE.append("data-source=" + dataSource);
+        AddressTemplate template = DATA_SOURCE_SUBSYSTEM.append("data-source=" + dataSource);
         ResourceAddress resourceAddress = template.resolve(statementContext);
         Composite composite = changeSetAdapter.fromChangeSet(resourceAddress, changedValues);
 

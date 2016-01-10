@@ -76,15 +76,15 @@ public class AppModule extends AbstractTemplatedPresenterModule {
 
         // ------------------------------------------------------ remaining presenter (A-Z)
 
-        bindPresenter(ConfigurationPresenter.class,
-                ConfigurationPresenter.MyView.class,
-                ConfigurationView.class,
-                ConfigurationPresenter.MyProxy.class);
-
         bindPresenter(DataSourcePresenter.class,
                 DataSourcePresenter.MyView.class,
                 DataSourceView.class,
                 DataSourcePresenter.MyProxy.class);
+
+        bindPresenter(ConfigurationPresenter.class,
+                ConfigurationPresenter.MyView.class,
+                ConfigurationView.class,
+                ConfigurationPresenter.MyProxy.class);
 
         bindPresenter(DeploymentPresenter.class,
                 DeploymentPresenter.MyView.class,
