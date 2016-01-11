@@ -26,6 +26,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.client.NameTokens;
+import org.jboss.hal.core.TopLevelCategory;
 import org.jboss.hal.core.PatternFlyPresenter;
 import org.jboss.hal.core.PatternFlyView;
 import org.jboss.hal.core.Slots;
@@ -36,7 +37,8 @@ import javax.inject.Inject;
  * @author Harald Pehl
  */
 public class ConfigurationPresenter
-        extends PatternFlyPresenter<ConfigurationPresenter.MyView, ConfigurationPresenter.MyProxy> {
+        extends PatternFlyPresenter<ConfigurationPresenter.MyView, ConfigurationPresenter.MyProxy>
+        implements TopLevelCategory {
 
     // @formatter:off
     @ProxyStandard

@@ -19,39 +19,10 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.runtime;
-
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyStandard;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.client.NameTokens;
-import org.jboss.hal.core.PatternFlyPresenter;
-import org.jboss.hal.core.PatternFlyView;
-import org.jboss.hal.core.Slots;
-import org.jboss.hal.core.TopLevelCategory;
-
-import javax.inject.Inject;
+package org.jboss.hal.core;
 
 /**
  * @author Harald Pehl
  */
-public class RuntimePresenter extends PatternFlyPresenter<RuntimePresenter.MyView, RuntimePresenter.MyProxy>
-        implements TopLevelCategory {
-
-    // @formatter:off
-    @ProxyStandard
-    @NameToken(NameTokens.RUNTIME)
-    public interface MyProxy extends ProxyPlace<RuntimePresenter> {}
-
-    public interface MyView extends PatternFlyView {}
-    // @formatter:on
-
-
-    @Inject
-    public RuntimePresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy) {
-        super(eventBus, view, proxy, Slots.MAIN);
-    }
+public interface TopLevelCategory {
 }

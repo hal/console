@@ -19,39 +19,47 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.runtime;
+package org.jboss.hal.core;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyStandard;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.client.NameTokens;
-import org.jboss.hal.core.PatternFlyPresenter;
-import org.jboss.hal.core.PatternFlyView;
-import org.jboss.hal.core.Slots;
-import org.jboss.hal.core.TopLevelCategory;
-
-import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Harald Pehl
  */
-public class RuntimePresenter extends PatternFlyPresenter<RuntimePresenter.MyView, RuntimePresenter.MyProxy>
-        implements TopLevelCategory {
+public class Breadcrumb implements Iterable<Breadcrumb.Segment> {
 
-    // @formatter:off
-    @ProxyStandard
-    @NameToken(NameTokens.RUNTIME)
-    public interface MyProxy extends ProxyPlace<RuntimePresenter> {}
+    public static final class Segment {
 
-    public interface MyView extends PatternFlyView {}
-    // @formatter:on
+        public final String key;
+        public final String value;
 
-
-    @Inject
-    public RuntimePresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy) {
-        super(eventBus, view, proxy, Slots.MAIN);
+        public Segment(final String key, final String value) {
+            this.key = key;
+            this.value = value;
+        }
     }
+
+    public static Breadcrumb of(String[][] segments) {
+        List<Segment> s = new ArrayList<>();
+        for (String[] segment : segments) {
+            s.add(new Segment(segment[0], segment[1]));
+        }
+        return new Breadcrumb(s);
+    }
+
+    private final List<Segment> segments;
+
+    private Breadcrumb(final List<Segment> segments) {this.segments = segments;}
+
+
+    @Override
+    public Iterator<Segment> iterator() {
+        return segments.iterator();
+    }
+
+    public boolean isEmpty() {return segments.isEmpty();}
+
+    public int size() {return segments.size();}
 }

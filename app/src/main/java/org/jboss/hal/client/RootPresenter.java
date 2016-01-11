@@ -31,6 +31,7 @@ import com.gwtplatform.mvp.client.presenter.slots.PermanentSlot;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.hal.client.skeleton.FooterPresenter;
 import org.jboss.hal.client.skeleton.HeaderPresenter;
+import org.jboss.hal.core.HasPresenter;
 import org.jboss.hal.core.Slots;
 
 /**
@@ -42,7 +43,7 @@ public class RootPresenter extends Presenter<RootPresenter.MyView, RootPresenter
     @ProxyStandard
     interface MyProxy extends Proxy<RootPresenter> {}
 
-    interface MyView extends View {}
+    interface MyView extends View, HasPresenter<RootPresenter> {}
     // @formatter:on
 
 
@@ -62,7 +63,16 @@ public class RootPresenter extends Presenter<RootPresenter.MyView, RootPresenter
 
     @Override
     protected void onBind() {
+        getView().setPresenter(this);
         setInSlot(SLOT_HEADER_CONTENT, headerPresenter);
         setInSlot(SLOT_FOOTER_CONTENT, footerPresenter);
+    }
+
+    void tlcMode() {
+        headerPresenter.tlcMode();
+    }
+
+    void applicationMode() {
+        headerPresenter.applicationMode();
     }
 }

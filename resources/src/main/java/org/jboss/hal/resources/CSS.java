@@ -74,6 +74,7 @@ public interface CSS {
     String inputGroup = "input-group";
     String inputGroupAddon = "input-group-addon";
     String inputGroupBtn = "input-group-btn";
+    String key = "key";
     String loading = "loading";
     String loadingContainer = "loading-container";
     String modal = "modal";
@@ -109,6 +110,7 @@ public interface CSS {
     String table = "table";
     String tableBordered = "table-bordered";
     String tableStriped = "table-striped";
+    String value = "value";
 
 
     static String column(int columns) {

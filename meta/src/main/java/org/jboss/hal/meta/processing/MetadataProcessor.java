@@ -99,7 +99,7 @@ public class MetadataProcessor {
 
             LookupResult lookupResult = lookup.check(token, templates, requiredResources.isRecursive(token));
             if (lookupResult.allPresent()) {
-                logger.debug("Token {}: All required resources have been processed -> callback.onSuccess(null)", token);
+                logger.debug("Token {}: All required resources have been already processed -> callback.onSuccess(null)", token);
                 callback.onSuccess(null);
             } else {
                 logger.debug("Token {}: {}", token, lookupResult);

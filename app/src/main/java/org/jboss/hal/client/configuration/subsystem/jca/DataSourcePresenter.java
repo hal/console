@@ -23,15 +23,18 @@ package org.jboss.hal.client.configuration.subsystem.jca;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyStandard;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.client.NameTokens;
+import org.jboss.hal.core.Breadcrumb;
+import org.jboss.hal.core.BreadcrumbEvent;
 import org.jboss.hal.core.HasPresenter;
 import org.jboss.hal.core.PatternFlyPresenter;
 import org.jboss.hal.core.PatternFlyView;
 import org.jboss.hal.core.ProfileSelectionEvent;
 import org.jboss.hal.core.Slots;
+import org.jboss.hal.core.mbui.LabelBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.ChangeSetAdapter;
@@ -69,7 +72,7 @@ public class DataSourcePresenter extends
 
 
     // @formatter:off
-    @ProxyStandard
+    @ProxyCodeSplit
     @NameToken(NameTokens.DATASOURCE)
     @Requires(ROOT_ADDRESS)
     public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
@@ -90,7 +93,7 @@ public class DataSourcePresenter extends
             final MyProxy proxy,
             final Dispatcher dispatcher,
             final StatementContext statementContext) {
-        super(eventBus, view, proxy, Slots.APPLICATION);
+        super(eventBus, view, proxy, Slots.MAIN);
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
         this.changeSetAdapter = new ChangeSetAdapter();
@@ -114,6 +117,15 @@ public class DataSourcePresenter extends
     @Override
     protected void onReset() {
         super.onReset();
+        LabelBuilder labelBuilder = new LabelBuilder();
+        getEventBus().fireEvent(new BreadcrumbEvent(Breadcrumb.of(new String[][]{
+                // Sample breadcrumb
+                {"Configuration", "Profiles"},
+                {"Profile", "full"},
+                {"Subsystem", labelBuilder.label("datasource")},
+                {"Type", "Non-XA"},
+                {"Datasource", "ExampleDS"},
+        })));
         loadDataSources();
     }
 

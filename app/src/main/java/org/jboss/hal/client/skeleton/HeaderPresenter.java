@@ -30,6 +30,9 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
+import org.jboss.hal.core.Breadcrumb;
+import org.jboss.hal.core.BreadcrumbEvent;
+import org.jboss.hal.core.BreadcrumbEvent.BreadcrumbHandler;
 import org.jboss.hal.core.HasPresenter;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -42,13 +45,17 @@ import static org.jboss.hal.resources.Names.NYI;
 /**
  * @author Harald Pehl
  */
-public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> implements MessageHandler {
+public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
+        implements BreadcrumbHandler, MessageHandler{
 
     // @formatter:off
     public interface MyView extends View, HasPresenter<HeaderPresenter> {
         void update(Environment environment, Endpoints endpoints, User user);
         void selectTlc(String nameToken);
         void showMessage(Message message);
+        void tlcMode();
+        void applicationMode();
+        void updateBreadcrumb(Breadcrumb breadcrumb);
     }
     // @formatter:on
 
@@ -76,6 +83,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     protected void onBind() {
         super.onBind();
         registerHandler(getEventBus().addHandler(MessageEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(BreadcrumbEvent.getType(), this));
         getView().setPresenter(this);
         getView().update(environment, endpoints, user);
     }
@@ -109,7 +117,20 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     }
 
     @Override
+    public void onBreadcrumb(final BreadcrumbEvent event) {
+        getView().updateBreadcrumb(event.getBreadcrumb());
+    }
+
+    @Override
     public void onMessage(final MessageEvent event) {
         getView().showMessage(event.getMessage());
+    }
+
+    public void tlcMode() {
+        getView().tlcMode();
+    }
+
+    public void applicationMode() {
+        getView().applicationMode();
     }
 }

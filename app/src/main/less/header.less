@@ -63,3 +63,37 @@
 .navbar-pf .navbar-primary > li > a {
   outline: none;
 }
+
+.breadcrumb-hal {
+  margin-bottom: 0;
+  padding-top: 10px;
+  padding-bottom: 9px;
+  #gradient > .vertical(@navbar-pf-navbar-primary-bg-color-start, @navbar-pf-navbar-primary-bg-color-stop);
+
+  .active {
+    color: #fff;
+  }
+
+  li {
+    color: #8b8d8f;
+    font-size: 14px;
+    a {
+      color: #fff;
+
+      &.back {
+        padding-left: 20px;
+      }
+    }
+    .key:after {
+      content: "\21d2";
+      color: #999;
+      font-size: 14px;
+      padding: 0 5px;
+    }
+  }
+  li + li:before {
+    content: '/';
+    font-size: 14px;
+    padding: 0 10px;
+  }
+}

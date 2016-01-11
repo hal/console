@@ -37,6 +37,8 @@ import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.InstanceInfo;
 import org.jboss.hal.config.User;
+import org.jboss.hal.core.Breadcrumb;
+import org.jboss.hal.core.Breadcrumb.Segment;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
@@ -46,11 +48,12 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.config.InstanceInfo.WILDFLY;
-import static org.jboss.hal.resources.CSS.active;
+import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.*;
 
 
@@ -85,6 +88,9 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     @DataElement Element connectedTo;
     @DataElement Element accessControl;
     @DataElement Element patching;
+    @DataElement Element topLevelTabs;
+    @DataElement Element breadcrumbs;
+
 
     @PostConstruct
     void init() {
@@ -102,6 +108,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         boolean su = user().isSuperuser() || user().isAdministrator();
         Elements.setVisible(accessControl, su);
         Elements.setVisible(patching, su);
+        Elements.setVisible(breadcrumbs, false);
 
         initWidget(Elements.asWidget(root));
     }
@@ -175,6 +182,40 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
             case INFO:
                 logger.info(message.getMessage());
                 break;
+        }
+    }
+
+    @Override
+    public void tlcMode() {
+        Elements.setVisible(topLevelTabs, true);
+        Elements.setVisible(breadcrumbs, false);
+    }
+
+    @Override
+    public void applicationMode() {
+        Elements.setVisible(topLevelTabs, false);
+        Elements.setVisible(breadcrumbs, true);
+    }
+
+    @Override
+    public void updateBreadcrumb(final Breadcrumb breadcrumb) {
+        while (breadcrumbs.getLastChild() != null && breadcrumbs.getChildren().getLength() > 1) {
+            breadcrumbs.removeChild(breadcrumbs.getLastChild());
+        }
+        for (Iterator<Segment> iterator = breadcrumb.iterator(); iterator.hasNext(); ) {
+            Segment segment = iterator.next();
+            // @formatter:off
+            Element li = new Elements.Builder()
+                .li()
+                    .span().css(key).innerText(segment.key).end()
+                    .span().css(value).innerText(segment.value).end()
+                .end()
+            .build();
+            // @formatter:off
+            if (!iterator.hasNext()) {
+                li.getClassList().add(active);
+            }
+            breadcrumbs.appendChild(li);
         }
     }
 

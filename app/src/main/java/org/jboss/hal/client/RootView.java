@@ -28,7 +28,10 @@ import elemental.dom.Element;
 import elemental.html.DivElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.core.Slots;
+import org.jboss.hal.core.TopLevelCategory;
 import org.jboss.hal.resources.Ids;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,9 +45,12 @@ import static org.jboss.hal.resources.CSS.containerFluid;
  */
 public class RootView extends ViewImpl implements RootPresenter.MyView {
 
+    private static final Logger logger = LoggerFactory.getLogger(RootView.class);
+
     private final Map<Object, Element> slots;
     private final DivElement rootContainer;
     private boolean initialized;
+    private RootPresenter presenter;
 
     public RootView() {
         slots = new HashMap<>();
@@ -53,35 +59,39 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
     }
 
     @Override
+    public void setPresenter(final RootPresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    @Override
     public void setInSlot(Object slot, IsWidget content) {
         Element element = Elements.asElement(content);
 
         if (slot == SLOT_HEADER_CONTENT || slot == SLOT_FOOTER_CONTENT) {
             slots.put(slot, element);
+            if (!initialized && slots.containsKey(SLOT_HEADER_CONTENT) && slots.containsKey(SLOT_FOOTER_CONTENT)) {
+                // append all three building blocks to the document body
+                Element body = Browser.getDocument().getBody();
+                body.appendChild(slots.get(SLOT_HEADER_CONTENT));
+                body.appendChild(rootContainer);
+                body.appendChild(slots.get(SLOT_FOOTER_CONTENT));
+                initialized = true;
+            }
         }
 
         else if (slot == Slots.MAIN) {
             Elements.removeChildrenFrom(rootContainer);
             rootContainer.appendChild(element);
+            if (content instanceof TopLevelCategory) {
+                presenter.tlcMode();
+            } else {
+                presenter.applicationMode();
+            }
         }
 
-        else if (slot == Slots.APPLICATION) {
-            // TODO Hide top level tabs
-            Elements.removeChildrenFrom(rootContainer);
-            rootContainer.appendChild(element);
-        }
-
-        else if (slot == Slots.PREVIEW) {
-            // TODO Implement preview
-        }
-
-        if (!initialized && slots.containsKey(SLOT_HEADER_CONTENT) && slots.containsKey(SLOT_FOOTER_CONTENT)) {
-            // append all three building blocks to the document body
-            Element body = Browser.getDocument().getBody();
-            body.appendChild(slots.get(SLOT_HEADER_CONTENT));
-            body.appendChild(rootContainer);
-            body.appendChild(slots.get(SLOT_FOOTER_CONTENT));
-            initialized = true;
+        else {
+            logger.warn("Unknown slot {}. Delegate to super.setInSlot()", slot); //NON-NLS
+            super.setInSlot(slot, content);
         }
     }
 }

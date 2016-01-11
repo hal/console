@@ -53,7 +53,7 @@
                 </ul>
             </li>
         </ul>
-        <ul class="nav navbar-nav navbar-primary">
+        <ul class="nav navbar-nav navbar-primary" data-element="topLevelTabs">
             <li class="active"><a id="{{resources().TLC_HOMEPAGE}}" href="{{historyToken(HOMEPAGE)}}" class="active">Homepage</a></li>
             <li><a id="{{resources().TLC_DEPLOYMENTS}}" href="{{historyToken(DEPLOYMENTS)}}">Deployments</a></li>
             <li><a id="{{resources().TLC_CONFIGURATION}}" href="{{historyToken(CONFIGURATION)}}">Configuration</a></li>
@@ -61,6 +61,11 @@
             <li data-element="accessControl"><a id="{{resources().TLC_ACCESS_CONTROL}}" href="{{historyToken(ACCESS_CONTROL)}}">Access Control</a></li>
             <li data-element="patching"><a id="{{resources().TLC_PATCHING}}" href="{{historyToken(PATCHING)}}">Patching</a></li>
         </ul>
+        <ol class="breadcrumb breadcrumb-hal" data-element="breadcrumbs">
+            <li><a class="back" href="javascript:history.back()" title="Back"><i class="fa fa-angle-double-left"></i></a></li>
+            <li><span class="key">Foo</span><span class="value">Bar</span></li>
+            <li class="active"><span class="key">Foo</span><span class="value">Bar</span></li>
+        </ol>
     </div>
 </nav>
 

@@ -31,6 +31,7 @@ import org.jboss.hal.core.HasPresenter;
 import org.jboss.hal.core.PatternFlyPresenter;
 import org.jboss.hal.core.PatternFlyView;
 import org.jboss.hal.core.Slots;
+import org.jboss.hal.core.TopLevelCategory;
 
 import javax.inject.Inject;
 
@@ -39,7 +40,8 @@ import static org.jboss.hal.resources.Names.*;
 /**
  * @author Harald Pehl
  */
-public class DeploymentPresenter extends PatternFlyPresenter<DeploymentPresenter.MyView, DeploymentPresenter.MyProxy> {
+public class DeploymentPresenter extends PatternFlyPresenter<DeploymentPresenter.MyView, DeploymentPresenter.MyProxy>
+        implements TopLevelCategory {
 
     // @formatter:off
     @ProxyStandard

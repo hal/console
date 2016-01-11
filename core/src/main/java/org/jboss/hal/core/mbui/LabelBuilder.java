@@ -37,7 +37,11 @@ public class LabelBuilder {
             .of("jndi", "JNDI", "sql", "SQL", "url", "URL"); //NON-NLS
 
     public String label(Property attributeDescription) {
-        String label = attributeDescription.getName();
+        return label(attributeDescription.getName());
+    }
+
+    public String label(String key) {
+        String label = key;
         label = replaceSpecial(label);
         label = label.replace('-', ' ');
         label = capitalize(label);

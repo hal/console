@@ -32,6 +32,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.core.HasPresenter;
 import org.jboss.hal.core.Slots;
+import org.jboss.hal.core.TopLevelCategory;
 
 import javax.inject.Inject;
 
@@ -40,7 +41,8 @@ import static org.jboss.hal.resources.Names.NYI;
 /**
  * @author Harald Pehl
  */
-public class HomepagePresenter extends Presenter<HomepagePresenter.MyView, HomepagePresenter.MyProxy> {
+public class HomepagePresenter extends Presenter<HomepagePresenter.MyView, HomepagePresenter.MyProxy>
+        implements TopLevelCategory {
 
     // @formatter:off
     @NoGatekeeper
