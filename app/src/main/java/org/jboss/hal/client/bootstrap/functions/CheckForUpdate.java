@@ -64,6 +64,10 @@ public class CheckForUpdate implements BootstrapFunction {
                         Version version = Versions.parseVersion(response.getText());
                         environment.setLatestHalVersion(version);
                         logger.debug("{}: Version from update url {}", name(), version);
+                        if (environment.halUpdateAvailable()) {
+                            logger.info("{}: A new HAL version is available. Current version: {}, new version: {}",
+                                    name(), environment.getHalVersion(), environment.getLatestHalVersion());
+                        }
                     } catch (Throwable t) {
                         logger.warn("{}: Cannot parse version from update server at {}: {}", name(), UPDATE_URL,
                                 t.getMessage());
