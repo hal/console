@@ -77,7 +77,7 @@ fieldset.form-section {
 }
 
 .help-block {
-  &.textarea {
+  &.hint {
     color: #999;
     font-size: smaller;
   }
@@ -90,3 +90,93 @@ abbr.req {
   vertical-align: text-top;
 }
 
+.bootstrap-select.btn-group.disabled .btn:focus {
+  box-shadow: none !important;
+}
+
+.bootstrap-select.btn-group .btn .clear {
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  width: 12px;
+  height: 9px;
+  margin-top: -4px;
+  vertical-align: middle;
+  font-family: @icon-font-name-pf;
+  font-size: 10px;
+  font-weight: 400;
+
+  &:before {
+    bottom: 0;
+    content: "\e60b";
+    left: 0;
+    line-height: 12px;
+    position: absolute;
+    text-align: center;
+    top: -1px;
+    right: 0;
+  }
+}
+
+.tag-editor {
+  .form-control;
+  padding: 0;
+
+  .placeholder {
+    padding: 0 6px;
+    > div {
+      padding: 0;
+      margin: 0;
+    }
+  }
+
+  .tag-editor-spacer {
+    width: 6px;
+  }
+
+  .tag-editor-tag {
+    color: #333;
+  }
+  .tag-editor-tag, .tag-editor-delete {
+    background-color: #f1f1f1;
+  }
+
+  .invalid-property {
+    .tag-editor-tag {
+      color: @state-danger-text;
+    }
+    .tag-editor-tag, .tag-editor-delete {
+      background-color: @state-danger-bg;
+    }
+  }
+}
+
+.disabled .tag-editor {
+  color: #969696;
+  background-color: #f8f8f8;
+  cursor: not-allowed;
+
+  .tag-editor-tag, .tag-editor-delete {
+    cursor: not-allowed;
+  }
+  .tag-editor-delete:hover i {
+    background-position: inherit;
+  }
+}
+
+.has-error .tag-editor {
+  border-color: #a94442;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+}
+
+.tt-dataset .empty-message {
+  padding-left: 30px;
+  padding-right: 5px;
+  .pficon {
+    font-size: 14px;
+    position: absolute;
+    left: 8px;
+    top: 10px;
+  }
+}
