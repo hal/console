@@ -19,24 +19,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core;
+package org.jboss.hal.ballroom.typeahead;
 
-import com.gwtplatform.mvp.client.View;
-import com.gwtplatform.mvp.client.ViewImpl;
+import jsinterop.annotations.JsType;
 
-/**
- * Interface for views which use JavaScript based PatternFly components like select picker, tooltips or data tables.
- *
- * @author Harald Pehl
- */
-public interface PatternFlyView extends View {
+import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.resources.Names.OBJECT;
+
+@JsType(isNative = true)
+public class Typeahead<T> {
 
     /**
-     * This method should be called <em>after</em> the view's elements are attached to the DOM. Typically this method
-     * is called from {@link PatternFlyPresenter#onReveal()}.
-     * <p>
-     * Please do <em>not</em> use {@link ViewImpl#onAttach()} to initialize Patternfly components. This works for
-     * widgets only, but not for elements!
+     * Mapping for the basic options from typeahead.js
+     *
+     * @author Harald Pehl
+     * @see <a href="https://github.com/twitter/typeahead.js/blob/master/doc/jquery_typeahead.md#options">https://github.com/twitter/typeahead.js/blob/master/doc/jquery_typeahead.md#options</a>
      */
-    void attach();
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    public static class Options {
+
+        public boolean highlight;
+        public int minLenght;
+    }
 }

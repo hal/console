@@ -143,6 +143,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String restartNoServices();
     String restartResourceServices();
 
+    String nothingSelected();
     String restricted();
     String remove();
     String sameOrigin();
@@ -150,7 +151,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String settings();
     String start();
     String supportsExpressions();
-
+    String tagEditorPlaceholder();
     String toggleNavigation();
     String tools();
     String unknownError();

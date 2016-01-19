@@ -34,7 +34,9 @@
             <section>
                 <div class="form form-horizontal">
                     <ul class="form-links clearfix">
-                        <li><a class="clickable"><i class="pficon pficon-edit"></i><span class="form-link-label">Edit</span></a></li>
+                        <li>
+                            <a class="clickable"><i class="pficon pficon-edit"></i><span class="form-link-label">Edit</span></a>
+                        </li>
                         <li title="Resets the required fields to their default values and undefines the remaining fields." data-toggle="tooltip" data-placement="right">
                             <a class="clickable"><i class="pficon pficon-restart"></i><span class="form-link-label">Reset</span></a>
                         </li>
@@ -69,17 +71,17 @@
                     </div>
                 </div>
                 <form class="form form-horizontal">
-<!--
-                    <div class="alert alert-danger">
-                        <span class="pficon pficon-error-circle-o"></span>
-                        <span>Something went wrong! What a mess!</span>
-                        <ul>
-                            <li>First</li>
-                            <li>Second</li>
-                            <li>Third</li>
-                        </ul>
-                    </div>
--->
+                    <!--
+                                        <div class="alert alert-danger">
+                                            <span class="pficon pficon-error-circle-o"></span>
+                                            <span>Something went wrong! What a mess!</span>
+                                            <ul>
+                                                <li>First</li>
+                                                <li>Second</li>
+                                                <li>Third</li>
+                                            </ul>
+                                        </div>
+                    -->
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <!--                                                       -->
                     <!-- TextBoxItem                                           -->
@@ -331,7 +333,6 @@
 
                             <div class="col-md-9">
                                 <textarea rows="3" id="textarea-markup" class="form-control" placeholder="Textarea"></textarea>
-                                <span class="help-block hint">One item per line</span>
                             </div>
                         </div>
                         <div class="form-group">
@@ -517,7 +518,7 @@
 
                             <div class="col-md-9">
                                 <select id="selectBoxSingleOptional-markup" class="form-control selectpicker">
-                                    <option title="Empty"></option>
+                                    <option title="undefined"></option>
                                     <option>Lorem</option>
                                     <option>Lorem</option>
                                     <option>ipsum</option>
@@ -532,7 +533,7 @@
 
                             <div class="col-md-9">
                                 <select id="selectBoxSingleOptionalDisabled-markup" class="form-control selectpicker" disabled>
-                                    <option title="Empty"></option>
+                                    <option title="undefined"></option>
                                     <option>Lorem</option>
                                     <option>ipsum</option>
                                     <option>dolor</option>
@@ -556,7 +557,7 @@
 
                             <div class="col-md-9">
                                 <select id="selectBoxSingleOptionalError-markup" class="form-control selectpicker">
-                                    <option title="Empty"></option>
+                                    <option title="undefined"></option>
                                     <option>Lorem</option>
                                     <option>ipsum</option>
                                     <option>dolor</option>
@@ -770,11 +771,6 @@
 
         $('[data-toggle=tooltip]').tooltip();
         $('.selectpicker').selectpicker();
-        $('select[id^=selectBoxSingleOptional]').selectpicker('val', 'Lorem');
-        $('button[data-id^=selectBoxSingleOptional] span:last-child')
-                .removeClass('caret')
-                .addClass('clear')
-                .attr('title', 'Clear selected value');
         $('.bootstrap-switch').bootstrapSwitch();
 
         function validateTags(field, editor, tags) {

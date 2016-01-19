@@ -19,22 +19,46 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.ballroom.typeahead;
+package org.jboss.hal.ballroom.tageditor;
 
+import com.google.gwt.core.client.GWT;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.resources.Constants;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.Names.OBJECT;
 
 /**
- * Mapping for the basic options from typeahead.js
- *
  * @author Harald Pehl
- * @see <a href="https://github.com/twitter/typeahead.js/blob/master/doc/jquery_typeahead.md#options">https://github.com/twitter/typeahead.js/blob/master/doc/jquery_typeahead.md#options</a>
  */
-@JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-public class TypeaheadOptions {
+@JsType(isNative = true)
+public class TagEditor {
 
-    public boolean highlight;
-    public int minLenght;
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    public static class Options {
+
+        public String delimiter;
+        public boolean forceLowercase;
+        public String placeholder;
+        public boolean sortable;
+    }
+
+
+    // Helper class to get hold of the default options, since native JS types cannot hold any static references
+    public static class Defaults {
+
+        private static final Options DEFAULT_OPTIONS = new Options();
+        private static final Constants CONSTANTS = GWT.create(Constants.class);
+
+        static {
+            DEFAULT_OPTIONS.delimiter = ", ";
+            DEFAULT_OPTIONS.forceLowercase = false;
+            DEFAULT_OPTIONS.placeholder = CONSTANTS.tagEditorPlaceholder();
+            DEFAULT_OPTIONS.sortable = false;
+        }
+
+        public static Options get() {
+            return DEFAULT_OPTIONS;
+        }
+    }
 }

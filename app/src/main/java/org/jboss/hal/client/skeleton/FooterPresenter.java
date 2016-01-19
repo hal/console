@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.client.skeleton;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
@@ -65,7 +66,7 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView> {
     @Override
     protected void onReveal() {
         super.onReveal();
-        PatternFly.initComponents();
+        Scheduler.get().scheduleDeferred(PatternFly::initComponents);
     }
 
     public void onShowVersion() {

@@ -314,7 +314,7 @@ public class Dialog implements IsElement {
         }
         $(SELECTOR_ID).modal(ModalOptions.create(closeOnEsc));
         $(SELECTOR_ID).modal("show");
-        PatternFly.initComponents(false);
+        PatternFly.initComponents();
     }
 
     private void close() {

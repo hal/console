@@ -29,6 +29,7 @@ import org.jboss.hal.ballroom.layout.LayoutBuilder;
 import org.jboss.hal.ballroom.tab.Tabs;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.core.PatternFlyViewImpl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.ModelNode;
@@ -48,7 +49,7 @@ import static org.jboss.hal.resources.Names.*;
 /**
  * @author Harald Pehl
  */
-public class DataSourceView extends ViewImpl implements DataSourcePresenter.MyView {
+public class DataSourceView extends PatternFlyViewImpl implements DataSourcePresenter.MyView {
 
     private final DataTable<ModelNode> table;
     private final List<Form<ModelNode>> forms;

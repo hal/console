@@ -22,7 +22,6 @@
 package org.jboss.hal.client.deployment;
 
 import com.google.gwt.core.client.GWT;
-import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.dialog.Dialog;
@@ -40,6 +39,7 @@ import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
 import org.jboss.hal.client.bootstrap.endpoint.Endpoint;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointResources;
+import org.jboss.hal.core.PatternFlyViewImpl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
@@ -49,7 +49,7 @@ import java.util.Arrays;
 /**
  * @author Harald Pehl
  */
-public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyView {
+public class DeploymentView extends PatternFlyViewImpl implements DeploymentPresenter.MyView {
 
     class SampleForm extends DefaultForm<String> {
 

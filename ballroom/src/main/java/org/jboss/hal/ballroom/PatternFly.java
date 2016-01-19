@@ -21,46 +21,50 @@
  */
 package org.jboss.hal.ballroom;
 
-import com.google.gwt.core.client.Scheduler;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.ballroom.selectpicker.Selectpicker;
+import org.jboss.hal.ballroom.tageditor.TagEditor;
 import org.jboss.hal.ballroom.typeahead.Dataset;
-import org.jboss.hal.ballroom.typeahead.TypeaheadOptions;
+import org.jboss.hal.ballroom.typeahead.Typeahead;
+import org.jboss.hal.resources.CSS;
 import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.resources.CSS.selectpicker;
+import static org.jboss.hal.resources.CSS.properties;
 
 @JsType(isNative = true)
 public class PatternFly {
+
+    public static class Components {
+
+        public final Selectpicker selectpicker;
+        public final TagEditor tagEditor;
+
+        public Components(final Selectpicker selectpicker, final TagEditor tagEditor) {
+            this.selectpicker = selectpicker;
+            this.tagEditor = tagEditor;
+        }
+    }
+
 
     /**
      * Same as {@code initComponents(true)}
      */
     @JsOverlay
-    public static void initComponents() {
-        initComponents(true);
-    }
-
-    /**
-     * Initializes JavaScript based PatternFly components.
-     *
-     * @param scheduled whether to run the initialization using {@code Scheduler.get().scheduleDeferred()}
-     */
-    @JsOverlay
-    public static void initComponents(boolean scheduled) {
-        if (scheduled) {
-            Scheduler.get().scheduleDeferred(PatternFly::init);
-        } else {
-            init();
-        }
+    public static Components initComponents() {
+        return init();
     }
 
     @JsOverlay
-    private static void init() {
-        $("." + selectpicker).selectpicker();
+    private static Components init() {
         $("[data-toggle=tooltip]").tooltip();
+        $("." + CSS.bootstrapSwitch).bootstrapSwitch();
+        TagEditor tagEditor = $("." + properties).tagEditor(TagEditor.Defaults.get());
+        Selectpicker selectpicker = $("." + CSS.selectpicker).selectpicker(Selectpicker.Defaults.get());
+
+        return new Components(selectpicker, tagEditor);
     }
 
     @JsMethod(namespace = GLOBAL)
@@ -68,11 +72,13 @@ public class PatternFly {
 
     public native void bootstrapSwitch();
 
-    public native void selectpicker();
+    public native Selectpicker selectpicker(Selectpicker.Options options);
 
     public native void tab(String command);
 
+    public native TagEditor tagEditor(TagEditor.Options options);
+
     public native void tooltip();
 
-    public native <T> void typeahead(TypeaheadOptions options, Dataset<T> dataset);
+    public native <T> Typeahead<T> typeahead(Typeahead.Options options, Dataset<T> dataset);
 }
