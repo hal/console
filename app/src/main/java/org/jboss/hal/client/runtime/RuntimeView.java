@@ -21,15 +21,15 @@
  */
 package org.jboss.hal.client.runtime;
 
+import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
-import org.jboss.hal.core.PatternFlyViewImpl;
 
 /**
  * @author Harald Pehl
  */
-public class RuntimeView extends PatternFlyViewImpl implements RuntimePresenter.MyView {
+public class RuntimeView extends ViewImpl implements RuntimePresenter.MyView {
 
     public RuntimeView() {
         Element someText = new Elements.Builder().p().innerText("First some text above the tabs.").end().build();

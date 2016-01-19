@@ -19,23 +19,17 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core;
+package org.jboss.hal.ballroom.typeahead;
 
-import com.google.gwt.core.client.Scheduler;
-import com.gwtplatform.mvp.client.ViewImpl;
-import org.jboss.hal.ballroom.PatternFly;
+import elemental.util.ArrayOf;
+import jsinterop.annotations.JsFunction;
 
 /**
  * @author Harald Pehl
  */
-public class PatternFlyViewImpl extends ViewImpl implements PatternFlyView {
+@JsFunction
+@FunctionalInterface
+public interface AsyncCallback<T> {
 
-    protected PatternFly.Components components;
-
-    @Override
-    public void attach() {
-        Scheduler.get().scheduleDeferred(() -> {
-            components = PatternFly.initComponents();
-        });
-    }
+    void async(ArrayOf<T> suggestions);
 }

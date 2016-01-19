@@ -30,7 +30,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-class DmrPayloadProcessor implements PayloadProcessor {
+public class DmrPayloadProcessor implements PayloadProcessor {
 
     @Override
     public ModelNode processPayload(final HttpMethod method, final String contentType, final String payload) {

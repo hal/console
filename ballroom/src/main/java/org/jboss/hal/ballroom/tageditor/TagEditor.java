@@ -44,7 +44,8 @@ public class TagEditor {
     }
 
 
-    // Helper class to get hold of the default options, since native JS types cannot hold any static references
+    // Helper class to get hold of the default options,
+    // since native JS types can neither hold static references nor initializer
     public static class Defaults {
 
         private static final Options DEFAULT_OPTIONS = new Options();

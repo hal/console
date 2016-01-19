@@ -244,7 +244,7 @@
                     </compilerArgs>
                     <devmodeArgs>
                         <devmodeArg>-startupUrl</devmodeArg>
-                        <devmodeArg>hal/index.html</devmodeArg>
+                        <devmodeArg>hal/dev.html</devmodeArg>
                         <devmodeArg>-incremental</devmodeArg>
                     </devmodeArgs>
                     <draftCompile>true</draftCompile>

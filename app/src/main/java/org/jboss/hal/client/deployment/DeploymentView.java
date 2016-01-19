@@ -22,8 +22,14 @@
 package org.jboss.hal.client.deployment;
 
 import com.google.gwt.core.client.GWT;
+import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
+import elemental.js.util.JsArrayOf;
+import elemental.json.Json;
+import elemental.json.JsonObject;
+import elemental.util.ArrayOf;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
 import org.jboss.hal.ballroom.form.ButtonItem;
@@ -37,26 +43,47 @@ import org.jboss.hal.ballroom.form.TextAreaItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
+import org.jboss.hal.ballroom.typeahead.AjaxSettings;
+import org.jboss.hal.ballroom.typeahead.AsyncCallback;
+import org.jboss.hal.ballroom.typeahead.Bloodhound;
+import org.jboss.hal.ballroom.typeahead.Dataset;
+import org.jboss.hal.ballroom.typeahead.RemoteOptions;
+import org.jboss.hal.ballroom.typeahead.SyncCallback;
+import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.client.bootstrap.endpoint.Endpoint;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointResources;
-import org.jboss.hal.core.PatternFlyViewImpl;
+import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.dispatch.DmrPayloadProcessor;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 
+import javax.inject.Inject;
 import java.util.Arrays;
+import java.util.List;
+
+import static org.jboss.hal.ballroom.PatternFly.$;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
 
 /**
  * @author Harald Pehl
  */
-public class DeploymentView extends PatternFlyViewImpl implements DeploymentPresenter.MyView {
+public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyView {
 
     class SampleForm extends DefaultForm<String> {
+
+        final TextBoxItem name;
 
         protected SampleForm(final String id, boolean nested) {
             super(id, nested ? new AddOnlyStateMachine() : new ExistingModelStateMachine(), SecurityContext.RWX);
 
-            TextBoxItem name = new TextBoxItem("name", "Name");
+            name = new TextBoxItem("name", "Name");
             name.setRequired(true);
             name.setExpressionAllowed(false);
             TextBoxItem formula = new TextBoxItem("formula", "Formula");
@@ -85,12 +112,19 @@ public class DeploymentView extends PatternFlyViewImpl implements DeploymentPres
     }
 
 
+    private final Endpoints endpoint;
+    private final StatementContext statementContext;
     private final Dialog dialog;
+    private final SampleForm sampleForm;
     private final Form<Endpoint> endpointForm;
     private DeploymentPresenter presenter;
 
-    public DeploymentView() {
-        SampleForm sampleForm = new SampleForm("deployment", false);
+    @Inject
+    public DeploymentView(Endpoints endpoint, StatementContext statementContext) {
+        this.endpoint = endpoint;
+        this.statementContext = statementContext;
+
+        sampleForm = new SampleForm("deployment", false);
         SampleForm dialogForm = new SampleForm("dialog", true);
         Element dialogBody = new Elements.Builder().p().innerText("A form inside a dialog").end()
                 .add(dialogForm.asElement()).build();
@@ -115,6 +149,91 @@ public class DeploymentView extends PatternFlyViewImpl implements DeploymentPres
         initWidget(Elements.asWidget(element));
 
         sampleForm.view("foo");
+    }
+
+    @Override
+    @SuppressWarnings("HardCodedStringLiteral")
+    public void attach() {
+        PatternFly.initComponents();
+
+        DmrPayloadProcessor payloadProcessor = new DmrPayloadProcessor();
+        ResourceAddress address = AddressTemplate.of("/profile=full/subsystem=security")
+                .resolve(statementContext);
+        Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, address)
+                .param(CHILD_TYPE, "security-domain")
+                .build();
+
+        Typeahead.Options typeaheadOptions = Typeahead.Defaults.get();
+
+        RemoteOptions<JsonObject> remoteOptions = new RemoteOptions<>();
+        remoteOptions.url = endpoint.dmr();
+        remoteOptions.prepare = (query, settings) -> {
+            AjaxSettings.Accepts accepts = new AjaxSettings.Accepts();
+            accepts.text = "application/dmr-encoded";
+
+            AjaxSettings.XHRFields xhrFields = new AjaxSettings.XHRFields();
+            xhrFields.withCredentials = true;
+
+            settings.accepts = accepts;
+            settings.beforeSend = (xhr, s) -> {
+                xhr.setRequestHeader("X-Management-Client-Name", "HAL");
+            };
+            settings.contentType = "application/dmr-encoded";
+            settings.data = operation.toBase64String();
+            settings.dataType = "text";
+            settings.method = POST.name();
+            settings.xhrFields = xhrFields;
+            return settings;
+        };
+        remoteOptions.transform = response -> {
+            ModelNode payload = payloadProcessor.processPayload(POST, "application/dmr-encoded", response);
+            if (!payload.isFailure()) {
+                String currentValue = sampleForm.name.getValue();
+                ModelNode result = payload.get(RESULT);
+                List<ModelNode> nodes = result.asList();
+                ArrayOf<JsonObject> objects = JsArrayOf.create();
+                for (ModelNode node : nodes) {
+                    String value = node.asString();
+                    if (currentValue == null || currentValue.equals("") || value.contains(currentValue)) {
+                        JsonObject object = Json.createObject();
+                        object.put("value", value);
+                        objects.push(object);
+                    }
+                }
+                return objects;
+            }
+            return JsArrayOf.<JsonObject>create();
+        };
+
+        Bloodhound.Options<JsonObject> bloodhoundOptions = new Bloodhound.Options<>();
+        bloodhoundOptions.datumTokenizer = datum -> datum.getString("value").split("\\s+");
+        bloodhoundOptions.queryTokenizer = query -> query.split("\\s+");
+        bloodhoundOptions.identify = datum -> datum.getString("value");
+        bloodhoundOptions.remote = remoteOptions;
+        Bloodhound<JsonObject> bloodhound = new Bloodhound<>(bloodhoundOptions);
+
+        Dataset.Templates templates = new Dataset.Templates();
+        templates.notFound = context -> "<div class=\"empty-message\">" +
+                "<span class=\"pficon pficon-warning-triangle-o\"></span>" +
+                "This is the error message shown if the query did not return results." +
+                "</div>";
+
+        Dataset<JsonObject> dataset = new Dataset<>();
+        dataset.name = "security-domains";
+        //noinspection Convert2Lambda,Anonymous2MethodRef
+        dataset.source = new Dataset.Source<JsonObject>() {
+            @Override
+            public void source(final String query, final SyncCallback<JsonObject> syncCallback,
+                    final AsyncCallback<JsonObject> asyncCallback) {
+                bloodhound.search(query, syncCallback, asyncCallback);
+            }
+        };
+        dataset.async = true;
+        dataset.limit = Integer.MAX_VALUE;
+        dataset.display = datum -> datum.getString("value");
+        dataset.templates = templates;
+
+        $("#deployment-name-editing").typeahead(typeaheadOptions, dataset);
     }
 
     @Override

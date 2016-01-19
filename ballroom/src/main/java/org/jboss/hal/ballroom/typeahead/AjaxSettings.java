@@ -21,7 +21,8 @@
  */
 package org.jboss.hal.ballroom.typeahead;
 
-import jsinterop.annotations.JsProperty;
+import elemental.xml.XMLHttpRequest;
+import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -39,12 +40,8 @@ import static org.jboss.hal.resources.Names.OBJECT;
 public class AjaxSettings {
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    public static class Headers {
-
-        @JsProperty(name = "Accept")
-        public String accept;
-        @JsProperty(name = "Content-Type")
-        public String contentType;
+    public static class Accepts {
+        public String text;
     }
 
 
@@ -54,9 +51,18 @@ public class AjaxSettings {
     }
 
 
+    @JsFunction
+    @FunctionalInterface
+    public interface BeforeSend {
+        void beforeSend(XMLHttpRequest xhr, AjaxSettings settings);
+    }
+
+
+    public Accepts accepts;
+    public BeforeSend beforeSend;
+    public String contentType;
     public String data;
-    public Headers headers;
+    public String dataType;
     public String method;
-    public String mimeType;
     public XHRFields xhrFields;
 }

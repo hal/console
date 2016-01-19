@@ -26,8 +26,7 @@ import jsinterop.annotations.JsType;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.Names.OBJECT;
 
-@JsType(isNative = true)
-public class Typeahead<T> {
+public class Typeahead {
 
     /**
      * Mapping for the basic options from typeahead.js
@@ -39,6 +38,23 @@ public class Typeahead<T> {
     public static class Options {
 
         public boolean highlight;
-        public int minLenght;
+        public int minLength;
+    }
+
+
+    // Helper class to get hold of the default options,
+    // since native JS types can neither hold static references nor initializer
+    public static class Defaults {
+
+        private static final Options DEFAULT_OPTIONS = new Options();
+
+        static {
+            DEFAULT_OPTIONS.highlight = true;
+            DEFAULT_OPTIONS.minLength = 0;
+        }
+
+        public static Options get() {
+            return DEFAULT_OPTIONS;
+        }
     }
 }

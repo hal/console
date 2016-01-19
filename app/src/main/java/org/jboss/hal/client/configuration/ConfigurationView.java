@@ -21,13 +21,13 @@
  */
 package org.jboss.hal.client.configuration;
 
+import com.gwtplatform.mvp.client.ViewImpl;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
 import org.jboss.hal.client.NameTokens;
-import org.jboss.hal.core.PatternFlyViewImpl;
 
 import javax.inject.Inject;
 
@@ -38,7 +38,7 @@ import static org.jboss.hal.resources.Names.PROFILE;
  * @author Harald Pehl
  */
 @SuppressWarnings("HardCodedStringLiteral")
-public class ConfigurationView extends PatternFlyViewImpl implements ConfigurationPresenter.MyView {
+public class ConfigurationView extends ViewImpl implements ConfigurationPresenter.MyView {
 
     @Inject
     public ConfigurationView(TokenFormatter tokenFormatter) {

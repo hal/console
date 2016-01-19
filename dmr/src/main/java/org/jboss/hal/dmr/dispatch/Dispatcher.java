@@ -87,7 +87,7 @@ public class Dispatcher {
     }
 
 
-    enum HttpMethod {GET, POST}
+    public enum HttpMethod {GET, POST}
 
 
     static final String APPLICATION_DMR_ENCODED = "application/dmr-encoded";

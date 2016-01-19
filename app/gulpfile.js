@@ -34,17 +34,19 @@ gulp.task('copy', function () {
         .pipe(copy('src/main/resources/org/jboss/hal/public/img', {prefix: 4}));
 
     // JavaScript
-    gulp.src('bower_components/datatables.net/js/jquery.dataTables.js')
+    gulp.src('bower_components/datatables.net/js/jquery.dataTables.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
-    gulp.src('bower_components/datatables.net-buttons/js/dataTables.buttons.min.js')
+    gulp.src('bower_components/datatables.net-buttons/js/dataTables.buttons.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
-    gulp.src('bower_components/datatables.net-select/js/dataTables.select.min.js')
+    gulp.src('bower_components/datatables.net-select/js/dataTables.select.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
 
-    gulp.src('bower_components/jquery/dist/jquery.min.js')
+    gulp.src('bower_components/jquery/dist/jquery.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
 
     gulp.src('bower_components/jquery-tag-editor/jquery.caret.min.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 2}));
+    gulp.src('bower_components/jquery-tag-editor/jquery.tag-editor.js')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 2}));
     gulp.src('bower_components/jquery-tag-editor/jquery.tag-editor.min.js')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 2}));
@@ -53,17 +55,17 @@ gulp.task('copy', function () {
     gulp.src('bower_components/jquery-tag-editor/delete.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/css', {prefix: 2}));
 
-    gulp.src('bower_components/patternfly/components/bootstrap/dist/js/bootstrap.min.js')
+    gulp.src('bower_components/patternfly/components/bootstrap/dist/js/bootstrap.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 6}));
-    gulp.src('bower_components/patternfly/components/bootstrap-select/dist/js/bootstrap-select.min.js')
+    gulp.src('bower_components/patternfly/components/bootstrap-select/dist/js/bootstrap-select.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 6}));
-    gulp.src('bower_components/patternfly/components/bootstrap-switch/dist/js/bootstrap-switch.min.js')
+    gulp.src('bower_components/patternfly/components/bootstrap-switch/dist/js/bootstrap-switch.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 6}));
 
-    gulp.src('bower_components/patternfly/dist/js/*.min.js')
+    gulp.src('bower_components/patternfly/dist/js/patternfly.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 4}));
 
-    gulp.src('bower_components/typeahead.js/dist/typeahead.bundle.min.js')
+    gulp.src('bower_components/typeahead.js/dist/typeahead.bundle.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
 });
 

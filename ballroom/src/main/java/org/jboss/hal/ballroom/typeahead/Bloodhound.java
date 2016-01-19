@@ -21,8 +21,8 @@
  */
 package org.jboss.hal.ballroom.typeahead;
 
-import com.google.gwt.core.client.js.JsFunction;
 import jsinterop.annotations.JsConstructor;
+import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -34,7 +34,7 @@ import static org.jboss.hal.resources.Names.OBJECT;
  * @author Harald Pehl
  * @see <a href="https://github.com/twitter/typeahead.js/blob/master/doc/bloodhound.md#api">https://github.com/twitter/typeahead.js/blob/master/doc/bloodhound.md#api</a>
  */
-@JsType(isNative = true)
+@JsType(isNative = true, namespace = GLOBAL)
 public class Bloodhound<T> {
 
     @JsFunction
@@ -80,10 +80,8 @@ public class Bloodhound<T> {
     }
 
 
-    private final Options<T> options;
-
     @JsConstructor
-    public Bloodhound(Options<T> options) {
-        this.options = options;
-    }
+    public Bloodhound(Options<T> options) {}
+
+    public native void search(String query, SyncCallback<T> syncCallback, AsyncCallback<T> asyncCallback);
 }

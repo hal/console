@@ -38,6 +38,14 @@ public class Dataset<T> {
 
     @JsFunction
     @FunctionalInterface
+    public interface Source<T> {
+
+        void source(String query, SyncCallback<T> syncCallback, AsyncCallback<T> asyncCallback);
+    }
+
+
+    @JsFunction
+    @FunctionalInterface
     public interface Display<T> {
 
         String render(T datum);
@@ -67,6 +75,8 @@ public class Dataset<T> {
 
 
     public String name;
+    public Source source;
+    public boolean async;
     public int limit;
     public Display<T> display;
     public Templates templates;
