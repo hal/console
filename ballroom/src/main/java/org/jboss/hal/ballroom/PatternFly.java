@@ -25,6 +25,8 @@ import com.google.gwt.core.client.Scheduler;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.ballroom.typeahead.Dataset;
+import org.jboss.hal.ballroom.typeahead.TypeaheadOptions;
 import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -64,9 +66,13 @@ public class PatternFly {
     @JsMethod(namespace = GLOBAL)
     public native static PatternFly $(@NonNls String selector);
 
+    public native void bootstrapSwitch();
+
     public native void selectpicker();
+
+    public native void tab(String command);
 
     public native void tooltip();
 
-    public native void tab(String command);
+    public native <T> void typeahead(TypeaheadOptions options, Dataset<T> dataset);
 }

@@ -3,7 +3,6 @@
 }
 
 .form {
-
   &.readonly {
     .separator {
       margin-top: -15px;
@@ -19,6 +18,10 @@
     input.restricted {
       cursor: not-allowed;
     }
+  }
+
+  &.readonly, &.editing {
+    padding-top: 10px;
   }
 }
 

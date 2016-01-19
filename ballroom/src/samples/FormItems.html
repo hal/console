@@ -32,7 +32,54 @@
                 <p>Each form item is bound to a specific type. See the related section for more details.</p>
             </header>
             <section>
+                <div class="form form-horizontal">
+                    <ul class="form-links clearfix">
+                        <li><a class="clickable"><i class="pficon pficon-edit"></i><span class="form-link-label">Edit</span></a></li>
+                        <li title="Resets the required fields to their default values and undefines the remaining fields." data-toggle="tooltip" data-placement="right">
+                            <a class="clickable"><i class="pficon pficon-restart"></i><span class="form-link-label">Reset</span></a>
+                        </li>
+                        <li>
+                            <a data-toggle="collapse" href="#sample-form-help" aria-expanded="false" aria-controls="sample-form-help"><i class="pficon pficon-help"></i> Help</a>
+                        </li>
+                    </ul>
+                    <div class="form-help-content collapse" id="sample-form-help">
+                        <div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">Lorem</label>
+
+                                <div class="col-md-9">
+                                    <p class="form-control-static">ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">At vero</label>
+
+                                <div class="col-md-9">
+                                    <p class="form-control-static">eos et accusam et justo duo dolores et ea rebum.</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">Stet clita kasd gubergren</label>
+
+                                <div class="col-md-9">
+                                    <p class="form-control-static">no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <form class="form form-horizontal">
+<!--
+                    <div class="alert alert-danger">
+                        <span class="pficon pficon-error-circle-o"></span>
+                        <span>Something went wrong! What a mess!</span>
+                        <ul>
+                            <li>First</li>
+                            <li>Second</li>
+                            <li>Third</li>
+                        </ul>
+                    </div>
+-->
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <!--                                                       -->
                     <!-- TextBoxItem                                           -->
@@ -662,7 +709,17 @@
                                 <button class="btn btn-default btn-hal" disabled>Nope</button>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <div class="col-md-9 col-md-offset-3">
+                                <button class="btn btn-default btn-hal" title="A button with a long text">A button with a long text</button>
+                            </div>
+                        </div>
                     </fieldset>
+                    <div class="form-group">
+                        <div class="col-md-offset-3 col-md-9">
+                            <span class="help-block">Required fields are marked with <abbr class="req" title="required"><i class="fa fa-asterisk"></i></abbr></span>
+                        </div>
+                    </div>
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <!--                                                       -->
                     <!-- Cancel & Save                                         -->
@@ -705,12 +762,13 @@
                         empty: [
                             '<div class="empty-message">',
                             '<span class="pficon pficon-warning-triangle-o"></span>',
-                            'This is the error message shown if the query did not return results. The error message might contains further details that expand one line.',
+                            'This is the error message shown if the query did not return results. The error message might contain further details that extend beyond one line.',
                             '</div>'
                         ].join('\n')
                     }
                 });
 
+        $('[data-toggle=tooltip]').tooltip();
         $('.selectpicker').selectpicker();
         $('select[id^=selectBoxSingleOptional]').selectpicker('val', 'Lorem');
         $('button[data-id^=selectBoxSingleOptional] span:last-child')
