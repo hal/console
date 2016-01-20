@@ -19,29 +19,36 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.config;
+package org.jboss.hal.ballroom.typeahead;
 
-import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import org.jboss.hal.spi.GinModule;
+import jsinterop.annotations.JsConstructor;
+import jsinterop.annotations.JsType;
+
+import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.resources.Names.OBJECT;
 
 /**
+ * Mapping for the Bloodhound class from typeahead.js
+ *
  * @author Harald Pehl
+ * @see <a href="https://github.com/twitter/typeahead.js/blob/master/doc/bloodhound.md#api">https://github.com/twitter/typeahead.js/blob/master/doc/bloodhound.md#api</a>
  */
-@GinModule
-public class ConfigModule extends AbstractGinModule {
+@JsType(isNative = true, namespace = GLOBAL)
+public class Bloodhound {
 
-    @Override
-    protected void configure() {
-        bind(Endpoints.class).in(Singleton.class);
-        bind(Environment.class).in(Singleton.class);
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    public static class Options {
 
-        requestStaticInjection(Endpoints.class);
+        public DataTokenizer datumTokenizer;
+        public QueryTokenizer queryTokenizer;
+        public Identifier identify;
+        public Comparator sorter;
+        public RemoteOptions remote;
     }
 
-    @Provides
-    public User providesCurrentUser() {
-        return User.current();
-    }
+
+    @JsConstructor
+    public Bloodhound(Options options) {}
+
+    public native void search(String query, SyncCallback syncCallback, AsyncCallback asyncCallback);
 }

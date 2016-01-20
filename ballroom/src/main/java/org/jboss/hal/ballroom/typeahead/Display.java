@@ -19,29 +19,17 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.config;
+package org.jboss.hal.ballroom.typeahead;
 
-import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import org.jboss.hal.spi.GinModule;
+import elemental.json.JsonObject;
+import jsinterop.annotations.JsFunction;
 
 /**
  * @author Harald Pehl
  */
-@GinModule
-public class ConfigModule extends AbstractGinModule {
+@JsFunction
+@FunctionalInterface
+public interface Display {
 
-    @Override
-    protected void configure() {
-        bind(Endpoints.class).in(Singleton.class);
-        bind(Environment.class).in(Singleton.class);
-
-        requestStaticInjection(Endpoints.class);
-    }
-
-    @Provides
-    public User providesCurrentUser() {
-        return User.current();
-    }
+    String render(JsonObject data);
 }

@@ -19,29 +19,40 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.config;
+package org.jboss.hal.ballroom.selectpicker;
 
-import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import org.jboss.hal.spi.GinModule;
+import com.google.gwt.core.client.GWT;
+import jsinterop.annotations.JsType;
+import org.jboss.hal.resources.Constants;
+
+import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.resources.Names.OBJECT;
 
 /**
  * @author Harald Pehl
  */
-@GinModule
-public class ConfigModule extends AbstractGinModule {
+public class Selectpicker {
 
-    @Override
-    protected void configure() {
-        bind(Endpoints.class).in(Singleton.class);
-        bind(Environment.class).in(Singleton.class);
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    public static class Options {
 
-        requestStaticInjection(Endpoints.class);
+        public String noneSelectedText;
     }
 
-    @Provides
-    public User providesCurrentUser() {
-        return User.current();
+
+    // Helper class to get hold of the default options,
+    // since native JS types can neither hold static references nor initializer
+    public static class Defaults {
+
+        private static final Options DEFAULT_OPTIONS = new Options();
+        private static final Constants CONSTANTS = GWT.create(Constants.class);
+
+        static {
+            DEFAULT_OPTIONS.noneSelectedText = CONSTANTS.nothingSelected();
+        }
+
+        public static Options get() {
+            return DEFAULT_OPTIONS;
+        }
     }
 }

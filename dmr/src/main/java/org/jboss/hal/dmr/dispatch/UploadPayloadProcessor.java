@@ -34,7 +34,7 @@ import static org.jboss.hal.resources.Names.UNKNOWN;
 /**
  * @author Harald Pehl
  */
-class UploadPayloadProcessor implements PayloadProcessor {
+public class UploadPayloadProcessor implements PayloadProcessor {
 
     @Override
     public ModelNode processPayload(final HttpMethod method, final String contentType, final String payload) {

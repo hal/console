@@ -38,6 +38,7 @@ public interface CSS {
     String alert = "alert";
     String alertDanger = "alert-danger";
     String alertSuccess = "alert-success";
+    String bootstrapSwitch = "bootstrap-switch";
     String btn = "btn";
     String btnDefault = "btn-default";
     String btnGroup = "btn-group";
@@ -98,6 +99,7 @@ public interface CSS {
     String progressBar = "progress-bar";
     String progressBarStriped = "progress-bar-striped";
     String progressXs = "progress-xs";
+    String properties = "properties";
     String pullRight = "pull-right";
     String readonly = "readonly";
     String restricted = "restricted";

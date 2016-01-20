@@ -23,6 +23,8 @@ package org.jboss.hal.config;
 
 import com.google.gwt.core.client.GWT;
 
+import javax.inject.Inject;
+
 import static org.jboss.hal.resources.Urls.*;
 
 /**
@@ -31,6 +33,9 @@ import static org.jboss.hal.resources.Urls.*;
  * @author Harald Pehl
  */
 public class Endpoints {
+
+    @Inject
+    public static Endpoints INSTANCE;
 
     /**
      * @return the base url w/o a trailing slash

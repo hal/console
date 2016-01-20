@@ -82,9 +82,9 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     private final SpanElement errorText;
     private final SpanElement expressionContainer;
     private final DivElement editingRestricted;
+    private final InputElement<T> inputElement;
     final DivElement editingRoot;
     final DivElement inputContainer;
-    final InputElement<T> inputElement;
 
     // Form.State#READONLY elements
     private final LabelElement readonlyLabelElement;
@@ -273,6 +273,16 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
         asElement(EDITING).getDataset().setAt(FORM_ITEM_GROUP, editId); //NON-NLS
         asElement(READONLY).getDataset().setAt(FORM_ITEM_GROUP, readonlyId); //NON-NLS
+    }
+
+    @Override
+    public String getId(final Form.State state) {
+        if (state == EDITING) {
+            return inputElement.getId();
+        } else if (state == READONLY) {
+            return valueElement.getId();
+        }
+        return null;
     }
 
     @Override

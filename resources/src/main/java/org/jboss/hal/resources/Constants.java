@@ -133,7 +133,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String logout();
     String modelBrowser();
     String metadataError();
+    String noResults();
     String notANumber();
+    String nothingSelected();
     String ping();
     String required();
     String reset();
@@ -150,10 +152,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String settings();
     String start();
     String supportsExpressions();
-
+    String tagEditorPlaceholder();
     String toggleNavigation();
     String tools();
     String unknownError();
+
 
     //@formatter:on
 }

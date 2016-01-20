@@ -69,7 +69,7 @@ public class ButtonItem extends AbstractFormItem<Void> {
     @Override
     protected void assembleUI() {
         inputContainer.getClassList().add(offset(labelColumns));
-        inputContainer.appendChild(inputElement.asElement());
+        inputContainer.appendChild(inputElement().asElement());
         editingRoot.appendChild(inputContainer);
     }
 

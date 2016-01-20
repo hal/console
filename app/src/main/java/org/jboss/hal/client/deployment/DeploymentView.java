@@ -25,6 +25,7 @@ import com.google.gwt.core.client.GWT;
 import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
 import org.jboss.hal.ballroom.form.ButtonItem;
@@ -38,13 +39,22 @@ import org.jboss.hal.ballroom.form.TextAreaItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
+import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.client.bootstrap.endpoint.Endpoint;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointResources;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 
+import javax.inject.Inject;
 import java.util.Arrays;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 
 /**
  * @author Harald Pehl
@@ -53,10 +63,12 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
 
     class SampleForm extends DefaultForm<String> {
 
+        final TextBoxItem name;
+
         protected SampleForm(final String id, boolean nested) {
             super(id, nested ? new AddOnlyStateMachine() : new ExistingModelStateMachine(), SecurityContext.RWX);
 
-            TextBoxItem name = new TextBoxItem("name", "Name");
+            name = new TextBoxItem("name", "Name");
             name.setRequired(true);
             name.setExpressionAllowed(false);
             TextBoxItem formula = new TextBoxItem("formula", "Formula");
@@ -85,12 +97,17 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
     }
 
 
+    private final StatementContext statementContext;
     private final Dialog dialog;
+    private final SampleForm sampleForm;
     private final Form<Endpoint> endpointForm;
     private DeploymentPresenter presenter;
 
-    public DeploymentView() {
-        SampleForm sampleForm = new SampleForm("deployment", false);
+    @Inject
+    public DeploymentView(StatementContext statementContext) {
+        this.statementContext = statementContext;
+
+        sampleForm = new SampleForm("deployment", false);
         SampleForm dialogForm = new SampleForm("dialog", true);
         Element dialogBody = new Elements.Builder().p().innerText("A form inside a dialog").end()
                 .add(dialogForm.asElement()).build();
@@ -115,6 +132,19 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
         initWidget(Elements.asWidget(element));
 
         sampleForm.view("foo");
+    }
+
+    @Override
+    public void attach() {
+        PatternFly.initComponents();
+
+        ResourceAddress address = AddressTemplate.of("/profile=full/subsystem=security")
+                .resolve(statementContext);
+        Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, address)
+                .param(CHILD_TYPE, "security-domain")
+                .build();
+
+        new Typeahead.ReadChildrenNamesBuilder(sampleForm.name, operation).build().attach();
     }
 
     @Override

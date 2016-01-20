@@ -25,10 +25,15 @@ import com.google.gwt.core.client.Scheduler;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.ballroom.selectpicker.Selectpicker;
+import org.jboss.hal.ballroom.tageditor.TagEditor;
+import org.jboss.hal.ballroom.typeahead.Dataset;
+import org.jboss.hal.ballroom.typeahead.Options;
+import org.jboss.hal.resources.CSS;
 import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.resources.CSS.selectpicker;
+import static org.jboss.hal.resources.CSS.properties;
 
 @JsType(isNative = true)
 public class PatternFly {
@@ -57,16 +62,24 @@ public class PatternFly {
 
     @JsOverlay
     private static void init() {
-        $("." + selectpicker).selectpicker();
         $("[data-toggle=tooltip]").tooltip();
+        $("." + CSS.bootstrapSwitch).bootstrapSwitch();
+        $("." + properties).tagEditor(TagEditor.Defaults.get());
+        $("." + CSS.selectpicker).selectpicker(Selectpicker.Defaults.get());
     }
 
     @JsMethod(namespace = GLOBAL)
     public native static PatternFly $(@NonNls String selector);
 
-    public native void selectpicker();
+    public native void bootstrapSwitch();
+
+    public native void selectpicker(Selectpicker.Options options);
+
+    public native void tab(String command);
+
+    public native void tagEditor(TagEditor.Options options);
 
     public native void tooltip();
 
-    public native void tab(String command);
+    public native void typeahead(Options options, Dataset dataset);
 }

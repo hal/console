@@ -90,6 +90,13 @@
 
 
 /*
+ * Bootstrap Switch
+ */
+@import "../../../bower_components/patternfly/components/bootstrap-switch/src/less/bootstrap3/bootstrap-switch.less";
+
+
+
+/*
  * PatternFly
  */
 // Bootstrap overrides
@@ -115,12 +122,13 @@
 @import "../../../bower_components/patternfly/less/type.less";
 
 // PatternFly Additions
-//@import "../../../bower_components/patternfly/less/variables.less";
+@import "../../../bower_components/patternfly/less/variables.less";
 //@import "../../../bower_components/patternfly/less/mixins.less";
 @import "../../../bower_components/patternfly/less/blank-slate.less";
 //@import "../../../bower_components/patternfly/less/bootstrap-combobox.less";
 //@import "../../../bower_components/patternfly/less/bootstrap-datepicker.less";
 @import "../../../bower_components/patternfly/less/bootstrap-select.less";
+@import "../../../bower_components/patternfly/less/bootstrap-switch.less";
 //@import "../../../bower_components/patternfly/less/bootstrap-treeview.less";
 @import "../../../bower_components/patternfly/less/cards.less";
 //@import "../../../bower_components/patternfly/less/charts.less";
@@ -147,7 +155,7 @@
  */
 // Paths are relative to generated CSS file in 'org/jboss/hal/public/css'
 @fa-font-path:          "../fonts";
-@icon-font-path:        "../fonts";
+@icon-font-path:        "../fonts/";
 @font-path:             "../fonts";
 @img-path:              "../img";
 //noinspection CssUnknownTarget
@@ -156,12 +164,13 @@
 
 
 /*
- * HAL
+ * HAL (please keep the order)
  */
 @import "variables";
 @import "mixins";
 @import "layout";
 
+@import "typeahead";
 @import "dialog";
 @import "form";
 @import "tabs";

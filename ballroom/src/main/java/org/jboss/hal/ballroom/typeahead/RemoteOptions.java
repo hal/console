@@ -19,29 +19,42 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.config;
+package org.jboss.hal.ballroom.typeahead;
 
-import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import org.jboss.hal.spi.GinModule;
+import elemental.json.JsonObject;
+import elemental.util.ArrayOf;
+import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsType;
+
+import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.resources.Names.OBJECT;
 
 /**
+ * Mapping for the remote options from typeahead.js
+ *
  * @author Harald Pehl
+ * @see <a href="https://github.com/twitter/typeahead.js/blob/master/doc/bloodhound.md#remote">https://github.com/twitter/typeahead.js/blob/master/doc/bloodhound.md#remote</a>
  */
-@GinModule
-public class ConfigModule extends AbstractGinModule {
+@JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+public class RemoteOptions {
 
-    @Override
-    protected void configure() {
-        bind(Endpoints.class).in(Singleton.class);
-        bind(Environment.class).in(Singleton.class);
+    @JsFunction
+    @FunctionalInterface
+    public interface Preparator {
 
-        requestStaticInjection(Endpoints.class);
+        AjaxSettings prepare(String query, AjaxSettings settings);
     }
 
-    @Provides
-    public User providesCurrentUser() {
-        return User.current();
+
+    @JsFunction
+    @FunctionalInterface
+    public interface Transformator {
+
+        ArrayOf<JsonObject> transform(String response);
     }
+
+
+    public String url;
+    public Preparator prepare;
+    public Transformator transform;
 }

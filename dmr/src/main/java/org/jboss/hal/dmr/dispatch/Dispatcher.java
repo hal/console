@@ -87,16 +87,16 @@ public class Dispatcher {
     }
 
 
-    enum HttpMethod {GET, POST}
+    public enum HttpMethod {GET, POST}
 
 
-    static final String APPLICATION_DMR_ENCODED = "application/dmr-encoded";
-    static final String APPLICATION_JSON = "application/json";
+    public static final String APPLICATION_DMR_ENCODED = "application/dmr-encoded";
+    public static final String APPLICATION_JSON = "application/json";
+    public static final String HEADER_MANAGEMENT_CLIENT_NAME = "X-Management-Client-Name";
+    public static final String HEADER_MANAGEMENT_CLIENT_VALUE = "HAL";
 
     private static final String HEADER_ACCEPT = "Accept";
     private static final String HEADER_CONTENT_TYPE = "Content-Type";
-    private static final String HEADER_MANAGEMENT_CLIENT_NAME = "X-Management-Client-Name";
-    private static final String HEADER_MANAGEMENT_CLIENT_VALUE = "HAL";
 
     /**
      * The read resource description supports the following parameters:
