@@ -26,7 +26,7 @@ import org.jboss.hal.ballroom.form.CheckBoxItem;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.NumberItem;
-import org.jboss.hal.ballroom.form.SelectBoxItem;
+import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.core.mbui.LabelBuilder;
 import org.jboss.hal.dmr.ModelNode;
@@ -98,7 +98,7 @@ public class DefaultFormItemProvider implements FormItemProvider {
                     if (allowedValues.isEmpty()) {
                         formItem = new TextBoxItem(name, label);
                     } else {
-                        formItem = new SelectBoxItem(name, label, allowedValues);
+                        formItem = new SingleSelectBoxItem(name, label, allowedValues);
                     }
                     break;
                 case TYPE:

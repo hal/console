@@ -448,17 +448,17 @@
                     </fieldset>
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <!--                                                       -->
-                    <!-- SelectBoxItem (single, required)                      -->
+                    <!-- SingleSelectBoxItem                                   -->
                     <!--                                                       -->
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <fieldset class="form-section">
-                        <legend>SelectBoxItem (single, required)</legend>
+                        <legend>SingleSelectBoxItem</legend>
                         <p>Target type: <code>String</code></p>
                         <div class="form-group">
-                            <label class="col-md-3 control-label" for="selectBoxSingleRequired-markup">Default</label>
+                            <label class="col-md-3 control-label" for="singleSelectBox-markup">Default</label>
 
                             <div class="col-md-9">
-                                <select id="selectBoxSingleRequired-markup" class="form-control selectpicker">
+                                <select id="singleSelectBox-markup" class="form-control selectpicker">
                                     <option>Lorem</option>
                                     <option>ipsum</option>
                                     <option>dolor</option>
@@ -468,10 +468,10 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-3 control-label" for="selectBoxSingleRequiredDisabled-markup">Disabled</label>
+                            <label class="col-md-3 control-label" for="singleSelectBoxDisabled-markup">Disabled</label>
 
                             <div class="col-md-9">
-                                <select id="selectBoxSingleRequiredDisabled-markup" class="form-control selectpicker" disabled>
+                                <select id="singleSelectBoxDisabled-markup" class="form-control selectpicker" disabled>
                                     <option>Lorem</option>
                                     <option>ipsum</option>
                                     <option>dolor</option>
@@ -481,20 +481,20 @@
                             </div>
                         </div>
                         <div class="form-group has-feedback">
-                            <label class="col-md-3 control-label" for="selectBoxSingleRequiredRestricted-markup">Restricted</label>
+                            <label class="col-md-3 control-label" for="singleSelectBoxRestricted-markup">Restricted</label>
 
                             <div class="col-md-9">
                                 <div class="input-group">
-                                    <input type="text" value="The permissions for your role don't allow to access this data" id="selectBoxSingleRequiredRestricted-markup" class="form-control" readonly>
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="singleSelectBoxRestricted-markup" class="form-control" readonly>
                                     <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group has-error">
-                            <label class="col-md-3 control-label" for="selectBoxSingleRequiredError-markup">With error</label>
+                            <label class="col-md-3 control-label" for="singleSelectBoxError-markup">With error</label>
 
                             <div class="col-md-9">
-                                <select id="selectBoxSingleRequiredError-markup" class="form-control selectpicker">
+                                <select id="singleSelectBoxError-markup" class="form-control selectpicker">
                                     <option>Lorem</option>
                                     <option>ipsum</option>
                                     <option>dolor</option>
@@ -507,17 +507,17 @@
                     </fieldset>
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <!--                                                       -->
-                    <!-- SelectBoxItem (single, optional)                      -->
+                    <!-- SingleSelectBoxItem (allow empty)                     -->
                     <!--                                                       -->
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <fieldset class="form-section">
-                        <legend>SelectBoxItem (single, optional)</legend>
+                        <legend>SingleSelectBoxItem (allow empty)</legend>
                         <p>Target type: <code>String</code></p>
                         <div class="form-group">
-                            <label class="col-md-3 control-label" for="selectBoxSingleOptional-markup">Default</label>
+                            <label class="col-md-3 control-label" for="singleSelectBoxAllowEmpty-markup">Default</label>
 
                             <div class="col-md-9">
-                                <select id="selectBoxSingleOptional-markup" class="form-control selectpicker">
+                                <select id="singleSelectBoxAllowEmpty-markup" class="form-control selectpicker">
                                     <option title="undefined"></option>
                                     <option>Lorem</option>
                                     <option>Lorem</option>
@@ -529,10 +529,10 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-3 control-label" for="selectBoxSingleOptionalDisabled-markup">Disabled</label>
+                            <label class="col-md-3 control-label" for="singleSelectBoxAllowEmptyDisabled-markup">Disabled</label>
 
                             <div class="col-md-9">
-                                <select id="selectBoxSingleOptionalDisabled-markup" class="form-control selectpicker" disabled>
+                                <select id="singleSelectBoxAllowEmptyDisabled-markup" class="form-control selectpicker" disabled>
                                     <option title="undefined"></option>
                                     <option>Lorem</option>
                                     <option>ipsum</option>
@@ -543,20 +543,20 @@
                             </div>
                         </div>
                         <div class="form-group has-feedback">
-                            <label class="col-md-3 control-label" for="selectBoxSingleOptionalRestricted-markup">Restricted</label>
+                            <label class="col-md-3 control-label" for="singleSelectBoxAllowEmptyRestricted-markup">Restricted</label>
 
                             <div class="col-md-9">
                                 <div class="input-group">
-                                    <input type="text" value="The permissions for your role don't allow to access this data" id="selectBoxSingleOptionalRestricted-markup" class="form-control" readonly>
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="singleSelectBoxAllowEmptyRestricted-markup" class="form-control" readonly>
                                     <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group has-error">
-                            <label class="col-md-3 control-label" for="selectBoxSingleOptionalError-markup">With error</label>
+                            <label class="col-md-3 control-label" for="singleSelectBoxAllowEmptyError-markup">With error</label>
 
                             <div class="col-md-9">
-                                <select id="selectBoxSingleOptionalError-markup" class="form-control selectpicker">
+                                <select id="singleSelectBoxAllowEmptyError-markup" class="form-control selectpicker">
                                     <option title="undefined"></option>
                                     <option>Lorem</option>
                                     <option>ipsum</option>
@@ -570,17 +570,17 @@
                     </fieldset>
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <!--                                                       -->
-                    <!-- SelectBoxItem (multiple)                              -->
+                    <!-- MultiSelectBoxItem                                    -->
                     <!--                                                       -->
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <fieldset class="form-section">
-                        <legend>SelectBoxItem (multiple)</legend>
+                        <legend>MultiSelectBoxItem</legend>
                         <p>Target type: <code>List&lt;String&gt;</code></p>
                         <div class="form-group">
-                            <label class="col-md-3 control-label" for="selectBoxMultiple-markup">Default</label>
+                            <label class="col-md-3 control-label" for="multiSelectBox-markup">Default</label>
 
                             <div class="col-md-9">
-                                <select id="selectBoxMultiple-markup" class="form-control selectpicker" multiple>
+                                <select id="multiSelectBox-markup" class="form-control selectpicker" multiple>
                                     <option>Lorem</option>
                                     <option>ipsum</option>
                                     <option>dolor</option>
@@ -590,10 +590,10 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-3 control-label" for="selectBoxMultipleDisabled-markup">Disabled</label>
+                            <label class="col-md-3 control-label" for="multiSelectBoxDisabled-markup">Disabled</label>
 
                             <div class="col-md-9">
-                                <select id="selectBoxMultipleDisabled-markup" class="form-control selectpicker" multiple disabled>
+                                <select id="multiSelectBoxDisabled-markup" class="form-control selectpicker" multiple disabled>
                                     <option>Lorem</option>
                                     <option>ipsum</option>
                                     <option>dolor</option>
@@ -603,20 +603,20 @@
                             </div>
                         </div>
                         <div class="form-group has-feedback">
-                            <label class="col-md-3 control-label" for="selectBoxMultipleRestricted-markup">Restricted</label>
+                            <label class="col-md-3 control-label" for="multiSelectBoxRestricted-markup">Restricted</label>
 
                             <div class="col-md-9">
                                 <div class="input-group">
-                                    <input type="text" value="The permissions for your role don't allow to access this data" id="selectBoxMultipleRestricted-markup" class="form-control" readonly>
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="multiSelectBoxRestricted-markup" class="form-control" readonly>
                                     <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group has-error">
-                            <label class="col-md-3 control-label" for="selectBoxMultipleError-markup">With error</label>
+                            <label class="col-md-3 control-label" for="multiSelectBoxError-markup">With error</label>
 
                             <div class="col-md-9">
-                                <select id="selectBoxMultipleError-markup" class="form-control selectpicker" multiple>
+                                <select id="multiSelectBoxError-markup" class="form-control selectpicker" multiple>
                                     <option>Lorem</option>
                                     <option>ipsum</option>
                                     <option>dolor</option>

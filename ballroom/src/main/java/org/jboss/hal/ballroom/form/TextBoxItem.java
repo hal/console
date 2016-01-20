@@ -45,6 +45,7 @@ public class TextBoxItem extends AbstractFormItem<String> {
 
     final void setupInputElement(final TextBoxElement textBox) {
         textBox.setClassName(formControl);
+        //noinspection Duplicates
         textBox.element.setOnchange(event -> {
             String newValue = inputElement().getValue();
             setModified(true);

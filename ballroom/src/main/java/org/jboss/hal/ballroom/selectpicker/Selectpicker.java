@@ -21,12 +21,18 @@
  */
 package org.jboss.hal.ballroom.selectpicker;
 
-import com.google.gwt.core.client.GWT;
+import elemental.dom.Element;
+import elemental.events.Event;
+import elemental.util.ArrayOf;
+import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.resources.Constants;
+import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.Names.OBJECT;
+import static org.jboss.hal.resources.Names.UNDEFINED;
 
 /**
  * @author Harald Pehl
@@ -45,14 +51,99 @@ public class Selectpicker {
     public static class Defaults {
 
         private static final Options DEFAULT_OPTIONS = new Options();
-        private static final Constants CONSTANTS = GWT.create(Constants.class);
 
         static {
-            DEFAULT_OPTIONS.noneSelectedText = CONSTANTS.nothingSelected();
+            DEFAULT_OPTIONS.noneSelectedText = UNDEFINED;
         }
 
         public static Options get() {
             return DEFAULT_OPTIONS;
+        }
+    }
+
+
+    private final static String VAL = "val";
+    private final static String DESELECT_ALL = "deselectAll";
+    private final static String CHANGE_EVENT = "changed.bs.select";
+
+
+    @JsFunction
+    @FunctionalInterface
+    public interface SingleChangeListener {
+
+        void onChange(Event event, int index, String newValue, String oldValue);
+    }
+
+
+    @JsType(isNative = true)
+    public static class Single {
+
+        @JsMethod(namespace = GLOBAL, name = "$")
+        public native static Single select(Element element);
+
+        public native String val();
+
+        public native void selectpicker(String method, String param);
+
+        public native void on(@NonNls String event, SingleChangeListener listener);
+
+        @JsOverlay
+        public final String getValue() {
+            return val();
+        }
+
+        @JsOverlay
+        public final void setValue(String value) {
+            selectpicker(VAL, value);
+        }
+
+        @JsOverlay
+        public final void onChange(SingleChangeListener listener) {
+            on(CHANGE_EVENT, listener);
+        }
+    }
+
+
+    @JsFunction
+    @FunctionalInterface
+    public interface MultiChangeListener {
+
+        void onChange(Event event, int index, ArrayOf<String> newValue, ArrayOf<String> oldValue);
+    }
+
+
+    @JsType(isNative = true)
+    public static class Multi {
+
+        @JsMethod(namespace = GLOBAL, name = "$")
+        public native static Multi select(Element element);
+
+        public native ArrayOf<String> val();
+
+        public native void selectpicker(String method);
+
+        public native void selectpicker(String method, ArrayOf<String> param);
+
+        public native void on(@NonNls String event, MultiChangeListener listener);
+
+        @JsOverlay
+        public final ArrayOf<String> getValue() {
+            return val();
+        }
+
+        @JsOverlay
+        public final void clear() {
+            selectpicker(DESELECT_ALL);
+        }
+
+        @JsOverlay
+        public final void setValue(ArrayOf<String> value) {
+            selectpicker(VAL, value);
+        }
+
+        @JsOverlay
+        public final void onChange(MultiChangeListener listener) {
+            on(CHANGE_EVENT, listener);
         }
     }
 }

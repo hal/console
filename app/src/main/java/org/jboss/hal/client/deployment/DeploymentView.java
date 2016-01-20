@@ -34,7 +34,7 @@ import org.jboss.hal.ballroom.form.ExistingModelStateMachine;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.NumberItem;
 import org.jboss.hal.ballroom.form.PasswordItem;
-import org.jboss.hal.ballroom.form.SelectBoxItem;
+import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.TextAreaItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
@@ -80,7 +80,7 @@ public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyVi
 
             addFormItem(name, formula, new PasswordItem("password", "Password"), age,
                     new TextAreaItem("hobbies", "Hobbies"),
-                    new SelectBoxItem("color", "Favorite Color", Arrays.asList("Red", "Green", "Blue")));
+                    new SingleSelectBoxItem("color", "Favorite Color", Arrays.asList("Red", "Green", "Blue")));
             if (!nested) {
                 ButtonItem button = new ButtonItem("click", "Click Me");
                 button.onClick(event -> dialog.show());

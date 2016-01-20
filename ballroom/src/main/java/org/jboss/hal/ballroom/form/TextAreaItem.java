@@ -21,34 +21,30 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 import elemental.client.Browser;
 import elemental.dom.Element;
 
-import java.util.List;
-
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.util.Collections.emptyList;
 import static org.jboss.hal.resources.CSS.formControl;
 
 /**
  * @author Harald Pehl
  */
-public class TextAreaItem extends AbstractFormItem<List<String>> {
+public class TextAreaItem extends AbstractFormItem<String> {
 
     public TextAreaItem(final String name, final String label) {
         super(name, label);
     }
 
     @Override
-    protected InputElement<List<String>> newInputElement() {
+    protected InputElement<String> newInputElement() {
         TextAreaElement textArea = new TextAreaElement();
         textArea.setClassName(formControl);
+        //noinspection Duplicates
         textArea.element.setOnchange(event -> {
-            List<String> newValue = inputElement().getValue();
+            String newValue = inputElement().getValue();
             setModified(true);
-            setUndefined(newValue.isEmpty());
+            setUndefined(isNullOrEmpty(newValue));
             signalChange(newValue);
         });
         return textArea;
@@ -60,7 +56,7 @@ public class TextAreaItem extends AbstractFormItem<List<String>> {
     }
 
 
-    static class TextAreaElement extends InputElement<List<String>> {
+    static class TextAreaElement extends InputElement<String> {
 
         final elemental.html.TextAreaElement element;
 
@@ -104,13 +100,13 @@ public class TextAreaItem extends AbstractFormItem<List<String>> {
         }
 
         @Override
-        public List<String> getValue() {
-            return asList(element.getValue());
+        public String getValue() {
+            return element.getValue();
         }
 
         @Override
-        public void setValue(final List<String> values) {
-            element.setValue(asString(values));
+        public void setValue(final String value) {
+            element.setValue(value);
         }
 
         @Override
@@ -130,12 +126,12 @@ public class TextAreaItem extends AbstractFormItem<List<String>> {
 
         @Override
         public String getText() {
-            return asString(getValue());
+            return getValue();
         }
 
         @Override
         public void setText(final String s) {
-            setValue(asList(s));
+            setValue(s);
         }
 
         @Override
@@ -146,22 +142,6 @@ public class TextAreaItem extends AbstractFormItem<List<String>> {
         @Override
         public Element asElement() {
             return element;
-        }
-
-        private List<String> asList(String value) {
-            if (isNullOrEmpty(value)) {
-                return emptyList();
-            }
-            return Splitter.on('\n')
-                    .trimResults()
-                    .omitEmptyStrings()
-                    .splitToList(value);
-        }
-
-        private String asString(final List<String> values) {
-            return Joiner.on('\n')
-                    .skipNulls()
-                    .join(values);
         }
     }
 }
