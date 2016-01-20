@@ -73,7 +73,7 @@ public class NumberItem extends AbstractFormItem<Long> {
         NumberElement number = new NumberElement();
         number.setClassName(formControl);
         number.element.setOnchange(event -> {
-            String newText = inputElement.getText();
+            String newText = inputElement().getText();
             Long newValue = inputElement().getValue();
             setModified(true);
             setUndefined(isNullOrEmpty(newText));

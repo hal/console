@@ -21,55 +21,20 @@
  */
 package org.jboss.hal.ballroom.typeahead;
 
-import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.Names.OBJECT;
 
 /**
- * Mapping for the dataset options from typeahead.js
+ * Mapping for the basic options from typeahead.js
  *
  * @author Harald Pehl
  * @see <a href="https://github.com/twitter/typeahead.js/blob/master/doc/jquery_typeahead.md#options">https://github.com/twitter/typeahead.js/blob/master/doc/jquery_typeahead.md#options</a>
  */
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-public class Dataset {
+public class Options {
 
-    @JsFunction
-    @FunctionalInterface
-    public interface Source {
-
-        void source(String query, SyncCallback syncCallback, AsyncCallback asyncCallback);
-    }
-
-
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    public static class NotFoundContext {
-
-        public String query;
-    }
-
-
-    @JsFunction
-    @FunctionalInterface
-    public interface NotFoundTemplate {
-
-        String render(NotFoundContext context);
-    }
-
-
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    public static class Templates {
-
-        public NotFoundTemplate notFound;
-    }
-
-
-    public String name;
-    public Source source;
-    public boolean async;
-    public int limit;
-    public Display display;
-    public Templates templates;
+    public boolean highlight;
+    public int minLength;
 }

@@ -21,40 +21,163 @@
  */
 package org.jboss.hal.ballroom.typeahead;
 
-import jsinterop.annotations.JsType;
+import com.google.gwt.core.client.GWT;
+import elemental.js.util.JsArrayOf;
+import elemental.json.Json;
+import elemental.json.JsonObject;
+import elemental.util.ArrayOf;
+import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.config.Endpoints;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.dispatch.DmrPayloadProcessor;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.resources.Constants;
 
-import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.resources.Names.OBJECT;
+import java.util.List;
+
+import static org.jboss.hal.ballroom.PatternFly.$;
+import static org.jboss.hal.ballroom.form.Form.State.EDITING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.dispatch.Dispatcher.*;
+import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
+import static org.jboss.hal.resources.Names.VALUE;
 
 public class Typeahead {
 
-    /**
-     * Mapping for the basic options from typeahead.js
-     *
-     * @author Harald Pehl
-     * @see <a href="https://github.com/twitter/typeahead.js/blob/master/doc/jquery_typeahead.md#options">https://github.com/twitter/typeahead.js/blob/master/doc/jquery_typeahead.md#options</a>
-     */
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    public static class Options {
+    @FunctionalInterface
+    public interface OperationProcessor {
 
-        public boolean highlight;
-        public int minLength;
+        ArrayOf<JsonObject> process(String query, ModelNode result);
     }
 
 
-    // Helper class to get hold of the default options,
-    // since native JS types can neither hold static references nor initializer
-    public static class Defaults {
+    public static class Builder {
 
-        private static final Options DEFAULT_OPTIONS = new Options();
+        private final FormItem formItem;
+        private final Operation operation;
+        private final OperationProcessor operationProcessor;
+        private final Identifier identifier;
+        protected DataTokenizer dataTokenizer;
+        protected Display display;
 
-        static {
-            DEFAULT_OPTIONS.highlight = true;
-            DEFAULT_OPTIONS.minLength = 0;
+        public Builder(final FormItem formItem, final Operation operation,
+                final OperationProcessor operationProcessor, final Identifier identifier) {
+            this.formItem = formItem;
+            this.operation = operation;
+            this.operationProcessor = operationProcessor;
+            this.identifier = identifier;
         }
 
-        public static Options get() {
-            return DEFAULT_OPTIONS;
+        public Builder dataTokenizer(DataTokenizer dataTokenizer) {
+            this.dataTokenizer = dataTokenizer;
+            return this;
         }
+
+        public Builder display(Display display) {
+            this.display = display;
+            return this;
+        }
+
+        public Typeahead build() {
+            return new Typeahead(this);
+        }
+    }
+
+
+    public static class ReadChildrenNamesBuilder extends Builder {
+
+        public ReadChildrenNamesBuilder(final FormItem formItem, final Operation readChildrenNames) {
+            super(formItem, readChildrenNames,
+                    (query, result) -> {
+                        List<ModelNode> children = result.asList();
+                        ArrayOf<JsonObject> objects = JsArrayOf.create();
+                        for (ModelNode child : children) {
+                            String value = child.asString();
+                            if (query == null || query.equals("") || value.contains(query)) {
+                                JsonObject object = Json.createObject();
+                                object.put(VALUE, value);
+                                objects.push(object);
+                            }
+                        }
+                        return objects;
+                    },
+                    data -> data.getString(VALUE));
+
+            dataTokenizer = data -> data.getString(VALUE).split("\\s+"); //NON-NLS
+            display = data -> data.getString(VALUE);
+        }
+    }
+
+
+    static final Constants CONSTANTS = GWT.create(Constants.class);
+
+    private final FormItem formItem;
+    private final Options options;
+    private final Dataset dataset;
+
+    Typeahead(final Builder builder) {
+        formItem = builder.formItem;
+
+        options = new Options();
+        options.highlight = true;
+        options.minLength = 0;
+
+        RemoteOptions remoteOptions = new RemoteOptions();
+        remoteOptions.url = Endpoints.INSTANCE.dmr();
+        remoteOptions.prepare = (query, settings) -> {
+            AjaxSettings.Accepts accepts = new AjaxSettings.Accepts();
+            accepts.text = APPLICATION_DMR_ENCODED;
+
+            AjaxSettings.XHRFields xhrFields = new AjaxSettings.XHRFields();
+            xhrFields.withCredentials = true;
+
+            settings.accepts = accepts;
+            settings.beforeSend = (xhr, sttngs) ->
+                    xhr.setRequestHeader(HEADER_MANAGEMENT_CLIENT_NAME, HEADER_MANAGEMENT_CLIENT_VALUE);
+            settings.contentType = APPLICATION_DMR_ENCODED;
+            settings.data = builder.operation.toBase64String();
+            settings.dataType = "text"; //NON-NLS
+            settings.method = POST.name();
+            settings.xhrFields = xhrFields;
+            return settings;
+        };
+        remoteOptions.transform = response -> {
+            DmrPayloadProcessor payloadProcessor = new DmrPayloadProcessor();
+            ModelNode payload = payloadProcessor.processPayload(POST, APPLICATION_DMR_ENCODED, response);
+            if (!payload.isFailure()) {
+                String query = String.valueOf(formItem.getValue());
+                ModelNode result = payload.get(RESULT);
+                return builder.operationProcessor.process(query, result);
+            }
+            return JsArrayOf.<JsonObject>create();
+        };
+
+        Bloodhound.Options bloodhoundOptions = new Bloodhound.Options();
+        bloodhoundOptions.datumTokenizer = builder.dataTokenizer == null
+                ? data -> builder.identifier.identify(data).split("\\s+") //NON-NLS
+                : builder.dataTokenizer;
+        bloodhoundOptions.queryTokenizer = query -> query.split("\\s+"); //NON-NLS
+        bloodhoundOptions.identify = builder.identifier;
+        bloodhoundOptions.remote = remoteOptions;
+        Bloodhound bloodhound = new Bloodhound(bloodhoundOptions);
+
+        Dataset.Templates templates = new Dataset.Templates();
+        //noinspection HardCodedStringLiteral
+        templates.notFound = context -> "<div class=\"empty-message\">" +
+                "<span class=\"pficon pficon-warning-triangle-o\"></span>" + CONSTANTS.noResults() +
+                "</div>";
+
+        dataset = new Dataset();
+        dataset.name = IdBuilder.build(formItem.getId(EDITING), "typeahead");
+        dataset.source = bloodhound::search;
+        dataset.async = true;
+        dataset.limit = Integer.MAX_VALUE;
+        dataset.display = builder.display == null ? builder.identifier::identify : builder.display;
+        dataset.templates = templates;
+    }
+
+    public void attach() {
+        $("#" + formItem.getId(EDITING)).typeahead(options, dataset);
     }
 }

@@ -22,7 +22,6 @@
 package org.jboss.hal.ballroom.typeahead;
 
 import jsinterop.annotations.JsConstructor;
-import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -35,53 +34,21 @@ import static org.jboss.hal.resources.Names.OBJECT;
  * @see <a href="https://github.com/twitter/typeahead.js/blob/master/doc/bloodhound.md#api">https://github.com/twitter/typeahead.js/blob/master/doc/bloodhound.md#api</a>
  */
 @JsType(isNative = true, namespace = GLOBAL)
-public class Bloodhound<T> {
-
-    @JsFunction
-    @FunctionalInterface
-    public interface DatumTokenizer<T> {
-
-        String[] tokenize(T datum);
-    }
-
-
-    @JsFunction
-    @FunctionalInterface
-    public interface QueryTokenizer {
-
-        String[] tokenize(String query);
-    }
-
-
-    @JsFunction
-    @FunctionalInterface
-    public interface Identifier<T> {
-
-        String identify(T datum);
-    }
-
-
-    @JsFunction
-    @FunctionalInterface
-    public interface Comparator<T> {
-
-        int compare(T datum1, T datum2);
-    }
-
+public class Bloodhound {
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    public static class Options<T> {
+    public static class Options {
 
-        public DatumTokenizer<T> datumTokenizer;
+        public DataTokenizer datumTokenizer;
         public QueryTokenizer queryTokenizer;
-        public Identifier<T> identify;
-        public Comparator<T> sorter;
-        public RemoteOptions<T> remote;
+        public Identifier identify;
+        public Comparator sorter;
+        public RemoteOptions remote;
     }
 
 
     @JsConstructor
-    public Bloodhound(Options<T> options) {}
+    public Bloodhound(Options options) {}
 
-    public native void search(String query, SyncCallback<T> syncCallback, AsyncCallback<T> asyncCallback);
+    public native void search(String query, SyncCallback syncCallback, AsyncCallback asyncCallback);
 }

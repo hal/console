@@ -31,7 +31,6 @@ import static org.jboss.hal.resources.Names.OBJECT;
 /**
  * @author Harald Pehl
  */
-@JsType(isNative = true)
 public class TagEditor {
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)

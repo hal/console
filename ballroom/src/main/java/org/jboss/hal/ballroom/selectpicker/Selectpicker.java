@@ -22,7 +22,6 @@
 package org.jboss.hal.ballroom.selectpicker;
 
 import com.google.gwt.core.client.GWT;
-import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.resources.Constants;
 
@@ -32,7 +31,6 @@ import static org.jboss.hal.resources.Names.OBJECT;
 /**
  * @author Harald Pehl
  */
-@JsType(isNative = true)
 public class Selectpicker {
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
@@ -56,18 +54,5 @@ public class Selectpicker {
         public static Options get() {
             return DEFAULT_OPTIONS;
         }
-    }
-
-
-    public native void selectpicker(String method, String param);
-
-    @JsOverlay
-    public final void setValue(String value) {
-        selectpicker("val", value);
-    }
-
-    @JsOverlay
-    public final void clear() {
-        selectpicker("val", "");
     }
 }

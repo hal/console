@@ -44,6 +44,8 @@ public interface FormItem<T> extends HasEnabled, Focusable, HasName, HasValue<T>
 
     void setId(String id);
 
+    String getId(Form.State state);
+
     void addValidationHandler(FormItemValidation<T> validationHandler);
 
     boolean validate();

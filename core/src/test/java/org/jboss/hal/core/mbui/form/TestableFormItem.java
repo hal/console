@@ -60,6 +60,11 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
+    public String getId(final Form.State state) {
+        return null;
+    }
+
+    @Override
     public void addValidationHandler(final FormItemValidation<String> validationHandler) {
 
     }

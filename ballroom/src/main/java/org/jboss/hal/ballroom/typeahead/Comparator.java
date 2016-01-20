@@ -22,39 +22,14 @@
 package org.jboss.hal.ballroom.typeahead;
 
 import elemental.json.JsonObject;
-import elemental.util.ArrayOf;
 import jsinterop.annotations.JsFunction;
-import jsinterop.annotations.JsType;
-
-import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.resources.Names.OBJECT;
 
 /**
- * Mapping for the remote options from typeahead.js
- *
  * @author Harald Pehl
- * @see <a href="https://github.com/twitter/typeahead.js/blob/master/doc/bloodhound.md#remote">https://github.com/twitter/typeahead.js/blob/master/doc/bloodhound.md#remote</a>
  */
-@JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-public class RemoteOptions {
+@JsFunction
+@FunctionalInterface
+public interface Comparator {
 
-    @JsFunction
-    @FunctionalInterface
-    public interface Preparator {
-
-        AjaxSettings prepare(String query, AjaxSettings settings);
-    }
-
-
-    @JsFunction
-    @FunctionalInterface
-    public interface Transformator {
-
-        ArrayOf<JsonObject> transform(String response);
-    }
-
-
-    public String url;
-    public Preparator prepare;
-    public Transformator transform;
+    int compare(JsonObject data1, JsonObject data2);
 }

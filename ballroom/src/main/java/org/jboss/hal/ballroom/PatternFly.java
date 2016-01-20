@@ -28,7 +28,7 @@ import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.selectpicker.Selectpicker;
 import org.jboss.hal.ballroom.tageditor.TagEditor;
 import org.jboss.hal.ballroom.typeahead.Dataset;
-import org.jboss.hal.ballroom.typeahead.Typeahead;
+import org.jboss.hal.ballroom.typeahead.Options;
 import org.jboss.hal.resources.CSS;
 import org.jetbrains.annotations.NonNls;
 
@@ -81,5 +81,5 @@ public class PatternFly {
 
     public native void tooltip();
 
-    public native <T> void typeahead(Typeahead.Options options, Dataset<T> dataset);
+    public native void typeahead(Options options, Dataset dataset);
 }

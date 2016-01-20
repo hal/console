@@ -63,4 +63,5 @@ public interface Names {
     String TOOLTIP = "tooltip";
     String UNDEFINED = "undefined";
     String UNKNOWN = "unknown";
+    String VALUE = "value";
 }

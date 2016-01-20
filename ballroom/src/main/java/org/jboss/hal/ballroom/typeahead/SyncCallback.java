@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.ballroom.typeahead;
 
+import elemental.json.JsonObject;
 import elemental.util.ArrayOf;
 import jsinterop.annotations.JsFunction;
 
@@ -29,7 +30,7 @@ import jsinterop.annotations.JsFunction;
  */
 @JsFunction
 @FunctionalInterface
-public interface SyncCallback<T> {
+public interface SyncCallback {
 
-    void sync(ArrayOf<T> suggestions);
+    void sync(ArrayOf<JsonObject> suggestions);
 }
