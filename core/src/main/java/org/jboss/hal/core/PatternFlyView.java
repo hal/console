@@ -23,7 +23,6 @@ package org.jboss.hal.core;
 
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.ViewImpl;
-import org.jboss.hal.ballroom.PatternFly;
 
 /**
  * Interface for views which use JavaScript based PatternFly components like select picker, tooltips or data tables.
@@ -38,8 +37,8 @@ public interface PatternFlyView extends View {
      * <p>
      * Please do <em>not</em> use {@link ViewImpl#onAttach()} to initialize Patternfly components. This works for
      * widgets only, but not for elements!
+     *
+     * TODO This should be a default method. But the GWT Compiler seems to have problems with default methods
      */
-    default void attach() {
-        PatternFly.initComponents(false);
-    }
+    void attach();
 }

@@ -22,11 +22,11 @@
 package org.jboss.hal.core.mbui.form;
 
 import com.google.common.collect.Lists;
-import org.jboss.hal.ballroom.form.CheckBoxItem;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.NumberItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
+import org.jboss.hal.ballroom.form.SwitchItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.core.mbui.LabelBuilder;
 import org.jboss.hal.dmr.ModelNode;
@@ -79,7 +79,7 @@ public class DefaultFormItemProvider implements FormItemProvider {
                     break;
 
                 case BOOLEAN:
-                    formItem = new CheckBoxItem(name, label);
+                    formItem = new SwitchItem(name, label);
                     break;
                 case BYTES:
                     break;

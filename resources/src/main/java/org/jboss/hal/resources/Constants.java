@@ -23,6 +23,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     //@formatter:off
     String add();
 
+    String back();
     String bootstrapFailed();
     String bootstrapException();
 

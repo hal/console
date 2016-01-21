@@ -21,7 +21,6 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
-import com.google.inject.Provider;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.html.FormData;
@@ -42,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import java.util.List;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;

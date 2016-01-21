@@ -19,10 +19,11 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.ballroom.selectpicker;
+package org.jboss.hal.ballroom.form;
 
 import elemental.dom.Element;
-import elemental.events.Event;
+import elemental.js.events.JsEvent;
+import elemental.js.util.JsArrayOf;
 import elemental.util.ArrayOf;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
@@ -69,9 +70,9 @@ public class Selectpicker {
 
     @JsFunction
     @FunctionalInterface
-    public interface SingleChangeListener {
+    public interface ChangeListener {
 
-        void onChange(Event event, int index, String newValue, String oldValue);
+        void onChange(JsEvent event, int index);
     }
 
 
@@ -79,13 +80,13 @@ public class Selectpicker {
     public static class Single {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Single select(Element element);
+        public native static Single element(Element element);
 
         public native String val();
 
         public native void selectpicker(String method, String param);
 
-        public native void on(@NonNls String event, SingleChangeListener listener);
+        public native void on(@NonNls String event, ChangeListener listener);
 
         @JsOverlay
         public final String getValue() {
@@ -98,17 +99,9 @@ public class Selectpicker {
         }
 
         @JsOverlay
-        public final void onChange(SingleChangeListener listener) {
+        public final void onChange(ChangeListener listener) {
             on(CHANGE_EVENT, listener);
         }
-    }
-
-
-    @JsFunction
-    @FunctionalInterface
-    public interface MultiChangeListener {
-
-        void onChange(Event event, int index, ArrayOf<String> newValue, ArrayOf<String> oldValue);
     }
 
 
@@ -116,18 +109,18 @@ public class Selectpicker {
     public static class Multi {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Multi select(Element element);
+        public native static Multi element(Element element);
 
-        public native ArrayOf<String> val();
+        public native JsArrayOf<String> val();
 
         public native void selectpicker(String method);
 
         public native void selectpicker(String method, ArrayOf<String> param);
 
-        public native void on(@NonNls String event, MultiChangeListener listener);
+        public native void on(@NonNls String event, ChangeListener listener);
 
         @JsOverlay
-        public final ArrayOf<String> getValue() {
+        public final JsArrayOf<String> getValue() {
             return val();
         }
 
@@ -137,12 +130,12 @@ public class Selectpicker {
         }
 
         @JsOverlay
-        public final void setValue(ArrayOf<String> value) {
+        public final void setValue(JsArrayOf<String> value) {
             selectpicker(VAL, value);
         }
 
         @JsOverlay
-        public final void onChange(MultiChangeListener listener) {
+        public final void onChange(ChangeListener listener) {
             on(CHANGE_EVENT, listener);
         }
     }

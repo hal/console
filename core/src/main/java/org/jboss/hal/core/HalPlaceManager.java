@@ -38,11 +38,12 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 public class HalPlaceManager extends DefaultPlaceManager {
 
     private final MetadataProcessor metadataProcessor;
-    private final Progress progress;
+    private final Provider<Progress> progress;
     private final Constants constants;
 
     @Inject
@@ -52,7 +53,7 @@ public class HalPlaceManager extends DefaultPlaceManager {
             @ErrorPlace final String errorPlaceNameToken,
             @UnauthorizedPlace final String unauthorizedPlaceNameToken,
             final MetadataProcessor metadataProcessor,
-            @Footer final Progress progress,
+            @Footer final Provider<Progress> progress,
             final Constants constants) {
         super(eventBus, tokenFormatter, defaultPlaceNameToken, errorPlaceNameToken, unauthorizedPlaceNameToken,
                 new PlaceHistoryHandler.DefaultHistorian());

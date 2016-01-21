@@ -41,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import java.util.List;
 import java.util.Set;
 
@@ -78,7 +79,7 @@ public class MetadataProcessor {
     }
 
     @SuppressWarnings("HardCodedStringLiteral")
-    public void process(final String token, final Progress progress, final AsyncCallback<Void> callback) {
+    public void process(final String token, final Provider<Progress> progress, final AsyncCallback<Void> callback) {
         Set<String> resources = requiredResources.getResources(token);
         logger.debug("Token {}: Process required resources on {}", token, resources);
         if (resources.isEmpty()) {
@@ -125,8 +126,12 @@ public class MetadataProcessor {
                         callback.onSuccess(null);
                     }
                 };
-                new Async<FunctionContext>(progress).waterfall(new FunctionContext(), outcome,
-                        functions.toArray(new RrdFunction[functions.size()]));
+                if (functions.size() == 1) {
+                    new Async<FunctionContext>(progress.get()).single(new FunctionContext(), outcome, functions.get(0));
+                } else {
+                    new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
+                            functions.toArray(new RrdFunction[functions.size()]));
+                }
             }
         }
     }

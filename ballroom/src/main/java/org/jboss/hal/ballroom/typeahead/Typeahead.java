@@ -22,10 +22,8 @@
 package org.jboss.hal.ballroom.typeahead;
 
 import com.google.gwt.core.client.GWT;
+import elemental.js.json.JsJsonObject;
 import elemental.js.util.JsArrayOf;
-import elemental.json.Json;
-import elemental.json.JsonObject;
-import elemental.util.ArrayOf;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.config.Endpoints;
@@ -48,7 +46,7 @@ public class Typeahead {
     @FunctionalInterface
     public interface OperationProcessor {
 
-        ArrayOf<JsonObject> process(String query, ModelNode result);
+        JsArrayOf<JsJsonObject> process(String query, ModelNode result);
     }
 
 
@@ -91,11 +89,11 @@ public class Typeahead {
             super(formItem, readChildrenNames,
                     (query, result) -> {
                         List<ModelNode> children = result.asList();
-                        ArrayOf<JsonObject> objects = JsArrayOf.create();
+                        JsArrayOf<JsJsonObject> objects = JsArrayOf.create();
                         for (ModelNode child : children) {
                             String value = child.asString();
                             if (query == null || query.equals("") || value.contains(query)) {
-                                JsonObject object = Json.createObject();
+                                JsJsonObject object = JsJsonObject.create();
                                 object.put(VALUE, value);
                                 objects.push(object);
                             }
@@ -150,7 +148,7 @@ public class Typeahead {
                 ModelNode result = payload.get(RESULT);
                 return builder.operationProcessor.process(query, result);
             }
-            return JsArrayOf.<JsonObject>create();
+            return JsArrayOf.<JsJsonObject>create();
         };
 
         Bloodhound.Options bloodhoundOptions = new Bloodhound.Options();

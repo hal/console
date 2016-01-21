@@ -25,7 +25,7 @@ import com.google.gwt.core.client.Scheduler;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.ballroom.selectpicker.Selectpicker;
+import org.jboss.hal.ballroom.form.Selectpicker;
 import org.jboss.hal.ballroom.tageditor.TagEditor;
 import org.jboss.hal.ballroom.typeahead.Dataset;
 import org.jboss.hal.ballroom.typeahead.Options;
@@ -39,11 +39,11 @@ import static org.jboss.hal.resources.CSS.properties;
 public class PatternFly {
 
     /**
-     * Same as {@code initComponents(true)}
+     * Same as {@code initComponents(false)}
      */
     @JsOverlay
     public static void initComponents() {
-        initComponents(true);
+        initComponents(false);
     }
 
     /**
@@ -74,8 +74,6 @@ public class PatternFly {
     public native void bootstrapSwitch();
 
     public native void selectpicker(Selectpicker.Options options);
-
-    public native void tab(String command);
 
     public native void tagEditor(TagEditor.Options options);
 

@@ -22,7 +22,6 @@
 package org.jboss.hal.client.deployment;
 
 import com.google.gwt.core.client.GWT;
-import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.PatternFly;
@@ -42,6 +41,7 @@ import org.jboss.hal.ballroom.layout.LayoutBuilder;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.client.bootstrap.endpoint.Endpoint;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointResources;
+import org.jboss.hal.core.PatternFlyViewImpl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -59,7 +59,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OP
 /**
  * @author Harald Pehl
  */
-public class DeploymentView extends ViewImpl implements DeploymentPresenter.MyView {
+public class DeploymentView extends PatternFlyViewImpl implements DeploymentPresenter.MyView {
 
     class SampleForm extends DefaultForm<String> {
 

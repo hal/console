@@ -21,8 +21,8 @@
  */
 package org.jboss.hal.ballroom.typeahead;
 
-import elemental.json.JsonObject;
-import elemental.util.ArrayOf;
+import elemental.js.json.JsJsonObject;
+import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsType;
 
@@ -50,7 +50,7 @@ public class RemoteOptions {
     @FunctionalInterface
     public interface Transformator {
 
-        ArrayOf<JsonObject> transform(String response);
+        JsArrayOf<JsJsonObject> transform(String response);
     }
 
 

@@ -21,8 +21,6 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import org.jboss.hal.ballroom.selectpicker.Selectpicker;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,10 +56,11 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
     protected InputElement<String> newInputElement() {
         selectBox = new SingleSelectBoxElement(allowEmpty);
         selectBox.setClassName(formControl + " " + selectpicker);
-        Selectpicker.Single.select(selectBox.asElement()).onChange((event, index, newValue, oldValue) -> {
+        Selectpicker.Single.element(selectBox.asElement()).onChange((event, index) -> {
+            String value = getValue();
             setModified(true);
-            setUndefined(isNullOrEmpty(newValue));
-            signalChange(newValue);
+            setUndefined(isNullOrEmpty(value));
+            signalChange(value);
         });
         return selectBox;
     }
@@ -89,18 +88,18 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
 
         @Override
         public String getValue() {
-            return Selectpicker.Single.select(asElement()).getValue();
+            return Selectpicker.Single.element(asElement()).getValue();
         }
 
         @Override
         public void setValue(final String value) {
-            Selectpicker.Single.select(asElement()).setValue(value);
+            Selectpicker.Single.element(asElement()).setValue(value);
         }
 
         @Override
         public void clearValue() {
             if (allowEmpty) {
-                Selectpicker.Single.select(asElement()).setValue("");
+                Selectpicker.Single.element(asElement()).setValue("");
             }
         }
 

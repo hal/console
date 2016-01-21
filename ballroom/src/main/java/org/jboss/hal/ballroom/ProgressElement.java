@@ -24,7 +24,6 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.resources.CSS;
 
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.ROLE;
@@ -40,7 +39,7 @@ public class ProgressElement implements IsElement, Progress {
     private int max;
     private boolean determinate;
     private final Element root;
-    private final Element progressBar;
+    private final Element progressBarElement;
 
     public ProgressElement() {
         value = 0;
@@ -50,7 +49,7 @@ public class ProgressElement implements IsElement, Progress {
         // @formatter:off
         Elements.Builder builder = new Elements.Builder()
             .div().css(progress, progressXs)
-                .div().css(CSS.progressBar).rememberAs("progressBar")
+                .div().css(progressBar).rememberAs("progressBar")
                         .attr(ROLE, "progress-bar") //NON-NLS
                         .aria("valuenow", "0")
                         .aria("valuemin", "0")
@@ -61,7 +60,7 @@ public class ProgressElement implements IsElement, Progress {
         // @formatter:on
 
         root = builder.build();
-        progressBar = builder.referenceFor("progressBar");
+        progressBarElement = builder.referenceFor("progressBar");
         Elements.setVisible(root, false);
     }
 
@@ -82,13 +81,15 @@ public class ProgressElement implements IsElement, Progress {
         determinate = max > 1; // if there's just one step, choose none-determinate state
 
         if (determinate) {
-            progressBar.setAttribute(ARIA_VALUENOW, "0");
-            progressBar.setClassName(CSS.progressBar);
-            progressBar.getStyle().setWidth("0");
+            progressBarElement.getClassList().remove(progressBarStriped);
+            progressBarElement.getClassList().remove(active);
+            progressBarElement.setAttribute(ARIA_VALUENOW, "0");
+            progressBarElement.getStyle().setWidth("0");
         } else {
-            progressBar.setAttribute(ARIA_VALUENOW, "100");
-            progressBar.setClassName(progressBarStriped + " " + active);
-            progressBar.getStyle().setWidth("100%");
+            progressBarElement.getClassList().add(progressBarStriped);
+            progressBarElement.getClassList().add(active);
+            progressBarElement.setAttribute(ARIA_VALUENOW, "100");
+            progressBarElement.getStyle().setWidth("100%");
         }
         Elements.setVisible(root, true);
     }
@@ -99,8 +100,8 @@ public class ProgressElement implements IsElement, Progress {
             if (value < max) {
                 value++;
                 String percent = String.valueOf(Math.round(value / max * 100));
-                progressBar.setAttribute(ARIA_VALUENOW, percent); //NON-NLS
-                progressBar.getStyle().setWidth(percent);
+                progressBarElement.setAttribute(ARIA_VALUENOW, percent); //NON-NLS
+                progressBarElement.getStyle().setWidth(percent);
             }
         }
     }

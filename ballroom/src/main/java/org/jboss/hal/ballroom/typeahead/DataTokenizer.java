@@ -21,7 +21,7 @@
  */
 package org.jboss.hal.ballroom.typeahead;
 
-import elemental.json.JsonObject;
+import elemental.js.json.JsJsonObject;
 import jsinterop.annotations.JsFunction;
 
 /**
@@ -31,5 +31,5 @@ import jsinterop.annotations.JsFunction;
 @FunctionalInterface
 public interface DataTokenizer {
 
-    String[] tokenize(JsonObject data);
+    String[] tokenize(JsJsonObject data);
 }

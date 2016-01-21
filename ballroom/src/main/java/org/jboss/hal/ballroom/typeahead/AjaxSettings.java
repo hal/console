@@ -21,7 +21,7 @@
  */
 package org.jboss.hal.ballroom.typeahead;
 
-import elemental.xml.XMLHttpRequest;
+import elemental.js.xml.JsXMLHttpRequest;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsType;
 
@@ -54,7 +54,7 @@ public class AjaxSettings {
     @JsFunction
     @FunctionalInterface
     public interface BeforeSend {
-        void beforeSend(XMLHttpRequest xhr, AjaxSettings settings);
+        void beforeSend(JsXMLHttpRequest xhr, AjaxSettings settings);
     }
 
 

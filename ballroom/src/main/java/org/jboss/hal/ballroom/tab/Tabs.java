@@ -22,6 +22,8 @@
 package org.jboss.hal.ballroom.tab;
 
 import elemental.dom.Element;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 
@@ -31,8 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.ballroom.PatternFly.$;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.*;
 
@@ -40,6 +42,16 @@ import static org.jboss.hal.resources.Names.*;
  * @author Harald Pehl
  */
 public class Tabs implements IsElement {
+
+    @JsType(isNative = true)
+    static class Selector {
+
+        @JsMethod(namespace = GLOBAL, name = "$")
+        public native static Selector select(String selector);
+
+        public native void tab(String command);
+    }
+
 
     private static final String TABS = "tabs";
     private static final String TAB = "tab";
@@ -127,7 +139,7 @@ public class Tabs implements IsElement {
 
     public void showTab(final String id) {
         if (id != null) {
-            $("#" + id).tab("show"); //NON-NLS
+            Selector.select("#" + id).tab("show"); //NON-NLS
         }
     }
 }

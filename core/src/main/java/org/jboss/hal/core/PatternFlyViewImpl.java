@@ -19,17 +19,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.ballroom.typeahead;
+package org.jboss.hal.core;
 
-import elemental.js.json.JsJsonObject;
-import jsinterop.annotations.JsFunction;
+import com.gwtplatform.mvp.client.ViewImpl;
+import org.jboss.hal.ballroom.PatternFly;
 
 /**
  * @author Harald Pehl
  */
-@JsFunction
-@FunctionalInterface
-public interface Display {
+public abstract class PatternFlyViewImpl extends ViewImpl implements PatternFlyView {
 
-    String render(JsJsonObject data);
+    @Override
+    public void attach() {
+        PatternFly.initComponents();
+    }
 }
