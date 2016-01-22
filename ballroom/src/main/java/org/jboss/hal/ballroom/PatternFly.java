@@ -25,10 +25,8 @@ import com.google.gwt.core.client.Scheduler;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.ballroom.form.SelectBoxBridge;
 import org.jboss.hal.ballroom.form.PropertiesBridge;
-import org.jboss.hal.ballroom.typeahead.Dataset;
-import org.jboss.hal.ballroom.typeahead.Options;
+import org.jboss.hal.ballroom.form.SelectBoxBridge;
 import org.jboss.hal.resources.CSS;
 import org.jetbrains.annotations.NonNls;
 
@@ -78,6 +76,4 @@ public class PatternFly {
     public native void tagEditor(PropertiesBridge.Options options);
 
     public native void tooltip();
-
-    public native void typeahead(Options options, Dataset dataset);
 }

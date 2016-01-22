@@ -24,6 +24,8 @@ package org.jboss.hal.ballroom.typeahead;
 import com.google.gwt.core.client.GWT;
 import elemental.js.json.JsJsonObject;
 import elemental.js.util.JsArrayOf;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.config.Endpoints;
@@ -34,19 +36,29 @@ import org.jboss.hal.resources.Constants;
 
 import java.util.List;
 
-import static org.jboss.hal.ballroom.PatternFly.$;
+import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.*;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
 import static org.jboss.hal.resources.Names.VALUE;
 
+/**
+ * A type ahead engine based on <a href="https://twitter.github.io/typeahead.js/">typeahead.js</a> ready to be used
+ * with {@code FormItem<String>}. Use one of the builders to setup an instance and call
+ * {@link Typeahead#attach()} after the form item was attached to the DOM.
+ *
+ * @see <a href="https://twitter.github.io/typeahead.js/">https://twitter.github.io/typeahead.js/</a>
+ */
 public class Typeahead {
 
-    @FunctionalInterface
-    public interface OperationProcessor {
+    @JsType(isNative = true)
+    public static class Bridge {
 
-        JsArrayOf<JsJsonObject> process(String query, ModelNode result);
+        @JsMethod(namespace = GLOBAL, name = "$")
+        public native static Bridge select(String selector);
+
+        public native void typeahead(Options options, Dataset dataset);
     }
 
 
@@ -54,16 +66,16 @@ public class Typeahead {
 
         private final FormItem formItem;
         private final Operation operation;
-        private final OperationProcessor operationProcessor;
+        private final ResultProcessor resultProcessor;
         private final Identifier identifier;
         protected DataTokenizer dataTokenizer;
         protected Display display;
 
         public Builder(final FormItem formItem, final Operation operation,
-                final OperationProcessor operationProcessor, final Identifier identifier) {
+                final ResultProcessor resultProcessor, final Identifier identifier) {
             this.formItem = formItem;
             this.operation = operation;
-            this.operationProcessor = operationProcessor;
+            this.resultProcessor = resultProcessor;
             this.identifier = identifier;
         }
 
@@ -146,7 +158,7 @@ public class Typeahead {
             if (!payload.isFailure()) {
                 String query = String.valueOf(formItem.getValue());
                 ModelNode result = payload.get(RESULT);
-                return builder.operationProcessor.process(query, result);
+                return builder.resultProcessor.process(query, result);
             }
             return JsArrayOf.<JsJsonObject>create();
         };
@@ -176,6 +188,6 @@ public class Typeahead {
     }
 
     public void attach() {
-        $("#" + formItem.getId(EDITING)).typeahead(options, dataset);
+        Bridge.select("#" + formItem.getId(EDITING)).typeahead(options, dataset);
     }
 }

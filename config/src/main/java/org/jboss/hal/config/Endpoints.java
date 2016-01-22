@@ -34,6 +34,9 @@ import static org.jboss.hal.resources.Urls.*;
  */
 public class Endpoints {
 
+    /**
+     * Please use this constant only in cases where no DI is available.
+     */
     @Inject
     public static Endpoints INSTANCE;
 

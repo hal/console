@@ -13,12 +13,22 @@
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.caret.min.js"></script>
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.dataTables.js"></script>
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.tag-editor.js"></script>
+
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/core.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/widget.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/position.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/menu.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/autocomplete.js"></script>
+
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/typeahead.bundle.js"></script>
+
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/dataTables.buttons.js"></script>
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/dataTables.select.js"></script>
+
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap.js"></script>
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-select.js"></script>
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-switch.js"></script>
+
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/patternfly.js"></script>
 </head>
 <body>
@@ -143,14 +153,14 @@
                             <label class="col-md-3 control-label" for="textBoxTypeahead-markup">Default</label>
 
                             <div class="col-md-9">
-                                <input type="text" id="textBoxTypeahead-markup" class="form-control hal-type-ahead" placeholder="Text input">
+                                <input type="text" id="textBoxTypeahead-markup" class="form-control hal-typeahead" placeholder="Text input">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="textBoxTypeaheadDisabled-markup">Disabled</label>
 
                             <div class="col-md-9">
-                                <input type="text" value="read-only" id="textBoxTypeaheadDisabled-markup" class="form-control hal-type-ahead" disabled>
+                                <input type="text" value="read-only" id="textBoxTypeaheadDisabled-markup" class="form-control hal-typeahead" disabled>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
@@ -167,7 +177,48 @@
                             <label class="col-md-3 control-label" for="textBoxTypeaheadError-markup">With error</label>
 
                             <div class="col-md-9">
-                                <input type="text" value="nope" id="textBoxTypeaheadError-markup" class="form-control hal-type-ahead">
+                                <input type="text" value="nope" id="textBoxTypeaheadError-markup" class="form-control hal-typeahead">
+                                <span class="help-block">Please correct the error</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- TextBoxItem with autocomplete support                 -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <fieldset class="form-section">
+                        <legend>TextBoxItem (with autocomplete support)</legend>
+                        <p>Target type: <code>String</code></p>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="textBoxAutocomplete-markup">Default</label>
+
+                            <div class="col-md-9">
+                                <input type="text" id="textBoxAutocomplete-markup" class="form-control hal-autocomplete" placeholder="Text input">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="textBoxAutocompleteDisabled-markup">Disabled</label>
+
+                            <div class="col-md-9">
+                                <input type="text" value="read-only" id="textBoxAutocompleteDisabled-markup" class="form-control hal-autocomplete" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="col-md-3 control-label" for="textBoxAutocompleteRestricted-markup">Restricted</label>
+
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="textBoxAutocompleteRestricted-markup" class="form-control" readonly>
+                                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="col-md-3 control-label" for="textBoxAutocompleteError-markup">With error</label>
+
+                            <div class="col-md-9">
+                                <input type="text" value="nope" id="textBoxAutocompleteError-markup" class="form-control hal-autocomplete">
                                 <span class="help-block">Please correct the error</span>
                             </div>
                         </div>
@@ -752,7 +803,7 @@
             }
         };
         var bestPictures = new Bloodhound(bloodhoundOptions);
-        $('.hal-type-ahead').typeahead({
+        $('.hal-typeahead').typeahead({
                     highlight: true
                 },
                 {
@@ -769,6 +820,21 @@
                         ].join('\n')
                     }
                 });
+
+        $('.hal-autocomplete').autocomplete({
+            source: function (request, response) {
+                $.getJSON("https://twitter.github.io/typeahead.js/data/films/queries/" + request.term + ".json", response);
+            },
+            position: {my: "left top+2", at: "left bottom", collision: "none"},
+            minLength: 1
+        });
+        $('.hal-autocomplete').autocomplete("instance")._resizeMenu = function () {
+            var ul = this.menu.element;
+            ul.outerWidth(Math.max(
+                    ul.width("").outerWidth() + 1,
+                    this.element.outerWidth() + 1 // add one pixel!
+            ));
+        };
 
         $('[data-toggle=tooltip]').tooltip();
         $('.selectpicker').selectpicker();
@@ -793,7 +859,14 @@
             placeholder: "Enter properties (key=value)",
             forceLowercase: false,
             sortable: false,
-            onChange: validateTags
+            onChange: validateTags,
+            autocomplete: {
+                source: function (request, response) {
+                    $.getJSON("https://twitter.github.io/typeahead.js/data/films/queries/" + request.term + ".json", response);
+                },
+                position: {my: "left top+6", at: "left bottom", collision: "none"},
+                minLength: 1
+            }
         });
         validateTags(null, $('#propertiesError-markup').tagEditor('getTags')[0].editor);
         $('.disabled .tag-editor, .disabled .tag-editor-tag, .disabled .tag-editor-delete')

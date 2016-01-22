@@ -44,6 +44,28 @@ gulp.task('copy', function () {
     gulp.src('bower_components/jquery/dist/jquery.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
 
+    gulp.src('bower_components/jquery-ui/ui/core.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
+    gulp.src('bower_components/jquery-ui/ui/widget.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
+    gulp.src('bower_components/jquery-ui/ui/position.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
+    gulp.src('bower_components/jquery-ui/ui/menu.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
+    gulp.src('bower_components/jquery-ui/ui/autocomplete.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
+
+    gulp.src('bower_components/jquery-ui/ui/minified/core.min.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 4}));
+    gulp.src('bower_components/jquery-ui/ui/minified/widget.min.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 4}));
+    gulp.src('bower_components/jquery-ui/ui/minified/position.min.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 4}));
+    gulp.src('bower_components/jquery-ui/ui/minified/menu.min.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 4}));
+    gulp.src('bower_components/jquery-ui/ui/minified/autocomplete.min.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 4}));
+
     gulp.src('bower_components/jquery-tag-editor/jquery.caret.min.js')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 2}));
     gulp.src('bower_components/jquery-tag-editor/jquery.tag-editor.js')
