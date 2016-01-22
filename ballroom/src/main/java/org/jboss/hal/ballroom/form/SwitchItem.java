@@ -23,6 +23,7 @@ package org.jboss.hal.ballroom.form;
 
 import elemental.client.Browser;
 import elemental.dom.Element;
+import org.jboss.hal.ballroom.form.SwitchBridge.Bridge;
 
 import static org.jboss.hal.resources.CSS.bootstrapSwitch;
 
@@ -39,7 +40,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
     protected InputElement<Boolean> newInputElement() {
         SwitchElement switchElement = new SwitchElement();
         switchElement.setClassName(bootstrapSwitch);
-        Switcher.Switch.element(switchElement.asElement()).onChange((event, state) -> {
+        Bridge.element(switchElement.asElement()).onChange((event, state) -> {
             setModified(true);
             setUndefined(false);
             signalChange(state);
@@ -88,27 +89,27 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
 
         @Override
         public boolean isEnabled() {
-            return Switcher.Switch.element(asElement()).isEnable();
+            return Bridge.element(asElement()).isEnable();
         }
 
         @Override
         public void setEnabled(final boolean b) {
-            Switcher.Switch.element(asElement()).setEnable(b);
+            Bridge.element(asElement()).setEnable(b);
         }
 
         @Override
         public Boolean getValue() {
-            return Switcher.Switch.element(asElement()).getValue();
+            return Bridge.element(asElement()).getValue();
         }
 
         @Override
         public void setValue(final Boolean value) {
-            Switcher.Switch.element(asElement()).setValue(value);
+            Bridge.element(asElement()).setValue(value);
         }
 
         @Override
         public void clearValue() {
-            Switcher.Switch.element(asElement()).setValue(false);
+            Bridge.element(asElement()).setValue(false);
         }
 
         @Override

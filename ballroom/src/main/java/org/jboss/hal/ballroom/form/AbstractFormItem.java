@@ -524,7 +524,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     @Override
-    public boolean isRequired() {
+    public final boolean isRequired() {
         return required;
     }
 
@@ -541,7 +541,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     @Override
-    public boolean isModified() {
+    public final boolean isModified() {
         return modified;
     }
 
@@ -551,7 +551,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     @Override
-    public boolean isUndefined() {
+    public final boolean isUndefined() {
         return undefined;
     }
 

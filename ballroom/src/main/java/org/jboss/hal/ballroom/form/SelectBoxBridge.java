@@ -31,14 +31,18 @@ import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
 import org.jetbrains.annotations.NonNls;
 
+import java.util.List;
+
 import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.ballroom.js.JsHelper.asJsArray;
+import static org.jboss.hal.ballroom.js.JsHelper.asList;
 import static org.jboss.hal.resources.Names.OBJECT;
 import static org.jboss.hal.resources.Names.UNDEFINED;
 
 /**
  * @author Harald Pehl
  */
-public class Selectpicker {
+public class SelectBoxBridge {
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     public static class Options {
@@ -61,11 +65,6 @@ public class Selectpicker {
             return DEFAULT_OPTIONS;
         }
     }
-
-
-    private final static String VAL = "val";
-    private final static String DESELECT_ALL = "deselectAll";
-    private final static String CHANGE_EVENT = "changed.bs.select";
 
 
     @JsFunction
@@ -120,8 +119,8 @@ public class Selectpicker {
         public native void on(@NonNls String event, ChangeListener listener);
 
         @JsOverlay
-        public final JsArrayOf<String> getValue() {
-            return val();
+        public final List<String> getValue() {
+            return asList(val());
         }
 
         @JsOverlay
@@ -130,8 +129,8 @@ public class Selectpicker {
         }
 
         @JsOverlay
-        public final void setValue(JsArrayOf<String> value) {
-            selectpicker(VAL, value);
+        public final void setValue(List<String> value) {
+            selectpicker(VAL, asJsArray(value));
         }
 
         @JsOverlay
@@ -139,4 +138,9 @@ public class Selectpicker {
             on(CHANGE_EVENT, listener);
         }
     }
+
+
+    private final static String VAL = "val";
+    private final static String DESELECT_ALL = "deselectAll";
+    private final static String CHANGE_EVENT = "changed.bs.select";
 }

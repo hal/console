@@ -34,12 +34,7 @@ import static jsinterop.annotations.JsPackage.GLOBAL;
 /**
  * @author Harald Pehl
  */
-public class Switcher {
-
-    private static final String STATE = "state";
-    private static final String DISABLED = "disabled";
-    private static final String CHANGE_EVENT = "switchChange.bootstrapSwitch";
-
+public class SwitchBridge {
 
     @JsFunction
     @FunctionalInterface
@@ -50,10 +45,10 @@ public class Switcher {
 
 
     @JsType(isNative = true)
-    public static class Switch {
+    public static class Bridge {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Switch element(Element element);
+        public native static Bridge element(Element element);
 
         public native boolean bootstrapSwitch(String method);
 
@@ -86,4 +81,9 @@ public class Switcher {
             on(CHANGE_EVENT, listener);
         }
     }
+
+
+    private static final String STATE = "state";
+    private static final String DISABLED = "disabled";
+    private static final String CHANGE_EVENT = "switchChange.bootstrapSwitch";
 }

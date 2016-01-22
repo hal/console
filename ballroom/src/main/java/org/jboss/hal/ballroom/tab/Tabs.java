@@ -44,10 +44,10 @@ import static org.jboss.hal.resources.Names.*;
 public class Tabs implements IsElement {
 
     @JsType(isNative = true)
-    static class Selector {
+    static class Bridge {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Selector select(String selector);
+        public native static Bridge select(String selector);
 
         public native void tab(String command);
     }
@@ -139,7 +139,7 @@ public class Tabs implements IsElement {
 
     public void showTab(final String id) {
         if (id != null) {
-            Selector.select("#" + id).tab("show"); //NON-NLS
+            Bridge.select("#" + id).tab("show"); //NON-NLS
         }
     }
 }

@@ -23,9 +23,8 @@ package org.jboss.hal.ballroom.form;
 
 import com.google.common.base.Joiner;
 import elemental.dom.Element;
-import elemental.js.util.JsArrayOf;
+import org.jboss.hal.ballroom.form.SelectBoxBridge.Multi;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.jboss.hal.resources.CSS.formControl;
@@ -35,23 +34,6 @@ import static org.jboss.hal.resources.CSS.selectpicker;
  * @author Harald Pehl
  */
 public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
-
-    private static <T> List<T> asList(JsArrayOf<T> array) {
-        List<T> list = new ArrayList<>(array.length());
-        for (int i = 0; i < array.length(); i++) {
-            list.add(array.get(i));
-        }
-        return list;
-    }
-
-    private static <T> JsArrayOf<T> asArray(List<T> list) {
-        JsArrayOf<T> array = JsArrayOf.create();
-        for (T t : list) {
-            array.push(t);
-        }
-        return array;
-    }
-
 
     private MultiSelectBoxElement selectBox;
 
@@ -64,7 +46,7 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
     protected InputElement<List<String>> newInputElement() {
         selectBox = new MultiSelectBoxElement();
         selectBox.setClassName(formControl + " " + selectpicker);
-        Selectpicker.Multi.element(selectBox.asElement()).onChange((event, index) -> {
+        Multi.element(selectBox.asElement()).onChange((event, index) -> {
             List<String> value = getValue();
             setModified(true);
             setUndefined(value.isEmpty());
@@ -82,11 +64,6 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
         return false;
     }
 
-    @Override
-    public boolean isUndefined() {
-        return getValue().isEmpty();
-    }
-
 
     static class MultiSelectBoxElement extends SelectBoxElement<List<String>> {
 
@@ -96,17 +73,17 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
 
         @Override
         public List<String> getValue() {
-            return asList(Selectpicker.Multi.element(asElement()).getValue());
+            return Multi.element(asElement()).getValue();
         }
 
         @Override
         public void setValue(final List<String> value) {
-            Selectpicker.Multi.element(asElement()).setValue(asArray(value));
+            Multi.element(asElement()).setValue(value);
         }
 
         @Override
         public void clearValue() {
-            Selectpicker.Multi.element(asElement()).clear();
+            Multi.element(asElement()).clear();
         }
 
         @Override
