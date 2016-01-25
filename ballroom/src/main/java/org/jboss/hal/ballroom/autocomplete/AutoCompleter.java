@@ -103,7 +103,7 @@ public class Autocompleter {
         options.minLength = builder.minLength;
         options.position = new Position();
         options.position.at = "left bottom";
-        options.position.my = "left top";
+        options.position.my = "left top+2";
         options.position.collision = "flip";
         options.source = (request, response) -> dispatcher.execute(operation,
                 result -> {

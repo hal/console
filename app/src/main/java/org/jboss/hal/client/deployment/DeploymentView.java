@@ -25,6 +25,8 @@ import com.google.gwt.core.client.GWT;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.PatternFly;
+import org.jboss.hal.ballroom.autocomplete.Autocompleter;
+import org.jboss.hal.ballroom.autocomplete.ReadChildrenNamesProcessor;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
 import org.jboss.hal.ballroom.form.ButtonItem;
@@ -43,6 +45,7 @@ import org.jboss.hal.client.bootstrap.endpoint.Endpoint;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointResources;
 import org.jboss.hal.core.PatternFlyViewImpl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
@@ -64,13 +67,19 @@ public class DeploymentView extends PatternFlyViewImpl implements DeploymentPres
     class SampleForm extends DefaultForm<String> {
 
         final TextBoxItem name;
+        final TextBoxItem name2;
 
         protected SampleForm(final String id, boolean nested) {
             super(id, nested ? new AddOnlyStateMachine() : new ExistingModelStateMachine(), SecurityContext.RWX);
 
-            name = new TextBoxItem("name", "Name");
+            name = new TextBoxItem("name", "Name (typeahead.js)");
             name.setRequired(true);
             name.setExpressionAllowed(false);
+
+            name2 = new TextBoxItem("name2", "Name (jQuery Autocomplete)");
+            name2.setRequired(true);
+            name2.setExpressionAllowed(false);
+
             TextBoxItem formula = new TextBoxItem("formula", "Formula");
             formula.addValidationHandler(value -> "${magic}".equals(value) ?
                     ValidationResult.OK :
@@ -78,7 +87,7 @@ public class DeploymentView extends PatternFlyViewImpl implements DeploymentPres
             NumberItem age = new NumberItem("age", "Age");
             age.setRestricted(true);
 
-            addFormItem(name, formula, new PasswordItem("password", "Password"), age,
+            addFormItem(name, name2, formula, new PasswordItem("password", "Password"), age,
                     new TextAreaItem("hobbies", "Hobbies"),
                     new SingleSelectBoxItem("color", "Favorite Color", Arrays.asList("Red", "Green", "Blue")));
             if (!nested) {
@@ -97,6 +106,7 @@ public class DeploymentView extends PatternFlyViewImpl implements DeploymentPres
     }
 
 
+    private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final Dialog dialog;
     private final SampleForm sampleForm;
@@ -104,7 +114,8 @@ public class DeploymentView extends PatternFlyViewImpl implements DeploymentPres
     private DeploymentPresenter presenter;
 
     @Inject
-    public DeploymentView(StatementContext statementContext) {
+    public DeploymentView(Dispatcher dispatcher, StatementContext statementContext) {
+        this.dispatcher = dispatcher;
         this.statementContext = statementContext;
 
         sampleForm = new SampleForm("deployment", false);
@@ -145,6 +156,7 @@ public class DeploymentView extends PatternFlyViewImpl implements DeploymentPres
                 .build();
 
         new Typeahead.ReadChildrenNamesBuilder(sampleForm.name, operation).build().attach();
+        new Autocompleter.Builder(sampleForm.name2, dispatcher, operation, new ReadChildrenNamesProcessor()).build().attach();
     }
 
     @Override
