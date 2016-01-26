@@ -33,7 +33,7 @@ gulp.task('copy', function () {
     gulp.src('bower_components/patternfly/dist/img/*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/img', {prefix: 4}));
 
-    // JavaScript
+    // DataTables
     gulp.src('bower_components/datatables.net/js/jquery.dataTables.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
     gulp.src('bower_components/datatables.net-buttons/js/dataTables.buttons.*')
@@ -41,54 +41,27 @@ gulp.task('copy', function () {
     gulp.src('bower_components/datatables.net-select/js/dataTables.select.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
 
+    // jQuery
     gulp.src('bower_components/jquery/dist/jquery.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
 
-    gulp.src('bower_components/jquery-ui/ui/core.js')
-        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
-    gulp.src('bower_components/jquery-ui/ui/widget.js')
-        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
-    gulp.src('bower_components/jquery-ui/ui/position.js')
-        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
-    gulp.src('bower_components/jquery-ui/ui/menu.js')
-        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
-    gulp.src('bower_components/jquery-ui/ui/autocomplete.js')
+    // Typeahead
+    gulp.src('bower_components/typeahead.js/dist/typeahead.bundle.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
 
-    gulp.src('bower_components/jquery-ui/ui/minified/core.min.js')
-        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 4}));
-    gulp.src('bower_components/jquery-ui/ui/minified/widget.min.js')
-        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 4}));
-    gulp.src('bower_components/jquery-ui/ui/minified/position.min.js')
-        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 4}));
-    gulp.src('bower_components/jquery-ui/ui/minified/menu.min.js')
-        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 4}));
-    gulp.src('bower_components/jquery-ui/ui/minified/autocomplete.min.js')
-        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 4}));
+    // TagManager
+    gulp.src('bower_components/tagmanager/tagmanager.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
 
-    gulp.src('bower_components/jquery-tag-editor/jquery.caret.min.js')
-        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 2}));
-    gulp.src('bower_components/jquery-tag-editor/jquery.tag-editor.js')
-        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 2}));
-    gulp.src('bower_components/jquery-tag-editor/jquery.tag-editor.min.js')
-        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 2}));
-    gulp.src('bower_components/jquery-tag-editor/jquery.tag-editor.css')
-        .pipe(copy('src/main/resources/org/jboss/hal/public/css', {prefix: 2}));
-    gulp.src('bower_components/jquery-tag-editor/delete.*')
-        .pipe(copy('src/main/resources/org/jboss/hal/public/css', {prefix: 2}));
-
+    // Bootstrap & PatternFly
     gulp.src('bower_components/patternfly/components/bootstrap/dist/js/bootstrap.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 6}));
     gulp.src('bower_components/patternfly/components/bootstrap-select/dist/js/bootstrap-select.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 6}));
     gulp.src('bower_components/patternfly/components/bootstrap-switch/dist/js/bootstrap-switch.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 6}));
-
     gulp.src('bower_components/patternfly/dist/js/patternfly.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 4}));
-
-    gulp.src('bower_components/typeahead.js/dist/typeahead.bundle.*')
-        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
 });
 
 // Clean
@@ -100,7 +73,7 @@ gulp.task('clean', function (cb) {
 });
 
 // Default task
-gulp.task('default', ['less', 'copy']);
+gulp.task('default', ['copy', 'less']);
 
 // Watch
 gulp.task('watch', function () {

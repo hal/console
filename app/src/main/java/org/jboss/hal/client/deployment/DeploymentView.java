@@ -25,8 +25,6 @@ import com.google.gwt.core.client.GWT;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.PatternFly;
-import org.jboss.hal.ballroom.autocomplete.Autocompleter;
-import org.jboss.hal.ballroom.autocomplete.ReadChildrenNamesProcessor;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
 import org.jboss.hal.ballroom.form.ButtonItem;
@@ -45,7 +43,6 @@ import org.jboss.hal.client.bootstrap.endpoint.Endpoint;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointResources;
 import org.jboss.hal.core.PatternFlyViewImpl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
@@ -106,7 +103,6 @@ public class DeploymentView extends PatternFlyViewImpl implements DeploymentPres
     }
 
 
-    private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final Dialog dialog;
     private final SampleForm sampleForm;
@@ -114,8 +110,7 @@ public class DeploymentView extends PatternFlyViewImpl implements DeploymentPres
     private DeploymentPresenter presenter;
 
     @Inject
-    public DeploymentView(Dispatcher dispatcher, StatementContext statementContext) {
-        this.dispatcher = dispatcher;
+    public DeploymentView(StatementContext statementContext) {
         this.statementContext = statementContext;
 
         sampleForm = new SampleForm("deployment", false);
@@ -156,7 +151,6 @@ public class DeploymentView extends PatternFlyViewImpl implements DeploymentPres
                 .build();
 
         new Typeahead.ReadChildrenNamesBuilder(sampleForm.name, operation).build().attach();
-        new Autocompleter.Builder(sampleForm.name2, dispatcher, operation, new ReadChildrenNamesProcessor()).build().attach();
     }
 
     @Override

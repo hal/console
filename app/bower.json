@@ -16,6 +16,7 @@
     "jquery-tag-editor": "~1.0.18",
     "jquery-ui": "~1.11.4",
     "patternfly": "~2.9.0",
+    "tagmanager": "~3.0.2",
     "typeahead.js": "~0.11.1"
   }
 }

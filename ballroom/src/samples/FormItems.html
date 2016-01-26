@@ -6,29 +6,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=9">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link href="../../../app/src/main/resources/org/jboss/hal/public/css/jquery.tag-editor.css" rel="stylesheet">
     <link href="../../../app/src/main/resources/org/jboss/hal/public/css/hal.min.css" rel="stylesheet">
 
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.caret.min.js"></script>
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.dataTables.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.tag-editor.js"></script>
-
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/core.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/widget.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/position.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/menu.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/autocomplete.js"></script>
-
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/typeahead.bundle.js"></script>
-
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/tagmanager.js"></script>
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/dataTables.buttons.js"></script>
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/dataTables.select.js"></script>
-
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap.js"></script>
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-select.js"></script>
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-switch.js"></script>
-
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/patternfly.js"></script>
 </head>
 <body>
@@ -81,17 +69,15 @@
                     </div>
                 </div>
                 <form class="form form-horizontal">
-                    <!--
-                                        <div class="alert alert-danger">
-                                            <span class="pficon pficon-error-circle-o"></span>
-                                            <span>Something went wrong! What a mess!</span>
-                                            <ul>
-                                                <li>First</li>
-                                                <li>Second</li>
-                                                <li>Third</li>
-                                            </ul>
-                                        </div>
-                    -->
+                    <div class="alert alert-danger">
+                        <span class="pficon pficon-error-circle-o"></span>
+                        <span>Something went wrong! What a mess!</span>
+                        <ul>
+                            <li>First</li>
+                            <li>Second</li>
+                            <li>Third</li>
+                        </ul>
+                    </div>
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <!--                                                       -->
                     <!-- TextBoxItem                                           -->
@@ -102,29 +88,26 @@
                         <p>Target type: <code>String</code></p>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="textBox-markup">Default</label>
-
                             <div class="col-md-9">
                                 <input type="text" id="textBox-markup" class="form-control" placeholder="Text input">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="textBoxRequired-markup">Required
-                                <abbr class="req" title="required"><i class="fa fa-asterisk"></i></abbr></label>
-
+                                <abbr class="req" title="required"><i class="fa fa-asterisk"></i></abbr>
+                            </label>
                             <div class="col-md-9">
                                 <input type="text" id="textBoxRequired-markup" class="form-control" placeholder="Required text input">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="textBoxDisabled-markup">Disabled</label>
-
                             <div class="col-md-9">
                                 <input type="text" value="read-only" id="textBoxDisabled-markup" class="form-control" disabled>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
                             <label class="col-md-3 control-label" for="textBoxRestricted-markup">Restricted</label>
-
                             <div class="col-md-9">
                                 <div class="input-group">
                                     <input type="text" value="The permissions for your role don't allow to access this data" id="textBoxRestricted-markup" class="form-control" readonly>
@@ -134,7 +117,6 @@
                         </div>
                         <div class="form-group has-error">
                             <label class="col-md-3 control-label" for="textBoxError-markup">With error</label>
-
                             <div class="col-md-9">
                                 <input type="text" value="nope" id="textBoxError-markup" class="form-control">
                                 <span class="help-block">Please correct the error</span>
@@ -148,24 +130,38 @@
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <fieldset class="form-section">
                         <legend>TextBoxItem (with type-ahead support)</legend>
-                        <p>Target type: <code>String</code></p>
+                        <ul>
+                            <li>Enter a new value or choose a suggestion from the list</li>
+                            <li>Target type: <code>String</code></li>
+                        </ul>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="textBoxTypeahead-markup">Default</label>
-
                             <div class="col-md-9">
-                                <input type="text" id="textBoxTypeahead-markup" class="form-control hal-typeahead" placeholder="Text input">
+                                <div class="input-group">
+                                    <input type="text" id="textBoxTypeahead-markup" class="form-control hal-typeahead" placeholder="Text input">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Show all options">
+                                            <i class="fa fa-angle-down"></i>
+                                        </button>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="textBoxTypeaheadDisabled-markup">Disabled</label>
-
                             <div class="col-md-9">
-                                <input type="text" value="read-only" id="textBoxTypeaheadDisabled-markup" class="form-control hal-typeahead" disabled>
+                                <div class="input-group">
+                                    <input type="text" value="read-only" id="textBoxTypeaheadDisabled-markup" class="form-control hal-typeahead" disabled>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Show all options">
+                                            <i class="fa fa-angle-down"></i>
+                                        </button>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
                             <label class="col-md-3 control-label" for="textBoxTypeaheadRestricted-markup">Restricted</label>
-
                             <div class="col-md-9">
                                 <div class="input-group">
                                     <input type="text" value="The permissions for your role don't allow to access this data" id="textBoxTypeaheadRestricted-markup" class="form-control" readonly>
@@ -175,50 +171,15 @@
                         </div>
                         <div class="form-group has-error">
                             <label class="col-md-3 control-label" for="textBoxTypeaheadError-markup">With error</label>
-
-                            <div class="col-md-9">
-                                <input type="text" value="nope" id="textBoxTypeaheadError-markup" class="form-control hal-typeahead">
-                                <span class="help-block">Please correct the error</span>
-                            </div>
-                        </div>
-                    </fieldset>
-                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
-                    <!--                                                       -->
-                    <!-- TextBoxItem with autocomplete support                 -->
-                    <!--                                                       -->
-                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
-                    <fieldset class="form-section">
-                        <legend>TextBoxItem (with autocomplete support)</legend>
-                        <p>Target type: <code>String</code></p>
-                        <div class="form-group">
-                            <label class="col-md-3 control-label" for="textBoxAutocomplete-markup">Default</label>
-
-                            <div class="col-md-9">
-                                <input type="text" id="textBoxAutocomplete-markup" class="form-control hal-autocomplete" placeholder="Text input">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-3 control-label" for="textBoxAutocompleteDisabled-markup">Disabled</label>
-
-                            <div class="col-md-9">
-                                <input type="text" value="read-only" id="textBoxAutocompleteDisabled-markup" class="form-control hal-autocomplete" disabled>
-                            </div>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <label class="col-md-3 control-label" for="textBoxAutocompleteRestricted-markup">Restricted</label>
-
                             <div class="col-md-9">
                                 <div class="input-group">
-                                    <input type="text" value="The permissions for your role don't allow to access this data" id="textBoxAutocompleteRestricted-markup" class="form-control" readonly>
-                                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                    <input type="text" value="nope" id="textBoxTypeaheadError-markup" class="form-control hal-typeahead">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Show all options">
+                                            <i class="fa fa-angle-down"></i>
+                                        </button>
+                                    </span>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="form-group has-error">
-                            <label class="col-md-3 control-label" for="textBoxAutocompleteError-markup">With error</label>
-
-                            <div class="col-md-9">
-                                <input type="text" value="nope" id="textBoxAutocompleteError-markup" class="form-control hal-autocomplete">
                                 <span class="help-block">Please correct the error</span>
                             </div>
                         </div>
@@ -237,53 +198,49 @@
                         </ul>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="expression-markup">Default</label>
-
                             <div class="col-md-9">
                                 <div class="input-group">
-                                    <input type="text" id="expression-markup" class="form-control" placeholder="Expression">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button" title="Expression Resolver">
-                                        <i class="fa fa-link"></i>
-                                    </button>
-                                </span>
+                                    <input type="text" id="expression-markup" class="form-control" placeholder="Expression"/>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Expression Resolver">
+                                            <i class="fa fa-link"></i>
+                                        </button>
+                                    </span>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="expressionDisabled-markup">Disabled</label>
-
                             <div class="col-md-9">
                                 <div class="input-group">
-                                    <input type="text" value="${read-only}" id="expressionDisabled-markup" class="form-control" disabled>
-                                <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button" title="Expression Resolver" disabled>
-                                        <i class="fa fa-link"></i>
-                                    </button>
-                                </span>
+                                    <input type="text" value="${read-only}" id="expressionDisabled-markup" class="form-control" disabled/>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Expression Resolver" disabled>
+                                            <i class="fa fa-link"></i>
+                                        </button>
+                                    </span>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
                             <label class="col-md-3 control-label" for="expressionRestricted-markup">Restricted</label>
-
                             <div class="col-md-9">
                                 <div class="input-group">
-                                    <input type="text" value="The permissions for your role don't allow to access this data" id="expressionRestricted-markup" class="form-control" readonly>
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="expressionRestricted-markup" class="form-control" readonly/>
                                     <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group has-error">
                             <label class="col-md-3 control-label" for="expressionError-markup">With error</label>
-
                             <div class="col-md-9">
                                 <div class="input-group">
-                                    <input type="text" value="nope" id="expressionError-markup" class="form-control">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button" title="Expression Resolver">
-                                        <i class="fa fa-link"></i>
-                                    </button>
-                                </span>
+                                    <input type="text" value="nope" id="expressionError-markup" class="form-control"/>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Expression Resolver">
+                                            <i class="fa fa-link"></i>
+                                        </button>
+                                    </span>
                                 </div>
                                 <span class="help-block">Please correct the error</span>
                             </div>
@@ -299,21 +256,18 @@
                         <p>Target type: <code>String</code></p>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="password-markup">Default</label>
-
                             <div class="col-md-9">
                                 <input type="password" id="password-markup" class="form-control" placeholder="Password">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="passwordDisabled-markup">Disabled</label>
-
                             <div class="col-md-9">
                                 <input type="password" value="read-only" id="passwordDisabled-markup" class="form-control" disabled>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
                             <label class="col-md-3 control-label" for="passwordRestricted-markup">Restricted</label>
-
                             <div class="col-md-9">
                                 <div class="input-group">
                                     <input type="text" value="The permissions for your role don't allow to access this data" id="passwordRestricted-markup" class="form-control" readonly>
@@ -323,7 +277,6 @@
                         </div>
                         <div class="form-group has-error">
                             <label class="col-md-3 control-label" for="passwordError-markup">With error</label>
-
                             <div class="col-md-9">
                                 <input type="password" value="nope" id="passwordError-markup" class="form-control">
                                 <span class="help-block">Please correct the error</span>
@@ -340,21 +293,18 @@
                         <p>Target type: <code>Long</code></p>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="number-markup">Default</label>
-
                             <div class="col-md-9">
                                 <input type="number" id="number-markup" class="form-control" placeholder="Number">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="numberDisabled-markup">Disabled</label>
-
                             <div class="col-md-9">
                                 <input type="number" value="0815" id="numberDisabled-markup" class="form-control" disabled>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
                             <label class="col-md-3 control-label" for="numberRestricted-markup">Restricted</label>
-
                             <div class="col-md-9">
                                 <div class="input-group">
                                     <input type="text" value="The permissions for your role don't allow to access this data" id="numberRestricted-markup" class="form-control" readonly>
@@ -364,7 +314,6 @@
                         </div>
                         <div class="form-group has-error">
                             <label class="col-md-3 control-label" for="numberError-markup">With error</label>
-
                             <div class="col-md-9">
                                 <input type="number" value="2342" id="numberError-markup" class="form-control">
                                 <span class="help-block">Please correct the error</span>
@@ -378,24 +327,24 @@
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <fieldset class="form-section">
                         <legend>TextareaItem</legend>
-                        <p>Target type: <code>String</code></p>
+                        <ul>
+                            <li>For long texts</li>
+                            <li>Target type: <code>String</code></li>
+                        </ul>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="textarea-markup">Default</label>
-
                             <div class="col-md-9">
                                 <textarea rows="3" id="textarea-markup" class="form-control" placeholder="Textarea"></textarea>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="textareaDisabled-markup">Disabled</label>
-
                             <div class="col-md-9">
                                 <textarea rows="3" id="textareaDisabled-markup" class="form-control" disabled>read-only</textarea>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
                             <label class="col-md-3 control-label" for="textareaRestricted-markup">Restricted</label>
-
                             <div class="col-md-9">
                                 <div class="input-group">
                                     <input type="text" value="The permissions for your role don't allow to access this data" id="textareaRestricted-markup" class="form-control" readonly>
@@ -405,7 +354,6 @@
                         </div>
                         <div class="form-group has-error">
                             <label class="col-md-3 control-label" for="textareaError-markup">With error</label>
-
                             <div class="col-md-9">
                                 <textarea rows="3" id="textareaError-markup" class="form-control">nope</textarea>
                                 <span class="help-block">Please correct the error</span>
@@ -422,21 +370,18 @@
                         <p>Target type: <code>Boolean</code></p>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="checkbox-markup">Default</label>
-
                             <div class="col-md-9">
                                 <input type="checkbox" id="checkbox-markup">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="checkboxDisabled-markup">Disabled</label>
-
                             <div class="col-md-9">
                                 <input type="checkbox" id="checkboxDisabled-markup" disabled>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
                             <label class="col-md-3 control-label" for="checkboxRestricted-markup">Restricted</label>
-
                             <div class="col-md-9">
                                 <div class="input-group">
                                     <input type="text" value="The permissions for your role don't allow to access this data" id="checkboxRestricted-markup" class="form-control" readonly>
@@ -446,7 +391,6 @@
                         </div>
                         <div class="form-group has-error">
                             <label class="col-md-3 control-label" for="checkboxError-markup">With error</label>
-
                             <div class="col-md-9">
                                 <input type="checkbox" id="checkboxError-markup">
                                 <span class="help-block">Please correct the error</span>
@@ -466,21 +410,18 @@
                         </ul>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="switch-markup">Default</label>
-
                             <div class="col-md-9">
                                 <input type="checkbox" id="switch-markup" class="bootstrap-switch" checked>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="switchDisabled-markup">Disabled</label>
-
                             <div class="col-md-9">
                                 <input type="checkbox" id="switchDisabled-markup" class="bootstrap-switch" disabled>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
                             <label class="col-md-3 control-label" for="switchRestricted-markup">Restricted</label>
-
                             <div class="col-md-9">
                                 <div class="input-group">
                                     <input type="text" value="The permissions for your role don't allow to access this data" id="switchRestricted-markup" class="form-control" readonly>
@@ -490,7 +431,6 @@
                         </div>
                         <div class="form-group has-error">
                             <label class="col-md-3 control-label" for="switchError-markup">With error</label>
-
                             <div class="col-md-9">
                                 <input type="checkbox" id="switchError-markup" class="bootstrap-switch">
                                 <span class="help-block">Please correct the error</span>
@@ -504,10 +444,14 @@
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <fieldset class="form-section">
                         <legend>SingleSelectBoxItem</legend>
-                        <p>Target type: <code>String</code></p>
+                        <ul>
+                            <li>Select an item from a predefined list</li>
+                            <li>Selection is required</li>
+                            <li>Target type: <code>String</code></li>
+                        </ul>
+                        <p></p>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="singleSelectBox-markup">Default</label>
-
                             <div class="col-md-9">
                                 <select id="singleSelectBox-markup" class="form-control selectpicker">
                                     <option>Lorem</option>
@@ -520,7 +464,6 @@
                         </div>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="singleSelectBoxDisabled-markup">Disabled</label>
-
                             <div class="col-md-9">
                                 <select id="singleSelectBoxDisabled-markup" class="form-control selectpicker" disabled>
                                     <option>Lorem</option>
@@ -533,7 +476,6 @@
                         </div>
                         <div class="form-group has-feedback">
                             <label class="col-md-3 control-label" for="singleSelectBoxRestricted-markup">Restricted</label>
-
                             <div class="col-md-9">
                                 <div class="input-group">
                                     <input type="text" value="The permissions for your role don't allow to access this data" id="singleSelectBoxRestricted-markup" class="form-control" readonly>
@@ -543,7 +485,6 @@
                         </div>
                         <div class="form-group has-error">
                             <label class="col-md-3 control-label" for="singleSelectBoxError-markup">With error</label>
-
                             <div class="col-md-9">
                                 <select id="singleSelectBoxError-markup" class="form-control selectpicker">
                                     <option>Lorem</option>
@@ -563,10 +504,14 @@
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <fieldset class="form-section">
                         <legend>SingleSelectBoxItem (allow empty)</legend>
+                        <ul>
+                            <li>Select an item from a predefined list</li>
+                            <li>Selection is optional</li>
+                            <li>Target type: <code>String</code></li>
+                        </ul>
                         <p>Target type: <code>String</code></p>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="singleSelectBoxAllowEmpty-markup">Default</label>
-
                             <div class="col-md-9">
                                 <select id="singleSelectBoxAllowEmpty-markup" class="form-control selectpicker">
                                     <option title="undefined"></option>
@@ -581,7 +526,6 @@
                         </div>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="singleSelectBoxAllowEmptyDisabled-markup">Disabled</label>
-
                             <div class="col-md-9">
                                 <select id="singleSelectBoxAllowEmptyDisabled-markup" class="form-control selectpicker" disabled>
                                     <option title="undefined"></option>
@@ -595,7 +539,6 @@
                         </div>
                         <div class="form-group has-feedback">
                             <label class="col-md-3 control-label" for="singleSelectBoxAllowEmptyRestricted-markup">Restricted</label>
-
                             <div class="col-md-9">
                                 <div class="input-group">
                                     <input type="text" value="The permissions for your role don't allow to access this data" id="singleSelectBoxAllowEmptyRestricted-markup" class="form-control" readonly>
@@ -605,7 +548,6 @@
                         </div>
                         <div class="form-group has-error">
                             <label class="col-md-3 control-label" for="singleSelectBoxAllowEmptyError-markup">With error</label>
-
                             <div class="col-md-9">
                                 <select id="singleSelectBoxAllowEmptyError-markup" class="form-control selectpicker">
                                     <option title="undefined"></option>
@@ -626,10 +568,13 @@
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <fieldset class="form-section">
                         <legend>MultiSelectBoxItem</legend>
-                        <p>Target type: <code>List&lt;String&gt;</code></p>
+                        <ul>
+                            <li>Select multiple items from a predefined list</li>
+                            <li>Selection is optional</li>
+                            <li>Target type: <code>List&lt;String&gt;</code></li>
+                        </ul>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="multiSelectBox-markup">Default</label>
-
                             <div class="col-md-9">
                                 <select id="multiSelectBox-markup" class="form-control selectpicker" multiple>
                                     <option>Lorem</option>
@@ -642,7 +587,6 @@
                         </div>
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="multiSelectBoxDisabled-markup">Disabled</label>
-
                             <div class="col-md-9">
                                 <select id="multiSelectBoxDisabled-markup" class="form-control selectpicker" multiple disabled>
                                     <option>Lorem</option>
@@ -655,7 +599,6 @@
                         </div>
                         <div class="form-group has-feedback">
                             <label class="col-md-3 control-label" for="multiSelectBoxRestricted-markup">Restricted</label>
-
                             <div class="col-md-9">
                                 <div class="input-group">
                                     <input type="text" value="The permissions for your role don't allow to access this data" id="multiSelectBoxRestricted-markup" class="form-control" readonly>
@@ -665,7 +608,6 @@
                         </div>
                         <div class="form-group has-error">
                             <label class="col-md-3 control-label" for="multiSelectBoxError-markup">With error</label>
-
                             <div class="col-md-9">
                                 <select id="multiSelectBoxError-markup" class="form-control selectpicker" multiple>
                                     <option>Lorem</option>
@@ -680,41 +622,156 @@
                     </fieldset>
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <!--                                                       -->
-                    <!-- PropertiesItem                                        -->
+                    <!-- ListItem                                              -->
                     <!--                                                       -->
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <fieldset class="form-section">
-                        <legend>PropertiesItem</legend>
-                        <p>Target type: <code>Map&lt;String, String&gt;</code></p>
+                        <legend>ListItem</legend>
+                        <ul>
+                            <li>Manage a list of items</li>
+                            <li>Enter items with return</li>
+                            <li>Remove items by clicking on 'x' or by pressing backspace in the empty text input</li>
+                            <li>Target type: <code>List&lt;String&gt;</code></li>
+                        </ul>
                         <div class="form-group">
-                            <label class="col-md-3 control-label" for="properties-markup">Default</label>
-
+                            <label class="col-md-3 control-label" for="listItem-markup">Default</label>
                             <div class="col-md-9">
-                                <textarea id="properties-markup" class="form-control properties"></textarea>
+                                <input type="text" id="listItem-markup" class="form-control hal-tagmanager" placeholder="Text input">
+                                <div id="listItem-markup-container" class="hal-tagmanager-container"></div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="col-md-3 control-label" for="propertiesDisabled-markup">Disabled</label>
-
+                        <div class="form-group disabled">
+                            <label class="col-md-3 control-label" for="listItemDisabled-markup">Disabled</label>
                             <div class="col-md-9 disabled">
-                                <textarea id="propertiesDisabled-markup" class="form-control properties">dis=abled</textarea>
+                                <input type="text" value="read-only" id="listItemDisabled-markup" class="form-control hal-tagmanager" disabled>
+                                <div id="listItemDisabled-markup-container" class="hal-tagmanager-container"></div>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
-                            <label class="col-md-3 control-label" for="propertiesRestricted-markup">Restricted</label>
-
+                            <label class="col-md-3 control-label" for="listItemRestricted-markup">Restricted</label>
                             <div class="col-md-9">
                                 <div class="input-group">
-                                    <input type="text" value="The permissions for your role don't allow to access this data" id="propertiesRestricted-markup" class="form-control" readonly>
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="listItemRestricted-markup" class="form-control" readonly>
                                     <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group has-error">
-                            <label class="col-md-3 control-label" for="propertiesError-markup">With error</label>
-
+                            <label class="col-md-3 control-label" for="listItemError-markup">With error</label>
                             <div class="col-md-9">
-                                <textarea id="propertiesError-markup" class="form-control properties">valid=property nope foo=bar</textarea>
+                                <input type="text" value="nope" id="listItemError-markup" class="form-control hal-tagmanager">
+                                <div id="listItemError-markup-container" class="hal-tagmanager-container"></div>
+                                <span class="help-block">Please correct the error</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- ListItem with type-ahead support                      -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <fieldset class="form-section">
+                        <legend>ListItem (with type-ahead support)</legend>
+                        <ul>
+                            <li>Manage a list of items</li>
+                            <li>Enter items with return or choose a suggestion from the list</li>
+                            <li>Remove items by clicking on 'x' or by pressing backspace in the empty text input</li>
+                            <li>Target type: <code>List&lt;String&gt;</code></li>
+                        </ul>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="listItemTypeahead-markup">Default</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" id="listItemTypeahead-markup" class="form-control hal-tagmanager hal-typeahead" placeholder="Text input">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Show all options">
+                                            <i class="fa fa-angle-down"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                                <div id="listItemTypeahead-markup-container" class="hal-tagmanager-container"></div>
+                            </div>
+                        </div>
+                        <div class="form-group disabled">
+                            <label class="col-md-3 control-label" for="listItemTypeaheadDisabled-markup">Disabled</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="read-only" id="listItemTypeaheadDisabled-markup" class="form-control hal-tagmanager hal-typeahead" disabled>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Show all options">
+                                            <i class="fa fa-angle-down"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                                <div id="listItemTypeaheadDisabled-markup-container" class="hal-tagmanager-container"></div>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="col-md-3 control-label" for="listItemTypeaheadRestricted-markup">Restricted</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="listItemTypeaheadRestricted-markup" class="form-control" readonly>
+                                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="col-md-3 control-label" for="listItemTypeaheadError-markup">With error</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="nope" id="listItemTypeaheadError-markup" class="form-control hal-tagmanager hal-typeahead">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Show all options">
+                                            <i class="fa fa-angle-down"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                                <div id="listItemTypeaheadError-markup-container" class="hal-tagmanager-container"></div>
+                                <span class="help-block">Please correct the error</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- PropertiesItem                                        -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <fieldset class="form-section">
+                        <legend>PropertiesItem</legend>
+                        <ul>
+                            <li>Manage a list of properties</li>
+                            <li>Enter properties using <code>key=value</code></li>
+                            <li>Remove items by clicking on 'x' or by pressing backspace in the empty text input</li>
+                            <li>Target type: <code>Map&lt;String, String&gt;</code></li>
+                        </ul>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="propertiesItem-markup">Default</label>
+                            <div class="col-md-9">
+                                <input type="text" id="propertiesItem-markup" class="form-control hal-properties"/>
+                                <div id="propertiesItem-markup-container" class="hal-tagmanager-container"></div>
+                            </div>
+                        </div>
+                        <div class="form-group disabled">
+                            <label class="col-md-3 control-label" for="propertiesItemDisabled-markup">Disabled</label>
+                            <div class="col-md-9 disabled">
+                                <input type="text" id="propertiesItemDisabled-markup" class="form-control hal-properties" disabled/>
+                                <div id="propertiesItemDisabled-markup-container" class="hal-tagmanager-container"></div>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="col-md-3 control-label" for="propertiesItemRestricted-markup">Restricted</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="propertiesItemRestricted-markup" class="form-control" readonly>
+                                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="col-md-3 control-label" for="propertiesItemError-markup">With error</label>
+                            <div class="col-md-9">
+                                <input type="text" id="propertiesItemError-markup" class="form-control hal-properties"/>
+                                <div id="propertiesItemError-markup-container" class="hal-tagmanager-container"></div>
                                 <span class="help-block">Please correct the error</span>
                             </div>
                         </div>
@@ -793,6 +850,10 @@
 <script>
     // Initialize Boostrap-select
     $(document).ready(function () {
+        $('[data-toggle=tooltip]').tooltip();
+        $('.bootstrap-switch').bootstrapSwitch();
+        $('.selectpicker').selectpicker();
+
         var bloodhoundOptions = {
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -803,78 +864,96 @@
             }
         };
         var bestPictures = new Bloodhound(bloodhoundOptions);
-        $('.hal-typeahead').typeahead({
-                    highlight: true
-                },
-                {
-                    name: 'best-pictures',
-                    display: 'value',
-                    limit: 50,
-                    source: bestPictures,
-                    templates: {
-                        empty: [
-                            '<div class="empty-message">',
-                            '<span class="pficon pficon-warning-triangle-o"></span>',
-                            'This is the error message shown if the query did not return results. The error message might contain further details that extend beyond one line.',
-                            '</div>'
-                        ].join('\n')
-                    }
-                });
 
-        $('.hal-autocomplete').autocomplete({
-            source: function (request, response) {
-                $.getJSON("https://twitter.github.io/typeahead.js/data/films/queries/" + request.term + ".json", response);
-            },
-            position: {my: "left top+2", at: "left bottom", collision: "none"},
-            minLength: 1
-        });
-        $('.hal-autocomplete').autocomplete("instance")._resizeMenu = function () {
-            var ul = this.menu.element;
-            ul.outerWidth(Math.max(
-                    ul.width("").outerWidth() + 1,
-                    this.element.outerWidth() + 1 // add one pixel!
-            ));
-        };
-
-        $('[data-toggle=tooltip]').tooltip();
-        $('.selectpicker').selectpicker();
-        $('.bootstrap-switch').bootstrapSwitch();
-
-        function validateTags(field, editor, tags) {
-            $('li', editor).each(function () {
-                var li = $(this);
-                var value = li.find('.tag-editor-tag').html();
-                if (!/^([\w\d]+)=([\w\d]+)$/.test(value)) {
-                    li.addClass('invalid-property');
-                    li.attr('title', 'Invalid property');
-                } else {
-                    li.removeClass('invalid-property');
-                    li.removeAttr('title');
-                }
-            });
-        }
-
-        $('.properties').tagEditor({
-            delimiter: ', ',
-            placeholder: "Enter properties (key=value)",
-            forceLowercase: false,
-            sortable: false,
-            onChange: validateTags,
-            autocomplete: {
-                source: function (request, response) {
-                    $.getJSON("https://twitter.github.io/typeahead.js/data/films/queries/" + request.term + ".json", response);
-                },
-                position: {my: "left top+6", at: "left bottom", collision: "none"},
-                minLength: 1
+        $('.hal-typeahead').typeahead({highlight: true}, {
+            name: 'best-pictures',
+            display: 'value',
+            limit: 50,
+            source: bestPictures,
+            templates: {
+                empty: '<div class="empty-message"><span class="pficon pficon-warning-triangle-o"></span>No results</div>'
             }
         });
-        validateTags(null, $('#propertiesError-markup').tagEditor('getTags')[0].editor);
-        $('.disabled .tag-editor, .disabled .tag-editor-tag, .disabled .tag-editor-delete')
-                .on('click', function (event) {
-                    event.stopPropagation();
-                    event.preventDefault();
-                    $('.disabled input[type=text]').attr('disabled', 'disabled');
-                });
+
+        $('#listItem-markup').tagsManager({
+            delimiters: [13],
+            tagsContainer: "#listItem-markup-container",
+            tagClass: "hal-tagmanager-tag"
+        });
+        $('#listItemDisabled-markup').tagsManager({
+            delimiters: [13],
+            tagsContainer: "#listItemDisabled-markup-container",
+            tagClass: "hal-tagmanager-tag",
+            prefilled: ["dis", "abled"]
+        });
+        $('#listItemError-markup').tagsManager({
+            delimiters: [13],
+            tagsContainer: "#listItemError-markup-container",
+            tagClass: "hal-tagmanager-tag",
+            prefilled: ["with", "error"]
+        });
+
+        var tagManagerApi = $('#listItemTypeahead-markup').tagsManager({
+            delimiters: [13],
+            tagsContainer: "#listItemTypeahead-markup-container",
+            tagClass: "hal-tagmanager-tag"
+        });
+        tagManagerApi.on('tm:refresh', function () {
+            $('#listItemTypeahead-markup').typeahead("val", "");
+            $('#listItemTypeahead-markup').typeahead("close");
+        });
+        $('#listItemTypeahead-markup').on('typeahead:select', function (e, d) {
+            tagManagerApi.tagsManager("pushTag", d.value);
+        });
+
+        $('#listItemTypeaheadDisabled-markup').tagsManager({
+            delimiters: [13],
+            tagsContainer: "#listItemTypeaheadDisabled-markup-container",
+            tagClass: "hal-tagmanager-tag",
+            prefilled: ["dis", "abled"]
+        });
+
+        var tagManagerErrorApi = $('#listItemTypeaheadError-markup').tagsManager({
+            delimiters: [13],
+            tagsContainer: "#listItemTypeaheadError-markup-container",
+            tagClass: "hal-tagmanager-tag",
+            prefilled: ["with", "error"]
+        });
+        tagManagerErrorApi.on('tm:refresh', function () {
+            $('#listItemTypeaheadError-markup').typeahead("val", "");
+            $('#listItemTypeaheadError-markup').typeahead("close");
+        });
+        $('#listItemTypeaheadError-markup').on('typeahead:selected', function (e, d) {
+            tagManagerErrorApi.tagsManager("pushTag", d.value);
+        });
+
+        $('#propertiesItem-markup').tagsManager({
+            delimiters: [13],
+            tagsContainer: "#propertiesItem-markup-container",
+            tagClass: "hal-tagmanager-tag",
+            validator: function (tag) {
+                var valid = /^([\w\d]+)=([\w\d]+)$/.test(tag);
+                if (!valid) {
+                    console.error("Not a valid property: '" + tag + "'");
+                }
+                return valid;
+            }
+        });
+        $('#propertiesItemDisabled-markup').tagsManager({
+            delimiters: [13],
+            tagsContainer: "#propertiesItemDisabled-markup-container",
+            tagClass: "hal-tagmanager-tag",
+            prefilled: ["dis=abled"]
+        });
+        $('#propertiesItemError-markup').tagsManager({
+            delimiters: [13],
+            tagsContainer: "#propertiesItemError-markup-container",
+            tagClass: "hal-tagmanager-tag",
+            prefilled: ["with=error"],
+            validator: function (tag) {
+                return /^([\w\d]+)=([\w\d]+)$/.test(tag);
+            }
+        });
     });
 </script>
 </body>

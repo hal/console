@@ -1,3 +1,6 @@
+/*
+ * Generic form classes
+ */
 .form-section {
   margin-top: 20px;
 }
@@ -94,6 +97,9 @@ abbr.req {
   vertical-align: text-top;
 }
 
+/*
+ * Bootstrap Select classes
+ */
 .bootstrap-select.btn-group.disabled .btn:focus {
   box-shadow: none !important;
 }
@@ -123,57 +129,9 @@ abbr.req {
   }
 }
 
-.tag-editor {
-  .form-control;
-  padding: 0;
-
-  .placeholder {
-    padding: 0 6px;
-    > div {
-      padding: 0;
-      margin: 0;
-    }
-  }
-
-  .tag-editor-spacer {
-    width: 6px;
-  }
-
-  .tag-editor-tag {
-    color: #333;
-  }
-  .tag-editor-tag, .tag-editor-delete {
-    background-color: #f1f1f1;
-  }
-
-  .invalid-property {
-    .tag-editor-tag {
-      color: @state-danger-text;
-    }
-    .tag-editor-tag, .tag-editor-delete {
-      background-color: @state-danger-bg;
-    }
-  }
-}
-
-.disabled .tag-editor {
-  color: #969696;
-  background-color: #f8f8f8;
-  cursor: not-allowed;
-
-  .tag-editor-tag, .tag-editor-delete {
-    cursor: not-allowed;
-  }
-  .tag-editor-delete:hover i {
-    background-position: inherit;
-  }
-}
-
-.has-error .tag-editor {
-  border-color: #a94442;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-}
-
+/*
+ * HAL specific typeahead.js classes beyond 'typeahead.less'
+ */
 .tt-dataset .empty-message {
   padding-left: 30px;
   padding-right: 5px;
@@ -189,4 +147,39 @@ abbr.req {
   max-height: 150px;
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+/*
+ * Tagmanager classes
+ */
+.hal-tagmanager-container {
+  margin: 0;
+  padding: 0;
+}
+
+.hal-tagmanager-tag {
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 5px 5px 0 0;
+  padding: 2px 4px;
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.disabled {
+  .tm-tag {
+    color: #999;
+    cursor: not-allowed;
+  }
+  .tm-tag-remove {
+    pointer-events: none;
+  }
+}
+
+.has-error {
+  .tm-tag {
+    background-color: #fbe7e7;
+    border-color: #c00;
+  }
 }
