@@ -31,13 +31,14 @@ import com.google.gwt.event.shared.SimpleEventBus;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.dom.Node;
+import elemental.html.ButtonElement;
 import elemental.html.DivElement;
 import elemental.html.LabelElement;
 import elemental.html.ParagraphElement;
 import elemental.html.SpanElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.IdBuilder;
-import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
@@ -64,7 +65,6 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
-    private static final String EXPRESSION_CONTAINER = "expressionContainer";
     private static final String RESTRICTED_ELEMENT = "restrictedElement";
     private static final String FORM_ITEM_GROUP = "formItemGroup";
 
@@ -79,9 +79,11 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     private SuggestHandler suggestHandler;
 
     // Form.State#EDITING elements
-    private final DivElement inputGroupContainer;
     private final LabelElement inputLabelElement;
-    private final SpanElement expressionContainer;
+    private final DivElement inputGroupContainer;
+    private final SpanElement inputButtonContainer;
+    private final ButtonElement expressionButton;
+    private final ButtonElement showAllButton;
     private final DivElement editingRestricted;
     private final InputElement<T> inputElement;
     final DivElement editingRoot;
@@ -112,7 +114,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         this.validationHandlers = new LinkedList<>();
         resetValidationHandlers();
 
-        // create editing elements
+        // editing elements
         editingRoot = new Elements.Builder().div().css(formGroup).end().build();
         inputLabelElement = new Elements.Builder()
                 .label(label)
@@ -123,22 +125,24 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         errorText = new Elements.Builder().span().css(helpBlock).end().build();
         Elements.setVisible(errorText, false);
 
-        // @formatter:off
-        Elements.Builder inputGroupBuilder = new Elements.Builder()
-            .div().css(inputGroup)
-                .span().css(inputGroupBtn).rememberAs(EXPRESSION_CONTAINER)
-                    .button().css(btn, btnDefault)
-                        .on(click, event -> ResolveExpressionEvent.fire(this, getExpressionValue()))
-                        .title(CONSTANTS.expressionResolver())
-                        .start("i").css(fontAwesome("link")).end()
-                    .end()
-                .end()
-            .end();
-        // @formatter:on
-        inputGroupContainer = inputGroupBuilder.build();
-        expressionContainer = inputGroupBuilder.referenceFor(EXPRESSION_CONTAINER);
+        inputGroupContainer = new Elements.Builder().div().css(inputGroup).end().build();
+        inputButtonContainer = new Elements.Builder().span().css(inputGroupBtn).end().build();
 
         // @formatter:off
+        expressionButton = new Elements.Builder()
+            .button().css(btn, btnDefault)
+                .on(click, event -> ResolveExpressionEvent.fire(this, getExpressionValue()))
+                .title(CONSTANTS.expressionResolver())
+                .start("i").css(fontAwesome("link")).end()
+            .end().build();
+
+        showAllButton = new Elements.Builder()
+            .button().css(btn, btnDefault)
+                .on(click, event -> showAll())
+                .title(CONSTANTS.showAll())
+                .start("i").css(fontAwesome("angle-down")).end()
+            .end().build();
+
         Elements.Builder restrictedBuilder = new Elements.Builder()
             .div().css(inputGroup)
                 .input(text).id(IdBuilder.build(name, RESTRICTED))
@@ -149,12 +153,13 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
                 .end()
             .end();
         // @formatter:on
+
         elemental.html.InputElement restrictedInput = restrictedBuilder.referenceFor(RESTRICTED_ELEMENT);
         restrictedInput.setReadOnly(true);
         restrictedInput.setValue(CONSTANTS.restricted());
         editingRestricted = restrictedBuilder.build();
 
-        // create readonly elements
+        // readonly elements
         readonlyRoot = new Elements.Builder().div().css(formGroup).end().build();
         readonlyLabelElement = new Elements.Builder()
                 .label()
@@ -211,10 +216,14 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         }
     }
 
+    /**
+     * Calls {@code SuggestHandler.attach()} in case there was one registered. If you override this method, please
+     * call {@code super.attach()} to keep this behaviour.
+     */
     @Override
     public void attach() {
-        if (suggestHandler instanceof Typeahead) {
-            ((Typeahead) suggestHandler).attach();
+        if (suggestHandler instanceof Attachable) {
+            ((Attachable) suggestHandler).attach();
         }
     }
 
@@ -243,21 +252,13 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     protected void setReadonlyValue(final T value) {
         String text = value == null ? "" : String.valueOf(value);
-        valueElement.setInnerText(text);
+        valueElement.setTextContent(text);
     }
 
     @Override
     public void clearValue() {
         inputElement.clearValue();
         setReadonlyValue(null);
-    }
-
-    @Override
-    public void addSuggestHandler(final SuggestHandler suggestHandler) {
-        this.suggestHandler = suggestHandler;
-        if (this.suggestHandler instanceof Typeahead) {
-            ((Typeahead) this.suggestHandler).setFormItem(this);
-        }
     }
 
     void signalChange(final T value) {
@@ -427,13 +428,17 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         // only change the UI if expressions are supported and switch is necessary
         if (supportsExpressions() && !isRestricted() && on != inExpressionState()) {
             if (on) {
-                inputContainer.removeChild(inputElement.asElement());
-                inputGroupContainer.insertBefore(inputElement.asElement(), expressionContainer);
-                inputContainer.insertBefore(inputGroupContainer, errorText);
+                if (inShowAllState()) {
+                    inputButtonContainer.insertBefore(expressionButton, showAllButton);
+                } else {
+                    addInputButton(expressionButton);
+                }
             } else {
-                inputGroupContainer.removeChild(inputElement.asElement());
-                inputContainer.removeChild(inputGroupContainer);
-                inputContainer.insertBefore(inputElement.asElement(), errorText);
+                if (inShowAllState()) {
+                    inputButtonContainer.removeChild(expressionButton);
+                } else {
+                    removeInputButtons();
+                }
             }
             return true;
         }
@@ -441,7 +446,65 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     private boolean inExpressionState() {
-        return inputContainer.contains(inputGroupContainer);
+        return inputContainer.contains(inputGroupContainer) &&
+                inputGroupContainer.contains(inputButtonContainer) &&
+                inputButtonContainer.contains(expressionButton);
+    }
+
+
+    // ------------------------------------------------------ suggestion handler
+
+    @Override
+    public void registerSuggestHandler(final SuggestHandler suggestHandler) {
+        this.suggestHandler = suggestHandler;
+        this.suggestHandler.setFormItem(this);
+        toggleShowAll(true);
+    }
+
+    private void showAll() {
+        if (suggestHandler != null) {
+            suggestHandler.showAll();
+        }
+    }
+
+    private void toggleShowAll(final boolean on) {
+        if (suggestHandler != null && !restricted && on != inShowAllState()) {
+            if (on) {
+                if (inExpressionState()) {
+                    inputButtonContainer.appendChild(showAllButton);
+                } else {
+                    addInputButton(showAllButton);
+                }
+            } else {
+                if (inExpressionState()) {
+                    inputButtonContainer.removeChild(showAllButton);
+                } else {
+                    removeInputButtons();
+                }
+            }
+        }
+    }
+
+    private boolean inShowAllState() {
+        return inputContainer.contains(inputGroupContainer) &&
+                inputGroupContainer.contains(inputButtonContainer) &&
+                inputButtonContainer.contains(showAllButton);
+    }
+
+    private void addInputButton(ButtonElement button) {
+        inputContainer.removeChild(inputElement.asElement());
+        Elements.removeChildrenFrom(inputGroupContainer);
+        inputButtonContainer.appendChild(button);
+        inputGroupContainer.appendChild(inputElement.asElement());
+        inputGroupContainer.appendChild(inputButtonContainer);
+        inputContainer.insertBefore(inputGroupContainer, inputContainer.getFirstChild());
+    }
+
+    private void removeInputButtons() {
+        Elements.removeChildrenFrom(inputGroupContainer);
+        Elements.removeChildrenFrom(inputButtonContainer);
+        inputContainer.removeChild(inputGroupContainer);
+        inputContainer.insertBefore(inputElement.asElement(), errorText);
     }
 
 

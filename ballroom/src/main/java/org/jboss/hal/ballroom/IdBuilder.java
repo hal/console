@@ -21,6 +21,7 @@ package org.jboss.hal.ballroom;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.Widget;
 import org.jetbrains.annotations.NonNls;
 
@@ -56,6 +57,10 @@ public final class IdBuilder {
 
     public static void set(elemental.dom.Element element, @NonNls String id) {
         element.setId(id);
+    }
+
+    public static String uniquId() {
+        return Document.get().createUniqueId();
     }
 
     private IdBuilder() {}

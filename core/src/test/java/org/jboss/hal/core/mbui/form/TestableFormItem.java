@@ -56,7 +56,7 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void addSuggestHandler(final SuggestHandler suggestHandler) {
+    public void registerSuggestHandler(final SuggestHandler suggestHandler) {
 
     }
 

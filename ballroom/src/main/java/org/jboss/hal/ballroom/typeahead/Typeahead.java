@@ -29,6 +29,7 @@ import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
+import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.config.Endpoints;
@@ -48,8 +49,8 @@ import static org.jboss.hal.resources.Names.VALUE;
 
 /**
  * A type ahead engine based on <a href="https://twitter.github.io/typeahead.js/">typeahead.js</a> ready to be used
- * with form items. Use one of the builders to setup an instance and call {@link Typeahead#attach()} after the form item
- * was attached to the DOM.
+ * with form items. Use one of the builders to setup an instance and call {@link Typeahead#attach()} after the form
+ * item was attached to the DOM.
  * <p>
  * <pre>
  * ResourceAddress address = AddressTemplate.of("/socket-binding-group=standard-sockets")
@@ -59,12 +60,12 @@ import static org.jboss.hal.resources.Names.VALUE;
  *         .build();
  *
  * Form&lt;Foo&gt; form = ...;
- * form.getItem("foo").addSuggestHandler(new Typeahead.ReadChildrenNamesBuilder(operation).build());
+ * form.getItem("foo").registerSuggestHandler(new Typeahead.ReadChildrenNamesBuilder(operation).build());
  * </pre>
  *
  * @see <a href="https://twitter.github.io/typeahead.js/">https://twitter.github.io/typeahead.js/</a>
  */
-public class Typeahead implements SuggestHandler {
+public class Typeahead implements SuggestHandler, Attachable {
 
     public static class Builder {
 
@@ -105,7 +106,7 @@ public class Typeahead implements SuggestHandler {
                         JsArrayOf<JsJsonObject> objects = JsArrayOf.create();
                         for (ModelNode child : children) {
                             String value = child.asString();
-                            if (query == null || query.equals("") || value.contains(query)) {
+                            if (SHOW_ALL_VALUE.equals(query) || value.contains(query)) {
                                 JsJsonObject object = JsJsonObject.create();
                                 object.put(VALUE, value);
                                 objects.push(object);
@@ -135,19 +136,45 @@ public class Typeahead implements SuggestHandler {
         @JsMethod(namespace = GLOBAL, name = "$")
         public native static Bridge select(String selector);
 
+        public native void focus();
+
         public native void on(String event, SelectListener listener);
 
         public native void typeahead(Options options, Dataset dataset);
+
+        public native String typeahead(String method);
+
+        public native void typeahead(String method, String value);
+
+        @JsMethod(name = "typeahead")
+        public native void typeaheadClose(String method);
 
         @JsOverlay
         public final void onSelect(SelectListener listener) {
             on(SELECTED_EVENT, listener);
         }
+
+        @JsOverlay
+        public final String getValue() {
+            return typeahead(VAL);
+        }
+
+        @JsOverlay
+        public final void setValue(String value) {
+            typeahead(VAL, value);
+        }
+
+        @JsOverlay
+        public final void close() {
+            typeaheadClose(CLOSE);
+        }
     }
 
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
+    private static final String CLOSE = "close";
     private static final String SELECTED_EVENT = "typeahead:selected";
+    private static final String VAL = "val";
 
     private final Options options;
     private final Dataset dataset;
@@ -181,7 +208,7 @@ public class Typeahead implements SuggestHandler {
             DmrPayloadProcessor payloadProcessor = new DmrPayloadProcessor();
             ModelNode payload = payloadProcessor.processPayload(POST, APPLICATION_DMR_ENCODED, response);
             if (!payload.isFailure()) {
-                String query = String.valueOf(formItem().getValue());
+                String query = Bridge.select(formItemSelector()).getValue();
                 ModelNode result = payload.get(RESULT);
                 return builder.resultProcessor.process(query, result);
             }
@@ -211,19 +238,35 @@ public class Typeahead implements SuggestHandler {
         dataset.templates = templates;
     }
 
-    public void attach() {
-        Bridge.select("#" + formItem().getId(EDITING)).typeahead(options, dataset);
-    }
-
+    @Override
     public void setFormItem(FormItem formItem) {
         this.formItem = formItem;
+    }
+
+    @Override
+    public void attach() {
+        Bridge.select(formItemSelector()).typeahead(options, dataset);
+    }
+
+    public void showAll() {
+        Bridge bridge = Bridge.select(formItemSelector());
+        bridge.setValue(SHOW_ALL_VALUE);
+        bridge.focus();
+    }
+
+    public Dataset getDataset() {
+        return dataset;
     }
 
     private FormItem formItem() {
         if (formItem == null) {
             throw new IllegalStateException(
-                    "No form item assigned. Please call Typeahead.setFormItem(FormItem) before using this instance as a SuggestHandler.");
+                    "No form item assigned. Please call Typeahead.setFormItem(FormItem) before using this as a SuggestHandler.");
         }
         return formItem;
+    }
+
+    private String formItemSelector() {
+        return "#" + formItem().getId(EDITING);
     }
 }

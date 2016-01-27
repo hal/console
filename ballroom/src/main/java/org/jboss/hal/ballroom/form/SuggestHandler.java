@@ -22,9 +22,18 @@
 package org.jboss.hal.ballroom.form;
 
 /**
- * A marker interface for a class which can suggests values for form items.
+ * An interface to suggest values for form items.
  *
  * @author Harald Pehl
  */
 public interface SuggestHandler {
+
+    /**
+     * Given this value the remote service should return all suggestions.
+     */
+    String SHOW_ALL_VALUE = "*";
+
+    void showAll();
+
+    void setFormItem(FormItem formItem);
 }

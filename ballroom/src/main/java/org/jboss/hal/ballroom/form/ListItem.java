@@ -23,52 +23,44 @@ package org.jboss.hal.ballroom.form;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
-import com.google.gwt.regexp.shared.RegExp;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.form.TagsManager.Bridge;
+import org.jboss.hal.ballroom.typeahead.Typeahead;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import static org.jboss.hal.ballroom.IdBuilder.build;
 import static org.jboss.hal.ballroom.IdBuilder.uniquId;
+import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
  * @author Harald Pehl
  */
-public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
+public class ListItem extends AbstractFormItem<List<String>> {
 
-    private final RegExp PROPERTY_REGEX = RegExp.compile("^([\\w\\d]+)=([\\w\\d]+)$"); //NON-NLS
-    private PropertiesElement propertiesElement;
+    private ListElement listElement;
     private Element tagsContainer;
 
-    public PropertiesItem(final String name, final String label) {
+    public ListItem(final String name, final String label) {
         super(name, label);
     }
 
     @Override
-    protected InputElement<Map<String, String>> newInputElement() {
-        propertiesElement = new PropertiesElement();
-        propertiesElement.setClassName(formControl + " " + properties);
-        Bridge.element(propertiesElement.asElement()).onRefresh((event, cst) -> {
-            Map<String, String> value = Splitter.on(',')
+    protected InputElement<List<String>> newInputElement() {
+        listElement = new ListElement();
+        listElement.setClassName(formControl + " " + tags);
+        TagsManager.Bridge.element(listElement.asElement()).onRefresh((event, cst) -> {
+            List<String> value = Splitter.on(',')
                     .trimResults()
                     .omitEmptyStrings()
-                    .withKeyValueSeparator('=')
-                    .split(cst);
+                    .splitToList(cst);
             setModified(true);
             setUndefined(value.isEmpty());
             signalChange(value);
         });
-        return propertiesElement;
+        return listElement;
     }
 
     @Override
@@ -85,12 +77,26 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
     }
 
     @Override
+    public void registerSuggestHandler(final SuggestHandler suggestHandler) {
+        super.registerSuggestHandler(suggestHandler);
+        if (suggestHandler instanceof Typeahead) {
+            Typeahead typeahead = (Typeahead) suggestHandler;
+            Typeahead.Bridge.select(getId(EDITING)).onSelect((event, data) -> {
+                TagsManager.Bridge.element(listElement.asElement()).addTag(typeahead.getDataset().display.render(data));
+            });
+            TagsManager.Bridge.element(listElement.asElement()).onRefresh((event, cst) -> {
+                Typeahead.Bridge.select(getId(EDITING)).setValue("");
+                Typeahead.Bridge.select(getId(EDITING)).close();
+            });
+        }
+    }
+
+    @Override
     public void attach() {
         super.attach();
         TagsManager.Options options = TagsManager.Defaults.get();
         options.tagsContainer = "#" + tagsContainer.getId();
-        options.validator = PROPERTY_REGEX::test;
-        Bridge.element(propertiesElement.asElement()).tagsManager(options);
+        TagsManager.Bridge.element(listElement.asElement()).tagsManager(options);
     }
 
     @Override
@@ -98,33 +104,29 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
         return false;
     }
 
-    public void setProperties(final Map<String, String> properties) {
-        propertiesElement.setValue(properties);
-    }
 
-
-    static class PropertiesElement extends InputElement<Map<String, String>> {
+    static class ListElement extends InputElement<List<String>> {
 
         final elemental.html.InputElement element;
 
-        PropertiesElement() {
+        ListElement() {
             element = Browser.getDocument().createInputElement();
             element.setType("text"); //NON-NLS
         }
 
         @Override
-        public Map<String, String> getValue() {
-            return asProperties(Bridge.element(asElement()).getTags());
+        public List<String> getValue() {
+            return TagsManager.Bridge.element(asElement()).getTags();
         }
 
         @Override
-        public void setValue(final Map<String, String> value) {
-            Bridge.element(asElement()).setTags(asTags(value));
+        public void setValue(final List<String> value) {
+            TagsManager.Bridge.element(asElement()).setTags(value);
         }
 
         @Override
         public void clearValue() {
-            Bridge.element(asElement()).removeAll();
+            TagsManager.Bridge.element(asElement()).removeAll();
         }
 
         @Override
@@ -173,7 +175,7 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
 
         @Override
         public String getText() {
-            return Joiner.on(',').join(asTags(getValue()));
+            return Joiner.on(',').join(getValue());
         }
 
         @Override
@@ -185,32 +187,5 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
         public Element asElement() {
             return element;
         }
-    }
-
-    private static Map<String, String> asProperties(final List<String> tags) {
-        if (tags.isEmpty()) {
-            return Collections.emptyMap();
-        }
-        Map<String, String> properties = new HashMap<>();
-        Splitter splitter = Splitter.on('=').omitEmptyStrings().trimResults().limit(2);
-        for (String tag : tags) {
-            Iterable<String> split = splitter.split(tag);
-            if (Iterables.size(split) == 2) {
-                Iterator<String> iterator = split.iterator();
-                properties.put(split.iterator().next(), iterator.next());
-            }
-        }
-        return properties;
-    }
-
-    private static List<String> asTags(final Map<String, String> properties) {
-        if (properties.isEmpty()) {
-            return Collections.emptyList();
-        }
-        List<String> tags = new ArrayList<>();
-        for (Map.Entry<String, String> entry : properties.entrySet()) {
-            tags.add(entry.getKey() + "=" + entry.getValue());
-        }
-        return tags;
     }
 }

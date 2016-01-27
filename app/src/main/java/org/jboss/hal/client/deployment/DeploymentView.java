@@ -30,6 +30,7 @@ import org.jboss.hal.ballroom.form.ButtonItem;
 import org.jboss.hal.ballroom.form.DefaultForm;
 import org.jboss.hal.ballroom.form.ExistingModelStateMachine;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.ListItem;
 import org.jboss.hal.ballroom.form.NumberItem;
 import org.jboss.hal.ballroom.form.PasswordItem;
 import org.jboss.hal.ballroom.form.PropertiesItem;
@@ -60,6 +61,7 @@ import static org.jboss.hal.resources.Names.NAME_KEY;
 /**
  * @author Harald Pehl
  */
+@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class DeploymentView extends PatternFlyViewImpl implements DeploymentPresenter.MyView {
 
     class SampleForm extends DefaultForm<String> {
@@ -76,7 +78,7 @@ public class DeploymentView extends PatternFlyViewImpl implements DeploymentPres
             TextBoxItem name = new TextBoxItem(NAME_KEY, "Name");
             name.setRequired(true);
             name.setExpressionAllowed(false);
-            name.addSuggestHandler(new Typeahead.ReadChildrenNamesBuilder(operation).build());
+            name.registerSuggestHandler(new Typeahead.ReadChildrenNamesBuilder(operation).build());
 
             TextBoxItem formula = new TextBoxItem("formula", "Formula");
             formula.addValidationHandler(value -> "${magic}".equals(value) ?
@@ -85,9 +87,14 @@ public class DeploymentView extends PatternFlyViewImpl implements DeploymentPres
             NumberItem age = new NumberItem("age", "Age");
             age.setRestricted(true);
 
+            ListItem security = new ListItem("security", "Security");
+            security.registerSuggestHandler(new Typeahead.ReadChildrenNamesBuilder(operation).build());
+
             addFormItem(name, formula, new PasswordItem("password", "Password"), age,
                     new TextAreaItem("hobbies", "Hobbies"),
                     new SingleSelectBoxItem("color", "Favorite Color", Arrays.asList("Red", "Green", "Blue")),
+                    new ListItem("tags", "Tags"),
+                    security,
                     new PropertiesItem("properties", "Properties"));
             if (!nested) {
                 ButtonItem button = new ButtonItem("click", "Click Me");
@@ -101,20 +108,21 @@ public class DeploymentView extends PatternFlyViewImpl implements DeploymentPres
             addHelp("Age", "How old are you?");
             addHelp("Hobbies", "Things you like to do in your spare time");
             addHelp("Color", "What's your favorite color?");
+            addHelp("Security", "Security settings");
+            addHelp("Tags", "Tags, tags, tags");
             addHelp("Properties", "Enter some key=value pairs");
         }
     }
 
 
     private final Dialog dialog;
-    private final SampleForm sampleForm;
     private final Form<Endpoint> endpointForm;
     private DeploymentPresenter presenter;
 
     @Inject
     public DeploymentView(StatementContext statementContext) {
 
-        sampleForm = new SampleForm("deployment", false, statementContext);
+        SampleForm sampleForm = new SampleForm("deployment", false, statementContext);
         registerAttachable(sampleForm);
 
         SampleForm dialogForm = new SampleForm("dialog", true, statementContext);

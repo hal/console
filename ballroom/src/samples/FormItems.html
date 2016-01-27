@@ -140,7 +140,10 @@
                                 <div class="input-group">
                                     <input type="text" id="textBoxTypeahead-markup" class="form-control typeahead" placeholder="Text input">
                                     <span class="input-group-btn">
-                                        <button class="btn btn-default" type="button" title="Show all options">
+                                        <button class="btn btn-default" type="button" title="Expression Resolver">
+                                            <i class="fa fa-link"></i>
+                                        </button>
+                                        <button id="textBoxTypeahead-showAll" class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
                                         </button>
                                     </span>
@@ -873,6 +876,13 @@
             templates: {
                 empty: '<div class="empty-message"><span class="pficon pficon-warning-triangle-o"></span>No results</div>'
             }
+        });
+
+        $('#textBoxTypeahead-showAll').on('click', function() {
+            // The remote service would need to support empty queries.
+            // Because it doesn't we simply use 'i' to get *some* suggestions
+            $('#textBoxTypeahead-markup').typeahead('val', 'i');
+            $('#textBoxTypeahead-markup').focus();
         });
 
         $('#listItem-markup').tagsManager({

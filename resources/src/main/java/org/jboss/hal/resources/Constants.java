@@ -151,12 +151,14 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String sameOrigin();
     String save();
     String settings();
+    String showAll();
     String start();
     String supportsExpressions();
-    String tagEditorPlaceholder();
+
     String toggleNavigation();
     String tools();
     String unknownError();
+
 
 
     //@formatter:on

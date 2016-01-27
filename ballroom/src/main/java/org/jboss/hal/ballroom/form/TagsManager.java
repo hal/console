@@ -42,7 +42,7 @@ import static org.jboss.hal.resources.Names.OBJECT;
 /**
  * @author Harald Pehl
  */
-public class TagsManagerBridge {
+public class TagsManager {
 
     @JsFunction
     @FunctionalInterface

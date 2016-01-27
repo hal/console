@@ -48,7 +48,7 @@ public interface FormItem<T> extends Attachable, HasEnabled, Focusable, HasName,
 
     String getId(Form.State state);
 
-    void addSuggestHandler(SuggestHandler suggestHandler);
+    void registerSuggestHandler(SuggestHandler suggestHandler);
 
     void addValidationHandler(FormItemValidation<T> validationHandler);
 

@@ -61,6 +61,12 @@ public class TextBoxItem extends AbstractFormItem<String> {
     }
 
     @Override
+    public void registerSuggestHandler(final SuggestHandler suggestHandler) {
+        super.registerSuggestHandler(suggestHandler);
+
+    }
+
+    @Override
     public boolean supportsExpressions() {
         return isExpressionAllowed();
     }

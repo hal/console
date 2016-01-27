@@ -23,6 +23,7 @@ package org.jboss.hal.client.configuration.subsystem.jca;
 
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
 import org.jboss.hal.ballroom.tab.Tabs;
@@ -102,10 +103,7 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
         .build();
         // @formatter:on
 
-        registerAttachable(table);
-        for (Form<ModelNode> form : forms) {
-            registerAttachable(form);
-        }
+        registerAttachable(table, forms.toArray(new Attachable[forms.size()]));
         initWidget(Elements.asWidget(element));
     }
 

@@ -22,8 +22,8 @@
 package org.jboss.hal.ballroom;
 
 /**
- * Interface for elements which need to execute special code when they get attached to the DOM. Global initialization
- * logic should be placed in {@link PatternFly#initComponents()}
+ * Interface for elements which need to run code when they get attached to the DOM. Global initialization logic should
+ * be placed in {@link PatternFly#initComponents()}
  *
  * @author Harald Pehl
  */
