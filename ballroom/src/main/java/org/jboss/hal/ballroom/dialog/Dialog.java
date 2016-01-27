@@ -27,6 +27,7 @@ import elemental.dom.Element;
 import elemental.html.ButtonElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.dialog.Modal.ModalOptions;
@@ -246,10 +247,12 @@ public class Dialog implements IsElement {
     private final boolean closeOnEsc;
     private ButtonElement primaryButton;
     private ButtonElement secondaryButton;
+    private final List<Attachable> attachables;
 
     private Dialog(final Builder builder) {
         reset();
         this.closeOnEsc = builder.closeOnEsc;
+        this.attachables = new ArrayList<>();
 
         if (builder.fadeIn) {
             Dialog.root.getClassList().add(fade);
@@ -307,6 +310,15 @@ public class Dialog implements IsElement {
         return root;
     }
 
+    public void registerAttachable(Attachable first, Attachable... rest) {
+        attachables.add(first);
+        if (rest != null) {
+            for (Attachable attachable : rest) {
+                attachables.add(attachable);
+            }
+        }
+    }
+
     public void show() {
         if (Dialog.open) {
             throw new IllegalStateException(
@@ -315,6 +327,9 @@ public class Dialog implements IsElement {
         $(SELECTOR_ID).modal(ModalOptions.create(closeOnEsc));
         $(SELECTOR_ID).modal("show");
         PatternFly.initComponents();
+        for (Attachable attachable : attachables) {
+            attachable.attach();
+        }
     }
 
     private void close() {

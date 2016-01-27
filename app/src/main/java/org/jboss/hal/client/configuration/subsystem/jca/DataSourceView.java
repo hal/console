@@ -102,12 +102,16 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
         .build();
         // @formatter:on
 
+        registerAttachable(table);
+        for (Form<ModelNode> form : forms) {
+            registerAttachable(form);
+        }
         initWidget(Elements.asWidget(element));
     }
 
     @Override
     public void attach() {
-        table.attach();
+        super.attach();
         table.api().bindForms(forms);
     }
 

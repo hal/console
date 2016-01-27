@@ -112,6 +112,9 @@ public interface CSS {
     String table = "table";
     String tableBordered = "table-bordered";
     String tableStriped = "table-striped";
+    String tagManagerContainer = "tag-manager-container";
+    String tagManagerTag = "tag-manager-tag";
+    String tags = "tags";
     String value = "value";
 
 

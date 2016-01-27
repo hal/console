@@ -22,12 +22,15 @@
 package org.jboss.hal.ballroom.typeahead;
 
 import com.google.gwt.core.client.GWT;
+import elemental.js.events.JsEvent;
 import elemental.js.json.JsJsonObject;
 import elemental.js.util.JsArrayOf;
+import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.DmrPayloadProcessor;
@@ -45,35 +48,33 @@ import static org.jboss.hal.resources.Names.VALUE;
 
 /**
  * A type ahead engine based on <a href="https://twitter.github.io/typeahead.js/">typeahead.js</a> ready to be used
- * with {@code FormItem<String>}. Use one of the builders to setup an instance and call
- * {@link Typeahead#attach()} after the form item was attached to the DOM.
+ * with form items. Use one of the builders to setup an instance and call {@link Typeahead#attach()} after the form item
+ * was attached to the DOM.
+ * <p>
+ * <pre>
+ * ResourceAddress address = AddressTemplate.of("/socket-binding-group=standard-sockets")
+ *         .resolve(statementContext);
+ * Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, address)
+ *         .param(CHILD_TYPE, "socket-binding")
+ *         .build();
+ *
+ * Form&lt;Foo&gt; form = ...;
+ * form.getItem("foo").addSuggestHandler(new Typeahead.ReadChildrenNamesBuilder(operation).build());
+ * </pre>
  *
  * @see <a href="https://twitter.github.io/typeahead.js/">https://twitter.github.io/typeahead.js/</a>
  */
-public class Typeahead {
-
-    @JsType(isNative = true)
-    public static class Bridge {
-
-        @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Bridge select(String selector);
-
-        public native void typeahead(Options options, Dataset dataset);
-    }
-
+public class Typeahead implements SuggestHandler {
 
     public static class Builder {
 
-        private final FormItem formItem;
         private final Operation operation;
         private final ResultProcessor resultProcessor;
         private final Identifier identifier;
         protected DataTokenizer dataTokenizer;
         protected Display display;
 
-        public Builder(final FormItem formItem, final Operation operation,
-                final ResultProcessor resultProcessor, final Identifier identifier) {
-            this.formItem = formItem;
+        public Builder(final Operation operation, final ResultProcessor resultProcessor, final Identifier identifier) {
             this.operation = operation;
             this.resultProcessor = resultProcessor;
             this.identifier = identifier;
@@ -97,8 +98,8 @@ public class Typeahead {
 
     public static class ReadChildrenNamesBuilder extends Builder {
 
-        public ReadChildrenNamesBuilder(final FormItem formItem, final Operation readChildrenNames) {
-            super(formItem, readChildrenNames,
+        public ReadChildrenNamesBuilder(final Operation readChildrenNames) {
+            super(readChildrenNames,
                     (query, result) -> {
                         List<ModelNode> children = result.asList();
                         JsArrayOf<JsJsonObject> objects = JsArrayOf.create();
@@ -120,15 +121,39 @@ public class Typeahead {
     }
 
 
-    static final Constants CONSTANTS = GWT.create(Constants.class);
+    @JsFunction
+    @FunctionalInterface
+    public interface SelectListener {
 
-    private final FormItem formItem;
+        void onSelect(JsEvent event, JsJsonObject data);
+    }
+
+
+    @JsType(isNative = true)
+    public static class Bridge {
+
+        @JsMethod(namespace = GLOBAL, name = "$")
+        public native static Bridge select(String selector);
+
+        public native void on(String event, SelectListener listener);
+
+        public native void typeahead(Options options, Dataset dataset);
+
+        @JsOverlay
+        public final void onSelect(SelectListener listener) {
+            on(SELECTED_EVENT, listener);
+        }
+    }
+
+
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
+    private static final String SELECTED_EVENT = "typeahead:selected";
+
     private final Options options;
     private final Dataset dataset;
+    private FormItem formItem;
 
     Typeahead(final Builder builder) {
-        formItem = builder.formItem;
-
         options = new Options();
         options.highlight = true;
         options.minLength = 0;
@@ -156,7 +181,7 @@ public class Typeahead {
             DmrPayloadProcessor payloadProcessor = new DmrPayloadProcessor();
             ModelNode payload = payloadProcessor.processPayload(POST, APPLICATION_DMR_ENCODED, response);
             if (!payload.isFailure()) {
-                String query = String.valueOf(formItem.getValue());
+                String query = String.valueOf(formItem().getValue());
                 ModelNode result = payload.get(RESULT);
                 return builder.resultProcessor.process(query, result);
             }
@@ -179,7 +204,6 @@ public class Typeahead {
                 "</div>";
 
         dataset = new Dataset();
-        dataset.name = IdBuilder.build(formItem.getId(EDITING), "typeahead");
         dataset.source = bloodhound::search;
         dataset.async = true;
         dataset.limit = Integer.MAX_VALUE;
@@ -188,6 +212,18 @@ public class Typeahead {
     }
 
     public void attach() {
-        Bridge.select("#" + formItem.getId(EDITING)).typeahead(options, dataset);
+        Bridge.select("#" + formItem().getId(EDITING)).typeahead(options, dataset);
+    }
+
+    public void setFormItem(FormItem formItem) {
+        this.formItem = formItem;
+    }
+
+    private FormItem formItem() {
+        if (formItem == null) {
+            throw new IllegalStateException(
+                    "No form item assigned. Please call Typeahead.setFormItem(FormItem) before using this instance as a SuggestHandler.");
+        }
+        return formItem;
     }
 }

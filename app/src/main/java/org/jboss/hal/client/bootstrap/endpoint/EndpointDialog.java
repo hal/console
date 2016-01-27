@@ -121,6 +121,7 @@ class EndpointDialog {
                 .closeIcon(false)
                 .closeOnEsc(false)
                 .build();
+        dialog.registerAttachable(form, table);
     }
 
     private Endpoint transientEndpoint() {
@@ -184,9 +185,8 @@ class EndpointDialog {
 
         FormItem<String> host = form.getFormItem(HOST);
         host.asElement(EDITING).setOnkeyup(event -> ping.setEnabled(emptyToNull(host.getValue()) != null));
-//        host.addValueChangeHandler(event -> ping.setEnabled(emptyToNull(host.getValue()) != null));
+        host.addValueChangeHandler(event -> ping.setEnabled(emptyToNull(host.getValue()) != null));
 
-        table.attach();
         table.api().onSelectionChange(api -> dialog.setPrimaryButtonDisabled(!api.hasSelection()));
         table.api().add(storage.list()).refresh(RESET);
 

@@ -24,11 +24,12 @@ package org.jboss.hal.ballroom.form;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.user.client.Random;
 import elemental.client.Browser;
 import elemental.dom.Element;
-import elemental.html.TextAreaElement;
-import org.jboss.hal.ballroom.form.PropertiesBridge.Bridge;
-import org.jboss.hal.ballroom.js.JsHelper;
+import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.form.TagsManagerBridge.Bridge;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,14 +38,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static org.jboss.hal.resources.CSS.properties;
+import static org.jboss.hal.resources.CSS.*;
 
 /**
  * @author Harald Pehl
  */
-public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
+public class PropertiesItem extends AbstractFormItem<Map<String, String>> implements Attachable {
 
+    private final RegExp PROPERTY_REGEX = RegExp.compile("^([\\w\\d]+)=([\\w\\d]+)$"); //NON-NLS
     private PropertiesElement propertiesElement;
+    private Element tagsContainer;
 
     public PropertiesItem(final String name, final String label) {
         super(name, label);
@@ -53,14 +56,36 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
     @Override
     protected InputElement<Map<String, String>> newInputElement() {
         propertiesElement = new PropertiesElement();
-        propertiesElement.setClassName(properties);
-        Bridge.element(propertiesElement.asElement()).onChange((field, editor, tags) -> {
-            Map<String, String> value = asProperties(JsHelper.asList(tags));
+        propertiesElement.setClassName(formControl + " " + properties);
+        Bridge.element(propertiesElement.asElement()).onRefresh((event, cst) -> {
+            Map<String, String> value = Splitter.on(',')
+                    .trimResults()
+                    .omitEmptyStrings()
+                    .withKeyValueSeparator('=')
+                    .split(cst);
             setModified(true);
             setUndefined(value.isEmpty());
             signalChange(value);
         });
         return propertiesElement;
+    }
+
+    @Override
+    void assembleUI() {
+        super.assembleUI();
+        tagsContainer = Browser.getDocument().createDivElement();
+        tagsContainer.setId("tags-container-" + Random.nextInt(9999)); //NON-NLS
+        tagsContainer.setClassName(tagManagerContainer);
+        inputContainer.insertBefore(tagsContainer, errorText);
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
+        TagsManagerBridge.Options options = TagsManagerBridge.Defaults.get();
+        options.tagsContainer = "#" + tagsContainer.getId();
+        options.validator = PROPERTY_REGEX::test;
+        Bridge.element(propertiesElement.asElement()).tagsManager(options);
     }
 
     @Override
@@ -75,10 +100,11 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
 
     static class PropertiesElement extends InputElement<Map<String, String>> {
 
-        final TextAreaElement element;
+        final elemental.html.InputElement element;
 
         PropertiesElement() {
-            element = Browser.getDocument().createTextAreaElement();
+            element = Browser.getDocument().createInputElement();
+            element.setType("text"); //NON-NLS
         }
 
         @Override

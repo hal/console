@@ -22,6 +22,7 @@
 package org.jboss.hal.ballroom.form;
 
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.Attachable;
 
 import java.util.Map;
 
@@ -32,7 +33,7 @@ import java.util.Map;
  *
  * @author Harald Pehl
  */
-public interface Form<T> extends IsElement {
+public interface Form<T> extends IsElement, Attachable {
 
     enum State {
         READONLY, EDITING

@@ -24,7 +24,6 @@ package org.jboss.hal.client.deployment;
 import com.google.gwt.core.client.GWT;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
 import org.jboss.hal.ballroom.form.ButtonItem;
@@ -33,6 +32,7 @@ import org.jboss.hal.ballroom.form.ExistingModelStateMachine;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.NumberItem;
 import org.jboss.hal.ballroom.form.PasswordItem;
+import org.jboss.hal.ballroom.form.PropertiesItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.TextAreaItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
@@ -43,7 +43,7 @@ import org.jboss.hal.client.bootstrap.endpoint.Endpoint;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointResources;
 import org.jboss.hal.core.PatternFlyViewImpl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.Operation.Builder;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
@@ -55,6 +55,7 @@ import java.util.Arrays;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.resources.Names.NAME_KEY;
 
 /**
  * @author Harald Pehl
@@ -63,19 +64,19 @@ public class DeploymentView extends PatternFlyViewImpl implements DeploymentPres
 
     class SampleForm extends DefaultForm<String> {
 
-        final TextBoxItem name;
-        final TextBoxItem name2;
-
-        protected SampleForm(final String id, boolean nested) {
+        protected SampleForm(final String id, boolean nested, final StatementContext statementContext) {
             super(id, nested ? new AddOnlyStateMachine() : new ExistingModelStateMachine(), SecurityContext.RWX);
 
-            name = new TextBoxItem("name", "Name (typeahead.js)");
+            ResourceAddress address = AddressTemplate.of("/profile=full/subsystem=security")
+                    .resolve(statementContext);
+            org.jboss.hal.dmr.model.Operation operation = new Builder(READ_CHILDREN_NAMES_OPERATION, address)
+                    .param(CHILD_TYPE, "security-domain")
+                    .build();
+
+            TextBoxItem name = new TextBoxItem(NAME_KEY, "Name");
             name.setRequired(true);
             name.setExpressionAllowed(false);
-
-            name2 = new TextBoxItem("name2", "Name (jQuery Autocomplete)");
-            name2.setRequired(true);
-            name2.setExpressionAllowed(false);
+            name.addSuggestHandler(new Typeahead.ReadChildrenNamesBuilder(operation).build());
 
             TextBoxItem formula = new TextBoxItem("formula", "Formula");
             formula.addValidationHandler(value -> "${magic}".equals(value) ?
@@ -84,9 +85,10 @@ public class DeploymentView extends PatternFlyViewImpl implements DeploymentPres
             NumberItem age = new NumberItem("age", "Age");
             age.setRestricted(true);
 
-            addFormItem(name, name2, formula, new PasswordItem("password", "Password"), age,
+            addFormItem(name, formula, new PasswordItem("password", "Password"), age,
                     new TextAreaItem("hobbies", "Hobbies"),
-                    new SingleSelectBoxItem("color", "Favorite Color", Arrays.asList("Red", "Green", "Blue")));
+                    new SingleSelectBoxItem("color", "Favorite Color", Arrays.asList("Red", "Green", "Blue")),
+                    new PropertiesItem("properties", "Properties"));
             if (!nested) {
                 ButtonItem button = new ButtonItem("click", "Click Me");
                 button.onClick(event -> dialog.show());
@@ -99,11 +101,11 @@ public class DeploymentView extends PatternFlyViewImpl implements DeploymentPres
             addHelp("Age", "How old are you?");
             addHelp("Hobbies", "Things you like to do in your spare time");
             addHelp("Color", "What's your favorite color?");
+            addHelp("Properties", "Enter some key=value pairs");
         }
     }
 
 
-    private final StatementContext statementContext;
     private final Dialog dialog;
     private final SampleForm sampleForm;
     private final Form<Endpoint> endpointForm;
@@ -111,13 +113,15 @@ public class DeploymentView extends PatternFlyViewImpl implements DeploymentPres
 
     @Inject
     public DeploymentView(StatementContext statementContext) {
-        this.statementContext = statementContext;
 
-        sampleForm = new SampleForm("deployment", false);
-        SampleForm dialogForm = new SampleForm("dialog", true);
+        sampleForm = new SampleForm("deployment", false, statementContext);
+        registerAttachable(sampleForm);
+
+        SampleForm dialogForm = new SampleForm("dialog", true, statementContext);
         Element dialogBody = new Elements.Builder().p().innerText("A form inside a dialog").end()
                 .add(dialogForm.asElement()).build();
         dialog = new Dialog.Builder("Sample Dialog").add(dialogBody).closeOnly().build();
+        dialog.registerAttachable(dialogForm);
 
         EndpointResources endpointResources = GWT.create(EndpointResources.class);
         endpointForm = new ModelNodeForm.Builder<Endpoint>("mbui-form", SecurityContext.RWX,
@@ -138,19 +142,6 @@ public class DeploymentView extends PatternFlyViewImpl implements DeploymentPres
         initWidget(Elements.asWidget(element));
 
         sampleForm.view("foo");
-    }
-
-    @Override
-    public void attach() {
-        PatternFly.initComponents();
-
-        ResourceAddress address = AddressTemplate.of("/profile=full/subsystem=security")
-                .resolve(statementContext);
-        Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, address)
-                .param(CHILD_TYPE, "security-domain")
-                .build();
-
-        new Typeahead.ReadChildrenNamesBuilder(sampleForm.name, operation).build().attach();
     }
 
     @Override

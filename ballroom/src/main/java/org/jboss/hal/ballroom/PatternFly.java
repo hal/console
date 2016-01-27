@@ -25,13 +25,11 @@ import com.google.gwt.core.client.Scheduler;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.ballroom.form.PropertiesBridge;
 import org.jboss.hal.ballroom.form.SelectBoxBridge;
 import org.jboss.hal.resources.CSS;
 import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.resources.CSS.properties;
 
 @JsType(isNative = true)
 public class PatternFly {
@@ -62,7 +60,6 @@ public class PatternFly {
     private static void init() {
         $("[data-toggle=tooltip]").tooltip();
         $("." + CSS.bootstrapSwitch).bootstrapSwitch();
-        $("." + properties).tagEditor(PropertiesBridge.Defaults.get());
         $("." + CSS.selectpicker).selectpicker(SelectBoxBridge.Defaults.get());
     }
 
@@ -72,8 +69,6 @@ public class PatternFly {
     public native void bootstrapSwitch();
 
     public native void selectpicker(SelectBoxBridge.Options options);
-
-    public native void tagEditor(PropertiesBridge.Options options);
 
     public native void tooltip();
 }

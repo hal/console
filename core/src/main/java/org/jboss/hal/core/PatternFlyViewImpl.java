@@ -22,15 +22,35 @@
 package org.jboss.hal.core;
 
 import com.gwtplatform.mvp.client.ViewImpl;
+import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.PatternFly;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Harald Pehl
  */
 public abstract class PatternFlyViewImpl extends ViewImpl implements PatternFlyView {
 
+    private final List<Attachable> attachables;
+
+    protected PatternFlyViewImpl() {attachables = new ArrayList<>();}
+
+    protected void registerAttachable(Attachable first, Attachable... rest) {
+        attachables.add(first);
+        if (rest != null) {
+            for (Attachable attachable : rest) {
+                attachables.add(attachable);
+            }
+        }
+    }
+
     @Override
     public void attach() {
         PatternFly.initComponents();
+        for (Attachable attachable : attachables) {
+            attachable.attach();
+        }
     }
 }

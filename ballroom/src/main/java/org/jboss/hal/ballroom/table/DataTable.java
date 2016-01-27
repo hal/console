@@ -27,6 +27,7 @@ import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jetbrains.annotations.NonNls;
 
@@ -66,18 +67,16 @@ import static org.jboss.hal.resources.CSS.*;
  * @author Harald Pehl
  * @see <a href="https://datatables.net/">https://datatables.net/</a>
  */
-public class DataTable<T> implements IsElement {
-
-    // ------------------------------------------------------ jquery selector
-
-    @JsMethod(namespace = GLOBAL)
-    private native static <T> JQuery<T> $(@NonNls String selector);
+public class DataTable<T> implements IsElement, Attachable {
 
     @JsType(isNative = true)
-    private static class JQuery<T> {
+    static class Bridge<T> {
+
+        @JsMethod(namespace = GLOBAL, name = "$")
+        native static <T> Bridge<T> select(@NonNls String selector);
 
         @JsMethod(name = "DataTable")
-        private native Api<T> dataTable(Options options);
+        native Api<T> dataTable(Options options);
     }
 
 
@@ -106,15 +105,13 @@ public class DataTable<T> implements IsElement {
      * Initialized the {@link Api} instance using the {@link Options} given at constructor argument. Make sure to call
      * this method before using any of the API methods. It's safe to call the methods multiple times (the
      * initialization will happen only once).
-     *
-     * @return the API instance
      */
-    public Api<T> attach() {
+    @Override
+    public void attach() {
         if (api == null) {
             // TODO check security context and adjust options if necessary
-            api = DataTable.<T>$("#" + id).dataTable(options);
+            api = Bridge.<T>select("#" + id).dataTable(options);
         }
-        return api;
     }
 
 

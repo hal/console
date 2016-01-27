@@ -27,11 +27,13 @@ import com.google.gwt.user.client.ui.HasName;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasValue;
 import elemental.dom.Element;
+import org.jboss.hal.ballroom.Attachable;
 
 /**
  * @author Harald Pehl
  */
-public interface FormItem<T> extends HasEnabled, Focusable, HasName, HasValue<T>, HasText /* for expression support */ {
+public interface FormItem<T> extends Attachable, HasEnabled, Focusable, HasName, HasValue<T>,
+        HasText /* for expression support */ {
 
     Element asElement(Form.State state);
 
@@ -45,6 +47,8 @@ public interface FormItem<T> extends HasEnabled, Focusable, HasName, HasValue<T>
     void setId(String id);
 
     String getId(Form.State state);
+
+    void addSuggestHandler(SuggestHandler suggestHandler);
 
     void addValidationHandler(FormItemValidation<T> validationHandler);
 

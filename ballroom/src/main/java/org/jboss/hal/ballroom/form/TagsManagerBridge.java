@@ -21,35 +21,53 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import com.google.gwt.core.client.GWT;
 import elemental.dom.Element;
-import elemental.js.dom.JsElement;
+import elemental.js.events.JsEvent;
 import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.resources.Constants;
+import org.jboss.hal.ballroom.js.JsHelper;
 
 import java.util.List;
 
-import static java.util.Collections.emptyList;
+import static elemental.events.KeyboardEvent.KeyCode.ENTER;
 import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.ballroom.js.JsHelper.asList;
+import static org.jboss.hal.resources.CSS.tagManagerTag;
 import static org.jboss.hal.resources.Names.OBJECT;
 
 /**
  * @author Harald Pehl
  */
-public class PropertiesBridge {
+public class TagsManagerBridge {
+
+    @JsFunction
+    @FunctionalInterface
+    public interface RefreshListener {
+
+        /**
+         * @param cst (c)omma (s)eparated (t)ags
+         */
+        void onRefresh(JsEvent event, String cst);
+    }
+
+
+    @JsFunction
+    @FunctionalInterface
+    public interface Validator {
+
+        boolean validate(String tag);
+    }
+
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     public static class Options {
 
-        public String delimiter;
-        public boolean forceLowercase;
-        public String placeholder;
-        public boolean sortable;
+        public JsArrayOf<Integer> delimiters;
+        public String tagsContainer;
+        public String tagClass;
+        public Validator validator;
     }
 
 
@@ -58,34 +76,16 @@ public class PropertiesBridge {
     public static class Defaults {
 
         private static final Options DEFAULT_OPTIONS = new Options();
-        private static final Constants CONSTANTS = GWT.create(Constants.class);
 
         static {
-            DEFAULT_OPTIONS.delimiter = ", ";
-            DEFAULT_OPTIONS.forceLowercase = false;
-            DEFAULT_OPTIONS.placeholder = CONSTANTS.tagEditorPlaceholder();
-            DEFAULT_OPTIONS.sortable = false;
+            DEFAULT_OPTIONS.delimiters = JsArrayOf.create();
+            DEFAULT_OPTIONS.delimiters.push(ENTER);
+            DEFAULT_OPTIONS.tagClass = tagManagerTag;
         }
 
         public static Options get() {
             return DEFAULT_OPTIONS;
         }
-    }
-
-
-    @JsFunction
-    @FunctionalInterface
-    public interface ChangeListener {
-        void onChange(JsElement field, JsElement editor, JsArrayOf<String> tags);
-    }
-
-
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    public static class Tags {
-
-        public JsElement field;
-        public JsElement editor;
-        public JsArrayOf<String> tags;
     }
 
 
@@ -95,19 +95,31 @@ public class PropertiesBridge {
         @JsMethod(namespace = GLOBAL, name = "$")
         public native static Bridge element(Element element);
 
-        public native JsArrayOf<Tags> tagEditor(String method);
+        public native void on(String event, RefreshListener refreshListener);
 
-        public native void tagEditor(String method, ChangeListener param1);
+        @JsMethod(name = TAGS_MANAGER)
+        public native JsArrayOf<String> tagsManagerGetTags(String getTags);
 
-        public native void tagEditor(String method, String param1, boolean param2);
+        @JsMethod(name = TAGS_MANAGER)
+        public native void tagsManagerRemoveTags(String removeTags);
+
+        public native void tagsManager(String pushTag, String tag);
+
+        public native void tagsManager(Options options);
+
+        @JsOverlay
+        public final void onRefresh(RefreshListener refreshListener) {
+            on(REFRESH_EVENT, refreshListener);
+        }
+
+        @JsOverlay
+        public final void addTag(String tag) {
+            tagsManager(PUSH_TAG, tag);
+        }
 
         @JsOverlay
         public final List<String> getTags() {
-            JsArrayOf<Tags> tags = tagEditor(GET_TAGS);
-            if (tags.length() > 0 && tags.get(0).tags.length() > 0) {
-                return asList(tags.get(0).tags);
-            }
-            return emptyList();
+            return JsHelper.asList(tagsManagerGetTags(TAGS));
         }
 
         @JsOverlay
@@ -119,32 +131,15 @@ public class PropertiesBridge {
         }
 
         @JsOverlay
-        public final void addTag(String tag) {
-            tagEditor(ADD_TAG, tag, true);
-        }
-
-        @JsOverlay
-        public final void removeTag(String tag) {
-            tagEditor(REMOVE_TAG, tag, true);
-        }
-
-        @JsOverlay
         public final void removeAll() {
-            List<String> tags = getTags();
-            for (String tag : tags) {
-                removeTag(tag);
-            }
-        }
-
-        @JsOverlay
-        public final void onChange(ChangeListener listener) {
-            tagEditor(ON_CHANGE, listener);
+            tagsManagerRemoveTags(EMPTY);
         }
     }
 
 
-    private static final String GET_TAGS = "getTags";
-    private static final String ADD_TAG = "addTag";
-    private static final String REMOVE_TAG = "removeTag";
-    private static final String ON_CHANGE = "onChange";
+    private static final String EMPTY = "empty";
+    private static final String PUSH_TAG = "pushTag";
+    private static final String REFRESH_EVENT = "tm:refresh";
+    private static final String TAGS = "tags";
+    private static final String TAGS_MANAGER = "tagsManager";
 }

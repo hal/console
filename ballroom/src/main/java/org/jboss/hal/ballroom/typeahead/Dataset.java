@@ -66,7 +66,6 @@ public class Dataset {
     }
 
 
-    public String name;
     public Source source;
     public boolean async;
     public int limit;

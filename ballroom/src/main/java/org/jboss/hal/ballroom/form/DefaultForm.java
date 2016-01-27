@@ -35,6 +35,7 @@ import elemental.html.SpanElement;
 import elemental.html.UListElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.LazyElement;
+import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
@@ -178,7 +179,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         Element viewPanel = new Elements.Builder()
                 .div().id(IdBuilder.build(id, READONLY.name().toLowerCase())).css(form, formHorizontal, readonly)
                 .end().build();
-        for (Iterator<FormItem> iterator = formItems.values().iterator(); iterator.hasNext(); ) {
+        for (Iterator<FormItem> iterator = getFormItems().iterator(); iterator.hasNext(); ) {
             FormItem formItem = iterator.next();
             viewPanel.appendChild(formItem.asElement(READONLY));
             if (iterator.hasNext()) {
@@ -209,7 +210,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
                 .build();
         editPanel.appendChild(errorPanel);
         boolean hasRequiredField = false;
-        for (FormItem formItem : formItems.values()) {
+        for (FormItem formItem : getFormItems()) {
             editPanel.appendChild(formItem.asElement(EDITING));
             hasRequiredField = hasRequiredField || formItem.isRequired();
         }
@@ -248,6 +249,12 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         return editPanel;
     }
 
+    @Override
+    public void attach() {
+        for (FormItem formItem : getFormItems()) {
+            formItem.attach();
+        }
+    }
 
     // ------------------------------------------------------ form operations
 
@@ -440,7 +447,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
 
             case EDITING:
                 if (!formItems.isEmpty()) {
-                    Scheduler.get().scheduleDeferred(() -> formItems.values().iterator().next().setFocus(true));
+                    Scheduler.get().scheduleDeferred(() -> getFormItems().iterator().next().setFocus(true));
                 }
                 if (exitEditWithEsc != null && panels.get(EDITING) != null) {
                     // Exit *this* edit state by pressing ESC
@@ -505,7 +512,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     }
 
     public boolean isModified() {
-        for (FormItem formItem : formItems.values()) {
+        for (FormItem formItem : getFormItems()) {
             if (formItem.isModified()) {
                 return true;
             }
@@ -521,7 +528,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         boolean valid = true;
 
         // validate form items
-        for (FormItem formItem : formItems.values()) {
+        for (FormItem formItem : getFormItems()) {
             if (!formItem.validate()) {
                 valid = false;
             }
@@ -530,7 +537,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         // validate form on its own
         List<String> messages = new ArrayList<>();
         for (FormValidation validationHandler : formValidations) {
-            ValidationResult validationResult = validationHandler.validate(formItems.values());
+            ValidationResult validationResult = validationHandler.validate(getFormItems());
             if (!validationResult.isValid()) {
                 messages.add(validationResult.getMessage());
             }
@@ -547,7 +554,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     }
 
     private void clearErrors() {
-        for (FormItem formItem : formItems.values()) {
+        for (FormItem formItem : getFormItems()) {
             formItem.clearError();
         }
         errorMessage.setInnerText("");

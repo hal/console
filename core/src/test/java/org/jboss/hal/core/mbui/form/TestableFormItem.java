@@ -29,6 +29,7 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemValidation;
 import org.jboss.hal.ballroom.form.ResolveExpressionEvent;
+import org.jboss.hal.ballroom.form.SuggestHandler;
 
 /**
  * @author Harald Pehl
@@ -45,7 +46,17 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
+    public void attach() {
+
+    }
+
+    @Override
     public void clearValue() {
+
+    }
+
+    @Override
+    public void addSuggestHandler(final SuggestHandler suggestHandler) {
 
     }
 

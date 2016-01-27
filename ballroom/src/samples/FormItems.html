@@ -138,7 +138,7 @@
                             <label class="col-md-3 control-label" for="textBoxTypeahead-markup">Default</label>
                             <div class="col-md-9">
                                 <div class="input-group">
-                                    <input type="text" id="textBoxTypeahead-markup" class="form-control hal-typeahead" placeholder="Text input">
+                                    <input type="text" id="textBoxTypeahead-markup" class="form-control typeahead" placeholder="Text input">
                                     <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
@@ -151,7 +151,7 @@
                             <label class="col-md-3 control-label" for="textBoxTypeaheadDisabled-markup">Disabled</label>
                             <div class="col-md-9">
                                 <div class="input-group">
-                                    <input type="text" value="read-only" id="textBoxTypeaheadDisabled-markup" class="form-control hal-typeahead" disabled>
+                                    <input type="text" value="read-only" id="textBoxTypeaheadDisabled-markup" class="form-control typeahead" disabled>
                                     <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
@@ -173,7 +173,7 @@
                             <label class="col-md-3 control-label" for="textBoxTypeaheadError-markup">With error</label>
                             <div class="col-md-9">
                                 <div class="input-group">
-                                    <input type="text" value="nope" id="textBoxTypeaheadError-markup" class="form-control hal-typeahead">
+                                    <input type="text" value="nope" id="textBoxTypeaheadError-markup" class="form-control typeahead">
                                     <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
@@ -636,15 +636,15 @@
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="listItem-markup">Default</label>
                             <div class="col-md-9">
-                                <input type="text" id="listItem-markup" class="form-control hal-tagmanager" placeholder="Text input">
-                                <div id="listItem-markup-container" class="hal-tagmanager-container"></div>
+                                <input type="text" id="listItem-markup" class="form-control tags" placeholder="Text input">
+                                <div id="listItem-markup-container" class="tag-manager-container"></div>
                             </div>
                         </div>
                         <div class="form-group disabled">
                             <label class="col-md-3 control-label" for="listItemDisabled-markup">Disabled</label>
                             <div class="col-md-9 disabled">
-                                <input type="text" value="read-only" id="listItemDisabled-markup" class="form-control hal-tagmanager" disabled>
-                                <div id="listItemDisabled-markup-container" class="hal-tagmanager-container"></div>
+                                <input type="text" value="read-only" id="listItemDisabled-markup" class="form-control tags" disabled>
+                                <div id="listItemDisabled-markup-container" class="tag-manager-container"></div>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
@@ -659,8 +659,8 @@
                         <div class="form-group has-error">
                             <label class="col-md-3 control-label" for="listItemError-markup">With error</label>
                             <div class="col-md-9">
-                                <input type="text" value="nope" id="listItemError-markup" class="form-control hal-tagmanager">
-                                <div id="listItemError-markup-container" class="hal-tagmanager-container"></div>
+                                <input type="text" value="nope" id="listItemError-markup" class="form-control tags">
+                                <div id="listItemError-markup-container" class="tag-manager-container"></div>
                                 <span class="help-block">Please correct the error</span>
                             </div>
                         </div>
@@ -682,28 +682,28 @@
                             <label class="col-md-3 control-label" for="listItemTypeahead-markup">Default</label>
                             <div class="col-md-9">
                                 <div class="input-group">
-                                    <input type="text" id="listItemTypeahead-markup" class="form-control hal-tagmanager hal-typeahead" placeholder="Text input">
+                                    <input type="text" id="listItemTypeahead-markup" class="form-control tags typeahead" placeholder="Text input">
                                     <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
                                         </button>
                                     </span>
                                 </div>
-                                <div id="listItemTypeahead-markup-container" class="hal-tagmanager-container"></div>
+                                <div id="listItemTypeahead-markup-container" class="tag-manager-container"></div>
                             </div>
                         </div>
                         <div class="form-group disabled">
                             <label class="col-md-3 control-label" for="listItemTypeaheadDisabled-markup">Disabled</label>
                             <div class="col-md-9">
                                 <div class="input-group">
-                                    <input type="text" value="read-only" id="listItemTypeaheadDisabled-markup" class="form-control hal-tagmanager hal-typeahead" disabled>
+                                    <input type="text" value="read-only" id="listItemTypeaheadDisabled-markup" class="form-control tags typeahead" disabled>
                                     <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
                                         </button>
                                     </span>
                                 </div>
-                                <div id="listItemTypeaheadDisabled-markup-container" class="hal-tagmanager-container"></div>
+                                <div id="listItemTypeaheadDisabled-markup-container" class="tag-manager-container"></div>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
@@ -719,14 +719,14 @@
                             <label class="col-md-3 control-label" for="listItemTypeaheadError-markup">With error</label>
                             <div class="col-md-9">
                                 <div class="input-group">
-                                    <input type="text" value="nope" id="listItemTypeaheadError-markup" class="form-control hal-tagmanager hal-typeahead">
+                                    <input type="text" value="nope" id="listItemTypeaheadError-markup" class="form-control tags typeahead">
                                     <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
                                         </button>
                                     </span>
                                 </div>
-                                <div id="listItemTypeaheadError-markup-container" class="hal-tagmanager-container"></div>
+                                <div id="listItemTypeaheadError-markup-container" class="tag-manager-container"></div>
                                 <span class="help-block">Please correct the error</span>
                             </div>
                         </div>
@@ -747,15 +747,15 @@
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="propertiesItem-markup">Default</label>
                             <div class="col-md-9">
-                                <input type="text" id="propertiesItem-markup" class="form-control hal-properties"/>
-                                <div id="propertiesItem-markup-container" class="hal-tagmanager-container"></div>
+                                <input type="text" id="propertiesItem-markup" class="form-control properties"/>
+                                <div id="propertiesItem-markup-container" class="tag-manager-container"></div>
                             </div>
                         </div>
                         <div class="form-group disabled">
                             <label class="col-md-3 control-label" for="propertiesItemDisabled-markup">Disabled</label>
                             <div class="col-md-9 disabled">
-                                <input type="text" id="propertiesItemDisabled-markup" class="form-control hal-properties" disabled/>
-                                <div id="propertiesItemDisabled-markup-container" class="hal-tagmanager-container"></div>
+                                <input type="text" id="propertiesItemDisabled-markup" class="form-control properties" disabled/>
+                                <div id="propertiesItemDisabled-markup-container" class="tag-manager-container"></div>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
@@ -770,8 +770,8 @@
                         <div class="form-group has-error">
                             <label class="col-md-3 control-label" for="propertiesItemError-markup">With error</label>
                             <div class="col-md-9">
-                                <input type="text" id="propertiesItemError-markup" class="form-control hal-properties"/>
-                                <div id="propertiesItemError-markup-container" class="hal-tagmanager-container"></div>
+                                <input type="text" id="propertiesItemError-markup" class="form-control properties"/>
+                                <div id="propertiesItemError-markup-container" class="tag-manager-container"></div>
                                 <span class="help-block">Please correct the error</span>
                             </div>
                         </div>
@@ -865,7 +865,7 @@
         };
         var bestPictures = new Bloodhound(bloodhoundOptions);
 
-        $('.hal-typeahead').typeahead({highlight: true}, {
+        $('.typeahead').typeahead({highlight: true}, {
             name: 'best-pictures',
             display: 'value',
             limit: 50,
@@ -878,25 +878,25 @@
         $('#listItem-markup').tagsManager({
             delimiters: [13],
             tagsContainer: "#listItem-markup-container",
-            tagClass: "hal-tagmanager-tag"
+            tagClass: "tag-manager-tag"
         });
         $('#listItemDisabled-markup').tagsManager({
             delimiters: [13],
             tagsContainer: "#listItemDisabled-markup-container",
-            tagClass: "hal-tagmanager-tag",
+            tagClass: "tag-manager-tag",
             prefilled: ["dis", "abled"]
         });
         $('#listItemError-markup').tagsManager({
             delimiters: [13],
             tagsContainer: "#listItemError-markup-container",
-            tagClass: "hal-tagmanager-tag",
+            tagClass: "tag-manager-tag",
             prefilled: ["with", "error"]
         });
 
         var tagManagerApi = $('#listItemTypeahead-markup').tagsManager({
             delimiters: [13],
             tagsContainer: "#listItemTypeahead-markup-container",
-            tagClass: "hal-tagmanager-tag"
+            tagClass: "tag-manager-tag"
         });
         tagManagerApi.on('tm:refresh', function () {
             $('#listItemTypeahead-markup').typeahead("val", "");
@@ -909,14 +909,14 @@
         $('#listItemTypeaheadDisabled-markup').tagsManager({
             delimiters: [13],
             tagsContainer: "#listItemTypeaheadDisabled-markup-container",
-            tagClass: "hal-tagmanager-tag",
+            tagClass: "tag-manager-tag",
             prefilled: ["dis", "abled"]
         });
 
         var tagManagerErrorApi = $('#listItemTypeaheadError-markup').tagsManager({
             delimiters: [13],
             tagsContainer: "#listItemTypeaheadError-markup-container",
-            tagClass: "hal-tagmanager-tag",
+            tagClass: "tag-manager-tag",
             prefilled: ["with", "error"]
         });
         tagManagerErrorApi.on('tm:refresh', function () {
@@ -930,7 +930,7 @@
         $('#propertiesItem-markup').tagsManager({
             delimiters: [13],
             tagsContainer: "#propertiesItem-markup-container",
-            tagClass: "hal-tagmanager-tag",
+            tagClass: "tag-manager-tag",
             validator: function (tag) {
                 var valid = /^([\w\d]+)=([\w\d]+)$/.test(tag);
                 if (!valid) {
@@ -942,13 +942,13 @@
         $('#propertiesItemDisabled-markup').tagsManager({
             delimiters: [13],
             tagsContainer: "#propertiesItemDisabled-markup-container",
-            tagClass: "hal-tagmanager-tag",
+            tagClass: "tag-manager-tag",
             prefilled: ["dis=abled"]
         });
         $('#propertiesItemError-markup').tagsManager({
             delimiters: [13],
             tagsContainer: "#propertiesItemError-markup-container",
-            tagClass: "hal-tagmanager-tag",
+            tagClass: "tag-manager-tag",
             prefilled: ["with=error"],
             validator: function (tag) {
                 return /^([\w\d]+)=([\w\d]+)$/.test(tag);

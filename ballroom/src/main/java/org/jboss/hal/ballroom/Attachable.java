@@ -19,15 +19,15 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.ballroom.form;
+package org.jboss.hal.ballroom;
 
 /**
- * Makes it possible to validate the form as a whole or to check fields which depend on other fields.
+ * Interface for elements which need to execute special code when they get attached to the DOM. Global initialization
+ * logic should be placed in {@link PatternFly#initComponents()}
  *
  * @author Harald Pehl
  */
-@FunctionalInterface
-public interface FormValidation  {
+public interface Attachable {
 
-    ValidationResult validate(Iterable<FormItem> formItems);
+    void attach();
 }

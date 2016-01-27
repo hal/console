@@ -37,6 +37,7 @@ import elemental.html.ParagraphElement;
 import elemental.html.SpanElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
@@ -75,16 +76,17 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     private boolean undefined;
     private boolean restricted;
     private boolean expressionAllowed;
+    private SuggestHandler suggestHandler;
 
     // Form.State#EDITING elements
     private final DivElement inputGroupContainer;
     private final LabelElement inputLabelElement;
-    private final SpanElement errorText;
     private final SpanElement expressionContainer;
     private final DivElement editingRestricted;
     private final InputElement<T> inputElement;
     final DivElement editingRoot;
     final DivElement inputContainer;
+    final SpanElement errorText;
 
     // Form.State#READONLY elements
     private final LabelElement readonlyLabelElement;
@@ -209,6 +211,13 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         }
     }
 
+    @Override
+    public void attach() {
+        if (suggestHandler instanceof Typeahead) {
+            ((Typeahead) suggestHandler).attach();
+        }
+    }
+
 
     // ------------------------------------------------------ state, name & text
 
@@ -241,6 +250,14 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     public void clearValue() {
         inputElement.clearValue();
         setReadonlyValue(null);
+    }
+
+    @Override
+    public void addSuggestHandler(final SuggestHandler suggestHandler) {
+        this.suggestHandler = suggestHandler;
+        if (this.suggestHandler instanceof Typeahead) {
+            ((Typeahead) this.suggestHandler).setFormItem(this);
+        }
     }
 
     void signalChange(final T value) {
@@ -461,10 +478,11 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
             editingRoot.getClassList().remove(hasFeedback);
             readonlyRoot.getClassList().remove(hasFeedback);
             inputContainer.removeChild(editingRestricted);
+            Node firstChild = inputContainer.getChildren().item(0);
             if (isExpressionValue()) {
-                inputContainer.appendChild(inputGroupContainer);
+                inputContainer.insertBefore(firstChild, inputGroupContainer);
             } else {
-                inputContainer.appendChild(inputElement.asElement());
+                inputContainer.insertBefore(firstChild, inputElement.asElement());
             }
 
             Elements.removeChildrenFrom(valueElement);
