@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Form Items</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="../../../app/src/main/resources/org/jboss/hal/public/css/hal.min.css" rel="stylesheet">
+
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.dataTables.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/typeahead.bundle.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/tagmanager.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/dataTables.buttons.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/dataTables.select.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-select.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-switch.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/patternfly.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div data-field="main" class="col-md-8 col-md-offset-1">
+            <header>
+                <h1 class="page-title">Form Items</h1>
+                <p>This page lists the supported form items available in HAL.
+                    It serves just as a demo and is <em>not</em> used as an UI template.</p>
+                <p>Each form item is bound to a specific type. See the related section for more details.</p>
+            </header>
+            <section>
+                <div class="form form-horizontal">
+                    <ul class="form-links clearfix">
+                        <li>
+                            <a class="clickable"><i class="pficon pficon-edit"></i><span class="form-link-label">Edit</span></a>
+                        </li>
+                        <li title="Resets the required fields to their default values and undefines the remaining fields." data-toggle="tooltip" data-placement="right">
+                            <a class="clickable"><i class="pficon pficon-restart"></i><span class="form-link-label">Reset</span></a>
+                        </li>
+                        <li>
+                            <a data-toggle="collapse" href="#sample-form-help" aria-expanded="false" aria-controls="sample-form-help"><i class="pficon pficon-help"></i> Help</a>
+                        </li>
+                    </ul>
+                    <div class="form-help-content collapse" id="sample-form-help">
+                        <div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">Lorem</label>
+
+                                <div class="col-md-9">
+                                    <p class="form-control-static">ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">At vero</label>
+
+                                <div class="col-md-9">
+                                    <p class="form-control-static">eos et accusam et justo duo dolores et ea rebum.</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">Stet clita kasd gubergren</label>
+
+                                <div class="col-md-9">
+                                    <p class="form-control-static">no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <form class="form form-horizontal">
+                    <div class="alert alert-danger">
+                        <span class="pficon pficon-error-circle-o"></span>
+                        <span>Something went wrong! What a mess!</span>
+                        <ul>
+                            <li>First</li>
+                            <li>Second</li>
+                            <li>Third</li>
+                        </ul>
+                    </div>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- TextBoxItem                                           -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <fieldset class="form-section">
+                        <legend>TextBoxItem</legend>
+                        <p>Target type: <code>String</code></p>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="textBox-markup">Default</label>
+                            <div class="col-md-9">
+                                <input type="text" id="textBox-markup" class="form-control" placeholder="Text input">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="textBoxRequired-markup">Required
+                                <abbr class="req" title="required"><i class="fa fa-asterisk"></i></abbr>
+                            </label>
+                            <div class="col-md-9">
+                                <input type="text" id="textBoxRequired-markup" class="form-control" placeholder="Required text input">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="textBoxDisabled-markup">Disabled</label>
+                            <div class="col-md-9">
+                                <input type="text" value="read-only" id="textBoxDisabled-markup" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="col-md-3 control-label" for="textBoxRestricted-markup">Restricted</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="textBoxRestricted-markup" class="form-control" readonly>
+                                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="col-md-3 control-label" for="textBoxError-markup">With error</label>
+                            <div class="col-md-9">
+                                <input type="text" value="nope" id="textBoxError-markup" class="form-control">
+                                <span class="help-block">Please correct the error</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- TextBoxItem with type-ahead support                   -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <fieldset class="form-section">
+                        <legend>TextBoxItem (with type-ahead support)</legend>
+                        <ul>
+                            <li>Enter a new value or choose a suggestion from the list</li>
+                            <li>Target type: <code>String</code></li>
+                        </ul>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="textBoxTypeahead-markup">Default</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" id="textBoxTypeahead-markup" class="form-control typeahead" placeholder="Text input">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Expression Resolver">
+                                            <i class="fa fa-link"></i>
+                                        </button>
+                                        <button id="textBoxTypeahead-showAll" class="btn btn-default" type="button" title="Show all options">
+                                            <i class="fa fa-angle-down"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="textBoxTypeaheadDisabled-markup">Disabled</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="read-only" id="textBoxTypeaheadDisabled-markup" class="form-control typeahead" disabled>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Show all options">
+                                            <i class="fa fa-angle-down"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="col-md-3 control-label" for="textBoxTypeaheadRestricted-markup">Restricted</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="textBoxTypeaheadRestricted-markup" class="form-control" readonly>
+                                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="col-md-3 control-label" for="textBoxTypeaheadError-markup">With error</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="nope" id="textBoxTypeaheadError-markup" class="form-control typeahead">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Show all options">
+                                            <i class="fa fa-angle-down"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                                <span class="help-block">Please correct the error</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- Expressions                                           -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <fieldset class="form-section">
+                        <legend>Expressions</legend>
+                        <p>Target type</p>
+                        <ul>
+                            <li><code>&lt;T&gt;</code> for the value</li>
+                            <li><code>String</code> for the expression</li>
+                        </ul>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="expression-markup">Default</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" id="expression-markup" class="form-control" placeholder="Expression"/>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Expression Resolver">
+                                            <i class="fa fa-link"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="expressionDisabled-markup">Disabled</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="${read-only}" id="expressionDisabled-markup" class="form-control" disabled/>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Expression Resolver" disabled>
+                                            <i class="fa fa-link"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="col-md-3 control-label" for="expressionRestricted-markup">Restricted</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="expressionRestricted-markup" class="form-control" readonly/>
+                                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="col-md-3 control-label" for="expressionError-markup">With error</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="nope" id="expressionError-markup" class="form-control"/>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Expression Resolver">
+                                            <i class="fa fa-link"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                                <span class="help-block">Please correct the error</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- PasswordItem                                          -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <fieldset class="form-section">
+                        <legend>PasswordItem</legend>
+                        <p>Target type: <code>String</code></p>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="password-markup">Default</label>
+                            <div class="col-md-9">
+                                <input type="password" id="password-markup" class="form-control" placeholder="Password">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="passwordDisabled-markup">Disabled</label>
+                            <div class="col-md-9">
+                                <input type="password" value="read-only" id="passwordDisabled-markup" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="col-md-3 control-label" for="passwordRestricted-markup">Restricted</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="passwordRestricted-markup" class="form-control" readonly>
+                                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="col-md-3 control-label" for="passwordError-markup">With error</label>
+                            <div class="col-md-9">
+                                <input type="password" value="nope" id="passwordError-markup" class="form-control">
+                                <span class="help-block">Please correct the error</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- NumberItem                                            -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <fieldset class="form-section">
+                        <legend>NumberItem</legend>
+                        <p>Target type: <code>Long</code></p>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="number-markup">Default</label>
+                            <div class="col-md-9">
+                                <input type="number" id="number-markup" class="form-control" placeholder="Number">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="numberDisabled-markup">Disabled</label>
+                            <div class="col-md-9">
+                                <input type="number" value="0815" id="numberDisabled-markup" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="col-md-3 control-label" for="numberRestricted-markup">Restricted</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="numberRestricted-markup" class="form-control" readonly>
+                                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="col-md-3 control-label" for="numberError-markup">With error</label>
+                            <div class="col-md-9">
+                                <input type="number" value="2342" id="numberError-markup" class="form-control">
+                                <span class="help-block">Please correct the error</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- TextareaItem                                          -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <fieldset class="form-section">
+                        <legend>TextareaItem</legend>
+                        <ul>
+                            <li>For long texts</li>
+                            <li>Target type: <code>String</code></li>
+                        </ul>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="textarea-markup">Default</label>
+                            <div class="col-md-9">
+                                <textarea rows="3" id="textarea-markup" class="form-control" placeholder="Textarea"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="textareaDisabled-markup">Disabled</label>
+                            <div class="col-md-9">
+                                <textarea rows="3" id="textareaDisabled-markup" class="form-control" disabled>read-only</textarea>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="col-md-3 control-label" for="textareaRestricted-markup">Restricted</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="textareaRestricted-markup" class="form-control" readonly>
+                                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="col-md-3 control-label" for="textareaError-markup">With error</label>
+                            <div class="col-md-9">
+                                <textarea rows="3" id="textareaError-markup" class="form-control">nope</textarea>
+                                <span class="help-block">Please correct the error</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- CheckBoxItem                                          -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <fieldset class="form-section">
+                        <legend>CheckBoxItem</legend>
+                        <p>Target type: <code>Boolean</code></p>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="checkbox-markup">Default</label>
+                            <div class="col-md-9">
+                                <input type="checkbox" id="checkbox-markup">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="checkboxDisabled-markup">Disabled</label>
+                            <div class="col-md-9">
+                                <input type="checkbox" id="checkboxDisabled-markup" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="col-md-3 control-label" for="checkboxRestricted-markup">Restricted</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="checkboxRestricted-markup" class="form-control" readonly>
+                                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="col-md-3 control-label" for="checkboxError-markup">With error</label>
+                            <div class="col-md-9">
+                                <input type="checkbox" id="checkboxError-markup">
+                                <span class="help-block">Please correct the error</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- SwitchItem                                            -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <fieldset class="form-section">
+                        <legend>SwitchItem</legend>
+                        <ul>
+                            <li>Target type: <code>Boolean</code></li>
+                            <li>Use this instead of CheckBoxItem</li>
+                        </ul>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="switch-markup">Default</label>
+                            <div class="col-md-9">
+                                <input type="checkbox" id="switch-markup" class="bootstrap-switch" checked>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="switchDisabled-markup">Disabled</label>
+                            <div class="col-md-9">
+                                <input type="checkbox" id="switchDisabled-markup" class="bootstrap-switch" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="col-md-3 control-label" for="switchRestricted-markup">Restricted</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="switchRestricted-markup" class="form-control" readonly>
+                                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="col-md-3 control-label" for="switchError-markup">With error</label>
+                            <div class="col-md-9">
+                                <input type="checkbox" id="switchError-markup" class="bootstrap-switch">
+                                <span class="help-block">Please correct the error</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- SingleSelectBoxItem                                   -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <fieldset class="form-section">
+                        <legend>SingleSelectBoxItem</legend>
+                        <ul>
+                            <li>Select an item from a predefined list</li>
+                            <li>Selection is required</li>
+                            <li>Target type: <code>String</code></li>
+                        </ul>
+                        <p></p>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="singleSelectBox-markup">Default</label>
+                            <div class="col-md-9">
+                                <select id="singleSelectBox-markup" class="form-control selectpicker">
+                                    <option>Lorem</option>
+                                    <option>ipsum</option>
+                                    <option>dolor</option>
+                                    <option>sit</option>
+                                    <option>amet</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="singleSelectBoxDisabled-markup">Disabled</label>
+                            <div class="col-md-9">
+                                <select id="singleSelectBoxDisabled-markup" class="form-control selectpicker" disabled>
+                                    <option>Lorem</option>
+                                    <option>ipsum</option>
+                                    <option>dolor</option>
+                                    <option>sit</option>
+                                    <option>amet</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="col-md-3 control-label" for="singleSelectBoxRestricted-markup">Restricted</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="singleSelectBoxRestricted-markup" class="form-control" readonly>
+                                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="col-md-3 control-label" for="singleSelectBoxError-markup">With error</label>
+                            <div class="col-md-9">
+                                <select id="singleSelectBoxError-markup" class="form-control selectpicker">
+                                    <option>Lorem</option>
+                                    <option>ipsum</option>
+                                    <option>dolor</option>
+                                    <option>sit</option>
+                                    <option>amet</option>
+                                </select>
+                                <span class="help-block">Please correct the error</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- SingleSelectBoxItem (allow empty)                     -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <fieldset class="form-section">
+                        <legend>SingleSelectBoxItem (allow empty)</legend>
+                        <ul>
+                            <li>Select an item from a predefined list</li>
+                            <li>Selection is optional</li>
+                            <li>Target type: <code>String</code></li>
+                        </ul>
+                        <p>Target type: <code>String</code></p>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="singleSelectBoxAllowEmpty-markup">Default</label>
+                            <div class="col-md-9">
+                                <select id="singleSelectBoxAllowEmpty-markup" class="form-control selectpicker">
+                                    <option title="undefined"></option>
+                                    <option>Lorem</option>
+                                    <option>Lorem</option>
+                                    <option>ipsum</option>
+                                    <option>dolor</option>
+                                    <option>sit</option>
+                                    <option>amet</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="singleSelectBoxAllowEmptyDisabled-markup">Disabled</label>
+                            <div class="col-md-9">
+                                <select id="singleSelectBoxAllowEmptyDisabled-markup" class="form-control selectpicker" disabled>
+                                    <option title="undefined"></option>
+                                    <option>Lorem</option>
+                                    <option>ipsum</option>
+                                    <option>dolor</option>
+                                    <option>sit</option>
+                                    <option>amet</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="col-md-3 control-label" for="singleSelectBoxAllowEmptyRestricted-markup">Restricted</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="singleSelectBoxAllowEmptyRestricted-markup" class="form-control" readonly>
+                                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="col-md-3 control-label" for="singleSelectBoxAllowEmptyError-markup">With error</label>
+                            <div class="col-md-9">
+                                <select id="singleSelectBoxAllowEmptyError-markup" class="form-control selectpicker">
+                                    <option title="undefined"></option>
+                                    <option>Lorem</option>
+                                    <option>ipsum</option>
+                                    <option>dolor</option>
+                                    <option>sit</option>
+                                    <option>amet</option>
+                                </select>
+                                <span class="help-block">Please correct the error</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- MultiSelectBoxItem                                    -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <fieldset class="form-section">
+                        <legend>MultiSelectBoxItem</legend>
+                        <ul>
+                            <li>Select multiple items from a predefined list</li>
+                            <li>Selection is optional</li>
+                            <li>Target type: <code>List&lt;String&gt;</code></li>
+                        </ul>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="multiSelectBox-markup">Default</label>
+                            <div class="col-md-9">
+                                <select id="multiSelectBox-markup" class="form-control selectpicker" multiple>
+                                    <option>Lorem</option>
+                                    <option>ipsum</option>
+                                    <option>dolor</option>
+                                    <option>sit</option>
+                                    <option>amet</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="multiSelectBoxDisabled-markup">Disabled</label>
+                            <div class="col-md-9">
+                                <select id="multiSelectBoxDisabled-markup" class="form-control selectpicker" multiple disabled>
+                                    <option>Lorem</option>
+                                    <option>ipsum</option>
+                                    <option>dolor</option>
+                                    <option>sit</option>
+                                    <option>amet</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="col-md-3 control-label" for="multiSelectBoxRestricted-markup">Restricted</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="multiSelectBoxRestricted-markup" class="form-control" readonly>
+                                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="col-md-3 control-label" for="multiSelectBoxError-markup">With error</label>
+                            <div class="col-md-9">
+                                <select id="multiSelectBoxError-markup" class="form-control selectpicker" multiple>
+                                    <option>Lorem</option>
+                                    <option>ipsum</option>
+                                    <option>dolor</option>
+                                    <option>sit</option>
+                                    <option>amet</option>
+                                </select>
+                                <span class="help-block">Please correct the error</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- ListItem                                              -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <fieldset class="form-section">
+                        <legend>ListItem</legend>
+                        <ul>
+                            <li>Manage a list of items</li>
+                            <li>Enter items with return</li>
+                            <li>Remove items by clicking on 'x' or by pressing backspace in the empty text input</li>
+                            <li>Target type: <code>List&lt;String&gt;</code></li>
+                        </ul>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="listItem-markup">Default</label>
+                            <div class="col-md-9">
+                                <input type="text" id="listItem-markup" class="form-control tags" placeholder="Text input">
+                                <div id="listItem-markup-container" class="tag-manager-container"></div>
+                            </div>
+                        </div>
+                        <div class="form-group disabled">
+                            <label class="col-md-3 control-label" for="listItemDisabled-markup">Disabled</label>
+                            <div class="col-md-9 disabled">
+                                <input type="text" value="read-only" id="listItemDisabled-markup" class="form-control tags" disabled>
+                                <div id="listItemDisabled-markup-container" class="tag-manager-container"></div>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="col-md-3 control-label" for="listItemRestricted-markup">Restricted</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="listItemRestricted-markup" class="form-control" readonly>
+                                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="col-md-3 control-label" for="listItemError-markup">With error</label>
+                            <div class="col-md-9">
+                                <input type="text" value="nope" id="listItemError-markup" class="form-control tags">
+                                <div id="listItemError-markup-container" class="tag-manager-container"></div>
+                                <span class="help-block">Please correct the error</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- ListItem with type-ahead support                      -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <fieldset class="form-section">
+                        <legend>ListItem (with type-ahead support)</legend>
+                        <ul>
+                            <li>Manage a list of items</li>
+                            <li>Enter items with return or choose a suggestion from the list</li>
+                            <li>Remove items by clicking on 'x' or by pressing backspace in the empty text input</li>
+                            <li>Target type: <code>List&lt;String&gt;</code></li>
+                        </ul>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="listItemTypeahead-markup">Default</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" id="listItemTypeahead-markup" class="form-control tags typeahead" placeholder="Text input">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Show all options">
+                                            <i class="fa fa-angle-down"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                                <div id="listItemTypeahead-markup-container" class="tag-manager-container"></div>
+                            </div>
+                        </div>
+                        <div class="form-group disabled">
+                            <label class="col-md-3 control-label" for="listItemTypeaheadDisabled-markup">Disabled</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="read-only" id="listItemTypeaheadDisabled-markup" class="form-control tags typeahead" disabled>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Show all options">
+                                            <i class="fa fa-angle-down"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                                <div id="listItemTypeaheadDisabled-markup-container" class="tag-manager-container"></div>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="col-md-3 control-label" for="listItemTypeaheadRestricted-markup">Restricted</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="listItemTypeaheadRestricted-markup" class="form-control" readonly>
+                                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="col-md-3 control-label" for="listItemTypeaheadError-markup">With error</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="nope" id="listItemTypeaheadError-markup" class="form-control tags typeahead">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" title="Show all options">
+                                            <i class="fa fa-angle-down"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                                <div id="listItemTypeaheadError-markup-container" class="tag-manager-container"></div>
+                                <span class="help-block">Please correct the error</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- PropertiesItem                                        -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <fieldset class="form-section">
+                        <legend>PropertiesItem</legend>
+                        <ul>
+                            <li>Manage a list of properties</li>
+                            <li>Enter properties using <code>key=value</code></li>
+                            <li>Remove items by clicking on 'x' or by pressing backspace in the empty text input</li>
+                            <li>Target type: <code>Map&lt;String, String&gt;</code></li>
+                        </ul>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="propertiesItem-markup">Default</label>
+                            <div class="col-md-9">
+                                <input type="text" id="propertiesItem-markup" class="form-control properties"/>
+                                <div id="propertiesItem-markup-container" class="tag-manager-container"></div>
+                            </div>
+                        </div>
+                        <div class="form-group disabled">
+                            <label class="col-md-3 control-label" for="propertiesItemDisabled-markup">Disabled</label>
+                            <div class="col-md-9 disabled">
+                                <input type="text" id="propertiesItemDisabled-markup" class="form-control properties" disabled/>
+                                <div id="propertiesItemDisabled-markup-container" class="tag-manager-container"></div>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="col-md-3 control-label" for="propertiesItemRestricted-markup">Restricted</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="propertiesItemRestricted-markup" class="form-control" readonly>
+                                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="col-md-3 control-label" for="propertiesItemError-markup">With error</label>
+                            <div class="col-md-9">
+                                <input type="text" id="propertiesItemError-markup" class="form-control properties"/>
+                                <div id="propertiesItemError-markup-container" class="tag-manager-container"></div>
+                                <span class="help-block">Please correct the error</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- StaticItem                                            -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <fieldset class="form-section">
+                        <legend>StaticItem</legend>
+                        <p>Target type: <code>String</code></p>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Label for</label>
+
+                            <div class="col-md-9">
+                                <p class="form-control-static">Static text</p>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="col-md-3 control-label">Restricted</label>
+
+                            <div class="col-md-9">
+                                <p class="form-control-static">The permissions for your role don't allow to access this data</p>
+                                <span class="fa fa-lock form-control-feedback" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- Button Item                                           -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <fieldset class="form-section">
+                        <legend>ButtonItem</legend>
+                        <p>Target type: <code>Void</code></p>
+                        <div class="form-group">
+                            <div class="col-md-offset-3 col-md-9">
+                                <button class="btn btn-default btn-hal">Click Me</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-3 col-md-9">
+                                <button class="btn btn-default btn-hal" disabled>Nope</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-9 col-md-offset-3">
+                                <button class="btn btn-default btn-hal" title="A button with a long text">A button with a long text</button>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        <div class="col-md-offset-3 col-md-9">
+                            <span class="help-block">Required fields are marked with <abbr class="req" title="required"><i class="fa fa-asterisk"></i></abbr></span>
+                        </div>
+                    </div>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- Cancel & Save                                         -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <div class="form-group">
+                        <div class="col-md-offset-3 col-md-9">
+                            <div class="pull-right form-buttons">
+                                <button type="button" class="btn btn-default btn-hal">Cancel</button>
+                                <button type="button" class="btn btn-primary btn-hal">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+</div>
+<script>
+    // Initialize Boostrap-select
+    $(document).ready(function () {
+        $('[data-toggle=tooltip]').tooltip();
+        $('.bootstrap-switch').bootstrapSwitch();
+        $('.selectpicker').selectpicker();
+
+        var bloodhoundOptions = {
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            prefetch: 'https://twitter.github.io/typeahead.js/data/films/post_1960.json',
+            remote: {
+                url: 'https://twitter.github.io/typeahead.js/data/films/queries/%QUERY.json',
+                wildcard: '%QUERY'
+            }
+        };
+        var bestPictures = new Bloodhound(bloodhoundOptions);
+
+        $('.typeahead').typeahead({highlight: true}, {
+            name: 'best-pictures',
+            display: 'value',
+            limit: 50,
+            source: bestPictures,
+            templates: {
+                empty: '<div class="empty-message"><span class="pficon pficon-warning-triangle-o"></span>No results</div>'
+            }
+        });
+
+        $('#textBoxTypeahead-showAll').on('click', function() {
+            // The remote service would need to support empty queries.
+            // Because it doesn't we simply use 'i' to get *some* suggestions
+            $('#textBoxTypeahead-markup').typeahead('val', 'i');
+            $('#textBoxTypeahead-markup').focus();
+        });
+
+        $('#listItem-markup').tagsManager({
+            delimiters: [13],
+            tagsContainer: "#listItem-markup-container",
+            tagClass: "tag-manager-tag"
+        });
+        $('#listItemDisabled-markup').tagsManager({
+            delimiters: [13],
+            tagsContainer: "#listItemDisabled-markup-container",
+            tagClass: "tag-manager-tag",
+            prefilled: ["dis", "abled"]
+        });
+        $('#listItemError-markup').tagsManager({
+            delimiters: [13],
+            tagsContainer: "#listItemError-markup-container",
+            tagClass: "tag-manager-tag",
+            prefilled: ["with", "error"]
+        });
+
+        var tagManagerApi = $('#listItemTypeahead-markup').tagsManager({
+            delimiters: [13],
+            tagsContainer: "#listItemTypeahead-markup-container",
+            tagClass: "tag-manager-tag"
+        });
+        tagManagerApi.on('tm:refresh', function () {
+            $('#listItemTypeahead-markup').typeahead("val", "");
+            $('#listItemTypeahead-markup').typeahead("close");
+        });
+        $('#listItemTypeahead-markup').on('typeahead:select', function (e, d) {
+            tagManagerApi.tagsManager("pushTag", d.value);
+        });
+
+        $('#listItemTypeaheadDisabled-markup').tagsManager({
+            delimiters: [13],
+            tagsContainer: "#listItemTypeaheadDisabled-markup-container",
+            tagClass: "tag-manager-tag",
+            prefilled: ["dis", "abled"]
+        });
+
+        var tagManagerErrorApi = $('#listItemTypeaheadError-markup').tagsManager({
+            delimiters: [13],
+            tagsContainer: "#listItemTypeaheadError-markup-container",
+            tagClass: "tag-manager-tag",
+            prefilled: ["with", "error"]
+        });
+        tagManagerErrorApi.on('tm:refresh', function () {
+            $('#listItemTypeaheadError-markup').typeahead("val", "");
+            $('#listItemTypeaheadError-markup').typeahead("close");
+        });
+        $('#listItemTypeaheadError-markup').on('typeahead:selected', function (e, d) {
+            tagManagerErrorApi.tagsManager("pushTag", d.value);
+        });
+
+        $('#propertiesItem-markup').tagsManager({
+            delimiters: [13],
+            tagsContainer: "#propertiesItem-markup-container",
+            tagClass: "tag-manager-tag",
+            validator: function (tag) {
+                var valid = /^([\w\d]+)=([\w\d]+)$/.test(tag);
+                if (!valid) {
+                    console.error("Not a valid property: '" + tag + "'");
+                }
+                return valid;
+            }
+        });
+        $('#propertiesItemDisabled-markup').tagsManager({
+            delimiters: [13],
+            tagsContainer: "#propertiesItemDisabled-markup-container",
+            tagClass: "tag-manager-tag",
+            prefilled: ["dis=abled"]
+        });
+        $('#propertiesItemError-markup').tagsManager({
+            delimiters: [13],
+            tagsContainer: "#propertiesItemError-markup-container",
+            tagClass: "tag-manager-tag",
+            prefilled: ["with=error"],
+            validator: function (tag) {
+                return /^([\w\d]+)=([\w\d]+)$/.test(tag);
+            }
+        });
+    });
+</script>
+</body>
+</html>

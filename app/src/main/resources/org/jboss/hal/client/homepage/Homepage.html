@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<!--suppress HtmlUnknownAnchorTarget -->
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Homepage</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="../../public/css/hal.min.css" rel="stylesheet">
+
+    <script src="../../public/js/jquery.min.js"></script>
+    <script src="../../public/js/bootstrap.min.js"></script>
+    <script src="../../public/js/patternfly.min.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="eap-home-row">
+        <div class="eap-home-title">
+            <p>New to EAP7? <a href="#">Take a Tour</a></p>
+
+            <h1>Red Hat Jboss Enterprise Application Platform</h1>
+        </div>
+        <div class="eap-home-col">
+            <div class="eap-home-module">
+                <div class="eap-home-module-icon">
+                    <img data-preview="deployments">
+                </div>
+                <div class="eap-home-module-container">
+                    <div class="eap-home-module-header">
+                        <h2><a href="#">Deployments</a></h2>
+                        <p>Add and manage deployments</p>
+                    </div>
+                    <!-- HomepageSection template -->
+                    <div data-element="homepage-section">
+                        <div class="eap-toggle-controls">
+                            <a href="#{{id()}}" data-element="toggleSection" data-toggle="collapse" aria-expanded="true" aria-controls="{{id}}"><i data-element="toggleIcon" class="eap-home-section-icon fa fa-angle-down"></i><span data-element="sectionHeader">Create a Deployment</span></a>
+                            <a href="{{historyToken()}}"><span>{{resources().constants().start()}} </span><i class="fa fa-arrow-circle-right"></i></a>
+                        </div>
+                        <div id="{{id}}" data-element="sectionBody" class="eap-toggle-container collapse">
+                            <p data-element="sectionIntro">Deploy an application and assign it to one or more server groups.</p>
+                            <ol data-element="sectionSteps">
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- HomepageModule template -->
+        <div data-element="homepage-module" class="eap-home-col">
+            <div class="eap-home-module">
+                <div class="eap-home-module-icon">
+                    <img data-element="moduleImage" data-preview="configuration">
+                </div>
+                <div data-element="moduleBody" class="eap-home-module-container">
+                    <div class="eap-home-module-header">
+                        <h2><a data-element="moduleHeader" href="{{historyToken()}}">Configuration</a></h2>
+                        <p data-element="moduleIntro">Configure your server profiles</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="eap-home-row">
+        <div class="eap-home-col">
+            <div class="eap-home-module">
+                <div class="eap-home-module-icon">
+                    <img data-preview="runtime">
+                </div>
+                <div class="eap-home-module-container">
+                    <div class="eap-home-module-header">
+                        <h2><a href="#">Runtime</a></h2>
+                        <p>Add servers and server groups. Monitor server status</p>
+                    </div>
+                    <div>
+                        <div class="eap-toggle-controls">
+                            <a href="#"><i class="fa fa-angle-down"></i> Create a Server Group</a>
+                            <a href="#">Start <i class="fa fa-arrow-circle-right"></i></a>
+                        </div>
+                        <div class="eap-toggle-container">
+                            <p>Server groups allow you to apply common management policies and deploy applications to a set of servers at once.</p>
+                            <ol>
+                                <li>Browse domain by server groups and add a new group</li>
+                                <li>Assign it a profile and socket binding</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="eap-home-col">
+            <div class="eap-home-module">
+                <div class="eap-home-module-icon">
+                    <img data-preview="access_control">
+                </div>
+                <div class="eap-home-module-container">
+                    <div class="eap-home-module-header">
+                        <h2><a href="#">Access Control</a></h2>
+                        <p>Manage user roles and groups</p>
+                    </div>
+                    <div>
+                        <div class="eap-toggle-controls">
+                            <a href="#"><i class="fa fa-angle-down"></i> Assign User Roles</a>
+                            <a href="#">Start <i class="fa fa-arrow-circle-right"></i></a>
+                        </div>
+                        <div class="eap-toggle-container">
+                            <p>Assign roles to individual users or user groups to secure access to system resources.</p>
+                            <ol>
+                                <li>Add user or group.</li>
+                                <li>Enter user or group name and realm</li>
+                                <li>Assign one or more roles to that user or group</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="eap-home-row">
+        <div class="eap-home-col">
+            <div class="eap-home-module">
+                <div class="eap-home-module-icon">
+                    <img data-preview="patching">
+                </div>
+                <div class="eap-home-module-container">
+                    <div class="eap-home-module-header">
+                        <h2><a href="#">Patching</a></h2>
+                        <p>Manage patches</p>
+                    </div>
+                    <div>
+                        <div class="eap-toggle-controls">
+                            <a href="#"><i class="fa fa-angle-down"></i> Apply a Patch</a>
+                            <a href="#">Start <i class="fa fa-arrow-circle-right"></i></a>
+                        </div>
+                        <div class="eap-toggle-container">
+                            <p>Update a selected host to the latest patch level. The patch file must be downloaded to your local machine prior to starting this process.</p>
+                            <ol>
+                                <li>Select target host</li>
+                                <li>Select Patch Management</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- HomepageHelp template -->
+        <div data-element="homepage-help" class="eap-home-col">
+            <div class="eap-home-module">
+                <div class="eap-home-module-icon">
+                    <img data-preview="help" src="{{resources().images().help().getSafeUri().asString()}}">
+                </div>
+                <div class="eap-home-module-container">
+                    <div class="eap-home-module-header">
+                        <h2>{{resources().constants().homepageHelpNeedHelp()}}</h2>
+                        <p></p>
+                    </div>
+                    <div class="eap-home-module-col">
+                        <p>{{resources().constants().homepageHelpGeneralResources()}}</p>
+                        <ul data-element="generalResources">
+                        </ul>
+                    </div>
+                    <div class="eap-home-module-col">
+                        <p>{{resources().constants().homepageHelpGetHelp()}}</p>
+                        <ul data-element="getHelp">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // for the sake of a better preview (please preview as local file!)
+    $(document).ready(function () {
+        $("img").each(function () {
+            var name = $(this).data("preview");
+            $(this).attr("src", "../../../../../../../../../resources/src/main/resources/org/jboss/hal/resources/homepage/" + name + ".png");
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JBoss, Home of Professional Open Source.
+  ~ Copyright 2010, Red Hat, Inc., and individual contributors
+  ~ as indicated by the @author tags. See the copyright.txt file in the
+  ~ distribution for a full listing of individual contributors.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jboss.hal</groupId>
+        <artifactId>hal-parent</artifactId>
+        <version>0.0.3</version>
+    </parent>
+
+    <artifactId>hal-parent-with-dependencies</artifactId>
+    <name>HAL :: Parent :: Dependencies</name>
+    <description>The parent with dependencies declares all dependency versions in dependencyManagement. All modules
+        extend this parent, except for the BOM (which is used here).
+    </description>
+    <packaging>pom</packaging>
+
+    <properties>
+        <annotations.version>15.0</annotations.version>
+        <apt-tools.version>0.0.2</apt-tools.version>
+        <auto-service.version>1.0-rc2</auto-service.version>
+        <circuit.version>0.1.4</circuit.version>
+        <elemento.version>0.1.8</elemento.version>
+        <flow.version>0.0.3</flow.version>
+        <gin.version>2.1.2</gin.version>
+        <guava.version>19.0-gwt28</guava.version>
+        <gwt.version>2.8.0-SNAPSHOT</gwt.version>
+        <gwtp.version>1.6-SNAPSHOT</gwtp.version>
+        <jboss.dmr.version>1.3.0.Final</jboss.dmr.version>
+        <junit.version>4.12</junit.version>
+        <mockito.version>2.0.31-beta</mockito.version>
+        <nodejs.version>v4.2.1</nodejs.version>
+        <npm.version>3.3.10</npm.version>
+        <slf4j.version>1.7.12</slf4j.version>
+        <slf4j-gwt.version>1.7.7.1</slf4j-gwt.version>
+        <validation.version>1.0.0.GA</validation.version>
+    </properties>
+
+    <!-- Do not declare any build settings here! Declare them in hal-parent. -->
+    <build/>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- HAL -->
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- GWT -->
+            <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-dev</artifactId>
+                <version>${gwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-user</artifactId>
+                <version>${gwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.gwt</groupId>
+                <artifactId>gwt-elemental</artifactId>
+                <version>${gwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>${validation.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.gwtplatform</groupId>
+                <artifactId>gwtp-mvp-client</artifactId>
+                <version>${gwtp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.gwt.inject</groupId>
+                <artifactId>gin</artifactId>
+                <version>${gin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.gwt.circuit</groupId>
+                <artifactId>circuit-meta</artifactId>
+                <version>${circuit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.gwt.circuit</groupId>
+                <artifactId>circuit-processor</artifactId>
+                <version>${circuit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.gwt.flow</groupId>
+                <artifactId>flow</artifactId>
+                <version>${flow.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.gwt.elemento</groupId>
+                <artifactId>elemento-core</artifactId>
+                <version>${elemento.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.gwt.elemento</groupId>
+                <artifactId>elemento-gin</artifactId>
+                <version>${elemento.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava-gwt</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.finam</groupId>
+                <artifactId>slf4j-gwt</artifactId>
+                <version>${slf4j-gwt.version}</version>
+            </dependency>
+
+            <!-- Misc -->
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>${annotations.version}</version>
+            </dependency>
+
+            <!-- Annotation Processing -->
+            <dependency>
+                <groupId>org.jboss.auto</groupId>
+                <artifactId>apt-tools</artifactId>
+                <version>${apt-tools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.auto.service</groupId>
+                <artifactId>auto-service</artifactId>
+                <version>${auto-service.version}</version>
+            </dependency>
+
+            <!-- Test -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss</groupId>
+                <artifactId>jboss-dmr</artifactId>
+                <version>${jboss.dmr.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-jcl</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jcl</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

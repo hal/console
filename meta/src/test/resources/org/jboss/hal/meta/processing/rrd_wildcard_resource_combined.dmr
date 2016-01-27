@@ -1,0 +1,2660 @@
+[
+    {
+        "address" => [
+            ("subsystem" => "mail"),
+            ("mail-session" => "*"),
+            ("server" => "smtp")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "description" => "Mail session server",
+            "access-constraints" => {"application" => {"mail-session" => {"type" => "mail"}}},
+            "attributes" => {
+                "outbound-socket-binding-ref" => {
+                    "type" => STRING,
+                    "description" => "Outbound Socket binding to mail server",
+                    "expressions-allowed" => true,
+                    "nillable" => false,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L,
+                    "access-constraints" => {"sensitive" => {"socket-binding-ref" => {"type" => "core"}}},
+                    "access-type" => "read-write",
+                    "storage" => "configuration",
+                    "restart-required" => "all-services"
+                },
+                "password" => {
+                    "type" => STRING,
+                    "description" => "Password to authenticate on server",
+                    "expressions-allowed" => true,
+                    "nillable" => true,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L,
+                    "access-constraints" => {"sensitive" => {
+                        "credential" => {"type" => "core"},
+                        "mail-server-security" => {"type" => "mail"}
+                    }},
+                    "access-type" => "read-write",
+                    "storage" => "configuration",
+                    "restart-required" => "all-services"
+                },
+                "ssl" => {
+                    "type" => BOOLEAN,
+                    "description" => "Does server require SSL?",
+                    "expressions-allowed" => true,
+                    "nillable" => true,
+                    "default" => false,
+                    "access-constraints" => {"sensitive" => {"mail-server-security" => {"type" => "mail"}}},
+                    "access-type" => "read-write",
+                    "storage" => "configuration",
+                    "restart-required" => "all-services"
+                },
+                "tls" => {
+                    "type" => BOOLEAN,
+                    "description" => "Does server require TLS?",
+                    "expressions-allowed" => true,
+                    "nillable" => true,
+                    "default" => false,
+                    "access-constraints" => {"sensitive" => {"mail-server-security" => {"type" => "mail"}}},
+                    "access-type" => "read-write",
+                    "storage" => "configuration",
+                    "restart-required" => "all-services"
+                },
+                "username" => {
+                    "type" => STRING,
+                    "description" => "Username to authenticate on server",
+                    "expressions-allowed" => true,
+                    "nillable" => true,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L,
+                    "access-constraints" => {"sensitive" => {
+                        "credential" => {"type" => "core"},
+                        "mail-server-security" => {"type" => "mail"}
+                    }},
+                    "access-type" => "read-write",
+                    "storage" => "configuration",
+                    "restart-required" => "all-services"
+                }
+            },
+            "operations" => {
+                "add" => {
+                    "operation-name" => "add",
+                    "description" => "adds mail server",
+                    "request-properties" => {
+                        "outbound-socket-binding-ref" => {
+                            "type" => STRING,
+                            "description" => "Outbound Socket binding to mail server",
+                            "expressions-allowed" => true,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "password" => {
+                            "type" => STRING,
+                            "description" => "Password to authenticate on server",
+                            "expressions-allowed" => true,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "ssl" => {
+                            "type" => BOOLEAN,
+                            "description" => "Does server require SSL?",
+                            "expressions-allowed" => true,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "tls" => {
+                            "type" => BOOLEAN,
+                            "description" => "Does server require TLS?",
+                            "expressions-allowed" => true,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "username" => {
+                            "type" => STRING,
+                            "description" => "Username to authenticate on server",
+                            "expressions-allowed" => true,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "read-children-types" => {
+                    "operation-name" => "read-children-types",
+                    "description" => "Gets the type names of all the children under the selected resource",
+                    "request-properties" => {
+                        "include-aliases" => {
+                            "type" => BOOLEAN,
+                            "description" => "If 'true' include children which are aliases.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-singletons" => {
+                            "type" => BOOLEAN,
+                            "description" => "If 'true' include the full key/value pair for any singleton registration.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => STRING,
+                        "description" => "The children types"
+                    }
+                },
+                "whoami" => {
+                    "operation-name" => "whoami",
+                    "description" => "Returns the identity of the currently authenticated user.",
+                    "request-properties" => {"verbose" => {
+                        "type" => BOOLEAN,
+                        "description" => "If set to true whoami also returns the users roles.",
+                        "expressions-allowed" => false,
+                        "required" => false,
+                        "nillable" => true,
+                        "default" => false
+                    }},
+                    "reply-properties" => {
+                        "type" => STRING,
+                        "description" => "The identify of the authenticated user and their roles if requested."
+                    }
+                },
+                "map-clear" => {
+                    "operation-name" => "map-clear",
+                    "description" => "Clear all entries from map attribute",
+                    "request-properties" => {"name" => {
+                        "type" => STRING,
+                        "description" => "Name of list attribute",
+                        "expressions-allowed" => false,
+                        "required" => true,
+                        "nillable" => false,
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L
+                    }},
+                    "reply-properties" => {}
+                },
+                "list-get" => {
+                    "operation-name" => "list-get",
+                    "description" => "Get entry from list attribute",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of list attribute",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "index" => {
+                            "type" => INT,
+                            "description" => "Index entry to get",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "query" => {
+                    "operation-name" => "query",
+                    "description" => "query a resource",
+                    "request-properties" => {
+                        "select" => {
+                            "type" => LIST,
+                            "description" => "a list of attribute names to reduce to",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "value-type" => STRING
+                        },
+                        "where" => {
+                            "type" => OBJECT,
+                            "description" => "a list of filter criteria tuples (i.e. 'running=true')",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "value-type" => STRING
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => OBJECT
+                    }
+                },
+                "read-operation-description" => {
+                    "operation-name" => "read-operation-description",
+                    "description" => "Gets description of given operation",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of operation",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "locale" => {
+                            "type" => STRING,
+                            "description" => "Locale in which to return description",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "access-control" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether or not to include information about what rights the current user has on the operation.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        }
+                    },
+                    "reply-properties" => {"type" => OBJECT}
+                },
+                "write-attribute" => {
+                    "operation-name" => "write-attribute",
+                    "description" => "Sets the value of an attribute for the selected resource",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "The name of the attribute to set the value for under the selected resource",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "value" => {
+                            "type" => STRING,
+                            "description" => "The value of the attribute to set the value for under the selected resource. May be null if the underlying model supports null values.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "map-get" => {
+                    "operation-name" => "map-get",
+                    "description" => "Get entry from map attribute",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of map attribute",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "key" => {
+                            "type" => STRING,
+                            "description" => "Key of entry to return",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "list-clear" => {
+                    "operation-name" => "list-clear",
+                    "description" => "Clear all entries from list attribute",
+                    "request-properties" => {"name" => {
+                        "type" => STRING,
+                        "description" => "Name of list attribute",
+                        "expressions-allowed" => false,
+                        "required" => true,
+                        "nillable" => false,
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L
+                    }},
+                    "reply-properties" => {}
+                },
+                "read-attribute" => {
+                    "operation-name" => "read-attribute",
+                    "description" => "Gets the value of an attribute for the selected resource",
+                    "request-properties" => {
+                        "resolve-expressions" => {
+                            "type" => BOOLEAN,
+                            "description" => "Resolves expressions to current runtime values",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "The name of the attribute to get the value for under the selected resource",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "include-defaults" => {
+                            "type" => BOOLEAN,
+                            "description" => "Boolean to enable/disable default reading. In case it is set to false only attribute set by user are returned ignoring undefined.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => true
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => OBJECT,
+                        "description" => "The value of the attribute. The type will be that of the attribute found"
+                    }
+                },
+                "remove" => {
+                    "operation-name" => "remove",
+                    "description" => "removes server",
+                    "request-properties" => {},
+                    "reply-properties" => {}
+                },
+                "map-remove" => {
+                    "operation-name" => "map-remove",
+                    "description" => "Remove entry from map attribute",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of map attribute",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "key" => {
+                            "type" => STRING,
+                            "description" => "Key of entry to remove",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "list-add" => {
+                    "operation-name" => "list-add",
+                    "description" => "Add entry to list attribute",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of list attribute to add entry to",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "value" => {
+                            "type" => STRING,
+                            "description" => "Value to add to list",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "index" => {
+                            "type" => INT,
+                            "description" => "Optional 0 based index where to insert value to",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "read-attribute-group" => {
+                    "operation-name" => "read-attribute-group",
+                    "description" => "Gets the value of attributes for the selected group",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of the group to get the attribute",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "resolve-expressions" => {
+                            "type" => BOOLEAN,
+                            "description" => "Resolves expressions to current runtime values",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-runtime" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include runtime attributes (i.e. those whose value does not come from the persistent configuration) in the response. If absent, false is the default.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-defaults" => {
+                            "type" => BOOLEAN,
+                            "description" => "Boolean to enable/disable default reading. In case it is set to false only attribute set by user are returned ignoring undefined.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => true
+                        },
+                        "include-aliases" => {
+                            "type" => BOOLEAN,
+                            "description" => "If 'true' include attributes which are aliases.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => PROPERTY,
+                        "description" => "The attributes"
+                    }
+                },
+                "undefine-attribute" => {
+                    "operation-name" => "undefine-attribute",
+                    "description" => "Sets the value of an attribute of the selected resource to 'undefined'",
+                    "request-properties" => {"name" => {
+                        "type" => STRING,
+                        "description" => "The name of the attribute which should be set to 'undefined'",
+                        "expressions-allowed" => false,
+                        "required" => true,
+                        "nillable" => false,
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L
+                    }},
+                    "reply-properties" => {}
+                },
+                "map-put" => {
+                    "operation-name" => "map-put",
+                    "description" => "Add entry to map attribute",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of map attribute to add entry to",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "key" => {
+                            "type" => STRING,
+                            "description" => "Key under which value will be added",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "value" => {
+                            "type" => STRING,
+                            "description" => "Value to be added",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "read-children-names" => {
+                    "operation-name" => "read-children-names",
+                    "description" => "Gets the names of all children under the selected resource with the given type",
+                    "request-properties" => {"child-type" => {
+                        "type" => STRING,
+                        "description" => "The name of the node under which to get the children names",
+                        "expressions-allowed" => false,
+                        "required" => true,
+                        "nillable" => false,
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L
+                    }},
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => STRING,
+                        "description" => "The children names"
+                    }
+                },
+                "read-attribute-group-names" => {
+                    "operation-name" => "read-attribute-group-names",
+                    "description" => "Gets the names of all the attribute groups under the selected resource",
+                    "request-properties" => {},
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => STRING
+                    }
+                },
+                "read-operation-names" => {
+                    "operation-name" => "read-operation-names",
+                    "description" => "Gets the names of all the operations for the given resource",
+                    "request-properties" => {"access-control" => {
+                        "type" => BOOLEAN,
+                        "description" => "If 'true' only operations the user is allowed to see are returned, and filtered operations are listed in the 'access-control' response header.",
+                        "expressions-allowed" => false,
+                        "required" => false,
+                        "nillable" => true,
+                        "default" => false
+                    }},
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => STRING,
+                        "description" => "The operation names"
+                    }
+                },
+                "list-remove" => {
+                    "operation-name" => "list-remove",
+                    "description" => "Remove entry from list attribute",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of list attribute to remove entry from",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "value" => {
+                            "type" => STRING,
+                            "description" => "Value remove from list",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "index" => {
+                            "type" => INT,
+                            "description" => "Optional 0 based index to tell what element to remove",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "read-children-resources" => {
+                    "operation-name" => "read-children-resources",
+                    "description" => "Reads information about all of a resource's children that are of a given type",
+                    "request-properties" => {
+                        "child-type" => {
+                            "type" => STRING,
+                            "description" => "The name of the resource under which to get the child resources",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "recursive" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to get the children recursively. If absent, false is the default",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true
+                        },
+                        "recursive-depth" => {
+                            "type" => INT,
+                            "description" => "The depth to which information about child resources should be included.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min" => 0L,
+                            "max" => 2147483647L
+                        },
+                        "proxies" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include remote resources in a recursive query (i.e. host level resources in a query of the domain root; running server resources in a query of a host). If absent, false is the default",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-runtime" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include runtime attributes (i.e. those whose value does not come from the persistent configuration) in the response. If absent, false is the default. Ignored if the 'recursive' parameter is set to 'true'; i.e. runtime attributes can only be read in non-recursive queries.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-defaults" => {
+                            "type" => BOOLEAN,
+                            "description" => "Boolean to enable/disable default reading. In case it is set to false only attribute set by user are returned ignoring undefined.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => true
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => OBJECT,
+                        "description" => "The children resources"
+                    }
+                },
+                "read-resource-description" => {
+                    "operation-name" => "read-resource-description",
+                    "description" => "Gets the description of a resource's attributes, types of children and, optionally, operations",
+                    "request-properties" => {
+                        "operations" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include descriptions of the resource's operations. Default is false",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "notifications" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include descriptions of the resource's notifications. Default is false",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "inherited" => {
+                            "type" => BOOLEAN,
+                            "description" => "If 'operations' is true, whether to include descriptions of the resource's inherited operations. Default is true.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => true
+                        },
+                        "recursive" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include recursively descriptions of child resources. Default is false.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true
+                        },
+                        "recursive-depth" => {
+                            "type" => INT,
+                            "description" => "The depth to which information about child resources should be included.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min" => 0L,
+                            "max" => 2147483647L
+                        },
+                        "proxies" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include remote resources in a recursive query (i.e. host level resources in a query of the domain root; running server resources in a query of a host). If absent, false is the default",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-aliases" => {
+                            "type" => BOOLEAN,
+                            "description" => "If 'true' and recursive, include children which are aliases.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "access-control" => {
+                            "type" => STRING,
+                            "description" => "Include information about what rights the current user has on the actual resources, attributes and operations.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => "none",
+                            "allowed" => [
+                                "none",
+                                "combined-descriptions",
+                                "trim-descriptions"
+                            ]
+                        },
+                        "locale" => {
+                            "type" => STRING,
+                            "description" => "The locale to get the resource description in. If null, the default locale will be used",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => OBJECT,
+                        "description" => "The description of the resource"
+                    }
+                },
+                "read-resource" => {
+                    "operation-name" => "read-resource",
+                    "description" => "Reads a model resource's attribute values along with either basic or complete information about any child resources",
+                    "request-properties" => {
+                        "resolve-expressions" => {
+                            "type" => BOOLEAN,
+                            "description" => "Resolves expressions to current runtime values",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "recursive" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include complete information about child resources, recursively. If absent, false is the default",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true
+                        },
+                        "recursive-depth" => {
+                            "type" => INT,
+                            "description" => "The depth to which information about child resources should be included.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min" => 0L,
+                            "max" => 2147483647L
+                        },
+                        "proxies" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include remote resources in a recursive query (i.e. host level resources in a query of the domain root; running server resources in a query of a host). If absent, false is the default.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-runtime" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include runtime attributes (i.e. those whose value does not come from the persistent configuration) in the response. If absent, false is the default.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-defaults" => {
+                            "type" => BOOLEAN,
+                            "description" => "Boolean to enable/disable default reading. In case it is set to false only attribute set by user are returned ignoring undefined.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => true
+                        },
+                        "attributes-only" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether or not to only read the attributes on the specified resource. Cannot be used in conjunction with 'recursive' or 'recursive-depth'.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-aliases" => {
+                            "type" => BOOLEAN,
+                            "description" => "If 'true' and recursive, include children which are aliases.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => OBJECT,
+                        "description" => "The resource's attribute values along with information about any child resources"
+                    }
+                }
+            },
+            "notifications" => undefined,
+            "children" => {},
+            "access-control" => {
+                "default" => {
+                    "read" => true,
+                    "write" => true,
+                    "attributes" => {
+                        "outbound-socket-binding-ref" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "password" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "ssl" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "tls" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "username" => {
+                            "read" => true,
+                            "write" => true
+                        }
+                    },
+                    "operations" => {
+                        "add" => {"execute" => true},
+                        "read-children-types" => {"execute" => true},
+                        "whoami" => {"execute" => true},
+                        "map-clear" => {"execute" => true},
+                        "list-get" => {"execute" => true},
+                        "query" => {"execute" => true},
+                        "read-operation-description" => {"execute" => true},
+                        "write-attribute" => {"execute" => true},
+                        "map-get" => {"execute" => true},
+                        "list-clear" => {"execute" => true},
+                        "read-attribute" => {"execute" => true},
+                        "remove" => {"execute" => true},
+                        "map-remove" => {"execute" => true},
+                        "list-add" => {"execute" => true},
+                        "read-attribute-group" => {"execute" => true},
+                        "undefine-attribute" => {"execute" => true},
+                        "map-put" => {"execute" => true},
+                        "read-children-names" => {"execute" => true},
+                        "read-attribute-group-names" => {"execute" => true},
+                        "read-operation-names" => {"execute" => true},
+                        "list-remove" => {"execute" => true},
+                        "read-children-resources" => {"execute" => true},
+                        "read-resource-description" => {"execute" => true},
+                        "read-resource" => {"execute" => true}
+                    }
+                },
+                "exceptions" => {}
+            }
+        }
+    },
+    {
+        "address" => [
+            ("subsystem" => "mail"),
+            ("mail-session" => "*"),
+            ("server" => "pop3")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "description" => "Mail session server",
+            "access-constraints" => {"application" => {"mail-session" => {"type" => "mail"}}},
+            "attributes" => {
+                "outbound-socket-binding-ref" => {
+                    "type" => STRING,
+                    "description" => "Outbound Socket binding to mail server",
+                    "expressions-allowed" => true,
+                    "nillable" => false,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L,
+                    "access-constraints" => {"sensitive" => {"socket-binding-ref" => {"type" => "core"}}},
+                    "access-type" => "read-write",
+                    "storage" => "configuration",
+                    "restart-required" => "all-services"
+                },
+                "password" => {
+                    "type" => STRING,
+                    "description" => "Password to authenticate on server",
+                    "expressions-allowed" => true,
+                    "nillable" => true,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L,
+                    "access-constraints" => {"sensitive" => {
+                        "credential" => {"type" => "core"},
+                        "mail-server-security" => {"type" => "mail"}
+                    }},
+                    "access-type" => "read-write",
+                    "storage" => "configuration",
+                    "restart-required" => "all-services"
+                },
+                "ssl" => {
+                    "type" => BOOLEAN,
+                    "description" => "Does server require SSL?",
+                    "expressions-allowed" => true,
+                    "nillable" => true,
+                    "default" => false,
+                    "access-constraints" => {"sensitive" => {"mail-server-security" => {"type" => "mail"}}},
+                    "access-type" => "read-write",
+                    "storage" => "configuration",
+                    "restart-required" => "all-services"
+                },
+                "tls" => {
+                    "type" => BOOLEAN,
+                    "description" => "Does server require TLS?",
+                    "expressions-allowed" => true,
+                    "nillable" => true,
+                    "default" => false,
+                    "access-constraints" => {"sensitive" => {"mail-server-security" => {"type" => "mail"}}},
+                    "access-type" => "read-write",
+                    "storage" => "configuration",
+                    "restart-required" => "all-services"
+                },
+                "username" => {
+                    "type" => STRING,
+                    "description" => "Username to authenticate on server",
+                    "expressions-allowed" => true,
+                    "nillable" => true,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L,
+                    "access-constraints" => {"sensitive" => {
+                        "credential" => {"type" => "core"},
+                        "mail-server-security" => {"type" => "mail"}
+                    }},
+                    "access-type" => "read-write",
+                    "storage" => "configuration",
+                    "restart-required" => "all-services"
+                }
+            },
+            "operations" => {
+                "add" => {
+                    "operation-name" => "add",
+                    "description" => "adds mail server",
+                    "request-properties" => {
+                        "outbound-socket-binding-ref" => {
+                            "type" => STRING,
+                            "description" => "Outbound Socket binding to mail server",
+                            "expressions-allowed" => true,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "password" => {
+                            "type" => STRING,
+                            "description" => "Password to authenticate on server",
+                            "expressions-allowed" => true,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "ssl" => {
+                            "type" => BOOLEAN,
+                            "description" => "Does server require SSL?",
+                            "expressions-allowed" => true,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "tls" => {
+                            "type" => BOOLEAN,
+                            "description" => "Does server require TLS?",
+                            "expressions-allowed" => true,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "username" => {
+                            "type" => STRING,
+                            "description" => "Username to authenticate on server",
+                            "expressions-allowed" => true,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "read-children-types" => {
+                    "operation-name" => "read-children-types",
+                    "description" => "Gets the type names of all the children under the selected resource",
+                    "request-properties" => {
+                        "include-aliases" => {
+                            "type" => BOOLEAN,
+                            "description" => "If 'true' include children which are aliases.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-singletons" => {
+                            "type" => BOOLEAN,
+                            "description" => "If 'true' include the full key/value pair for any singleton registration.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => STRING,
+                        "description" => "The children types"
+                    }
+                },
+                "whoami" => {
+                    "operation-name" => "whoami",
+                    "description" => "Returns the identity of the currently authenticated user.",
+                    "request-properties" => {"verbose" => {
+                        "type" => BOOLEAN,
+                        "description" => "If set to true whoami also returns the users roles.",
+                        "expressions-allowed" => false,
+                        "required" => false,
+                        "nillable" => true,
+                        "default" => false
+                    }},
+                    "reply-properties" => {
+                        "type" => STRING,
+                        "description" => "The identify of the authenticated user and their roles if requested."
+                    }
+                },
+                "map-clear" => {
+                    "operation-name" => "map-clear",
+                    "description" => "Clear all entries from map attribute",
+                    "request-properties" => {"name" => {
+                        "type" => STRING,
+                        "description" => "Name of list attribute",
+                        "expressions-allowed" => false,
+                        "required" => true,
+                        "nillable" => false,
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L
+                    }},
+                    "reply-properties" => {}
+                },
+                "list-get" => {
+                    "operation-name" => "list-get",
+                    "description" => "Get entry from list attribute",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of list attribute",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "index" => {
+                            "type" => INT,
+                            "description" => "Index entry to get",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "query" => {
+                    "operation-name" => "query",
+                    "description" => "query a resource",
+                    "request-properties" => {
+                        "select" => {
+                            "type" => LIST,
+                            "description" => "a list of attribute names to reduce to",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "value-type" => STRING
+                        },
+                        "where" => {
+                            "type" => OBJECT,
+                            "description" => "a list of filter criteria tuples (i.e. 'running=true')",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "value-type" => STRING
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => OBJECT
+                    }
+                },
+                "read-operation-description" => {
+                    "operation-name" => "read-operation-description",
+                    "description" => "Gets description of given operation",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of operation",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "locale" => {
+                            "type" => STRING,
+                            "description" => "Locale in which to return description",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "access-control" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether or not to include information about what rights the current user has on the operation.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        }
+                    },
+                    "reply-properties" => {"type" => OBJECT}
+                },
+                "write-attribute" => {
+                    "operation-name" => "write-attribute",
+                    "description" => "Sets the value of an attribute for the selected resource",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "The name of the attribute to set the value for under the selected resource",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "value" => {
+                            "type" => STRING,
+                            "description" => "The value of the attribute to set the value for under the selected resource. May be null if the underlying model supports null values.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "map-get" => {
+                    "operation-name" => "map-get",
+                    "description" => "Get entry from map attribute",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of map attribute",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "key" => {
+                            "type" => STRING,
+                            "description" => "Key of entry to return",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "list-clear" => {
+                    "operation-name" => "list-clear",
+                    "description" => "Clear all entries from list attribute",
+                    "request-properties" => {"name" => {
+                        "type" => STRING,
+                        "description" => "Name of list attribute",
+                        "expressions-allowed" => false,
+                        "required" => true,
+                        "nillable" => false,
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L
+                    }},
+                    "reply-properties" => {}
+                },
+                "read-attribute" => {
+                    "operation-name" => "read-attribute",
+                    "description" => "Gets the value of an attribute for the selected resource",
+                    "request-properties" => {
+                        "resolve-expressions" => {
+                            "type" => BOOLEAN,
+                            "description" => "Resolves expressions to current runtime values",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "The name of the attribute to get the value for under the selected resource",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "include-defaults" => {
+                            "type" => BOOLEAN,
+                            "description" => "Boolean to enable/disable default reading. In case it is set to false only attribute set by user are returned ignoring undefined.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => true
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => OBJECT,
+                        "description" => "The value of the attribute. The type will be that of the attribute found"
+                    }
+                },
+                "remove" => {
+                    "operation-name" => "remove",
+                    "description" => "removes server",
+                    "request-properties" => {},
+                    "reply-properties" => {}
+                },
+                "map-remove" => {
+                    "operation-name" => "map-remove",
+                    "description" => "Remove entry from map attribute",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of map attribute",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "key" => {
+                            "type" => STRING,
+                            "description" => "Key of entry to remove",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "list-add" => {
+                    "operation-name" => "list-add",
+                    "description" => "Add entry to list attribute",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of list attribute to add entry to",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "value" => {
+                            "type" => STRING,
+                            "description" => "Value to add to list",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "index" => {
+                            "type" => INT,
+                            "description" => "Optional 0 based index where to insert value to",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "read-attribute-group" => {
+                    "operation-name" => "read-attribute-group",
+                    "description" => "Gets the value of attributes for the selected group",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of the group to get the attribute",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "resolve-expressions" => {
+                            "type" => BOOLEAN,
+                            "description" => "Resolves expressions to current runtime values",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-runtime" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include runtime attributes (i.e. those whose value does not come from the persistent configuration) in the response. If absent, false is the default.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-defaults" => {
+                            "type" => BOOLEAN,
+                            "description" => "Boolean to enable/disable default reading. In case it is set to false only attribute set by user are returned ignoring undefined.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => true
+                        },
+                        "include-aliases" => {
+                            "type" => BOOLEAN,
+                            "description" => "If 'true' include attributes which are aliases.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => PROPERTY,
+                        "description" => "The attributes"
+                    }
+                },
+                "undefine-attribute" => {
+                    "operation-name" => "undefine-attribute",
+                    "description" => "Sets the value of an attribute of the selected resource to 'undefined'",
+                    "request-properties" => {"name" => {
+                        "type" => STRING,
+                        "description" => "The name of the attribute which should be set to 'undefined'",
+                        "expressions-allowed" => false,
+                        "required" => true,
+                        "nillable" => false,
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L
+                    }},
+                    "reply-properties" => {}
+                },
+                "map-put" => {
+                    "operation-name" => "map-put",
+                    "description" => "Add entry to map attribute",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of map attribute to add entry to",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "key" => {
+                            "type" => STRING,
+                            "description" => "Key under which value will be added",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "value" => {
+                            "type" => STRING,
+                            "description" => "Value to be added",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "read-children-names" => {
+                    "operation-name" => "read-children-names",
+                    "description" => "Gets the names of all children under the selected resource with the given type",
+                    "request-properties" => {"child-type" => {
+                        "type" => STRING,
+                        "description" => "The name of the node under which to get the children names",
+                        "expressions-allowed" => false,
+                        "required" => true,
+                        "nillable" => false,
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L
+                    }},
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => STRING,
+                        "description" => "The children names"
+                    }
+                },
+                "read-attribute-group-names" => {
+                    "operation-name" => "read-attribute-group-names",
+                    "description" => "Gets the names of all the attribute groups under the selected resource",
+                    "request-properties" => {},
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => STRING
+                    }
+                },
+                "read-operation-names" => {
+                    "operation-name" => "read-operation-names",
+                    "description" => "Gets the names of all the operations for the given resource",
+                    "request-properties" => {"access-control" => {
+                        "type" => BOOLEAN,
+                        "description" => "If 'true' only operations the user is allowed to see are returned, and filtered operations are listed in the 'access-control' response header.",
+                        "expressions-allowed" => false,
+                        "required" => false,
+                        "nillable" => true,
+                        "default" => false
+                    }},
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => STRING,
+                        "description" => "The operation names"
+                    }
+                },
+                "list-remove" => {
+                    "operation-name" => "list-remove",
+                    "description" => "Remove entry from list attribute",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of list attribute to remove entry from",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "value" => {
+                            "type" => STRING,
+                            "description" => "Value remove from list",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "index" => {
+                            "type" => INT,
+                            "description" => "Optional 0 based index to tell what element to remove",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "read-children-resources" => {
+                    "operation-name" => "read-children-resources",
+                    "description" => "Reads information about all of a resource's children that are of a given type",
+                    "request-properties" => {
+                        "child-type" => {
+                            "type" => STRING,
+                            "description" => "The name of the resource under which to get the child resources",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "recursive" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to get the children recursively. If absent, false is the default",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true
+                        },
+                        "recursive-depth" => {
+                            "type" => INT,
+                            "description" => "The depth to which information about child resources should be included.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min" => 0L,
+                            "max" => 2147483647L
+                        },
+                        "proxies" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include remote resources in a recursive query (i.e. host level resources in a query of the domain root; running server resources in a query of a host). If absent, false is the default",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-runtime" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include runtime attributes (i.e. those whose value does not come from the persistent configuration) in the response. If absent, false is the default. Ignored if the 'recursive' parameter is set to 'true'; i.e. runtime attributes can only be read in non-recursive queries.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-defaults" => {
+                            "type" => BOOLEAN,
+                            "description" => "Boolean to enable/disable default reading. In case it is set to false only attribute set by user are returned ignoring undefined.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => true
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => OBJECT,
+                        "description" => "The children resources"
+                    }
+                },
+                "read-resource-description" => {
+                    "operation-name" => "read-resource-description",
+                    "description" => "Gets the description of a resource's attributes, types of children and, optionally, operations",
+                    "request-properties" => {
+                        "operations" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include descriptions of the resource's operations. Default is false",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "notifications" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include descriptions of the resource's notifications. Default is false",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "inherited" => {
+                            "type" => BOOLEAN,
+                            "description" => "If 'operations' is true, whether to include descriptions of the resource's inherited operations. Default is true.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => true
+                        },
+                        "recursive" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include recursively descriptions of child resources. Default is false.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true
+                        },
+                        "recursive-depth" => {
+                            "type" => INT,
+                            "description" => "The depth to which information about child resources should be included.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min" => 0L,
+                            "max" => 2147483647L
+                        },
+                        "proxies" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include remote resources in a recursive query (i.e. host level resources in a query of the domain root; running server resources in a query of a host). If absent, false is the default",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-aliases" => {
+                            "type" => BOOLEAN,
+                            "description" => "If 'true' and recursive, include children which are aliases.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "access-control" => {
+                            "type" => STRING,
+                            "description" => "Include information about what rights the current user has on the actual resources, attributes and operations.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => "none",
+                            "allowed" => [
+                                "none",
+                                "combined-descriptions",
+                                "trim-descriptions"
+                            ]
+                        },
+                        "locale" => {
+                            "type" => STRING,
+                            "description" => "The locale to get the resource description in. If null, the default locale will be used",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => OBJECT,
+                        "description" => "The description of the resource"
+                    }
+                },
+                "read-resource" => {
+                    "operation-name" => "read-resource",
+                    "description" => "Reads a model resource's attribute values along with either basic or complete information about any child resources",
+                    "request-properties" => {
+                        "resolve-expressions" => {
+                            "type" => BOOLEAN,
+                            "description" => "Resolves expressions to current runtime values",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "recursive" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include complete information about child resources, recursively. If absent, false is the default",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true
+                        },
+                        "recursive-depth" => {
+                            "type" => INT,
+                            "description" => "The depth to which information about child resources should be included.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min" => 0L,
+                            "max" => 2147483647L
+                        },
+                        "proxies" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include remote resources in a recursive query (i.e. host level resources in a query of the domain root; running server resources in a query of a host). If absent, false is the default.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-runtime" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include runtime attributes (i.e. those whose value does not come from the persistent configuration) in the response. If absent, false is the default.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-defaults" => {
+                            "type" => BOOLEAN,
+                            "description" => "Boolean to enable/disable default reading. In case it is set to false only attribute set by user are returned ignoring undefined.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => true
+                        },
+                        "attributes-only" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether or not to only read the attributes on the specified resource. Cannot be used in conjunction with 'recursive' or 'recursive-depth'.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-aliases" => {
+                            "type" => BOOLEAN,
+                            "description" => "If 'true' and recursive, include children which are aliases.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => OBJECT,
+                        "description" => "The resource's attribute values along with information about any child resources"
+                    }
+                }
+            },
+            "notifications" => undefined,
+            "children" => {},
+            "access-control" => {
+                "default" => {
+                    "read" => true,
+                    "write" => true,
+                    "attributes" => {
+                        "outbound-socket-binding-ref" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "password" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "ssl" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "tls" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "username" => {
+                            "read" => true,
+                            "write" => true
+                        }
+                    },
+                    "operations" => {
+                        "add" => {"execute" => true},
+                        "read-children-types" => {"execute" => true},
+                        "whoami" => {"execute" => true},
+                        "map-clear" => {"execute" => true},
+                        "list-get" => {"execute" => true},
+                        "query" => {"execute" => true},
+                        "read-operation-description" => {"execute" => true},
+                        "write-attribute" => {"execute" => true},
+                        "map-get" => {"execute" => true},
+                        "list-clear" => {"execute" => true},
+                        "read-attribute" => {"execute" => true},
+                        "remove" => {"execute" => true},
+                        "map-remove" => {"execute" => true},
+                        "list-add" => {"execute" => true},
+                        "read-attribute-group" => {"execute" => true},
+                        "undefine-attribute" => {"execute" => true},
+                        "map-put" => {"execute" => true},
+                        "read-children-names" => {"execute" => true},
+                        "read-attribute-group-names" => {"execute" => true},
+                        "read-operation-names" => {"execute" => true},
+                        "list-remove" => {"execute" => true},
+                        "read-children-resources" => {"execute" => true},
+                        "read-resource-description" => {"execute" => true},
+                        "read-resource" => {"execute" => true}
+                    }
+                },
+                "exceptions" => {}
+            }
+        }
+    },
+    {
+        "address" => [
+            ("subsystem" => "mail"),
+            ("mail-session" => "*"),
+            ("server" => "imap")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "description" => "Mail session server",
+            "access-constraints" => {"application" => {"mail-session" => {"type" => "mail"}}},
+            "attributes" => {
+                "outbound-socket-binding-ref" => {
+                    "type" => STRING,
+                    "description" => "Outbound Socket binding to mail server",
+                    "expressions-allowed" => true,
+                    "nillable" => false,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L,
+                    "access-constraints" => {"sensitive" => {"socket-binding-ref" => {"type" => "core"}}},
+                    "access-type" => "read-write",
+                    "storage" => "configuration",
+                    "restart-required" => "all-services"
+                },
+                "password" => {
+                    "type" => STRING,
+                    "description" => "Password to authenticate on server",
+                    "expressions-allowed" => true,
+                    "nillable" => true,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L,
+                    "access-constraints" => {"sensitive" => {
+                        "credential" => {"type" => "core"},
+                        "mail-server-security" => {"type" => "mail"}
+                    }},
+                    "access-type" => "read-write",
+                    "storage" => "configuration",
+                    "restart-required" => "all-services"
+                },
+                "ssl" => {
+                    "type" => BOOLEAN,
+                    "description" => "Does server require SSL?",
+                    "expressions-allowed" => true,
+                    "nillable" => true,
+                    "default" => false,
+                    "access-constraints" => {"sensitive" => {"mail-server-security" => {"type" => "mail"}}},
+                    "access-type" => "read-write",
+                    "storage" => "configuration",
+                    "restart-required" => "all-services"
+                },
+                "tls" => {
+                    "type" => BOOLEAN,
+                    "description" => "Does server require TLS?",
+                    "expressions-allowed" => true,
+                    "nillable" => true,
+                    "default" => false,
+                    "access-constraints" => {"sensitive" => {"mail-server-security" => {"type" => "mail"}}},
+                    "access-type" => "read-write",
+                    "storage" => "configuration",
+                    "restart-required" => "all-services"
+                },
+                "username" => {
+                    "type" => STRING,
+                    "description" => "Username to authenticate on server",
+                    "expressions-allowed" => true,
+                    "nillable" => true,
+                    "min-length" => 1L,
+                    "max-length" => 2147483647L,
+                    "access-constraints" => {"sensitive" => {
+                        "credential" => {"type" => "core"},
+                        "mail-server-security" => {"type" => "mail"}
+                    }},
+                    "access-type" => "read-write",
+                    "storage" => "configuration",
+                    "restart-required" => "all-services"
+                }
+            },
+            "operations" => {
+                "add" => {
+                    "operation-name" => "add",
+                    "description" => "adds mail server",
+                    "request-properties" => {
+                        "outbound-socket-binding-ref" => {
+                            "type" => STRING,
+                            "description" => "Outbound Socket binding to mail server",
+                            "expressions-allowed" => true,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "password" => {
+                            "type" => STRING,
+                            "description" => "Password to authenticate on server",
+                            "expressions-allowed" => true,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "ssl" => {
+                            "type" => BOOLEAN,
+                            "description" => "Does server require SSL?",
+                            "expressions-allowed" => true,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "tls" => {
+                            "type" => BOOLEAN,
+                            "description" => "Does server require TLS?",
+                            "expressions-allowed" => true,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "username" => {
+                            "type" => STRING,
+                            "description" => "Username to authenticate on server",
+                            "expressions-allowed" => true,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "read-children-types" => {
+                    "operation-name" => "read-children-types",
+                    "description" => "Gets the type names of all the children under the selected resource",
+                    "request-properties" => {
+                        "include-aliases" => {
+                            "type" => BOOLEAN,
+                            "description" => "If 'true' include children which are aliases.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-singletons" => {
+                            "type" => BOOLEAN,
+                            "description" => "If 'true' include the full key/value pair for any singleton registration.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => STRING,
+                        "description" => "The children types"
+                    }
+                },
+                "whoami" => {
+                    "operation-name" => "whoami",
+                    "description" => "Returns the identity of the currently authenticated user.",
+                    "request-properties" => {"verbose" => {
+                        "type" => BOOLEAN,
+                        "description" => "If set to true whoami also returns the users roles.",
+                        "expressions-allowed" => false,
+                        "required" => false,
+                        "nillable" => true,
+                        "default" => false
+                    }},
+                    "reply-properties" => {
+                        "type" => STRING,
+                        "description" => "The identify of the authenticated user and their roles if requested."
+                    }
+                },
+                "map-clear" => {
+                    "operation-name" => "map-clear",
+                    "description" => "Clear all entries from map attribute",
+                    "request-properties" => {"name" => {
+                        "type" => STRING,
+                        "description" => "Name of list attribute",
+                        "expressions-allowed" => false,
+                        "required" => true,
+                        "nillable" => false,
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L
+                    }},
+                    "reply-properties" => {}
+                },
+                "list-get" => {
+                    "operation-name" => "list-get",
+                    "description" => "Get entry from list attribute",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of list attribute",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "index" => {
+                            "type" => INT,
+                            "description" => "Index entry to get",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "query" => {
+                    "operation-name" => "query",
+                    "description" => "query a resource",
+                    "request-properties" => {
+                        "select" => {
+                            "type" => LIST,
+                            "description" => "a list of attribute names to reduce to",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "value-type" => STRING
+                        },
+                        "where" => {
+                            "type" => OBJECT,
+                            "description" => "a list of filter criteria tuples (i.e. 'running=true')",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "value-type" => STRING
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => OBJECT
+                    }
+                },
+                "read-operation-description" => {
+                    "operation-name" => "read-operation-description",
+                    "description" => "Gets description of given operation",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of operation",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "locale" => {
+                            "type" => STRING,
+                            "description" => "Locale in which to return description",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "access-control" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether or not to include information about what rights the current user has on the operation.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        }
+                    },
+                    "reply-properties" => {"type" => OBJECT}
+                },
+                "write-attribute" => {
+                    "operation-name" => "write-attribute",
+                    "description" => "Sets the value of an attribute for the selected resource",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "The name of the attribute to set the value for under the selected resource",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "value" => {
+                            "type" => STRING,
+                            "description" => "The value of the attribute to set the value for under the selected resource. May be null if the underlying model supports null values.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "map-get" => {
+                    "operation-name" => "map-get",
+                    "description" => "Get entry from map attribute",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of map attribute",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "key" => {
+                            "type" => STRING,
+                            "description" => "Key of entry to return",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "list-clear" => {
+                    "operation-name" => "list-clear",
+                    "description" => "Clear all entries from list attribute",
+                    "request-properties" => {"name" => {
+                        "type" => STRING,
+                        "description" => "Name of list attribute",
+                        "expressions-allowed" => false,
+                        "required" => true,
+                        "nillable" => false,
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L
+                    }},
+                    "reply-properties" => {}
+                },
+                "read-attribute" => {
+                    "operation-name" => "read-attribute",
+                    "description" => "Gets the value of an attribute for the selected resource",
+                    "request-properties" => {
+                        "resolve-expressions" => {
+                            "type" => BOOLEAN,
+                            "description" => "Resolves expressions to current runtime values",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "The name of the attribute to get the value for under the selected resource",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "include-defaults" => {
+                            "type" => BOOLEAN,
+                            "description" => "Boolean to enable/disable default reading. In case it is set to false only attribute set by user are returned ignoring undefined.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => true
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => OBJECT,
+                        "description" => "The value of the attribute. The type will be that of the attribute found"
+                    }
+                },
+                "remove" => {
+                    "operation-name" => "remove",
+                    "description" => "removes server",
+                    "request-properties" => {},
+                    "reply-properties" => {}
+                },
+                "map-remove" => {
+                    "operation-name" => "map-remove",
+                    "description" => "Remove entry from map attribute",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of map attribute",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "key" => {
+                            "type" => STRING,
+                            "description" => "Key of entry to remove",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "list-add" => {
+                    "operation-name" => "list-add",
+                    "description" => "Add entry to list attribute",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of list attribute to add entry to",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "value" => {
+                            "type" => STRING,
+                            "description" => "Value to add to list",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "index" => {
+                            "type" => INT,
+                            "description" => "Optional 0 based index where to insert value to",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "read-attribute-group" => {
+                    "operation-name" => "read-attribute-group",
+                    "description" => "Gets the value of attributes for the selected group",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of the group to get the attribute",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "resolve-expressions" => {
+                            "type" => BOOLEAN,
+                            "description" => "Resolves expressions to current runtime values",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-runtime" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include runtime attributes (i.e. those whose value does not come from the persistent configuration) in the response. If absent, false is the default.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-defaults" => {
+                            "type" => BOOLEAN,
+                            "description" => "Boolean to enable/disable default reading. In case it is set to false only attribute set by user are returned ignoring undefined.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => true
+                        },
+                        "include-aliases" => {
+                            "type" => BOOLEAN,
+                            "description" => "If 'true' include attributes which are aliases.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => PROPERTY,
+                        "description" => "The attributes"
+                    }
+                },
+                "undefine-attribute" => {
+                    "operation-name" => "undefine-attribute",
+                    "description" => "Sets the value of an attribute of the selected resource to 'undefined'",
+                    "request-properties" => {"name" => {
+                        "type" => STRING,
+                        "description" => "The name of the attribute which should be set to 'undefined'",
+                        "expressions-allowed" => false,
+                        "required" => true,
+                        "nillable" => false,
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L
+                    }},
+                    "reply-properties" => {}
+                },
+                "map-put" => {
+                    "operation-name" => "map-put",
+                    "description" => "Add entry to map attribute",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of map attribute to add entry to",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "key" => {
+                            "type" => STRING,
+                            "description" => "Key under which value will be added",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "value" => {
+                            "type" => STRING,
+                            "description" => "Value to be added",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "read-children-names" => {
+                    "operation-name" => "read-children-names",
+                    "description" => "Gets the names of all children under the selected resource with the given type",
+                    "request-properties" => {"child-type" => {
+                        "type" => STRING,
+                        "description" => "The name of the node under which to get the children names",
+                        "expressions-allowed" => false,
+                        "required" => true,
+                        "nillable" => false,
+                        "min-length" => 1L,
+                        "max-length" => 2147483647L
+                    }},
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => STRING,
+                        "description" => "The children names"
+                    }
+                },
+                "read-attribute-group-names" => {
+                    "operation-name" => "read-attribute-group-names",
+                    "description" => "Gets the names of all the attribute groups under the selected resource",
+                    "request-properties" => {},
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => STRING
+                    }
+                },
+                "read-operation-names" => {
+                    "operation-name" => "read-operation-names",
+                    "description" => "Gets the names of all the operations for the given resource",
+                    "request-properties" => {"access-control" => {
+                        "type" => BOOLEAN,
+                        "description" => "If 'true' only operations the user is allowed to see are returned, and filtered operations are listed in the 'access-control' response header.",
+                        "expressions-allowed" => false,
+                        "required" => false,
+                        "nillable" => true,
+                        "default" => false
+                    }},
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => STRING,
+                        "description" => "The operation names"
+                    }
+                },
+                "list-remove" => {
+                    "operation-name" => "list-remove",
+                    "description" => "Remove entry from list attribute",
+                    "request-properties" => {
+                        "name" => {
+                            "type" => STRING,
+                            "description" => "Name of list attribute to remove entry from",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "value" => {
+                            "type" => STRING,
+                            "description" => "Value remove from list",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "index" => {
+                            "type" => INT,
+                            "description" => "Optional 0 based index to tell what element to remove",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true
+                        }
+                    },
+                    "reply-properties" => {}
+                },
+                "read-children-resources" => {
+                    "operation-name" => "read-children-resources",
+                    "description" => "Reads information about all of a resource's children that are of a given type",
+                    "request-properties" => {
+                        "child-type" => {
+                            "type" => STRING,
+                            "description" => "The name of the resource under which to get the child resources",
+                            "expressions-allowed" => false,
+                            "required" => true,
+                            "nillable" => false,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        },
+                        "recursive" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to get the children recursively. If absent, false is the default",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true
+                        },
+                        "recursive-depth" => {
+                            "type" => INT,
+                            "description" => "The depth to which information about child resources should be included.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min" => 0L,
+                            "max" => 2147483647L
+                        },
+                        "proxies" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include remote resources in a recursive query (i.e. host level resources in a query of the domain root; running server resources in a query of a host). If absent, false is the default",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-runtime" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include runtime attributes (i.e. those whose value does not come from the persistent configuration) in the response. If absent, false is the default. Ignored if the 'recursive' parameter is set to 'true'; i.e. runtime attributes can only be read in non-recursive queries.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-defaults" => {
+                            "type" => BOOLEAN,
+                            "description" => "Boolean to enable/disable default reading. In case it is set to false only attribute set by user are returned ignoring undefined.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => true
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => LIST,
+                        "value-type" => OBJECT,
+                        "description" => "The children resources"
+                    }
+                },
+                "read-resource-description" => {
+                    "operation-name" => "read-resource-description",
+                    "description" => "Gets the description of a resource's attributes, types of children and, optionally, operations",
+                    "request-properties" => {
+                        "operations" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include descriptions of the resource's operations. Default is false",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "notifications" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include descriptions of the resource's notifications. Default is false",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "inherited" => {
+                            "type" => BOOLEAN,
+                            "description" => "If 'operations' is true, whether to include descriptions of the resource's inherited operations. Default is true.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => true
+                        },
+                        "recursive" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include recursively descriptions of child resources. Default is false.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true
+                        },
+                        "recursive-depth" => {
+                            "type" => INT,
+                            "description" => "The depth to which information about child resources should be included.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min" => 0L,
+                            "max" => 2147483647L
+                        },
+                        "proxies" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include remote resources in a recursive query (i.e. host level resources in a query of the domain root; running server resources in a query of a host). If absent, false is the default",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-aliases" => {
+                            "type" => BOOLEAN,
+                            "description" => "If 'true' and recursive, include children which are aliases.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "access-control" => {
+                            "type" => STRING,
+                            "description" => "Include information about what rights the current user has on the actual resources, attributes and operations.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => "none",
+                            "allowed" => [
+                                "none",
+                                "combined-descriptions",
+                                "trim-descriptions"
+                            ]
+                        },
+                        "locale" => {
+                            "type" => STRING,
+                            "description" => "The locale to get the resource description in. If null, the default locale will be used",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min-length" => 1L,
+                            "max-length" => 2147483647L
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => OBJECT,
+                        "description" => "The description of the resource"
+                    }
+                },
+                "read-resource" => {
+                    "operation-name" => "read-resource",
+                    "description" => "Reads a model resource's attribute values along with either basic or complete information about any child resources",
+                    "request-properties" => {
+                        "resolve-expressions" => {
+                            "type" => BOOLEAN,
+                            "description" => "Resolves expressions to current runtime values",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "recursive" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include complete information about child resources, recursively. If absent, false is the default",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true
+                        },
+                        "recursive-depth" => {
+                            "type" => INT,
+                            "description" => "The depth to which information about child resources should be included.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "min" => 0L,
+                            "max" => 2147483647L
+                        },
+                        "proxies" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include remote resources in a recursive query (i.e. host level resources in a query of the domain root; running server resources in a query of a host). If absent, false is the default.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-runtime" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether to include runtime attributes (i.e. those whose value does not come from the persistent configuration) in the response. If absent, false is the default.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-defaults" => {
+                            "type" => BOOLEAN,
+                            "description" => "Boolean to enable/disable default reading. In case it is set to false only attribute set by user are returned ignoring undefined.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => true
+                        },
+                        "attributes-only" => {
+                            "type" => BOOLEAN,
+                            "description" => "Whether or not to only read the attributes on the specified resource. Cannot be used in conjunction with 'recursive' or 'recursive-depth'.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        },
+                        "include-aliases" => {
+                            "type" => BOOLEAN,
+                            "description" => "If 'true' and recursive, include children which are aliases.",
+                            "expressions-allowed" => false,
+                            "required" => false,
+                            "nillable" => true,
+                            "default" => false
+                        }
+                    },
+                    "reply-properties" => {
+                        "type" => OBJECT,
+                        "description" => "The resource's attribute values along with information about any child resources"
+                    }
+                }
+            },
+            "notifications" => undefined,
+            "children" => {},
+            "access-control" => {
+                "default" => {
+                    "read" => true,
+                    "write" => true,
+                    "attributes" => {
+                        "outbound-socket-binding-ref" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "password" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "ssl" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "tls" => {
+                            "read" => true,
+                            "write" => true
+                        },
+                        "username" => {
+                            "read" => true,
+                            "write" => true
+                        }
+                    },
+                    "operations" => {
+                        "add" => {"execute" => true},
+                        "read-children-types" => {"execute" => true},
+                        "whoami" => {"execute" => true},
+                        "map-clear" => {"execute" => true},
+                        "list-get" => {"execute" => true},
+                        "query" => {"execute" => true},
+                        "read-operation-description" => {"execute" => true},
+                        "write-attribute" => {"execute" => true},
+                        "map-get" => {"execute" => true},
+                        "list-clear" => {"execute" => true},
+                        "read-attribute" => {"execute" => true},
+                        "remove" => {"execute" => true},
+                        "map-remove" => {"execute" => true},
+                        "list-add" => {"execute" => true},
+                        "read-attribute-group" => {"execute" => true},
+                        "undefine-attribute" => {"execute" => true},
+                        "map-put" => {"execute" => true},
+                        "read-children-names" => {"execute" => true},
+                        "read-attribute-group-names" => {"execute" => true},
+                        "read-operation-names" => {"execute" => true},
+                        "list-remove" => {"execute" => true},
+                        "read-children-resources" => {"execute" => true},
+                        "read-resource-description" => {"execute" => true},
+                        "read-resource" => {"execute" => true}
+                    }
+                },
+                "exceptions" => {}
+            }
+        }
+    }
+]

@@ -1,0 +1,50 @@
+.navbar-footer {
+  height: @hal-footer-height;
+  min-height: @hal-footer-height;
+  background-color: @hal-almost-white;
+  border-top: 1px solid @hal-gray;
+
+  .footer-progress {
+    margin: 10px 0 0 20px;
+    width: 250px;
+  }
+
+  .dropdown {
+    float: left;
+  }
+
+  .caret::before {
+    content: "\f106";
+  }
+
+  .footer-tools {
+    float: right;
+    border-bottom: 0;
+    font-size: 11px;
+    margin: 0;
+
+    > li {
+      float: left;
+      > a {
+        padding: 7px 10px;
+        line-height: 1;
+        border-left: 1px solid @hal-gray;
+        > .fa, .pficon {
+          padding-right: 4px;
+        }
+      }
+    }
+
+    .open > a, .open > a:hover, .open > a:focus {
+      border-left: 1px solid @hal-gray;
+    }
+    .open .dropdown-menu {
+      left: auto;
+      right: 0;
+    }
+  }
+}
+
+.progress-bar-striped {
+  background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+}

@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JBoss, Home of Professional Open Source.
+  ~ Copyright 2010, Red Hat, Inc., and individual contributors
+  ~ as indicated by the @author tags. See the copyright.txt file in the
+  ~ distribution for a full listing of individual contributors.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jboss.hal</groupId>
+        <artifactId>hal-parent-with-dependencies</artifactId>
+        <version>0.0.3</version>
+        <relativePath>../parent-with-dependencies/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>hal-app</artifactId>
+    <name>HAL :: Application</name>
+    <description>The HAL application containing the GWT entry point and the UI.</description>
+    <packaging>gwt-app</packaging>
+
+    <dependencies>
+        <!-- HAL -->
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-ballroom</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-dmr</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-processors</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-resources</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-spi</artifactId>
+        </dependency>
+
+        <!-- GWT -->
+        <dependency>
+            <groupId>org.jboss.gwt.flow</groupId>
+            <artifactId>flow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.gwt.elemento</groupId>
+            <artifactId>elemento-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.gwt.elemento</groupId>
+            <artifactId>elemento-gin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.gwtplatform</groupId>
+            <artifactId>gwtp-mvp-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-user</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-elemental</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava-gwt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ru.finam</groupId>
+            <artifactId>slf4j-gwt</artifactId>
+        </dependency>
+
+        <!-- Misc -->
+        <dependency>
+            <groupId>org.jboss.gwt.circuit</groupId>
+            <artifactId>circuit-processor</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>install node and npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>${nodejs.version}</nodeVersion>
+                            <npmVersion>${npm.version}</npmVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>bower install</id>
+                        <goals>
+                            <goal>bower</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>gulp build</id>
+                        <goals>
+                            <goal>gulp</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.bsc.maven</groupId>
+                <artifactId>maven-processor-plugin</artifactId>
+                <!--
+                    Execution order matters! Generate code for hal-app first, then generate the composite GIN module
+                -->
+                <executions>
+                    <execution>
+                        <id>generate-app-code</id>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <options>
+                                <!-- Uncomment to get more messages from the annotation processors -->
+                                <!--<debug>true</debug>-->
+                            </options>
+                            <defaultOutputDirectory>${project.build.directory}/generated-sources/apt-app
+                            </defaultOutputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-composite-gin</id>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <options>
+                                <!-- Uncomment to get more messages from the annotation processors -->
+                                <!--<debug>true</debug>-->
+                            </options>
+                            <defaultOutputDirectory>${project.build.directory}/generated-sources/apt-gin
+                            </defaultOutputDirectory>
+                            <additionalSourceDirectories>
+                                <additionalSourceDirectory>${project.build.directory}/generated-sources/apt-app
+                                </additionalSourceDirectory>
+                                <additionalSourceDirectory>../config/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../core/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../dmr/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../meta/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../resources/src/main/java</additionalSourceDirectory>
+                            </additionalSourceDirectories>
+                            <processors>
+                                <processor>org.jboss.hal.processor.GinModuleProcessor</processor>
+                            </processors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerArgument>-proc:none</compilerArgument>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/apt-app</source>
+                                <source>${project.build.directory}/generated-sources/apt-gin</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>net.ltgt.gwt.maven</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+                <configuration>
+                    <compilerArgs>
+                        <compilerArg>-gen</compilerArg>
+                        <compilerArg>${project.build.directory}/generated-sources/gwt</compilerArg>
+                    </compilerArgs>
+                    <devmodeArgs>
+                        <devmodeArg>-startupUrl</devmodeArg>
+                        <devmodeArg>hal/dev.html</devmodeArg>
+                        <devmodeArg>-incremental</devmodeArg>
+                    </devmodeArgs>
+                    <draftCompile>true</draftCompile>
+                    <logLevel>INFO</logLevel>
+                    <moduleName>${gwt.module}</moduleName>
+                    <moduleShortName>${gwt.shortName}</moduleShortName>
+                    <sourceLevel>1.8</sourceLevel>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+    <profiles>
+        <profile>
+            <!--
+                Activate this profile when running gwt:devmode from the command line
+                to enable browser refresh after changing sources
+            -->
+            <id>devmode</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>add-source</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>add-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources>
+                                        <source>../ballroom/src/main/java</source>
+                                        <source>../config/src/main/java</source>
+                                        <source>../core/src/main/java</source>
+                                        <source>../dmr/src/main/java</source>
+                                        <source>../meta/src/main/java</source>
+                                        <source>../resources/src/main/java</source>
+                                        <source>../spi/src/main/java</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

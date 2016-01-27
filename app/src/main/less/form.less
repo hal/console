@@ -1,0 +1,185 @@
+/*
+ * Generic form classes
+ */
+.form-section {
+  margin-top: 20px;
+}
+
+.form {
+  &.readonly {
+    .separator {
+      margin-top: -15px;
+      margin-bottom: 5px;
+      border-top: 1px solid @hal-light-gray;
+    }
+    .restricted {
+      margin-right: .5em
+    }
+  }
+
+  &.editing {
+    input.restricted {
+      cursor: not-allowed;
+    }
+  }
+
+  &.readonly, &.editing {
+    padding-top: 10px;
+  }
+}
+
+fieldset.form-section {
+  legend {
+    font-size: 16px;
+    font-weight: 300;
+  }
+}
+
+.form-links {
+  list-style: none;
+  margin: 0 0 5px;
+  padding: 0;
+  li {
+    display: inline-block;
+    margin-right: 10px;
+    &:last-child {
+      margin-right: 0;
+    }
+    a {
+      cursor: pointer;
+    }
+  }
+  .form-link-label {
+    margin-left: 0.3em;
+  }
+}
+
+.form-help-link {
+  margin-bottom: 3px;
+}
+
+.form-help-content {
+  border: 1px solid @alert-success-border;
+  > div {
+    padding: 10px;
+    color: @alert-success-text;
+    background-color: @alert-success-bg;
+    .form-group {
+      margin-bottom: 4px;
+    }
+  }
+}
+
+.form-buttons button {
+  margin-right: 10px;
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.btn-hal {
+  width: 8em;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.help-block {
+  &.hint {
+    color: #999;
+    font-size: smaller;
+  }
+}
+
+abbr.req {
+  color: @hal-dark-blue;
+  border: none;
+  font-size: .6em;
+  vertical-align: text-top;
+}
+
+/*
+ * Bootstrap Select classes
+ */
+.bootstrap-select.btn-group.disabled .btn:focus {
+  box-shadow: none !important;
+}
+
+.bootstrap-select.btn-group .btn .clear {
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  width: 12px;
+  height: 9px;
+  margin-top: -4px;
+  vertical-align: middle;
+  font-family: @icon-font-name-pf;
+  font-size: 10px;
+  font-weight: 400;
+
+  &:before {
+    bottom: 0;
+    content: "\e60b";
+    left: 0;
+    line-height: 12px;
+    position: absolute;
+    text-align: center;
+    top: -1px;
+    right: 0;
+  }
+}
+
+/*
+ * HAL specific typeahead.js classes beyond 'typeahead.less'
+ */
+.tt-dataset .empty-message {
+  padding-left: 30px;
+  padding-right: 5px;
+  .pficon {
+    font-size: 14px;
+    position: absolute;
+    left: 8px;
+    top: 10px;
+  }
+}
+
+.tt-menu, .ui-autocomplete {
+  max-height: 150px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/*
+ * TagManager classes
+ */
+.tag-manager-container {
+  margin: 0;
+  padding: 0;
+}
+
+.tag-manager-tag {
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 5px 5px 0 0;
+  padding: 2px 4px;
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.disabled {
+  .tm-tag {
+    color: #999;
+    cursor: not-allowed;
+  }
+  .tm-tag-remove {
+    pointer-events: none;
+  }
+}
+
+.has-error {
+  .tm-tag {
+    background-color: #fbe7e7;
+    border-color: #c00;
+  }
+}
