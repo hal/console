@@ -27,6 +27,7 @@ import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.HasPresenter;
 
 import javax.inject.Inject;
@@ -40,12 +41,14 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView> {
 
     // @formatter:off
     public interface MyView extends View, HasPresenter<FooterPresenter> {
-        void update(Environment environment);
+        void updateEnvironment(Environment environment);
+        void updateVersion(Version version);
     }
     // @formatter:on
 
 
     private final Environment environment;
+    private final CheckForUpdate checkForUpdate;
 
     @Inject
     public FooterPresenter(final EventBus eventBus,
@@ -53,19 +56,21 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView> {
             final Environment environment) {
         super(eventBus, view);
         this.environment = environment;
+        this.checkForUpdate = new CheckForUpdate(environment);
     }
 
     @Override
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-        getView().update(environment);
+        getView().updateEnvironment(environment);
     }
 
     @Override
     protected void onReveal() {
         super.onReveal();
         PatternFly.initComponents();
+        checkForUpdate.execute(version -> getView().updateVersion(version));
     }
 
     public void onShowVersion() {

@@ -19,84 +19,65 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.bootstrap.functions;
+package org.jboss.hal.client.skeleton;
 
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.InstanceInfo;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.config.semver.Versions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
+class CheckForUpdate {
 
-public class CheckForUpdate implements BootstrapFunction {
+    @FunctionalInterface
+    interface VersionCallback {
+
+        void onVersion(Version version);
+    }
 
     private static final String UPDATE_URL = "http://access-halproject.rhcloud.com/latest";
+    private static Logger logger = LoggerFactory.getLogger(CheckForUpdate.class);
 
     private final Environment environment;
 
-    @Inject
-    public CheckForUpdate(final Environment environment) {
+    CheckForUpdate(Environment environment) {
         this.environment = environment;
     }
 
     @SuppressWarnings("HardCodedStringLiteral")
-    public void execute(final Control<FunctionContext> control) {
-        logStart();
+    void execute(VersionCallback callback) {
         // only check for community updates
         if (environment.getInstanceInfo() == InstanceInfo.EAP) {
-            logger.debug("{}: Skip for EAP", name());
-            logDone();
-            control.proceed();
+            logger.debug("Version update check skipped for EAP");
         } else {
             RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, UPDATE_URL);
-            builder.setTimeoutMillis(1000); // we're in bootstrap and need a response fast!
             builder.setCallback(new RequestCallback() {
                 @Override
                 public void onResponseReceived(final Request request, final Response response) {
                     try {
                         Version version = Versions.parseVersion(response.getText());
-                        environment.setLatestHalVersion(version);
-                        logger.debug("{}: Version from update url {}", name(), version);
-                        if (environment.halUpdateAvailable()) {
-                            logger.info("{}: A new HAL version is available. Current version: {}, new version: {}",
-                                    name(), environment.getHalVersion(), environment.getLatestHalVersion());
-                        }
+                        callback.onVersion(version);
                     } catch (Throwable t) {
-                        logger.warn("{}: Cannot parse version from update server at {}: {}", name(), UPDATE_URL,
-                                t.getMessage());
-                    } finally {
-                        logDone();
-                        control.proceed();
+                        logger.warn("Cannot parse version from update server at {}: {}", UPDATE_URL, t.getMessage());
                     }
                 }
 
                 @Override
                 public void onError(final Request request, final Throwable throwable) {
-                    logger.warn("{}: Cannot read version from update server at {}: {}", name(), UPDATE_URL,
-                            throwable.getMessage());
-                    logDone();
-                    control.proceed();
+                    logger.warn("Cannot read version from update server at {}: {}", UPDATE_URL, throwable.getMessage());
                 }
             });
             try {
                 builder.send();
             } catch (RequestException e) {
-                logger.warn("{}: Cannot contact update server at {}: {}", name(), UPDATE_URL, e.getMessage());
-                logDone();
-                control.proceed();
+                logger.warn("Cannot contact update server at {}: {}", UPDATE_URL, e.getMessage());
             }
         }
-    }
-
-    @Override
-    public String name() {
-        return "Bootstrap[CheckForUpdate]";
     }
 }

@@ -17,15 +17,6 @@ public interface Environment {
     Version getHalVersion();
 
     /**
-     * Latest version from the HAL build proxy
-     */
-    Version getLatestHalVersion();
-
-    void setLatestHalVersion(Version latestVersion);
-
-    boolean halUpdateAvailable();
-
-    /**
      * The configured locales in the GWT module.
      *
      * @return the list of supported locales

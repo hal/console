@@ -156,7 +156,7 @@ public class Typeahead implements SuggestHandler {
     Typeahead(final Builder builder) {
         options = new Options();
         options.highlight = true;
-        options.minLength = 0;
+        options.minLength = 1;
 
         RemoteOptions remoteOptions = new RemoteOptions();
         remoteOptions.url = Endpoints.INSTANCE.dmr();

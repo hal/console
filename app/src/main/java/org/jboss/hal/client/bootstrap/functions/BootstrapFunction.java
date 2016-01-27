@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public interface BootstrapFunction extends Function<FunctionContext> {
 
-    Logger logger = LoggerFactory.getLogger(CheckForUpdate.class);
+    Logger logger = LoggerFactory.getLogger(BootstrapFunction.class);
 
     @NonNls
     String name();

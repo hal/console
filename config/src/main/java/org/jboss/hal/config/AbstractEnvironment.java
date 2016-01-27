@@ -43,13 +43,11 @@ public abstract class AbstractEnvironment implements Environment {
     private final Version halVersion;
     private final List<String> locales;
     private final InstanceInfo instanceInfo;
-    private Version latestVersion;
     private OperationMode operationMode;
     private Version managementVersion;
 
     protected AbstractEnvironment(final String halVersion, final List<String> locales) {
         this.halVersion = Version.valueOf(halVersion);
-        this.latestVersion = null;
         this.locales = locales;
         this.instanceInfo = WILDFLY;
         this.operationMode = STANDALONE;
@@ -59,21 +57,6 @@ public abstract class AbstractEnvironment implements Environment {
     @Override
     public Version getHalVersion() {
         return halVersion;
-    }
-
-    @Override
-    public Version getLatestHalVersion() {
-        return latestVersion;
-    }
-
-    @Override
-    public void setLatestHalVersion(final Version latestVersion) {
-        this.latestVersion = latestVersion;
-    }
-
-    @Override
-    public boolean halUpdateAvailable() {
-        return latestVersion != null && latestVersion.greaterThan(halVersion);
     }
 
     @Override

@@ -30,15 +30,14 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.ballroom.ProgressElement;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.ui.UIRegistry;
 import org.jboss.hal.resources.Resources;
 
 import javax.annotation.PostConstruct;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.resources.Names.PLACEMENT;
-import static org.jboss.hal.resources.Names.TOGGLE;
-import static org.jboss.hal.resources.Names.TOOLTIP;
+import static org.jboss.hal.resources.Names.*;
 
 /**
  * @author Harald Pehl
@@ -57,6 +56,7 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
 
 
     private FooterPresenter presenter;
+    private Environment environment;
 
     @DataElement ProgressElement progress = new ProgressElement();
     @DataElement Element halVersion;
@@ -74,11 +74,16 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
         this.presenter = presenter;
     }
 
-    public void update(Environment environment) {
+    public void updateEnvironment(Environment environment) {
+        this.environment = environment;
         halVersion.setInnerText(environment.getHalVersion().toString());
-        if (environment.halUpdateAvailable()) {
+    }
+
+    @Override
+    public void updateVersion(final Version version) {
+        if (version.greaterThan(environment.getHalVersion())) {
             String updateAvailable = resources().messages().updateAvailable(environment.getHalVersion().toString(),
-                    environment.getLatestHalVersion().toString());
+                    version.toString());
             this.updateAvailable.setTitle(updateAvailable);
             this.updateAvailable.getDataset().setAt(TOGGLE, TOOLTIP);
             this.updateAvailable.getDataset().setAt(PLACEMENT, "top");

@@ -21,8 +21,10 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.js.events.JsEvent;
+import elemental.js.html.JsInt16Array;
 import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
@@ -64,7 +66,7 @@ public class TagsManagerBridge {
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     public static class Options {
 
-        public JsArrayOf<Integer> delimiters;
+        public JsInt16Array delimiters;
         public String tagsContainer;
         public String tagClass;
         public Validator validator;
@@ -78,8 +80,8 @@ public class TagsManagerBridge {
         private static final Options DEFAULT_OPTIONS = new Options();
 
         static {
-            DEFAULT_OPTIONS.delimiters = JsArrayOf.create();
-            DEFAULT_OPTIONS.delimiters.push(ENTER);
+            DEFAULT_OPTIONS.delimiters = (JsInt16Array) Browser.getWindow().newInt16Array(1);
+            DEFAULT_OPTIONS.delimiters.setAt(0, ENTER);
             DEFAULT_OPTIONS.tagClass = tagManagerTag;
         }
 

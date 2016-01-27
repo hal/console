@@ -33,11 +33,9 @@ public class BootstrapFunctions {
     private final BootstrapFunction[] functions;
 
     @Inject
-    public BootstrapFunctions(final CheckForUpdate checkForUpdate,
-            final ReadEnvironment readEnvironment,
+    public BootstrapFunctions(final ReadEnvironment readEnvironment,
             final FinishBootstrap finishBootstrap) {
         this.functions = new BootstrapFunction[]{
-                checkForUpdate,
                 readEnvironment,
                 finishBootstrap
         };
