@@ -34,8 +34,12 @@ import java.util.List;
 public abstract class PatternFlyViewImpl extends ViewImpl implements PatternFlyView {
 
     private final List<Attachable> attachables;
+    private boolean attached;
 
-    protected PatternFlyViewImpl() {attachables = new ArrayList<>();}
+    protected PatternFlyViewImpl() {
+        attachables = new ArrayList<>();
+        attached = false;
+    }
 
     protected void registerAttachable(Attachable first, Attachable... rest) {
         attachables.add(first);
@@ -48,9 +52,12 @@ public abstract class PatternFlyViewImpl extends ViewImpl implements PatternFlyV
 
     @Override
     public void attach() {
-        PatternFly.initComponents();
-        for (Attachable attachable : attachables) {
-            attachable.attach();
+        if (!attached) {
+            PatternFly.initComponents();
+            for (Attachable attachable : attachables) {
+                attachable.attach();
+            }
+            attached = true;
         }
     }
 }

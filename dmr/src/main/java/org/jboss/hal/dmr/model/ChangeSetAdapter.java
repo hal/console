@@ -82,7 +82,6 @@ public class ChangeSetAdapter {
         if (String.class == type) {
             String stringValue = (String) value;
             if (stringValue.startsWith("$")) {
-                // TODO: further constraints
                 valueNode.setExpression(stringValue);
             } else {
                 valueNode.set(stringValue);
@@ -101,13 +100,12 @@ public class ChangeSetAdapter {
             valueNode.clear();
             List l = (List) value;
             for (Object o : l)
-                valueNode.add(o.toString()); // TODO: type conversion?
+                valueNode.add(String.valueOf(o));
         } else if (HashMap.class == type) {
             valueNode.clear();
-            //noinspection unchecked
-            Map<String, String> map = (Map<String, String>) value;
-            for (String k : map.keySet())
-                valueNode.add(k, map.get(k));
+            Map map = (Map) value;
+            for (Object k : map.keySet())
+                valueNode.add(String.valueOf(k), String.valueOf(map.get(k)));
         } else {
             valueNode = null;
         }

@@ -33,6 +33,8 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.ui.UIRegistry;
 import org.jboss.hal.resources.Resources;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 
@@ -54,6 +56,8 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
     public abstract Resources resources();
     // @formatter:on
 
+
+    private static Logger logger = LoggerFactory.getLogger(FooterView.class);
 
     private FooterPresenter presenter;
     private Environment environment;
@@ -82,6 +86,8 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
     @Override
     public void updateVersion(final Version version) {
         if (version.greaterThan(environment.getHalVersion())) {
+            logger.info("A new HAL version is available. Current version: {}, new version: {}", //NON-NLS
+                    environment.getHalVersion(), version);
             String updateAvailable = resources().messages().updateAvailable(environment.getHalVersion().toString(),
                     version.toString());
             this.updateAvailable.setTitle(updateAvailable);

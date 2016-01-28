@@ -6,7 +6,7 @@
 var gulp = require('gulp'),
     less = require('gulp-less'),
     autoprefixer = require('gulp-autoprefixer'),
-    minifycss = require('gulp-minify-css'),
+    cssnano = require('gulp-cssnano'),
     rename = require('gulp-rename'),
     copy = require('gulp-copy'),
     del = require('del');
@@ -15,21 +15,15 @@ gulp.task('less', function () {
     return gulp.src('src/main/less/hal.less')
         .pipe(less())
         .pipe(autoprefixer({browsers: ['last 2 versions'], cascade: false}))
-        .pipe(minifycss())
+        .pipe(cssnano())
         .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest('src/main/resources/org/jboss/hal/public/css'));
 });
 
 gulp.task('copy', function () {
-    // Fonts
+    // PatternFly fonts & images
     gulp.src('bower_components/patternfly/dist/fonts/*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/fonts', {prefix: 4}));
-    gulp.src('bower_components/patternfly/components/font-awesome/fonts/*')
-        .pipe(copy('src/main/resources/org/jboss/hal/public/fonts', {prefix: 5}));
-    gulp.src('bower_components/patternfly/components/bootstrap/dist/fonts/*')
-        .pipe(copy('src/main/resources/org/jboss/hal/public/fonts', {prefix: 6}));
-
-    // Images
     gulp.src('bower_components/patternfly/dist/img/*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/img', {prefix: 4}));
 
@@ -54,12 +48,12 @@ gulp.task('copy', function () {
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
 
     // Bootstrap & PatternFly
-    gulp.src('bower_components/patternfly/components/bootstrap/dist/js/bootstrap.*')
-        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 6}));
-    gulp.src('bower_components/patternfly/components/bootstrap-select/dist/js/bootstrap-select.*')
-        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 6}));
-    gulp.src('bower_components/patternfly/components/bootstrap-switch/dist/js/bootstrap-switch.*')
-        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 6}));
+    gulp.src('bower_components/bootstrap/dist/js/bootstrap.*')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 4}));
+    gulp.src('bower_components/bootstrap-select/dist/js/bootstrap-select.*')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 4}));
+    gulp.src('bower_components/bootstrap-switch/dist/js/bootstrap-switch.*')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 4}));
     gulp.src('bower_components/patternfly/dist/js/patternfly.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 4}));
 });
