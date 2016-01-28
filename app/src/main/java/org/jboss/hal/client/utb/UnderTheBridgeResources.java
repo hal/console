@@ -19,19 +19,16 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client;
+package org.jboss.hal.client.utb;
+
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.TextResource;
 
 /**
  * @author Harald Pehl
  */
-public interface NameTokens {
+public interface UnderTheBridgeResources extends ClientBundle {
 
-    String ACCESS_CONTROL = "/access-control";
-    String CONFIGURATION = "/configuration";
-    String DATASOURCE = "/configuration/{profile}/datasource";
-    String DEPLOYMENTS = "/deployments";
-    String HOMEPAGE = "/home";
-    String PATCHING = "/patching";
-    String RUNTIME = "/runtime";
-    String UNDER_THE_BRIDGE = "/utb";
+    @Source("underTheBridge.base64")
+    TextResource underTheBridge();
 }

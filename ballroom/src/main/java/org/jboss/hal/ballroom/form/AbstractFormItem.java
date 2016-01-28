@@ -100,8 +100,8 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     // ------------------------------------------------------ initialization
 
-    AbstractFormItem(String name, String label) {
-        this.inputElement = newInputElement();
+    AbstractFormItem(String name, String label, InputElement.Context<?> context) {
+        this.inputElement = newInputElement(context);
 
         this.label = label;
         this.required = false;
@@ -203,7 +203,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
      *
      * @return a new input element for this form item
      */
-    protected abstract InputElement<T> newInputElement();
+    protected abstract InputElement<T> newInputElement(InputElement.Context<?> context);
 
     @Override
     public Element asElement(Form.State state) {
@@ -277,7 +277,9 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public boolean isEmpty() {
-        return getValue() == null || isNullOrEmpty(getText()) || isUndefined();
+        return supportsExpressions()
+                ? getValue() == null || isUndefined() || isNullOrEmpty(getText())
+                : getValue() == null || isUndefined();
     }
 
     @Override

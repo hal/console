@@ -24,6 +24,7 @@ package org.jboss.hal.ballroom.form;
 import com.google.gwt.core.client.GWT;
 import elemental.client.Browser;
 import elemental.dom.Element;
+import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
 
@@ -31,6 +32,7 @@ import java.util.List;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Arrays.asList;
+import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.formControl;
 
 /**
@@ -59,7 +61,7 @@ public class NumberItem extends AbstractFormItem<Long> {
     }
 
     public NumberItem(final String name, final String label, long min, long max) {
-        super(name, label);
+        super(name, label, EMPTY_CONTEXT);
         setRange(min, max);
     }
 
@@ -69,7 +71,7 @@ public class NumberItem extends AbstractFormItem<Long> {
     }
 
     @Override
-    protected InputElement<Long> newInputElement() {
+    protected InputElement<Long> newInputElement(Context<?> context) {
         NumberElement number = new NumberElement();
         number.setClassName(formControl);
         number.element.setOnchange(event -> {

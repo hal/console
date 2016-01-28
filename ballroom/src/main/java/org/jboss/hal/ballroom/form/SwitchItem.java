@@ -23,8 +23,10 @@ package org.jboss.hal.ballroom.form;
 
 import elemental.client.Browser;
 import elemental.dom.Element;
+import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.form.SwitchBridge.Bridge;
 
+import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.bootstrapSwitch;
 
 /**
@@ -33,11 +35,11 @@ import static org.jboss.hal.resources.CSS.bootstrapSwitch;
 public class SwitchItem extends AbstractFormItem<Boolean> {
 
     public SwitchItem(final String name, final String label) {
-        super(name, label);
+        super(name, label, EMPTY_CONTEXT);
     }
 
     @Override
-    protected InputElement<Boolean> newInputElement() {
+    protected InputElement<Boolean> newInputElement(Context<?> context) {
         SwitchElement switchElement = new SwitchElement();
         switchElement.setClassName(bootstrapSwitch);
         Bridge.element(switchElement.asElement()).onChange((event, state) -> {

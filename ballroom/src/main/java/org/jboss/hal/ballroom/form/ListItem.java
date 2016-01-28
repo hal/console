@@ -26,6 +26,7 @@ import com.google.common.base.Splitter;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
 
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.List;
 import static org.jboss.hal.ballroom.IdBuilder.build;
 import static org.jboss.hal.ballroom.IdBuilder.uniquId;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
+import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -44,11 +46,11 @@ public class ListItem extends AbstractFormItem<List<String>> {
     private Element tagsContainer;
 
     public ListItem(final String name, final String label) {
-        super(name, label);
+        super(name, label, EMPTY_CONTEXT);
     }
 
     @Override
-    protected InputElement<List<String>> newInputElement() {
+    protected InputElement<List<String>> newInputElement(Context<?> context) {
         listElement = new ListElement();
         listElement.setClassName(formControl + " " + tags);
         TagsManager.Bridge.element(listElement.asElement()).onRefresh((event, cst) -> {
@@ -102,6 +104,11 @@ public class ListItem extends AbstractFormItem<List<String>> {
     @Override
     public boolean supportsExpressions() {
         return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return getValue().isEmpty() || isUndefined();
     }
 
 

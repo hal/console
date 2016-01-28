@@ -23,10 +23,12 @@ package org.jboss.hal.ballroom.form;
 
 import com.google.common.base.Joiner;
 import elemental.dom.Element;
+import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.form.SelectBoxBridge.Multi;
 
 import java.util.List;
 
+import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.formControl;
 import static org.jboss.hal.resources.CSS.selectpicker;
 
@@ -38,12 +40,12 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
     private MultiSelectBoxElement selectBox;
 
     public MultiSelectBoxItem(final String name, final String label, List<String> options) {
-        super(name, label);
+        super(name, label, EMPTY_CONTEXT);
         setOptions(options);
     }
 
     @Override
-    protected InputElement<List<String>> newInputElement() {
+    protected InputElement<List<String>> newInputElement(Context<?> context) {
         selectBox = new MultiSelectBoxElement();
         selectBox.setClassName(formControl + " " + selectpicker);
         Multi.element(selectBox.asElement()).onChange((event, index) -> {
@@ -57,6 +59,11 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
 
     public void setOptions(List<String> options) {
         selectBox.setOptions(options);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return getValue().isEmpty() || isUndefined();
     }
 
     @Override

@@ -55,21 +55,12 @@ public class TagsManager {
     }
 
 
-    @JsFunction
-    @FunctionalInterface
-    public interface Validator {
-
-        boolean validate(String tag);
-    }
-
-
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     public static class Options {
 
         public JsInt16Array delimiters;
         public String tagsContainer;
         public String tagClass;
-        public Validator validator;
     }
 
 

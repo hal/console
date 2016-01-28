@@ -53,10 +53,6 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
     @SuppressWarnings("unchecked")
     public void populateFormItems(final T model, final Form<T> form) {
         for (FormItem formItem : form.getFormItems()) {
-            // reset meta data
-            formItem.setExpressionValue(null); // TODO Why?
-            formItem.setModified(false);
-            formItem.setUndefined(false);
             formItem.clearError();
 
             String name = formItem.getName();

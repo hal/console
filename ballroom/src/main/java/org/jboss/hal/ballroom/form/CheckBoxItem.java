@@ -23,6 +23,9 @@ package org.jboss.hal.ballroom.form;
 
 import elemental.client.Browser;
 import elemental.dom.Element;
+import org.jboss.hal.ballroom.form.InputElement.Context;
+
+import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 
 /**
  * @author Harald Pehl
@@ -30,11 +33,11 @@ import elemental.dom.Element;
 public class CheckBoxItem extends AbstractFormItem<Boolean> {
 
     public CheckBoxItem(final String name, final String label) {
-        super(name, label);
+        super(name, label, EMPTY_CONTEXT);
     }
 
     @Override
-    protected InputElement<Boolean> newInputElement() {
+    protected InputElement<Boolean> newInputElement(Context<?> context) {
         CheckBoxElement checkBox = new CheckBoxElement();
         checkBox.element.setOnchange(event -> {
             Boolean newValue = inputElement().getValue();

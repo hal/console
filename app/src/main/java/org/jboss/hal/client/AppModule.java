@@ -40,6 +40,8 @@ import org.jboss.hal.client.skeleton.FooterPresenter;
 import org.jboss.hal.client.skeleton.HeaderPresenter;
 import org.jboss.hal.client.skeleton.Templated_FooterView_Provider;
 import org.jboss.hal.client.skeleton.Templated_HeaderView_Provider;
+import org.jboss.hal.client.utb.UnderTheBridgePresenter;
+import org.jboss.hal.client.utb.UnderTheBridgeView;
 import org.jboss.hal.core.HalPlaceManager;
 import org.jboss.hal.core.gin.AbstractTemplatedPresenterModule;
 import org.jboss.hal.spi.GinModule;
@@ -100,5 +102,10 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 RuntimePresenter.MyView.class,
                 RuntimeView.class,
                 RuntimePresenter.MyProxy.class);
+
+        bindPresenter(UnderTheBridgePresenter.class,
+                UnderTheBridgePresenter.MyView.class,
+                UnderTheBridgeView.class,
+                UnderTheBridgePresenter.MyProxy.class);
     }
 }

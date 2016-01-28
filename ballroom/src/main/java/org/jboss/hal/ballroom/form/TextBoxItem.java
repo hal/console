@@ -23,8 +23,10 @@ package org.jboss.hal.ballroom.form;
 
 import elemental.client.Browser;
 import elemental.dom.Element;
+import org.jboss.hal.ballroom.form.InputElement.Context;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.formControl;
 
 /**
@@ -33,11 +35,11 @@ import static org.jboss.hal.resources.CSS.formControl;
 public class TextBoxItem extends AbstractFormItem<String> {
 
     public TextBoxItem(final String name, final String label) {
-        super(name, label);
+        super(name, label, EMPTY_CONTEXT);
     }
 
     @Override
-    protected InputElement<String> newInputElement() {
+    protected InputElement<String> newInputElement(Context<?> context) {
         TextBoxElement textBox = new TextBoxElement();
         setupInputElement(textBox);
         return textBox;

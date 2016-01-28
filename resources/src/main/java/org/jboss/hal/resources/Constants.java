@@ -48,6 +48,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String formResetDesc();
 
     String help();
+    String invalidProperty();
 
     String homepageNewToEap();
     String homepageTakeATour();
@@ -158,8 +159,5 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String toggleNavigation();
     String tools();
     String unknownError();
-
-
-
     //@formatter:on
 }

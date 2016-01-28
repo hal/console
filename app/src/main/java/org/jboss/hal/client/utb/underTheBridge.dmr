@@ -1,0 +1,33 @@
+{
+    "comment" => "This file is not used! It's just here to generate the base64 encoded version using https://github.com/hal/dmr.cmd",
+    "description" => "This pages shows a form based on an artificial resource description. The resource contains many different attribute variations to demonstrate all available form items in HAL.",
+    "attributes" => {
+        "name" => {
+            "type" => STRING,
+            "description" => "The name of the management endpoint",
+            "nillable" => false
+        },
+        "scheme" => {
+            "type" => STRING,
+            "description" => "The scheme of management endpoint. Allowed values are \"http\" and \"https\".",
+            "nillable" => false,
+            "allowed" => [
+                "http",
+                "https"
+            ]
+        },
+        "host" => {
+            "type" => STRING,
+            "description" => "The hostname of the management endpoint",
+            "nillable" => false
+        },
+        "port" => {
+            "type" => INT,
+            "description" => "The port of the management endpoint. Leave empty for the default ports.",
+            "nillable" => true,
+            "min" => 1L,
+            "max" => 65535L,
+            "default" => 80
+        }
+    }
+}
