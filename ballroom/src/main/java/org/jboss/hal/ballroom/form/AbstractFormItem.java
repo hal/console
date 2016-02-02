@@ -39,6 +39,7 @@ import elemental.html.SpanElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
@@ -331,13 +332,16 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public void setValue(final T value, final boolean fireEvent) {
-        toggleExpressionSupport(false);
+        //        toggleExpressionSupport(false);
         inputElement.setValue(value);
         setReadonlyValue(value);
         markDefaultValue(defaultValue != null && (value == null || isNullOrEmpty(String.valueOf(value))),
                 defaultValue);
         if (fireEvent) {
             signalChange(value);
+        }
+        if (hasExpressionScheme(asString(value))) {
+            toggleExpressionSupport(true);
         }
     }
 
@@ -569,7 +573,16 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     public void registerSuggestHandler(final SuggestHandler suggestHandler) {
         this.suggestHandler = suggestHandler;
         this.suggestHandler.setFormItem(this);
+        if (suggestHandler instanceof Typeahead) {
+            Typeahead typeahead = (Typeahead) suggestHandler;
+            Typeahead.Bridge.select(getId(EDITING)).onSelect((event, data) ->
+                    onSuggest(typeahead.getDataset().display.render(data)));
+        }
         toggleShowAll(true);
+    }
+
+    void onSuggest(final String suggestion) {
+        // nop
     }
 
     private void showAll() {

@@ -63,9 +63,9 @@ public class TextBoxItem extends AbstractFormItem<String> {
     }
 
     @Override
-    public void registerSuggestHandler(final SuggestHandler suggestHandler) {
-        super.registerSuggestHandler(suggestHandler);
-
+    void onSuggest(final String suggestion) {
+        setValue(suggestion);
+        setModified(true);
     }
 
     @Override

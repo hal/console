@@ -105,15 +105,17 @@ public class ListItem extends AbstractFormItem<List<String>> {
     public void registerSuggestHandler(final SuggestHandler suggestHandler) {
         super.registerSuggestHandler(suggestHandler);
         if (suggestHandler instanceof Typeahead) {
-            Typeahead typeahead = (Typeahead) suggestHandler;
-            Typeahead.Bridge.select(getId(EDITING)).onSelect((event, data) -> {
-                TagsManager.Bridge.element(listElement.asElement()).addTag(typeahead.getDataset().display.render(data));
-            });
             TagsManager.Bridge.element(listElement.asElement()).onRefresh((event, cst) -> {
                 Typeahead.Bridge.select(getId(EDITING)).setValue("");
                 suggestHandler.close();
             });
         }
+    }
+
+    @Override
+    void onSuggest(final String suggestion) {
+        TagsManager.Bridge.element(listElement.asElement()).addTag(suggestion);
+        setModified(true);
     }
 
     @Override

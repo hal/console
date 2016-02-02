@@ -31,7 +31,6 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.form.TagsManager.Bridge;
 import org.jboss.hal.resources.CSS;
-import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
 
 import java.util.ArrayList;
@@ -50,7 +49,6 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
 
-    private final static Constants CONSTANTS = GWT.create(Constants.class);
     private final static Messages MESSAGES = GWT.create(Messages.class);
     private final static RegExp PROPERTY_REGEX = RegExp.compile("^([\\w\\d]+)=([\\w\\d]+)$"); //NON-NLS
 
@@ -110,32 +108,12 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
     }
 
     @Override
-    public void registerSuggestHandler(final SuggestHandler suggestHandler) {
-        throw new IllegalArgumentException("Suggest handlers are not supported by PropertiesItem");
-    }
-
-    @Override
     public void attach() {
         super.attach();
         TagsManager.Options options = TagsManager.Defaults.get();
         options.tagsContainer = "#" + tagsContainer.getId();
         options.validator = PROPERTY_REGEX::test;
         Bridge.element(propertiesElement.asElement()).tagsManager(options);
-    }
-
-    @Override
-    List<FormItemValidation<Map<String, String>>> defaultValidationHandlers() {
-        List<FormItemValidation<Map<String, String>>> validators = new ArrayList<>(super.defaultValidationHandlers());
-        validators.add(value -> {
-            for (Map.Entry<String, String> entry : value.entrySet()) {
-                String property = Joiner.on("=").join(entry.getKey(), entry.getValue());
-                if (!PROPERTY_REGEX.test(property)) {
-                    return ValidationResult.invalid(CONSTANTS.invalidProperty());
-                }
-            }
-            return ValidationResult.OK;
-        });
-        return validators;
     }
 
     @Override

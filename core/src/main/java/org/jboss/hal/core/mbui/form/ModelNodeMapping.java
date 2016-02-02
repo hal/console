@@ -21,16 +21,21 @@
  */
 package org.jboss.hal.core.mbui.form;
 
+import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.form.DefaultMapping;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelType.BIG_INTEGER;
@@ -81,16 +86,29 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                         formItem.setValue(value.asLong());
                         break;
 
+                    case LIST:
+                        List<String> list = Lists.transform(value.asList(), ModelNode::asString);
+                        formItem.setValue(list);
+                        break;
+
+                    case OBJECT:
+                        List<Property> properties = value.asPropertyList();
+                        Map<String, String> map = new HashMap<>();
+                        for (Property property : properties) {
+                            map.put(property.getName(), property.getValue().asString());
+                        }
+                        formItem.setValue(map);
+                        break;
+
                     case STRING:
                         formItem.setValue(value.asString());
                         break;
 
+                    // unsupported types
                     case BIG_DECIMAL:
                     case DOUBLE:
                     case BYTES:
                     case EXPRESSION:
-                    case LIST:
-                    case OBJECT:
                     case PROPERTY:
                     case TYPE:
                     case UNDEFINED:
@@ -109,11 +127,12 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void persistModel(final T model, final Form<T> form) {
         for (FormItem formItem : form.getFormItems()) {
             String name = formItem.getName();
 
-            if (formItem.isUndefined()) {
+            if (model.hasDefined(name) && formItem.isUndefined()) {
                 // TODO Check default value
                 model.remove(name);
 
@@ -132,8 +151,8 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                         model.get(name).set((Boolean) value);
                         break;
 
-                    case INT:
                     case BIG_INTEGER:
+                    case INT:
                     case LONG:
                         Long longValue = (Long) value;
                         if (type == BIG_INTEGER) {
@@ -145,16 +164,29 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                         }
                         break;
 
+                    case LIST:
+                        List<String> list = (List<String>) value;
+                        for (String s : list) {
+                            model.get(name).add(s);
+                        }
+                        break;
+
+                    case OBJECT:
+                        Map<String, String> map = (Map<String, String>) value;
+                        for (Map.Entry<String, String> entry : map.entrySet()) {
+                            model.get(name).set(entry.getKey(), entry.getValue());
+                        }
+                        break;
+
                     case STRING:
                         model.get(name).set(String.valueOf(value));
                         break;
 
+                    // unsupported types
                     case BIG_DECIMAL:
-                    case DOUBLE:
                     case BYTES:
+                    case DOUBLE:
                     case EXPRESSION:
-                    case LIST:
-                    case OBJECT:
                     case PROPERTY:
                     case TYPE:
                     case UNDEFINED:
