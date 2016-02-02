@@ -140,9 +140,6 @@
                                 <div class="input-group">
                                     <input type="text" id="textBoxTypeahead-markup" class="form-control typeahead" placeholder="Text input">
                                     <span class="input-group-btn">
-                                        <button class="btn btn-default" type="button" title="Expression Resolver">
-                                            <i class="fa fa-link"></i>
-                                        </button>
                                         <button id="textBoxTypeahead-showAll" class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
                                         </button>
@@ -298,6 +295,15 @@
                             <label class="col-md-3 control-label" for="number-markup">Default</label>
                             <div class="col-md-9">
                                 <input type="number" id="number-markup" class="form-control" placeholder="Number">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="numberUnit-markup">With Unit</label>
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <input type="number" id="numberUnit-markup" class="form-control" placeholder="Number" aria-describedby="numberUnit-addon">
+                                    <span class="input-group-addon" id="numberUnit-addon">minutes</span>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -878,7 +884,7 @@
             }
         });
 
-        $('#textBoxTypeahead-showAll').on('click', function() {
+        $('#textBoxTypeahead-showAll').on('click', function () {
             // The remote service would need to support empty queries.
             // Because it doesn't we simply use 'i' to get *some* suggestions
             $('#textBoxTypeahead-markup').typeahead('val', 'i');

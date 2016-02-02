@@ -56,12 +56,12 @@ public class NumberItem extends AbstractFormItem<Long> {
     private long min;
     private long max;
 
-    public NumberItem(final String name, final String label) {
-        this(name, label, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    public NumberItem(final String name, final String label, final String unit) {
+        this(name, label, unit, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
-    public NumberItem(final String name, final String label, long min, long max) {
-        super(name, label, EMPTY_CONTEXT);
+    public NumberItem(final String name, final String label, final String unit, long min, long max) {
+        super(name, label, unit, EMPTY_CONTEXT);
         setRange(min, max);
     }
 

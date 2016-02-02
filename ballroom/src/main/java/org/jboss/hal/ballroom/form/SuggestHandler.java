@@ -35,5 +35,7 @@ public interface SuggestHandler {
 
     void showAll();
 
+    void close();
+
     void setFormItem(FormItem formItem);
 }

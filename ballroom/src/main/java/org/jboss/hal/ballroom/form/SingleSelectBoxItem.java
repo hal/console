@@ -45,7 +45,7 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
     }
 
     public SingleSelectBoxItem(final String name, final String label, List<String> options, boolean allowEmpty) {
-        super(name, label, new Context<>(allowEmpty));
+        super(name, label, null, new Context<>(allowEmpty));
         this.allowEmpty = allowEmpty;
         List<String> localOptions = options;
         if (allowEmpty && !options.isEmpty() && emptyToNull(options.get(0)) != null) {
@@ -57,7 +57,8 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
 
     @Override
     protected InputElement<String> newInputElement(Context<?> context) {
-        selectBox = new SingleSelectBoxElement((Boolean) context.<Boolean>data());
+        Boolean allowEmpty = (Boolean) context.data();
+        selectBox = new SingleSelectBoxElement(allowEmpty);
         selectBox.setClassName(formControl + " " + selectpicker);
         Single.element(selectBox.asElement()).onChange((event, index) -> {
             String value = getValue();
@@ -92,6 +93,13 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
         }
     }
 
+    @Override
+    void markDefaultValue(final boolean on, final String defaultValue) {
+        super.markDefaultValue(on, defaultValue);
+        Single.element(selectBox.asElement()).refresh();
+    }
+
+
     static class SingleSelectBoxElement extends SelectBoxElement<String> {
 
         SingleSelectBoxElement(final boolean allowEmpty) {
@@ -123,6 +131,11 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
         @Override
         public void setText(final String s) {
             setValue(s);
+        }
+
+        @Override
+        public void setPlaceholder(final String placeHolder) {
+            super.setPlaceholder(placeHolder);
         }
     }
 }

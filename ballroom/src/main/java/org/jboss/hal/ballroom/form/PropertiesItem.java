@@ -30,7 +30,9 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.form.TagsManager.Bridge;
+import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Messages;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,13 +51,14 @@ import static org.jboss.hal.resources.CSS.*;
 public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
 
     private final static Constants CONSTANTS = GWT.create(Constants.class);
+    private final static Messages MESSAGES = GWT.create(Messages.class);
     private final static RegExp PROPERTY_REGEX = RegExp.compile("^([\\w\\d]+)=([\\w\\d]+)$"); //NON-NLS
 
     private PropertiesElement propertiesElement;
     private Element tagsContainer;
 
     public PropertiesItem(final String name, final String label) {
-        super(name, label, EMPTY_CONTEXT);
+        super(name, label, null, EMPTY_CONTEXT);
     }
 
     @Override
@@ -63,7 +66,7 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
         propertiesElement = new PropertiesElement();
         propertiesElement.setClassName(formControl + " " + properties);
         Bridge.element(propertiesElement.asElement()).onRefresh((event, cst) -> {
-            Map<String, String> value = Splitter.on(',')
+            Map<String, String> value = Splitter.on(", ")
                     .trimResults()
                     .omitEmptyStrings()
                     .withKeyValueSeparator('=')
@@ -79,6 +82,10 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
     void assembleUI() {
         super.assembleUI();
 
+        errorText.setInnerHTML(MESSAGES.propertiesHint().asString());
+        errorText.getClassList().add(CSS.hint);
+        Elements.setVisible(errorText, true);
+
         //noinspection DuplicateStringLiteralInspection
         tagsContainer = new Elements.Builder().div()
                 .id(build("tags", "container", uniquId()))
@@ -89,17 +96,37 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
     }
 
     @Override
+    public void clearError() {
+        super.clearError();
+        errorText.setInnerHTML(MESSAGES.propertiesHint().asString());
+        errorText.getClassList().add(CSS.hint);
+        Elements.setVisible(errorText, true);
+    }
+
+    @Override
+    public void showError(final String message) {
+        super.showError(message);
+        errorText.getClassList().remove(CSS.hint);
+    }
+
+    @Override
+    public void registerSuggestHandler(final SuggestHandler suggestHandler) {
+        throw new IllegalArgumentException("Suggest handlers are not supported by PropertiesItem");
+    }
+
+    @Override
     public void attach() {
         super.attach();
         TagsManager.Options options = TagsManager.Defaults.get();
         options.tagsContainer = "#" + tagsContainer.getId();
+        options.validator = PROPERTY_REGEX::test;
         Bridge.element(propertiesElement.asElement()).tagsManager(options);
     }
 
     @Override
     List<FormItemValidation<Map<String, String>>> defaultValidationHandlers() {
-        List<FormItemValidation<Map<String, String>>> defaults = super.defaultValidationHandlers();
-        defaults.add(value -> {
+        List<FormItemValidation<Map<String, String>>> validators = new ArrayList<>(super.defaultValidationHandlers());
+        validators.add(value -> {
             for (Map.Entry<String, String> entry : value.entrySet()) {
                 String property = Joiner.on("=").join(entry.getKey(), entry.getValue());
                 if (!PROPERTY_REGEX.test(property)) {
@@ -108,7 +135,12 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
             }
             return ValidationResult.OK;
         });
-        return defaults;
+        return validators;
+    }
+
+    @Override
+    String asString(final Map<String, String> value) {
+        return Joiner.on(", ").join(asTags(value));
     }
 
     @Override
@@ -124,6 +156,7 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
     public boolean isEmpty() {
         return getValue().isEmpty() || isUndefined();
     }
+
 
     static class PropertiesElement extends InputElement<Map<String, String>> {
 
@@ -195,7 +228,7 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
 
         @Override
         public String getText() {
-            return Joiner.on(',').join(asTags(getValue()));
+            return Joiner.on(", ").join(asTags(getValue()));
         }
 
         @Override

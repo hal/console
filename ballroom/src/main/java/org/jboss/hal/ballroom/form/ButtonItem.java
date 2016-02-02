@@ -43,7 +43,7 @@ public class ButtonItem extends AbstractFormItem<Void> {
     private Element readonlyNotSupported;
 
     public ButtonItem(final String name, final String label) {
-        super(name, label, EMPTY_CONTEXT);
+        super(name, label, null, EMPTY_CONTEXT);
         button.setText(label);
     }
 

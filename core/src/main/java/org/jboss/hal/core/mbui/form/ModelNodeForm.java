@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -95,6 +96,11 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             this.unsorted = false;
             this.includeRuntime = false;
             this.dataMapping = new ModelNodeMapping<>(resourceDescription);
+        }
+
+        public Builder<T> include(final String[] attributes) {
+            includes.addAll(Arrays.asList(attributes));
+            return this;
         }
 
         public Builder<T> include(final String first, final String... rest) {

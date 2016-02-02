@@ -35,7 +35,7 @@ import static org.jboss.hal.resources.CSS.formControl;
 public class TextBoxItem extends AbstractFormItem<String> {
 
     public TextBoxItem(final String name, final String label) {
-        super(name, label, EMPTY_CONTEXT);
+        super(name, label, null, EMPTY_CONTEXT);
     }
 
     @Override

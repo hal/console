@@ -22,6 +22,8 @@
 package org.jboss.hal.ballroom.typeahead;
 
 import com.google.gwt.core.client.GWT;
+import elemental.client.Browser;
+import elemental.dom.Element;
 import elemental.js.events.JsEvent;
 import elemental.js.json.JsJsonObject;
 import elemental.js.util.JsArrayOf;
@@ -29,6 +31,7 @@ import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
@@ -252,6 +255,14 @@ public class Typeahead implements SuggestHandler, Attachable {
         Bridge bridge = Bridge.select(formItemSelector());
         bridge.setValue(SHOW_ALL_VALUE);
         bridge.focus();
+    }
+
+    @Override
+    public void close() {
+        Bridge.select(formItemSelector()).close();
+        Element menu = Browser.getDocument()
+                .querySelector(formItemSelector() + " .twitter-typeahead .tt-menu.tt-open"); //NON-NLS
+        Elements.setVisible(menu, false);
     }
 
     public Dataset getDataset() {

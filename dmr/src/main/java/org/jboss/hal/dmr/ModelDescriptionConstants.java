@@ -178,6 +178,7 @@ public interface ModelDescriptionConstants {
     String TRIM_DESCRIPTIONS = "trim-descriptions";
     String TO_REPLACE = "to-replace";
     String TYPE = "type";
+    String UNIT = "unit";
     String URL = "url";
     String VALUE = "value";
     String VALUE_TYPE = "value-type";

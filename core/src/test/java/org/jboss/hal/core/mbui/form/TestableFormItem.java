@@ -246,7 +246,7 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void setPlaceholder(final String placeholder) {
+    public void setDefaultValue(final String defaultValue) {
 
     }
 

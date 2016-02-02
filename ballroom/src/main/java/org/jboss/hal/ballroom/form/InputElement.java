@@ -36,13 +36,13 @@ public abstract class InputElement<T>
     /**
      * Helper class to pass data from subclasses of AbstractFormItem to newInputElement().
      */
-    static class Context<T> {
+    static class Context<C> {
 
-        private final T data;
+        private final C data;
 
-        Context(final T data) {this.data = data;}
+        Context(final C data) {this.data = data;}
 
-        public T data() {
+        public C data() {
             return data;
         }
     }

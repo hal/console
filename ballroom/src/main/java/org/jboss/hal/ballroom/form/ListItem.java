@@ -23,11 +23,14 @@ package org.jboss.hal.ballroom.form;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.gwt.core.client.GWT;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
+import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Messages;
 
 import java.util.List;
 
@@ -42,11 +45,13 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public class ListItem extends AbstractFormItem<List<String>> {
 
+    private final static Messages MESSAGES = GWT.create(Messages.class);
+
     private ListElement listElement;
     private Element tagsContainer;
 
     public ListItem(final String name, final String label) {
-        super(name, label, EMPTY_CONTEXT);
+        super(name, label, null, EMPTY_CONTEXT);
     }
 
     @Override
@@ -69,6 +74,10 @@ public class ListItem extends AbstractFormItem<List<String>> {
     void assembleUI() {
         super.assembleUI();
 
+        errorText.setInnerHTML(MESSAGES.listHint().asString());
+        errorText.getClassList().add(CSS.hint);
+        Elements.setVisible(errorText, true);
+
         //noinspection DuplicateStringLiteralInspection
         tagsContainer = new Elements.Builder().div()
                 .id(build("tags", "container", uniquId()))
@@ -76,6 +85,20 @@ public class ListItem extends AbstractFormItem<List<String>> {
                 .end()
                 .build();
         inputContainer.insertBefore(tagsContainer, errorText);
+    }
+
+    @Override
+    public void clearError() {
+        super.clearError();
+        errorText.setInnerHTML(MESSAGES.listHint().asString());
+        errorText.getClassList().add(CSS.hint);
+        Elements.setVisible(errorText, true);
+    }
+
+    @Override
+    public void showError(final String message) {
+        super.showError(message);
+        errorText.getClassList().remove(CSS.hint);
     }
 
     @Override
@@ -88,7 +111,7 @@ public class ListItem extends AbstractFormItem<List<String>> {
             });
             TagsManager.Bridge.element(listElement.asElement()).onRefresh((event, cst) -> {
                 Typeahead.Bridge.select(getId(EDITING)).setValue("");
-                Typeahead.Bridge.select(getId(EDITING)).close();
+                suggestHandler.close();
             });
         }
     }
@@ -99,6 +122,11 @@ public class ListItem extends AbstractFormItem<List<String>> {
         TagsManager.Options options = TagsManager.Defaults.get();
         options.tagsContainer = "#" + tagsContainer.getId();
         TagsManager.Bridge.element(listElement.asElement()).tagsManager(options);
+    }
+
+    @Override
+    String asString(final List<String> value) {
+        return Joiner.on(", ").join(value);
     }
 
     @Override
@@ -182,7 +210,7 @@ public class ListItem extends AbstractFormItem<List<String>> {
 
         @Override
         public String getText() {
-            return Joiner.on(',').join(getValue());
+            return Joiner.on(", ").join(getValue());
         }
 
         @Override

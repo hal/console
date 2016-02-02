@@ -21,44 +21,19 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import com.google.common.base.Strings;
 import elemental.client.Browser;
 import elemental.dom.Element;
-import elemental.html.OptionElement;
-import elemental.html.SelectElement;
-
-import java.util.List;
-
-import static com.google.common.base.Strings.emptyToNull;
-import static org.jboss.hal.resources.Names.UNDEFINED;
 
 /**
  * @author Harald Pehl
  */
-abstract class SelectBoxElement<T> extends InputElement<T> {
+abstract class AbstractCheckBoxElement extends InputElement<Boolean> {
 
-    final boolean allowEmpty;
-    final boolean multi;
-    final SelectElement element;
+    final elemental.html.InputElement element;
 
-    SelectBoxElement(final boolean allowEmpty, final boolean multi) {
-        this.allowEmpty = allowEmpty;
-        this.multi = multi;
-
-        element = Browser.getDocument().createSelectElement();
-        element.setMultiple(multi);
-        element.setSize(1);
-    }
-
-    void setOptions(List<String> options) {
-        for (String option : options) {
-            OptionElement optionElement = Browser.getDocument().createOptionElement();
-            optionElement.setText(option);
-            if (emptyToNull(option) == null) {
-                optionElement.setTitle(UNDEFINED);
-            }
-            element.appendChild(optionElement);
-        }
+    AbstractCheckBoxElement() {
+        element = Browser.getDocument().createInputElement();
+        element.setType("checkbox"); //NON-NLS
     }
 
     @Override
@@ -86,16 +61,6 @@ abstract class SelectBoxElement<T> extends InputElement<T> {
     }
 
     @Override
-    public boolean isEnabled() {
-        return !element.isDisabled();
-    }
-
-    @Override
-    public void setEnabled(final boolean b) {
-        element.setDisabled(!b);
-    }
-
-    @Override
     public void setName(final String s) {
         element.setName(s);
     }
@@ -106,12 +71,17 @@ abstract class SelectBoxElement<T> extends InputElement<T> {
     }
 
     @Override
-    public Element asElement() {
-        return element;
+    public String getText() {
+        return element.getValue();
     }
 
     @Override
-    public void setPlaceholder(final String placeHolder) {
-        element.setTitle(Strings.isNullOrEmpty(placeHolder) ? UNDEFINED : placeHolder);
+    public void setText(final String s) {
+        // not supported
+    }
+
+    @Override
+    public Element asElement() {
+        return element;
     }
 }

@@ -40,7 +40,7 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
     private MultiSelectBoxElement selectBox;
 
     public MultiSelectBoxItem(final String name, final String label, List<String> options) {
-        super(name, label, EMPTY_CONTEXT);
+        super(name, label, null, EMPTY_CONTEXT);
         setOptions(options);
     }
 
@@ -57,8 +57,19 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
         return selectBox;
     }
 
+    @Override
+    void markDefaultValue(final boolean on, final List<String> defaultValue) {
+        super.markDefaultValue(on, defaultValue);
+        Multi.element(selectBox.asElement()).refresh();
+    }
+
     public void setOptions(List<String> options) {
         selectBox.setOptions(options);
+    }
+
+    @Override
+    String asString(final List<String> value) {
+        return Joiner.on(", ").join(value);
     }
 
     @Override
@@ -95,7 +106,7 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
 
         @Override
         public String getText() {
-            return Joiner.on(',').join(getValue());
+            return Joiner.on(", ").join(getValue());
         }
 
         @Override

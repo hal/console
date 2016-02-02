@@ -53,6 +53,7 @@ public interface CSS {
     String containerFluid = "container-fluid";
     String controlLabel = "control-label";
     String dataTable = "datatable";
+    String defaultValue = "default-value";
     String eapHomeRow = "eap-home-row";
     String eapHomeTitle = "eap-home-title";
     String editing = "editing";
@@ -70,6 +71,7 @@ public interface CSS {
     String hasError = "has-error";
     String hasFeedback = "has-feedback";
     String helpBlock = "help-block";
+    String hint = "hint";
     String hover = "hover";
     String in = "in";
     String inputGroup = "input-group";
@@ -133,5 +135,4 @@ public interface CSS {
     static String pfIcon(@NonNls String name) {
         return "pficon pficon-" + name; //NON-NLS
     }
-
 }

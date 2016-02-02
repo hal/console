@@ -13,6 +13,7 @@ import java.util.List;
 public class StandaloneProcessStateProcessor implements ProcessStateProcessor {
 
     private static final String STANDALONE_SERVER = "Standalone Server";
+    private static final String STANDALONE_HOST = "";
 
     @Override
     public boolean accepts(ModelNode response) {
@@ -29,11 +30,11 @@ public class StandaloneProcessStateProcessor implements ProcessStateProcessor {
 
                 String headerValue = header.getValue().asString();
                 if (RESTART_REQUIRED.equals(headerValue)) {
-                    ServerState state = new ServerState(null, STANDALONE_SERVER, State.RESTART_REQUIRED);
+                    ServerState state = new ServerState(STANDALONE_HOST, STANDALONE_SERVER, State.RESTART_REQUIRED);
                     processState.add(state);
 
                 } else if (RELOAD_REQUIRED.equals(headerValue)) {
-                    ServerState state = new ServerState(null, STANDALONE_SERVER, State.RELOAD_REQUIRED);
+                    ServerState state = new ServerState(STANDALONE_HOST, STANDALONE_SERVER, State.RELOAD_REQUIRED);
                     processState.add(state);
                 }
             }

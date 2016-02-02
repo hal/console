@@ -84,7 +84,7 @@ public class DeploymentView extends PatternFlyViewImpl implements DeploymentPres
             formula.addValidationHandler(value -> "${magic}".equals(value) ?
                     ValidationResult.OK :
                     ValidationResult.invalid("Please provide the magic expression"));
-            NumberItem age = new NumberItem("age", "Age");
+            NumberItem age = new NumberItem("age", "Age", null);
             age.setRestricted(true);
 
             ListItem security = new ListItem("security", "Security");
