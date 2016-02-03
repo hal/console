@@ -1,0 +1,91 @@
+.finder, .finder > .finder-column, .finder > .finder-preview {
+  display: flex;
+}
+
+.finder {
+  .btn-group {
+    display: flex;
+  }
+
+  .btn-finder {
+    border-color: #b7b7b7;
+    color: #4d5258;
+    background-color: white;
+    box-shadow: none;
+
+    &:hover {
+      background-color: #eee;
+    }
+  }
+
+  .finder-column, .finder-preview {
+    flex-direction: column;
+  }
+
+  .finder-column {
+    background-color: #fafafa;
+    border-right: 1px solid #b7babe;
+    padding: 0;
+
+    > header, > ul > li {
+      min-height: 50px;
+    }
+
+    > header {
+      align-items: center;
+      background-color: #ededed;
+      border-bottom: 1px solid #b7babe;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      padding: 10px 20px;
+
+      h1 {
+        font-size: 13px;
+        font-weight: 600;
+        margin: 0;
+      }
+    }
+
+    > ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      overflow-y: auto;
+
+      > li:hover, li.active:hover {
+        background-color: #bee1f4;
+      }
+
+      > li {
+        align-items: center;
+        cursor: pointer;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 10px 20px;
+
+        .content {
+          margin-right: 10px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+
+      > li.active {
+        background-color: #d1d1d1;
+      }
+    }
+  }
+
+  .finder-preview {
+    background-color: white;
+
+    header {
+      h1 {
+        margin-top: 10px;
+      }
+    }
+  }
+}
