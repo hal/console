@@ -132,10 +132,5 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
         public void setText(final String s) {
             setValue(s);
         }
-
-        @Override
-        public void setPlaceholder(final String placeHolder) {
-            super.setPlaceholder(placeHolder);
-        }
     }
 }

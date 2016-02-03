@@ -166,16 +166,20 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
 
                     case LIST:
                         List<String> list = (List<String>) value;
+                        ModelNode listNode = new ModelNode();
                         for (String s : list) {
-                            model.get(name).add(s);
+                            listNode.add(s);
                         }
+                        model.get(name).set(listNode);
                         break;
 
                     case OBJECT:
                         Map<String, String> map = (Map<String, String>) value;
+                        ModelNode mapNode = new ModelNode();
                         for (Map.Entry<String, String> entry : map.entrySet()) {
-                            model.get(name).set(entry.getKey(), entry.getValue());
+                            mapNode.get(entry.getKey()).set(entry.getValue());
                         }
+                        model.get(name).set(mapNode);
                         break;
 
                     case STRING:

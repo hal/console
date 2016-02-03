@@ -21,12 +21,9 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import com.google.gwt.core.client.GWT;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.form.InputElement.Context;
-import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.Messages;
 
 import java.util.List;
 
@@ -49,9 +46,6 @@ public class NumberItem extends AbstractFormItem<Long> {
      * As defined by https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
      */
     public static final long MAX_SAFE_LONG = 9007199254740991l;
-
-    private final static Constants CONSTANTS = GWT.create(Constants.class);
-    private final static Messages MESSAGES = GWT.create(Messages.class);
 
     private long min;
     private long max;

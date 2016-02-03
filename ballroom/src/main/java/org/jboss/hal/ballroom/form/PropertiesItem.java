@@ -23,15 +23,14 @@ package org.jboss.hal.ballroom.form;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.form.TagsManager.Bridge;
 import org.jboss.hal.resources.CSS;
-import org.jboss.hal.resources.Messages;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,7 +48,6 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
 
-    private final static Messages MESSAGES = GWT.create(Messages.class);
     private final static RegExp PROPERTY_REGEX = RegExp.compile("^([\\w\\d]+)=([\\w\\d]+)$"); //NON-NLS
 
     private PropertiesElement propertiesElement;
@@ -64,7 +62,7 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
         propertiesElement = new PropertiesElement();
         propertiesElement.setClassName(formControl + " " + properties);
         Bridge.element(propertiesElement.asElement()).onRefresh((event, cst) -> {
-            Map<String, String> value = Splitter.on(", ")
+            Map<String, String> value = Splitter.on(',')
                     .trimResults()
                     .omitEmptyStrings()
                     .withKeyValueSeparator('=')
@@ -79,6 +77,8 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
     @Override
     void assembleUI() {
         super.assembleUI();
+
+        valueElement.getClassList().add(properties);
 
         errorText.setInnerHTML(MESSAGES.propertiesHint().asString());
         errorText.getClassList().add(CSS.hint);
@@ -114,6 +114,41 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
         options.tagsContainer = "#" + tagsContainer.getId();
         options.validator = PROPERTY_REGEX::test;
         Bridge.element(propertiesElement.asElement()).tagsManager(options);
+    }
+
+    @Override
+    protected void setReadonlyValue(final Map<String, String> value) {
+        if (value != null && !value.isEmpty()) {
+            Elements.removeChildrenFrom(valueElement);
+            for (Element element : keyValueElements(value)) {
+                valueElement.appendChild(element);
+            }
+        }
+    }
+
+    @Override
+    void markDefaultValue(final boolean on, final Map<String, String> defaultValue) {
+        if (on) {
+            Elements.removeChildrenFrom(valueElement);
+            for (Element element : keyValueElements(defaultValue)) {
+                valueElement.appendChild(element);
+            }
+            valueElement.getClassList().add(CSS.defaultValue);
+            valueElement.setTitle(CONSTANTS.defaultValue());
+        } else {
+            valueElement.getClassList().remove(CSS.defaultValue);
+            valueElement.setTitle("");
+        }
+    }
+
+    private Iterable<Element> keyValueElements(Map<String, String> value) {
+        Elements.Builder builder = new Elements.Builder();
+        for (Map.Entry<String, String> entry : value.entrySet()) {
+            builder.span().css(CSS.key).innerText(entry.getKey()).end();
+            builder.span().css(CSS.equals).innerHtml(SafeHtmlUtils.fromSafeConstant("&rArr;")).end(); //NON-NLS
+            builder.span().css(CSS.value).innerText(entry.getValue()).end();
+        }
+        return builder.elements();
     }
 
     @Override

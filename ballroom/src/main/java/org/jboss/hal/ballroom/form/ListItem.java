@@ -23,14 +23,12 @@ package org.jboss.hal.ballroom.form;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.gwt.core.client.GWT;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.resources.CSS;
-import org.jboss.hal.resources.Messages;
 
 import java.util.List;
 
@@ -44,8 +42,6 @@ import static org.jboss.hal.resources.CSS.*;
  * @author Harald Pehl
  */
 public class ListItem extends AbstractFormItem<List<String>> {
-
-    private final static Messages MESSAGES = GWT.create(Messages.class);
 
     private ListElement listElement;
     private Element tagsContainer;

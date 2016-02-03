@@ -68,8 +68,8 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     private static final String FORM_ITEM_GROUP = "formItemGroup";
     private static final String RESTRICTED_ELEMENT = "restrictedElement";
 
-    private static final Constants CONSTANTS = GWT.create(Constants.class);
-    private static final Messages MESSAGES = GWT.create(Messages.class);
+    static final Constants CONSTANTS = GWT.create(Constants.class);
+    static final Messages MESSAGES = GWT.create(Messages.class);
 
     private final EventBus eventBus;
     private final List<FormItemValidation<T>> validationHandlers;
@@ -98,14 +98,15 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     // Form.State#READONLY elements
     private final LabelElement readonlyLabelElement;
-    private final ParagraphElement valueElement;
     private final DivElement valueContainer;
     private final DivElement readonlyRoot;
     private final SpanElement readonlyRestricted;
+    final ParagraphElement valueElement;
 
 
     // ------------------------------------------------------ initialization
 
+    @SuppressWarnings("unchecked")
     AbstractFormItem(String name, String label, String hint, InputElement.Context<?> context) {
         this.inputElement = newInputElement(context);
 
@@ -332,7 +333,6 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public void setValue(final T value, final boolean fireEvent) {
-        //        toggleExpressionSupport(false);
         inputElement.setValue(value);
         setReadonlyValue(value);
         markDefaultValue(defaultValue != null && (value == null || isNullOrEmpty(String.valueOf(value))),
@@ -360,16 +360,16 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     @Override
     public void setDefaultValue(final T defaultValue) {
         this.defaultValue = defaultValue;
+        inputElement.setPlaceholder(asString(defaultValue));
     }
 
     void markDefaultValue(final boolean on, final T defaultValue) {
         if (on) {
-            inputElement.setPlaceholder(asString(defaultValue));
+            Elements.removeChildrenFrom(valueElement);
             valueElement.setTextContent(asString(defaultValue));
             valueElement.getClassList().add(CSS.defaultValue);
             valueElement.setTitle(CONSTANTS.defaultValue());
         } else {
-            inputElement.setPlaceholder("");
             valueElement.getClassList().remove(CSS.defaultValue);
             valueElement.setTitle("");
         }

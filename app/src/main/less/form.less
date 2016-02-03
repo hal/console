@@ -15,10 +15,26 @@
     .restricted {
       margin-right: .5em
     }
-    .form-control-static.default-value {
-      color: #C7C7CD;
-      font-style: italic;
-      cursor: help;
+    .form-control-static {
+      &.default-value {
+        color: #c7c7cd;
+        font-style: italic;
+        cursor: help;
+        .key, .equals, .value {
+          color: #c7c7cd;
+        }
+      }
+      &.properties {
+        .key {
+        }
+        .equals {
+          color: #8b8d8f;
+          margin: 0 3px;
+        }
+        .value {
+          margin-right: 8px;
+        }
+      }
     }
   }
 
@@ -193,3 +209,4 @@ abbr.key {
     border-color: #c00;
   }
 }
+

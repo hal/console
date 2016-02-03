@@ -57,6 +57,7 @@ public interface CSS {
     String eapHomeRow = "eap-home-row";
     String eapHomeTitle = "eap-home-title";
     String editing = "editing";
+    String equals = "equals";
     String fade = "fade";
     String form = "form";
     String formButtons = "form-buttons";
