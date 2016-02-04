@@ -44,6 +44,7 @@ public interface Names {
     String MANAGEMENT_CONSOLE = "Management Console";
     String NAME_KEY = "name";
     String NAME_LABEL = "Name";
+    String NOT_AVAILABLE = "n/a";
     String NOT_SUPPORTED = "not supported";
     String NYI = "not yet implemented";
     String OBJECT = "Object";

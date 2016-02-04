@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jboss.hal.ballroom.IdBuilder.build;
-import static org.jboss.hal.ballroom.IdBuilder.uniquId;
+import static org.jboss.hal.ballroom.IdBuilder.uniqueId;
 import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.*;
 
@@ -86,7 +86,7 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
 
         //noinspection DuplicateStringLiteralInspection
         tagsContainer = new Elements.Builder().div()
-                .id(build("tags", "container", uniquId()))
+                .id(build("tags", "container", uniqueId()))
                 .css(tagManagerContainer)
                 .end()
                 .build();

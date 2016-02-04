@@ -28,7 +28,7 @@ import com.gwtplatform.mvp.client.View;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
-import org.jboss.hal.core.HasPresenter;
+import org.jboss.hal.core.mvp.HasPresenter;
 
 import javax.inject.Inject;
 

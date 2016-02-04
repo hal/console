@@ -19,14 +19,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core;
+package org.jboss.hal.core.mvp;
 
-import com.gwtplatform.mvp.client.presenter.slots.NestedSlot;
+import com.gwtplatform.mvp.client.View;
+import com.gwtplatform.mvp.client.ViewImpl;
 
 /**
+ * Interface for views which use JavaScript based PatternFly components like select picker, tooltips or data tables.
+ *
  * @author Harald Pehl
  */
-public interface Slots {
+public interface PatternFlyView extends View {
 
-    NestedSlot MAIN = new NestedSlot();
+    /**
+     * This method should be called <em>after</em> the view's elements are attached to the DOM. Typically this method
+     * is called from {@link PatternFlyPresenter#onReveal()}.
+     * <p>
+     * Please do <em>not</em> use {@link ViewImpl#onAttach()} to initialize Patternfly components. This works for
+     * widgets only, but not for elements!
+     */
+    void attach();
 }

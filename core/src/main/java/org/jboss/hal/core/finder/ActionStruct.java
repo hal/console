@@ -19,26 +19,41 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core;
+package org.jboss.hal.core.finder;
 
-import com.gwtplatform.mvp.client.Presenter;
+import elemental.dom.Element;
 
 /**
- * Interface meant to be implemented by views which need a reference to their presenter. The presenter should bind
- * itself to views implementing this interface in the {@link Presenter#onBind()} method:
- * <p>
- * <pre>
- * {@code @}Override
- * protected void onBind() {
- *     super.onBind();
- *     getView().setPresenter(this);
- * }
- *
- * </pre>
- *
  * @author Harald Pehl
  */
-public interface HasPresenter<P> {
+class ActionStruct<T extends FinderItem> {
 
-    void setPresenter(P presenter);
+    final String title;
+    final Element content;
+    final ColumnAction<T> columnAction;
+    final ItemAction<T> itemAction;
+
+    ActionStruct(final String title, final ColumnAction<T> columnAction) {
+        this(title, null, columnAction, null);
+    }
+
+    ActionStruct(final Element content, final ColumnAction<T> columnAction) {
+        this(null, content, columnAction, null);
+    }
+
+    ActionStruct(final String title, final ItemAction<T> itemAction) {
+        this(title, null, null, itemAction);
+    }
+
+    ActionStruct(final Element content, final ItemAction<T> itemAction) {
+        this(null, content, null, itemAction);
+    }
+
+    private ActionStruct(final String title, final Element content, final ColumnAction<T> columnAction,
+            final ItemAction<T> itemAction) {
+        this.columnAction = columnAction;
+        this.title = title;
+        this.content = content;
+        this.itemAction = itemAction;
+    }
 }

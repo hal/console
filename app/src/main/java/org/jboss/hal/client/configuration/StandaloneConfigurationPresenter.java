@@ -19,31 +19,40 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core;
+package org.jboss.hal.client.configuration;
 
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.Presenter;
-import com.gwtplatform.mvp.client.proxy.Proxy;
-import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyStandard;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.client.NameTokens;
+import org.jboss.hal.core.TopLevelCategory;
+import org.jboss.hal.core.mvp.PatternFlyPresenter;
+import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.Slots;
+
+import javax.inject.Inject;
 
 /**
- * A presenter which calls {@link PatternFlyView#attach()} when it's {@linkplain #onReveal() revealed}. Extend from
- * this presenter if the view uses opt-in features from PatternFly / Bootstrap like data tables, tooltips or select
- * boxes.
- *
  * @author Harald Pehl
  */
-public abstract class PatternFlyPresenter<V extends PatternFlyView, Proxy_ extends Proxy<?>> extends Presenter<V, Proxy_> {
+public class StandaloneConfigurationPresenter
+        extends PatternFlyPresenter<StandaloneConfigurationPresenter.MyView, StandaloneConfigurationPresenter.MyProxy>
+        implements TopLevelCategory {
 
-    public PatternFlyPresenter(final EventBus eventBus, final V view, final Proxy_ proxy,
-            final GwtEvent.Type<RevealContentHandler<?>> slot) {
-        super(eventBus, view, proxy, slot);
-    }
+    // @formatter:off
+    @ProxyStandard
+    @NameToken(NameTokens.CONFIGURATION)
+    public interface MyProxy extends ProxyPlace<StandaloneConfigurationPresenter> {}
 
-    @Override
-    protected void onReveal() {
-        super.onReveal();
-        getView().attach();
+    public interface MyView extends PatternFlyView {}
+    // @formatter:on
+
+
+    @Inject
+    public StandaloneConfigurationPresenter(final EventBus eventBus,
+            final MyView view,
+            final MyProxy proxy) {
+        super(eventBus, view, proxy, Slots.MAIN);
     }
 }

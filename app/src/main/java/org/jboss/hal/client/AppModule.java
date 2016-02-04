@@ -26,8 +26,8 @@ import com.gwtplatform.mvp.client.annotations.ErrorPlace;
 import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
 import com.gwtplatform.mvp.shared.proxy.RouteTokenFormatter;
-import org.jboss.hal.client.configuration.ConfigurationPresenter;
-import org.jboss.hal.client.configuration.ConfigurationView;
+import org.jboss.hal.client.configuration.StandaloneConfigurationPresenter;
+import org.jboss.hal.client.configuration.StandaloneConfigurationView;
 import org.jboss.hal.client.configuration.subsystem.jca.DataSourcePresenter;
 import org.jboss.hal.client.configuration.subsystem.jca.DataSourceView;
 import org.jboss.hal.client.deployment.DeploymentPresenter;
@@ -42,7 +42,7 @@ import org.jboss.hal.client.skeleton.Templated_FooterView_Provider;
 import org.jboss.hal.client.skeleton.Templated_HeaderView_Provider;
 import org.jboss.hal.client.utb.UnderTheBridgePresenter;
 import org.jboss.hal.client.utb.UnderTheBridgeView;
-import org.jboss.hal.core.HalPlaceManager;
+import org.jboss.hal.core.mvp.HalPlaceManager;
 import org.jboss.hal.core.gin.AbstractTemplatedPresenterModule;
 import org.jboss.hal.spi.GinModule;
 
@@ -78,10 +78,10 @@ public class AppModule extends AbstractTemplatedPresenterModule {
 
         // ------------------------------------------------------ remaining presenter (A-Z)
 
-        bindPresenter(ConfigurationPresenter.class,
-                ConfigurationPresenter.MyView.class,
-                ConfigurationView.class,
-                ConfigurationPresenter.MyProxy.class);
+        bindPresenter(StandaloneConfigurationPresenter.class,
+                StandaloneConfigurationPresenter.MyView.class,
+                StandaloneConfigurationView.class,
+                StandaloneConfigurationPresenter.MyProxy.class);
 
         bindPresenter(DataSourcePresenter.class,
                 DataSourcePresenter.MyView.class,

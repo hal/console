@@ -27,7 +27,7 @@ import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.DivElement;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.core.Slots;
+import org.jboss.hal.core.mvp.Slots;
 import org.jboss.hal.core.TopLevelCategory;
 import org.jboss.hal.resources.Ids;
 import org.slf4j.Logger;

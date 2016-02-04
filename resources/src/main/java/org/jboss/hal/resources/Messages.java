@@ -25,6 +25,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     //@formatter:off
     String activeRoles(String roles);
+    SafeHtml configurationStandalonePreview(String runtimeToken);
     String connectedTo(String url);
 
     SafeHtml endpointError(String url);
@@ -41,9 +42,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml propertiesHint();
     SafeHtml requiredHelp();
     SafeHtml requiredMarker();
-    SafeHtml tableInfo(int from, int to, int size);
-    String tableNamedGroup(String name);
-    SafeHtml tablePages(int pages);
+    SafeHtml subsystemsPreview();
     String updateAvailable(String current, String update);
     String unit(String unit);
     //@formatter:on

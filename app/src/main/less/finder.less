@@ -1,3 +1,4 @@
+
 .finder, .finder > .finder-column, .finder > .finder-preview {
   display: flex;
 }
@@ -24,7 +25,7 @@
 
   .finder-column {
     background-color: #fafafa;
-    border-right: 1px solid #b7babe;
+    border-right: 1px solid @finder-border-color;
     padding: 0;
 
     > header, > ul > li {
@@ -34,23 +35,51 @@
     > header {
       align-items: center;
       background-color: #ededed;
-      border-bottom: 1px solid #b7babe;
+      border-bottom: 1px solid @finder-border-color;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-      padding: 10px 20px;
+      padding: @finder-padding-tb @finder-padding-lr;
 
       h1 {
         font-size: 13px;
         font-weight: 600;
-        margin-right: 10px;
+        line-height: 1.67;
+        margin: 0 10px 0 0;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
     }
 
+    .filter {
+      .form-control {
+        border-top: none;
+        border-right: none;
+        border-bottom: 1px solid @finder-border-color;
+        border-left: none;
+        box-shadow: none;
+        outline: none;
+        padding-left: @finder-padding-lr;
+
+        &:focus, &:hover {
+          border-bottom: 1px solid @finder-border-color;
+          box-shadow: none;
+          outline: none;
+        }
+      }
+
+      .input-group-addon {
+        background-color: white;
+        border-top: none;
+        border-right: none;
+        border-left: none;
+        padding-right: @finder-padding-lr;
+      }
+    }
+
     > ul {
+      flex-grow: 1;
       list-style: none;
       margin: 0;
       padding: 0;
@@ -66,7 +95,27 @@
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        padding: 10px 20px;
+        padding: @finder-padding-tb @finder-padding-lr;
+
+        &.active {
+          background-color: #d1d1d1;
+        }
+
+        &.error-marker, &.info-marker, &.success-marker, &.warning-marker {
+          border-left: 3px solid;
+        }
+        &.error-marker {
+          border-left-color: @brand-danger;
+        }
+        &.info-marker {
+          border-left-color: @brand-primary;
+        }
+        &.success-marker {
+          border-left-color: @brand-success;
+        }
+        &.warning-marker {
+          border-left-color: @brand-warning;
+        }
 
         .content {
           margin-right: 10px;
@@ -74,21 +123,17 @@
           text-overflow: ellipsis;
           white-space: nowrap;
         }
-      }
 
-      > li.active {
-        background-color: #d1d1d1;
+        .subtitle {
+          display: block;
+          font-size: 10px;
+          color: #8b8d8f;
+        }
       }
     }
   }
 
   .finder-preview {
     background-color: white;
-
-    header {
-      h1 {
-        margin-top: 10px;
-      }
-    }
   }
 }

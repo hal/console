@@ -19,14 +19,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.meta.security;
+package org.jboss.hal.core.finder;
+
+import elemental.dom.Element;
 
 /**
- * Interface meant to be implemented by elements which need to react upon a changed security context.
- *
  * @author Harald Pehl
  */
-public interface SecurityContextAware {
+public interface ItemCallback<T extends FinderItem> {
 
-    void onSecurityContextChange(SecurityContext securityContext);
+    Element render(T item);
 }

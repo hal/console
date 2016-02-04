@@ -19,14 +19,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.meta.security;
+package org.jboss.hal.core.mvp;
+
+import com.gwtplatform.mvp.client.Presenter;
 
 /**
- * Interface meant to be implemented by elements which need to react upon a changed security context.
+ * Interface meant to be implemented by views which need a reference to their presenter. The presenter should bind
+ * itself to views implementing this interface in the {@link Presenter#onBind()} method:
+ * <p>
+ * <pre>
+ * {@code @}Override
+ * protected void onBind() {
+ *     super.onBind();
+ *     getView().setPresenter(this);
+ * }
+ *
+ * </pre>
  *
  * @author Harald Pehl
  */
-public interface SecurityContextAware {
+public interface HasPresenter<P> {
 
-    void onSecurityContextChange(SecurityContext securityContext);
+    void setPresenter(P presenter);
 }

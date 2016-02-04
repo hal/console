@@ -467,7 +467,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     // ------------------------------------------------------ security
 
     @Override
-    public void updateSecurityContext(final SecurityContext securityContext) {
+    public void onSecurityContextChange(final SecurityContext securityContext) {
         this.securityContext = securityContext;
         applySecurity();
     }

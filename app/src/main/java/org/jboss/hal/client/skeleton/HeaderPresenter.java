@@ -33,7 +33,7 @@ import org.jboss.hal.config.User;
 import org.jboss.hal.core.Breadcrumb;
 import org.jboss.hal.core.BreadcrumbEvent;
 import org.jboss.hal.core.BreadcrumbEvent.BreadcrumbHandler;
-import org.jboss.hal.core.HasPresenter;
+import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.MessageEvent.MessageHandler;

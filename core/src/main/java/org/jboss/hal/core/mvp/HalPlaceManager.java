@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core;
+package org.jboss.hal.core.mvp;
 
 import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;

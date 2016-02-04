@@ -33,7 +33,7 @@ import org.jboss.hal.resources.CSS;
 import java.util.List;
 
 import static org.jboss.hal.ballroom.IdBuilder.build;
-import static org.jboss.hal.ballroom.IdBuilder.uniquId;
+import static org.jboss.hal.ballroom.IdBuilder.uniqueId;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.*;
@@ -76,7 +76,7 @@ public class ListItem extends AbstractFormItem<List<String>> {
 
         //noinspection DuplicateStringLiteralInspection
         tagsContainer = new Elements.Builder().div()
-                .id(build("tags", "container", uniquId()))
+                .id(build("tags", "container", uniqueId()))
                 .css(tagManagerContainer)
                 .end()
                 .build();
