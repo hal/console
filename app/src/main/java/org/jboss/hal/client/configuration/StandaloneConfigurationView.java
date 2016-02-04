@@ -28,6 +28,7 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import javax.inject.Inject;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
+import static org.jboss.hal.resources.Names.*;
 
 /**
  * @author Harald Pehl
@@ -45,15 +47,28 @@ public class StandaloneConfigurationView extends PatternFlyViewImpl implements S
     @Inject
     public StandaloneConfigurationView(final Resources resources) {
         List<StaticItem> items = new ArrayList<>();
-        items.add(new StaticItem.Builder("subsystems", "Subsystems", true)
-                .preview(item -> new PreviewContent("Subsystems", resources.messages().subsystemsPreview()))
+        items.add(new StaticItem.Builder("subsystems", SUBSYSTEMS, true)
+                .preview(item -> new PreviewContent(SUBSYSTEMS, resources.messages().subsystemsPreview()))
+                .build());
+        items.add(new StaticItem.Builder("interfaces", INTERFACES, true)
+                .preview(item -> new PreviewContent(INTERFACES, resources.messages().interfacesPreview()))
+                .build());
+        items.add(new StaticItem.Builder("socket-bindings", SOCKET_BINDINGS, true)
+                .preview(item -> new PreviewContent(SOCKET_BINDINGS, resources.messages().socketBindingsPreview()))
+                .build());
+        items.add(new StaticItem.Builder("paths", PATHS, true)
+                .preview(item -> new PreviewContent(PATHS, resources.messages().pathsPreview()))
+                .build());
+        items.add(new StaticItem.Builder("system-properties", Names.SYSTEM_PROPERTIES, true)
+                .preview(
+                        item -> new PreviewContent(Names.SYSTEM_PROPERTIES, resources.messages().systemPropertiesPreview()))
                 .build());
 
-        FinderColumn<StaticItem> column = new FinderColumn.Builder<StaticItem>("configuration-column", "Configuration")
+        FinderColumn<StaticItem> column = new FinderColumn.Builder<StaticItem>("configuration-column", CONFIGURATION)
                 .initialItems(items)
                 .build();
 
-        PreviewContent initialPreview = new PreviewContent("Configuration",
+        PreviewContent initialPreview = new PreviewContent(CONFIGURATION,
                 resources.constants().homepageConfigurationStandaloneSubHeader(),
                 resources.messages().configurationStandalonePreview(NameTokens.RUNTIME));
         Finder finder = new Finder("configuration-finder", initialPreview, singletonList(column));

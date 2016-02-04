@@ -35,14 +35,18 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String homepagePatchingStandaloneStepIntro(String name);
     String homepagePatchingDomainStepIntro(String name);
 
+    SafeHtml interfacesPreview();
     String invalidRange(long value, long min, long max);
     SafeHtml listHint();
     String messages(@PluralCount int count);
+    SafeHtml pathsPreview();
     String patternMismatch(String pattern);
     SafeHtml propertiesHint();
     SafeHtml requiredHelp();
     SafeHtml requiredMarker();
+    SafeHtml socketBindingsPreview();
     SafeHtml subsystemsPreview();
+    SafeHtml systemPropertiesPreview();
     String updateAvailable(String current, String update);
     String unit(String unit);
     //@formatter:on

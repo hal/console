@@ -39,6 +39,7 @@ public interface Names {
     String HAL = "HAL";
     String HIDDEN = "hidden";
     String HOST = "host";
+    String INTERFACES = "Interfaces";
     String JNDI_NAME = "jndi-name";
     String LABEL = "label";
     String MANAGEMENT_CONSOLE = "Management Console";
@@ -49,6 +50,7 @@ public interface Names {
     String NYI = "not yet implemented";
     String OBJECT = "Object";
     String PLACEMENT = "placement";
+    String PATHS = "Paths";
     String PORT = "port";
     String PROFILE = "profile";
     String RESTRICTED = "restricted";
@@ -60,9 +62,12 @@ public interface Names {
     String SERVER = "server";
     String SERVER_GROUP = "server-group";
     String SELECTED = "selected";
+    String SOCKET_BINDINGS = "Socket Bindings";
+    String SUBSYSTEMS = "Subsystems";
     String TOGGLE = "toggle";
     String TOOLTIP = "tooltip";
     String UNDEFINED = "undefined";
     String UNKNOWN = "unknown";
     String VALUE = "value";
+    String SYSTEM_PROPERTIES = "System Properties";
 }
