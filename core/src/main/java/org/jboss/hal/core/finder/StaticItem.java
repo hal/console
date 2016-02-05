@@ -19,14 +19,39 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core;
-
-import com.gwtplatform.mvp.client.presenter.slots.NestedSlot;
+package org.jboss.hal.core.finder;
 
 /**
  * @author Harald Pehl
  */
-public interface Slots {
+public class StaticItem {
 
-    NestedSlot MAIN = new NestedSlot();
+    private final String title;
+    private final boolean folder;
+    private final SelectCallback<StaticItem> selectCallback;
+    private final PreviewContent previewContent;
+
+    public StaticItem(final String title, final boolean folder, final SelectCallback<StaticItem> selectCallback,
+            final PreviewContent previewContent) {
+        this.title = title;
+        this.folder = folder;
+        this.selectCallback = selectCallback;
+        this.previewContent = previewContent;
+    }
+
+    public PreviewContent getPreviewContent() {
+        return previewContent;
+    }
+
+    public SelectCallback<StaticItem> getSelectCallback() {
+        return selectCallback;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public boolean isFolder() {
+        return folder;
+    }
 }

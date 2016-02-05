@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import com.google.common.base.Strings;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.OptionElement;
@@ -107,5 +108,10 @@ abstract class SelectBoxElement<T> extends InputElement<T> {
     @Override
     public Element asElement() {
         return element;
+    }
+
+    @Override
+    public void setPlaceholder(final String placeHolder) {
+        element.setTitle(Strings.isNullOrEmpty(placeHolder) ? UNDEFINED : placeHolder);
     }
 }

@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.form.SelectBoxBridge.Single;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
     }
 
     public SingleSelectBoxItem(final String name, final String label, List<String> options, boolean allowEmpty) {
-        super(name, label);
+        super(name, label, null, new Context<>(allowEmpty));
         this.allowEmpty = allowEmpty;
         List<String> localOptions = options;
         if (allowEmpty && !options.isEmpty() && emptyToNull(options.get(0)) != null) {
@@ -55,7 +56,8 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
     }
 
     @Override
-    protected InputElement<String> newInputElement() {
+    protected InputElement<String> newInputElement(Context<?> context) {
+        Boolean allowEmpty = (Boolean) context.data();
         selectBox = new SingleSelectBoxElement(allowEmpty);
         selectBox.setClassName(formControl + " " + selectpicker);
         Single.element(selectBox.asElement()).onChange((event, index) -> {
@@ -74,6 +76,27 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
 
     public void setOptions(List<String> options) {
         selectBox.setOptions(options);
+        setUndefined(allowEmpty);
+        if (!allowEmpty) {
+            setModified(true);
+        }
+    }
+
+    @Override
+    public void setUndefined(final boolean undefined) {
+        if (allowEmpty || !undefined) {
+            // ok
+            super.setUndefined(undefined);
+        } else {
+            // there's always a value and this form item can never get undefined!
+            setUndefined(false);
+        }
+    }
+
+    @Override
+    void markDefaultValue(final boolean on, final String defaultValue) {
+        super.markDefaultValue(on, defaultValue);
+        Single.element(selectBox.asElement()).refresh();
     }
 
 

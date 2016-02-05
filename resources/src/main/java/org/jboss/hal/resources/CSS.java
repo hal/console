@@ -41,9 +41,11 @@ public interface CSS {
     String bootstrapSwitch = "bootstrap-switch";
     String btn = "btn";
     String btnDefault = "btn-default";
+    String btnFinder = "btn-finder";
     String btnGroup = "btn-group";
     String btnPrimary = "btn-primary";
     String btnHal = "btn-hal";
+    String caret = "caret";
     String clearfix = "clearfix";
     String clickable = "clickable";
     String close = "close";
@@ -51,12 +53,22 @@ public interface CSS {
     String columnMedium = "md";
     String collapse = "collapse";
     String containerFluid = "container-fluid";
+    String itemText = "item-text";
     String controlLabel = "control-label";
     String dataTable = "datatable";
+    String defaultValue = "default-value";
+    String dropdownMenu = "dropdown-menu";
+    String dropdownToggle = "dropdown-toggle";
     String eapHomeRow = "eap-home-row";
     String eapHomeTitle = "eap-home-title";
     String editing = "editing";
+    String equals = "equals";
     String fade = "fade";
+    String filter = "filter";
+    String finder = "finder";
+    String finderColumn = "finder-column";
+    String finderPreview = "finder-preview";
+    String folder = "folder";
     String form = "form";
     String formButtons = "form-buttons";
     String formControl = "form-control";
@@ -70,6 +82,7 @@ public interface CSS {
     String hasError = "has-error";
     String hasFeedback = "has-feedback";
     String helpBlock = "help-block";
+    String hint = "hint";
     String hover = "hover";
     String in = "in";
     String inputGroup = "input-group";
@@ -90,6 +103,7 @@ public interface CSS {
     String modelSmall = "modal-sm";
     String modalTitle = "modal-title";
     String nav = "nav";
+    String navbar = "navbar";
     String navTabs = "nav-tabs";
     String navTabsHal = "nav-tabs-hal";
     String navTabsPf = "nav-tabs-pf";
@@ -107,6 +121,7 @@ public interface CSS {
     String selectpicker = "selectpicker";
     String spinner = "spinner";
     String srOnly = "sr-only";
+    String subtitle = "subtitle";
     String tabContent = "tab-content";
     String tabPane = "tab-pane";
     String table = "table";
@@ -133,5 +148,4 @@ public interface CSS {
     static String pfIcon(@NonNls String name) {
         return "pficon pficon-" + name; //NON-NLS
     }
-
 }

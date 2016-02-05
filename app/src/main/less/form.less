@@ -15,6 +15,27 @@
     .restricted {
       margin-right: .5em
     }
+    .form-control-static {
+      &.default-value {
+        color: #c7c7cd;
+        font-style: italic;
+        cursor: help;
+        .key, .equals, .value {
+          color: #c7c7cd;
+        }
+      }
+      &.properties {
+        .key {
+        }
+        .equals {
+          color: #8b8d8f;
+          margin: 0 3px;
+        }
+        .value {
+          margin-right: 8px;
+        }
+      }
+    }
   }
 
   &.editing {
@@ -86,7 +107,8 @@ fieldset.form-section {
 .help-block {
   &.hint {
     color: #999;
-    font-size: smaller;
+    font-size: 11px;
+    margin-bottom: 0;
   }
 }
 
@@ -95,6 +117,10 @@ abbr.req {
   border: none;
   font-size: .6em;
   vertical-align: text-top;
+}
+
+abbr.key {
+  border: none;
 }
 
 /*
@@ -183,3 +209,4 @@ abbr.req {
     border-color: #c00;
   }
 }
+

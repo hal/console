@@ -33,6 +33,23 @@ import org.jboss.gwt.elemento.core.IsElement;
 public abstract class InputElement<T>
         implements IsElement, HasEnabled, Focusable, HasName, HasText /* for expression support */ {
 
+    /**
+     * Helper class to pass data from subclasses of AbstractFormItem to newInputElement().
+     */
+    static class Context<C> {
+
+        private final C data;
+
+        Context(final C data) {this.data = data;}
+
+        public C data() {
+            return data;
+        }
+    }
+
+
+    static final Context<Void> EMPTY_CONTEXT = new Context<>(null);
+
     public void setId(final String id) {
         asElement().setId(id);
     }

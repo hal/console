@@ -23,10 +23,12 @@ package org.jboss.hal.ballroom.form;
 
 import com.google.common.base.Joiner;
 import elemental.dom.Element;
+import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.form.SelectBoxBridge.Multi;
 
 import java.util.List;
 
+import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.formControl;
 import static org.jboss.hal.resources.CSS.selectpicker;
 
@@ -38,12 +40,12 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
     private MultiSelectBoxElement selectBox;
 
     public MultiSelectBoxItem(final String name, final String label, List<String> options) {
-        super(name, label);
+        super(name, label, null, EMPTY_CONTEXT);
         setOptions(options);
     }
 
     @Override
-    protected InputElement<List<String>> newInputElement() {
+    protected InputElement<List<String>> newInputElement(Context<?> context) {
         selectBox = new MultiSelectBoxElement();
         selectBox.setClassName(formControl + " " + selectpicker);
         Multi.element(selectBox.asElement()).onChange((event, index) -> {
@@ -55,8 +57,24 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
         return selectBox;
     }
 
+    @Override
+    void markDefaultValue(final boolean on, final List<String> defaultValue) {
+        super.markDefaultValue(on, defaultValue);
+        Multi.element(selectBox.asElement()).refresh();
+    }
+
     public void setOptions(List<String> options) {
         selectBox.setOptions(options);
+    }
+
+    @Override
+    String asString(final List<String> value) {
+        return Joiner.on(", ").join(value);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return getValue().isEmpty() || isUndefined();
     }
 
     @Override
@@ -88,7 +106,7 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
 
         @Override
         public String getText() {
-            return Joiner.on(',').join(getValue());
+            return Joiner.on(", ").join(getValue());
         }
 
         @Override

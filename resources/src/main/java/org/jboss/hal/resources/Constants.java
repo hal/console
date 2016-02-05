@@ -31,6 +31,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String close();
     String connectToServer();
 
+    String defaultValue();
     String dispatcherException();
     String dispatcherFailed();
 
@@ -44,10 +45,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String expressionResolver();
 
+    String filter();
     String formErrors();
     String formResetDesc();
 
     String help();
+    String invalidProperty();
 
     String homepageNewToEap();
     String homepageTakeATour();
@@ -155,11 +158,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String start();
     String supportsExpressions();
 
+    String toggleDropdown();
     String toggleNavigation();
     String tools();
     String unknownError();
-
-
-
     //@formatter:on
 }

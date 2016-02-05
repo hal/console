@@ -29,7 +29,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-dependencies</artifactId>
-        <version>0.0.3</version>
+        <version>0.0.4</version>
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 

@@ -1,5 +1,7 @@
 package org.jboss.hal.dmr.dispatch;
 
+import com.google.common.base.Strings;
+
 /**
  * @author Heiko Braun
  * @date 1/18/12
@@ -45,10 +47,10 @@ public class ServerState {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("ServerState(");
-        if (host != null) {
+        if (!Strings.isNullOrEmpty(host)) {
             builder.append(host).append(" / ");
         }
-        builder.append(server).append(": " + state.name()).append(")");
+        builder.append(server).append(": ").append(state.name()).append(")");
         return builder.toString();
     }
 

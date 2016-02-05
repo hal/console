@@ -19,26 +19,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core;
+package org.jboss.hal.resources;
 
-import com.gwtplatform.mvp.client.Presenter;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.TextResource;
 
 /**
- * Interface meant to be implemented by views which need a reference to their presenter. The presenter should bind
- * itself to views implementing this interface in the {@link Presenter#onBind()} method:
- * <p>
- * <pre>
- * {@code @}Override
- * protected void onBind() {
- *     super.onBind();
- *     getView().setPresenter(this);
- * }
- *
- * </pre>
- *
  * @author Harald Pehl
  */
-public interface HasPresenter<P> {
+public interface Previews extends ClientBundle {
 
-    void setPresenter(P presenter);
+    @Source("previews/interfaces.html")
+    TextResource interfaces();
+
+    @Source("previews/paths.html")
+    TextResource paths();
+
+    @Source("previews/socket-bindings.html")
+    TextResource socketBindings();
+
+    @Source("previews/standalone-configuration.html")
+    TextResource standaloneConfiguration();
+
+    @Source("previews/subsystems.html")
+    TextResource subsystems();
+
+    @Source("previews/system-properties.html")
+    TextResource systemProperties();
 }

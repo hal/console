@@ -30,8 +30,8 @@ import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.client.NameTokens;
-import org.jboss.hal.core.HasPresenter;
-import org.jboss.hal.core.Slots;
+import org.jboss.hal.core.mvp.HasPresenter;
+import org.jboss.hal.core.mvp.Slots;
 import org.jboss.hal.core.TopLevelCategory;
 
 import javax.inject.Inject;

@@ -19,38 +19,39 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core;
+package org.jboss.hal.core.finder;
 
-import com.gwtplatform.mvp.client.ViewImpl;
-import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.PatternFly;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.meta.security.SecurityContext;
+import org.jboss.hal.meta.security.SecurityContextAware;
 
 /**
  * @author Harald Pehl
  */
-public abstract class PatternFlyViewImpl extends ViewImpl implements PatternFlyView {
+public class PreviewContent implements SecurityContextAware {
 
-    private final List<Attachable> attachables;
+    private Elements.Builder builder;
 
-    protected PatternFlyViewImpl() {attachables = new ArrayList<>();}
+    public PreviewContent(final String header, final SafeHtml content) {
+        builder = new Elements.Builder().header().h(1).innerText(header).end();
+        builder.end(); // </header>
+        builder.section().innerHtml(content).end();
+    }
 
-    protected void registerAttachable(Attachable first, Attachable... rest) {
-        attachables.add(first);
-        if (rest != null) {
-            for (Attachable attachable : rest) {
-                attachables.add(attachable);
-            }
-        }
+    public PreviewContent(final String header, final Element content) {
+        builder = new Elements.Builder().header().h(1).innerText(header).end();
+        builder.end(); // </header>
+        builder.section().add(content).end();
+    }
+
+    public Iterable<Element> elements() {
+        return builder.elements();
     }
 
     @Override
-    public void attach() {
-        PatternFly.initComponents();
-        for (Attachable attachable : attachables) {
-            attachable.attach();
-        }
+    public void onSecurityContextChange(final SecurityContext securityContext) {
+
     }
 }

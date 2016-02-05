@@ -48,6 +48,8 @@ public interface FormItem<T> extends Attachable, HasEnabled, Focusable, HasName,
 
     String getId(Form.State state);
 
+    void setDefaultValue(T defaultValue);
+
     void registerSuggestHandler(SuggestHandler suggestHandler);
 
     void addValidationHandler(FormItemValidation<T> validationHandler);
@@ -91,6 +93,4 @@ public interface FormItem<T> extends Attachable, HasEnabled, Focusable, HasName,
     boolean isRestricted();
 
     void setRestricted(boolean restricted);
-
-    void setPlaceholder(String placeholder);
 }

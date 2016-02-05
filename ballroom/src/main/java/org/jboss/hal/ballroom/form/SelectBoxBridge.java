@@ -83,6 +83,8 @@ public class SelectBoxBridge {
 
         public native String val();
 
+        public native void selectpicker(String method);
+
         public native void selectpicker(String method, String param);
 
         public native void on(@NonNls String event, ChangeListener listener);
@@ -100,6 +102,11 @@ public class SelectBoxBridge {
         @JsOverlay
         public final void onChange(ChangeListener listener) {
             on(CHANGE_EVENT, listener);
+        }
+
+        @JsOverlay
+        public final void refresh() {
+            selectpicker(REFRESH);
         }
     }
 
@@ -129,6 +136,11 @@ public class SelectBoxBridge {
         }
 
         @JsOverlay
+        public final void refresh() {
+            selectpicker(REFRESH);
+        }
+
+        @JsOverlay
         public final void setValue(List<String> value) {
             selectpicker(VAL, asJsArray(value));
         }
@@ -142,5 +154,6 @@ public class SelectBoxBridge {
 
     private final static String VAL = "val";
     private final static String DESELECT_ALL = "deselectAll";
+    private final static String REFRESH = "refresh";
     private final static String CHANGE_EVENT = "changed.bs.select";
 }

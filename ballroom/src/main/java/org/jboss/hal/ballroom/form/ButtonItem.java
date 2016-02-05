@@ -26,8 +26,10 @@ import elemental.dom.Element;
 import elemental.events.EventListener;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Button;
+import org.jboss.hal.ballroom.form.InputElement.Context;
 
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
+import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.labelColumns;
 import static org.jboss.hal.resources.CSS.offset;
 import static org.jboss.hal.resources.Names.NOT_SUPPORTED;
@@ -41,7 +43,7 @@ public class ButtonItem extends AbstractFormItem<Void> {
     private Element readonlyNotSupported;
 
     public ButtonItem(final String name, final String label) {
-        super(name, label);
+        super(name, label, null, EMPTY_CONTEXT);
         button.setText(label);
     }
 
@@ -60,7 +62,7 @@ public class ButtonItem extends AbstractFormItem<Void> {
     }
 
     @Override
-    protected InputElement<Void> newInputElement() {
+    protected InputElement<Void> newInputElement(Context<?> context) {
         button = new ButtonElement();
         button.setClassName(Button.DEFAULT_CSS);
         return button;

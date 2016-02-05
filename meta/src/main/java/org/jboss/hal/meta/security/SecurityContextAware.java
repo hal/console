@@ -22,11 +22,11 @@
 package org.jboss.hal.meta.security;
 
 /**
- * Interface meant to be implemented by widgets / elements which want to react upon a changed security context.
+ * Interface meant to be implemented by elements which need to react upon a changed security context.
  *
  * @author Harald Pehl
  */
 public interface SecurityContextAware {
 
-    void updateSecurityContext(SecurityContext securityContext);
+    void onSecurityContextChange(SecurityContext securityContext);
 }

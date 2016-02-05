@@ -21,10 +21,10 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
+import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.form.SwitchBridge.Bridge;
 
+import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.bootstrapSwitch;
 
 /**
@@ -33,11 +33,11 @@ import static org.jboss.hal.resources.CSS.bootstrapSwitch;
 public class SwitchItem extends AbstractFormItem<Boolean> {
 
     public SwitchItem(final String name, final String label) {
-        super(name, label);
+        super(name, label, null, EMPTY_CONTEXT);
     }
 
     @Override
-    protected InputElement<Boolean> newInputElement() {
+    protected InputElement<Boolean> newInputElement(Context<?> context) {
         SwitchElement switchElement = new SwitchElement();
         switchElement.setClassName(bootstrapSwitch);
         Bridge.element(switchElement.asElement()).onChange((event, state) -> {
@@ -49,43 +49,20 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
     }
 
     @Override
+    void markDefaultValue(final boolean on, final Boolean defaultValue) {
+        super.markDefaultValue(on, defaultValue);
+        if (on && defaultValue) {
+            inputElement().setValue(true);
+        }
+    }
+
+    @Override
     public boolean supportsExpressions() {
         return false;
     }
 
 
-    static class SwitchElement extends InputElement<Boolean> {
-
-        final elemental.html.InputElement element;
-
-        SwitchElement() {
-            element = Browser.getDocument().createInputElement();
-            element.setType("checkbox"); //NON-NLS
-        }
-
-        @Override
-        public int getTabIndex() {
-            return element.getTabIndex();
-        }
-
-        @Override
-        public void setAccessKey(final char c) {
-            element.setAccessKey(String.valueOf(c));
-        }
-
-        @Override
-        public void setFocus(final boolean b) {
-            if (b) {
-                element.focus();
-            } else {
-                element.blur();
-            }
-        }
-
-        @Override
-        public void setTabIndex(final int i) {
-            element.setTabIndex(i);
-        }
+    static class SwitchElement extends AbstractCheckBoxElement {
 
         @Override
         public boolean isEnabled() {
@@ -110,31 +87,6 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         @Override
         public void clearValue() {
             Bridge.element(asElement()).setValue(false);
-        }
-
-        @Override
-        public void setName(final String s) {
-            element.setName(s);
-        }
-
-        @Override
-        public String getName() {
-            return element.getName();
-        }
-
-        @Override
-        public String getText() {
-            return null;
-        }
-
-        @Override
-        public void setText(final String s) {
-            // not supported
-        }
-
-        @Override
-        public Element asElement() {
-            return element;
         }
     }
 }

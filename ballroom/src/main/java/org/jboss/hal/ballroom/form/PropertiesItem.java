@@ -23,22 +23,24 @@ package org.jboss.hal.ballroom.form;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.form.TagsManager.Bridge;
+import org.jboss.hal.resources.CSS;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import static org.jboss.hal.ballroom.IdBuilder.build;
-import static org.jboss.hal.ballroom.IdBuilder.uniquId;
+import static org.jboss.hal.ballroom.IdBuilder.uniqueId;
+import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -46,16 +48,17 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
 
-    private final RegExp PROPERTY_REGEX = RegExp.compile("^([\\w\\d]+)=([\\w\\d]+)$"); //NON-NLS
+    private final static RegExp PROPERTY_REGEX = RegExp.compile("^([\\w\\d]+)=([\\w\\d]+)$"); //NON-NLS
+
     private PropertiesElement propertiesElement;
     private Element tagsContainer;
 
     public PropertiesItem(final String name, final String label) {
-        super(name, label);
+        super(name, label, null, EMPTY_CONTEXT);
     }
 
     @Override
-    protected InputElement<Map<String, String>> newInputElement() {
+    protected InputElement<Map<String, String>> newInputElement(Context<?> context) {
         propertiesElement = new PropertiesElement();
         propertiesElement.setClassName(formControl + " " + properties);
         Bridge.element(propertiesElement.asElement()).onRefresh((event, cst) -> {
@@ -75,13 +78,33 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
     void assembleUI() {
         super.assembleUI();
 
+        valueElement.getClassList().add(properties);
+
+        errorText.setInnerHTML(MESSAGES.propertiesHint().asString());
+        errorText.getClassList().add(CSS.hint);
+        Elements.setVisible(errorText, true);
+
         //noinspection DuplicateStringLiteralInspection
         tagsContainer = new Elements.Builder().div()
-                .id(build("tags", "container", uniquId()))
+                .id(build("tags", "container", uniqueId()))
                 .css(tagManagerContainer)
                 .end()
                 .build();
         inputContainer.insertBefore(tagsContainer, errorText);
+    }
+
+    @Override
+    public void clearError() {
+        super.clearError();
+        errorText.setInnerHTML(MESSAGES.propertiesHint().asString());
+        errorText.getClassList().add(CSS.hint);
+        Elements.setVisible(errorText, true);
+    }
+
+    @Override
+    public void showError(final String message) {
+        super.showError(message);
+        errorText.getClassList().remove(CSS.hint);
     }
 
     @Override
@@ -94,12 +117,57 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
     }
 
     @Override
+    protected void setReadonlyValue(final Map<String, String> value) {
+        if (value != null && !value.isEmpty()) {
+            Elements.removeChildrenFrom(valueElement);
+            for (Element element : keyValueElements(value)) {
+                valueElement.appendChild(element);
+            }
+        }
+    }
+
+    @Override
+    void markDefaultValue(final boolean on, final Map<String, String> defaultValue) {
+        if (on) {
+            Elements.removeChildrenFrom(valueElement);
+            for (Element element : keyValueElements(defaultValue)) {
+                valueElement.appendChild(element);
+            }
+            valueElement.getClassList().add(CSS.defaultValue);
+            valueElement.setTitle(CONSTANTS.defaultValue());
+        } else {
+            valueElement.getClassList().remove(CSS.defaultValue);
+            valueElement.setTitle("");
+        }
+    }
+
+    private Iterable<Element> keyValueElements(Map<String, String> value) {
+        Elements.Builder builder = new Elements.Builder();
+        for (Map.Entry<String, String> entry : value.entrySet()) {
+            builder.span().css(CSS.key).innerText(entry.getKey()).end();
+            builder.span().css(CSS.equals).innerHtml(SafeHtmlUtils.fromSafeConstant("&rArr;")).end(); //NON-NLS
+            builder.span().css(CSS.value).innerText(entry.getValue()).end();
+        }
+        return builder.elements();
+    }
+
+    @Override
+    String asString(final Map<String, String> value) {
+        return Joiner.on(", ").join(asTags(value));
+    }
+
+    @Override
     public boolean supportsExpressions() {
         return false;
     }
 
     public void setProperties(final Map<String, String> properties) {
         propertiesElement.setValue(properties);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return getValue().isEmpty() || isUndefined();
     }
 
 
@@ -173,7 +241,7 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
 
         @Override
         public String getText() {
-            return Joiner.on(',').join(asTags(getValue()));
+            return Joiner.on(", ").join(asTags(getValue()));
         }
 
         @Override
@@ -192,12 +260,26 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
             return Collections.emptyMap();
         }
         Map<String, String> properties = new HashMap<>();
-        Splitter splitter = Splitter.on('=').omitEmptyStrings().trimResults().limit(2);
+        Splitter splitter = Splitter.on('=');
         for (String tag : tags) {
-            Iterable<String> split = splitter.split(tag);
-            if (Iterables.size(split) == 2) {
-                Iterator<String> iterator = split.iterator();
-                properties.put(split.iterator().next(), iterator.next());
+            if (tag.contains("=")) {
+                List<String> split = splitter.splitToList(tag);
+                switch (split.size()) {
+                    case 0:
+                        properties.put("", "");
+                        break;
+                    case 1:
+                        properties.put(split.get(0), "");
+                        break;
+                    case 2:
+                        properties.put(split.get(0), split.get(1));
+                        break;
+                    default:
+                        properties.put(split.get(0), Joiner.on("").join(split.subList(1, split.size() - 1)));
+                        break;
+                }
+            } else {
+                properties.put(tag, null);
             }
         }
         return properties;

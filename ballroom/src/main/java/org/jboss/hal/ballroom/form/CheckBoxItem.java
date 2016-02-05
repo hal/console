@@ -21,8 +21,9 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import elemental.client.Browser;
-import elemental.dom.Element;
+import org.jboss.hal.ballroom.form.InputElement.Context;
+
+import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 
 /**
  * @author Harald Pehl
@@ -30,11 +31,11 @@ import elemental.dom.Element;
 public class CheckBoxItem extends AbstractFormItem<Boolean> {
 
     public CheckBoxItem(final String name, final String label) {
-        super(name, label);
+        super(name, label, null, EMPTY_CONTEXT);
     }
 
     @Override
-    protected InputElement<Boolean> newInputElement() {
+    protected InputElement<Boolean> newInputElement(Context<?> context) {
         CheckBoxElement checkBox = new CheckBoxElement();
         checkBox.element.setOnchange(event -> {
             Boolean newValue = inputElement().getValue();
@@ -46,43 +47,20 @@ public class CheckBoxItem extends AbstractFormItem<Boolean> {
     }
 
     @Override
+    void markDefaultValue(final boolean on, final Boolean defaultValue) {
+        super.markDefaultValue(on, defaultValue);
+        if (on && defaultValue) {
+            inputElement().setValue(true);
+        }
+    }
+
+    @Override
     public boolean supportsExpressions() {
         return false;
     }
 
 
-    static class CheckBoxElement extends InputElement<Boolean> {
-
-        final elemental.html.InputElement element;
-
-        CheckBoxElement() {
-            element = Browser.getDocument().createInputElement();
-            element.setType("checkbox"); //NON-NLS
-        }
-
-        @Override
-        public int getTabIndex() {
-            return element.getTabIndex();
-        }
-
-        @Override
-        public void setAccessKey(final char c) {
-            element.setAccessKey(String.valueOf(c));
-        }
-
-        @Override
-        public void setFocus(final boolean b) {
-            if (b) {
-                element.focus();
-            } else {
-                element.blur();
-            }
-        }
-
-        @Override
-        public void setTabIndex(final int i) {
-            element.setTabIndex(i);
-        }
+    static class CheckBoxElement extends AbstractCheckBoxElement {
 
         @Override
         public boolean isEnabled() {
@@ -107,31 +85,6 @@ public class CheckBoxItem extends AbstractFormItem<Boolean> {
         @Override
         public void clearValue() {
             element.setChecked(false);
-        }
-
-        @Override
-        public void setName(final String s) {
-            element.setName(s);
-        }
-
-        @Override
-        public String getName() {
-            return element.getName();
-        }
-
-        @Override
-        public String getText() {
-            return null;
-        }
-
-        @Override
-        public void setText(final String s) {
-            // not supported
-        }
-
-        @Override
-        public Element asElement() {
-            return element;
         }
     }
 }

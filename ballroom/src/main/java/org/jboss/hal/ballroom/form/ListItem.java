@@ -26,13 +26,16 @@ import com.google.common.base.Splitter;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
+import org.jboss.hal.resources.CSS;
 
 import java.util.List;
 
 import static org.jboss.hal.ballroom.IdBuilder.build;
-import static org.jboss.hal.ballroom.IdBuilder.uniquId;
+import static org.jboss.hal.ballroom.IdBuilder.uniqueId;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
+import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -44,11 +47,11 @@ public class ListItem extends AbstractFormItem<List<String>> {
     private Element tagsContainer;
 
     public ListItem(final String name, final String label) {
-        super(name, label);
+        super(name, label, null, EMPTY_CONTEXT);
     }
 
     @Override
-    protected InputElement<List<String>> newInputElement() {
+    protected InputElement<List<String>> newInputElement(Context<?> context) {
         listElement = new ListElement();
         listElement.setClassName(formControl + " " + tags);
         TagsManager.Bridge.element(listElement.asElement()).onRefresh((event, cst) -> {
@@ -67,9 +70,13 @@ public class ListItem extends AbstractFormItem<List<String>> {
     void assembleUI() {
         super.assembleUI();
 
+        errorText.setInnerHTML(MESSAGES.listHint().asString());
+        errorText.getClassList().add(CSS.hint);
+        Elements.setVisible(errorText, true);
+
         //noinspection DuplicateStringLiteralInspection
         tagsContainer = new Elements.Builder().div()
-                .id(build("tags", "container", uniquId()))
+                .id(build("tags", "container", uniqueId()))
                 .css(tagManagerContainer)
                 .end()
                 .build();
@@ -77,18 +84,34 @@ public class ListItem extends AbstractFormItem<List<String>> {
     }
 
     @Override
+    public void clearError() {
+        super.clearError();
+        errorText.setInnerHTML(MESSAGES.listHint().asString());
+        errorText.getClassList().add(CSS.hint);
+        Elements.setVisible(errorText, true);
+    }
+
+    @Override
+    public void showError(final String message) {
+        super.showError(message);
+        errorText.getClassList().remove(CSS.hint);
+    }
+
+    @Override
     public void registerSuggestHandler(final SuggestHandler suggestHandler) {
         super.registerSuggestHandler(suggestHandler);
         if (suggestHandler instanceof Typeahead) {
-            Typeahead typeahead = (Typeahead) suggestHandler;
-            Typeahead.Bridge.select(getId(EDITING)).onSelect((event, data) -> {
-                TagsManager.Bridge.element(listElement.asElement()).addTag(typeahead.getDataset().display.render(data));
-            });
             TagsManager.Bridge.element(listElement.asElement()).onRefresh((event, cst) -> {
                 Typeahead.Bridge.select(getId(EDITING)).setValue("");
-                Typeahead.Bridge.select(getId(EDITING)).close();
+                suggestHandler.close();
             });
         }
+    }
+
+    @Override
+    void onSuggest(final String suggestion) {
+        TagsManager.Bridge.element(listElement.asElement()).addTag(suggestion);
+        setModified(true);
     }
 
     @Override
@@ -100,8 +123,18 @@ public class ListItem extends AbstractFormItem<List<String>> {
     }
 
     @Override
+    String asString(final List<String> value) {
+        return Joiner.on(", ").join(value);
+    }
+
+    @Override
     public boolean supportsExpressions() {
         return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return getValue().isEmpty() || isUndefined();
     }
 
 
@@ -175,7 +208,7 @@ public class ListItem extends AbstractFormItem<List<String>> {
 
         @Override
         public String getText() {
-            return Joiner.on(',').join(getValue());
+            return Joiner.on(", ").join(getValue());
         }
 
         @Override

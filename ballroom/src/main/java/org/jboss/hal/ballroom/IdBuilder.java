@@ -59,7 +59,7 @@ public final class IdBuilder {
         element.setId(id);
     }
 
-    public static String uniquId() {
+    public static String uniqueId() {
         return Document.get().createUniqueId();
     }
 

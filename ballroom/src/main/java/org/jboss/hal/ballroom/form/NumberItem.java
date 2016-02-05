@@ -21,16 +21,15 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import com.google.gwt.core.client.GWT;
 import elemental.client.Browser;
 import elemental.dom.Element;
-import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.Messages;
+import org.jboss.hal.ballroom.form.InputElement.Context;
 
 import java.util.List;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Arrays.asList;
+import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.formControl;
 
 /**
@@ -48,18 +47,15 @@ public class NumberItem extends AbstractFormItem<Long> {
      */
     public static final long MAX_SAFE_LONG = 9007199254740991l;
 
-    private final static Constants CONSTANTS = GWT.create(Constants.class);
-    private final static Messages MESSAGES = GWT.create(Messages.class);
-
     private long min;
     private long max;
 
-    public NumberItem(final String name, final String label) {
-        this(name, label, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    public NumberItem(final String name, final String label, final String unit) {
+        this(name, label, unit, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
-    public NumberItem(final String name, final String label, long min, long max) {
-        super(name, label);
+    public NumberItem(final String name, final String label, final String unit, long min, long max) {
+        super(name, label, unit, EMPTY_CONTEXT);
         setRange(min, max);
     }
 
@@ -69,7 +65,7 @@ public class NumberItem extends AbstractFormItem<Long> {
     }
 
     @Override
-    protected InputElement<Long> newInputElement() {
+    protected InputElement<Long> newInputElement(Context<?> context) {
         NumberElement number = new NumberElement();
         number.setClassName(formControl);
         number.element.setOnchange(event -> {

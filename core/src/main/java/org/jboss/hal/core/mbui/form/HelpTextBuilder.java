@@ -26,6 +26,7 @@ import com.google.gwt.core.client.GWT;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Names;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,14 +36,16 @@ import java.util.List;
 
 import static org.jboss.hal.core.mbui.form.HelpTextBuilder.RestartMode.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNIT;
 import static org.jboss.hal.dmr.dispatch.ProcessStateProcessor.RESTART_REQUIRED;
 
 /**
  * Class to build a help text from an attribute description. Besides the description itself includes information about
  * whether a attribute is required, supports expressions or needs some kind of restart after modification.
  * <p>
+ * TODO Add info about "alternatives"
  * TODO Add info about capabilities & requirements
- * TODO Add info about "requires" relations
+ * TODO Add info about "requires"
  */
 class HelpTextBuilder {
 
@@ -66,6 +69,7 @@ class HelpTextBuilder {
 
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
+    private static final Messages MESSAGES = GWT.create(Messages.class);
     private static final Logger logger = LoggerFactory.getLogger(HelpTextBuilder.class);
 
     String helpText(FormItem formItem, ModelNode description) {
@@ -75,6 +79,7 @@ class HelpTextBuilder {
             desc = desc + ".";
         }
         help.append(desc);
+
         RestartMode restartMode = restartRequired(description);
         if (restartMode == UNKNOWN) {
             logger.warn("Unknown restart mode in attribute description for '{}': '{}'", formItem.getName(), //NON-NLS
@@ -88,6 +93,9 @@ class HelpTextBuilder {
         }
         if (formItem.supportsExpressions()) {
             textModules.add(CONSTANTS.supportsExpressions());
+        }
+        if (description.hasDefined(UNIT)) {
+            textModules.add(MESSAGES.unit(description.get(UNIT).asString().toLowerCase()));
         }
         if (showRestartHelp) {
             textModules.add(restartMode.description());

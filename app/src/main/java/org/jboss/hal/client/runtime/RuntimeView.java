@@ -24,7 +24,7 @@ package org.jboss.hal.client.runtime;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
-import org.jboss.hal.core.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 
 /**
  * @author Harald Pehl

@@ -21,38 +21,18 @@
  */
 package org.jboss.hal.client.configuration;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyStandard;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.client.NameTokens;
-import org.jboss.hal.core.TopLevelCategory;
-import org.jboss.hal.core.PatternFlyPresenter;
-import org.jboss.hal.core.PatternFlyView;
-import org.jboss.hal.core.Slots;
-
-import javax.inject.Inject;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 
 /**
  * @author Harald Pehl
  */
-public class ConfigurationPresenter
-        extends PatternFlyPresenter<ConfigurationPresenter.MyView, ConfigurationPresenter.MyProxy>
-        implements TopLevelCategory {
+public class StandaloneConfigurationView extends PatternFlyViewImpl implements StandaloneConfigurationPresenter.MyView {
 
-    // @formatter:off
-    @ProxyStandard
-    @NameToken(NameTokens.CONFIGURATION)
-    public interface MyProxy extends ProxyPlace<ConfigurationPresenter> {}
-
-    public interface MyView extends PatternFlyView {}
-    // @formatter:on
-
-
-    @Inject
-    public ConfigurationPresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy) {
-        super(eventBus, view, proxy, Slots.MAIN);
+    @Override
+    public void setFinder(final Finder finder) {
+        registerAttachable(finder);
+        initWidget(Elements.asWidget(finder.asElement()));
     }
 }

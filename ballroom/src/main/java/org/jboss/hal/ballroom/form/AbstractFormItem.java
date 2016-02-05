@@ -39,6 +39,7 @@ import elemental.html.SpanElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
@@ -63,25 +64,30 @@ import static org.jboss.hal.resources.Names.RESTRICTED;
  */
 public abstract class AbstractFormItem<T> implements FormItem<T> {
 
-    private static final Constants CONSTANTS = GWT.create(Constants.class);
-    private static final Messages MESSAGES = GWT.create(Messages.class);
-    private static final String RESTRICTED_ELEMENT = "restrictedElement";
+    private static final String ARIA_DESCRIBEDBY = "aria-describedby";
     private static final String FORM_ITEM_GROUP = "formItemGroup";
+    private static final String RESTRICTED_ELEMENT = "restrictedElement";
+
+    static final Constants CONSTANTS = GWT.create(Constants.class);
+    static final Messages MESSAGES = GWT.create(Messages.class);
 
     private final EventBus eventBus;
     private final List<FormItemValidation<T>> validationHandlers;
     private final String label;
+    private final String hint;
     private boolean required;
     private boolean modified;
     private boolean undefined;
     private boolean restricted;
     private boolean expressionAllowed;
     private SuggestHandler suggestHandler;
+    T defaultValue;
 
     // Form.State#EDITING elements
     private final LabelElement inputLabelElement;
     private final DivElement inputGroupContainer;
     private final SpanElement inputButtonContainer;
+    private SpanElement inputAddonContainer;
     private final ButtonElement expressionButton;
     private final ButtonElement showAllButton;
     private final DivElement editingRestricted;
@@ -92,18 +98,20 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     // Form.State#READONLY elements
     private final LabelElement readonlyLabelElement;
-    private final ParagraphElement valueElement;
     private final DivElement valueContainer;
     private final DivElement readonlyRoot;
     private final SpanElement readonlyRestricted;
+    final ParagraphElement valueElement;
 
 
     // ------------------------------------------------------ initialization
 
-    AbstractFormItem(String name, String label) {
-        this.inputElement = newInputElement();
+    @SuppressWarnings("unchecked")
+    AbstractFormItem(String name, String label, String hint, InputElement.Context<?> context) {
+        this.inputElement = newInputElement(context);
 
         this.label = label;
+        this.hint = hint;
         this.required = false;
         this.modified = false;
         this.undefined = true;
@@ -127,6 +135,14 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
         inputGroupContainer = new Elements.Builder().div().css(inputGroup).end().build();
         inputButtonContainer = new Elements.Builder().span().css(inputGroupBtn).end().build();
+        if (hint != null) {
+            inputAddonContainer = new Elements.Builder()
+                    .span()
+                    .id(IdBuilder.build(name, "addon", "hint"))
+                    .css(inputGroupAddon)
+                    .innerText(hint)
+                    .end().build();
+        }
 
         // @formatter:off
         expressionButton = new Elements.Builder()
@@ -186,7 +202,11 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
      * form item.
      */
     void assembleUI() {
-        inputContainer.appendChild(inputElement.asElement());
+        if (hint != null) {
+            showInputAddon(hint);
+        } else {
+            inputContainer.appendChild(inputElement.asElement());
+        }
         inputContainer.appendChild(errorText);
         editingRoot.appendChild(inputLabelElement);
         editingRoot.appendChild(inputContainer);
@@ -196,6 +216,77 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         readonlyRoot.appendChild(valueContainer);
     }
 
+    void showInputButton(ButtonElement button) {
+        inputElement.asElement().removeAttribute(ARIA_DESCRIBEDBY);
+
+        if (hasInputButton()) {
+            Elements.removeChildrenFrom(inputButtonContainer);
+            inputButtonContainer.appendChild(button);
+
+        } else if (hasInputAddon()) {
+            inputGroupContainer.removeChild(inputAddonContainer);
+            inputGroupContainer.appendChild(inputButtonContainer);
+            inputButtonContainer.appendChild(button);
+
+        } else {
+            inputContainer.removeChild(inputElement.asElement());
+            Elements.removeChildrenFrom(inputGroupContainer);
+            inputButtonContainer.appendChild(button);
+            inputGroupContainer.appendChild(inputElement.asElement());
+            inputGroupContainer.appendChild(inputButtonContainer);
+            inputContainer.insertBefore(inputGroupContainer, inputContainer.getFirstChild());
+        }
+    }
+
+    void showInputAddon(String addon) {
+        inputAddonContainer.setTextContent(addon);
+        inputElement.asElement().setAttribute(ARIA_DESCRIBEDBY, inputAddonContainer.getId());
+
+        if (hasInputButton()) {
+            inputGroupContainer.removeChild(inputButtonContainer);
+            inputGroupContainer.appendChild(inputAddonContainer);
+        }
+
+        //noinspection StatementWithEmptyBody
+        else if (hasInputAddon()) {
+            // nothing to do
+
+        } else {
+            if (inputContainer.contains(inputElement().asElement())) {
+                inputContainer.removeChild(inputElement().asElement());
+            }
+            inputGroupContainer.appendChild(inputElement.asElement());
+            inputGroupContainer.appendChild(inputAddonContainer);
+            inputContainer.appendChild(inputGroupContainer);
+        }
+    }
+
+    void removeInputGroup() {
+        Elements.removeChildrenFrom(inputGroupContainer);
+        Elements.removeChildrenFrom(inputButtonContainer);
+        inputContainer.removeChild(inputGroupContainer);
+        inputContainer.insertBefore(inputElement.asElement(), errorText);
+
+    }
+
+    boolean hasInputButton() {
+        return inputContainer.contains(inputGroupContainer) &&
+                inputGroupContainer.contains(inputButtonContainer) &&
+                inputButtonContainer.getChildren().length() > 0;
+    }
+
+    boolean hasInputButton(ButtonElement button) {
+        return inputContainer.contains(inputGroupContainer) &&
+                inputGroupContainer.contains(inputButtonContainer) &&
+                inputButtonContainer.contains(button);
+    }
+
+    boolean hasInputAddon() {
+        return inputContainer.contains(inputGroupContainer) &&
+                inputGroupContainer.contains(inputAddonContainer) &&
+                !isNullOrEmpty(inputAddonContainer.getTextContent());
+    }
+
     /**
      * Subclasses must create and return an input element with proper styles attached to it.
      * Subclasses should register a value change handler on the input element to update the modified / undefined flags
@@ -203,7 +294,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
      *
      * @return a new input element for this form item
      */
-    protected abstract InputElement<T> newInputElement();
+    protected abstract InputElement<T> newInputElement(InputElement.Context<?> context);
 
     @Override
     public Element asElement(Form.State state) {
@@ -242,16 +333,20 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public void setValue(final T value, final boolean fireEvent) {
-        toggleExpressionSupport(false);
         inputElement.setValue(value);
         setReadonlyValue(value);
+        markDefaultValue(defaultValue != null && (value == null || isNullOrEmpty(String.valueOf(value))),
+                defaultValue);
         if (fireEvent) {
             signalChange(value);
+        }
+        if (hasExpressionScheme(asString(value))) {
+            toggleExpressionSupport(true);
         }
     }
 
     protected void setReadonlyValue(final T value) {
-        String text = value == null ? "" : String.valueOf(value);
+        String text = value == null ? "" : asString(value);
         valueElement.setTextContent(text);
     }
 
@@ -259,6 +354,25 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     public void clearValue() {
         inputElement.clearValue();
         setReadonlyValue(null);
+        markDefaultValue(defaultValue != null, defaultValue);
+    }
+
+    @Override
+    public void setDefaultValue(final T defaultValue) {
+        this.defaultValue = defaultValue;
+        inputElement.setPlaceholder(asString(defaultValue));
+    }
+
+    void markDefaultValue(final boolean on, final T defaultValue) {
+        if (on) {
+            Elements.removeChildrenFrom(valueElement);
+            valueElement.setTextContent(asString(defaultValue));
+            valueElement.getClassList().add(CSS.defaultValue);
+            valueElement.setTitle(CONSTANTS.defaultValue());
+        } else {
+            valueElement.getClassList().remove(CSS.defaultValue);
+            valueElement.setTitle("");
+        }
     }
 
     void signalChange(final T value) {
@@ -277,7 +391,9 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public boolean isEmpty() {
-        return getValue() == null || isNullOrEmpty(getText()) || isUndefined();
+        return supportsExpressions()
+                ? getValue() == null || isUndefined() || isNullOrEmpty(getText())
+                : getValue() == null || isUndefined();
     }
 
     @Override
@@ -321,6 +437,10 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     @Override
     public void setText(final String text) {
         inputElement.setText(text);
+    }
+
+    String asString(T value) {
+        return String.valueOf(value);
     }
 
 
@@ -426,29 +546,24 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     boolean toggleExpressionSupport(boolean on) {
         // only change the UI if expressions are supported and switch is necessary
-        if (supportsExpressions() && !isRestricted() && on != inExpressionState()) {
+        if (supportsExpressions() && !isRestricted() && on != hasInputButton(expressionButton)) {
             if (on) {
-                if (inShowAllState()) {
-                    inputButtonContainer.insertBefore(expressionButton, showAllButton);
-                } else {
-                    addInputButton(expressionButton);
+                showInputButton(expressionButton);
+                if (suggestHandler != null) {
+                    suggestHandler.close();
                 }
             } else {
-                if (inShowAllState()) {
-                    inputButtonContainer.removeChild(expressionButton);
+                if (suggestHandler != null) {
+                    showInputButton(showAllButton);
+                } else if (hint != null) {
+                    showInputAddon(hint);
                 } else {
-                    removeInputButtons();
+                    removeInputGroup();
                 }
             }
             return true;
         }
         return false;
-    }
-
-    private boolean inExpressionState() {
-        return inputContainer.contains(inputGroupContainer) &&
-                inputGroupContainer.contains(inputButtonContainer) &&
-                inputButtonContainer.contains(expressionButton);
     }
 
 
@@ -458,7 +573,16 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     public void registerSuggestHandler(final SuggestHandler suggestHandler) {
         this.suggestHandler = suggestHandler;
         this.suggestHandler.setFormItem(this);
+        if (suggestHandler instanceof Typeahead) {
+            Typeahead typeahead = (Typeahead) suggestHandler;
+            Typeahead.Bridge.select(getId(EDITING)).onSelect((event, data) ->
+                    onSuggest(typeahead.getDataset().display.render(data)));
+        }
         toggleShowAll(true);
+    }
+
+    void onSuggest(final String suggestion) {
+        // nop
     }
 
     private void showAll() {
@@ -468,43 +592,19 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     private void toggleShowAll(final boolean on) {
-        if (suggestHandler != null && !restricted && on != inShowAllState()) {
+        if (suggestHandler != null && !restricted && on != hasInputButton(showAllButton)) {
             if (on) {
-                if (inExpressionState()) {
-                    inputButtonContainer.appendChild(showAllButton);
-                } else {
-                    addInputButton(showAllButton);
-                }
+                showInputButton(showAllButton);
             } else {
-                if (inExpressionState()) {
-                    inputButtonContainer.removeChild(showAllButton);
+                if (supportsExpressions() && hasExpressionScheme(getText())) {
+                    showInputButton(expressionButton);
+                } else if (hint != null) {
+                    showInputAddon(hint);
                 } else {
-                    removeInputButtons();
+                    removeInputGroup();
                 }
             }
         }
-    }
-
-    private boolean inShowAllState() {
-        return inputContainer.contains(inputGroupContainer) &&
-                inputGroupContainer.contains(inputButtonContainer) &&
-                inputButtonContainer.contains(showAllButton);
-    }
-
-    private void addInputButton(ButtonElement button) {
-        inputContainer.removeChild(inputElement.asElement());
-        Elements.removeChildrenFrom(inputGroupContainer);
-        inputButtonContainer.appendChild(button);
-        inputGroupContainer.appendChild(inputElement.asElement());
-        inputGroupContainer.appendChild(inputButtonContainer);
-        inputContainer.insertBefore(inputGroupContainer, inputContainer.getFirstChild());
-    }
-
-    private void removeInputButtons() {
-        Elements.removeChildrenFrom(inputGroupContainer);
-        Elements.removeChildrenFrom(inputButtonContainer);
-        inputContainer.removeChild(inputGroupContainer);
-        inputContainer.insertBefore(inputElement.asElement(), errorText);
     }
 
 
@@ -584,11 +684,6 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     @Override
     public void setFocus(final boolean focus) {
         inputElement.setFocus(focus);
-    }
-
-    @Override
-    public void setPlaceholder(final String placeholder) {
-        inputElement.setPlaceholder(placeholder);
     }
 
 
