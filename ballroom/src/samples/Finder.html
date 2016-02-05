@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Finder</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="../../../app/src/main/resources/org/jboss/hal/public/css/hal.min.css" rel="stylesheet">
+
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.dataTables.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/typeahead.bundle.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/tagmanager.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/dataTables.buttons.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/dataTables.select.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-select.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-switch.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/patternfly.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="finder row" style="height: 555px">
+
+        <!-- finder column #1 -->
+        <div id="column-1" class="finder-column col-md-2 col-sm-2">
+            <header>
+                <h1>Configuration</h1>
+            </header>
+            <ul>
+                <li>
+                    <span class="item-text">First Item</span>
+                    <button class="btn btn-finder">View</button>
+                </li>
+                <li class="active">
+                    <span class="item-text">Second Item</span>
+                    <span class="folder fa fa-angle-right"></span>
+                </li>
+                <li>
+                    <span class="item-text" title="Third Item which is quite long">Third Item which is quite long</span>
+                    <div class="btn-group pull-right">
+                        <button type="button" class="btn btn-finder">Action</button>
+                        <button type="button" class="btn btn-finder dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Another action</a></li>
+                            <li><a href="#">Something else here</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#">Separated link</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+
+        <!-- finder column #2 -->
+        <div id="column-2" class="finder-column col-md-2 col-sm-2">
+            <header>
+                <h1>All available profiles (4)</h1>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-finder"><span class="pficon pficon-add-circle-o"></span>
+                    </button>
+                    <button type="button" class="btn btn-finder"><span class="fa fa-refresh"></span></button>
+                </div>
+            </header>
+            <ul>
+                <li class="error-marker">
+                    <span class="item-text">default</span>
+                </li>
+                <li class="info-marker">
+                    <span class="item-text">full</span>
+                </li>
+                <li class="success-marker">
+                    <span class="item-text">ha</span>
+                </li>
+                <li class="active warning-marker">
+                    <span class="item-text">full-ha</span>
+                </li>
+            </ul>
+        </div>
+
+
+        <!-- finder column #3 -->
+        <div id="column-3" class="finder-column col-md-2 col-sm-2">
+            <header>
+                <h1>Subsystems (19)</h1>
+                <button type="button" class="btn btn-finder"><span class="fa fa-refresh"></span></button>
+            </header>
+            <div class="input-group filter">
+                <input type="text" class="form-control" placeholder="Filter" aria-describedby="column-3-filter">
+                <span id="column3-filter" class="input-group-addon fa fa-search"></span>
+            </div>
+            <ul>
+                <li><span class="item-text">Batch</span></li>
+                <li class="active"><span class="item-text">DataSources</span></li>
+                <li><span class="item-text">Deployment Scanner</span></li>
+                <li><span class="item-text">EE</span></li>
+                <li><span class="item-text">EJB</span></li>
+                <li><span class="item-text">IIOP<small class="subtitle">OpenJDK</small></span></li>
+                <li><span class="item-text">Infinispan</span></li>
+                <li><span class="item-text">IO</span></li>
+                <li><span class="item-text">JAX-RS</span></li>
+                <li><span class="item-text">Logging</span></li>
+                <li><span class="item-text">Mail</span></li>
+                <li><span class="item-text">Messaging<small class="subtitle">ActiveMQ</small></span></li>
+                <li><span class="item-text">Remoting</span></li>
+                <li><span class="item-text">Request Controller</span></li>
+                <li><span class="item-text">Security</span></li>
+                <li><span class="item-text">Transactions</span></li>
+                <li><span class="item-text">HTTP<small class="subtitle">Undertow</small></span></li>
+                <li><span class="item-text">Web Services</span></li>
+                <li><span class="item-text">Weld</span></li>
+            </ul>
+        </div>
+
+
+        <!-- finder column #4 -->
+        <div id="column-4" class="finder-column col-md-2 col-sm-2">
+            <header>
+                <h1>Type</h1>
+            </header>
+            <ul>
+                <li class="active"><span class="item-text">Non-XA</span></li>
+                <li><span class="item-text">XA</span></li>
+            </ul>
+        </div>
+
+
+        <!-- finder preview -->
+        <div class="finder-preview col-md-4">
+            <div>
+                <header>
+                    <h1>Preview Section</h1>
+                    <p class="lead">An optional short description of the resource in preview</p>
+                </header>
+                <section>
+                    <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+
+                    <p>Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+
+                    <p>Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. </p>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('[data-toggle=tooltip]').tooltip();
+    });
+</script>
+</body>
+</html>

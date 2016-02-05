@@ -21,6 +21,8 @@
  */
 package org.jboss.hal.core;
 
+import com.google.common.base.Joiner;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +41,15 @@ public class Breadcrumb implements Iterable<Breadcrumb.Segment> {
             this.key = key;
             this.value = value;
         }
+
+        @Override
+        public String toString() {
+            return key + " = " + value;
+        }
+    }
+
+    public static Breadcrumb empty() {
+        return new Breadcrumb(new ArrayList<>());
     }
 
     public static Breadcrumb of(String[][] segments) {
@@ -51,8 +62,13 @@ public class Breadcrumb implements Iterable<Breadcrumb.Segment> {
 
     private final List<Segment> segments;
 
+
     private Breadcrumb(final List<Segment> segments) {this.segments = segments;}
 
+    public Breadcrumb append(String key, String value) {
+        segments.add(new Segment(key, value));
+        return this;
+    }
 
     @Override
     public Iterator<Segment> iterator() {
@@ -62,4 +78,9 @@ public class Breadcrumb implements Iterable<Breadcrumb.Segment> {
     public boolean isEmpty() {return segments.isEmpty();}
 
     public int size() {return segments.size();}
+
+    @Override
+    public String toString() {
+        return segments.isEmpty() ? "<empty>" : Joiner.on(" / ").join(segments);
+    }
 }

@@ -19,45 +19,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core;
+package org.jboss.hal.core.finder;
 
-import com.gwtplatform.mvp.client.ViewImpl;
-import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.PatternFly;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.jboss.hal.core.mbui.LabelBuilder;
+import org.jboss.hal.dmr.Property;
 
 /**
  * @author Harald Pehl
  */
-public abstract class PatternFlyViewImpl extends ViewImpl implements PatternFlyView {
+public class PropertyColumn extends FinderColumn<Property> {
 
-    private final List<Attachable> attachables;
-    private boolean attached;
-
-    protected PatternFlyViewImpl() {
-        attachables = new ArrayList<>();
-        attached = false;
-    }
-
-    protected void registerAttachable(Attachable first, Attachable... rest) {
-        attachables.add(first);
-        if (rest != null) {
-            for (Attachable attachable : rest) {
-                attachables.add(attachable);
-            }
-        }
-    }
-
-    @Override
-    public void attach() {
-        if (!attached) {
-            PatternFly.initComponents();
-            for (Attachable attachable : attachables) {
-                attachable.attach();
-            }
-            attached = true;
-        }
+    public PropertyColumn(final String id, final String title,
+            final PreviewCallback<Property> previewCallback) {
+        super(new Builder<Property>(id, title, property -> () -> new LabelBuilder().label(property))
+                .onPreview(previewCallback)
+                .showCount()
+                .withFilter());
     }
 }

@@ -19,31 +19,39 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core;
+package org.jboss.hal.core.finder;
 
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.Presenter;
-import com.gwtplatform.mvp.client.proxy.Proxy;
-import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.meta.security.SecurityContext;
+import org.jboss.hal.meta.security.SecurityContextAware;
 
 /**
- * A presenter which calls {@link PatternFlyView#attach()} when it's {@linkplain #onReveal() revealed}. Extend from
- * this presenter if the view uses opt-in features from PatternFly / Bootstrap like data tables, tooltips or select
- * boxes.
- *
  * @author Harald Pehl
  */
-public abstract class PatternFlyPresenter<V extends PatternFlyView, Proxy_ extends Proxy<?>> extends Presenter<V, Proxy_> {
+public class PreviewContent implements SecurityContextAware {
 
-    public PatternFlyPresenter(final EventBus eventBus, final V view, final Proxy_ proxy,
-            final GwtEvent.Type<RevealContentHandler<?>> slot) {
-        super(eventBus, view, proxy, slot);
+    private Elements.Builder builder;
+
+    public PreviewContent(final String header, final SafeHtml content) {
+        builder = new Elements.Builder().header().h(1).innerText(header).end();
+        builder.end(); // </header>
+        builder.section().innerHtml(content).end();
+    }
+
+    public PreviewContent(final String header, final Element content) {
+        builder = new Elements.Builder().header().h(1).innerText(header).end();
+        builder.end(); // </header>
+        builder.section().add(content).end();
+    }
+
+    public Iterable<Element> elements() {
+        return builder.elements();
     }
 
     @Override
-    protected void onReveal() {
-        super.onReveal();
-        getView().attach();
+    public void onSecurityContextChange(final SecurityContext securityContext) {
+
     }
 }

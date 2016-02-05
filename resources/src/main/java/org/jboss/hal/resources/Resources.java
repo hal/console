@@ -30,12 +30,14 @@ public class Resources implements Ids, Names, CSS {
 
     private final Constants constants;
     private final Messages messages;
+    private final Previews previews;
     private final Images images;
 
     @Inject
-    public Resources(final Constants constants, final Messages messages, final Images images) {
+    public Resources(final Constants constants, final Messages messages, final Previews previews, final Images images) {
         this.constants = constants;
         this.messages = messages;
+        this.previews = previews;
         this.images = images;
     }
 
@@ -45,6 +47,10 @@ public class Resources implements Ids, Names, CSS {
 
     public Messages messages() {
         return messages;
+    }
+
+    public Previews previews() {
+        return previews;
     }
 
     public Images images() {

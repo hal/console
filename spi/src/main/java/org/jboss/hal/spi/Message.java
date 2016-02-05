@@ -24,7 +24,7 @@ package org.jboss.hal.spi;
 public class Message {
 
     public enum Level {
-        ERROR, WARNING, INFO
+        ERROR, WARNING, INFO, SUCCESS
     }
 
 
@@ -62,6 +62,19 @@ public class Message {
 
     public static Message info(final String message, final String details, boolean sticky) {
         return new Message(Level.INFO, message, details, sticky);
+    }
+
+
+    public static Message success(final String message) {
+        return success(message, null, false);
+    }
+
+    public static Message success(final String message, final String details) {
+        return success(message, details, false);
+    }
+
+    public static Message success(final String message, final String details, boolean sticky) {
+        return new Message(Level.SUCCESS, message, details, sticky);
     }
 
 

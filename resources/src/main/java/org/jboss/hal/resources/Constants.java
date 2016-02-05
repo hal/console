@@ -45,6 +45,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String expressionResolver();
 
+    String filter();
     String formErrors();
     String formResetDesc();
 
@@ -157,6 +158,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String start();
     String supportsExpressions();
 
+    String toggleDropdown();
     String toggleNavigation();
     String tools();
     String unknownError();
