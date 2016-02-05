@@ -19,41 +19,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.finder;
+package org.jboss.hal.resources;
 
-import elemental.dom.Element;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.TextResource;
 
 /**
  * @author Harald Pehl
  */
-class ActionStruct<T> {
+public interface Previews extends ClientBundle {
 
-    final String title;
-    final Element content;
-    final ColumnAction<T> columnAction;
-    final ItemAction<T> itemAction;
+    @Source("previews/interfaces.html")
+    TextResource interfaces();
 
-    ActionStruct(final String title, final ColumnAction<T> columnAction) {
-        this(title, null, columnAction, null);
-    }
+    @Source("previews/paths.html")
+    TextResource paths();
 
-    ActionStruct(final Element content, final ColumnAction<T> columnAction) {
-        this(null, content, columnAction, null);
-    }
+    @Source("previews/socket-bindings.html")
+    TextResource socketBindings();
 
-    ActionStruct(final String title, final ItemAction<T> itemAction) {
-        this(title, null, null, itemAction);
-    }
+    @Source("previews/standalone-configuration.html")
+    TextResource standaloneConfiguration();
 
-    ActionStruct(final Element content, final ItemAction<T> itemAction) {
-        this(null, content, null, itemAction);
-    }
+    @Source("previews/subsystems.html")
+    TextResource subsystems();
 
-    private ActionStruct(final String title, final Element content, final ColumnAction<T> columnAction,
-            final ItemAction<T> itemAction) {
-        this.columnAction = columnAction;
-        this.title = title;
-        this.content = content;
-        this.itemAction = itemAction;
-    }
+    @Source("previews/system-properties.html")
+    TextResource systemProperties();
 }

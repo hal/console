@@ -26,7 +26,6 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
-import org.jboss.hal.resources.CSS;
 
 /**
  * @author Harald Pehl
@@ -36,27 +35,13 @@ public class PreviewContent implements SecurityContextAware {
     private Elements.Builder builder;
 
     public PreviewContent(final String header, final SafeHtml content) {
-        this(header, null, content);
-    }
-
-    public PreviewContent(final String header, final String lead, final SafeHtml content) {
         builder = new Elements.Builder().header().h(1).innerText(header).end();
-        if (lead != null) {
-            builder.p().css(CSS.lead).innerText(lead).end();
-        }
         builder.end(); // </header>
         builder.section().innerHtml(content).end();
     }
 
     public PreviewContent(final String header, final Element content) {
-        this(header, null, content);
-    }
-
-    public PreviewContent(final String header, final String lead, final Element content) {
         builder = new Elements.Builder().header().h(1).innerText(header).end();
-        if (lead != null) {
-            builder.p().css(CSS.lead).innerText(lead).end();
-        }
         builder.end(); // </header>
         builder.section().add(content).end();
     }

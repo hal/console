@@ -36,8 +36,8 @@ public class LabelBuilder {
     private final ImmutableMap<String, String> SPECIALS = ImmutableMap
             .of("jndi", "JNDI", "sql", "SQL", "url", "URL"); //NON-NLS
 
-    public String label(Property attributeDescription) {
-        return label(attributeDescription.getName());
+    public String label(Property property) {
+        return label(property.getName());
     }
 
     public String label(String key) {

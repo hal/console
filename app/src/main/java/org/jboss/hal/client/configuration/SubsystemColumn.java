@@ -19,41 +19,22 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.finder;
+package org.jboss.hal.client.configuration;
 
-import elemental.dom.Element;
+import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.mbui.LabelBuilder;
+
+import static org.jboss.hal.resources.Ids.SUBSYSTEM_COLUMN;
+import static org.jboss.hal.resources.Names.SUBSYSTEM;
 
 /**
  * @author Harald Pehl
  */
-class ActionStruct<T> {
+public class SubsystemColumn extends FinderColumn<String> {
 
-    final String title;
-    final Element content;
-    final ColumnAction<T> columnAction;
-    final ItemAction<T> itemAction;
-
-    ActionStruct(final String title, final ColumnAction<T> columnAction) {
-        this(title, null, columnAction, null);
-    }
-
-    ActionStruct(final Element content, final ColumnAction<T> columnAction) {
-        this(null, content, columnAction, null);
-    }
-
-    ActionStruct(final String title, final ItemAction<T> itemAction) {
-        this(title, null, null, itemAction);
-    }
-
-    ActionStruct(final Element content, final ItemAction<T> itemAction) {
-        this(null, content, null, itemAction);
-    }
-
-    private ActionStruct(final String title, final Element content, final ColumnAction<T> columnAction,
-            final ItemAction<T> itemAction) {
-        this.columnAction = columnAction;
-        this.title = title;
-        this.content = content;
-        this.itemAction = itemAction;
+    public SubsystemColumn() {
+        super(new Builder<>(SUBSYSTEM_COLUMN, SUBSYSTEM, (String item) -> () -> new LabelBuilder().label(item))
+                .showCount()
+                .withFilter());
     }
 }

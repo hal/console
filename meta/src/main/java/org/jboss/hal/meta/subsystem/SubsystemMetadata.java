@@ -19,41 +19,46 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.finder;
-
-import elemental.dom.Element;
+package org.jboss.hal.meta.subsystem;
 
 /**
  * @author Harald Pehl
  */
-class ActionStruct<T> {
+public class SubsystemMetadata {
 
-    final String title;
-    final Element content;
-    final ColumnAction<T> columnAction;
-    final ItemAction<T> itemAction;
+    private final String name;
+    private final String title;
+    private final String token;
+    private final boolean folder;
 
-    ActionStruct(final String title, final ColumnAction<T> columnAction) {
-        this(title, null, columnAction, null);
+    private SubsystemMetadata(final String name, final String title) {
+        this(name, title, null, true);
     }
 
-    ActionStruct(final Element content, final ColumnAction<T> columnAction) {
-        this(null, content, columnAction, null);
+    private SubsystemMetadata(final String name, final String title, final String token) {
+        this(name, title, token, false);
     }
 
-    ActionStruct(final String title, final ItemAction<T> itemAction) {
-        this(title, null, null, itemAction);
-    }
-
-    ActionStruct(final Element content, final ItemAction<T> itemAction) {
-        this(null, content, null, itemAction);
-    }
-
-    private ActionStruct(final String title, final Element content, final ColumnAction<T> columnAction,
-            final ItemAction<T> itemAction) {
-        this.columnAction = columnAction;
+    private SubsystemMetadata(final String name, final String title, final String token, final boolean folder) {
+        this.name = name;
         this.title = title;
-        this.content = content;
-        this.itemAction = itemAction;
+        this.token = token;
+        this.folder = folder;
+    }
+
+    public boolean isFolder() {
+        return folder;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getToken() {
+        return token;
     }
 }

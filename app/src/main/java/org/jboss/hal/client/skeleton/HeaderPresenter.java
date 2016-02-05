@@ -37,6 +37,8 @@ import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.MessageEvent.MessageHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
@@ -59,6 +61,8 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
     }
     // @formatter:on
 
+
+    private static final Logger logger = LoggerFactory.getLogger(HeaderPresenter.class);
 
     private final PlaceManager placeManager;
     private final Environment environment;
@@ -119,6 +123,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
     @Override
     public void onBreadcrumb(final BreadcrumbEvent event) {
         getView().updateBreadcrumb(event.getBreadcrumb());
+        logger.debug("New breadcrumb: '{}'", event.getBreadcrumb()); //NON-NLS
     }
 
     @Override

@@ -53,7 +53,7 @@ public interface CSS {
     String columnMedium = "md";
     String collapse = "collapse";
     String containerFluid = "container-fluid";
-    String content = "content";
+    String itemText = "item-text";
     String controlLabel = "control-label";
     String dataTable = "datatable";
     String defaultValue = "default-value";
@@ -89,7 +89,6 @@ public interface CSS {
     String inputGroupAddon = "input-group-addon";
     String inputGroupBtn = "input-group-btn";
     String key = "key";
-    String lead = "lead";
     String loading = "loading";
     String loadingContainer = "loading-container";
     String modal = "modal";
@@ -104,6 +103,7 @@ public interface CSS {
     String modelSmall = "modal-sm";
     String modalTitle = "modal-title";
     String nav = "nav";
+    String navbar = "navbar";
     String navTabs = "nav-tabs";
     String navTabsHal = "nav-tabs-hal";
     String navTabsPf = "nav-tabs-pf";

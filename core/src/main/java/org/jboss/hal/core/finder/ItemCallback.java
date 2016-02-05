@@ -21,12 +21,10 @@
  */
 package org.jboss.hal.core.finder;
 
-import elemental.dom.Element;
-
 /**
  * @author Harald Pehl
  */
-public interface ItemCallback<T extends FinderItem> {
+public interface ItemCallback<T> {
 
-    Element render(T item);
+    ItemDisplay render(T item);
 }

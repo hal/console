@@ -22,38 +22,40 @@
 package org.jboss.hal.core.finder;
 
 import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.spi.Message;
 
 /**
+ * Controls the layout of a finder item <em>w/o</em> the actions. For simple items implement the {@link #getText()}
+ * method and let the {@link #asElement()} return {@code null}. If you need a special layout implement the
+ * {@link #asElement()} method, but provide a text as well (used for the breadcrumb).
+ *
  * @author Harald Pehl
  */
-class ActionStruct<T> {
+public interface ItemDisplay extends IsElement {
 
-    final String title;
-    final Element content;
-    final ColumnAction<T> columnAction;
-    final ItemAction<T> itemAction;
+    String getText();
 
-    ActionStruct(final String title, final ColumnAction<T> columnAction) {
-        this(title, null, columnAction, null);
+    default Element asElement() {
+        return null;
     }
 
-    ActionStruct(final Element content, final ColumnAction<T> columnAction) {
-        this(null, content, columnAction, null);
+    /**
+     * The data which is used to filter items. Defaults to {@link #getText()}.
+     */
+    default String getFilterData() {
+        return getText();
     }
 
-    ActionStruct(final String title, final ItemAction<T> itemAction) {
-        this(title, null, null, itemAction);
+    default Message.Level getMarker() {
+        return null;
     }
 
-    ActionStruct(final Element content, final ItemAction<T> itemAction) {
-        this(null, content, null, itemAction);
+    default String getTooltip() {
+        return null;
     }
 
-    private ActionStruct(final String title, final Element content, final ColumnAction<T> columnAction,
-            final ItemAction<T> itemAction) {
-        this.columnAction = columnAction;
-        this.title = title;
-        this.content = content;
-        this.itemAction = itemAction;
+    default boolean isFolder() {
+        return false;
     }
 }

@@ -24,6 +24,7 @@ package org.jboss.hal.core.finder;
 import com.google.gwt.core.client.GWT;
 import elemental.dom.Element;
 import elemental.events.Event;
+import elemental.html.InputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.IdBuilder;
@@ -38,6 +39,7 @@ import java.util.List;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.keyup;
 import static org.jboss.gwt.elemento.core.InputType.text;
+import static org.jboss.hal.core.finder.Finder.BREADCRUMB_KEY;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
 import static org.jboss.hal.resources.Names.ROLE;
@@ -47,43 +49,38 @@ import static org.jboss.hal.resources.Names.ROLE;
  *
  * @author Harald Pehl
  */
-public class FinderColumn<T extends FinderItem> implements IsElement, SecurityContextAware {
+public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
-    public static class Builder<T extends FinderItem> {
+    public static class Builder<T> {
 
         private final String id;
         private final String title;
-        private final List<T> initialItems;
+        private final ItemCallback<T> itemCallback;
         private final List<ActionStruct<T>> columnActions;
+        private final List<ActionStruct<T>> itemActions;
         private boolean showCount;
         private boolean withFilter;
+        private SelectCallback<T> selectCallback;
+        private PreviewCallback<T> previewCallback;
 
-        public Builder(final String id, final String title) {
+        public Builder(final String id, final String title,
+                final ItemCallback<T> itemCallback) {
             this.id = id;
             this.title = title;
-            this.initialItems = new ArrayList<>();
+            this.itemCallback = itemCallback;
             this.columnActions = new ArrayList<>();
+            this.itemActions = new ArrayList<>();
             this.showCount = false;
             this.withFilter = false;
         }
 
-        public Builder<T> initialItem(T item) {
-            initialItems.add(item);
-            return this;
-        }
-
-        public Builder<T> initialItems(List<T> items) {
-            initialItems.addAll(items);
-            return this;
-        }
-
         public Builder<T> columnAction(String title, ColumnAction<T> action) {
-            this.columnActions.add(new ActionStruct<>(title, action));
+            columnActions.add(new ActionStruct<>(title, action));
             return this;
         }
 
         public Builder<T> columnAction(Element content, ColumnAction<T> action) {
-            this.columnActions.add(new ActionStruct<>(content, action));
+            columnActions.add(new ActionStruct<>(content, action));
             return this;
         }
 
@@ -107,6 +104,26 @@ public class FinderColumn<T extends FinderItem> implements IsElement, SecurityCo
             return this;
         }
 
+        public Builder<T> itemAction(String title, ItemAction<T> action) {
+            itemActions.add(new ActionStruct<>(title, action));
+            return this;
+        }
+
+        public Builder<T> itemAction(Element content, ItemAction<T> action) {
+            itemActions.add(new ActionStruct<>(content, action));
+            return this;
+        }
+
+        public Builder<T> onSelect(SelectCallback<T> selectCallback) {
+            this.selectCallback = selectCallback;
+            return this;
+        }
+
+        public Builder<T> onPreview(PreviewCallback<T> previewCallback) {
+            this.previewCallback = previewCallback;
+            return this;
+        }
+
         public FinderColumn<T> build() {
             return new FinderColumn<>(this);
         }
@@ -115,16 +132,40 @@ public class FinderColumn<T extends FinderItem> implements IsElement, SecurityCo
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String HEADER_ELEMENT = "headerElement";
+    private static final String FILTER_ELEMENT = "filterElement";
+    private static final String UL_ELEMENT = "ulElement";
 
     private final String id;
-    private final Element root;
+    private final String title;
+    private final boolean showCount;
+    private final ItemCallback<T> itemCallback;
+    private final SelectCallback<T> selectCallback;
+    private final PreviewCallback<T> previewCallback;
+    private final List<FinderItem<T>> items;
+    private final List<ActionStruct<T>> itemActions;
 
-    FinderColumn(final Builder<T> builder) {
+    private final Element root;
+    private final Element headerElement;
+    private final InputElement filterElement;
+    private final Element ulElement;
+
+    private Finder finder;
+
+    protected FinderColumn(final Builder<T> builder) {
         this.id = builder.id;
+        this.title = builder.title;
+        this.showCount = builder.showCount;
+        this.itemCallback = builder.itemCallback;
+        this.selectCallback = builder.selectCallback;
+        this.previewCallback = builder.previewCallback;
+        this.items = new ArrayList<>();
+        this.itemActions = new ArrayList<>();
+        this.itemActions.addAll(builder.itemActions);
+        this.finder = null;
 
         // header
         Elements.Builder eb = new Elements.Builder()
-                .div().id(id).css(finderColumn, column(2))
+                .div().id(id).css(finderColumn, column(2)).data(BREADCRUMB_KEY, title)
                 .header()
                 .h(1).innerText(builder.title).title(builder.title).rememberAs(HEADER_ELEMENT).end();
 
@@ -141,7 +182,7 @@ public class FinderColumn<T extends FinderItem> implements IsElement, SecurityCo
                 eb.end();
             }
         }
-        eb.end(); // </header>
+        eb.end(); // </updateHeader>
 
         // filter box
         if (builder.withFilter) {
@@ -154,25 +195,19 @@ public class FinderColumn<T extends FinderItem> implements IsElement, SecurityCo
                     .aria("describedby", iconId)
                     .attr("placeholder", CONSTANTS.filter())
                     .on(keyup, (this::onFilter))
+                    .rememberAs(FILTER_ELEMENT)
                 .span().id(iconId).css(inputGroupAddon, fontAwesome("search")).end()
             .end();
             // @formatter:on
         }
 
         // items
-        eb.ul();
-        for (T item : builder.initialItems) {
-            eb.add(item.asElement());
-        }
-        eb.end().end(); // </ul> && </div>
+        eb.ul().rememberAs(UL_ELEMENT).end().end(); // </ul> && </div>
 
         root = eb.build();
-        if (builder.showCount && !builder.initialItems.isEmpty()) {
-            Element headerElement = eb.referenceFor(HEADER_ELEMENT);
-            String titleWithSize = builder.title + "(" + builder.initialItems.size() + ")";
-            headerElement.setInnerText(titleWithSize);
-            headerElement.setTitle(titleWithSize);
-        }
+        headerElement = eb.referenceFor(HEADER_ELEMENT);
+        filterElement = builder.withFilter ? eb.referenceFor(FILTER_ELEMENT) : null;
+        ulElement = eb.referenceFor(UL_ELEMENT);
     }
 
     private void addColumnButton(final Elements.Builder builder, final ActionStruct<T> action) {
@@ -192,22 +227,55 @@ public class FinderColumn<T extends FinderItem> implements IsElement, SecurityCo
     }
 
     private void onFilter(final Event event) {
-
+        int matched = 0;
+        String filter = filterElement.getValue();
+        for (Element li : Elements.children(ulElement)) {
+            Object filterData = li.getDataset().at(CSS.filter); //NON-NLS
+            boolean match = filter == null
+                    || filter.trim().length() == 0
+                    || filterData == null
+                    || String.valueOf(filterData).toLowerCase().contains(filter.toLowerCase());
+            Elements.setVisible(li, match);
+            if (match) {
+                matched++;
+            }
+        }
+        updateHeader(matched);
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof FinderColumn)) { return false; }
+    public void setItems(List<T> items) {
+        this.items.clear();
+        Elements.removeChildrenFrom(ulElement);
+        if (filterElement != null) {
+            filterElement.setValue("");
+        }
 
-        FinderColumn<?> that = (FinderColumn<?>) o;
-        return id.equals(that.id);
+        for (T item : items) {
+            // finder might not yet be initialized, thus pass a Provider<Finder>
+            FinderItem<T> finderItem = new FinderItem<>(() -> finder, this, item,
+                    itemCallback.render(item), itemActions, selectCallback, previewCallback);
+            this.items.add(finderItem);
+            ulElement.appendChild(finderItem.asElement());
+        }
 
+        updateHeader(items.size());
     }
 
-    @Override
-    public int hashCode() {
-        return id.hashCode();
+    private void updateHeader(int matched) {
+        if (showCount) {
+            String titleWithSize;
+            if (matched == items.size()) {
+                titleWithSize = title + " (" + items.size() + ")";
+            } else {
+                titleWithSize = title + " (" + matched + " / " + items.size() + ")";
+            }
+            headerElement.setInnerText(titleWithSize);
+            headerElement.setTitle(titleWithSize);
+        }
+    }
+
+    void setFinder(final Finder finder) {
+        this.finder = finder;
     }
 
     @Override
@@ -222,6 +290,17 @@ public class FinderColumn<T extends FinderItem> implements IsElement, SecurityCo
 
     @Override
     public void onSecurityContextChange(final SecurityContext securityContext) {
+        // TODO Check column actions
+        for (FinderItem<T> item : items) {
+            item.onSecurityContextChange(securityContext);
+        }
+    }
 
+    public String getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
     }
 }

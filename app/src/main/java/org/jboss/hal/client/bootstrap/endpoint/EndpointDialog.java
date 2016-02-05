@@ -26,6 +26,7 @@ import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.ADD;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.SELECT;
 import static org.jboss.hal.meta.security.SecurityContext.RWX;
+import static org.jboss.hal.resources.Ids.ENDPOINT_ADD;
 import static org.jboss.hal.resources.Names.*;
 
 /**
@@ -95,7 +96,7 @@ class EndpointDialog {
         });
         ping.setEnabled(false);
 
-        form = new ModelNodeForm.Builder<Endpoint>(Ids.ENDPOINT_ADD, SecurityContext.RWX, description)
+        form = new ModelNodeForm.Builder<Endpoint>(ENDPOINT_ADD, SecurityContext.RWX, description)
                 .addOnly()
                 .include(NAME_KEY, SCHEME, HOST, PORT)
                 .unboundFormItem(ping)

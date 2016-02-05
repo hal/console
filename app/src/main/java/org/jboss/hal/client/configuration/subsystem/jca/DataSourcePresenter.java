@@ -27,10 +27,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.client.NameTokens;
-import org.jboss.hal.core.Breadcrumb;
-import org.jboss.hal.core.BreadcrumbEvent;
 import org.jboss.hal.core.ProfileSelectionEvent;
-import org.jboss.hal.core.mbui.LabelBuilder;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
@@ -55,7 +52,6 @@ import java.util.Map;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNodesWithNames;
-import static org.jboss.hal.resources.Names.CONFIGURATION;
 import static org.jboss.hal.resources.Names.PROFILE;
 
 /**
@@ -118,15 +114,6 @@ public class DataSourcePresenter extends
     @Override
     protected void onReset() {
         super.onReset();
-        LabelBuilder labelBuilder = new LabelBuilder();
-        getEventBus().fireEvent(new BreadcrumbEvent(Breadcrumb.of(new String[][]{
-                // Sample breadcrumb
-                {CONFIGURATION, "Profiles"},
-                {"Profile", "full"},
-                {"Subsystem", labelBuilder.label("datasource")},
-                {"Type", "Non-XA"},
-                {"Datasource", "ExampleDS"},
-        })));
         loadDataSources();
     }
 

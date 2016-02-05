@@ -21,39 +21,19 @@
  */
 package org.jboss.hal.core.finder;
 
-import elemental.dom.Element;
+import org.jboss.hal.core.mbui.LabelBuilder;
+import org.jboss.hal.dmr.Property;
 
 /**
  * @author Harald Pehl
  */
-class ActionStruct<T> {
+public class PropertyColumn extends FinderColumn<Property> {
 
-    final String title;
-    final Element content;
-    final ColumnAction<T> columnAction;
-    final ItemAction<T> itemAction;
-
-    ActionStruct(final String title, final ColumnAction<T> columnAction) {
-        this(title, null, columnAction, null);
-    }
-
-    ActionStruct(final Element content, final ColumnAction<T> columnAction) {
-        this(null, content, columnAction, null);
-    }
-
-    ActionStruct(final String title, final ItemAction<T> itemAction) {
-        this(title, null, null, itemAction);
-    }
-
-    ActionStruct(final Element content, final ItemAction<T> itemAction) {
-        this(null, content, null, itemAction);
-    }
-
-    private ActionStruct(final String title, final Element content, final ColumnAction<T> columnAction,
-            final ItemAction<T> itemAction) {
-        this.columnAction = columnAction;
-        this.title = title;
-        this.content = content;
-        this.itemAction = itemAction;
+    public PropertyColumn(final String id, final String title,
+            final PreviewCallback<Property> previewCallback) {
+        super(new Builder<Property>(id, title, property -> () -> new LabelBuilder().label(property))
+                .onPreview(previewCallback)
+                .showCount()
+                .withFilter());
     }
 }

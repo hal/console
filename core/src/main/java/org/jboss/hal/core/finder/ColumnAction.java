@@ -24,7 +24,7 @@ package org.jboss.hal.core.finder;
 /**
  * @author Harald Pehl
  */
-public interface ColumnAction<T extends FinderItem> {
+public interface ColumnAction<T> {
 
     void execute(FinderColumn<T> column);
 }

@@ -24,7 +24,7 @@ package org.jboss.hal.core.finder;
 /**
  * @author Harald Pehl
  */
-public interface ItemAction<T extends FinderItem> {
+public interface ItemAction<T> {
 
     void execute(T item);
 }

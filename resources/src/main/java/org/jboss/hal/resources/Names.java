@@ -33,12 +33,16 @@ public interface Names {
     String CONTROLS = "controls";
     String DEPLOYMENTS = "Deployments";
     String DESELECT = "deselect";
+    String DROPDOWN = "dropdown";
     String ENABLED = "enabled";
+    String EXPANDED = "expanded";
     String FAILURE = "failure";
     String GET = "GET";
     String HAL = "HAL";
+    String HAS_POPUP = "haspopup";
     String HIDDEN = "hidden";
     String HOST = "host";
+    String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";
     String JNDI_NAME = "jndi-name";
     String LABEL = "label";
@@ -62,7 +66,9 @@ public interface Names {
     String SERVER = "server";
     String SERVER_GROUP = "server-group";
     String SELECTED = "selected";
+    String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDINGS = "Socket Bindings";
+    String SUBSYSTEM = "Subsystem";
     String SUBSYSTEMS = "Subsystems";
     String TOGGLE = "toggle";
     String TOOLTIP = "tooltip";

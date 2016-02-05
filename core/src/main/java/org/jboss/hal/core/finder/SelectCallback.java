@@ -21,12 +21,11 @@
  */
 package org.jboss.hal.core.finder;
 
-import java.util.List;
-
 /**
+ * @param <T> The type of the current column
  * @author Harald Pehl
  */
-public interface SelectCallback<T extends FinderItem> {
+public interface SelectCallback<T> {
 
-    <S extends FinderItem> List<S> onSelect(T item);
+    void onSelect(Finder finder, T item);
 }
