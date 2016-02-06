@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Provider;
-import java.util.List;
+import java.util.Map;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.core.finder.Finder.BREADCRUMB_VALUE;
@@ -56,13 +56,12 @@ class FinderItem<T> implements IsElement, SecurityContextAware {
     public FinderItem(final Provider<Finder> finder,
             final FinderColumn<T> column,
             final T item,
-            final ItemDisplay display,
-            final List<ActionStruct<T>> actions,
+            final ItemDisplay<T> display,
             final SelectCallback<T> selectCallback,
             final PreviewCallback<T> previewCallback) {
 
         Elements.Builder eb = new Elements.Builder().li()
-                .data(BREADCRUMB_VALUE, display.getText())
+                .data(BREADCRUMB_VALUE, display.getTitle())
                 .data(filter, display.getFilterData());
 
         if (display.getTooltip() != null) {
@@ -77,8 +76,8 @@ class FinderItem<T> implements IsElement, SecurityContextAware {
 
         if (display.asElement() != null) {
             eb.add(display.asElement());
-        } else if (display.getText() != null) {
-            eb.span().css(itemText).innerText(display.getText()).end();
+        } else if (display.getTitle() != null) {
+            eb.span().css(itemText).innerText(display.getTitle()).end();
         } else {
             eb.span().css(itemText).innerText(NOT_AVAILABLE).end();
         }
@@ -87,26 +86,26 @@ class FinderItem<T> implements IsElement, SecurityContextAware {
             eb.span().css(folder, fontAwesome("angle-right")).rememberAs(FOLDER_ELEMENT).end();
         }
 
-        if (!actions.isEmpty()) {
-            if (actions.size() == 1) {
-                ActionStruct<T> action = actions.get(0);
+        if (!display.actions().isEmpty()) {
+            if (display.actions().size() == 1) {
+                Map.Entry<String, ItemAction<T>> entry = display.actions().entrySet().iterator().next();
                 eb.button()
                         .css(btn, btnFinder)
-                        .innerText(action.title)
-                        .on(click, event -> action.itemAction.execute(item))
+                        .innerText(entry.getKey())
+                        .on(click, event -> entry.getValue().execute(item))
                         .rememberAs(BUTTON_CONTAINER)
                         .end();
             } else {
                 boolean firstAction = true;
                 boolean ulCreated = false;
                 eb.div().css(btnGroup, pullRight).rememberAs(BUTTON_CONTAINER);
-                for (ActionStruct<T> action : actions) {
+                for (Map.Entry<String, ItemAction<T>> entry : display.actions().entrySet()) {
                     if (firstAction) {
                         // @formatter:off
                         eb.button()
                                 .css(btn, btnFinder)
-                                .innerText(action.title)
-                                .on(click, event -> action.itemAction.execute(item))
+                                .innerText(entry.getKey())
+                                .on(click, event -> entry.getValue().execute(item))
                         .end();
                         eb.button()
                                 .css(btn, btnFinder, dropdownToggle)
@@ -125,9 +124,9 @@ class FinderItem<T> implements IsElement, SecurityContextAware {
                             ulCreated = true;
                         }
                         eb.li().a()
-                                .innerText(action.title)
+                                .innerText(entry.getKey())
                                 .css(clickable)
-                                .on(click, event -> action.itemAction.execute(item))
+                                .on(click, event -> entry.getValue().execute(item))
                                 .end().end();
                     }
                 }
@@ -138,22 +137,23 @@ class FinderItem<T> implements IsElement, SecurityContextAware {
 
         root = eb.build();
         folderElement = display.isFolder() ? eb.referenceFor(FOLDER_ELEMENT) : null;
-        buttonContainer = actions.isEmpty() ? null : eb.referenceFor(BUTTON_CONTAINER);
+        buttonContainer = display.actions().isEmpty() ? null : eb.referenceFor(BUTTON_CONTAINER);
         Elements.setVisible(buttonContainer, false);
 
         root.setOnclick(event -> {
             for (Element sibling : Elements.children(root.getParentElement())) {
                 if (sibling == root) {
                     sibling.getClassList().add(active);
-                    if (folderElement != null && buttonContainer != null) {
+                    if (buttonContainer != null) {
                         Elements.setVisible(folderElement, false);
                         Elements.setVisible(buttonContainer, true);
                     }
 
                 } else {
                     sibling.getClassList().remove(active);
-                    Elements.setVisible(buttonContainer, false);
-                    Elements.setVisible(folderElement, true);
+                    Elements.setVisible(sibling.querySelector("button"), false); //NON-NLS
+                    Elements.setVisible(sibling.querySelector("div." + btnGroup), false); //NON-NLS
+                    Elements.setVisible(sibling.querySelector("span." + folder), true); //NON-NLS
                 }
             }
 

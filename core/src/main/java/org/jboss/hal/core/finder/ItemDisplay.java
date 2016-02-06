@@ -25,26 +25,28 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.spi.Message;
 
+import java.util.LinkedHashMap;
+
 /**
- * Controls the layout of a finder item <em>w/o</em> the actions. For simple items implement the {@link #getText()}
- * method and let the {@link #asElement()} return {@code null}. If you need a special layout implement the
- * {@link #asElement()} method, but provide a text as well (used for the breadcrumb).
+ * Controls the layout of a finder item. For simple items implement the {@link #getTitle()} method and let the {@link
+ * #asElement()} return {@code null}. If you need a special layout implement the {@link #asElement()} method, but
+ * provide a text as well (used for the breadcrumb).
  *
  * @author Harald Pehl
  */
-public interface ItemDisplay extends IsElement {
+public interface ItemDisplay<T> extends IsElement {
 
-    String getText();
+    String getTitle();
 
     default Element asElement() {
         return null;
     }
 
     /**
-     * The data which is used to filter items. Defaults to {@link #getText()}.
+     * The data which is used to filter items. Defaults to {@link #getTitle()}.
      */
     default String getFilterData() {
-        return getText();
+        return getTitle();
     }
 
     default Message.Level getMarker() {
@@ -57,5 +59,9 @@ public interface ItemDisplay extends IsElement {
 
     default boolean isFolder() {
         return false;
+    }
+
+    default LinkedHashMap<String, ItemAction<T>> actions() {
+        return new LinkedHashMap<>();
     }
 }

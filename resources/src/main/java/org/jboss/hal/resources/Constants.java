@@ -162,5 +162,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String toggleNavigation();
     String tools();
     String unknownError();
+    String view();
+
     //@formatter:on
 }

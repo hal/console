@@ -32,13 +32,13 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventHandler;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
-import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.InstanceInfo;
 import org.jboss.hal.config.User;
 import org.jboss.hal.core.Breadcrumb;
 import org.jboss.hal.core.Breadcrumb.Segment;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
@@ -61,8 +61,7 @@ import static org.jboss.hal.resources.Names.*;
  * @author Harald Pehl
  */
 @Templated("MainLayout.html#header")
-public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyView, IsElement,
-        NameTokens /* makes it easier to reference the name tokens in the HTML template */ {
+public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyView, IsElement {
 
     // @formatter:off
     public static HeaderView create(final TokenFormatter tokenFormatter, final Resources resources, final User user) {
@@ -98,12 +97,12 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
         tlc = new HashMap<>();
         resources();
-        tlc.put(HOMEPAGE, root.querySelector("#" + Ids.TLC_HOMEPAGE));
-        tlc.put(DEPLOYMENTS, root.querySelector("#" + Ids.TLC_DEPLOYMENTS));
-        tlc.put(CONFIGURATION, root.querySelector("#" + Ids.TLC_CONFIGURATION));
-        tlc.put(RUNTIME, root.querySelector("#" + Ids.TLC_RUNTIME));
-        tlc.put(ACCESS_CONTROL, root.querySelector("#" + Ids.TLC_ACCESS_CONTROL));
-        tlc.put(PATCHING, root.querySelector("#" + Ids.TLC_PATCHING));
+        tlc.put(NameTokens.HOMEPAGE, root.querySelector("#" + Ids.TLC_HOMEPAGE));
+        tlc.put(NameTokens.DEPLOYMENTS, root.querySelector("#" + Ids.TLC_DEPLOYMENTS));
+        tlc.put(NameTokens.CONFIGURATION, root.querySelector("#" + Ids.TLC_CONFIGURATION));
+        tlc.put(NameTokens.RUNTIME, root.querySelector("#" + Ids.TLC_RUNTIME));
+        tlc.put(NameTokens.ACCESS_CONTROL, root.querySelector("#" + Ids.TLC_ACCESS_CONTROL));
+        tlc.put(NameTokens.PATCHING, root.querySelector("#" + Ids.TLC_PATCHING));
 
         boolean su = user().isSuperuser() || user().isAdministrator();
         Elements.setVisible(accessControl, su);
@@ -221,7 +220,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     @EventHandler(element = "logoLink", on = click)
     void onLogo() {
-        presenter.goTo(HOMEPAGE);
+        presenter.goTo(NameTokens.HOMEPAGE);
     }
 
     @EventHandler(element = "messages", on = click)

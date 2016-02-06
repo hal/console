@@ -25,7 +25,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
@@ -44,7 +43,7 @@ public class UnderTheBridgePresenter extends
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(NameTokens.UNDER_THE_BRIDGE)
+    @NameToken(org.jboss.hal.meta.token.NameTokens.UNDER_THE_BRIDGE)
     public interface MyProxy extends ProxyPlace<UnderTheBridgePresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<UnderTheBridgePresenter> {

@@ -57,9 +57,9 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 .build();
         install(defaultModule);
 
-        bindConstant().annotatedWith(DefaultPlace.class).to(NameTokens.HOMEPAGE);
-        bindConstant().annotatedWith(ErrorPlace.class).to(NameTokens.HOMEPAGE);
-        bindConstant().annotatedWith(UnauthorizedPlace.class).to(NameTokens.HOMEPAGE);
+        bindConstant().annotatedWith(DefaultPlace.class).to(org.jboss.hal.meta.token.NameTokens.HOMEPAGE);
+        bindConstant().annotatedWith(ErrorPlace.class).to(org.jboss.hal.meta.token.NameTokens.HOMEPAGE);
+        bindConstant().annotatedWith(UnauthorizedPlace.class).to(org.jboss.hal.meta.token.NameTokens.HOMEPAGE);
 
         // ------------------------------------------------------ skeleton & root presenter
 

@@ -21,28 +21,36 @@
  */
 package org.jboss.hal.core.finder;
 
-import elemental.dom.Element;
+import java.util.LinkedHashMap;
 
 /**
  * @author Harald Pehl
  */
-class ActionStruct<T> {
+public class StaticItemColumn extends FinderColumn<StaticItem> {
 
-    final String title;
-    final Element content;
-    final ColumnAction<T> columnAction;
+    public StaticItemColumn(final String id, String title) {
+        super(new Builder<StaticItem>(id, title,
+                item -> new ItemDisplay<StaticItem>() {
+                    @Override
+                    public String getTitle() {
+                        return item.getTitle();
+                    }
 
-    ActionStruct(final String title, final ColumnAction<T> columnAction) {
-        this(title, null, columnAction);
-    }
+                    @Override
+                    public LinkedHashMap<String, ItemAction<StaticItem>> actions() {
+                        return item.getActions();
+                    }
 
-    ActionStruct(final Element content, final ColumnAction<T> columnAction) {
-        this(null, content, columnAction);
-    }
-
-    private ActionStruct(final String title, final Element content, final ColumnAction<T> columnAction) {
-        this.columnAction = columnAction;
-        this.title = title;
-        this.content = content;
+                    @Override
+                    public boolean isFolder() {
+                        return item.isFolder();
+                    }
+                })
+                .onPreview(StaticItem::getPreviewContent)
+                .onSelect((finder, item) -> {
+                    if (item.getSelectCallback() != null) {
+                        item.getSelectCallback().onSelect(finder, item);
+                    }
+                }));
     }
 }

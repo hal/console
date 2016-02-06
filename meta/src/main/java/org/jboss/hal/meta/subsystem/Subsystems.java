@@ -19,19 +19,25 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client;
+package org.jboss.hal.meta.subsystem;
+
+import org.jboss.hal.meta.token.NameTokens;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Harald Pehl
  */
-public interface NameTokens {
+public class Subsystems {
 
-    String ACCESS_CONTROL = "/access-control";
-    String CONFIGURATION = "/configuration";
-    String DATASOURCE = "/configuration/{profile}/datasource";
-    String DEPLOYMENTS = "/deployments";
-    String HOMEPAGE = "/home";
-    String PATCHING = "/patching";
-    String RUNTIME = "/runtime";
-    String UNDER_THE_BRIDGE = "/utb";
+    private final Set<SubsystemMetadata> subsystems;
+
+    public Subsystems() {
+        subsystems = new HashSet<>();
+
+        // built-in subsystems
+        subsystems.add(new SubsystemMetadata("batch-jberet", "Batch", NameTokens.BATCH));
+        subsystems.add(new SubsystemMetadata("datasources", "Datasources"));
+    }
 }

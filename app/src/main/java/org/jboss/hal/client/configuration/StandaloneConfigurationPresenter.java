@@ -26,13 +26,15 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.core.TopLevelCategory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.HasFinder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.PropertyColumn;
+import org.jboss.hal.core.finder.StaticItem;
+import org.jboss.hal.core.finder.StaticItemColumn;
 import org.jboss.hal.core.mbui.LabelBuilder;
 import org.jboss.hal.core.mvp.PatternFlyPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
@@ -42,12 +44,14 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
 
 import javax.inject.Inject;
 import java.util.List;
 
 import static com.google.gwt.safehtml.shared.SafeHtmlUtils.fromSafeConstant;
+import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.Ids.*;
 import static org.jboss.hal.resources.Names.*;
@@ -78,15 +82,51 @@ public class StandaloneConfigurationPresenter
     public StandaloneConfigurationPresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy proxy,
+            final PlaceManager placeManager,
             final Dispatcher dispatcher,
             final Resources resources) {
         super(eventBus, view, proxy, Slots.MAIN);
+        this.dispatcher = dispatcher;
 
-        StandaloneRootColumn initialColumn = new StandaloneRootColumn(this, resources);
+        StaticItemColumn initialColumn = new StaticItemColumn(CONFIGURATION_COLUMN, CONFIGURATION);
+        initialColumn.setItems(asList(
+
+                new StaticItem.Builder(SUBSYSTEMS)
+                        .folder()
+                        .onSelect((finder, item) -> loadSubsystems())
+                        .onPreview(new PreviewContent(SUBSYSTEMS,
+                                fromSafeConstant(resources.previews().subsystems().getText())))
+                        .build(),
+
+                new StaticItem.Builder(INTERFACES)
+                        .folder()
+                        .onSelect((finder, item) -> loadInterfaces())
+                        .onPreview(new PreviewContent(INTERFACES,
+                                fromSafeConstant(resources.previews().interfaces().getText())))
+                        .build(),
+
+                new StaticItem.Builder(SOCKET_BINDINGS)
+                        .folder()
+                        .onSelect((finder, item) -> loadSocketBindings())
+                        .onPreview(new PreviewContent(SOCKET_BINDINGS,
+                                fromSafeConstant(resources.previews().socketBindings().getText())))
+                        .build(),
+
+                new StaticItem.Builder(PATHS)
+                        .token(placeManager, NameTokens.PATH)
+                        .onPreview(new PreviewContent(PATHS, fromSafeConstant(resources.previews().paths().getText())))
+                        .build(),
+
+                new StaticItem.Builder(SYSTEM_PROPERTIES)
+                        .token(placeManager, NameTokens.SYSTEM_PROPERTIES)
+                        .onPreview(new PreviewContent(SYSTEM_PROPERTIES,
+                                fromSafeConstant(resources.previews().systemProperties().getText())))
+                        .build()
+        ));
+
         PreviewContent initialPreview = new PreviewContent(CONFIGURATION,
                 fromSafeConstant(resources.previews().standaloneConfiguration().getText()));
 
-        this.dispatcher = dispatcher;
         this.finder = new Finder(CONFIGURATION_FINDER, eventBus, initialColumn, initialPreview);
         this.subsystemColumn = new SubsystemColumn();
         this.interfaceColumn = new PropertyColumn(INTERFACE_COLUMN, INTERFACE,

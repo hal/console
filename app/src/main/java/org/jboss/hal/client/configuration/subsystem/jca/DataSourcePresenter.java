@@ -26,7 +26,6 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.core.ProfileSelectionEvent;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyPresenter;
@@ -52,6 +51,7 @@ import java.util.Map;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNodesWithNames;
+import static org.jboss.hal.meta.token.NameTokens.DATASOURCE;
 import static org.jboss.hal.resources.Names.PROFILE;
 
 /**
@@ -70,7 +70,7 @@ public class DataSourcePresenter extends
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(NameTokens.DATASOURCE)
+    @NameToken(DATASOURCE)
     @Requires(ROOT_ADDRESS)
     public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
 

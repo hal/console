@@ -25,6 +25,18 @@ import java.util.Set;
 
 public interface NameTokens {
 
+    String ACCESS_CONTROL = "/access-control";
+    String BATCH = "/configuration/{profile}/batch";
+    String CONFIGURATION = "/configuration";
+    String DATASOURCE = "/configuration/{profile}/datasource";
+    String DEPLOYMENTS = "/deployments";
+    String HOMEPAGE = "/home";
+    String PATCHING = "/patching";
+    String PATH = "/path";
+    String RUNTIME = "/runtime";
+    String SYSTEM_PROPERTIES = "/system-properties";
+    String UNDER_THE_BRIDGE = "/utb";
+
     Set<String> getTokens();
 
     boolean wasRevealed(String token);

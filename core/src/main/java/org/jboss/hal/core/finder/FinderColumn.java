@@ -57,7 +57,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         private final String title;
         private final ItemCallback<T> itemCallback;
         private final List<ActionStruct<T>> columnActions;
-        private final List<ActionStruct<T>> itemActions;
         private boolean showCount;
         private boolean withFilter;
         private SelectCallback<T> selectCallback;
@@ -69,7 +68,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             this.title = title;
             this.itemCallback = itemCallback;
             this.columnActions = new ArrayList<>();
-            this.itemActions = new ArrayList<>();
             this.showCount = false;
             this.withFilter = false;
         }
@@ -104,16 +102,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             return this;
         }
 
-        public Builder<T> itemAction(String title, ItemAction<T> action) {
-            itemActions.add(new ActionStruct<>(title, action));
-            return this;
-        }
-
-        public Builder<T> itemAction(Element content, ItemAction<T> action) {
-            itemActions.add(new ActionStruct<>(content, action));
-            return this;
-        }
-
         public Builder<T> onSelect(SelectCallback<T> selectCallback) {
             this.selectCallback = selectCallback;
             return this;
@@ -142,7 +130,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     private final SelectCallback<T> selectCallback;
     private final PreviewCallback<T> previewCallback;
     private final List<FinderItem<T>> items;
-    private final List<ActionStruct<T>> itemActions;
 
     private final Element root;
     private final Element headerElement;
@@ -159,8 +146,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         this.selectCallback = builder.selectCallback;
         this.previewCallback = builder.previewCallback;
         this.items = new ArrayList<>();
-        this.itemActions = new ArrayList<>();
-        this.itemActions.addAll(builder.itemActions);
         this.finder = null;
 
         // header
@@ -253,7 +238,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         for (T item : items) {
             // finder might not yet be initialized, thus pass a Provider<Finder>
             FinderItem<T> finderItem = new FinderItem<>(() -> finder, this, item,
-                    itemCallback.render(item), itemActions, selectCallback, previewCallback);
+                    itemCallback.render(item), selectCallback, previewCallback);
             this.items.add(finderItem);
             ulElement.appendChild(finderItem.asElement());
         }

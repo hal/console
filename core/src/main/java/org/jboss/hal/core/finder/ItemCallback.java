@@ -26,5 +26,5 @@ package org.jboss.hal.core.finder;
  */
 public interface ItemCallback<T> {
 
-    ItemDisplay render(T item);
+    ItemDisplay<T> render(T item);
 }

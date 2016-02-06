@@ -25,13 +25,14 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.core.mvp.PatternFlyPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.core.mvp.Slots;
 import org.jboss.hal.core.TopLevelCategory;
 
 import javax.inject.Inject;
+
+import static org.jboss.hal.meta.token.NameTokens.RUNTIME;
 
 /**
  * @author Harald Pehl
@@ -41,7 +42,7 @@ public class RuntimePresenter extends PatternFlyPresenter<RuntimePresenter.MyVie
 
     // @formatter:off
     @ProxyStandard
-    @NameToken(NameTokens.RUNTIME)
+    @NameToken(RUNTIME)
     public interface MyProxy extends ProxyPlace<RuntimePresenter> {}
 
     public interface MyView extends PatternFlyView {}

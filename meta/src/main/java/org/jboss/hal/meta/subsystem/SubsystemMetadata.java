@@ -31,11 +31,11 @@ public class SubsystemMetadata {
     private final String token;
     private final boolean folder;
 
-    private SubsystemMetadata(final String name, final String title) {
+    public SubsystemMetadata(final String name, final String title) {
         this(name, title, null, true);
     }
 
-    private SubsystemMetadata(final String name, final String title, final String token) {
+    public SubsystemMetadata(final String name, final String title, final String token) {
         this(name, title, token, false);
     }
 
@@ -44,6 +44,27 @@ public class SubsystemMetadata {
         this.title = title;
         this.token = token;
         this.folder = folder;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) { return true; }
+        if (!(o instanceof SubsystemMetadata)) { return false; }
+
+        SubsystemMetadata that = (SubsystemMetadata) o;
+
+        return name.equals(that.name);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Subsystem(" + name + ")";
     }
 
     public boolean isFolder() {
