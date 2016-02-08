@@ -19,20 +19,20 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.configuration;
+package org.jboss.hal.core.mvp;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.Proxy;
+import org.jboss.hal.core.TopLevelCategory;
 
 /**
  * @author Harald Pehl
  */
-public class StandaloneConfigurationView extends PatternFlyViewImpl implements StandaloneConfigurationPresenter.MyView {
+public class TopLevelPresenter<V extends PatternFlyView, Proxy_ extends Proxy<?>>
+        extends PatternFlyPresenter<V, Proxy_>
+        implements TopLevelCategory {
 
-    @Override
-    public void setFinder(final Finder finder) {
-        registerAttachable(finder);
-        initWidget(Elements.asWidget(finder.asElement()));
+    public TopLevelPresenter(final EventBus eventBus, final V view, final Proxy_ proxy) {
+        super(eventBus, view, proxy, Slots.MAIN);
     }
 }

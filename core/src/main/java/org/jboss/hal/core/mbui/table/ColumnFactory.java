@@ -23,7 +23,7 @@ package org.jboss.hal.core.mbui.table;
 
 import org.jboss.hal.ballroom.table.Column;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
-import org.jboss.hal.core.mbui.LabelBuilder;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 

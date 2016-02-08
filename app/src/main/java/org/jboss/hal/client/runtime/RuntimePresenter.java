@@ -25,10 +25,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.core.mvp.PatternFlyPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
-import org.jboss.hal.core.mvp.Slots;
-import org.jboss.hal.core.TopLevelCategory;
+import org.jboss.hal.core.mvp.TopLevelPresenter;
 
 import javax.inject.Inject;
 
@@ -37,8 +35,7 @@ import static org.jboss.hal.meta.token.NameTokens.RUNTIME;
 /**
  * @author Harald Pehl
  */
-public class RuntimePresenter extends PatternFlyPresenter<RuntimePresenter.MyView, RuntimePresenter.MyProxy>
-        implements TopLevelCategory {
+public class RuntimePresenter extends TopLevelPresenter<RuntimePresenter.MyView, RuntimePresenter.MyProxy> {
 
     // @formatter:off
     @ProxyStandard
@@ -53,6 +50,6 @@ public class RuntimePresenter extends PatternFlyPresenter<RuntimePresenter.MyVie
     public RuntimePresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy proxy) {
-        super(eventBus, view, proxy, Slots.MAIN);
+        super(eventBus, view, proxy);
     }
 }

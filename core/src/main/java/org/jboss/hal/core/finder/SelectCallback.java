@@ -22,10 +22,11 @@
 package org.jboss.hal.core.finder;
 
 /**
- * @param <T> The type of the current column
+ * A callback when an item is selected.
+ *
  * @author Harald Pehl
  */
 public interface SelectCallback<T> {
 
-    void onSelect(Finder finder, T item);
+    void onSelect(T item);
 }

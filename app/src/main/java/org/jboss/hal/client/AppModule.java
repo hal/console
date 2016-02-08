@@ -26,8 +26,12 @@ import com.gwtplatform.mvp.client.annotations.ErrorPlace;
 import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
 import com.gwtplatform.mvp.shared.proxy.RouteTokenFormatter;
-import org.jboss.hal.client.configuration.StandaloneConfigurationPresenter;
-import org.jboss.hal.client.configuration.StandaloneConfigurationView;
+import org.jboss.hal.client.configuration.ConfigurationPresenter;
+import org.jboss.hal.client.configuration.ConfigurationView;
+import org.jboss.hal.client.configuration.InterfacePresenter;
+import org.jboss.hal.client.configuration.InterfaceView;
+import org.jboss.hal.client.configuration.PathsPresenter;
+import org.jboss.hal.client.configuration.PathsView;
 import org.jboss.hal.client.configuration.subsystem.jca.DataSourcePresenter;
 import org.jboss.hal.client.configuration.subsystem.jca.DataSourceView;
 import org.jboss.hal.client.deployment.DeploymentPresenter;
@@ -42,8 +46,8 @@ import org.jboss.hal.client.skeleton.Templated_FooterView_Provider;
 import org.jboss.hal.client.skeleton.Templated_HeaderView_Provider;
 import org.jboss.hal.client.utb.UnderTheBridgePresenter;
 import org.jboss.hal.client.utb.UnderTheBridgeView;
-import org.jboss.hal.core.mvp.HalPlaceManager;
 import org.jboss.hal.core.gin.AbstractTemplatedPresenterModule;
+import org.jboss.hal.core.mvp.HalPlaceManager;
 import org.jboss.hal.spi.GinModule;
 
 @GinModule
@@ -61,6 +65,7 @@ public class AppModule extends AbstractTemplatedPresenterModule {
         bindConstant().annotatedWith(ErrorPlace.class).to(org.jboss.hal.meta.token.NameTokens.HOMEPAGE);
         bindConstant().annotatedWith(UnauthorizedPlace.class).to(org.jboss.hal.meta.token.NameTokens.HOMEPAGE);
 
+
         // ------------------------------------------------------ skeleton & root presenter
 
         bindTemplatedSingletonPresenterWidget(HeaderPresenter.class,
@@ -76,12 +81,13 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 RootView.class,
                 RootPresenter.MyProxy.class);
 
+
         // ------------------------------------------------------ remaining presenter (A-Z)
 
-        bindPresenter(StandaloneConfigurationPresenter.class,
-                StandaloneConfigurationPresenter.MyView.class,
-                StandaloneConfigurationView.class,
-                StandaloneConfigurationPresenter.MyProxy.class);
+        bindPresenter(ConfigurationPresenter.class,
+                ConfigurationPresenter.MyView.class,
+                ConfigurationView.class,
+                ConfigurationPresenter.MyProxy.class);
 
         bindPresenter(DataSourcePresenter.class,
                 DataSourcePresenter.MyView.class,
@@ -97,6 +103,16 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 HomepagePresenter.MyView.class,
                 HomepageView.class,
                 HomepagePresenter.MyProxy.class);
+
+        bindPresenter(InterfacePresenter.class,
+                InterfacePresenter.MyView.class,
+                InterfaceView.class,
+                InterfacePresenter.MyProxy.class);
+
+        bindPresenter(PathsPresenter.class,
+                PathsPresenter.MyView.class,
+                PathsView.class,
+                PathsPresenter.MyProxy.class);
 
         bindPresenter(RuntimePresenter.class,
                 RuntimePresenter.MyView.class,

@@ -21,11 +21,21 @@
  */
 package org.jboss.hal.core.finder;
 
+import com.google.gwt.inject.client.AsyncProvider;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.gwt.flow.Async;
+import org.jboss.gwt.flow.Control;
+import org.jboss.gwt.flow.Function;
+import org.jboss.gwt.flow.FunctionContext;
+import org.jboss.gwt.flow.Outcome;
+import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.core.Breadcrumb;
@@ -33,21 +43,65 @@ import org.jboss.hal.core.BreadcrumbEvent;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import javax.inject.Inject;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.lang.Math.min;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.Ids.FINDER;
 
 /**
+ * The one and only finder which is shared across all different top level categories in HAL. The same finder instance
+ * gets injected into the different top level presenters. Only the columns will change when navigating between the
+ * different places
+ *
  * @author Harald Pehl
  */
 public class Finder implements IsElement, SecurityContextAware, Attachable {
+
+    private class SelectFunction implements Function<FunctionContext> {
+
+        final FinderPath.Segment segment;
+
+        private SelectFunction(final FinderPath.Segment segment) {this.segment = segment;}
+
+        @Override
+        public void execute(final Control<FunctionContext> control) {
+            FinderColumn column = columnRegistry.getColumn(segment.getKey());
+            if (column != null) {
+                appendColumn(column);
+                AsyncProvider<List> itemProvider = columnRegistry.getItemProvider(segment.getKey());
+                if (itemProvider != null) {
+                    itemProvider.get(new AsyncCallback<List>() {
+                        @Override
+                        public void onFailure(final Throwable throwable) {
+                            control.abort();
+                        }
+
+                        @Override
+                        public void onSuccess(final List list) {
+                            //noinspection unchecked
+                            column.setItems(list);
+                            column.markSelected(segment.getValue());
+                            control.proceed();
+                        }
+                    });
+                } else {
+                    control.proceed();
+                }
+
+            } else {
+                control.abort();
+            }
+        }
+    }
 
     /**
      * The maximum number of visible columns. If there are more columns given the first column is hidden when column
@@ -60,20 +114,28 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     private static final int MAX_COLUMNS = 12;
     private static final String PREVIEW_COLUMN = "previewColumn";
 
-    private final String id;
+    private static final Logger logger = LoggerFactory.getLogger(Finder.class);
+
+    private final PlaceManager placeManager;
     private final EventBus eventBus;
-    private final FinderColumn initialColumn;
-    private final PreviewContent initialPreview;
+    private final ColumnRegistry columnRegistry;
+    private final String id;
     private final Map<String, FinderColumn> columns;
     private final Element root;
     private final Element previewColumn;
+    private String token;
 
-    public Finder(String id, final EventBus eventBus,
-            final FinderColumn initialColumn, final PreviewContent initialPreview) {
-        this.id = id;
+
+    // ------------------------------------------------------ ui setup
+
+    @Inject
+    public Finder(final PlaceManager placeManager,
+            final EventBus eventBus,
+            final ColumnRegistry columnRegistry) {
+        this.placeManager = placeManager;
         this.eventBus = eventBus;
-        this.initialColumn = initialColumn;
-        this.initialPreview = initialPreview;
+        this.columnRegistry = columnRegistry;
+        this.id = FINDER;
         this.columns = new HashMap<>();
 
         // @formatter:off
@@ -89,7 +151,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
         root = builder.build();
         previewColumn = builder.referenceFor(PREVIEW_COLUMN);
-        Browser.getWindow().setOnresize(event -> resize());
+        Browser.getWindow().setOnresize(event -> adjustHeight());
     }
 
     @Override
@@ -99,12 +161,10 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     @Override
     public void attach() {
-        appendColumn(initialColumn);
-        preview(initialPreview);
-        resize();
+        adjustHeight();
     }
 
-    private void resize() {
+    private void adjustHeight() {
         int window = Browser.getWindow().getInnerHeight();
         int navigation = 0, footer = 0;
         Element element = Browser.getDocument().querySelector("nav." + navbar); //NON-NLS
@@ -121,6 +181,9 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         }
     }
 
+
+    // ------------------------------------------------------ internal API
+
     void preview(PreviewContent preview) {
         Elements.removeChildrenFrom(previewColumn);
         for (Element element : preview.elements()) {
@@ -129,50 +192,95 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     }
 
     void reduceTo(FinderColumn column) {
-        List<Element> reverseColumns = new ArrayList<>();
-        for (Element element : Elements.children(root)) {
-            if (element == previewColumn) {
+        boolean removeFromHere = false;
+        for (Iterator<Element> iterator = Elements.children(root).iterator(); iterator.hasNext(); ) {
+            Element element = iterator.next();
+            if (element == column.asElement()) {
+                removeFromHere = true;
                 continue;
             }
-            reverseColumns.add(element);
-        }
-        Collections.reverse(reverseColumns);
-        for (Element element : reverseColumns) {
-            if (element == column.asElement()) {
+            if (element == previewColumn) {
                 break;
             }
-            columns.remove(element.getId());
-            root.removeChild(element);
+            if (removeFromHere) {
+                columns.remove(element.getId());
+                iterator.remove();
+            }
         }
     }
 
-    void updateBreadcrumb() {
+    void navigate() {
+        FinderPath path = FinderPath.empty();
         Breadcrumb breadcrumb = Breadcrumb.empty();
         for (Element column : Elements.children(root)) {
             if (column == previewColumn) {
                 break;
             }
-            String key = String.valueOf(column.getDataset().at(BREADCRUMB_KEY));
+            String key = column.getId();
+            String breadcrumbKey = String.valueOf(column.getDataset().at(BREADCRUMB_KEY));
             Element activeItem = column.querySelector("li." + CSS.active); //NON-NLS
             if (activeItem != null) {
-                String value = String.valueOf(activeItem.getDataset().at(BREADCRUMB_VALUE));
+                String value = activeItem.getId();
+                String breadcrumbValue = String.valueOf(activeItem.getDataset().at(BREADCRUMB_VALUE));
                 if (key != null && value != null) {
-                    breadcrumb.append(key, value);
+                    path.append(key, value);
+                }
+                if (breadcrumbKey != null && breadcrumbValue != null) {
+                    breadcrumb.append(breadcrumbKey, breadcrumbValue);
                 }
             }
+        }
+        if (token != null) {
+            PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token).with("path", path.toString())
+                    .build();
+            placeManager.updateHistory();
+            placeManager.revealPlace(placeRequest);
         }
         eventBus.fireEvent(new BreadcrumbEvent(breadcrumb));
     }
 
+
+    // ------------------------------------------------------ public interface
+
+    public void reset(final String token,
+            final FinderColumn initialColumn, final PreviewContent initialPreview) {
+
+        this.token = token;
+        while (root.getFirstChild() != previewColumn) {
+            root.removeChild(root.getFirstChild());
+        }
+        appendColumn(initialColumn);
+        preview(initialPreview);
+    }
+
     public void appendColumn(FinderColumn column) {
-        // always make sure the finder instance is there
-        column.setFinder(this);
         columns.put(column.getId(), column);
         root.insertBefore(column.asElement(), previewColumn);
 
         int columns = root.getChildren().length() - 1;
         int previewSize = MAX_COLUMNS - 2 * min(columns, MAX_VISIBLE_COLUMNS);
         previewColumn.setClassName(finderPreview + " " + column(previewSize));
+    }
+
+    public void select(FinderPath path) {
+        if (!path.isEmpty()) {
+
+            int index = 0;
+            Function[] functions = new Function[path.size()];
+            for (FinderPath.Segment segment : path) {
+                functions[index] = new SelectFunction(segment);
+                index++;
+            }
+            new Async<FunctionContext>(Progress.NOOP).waterfall(new FunctionContext(), new Outcome<FunctionContext>() {
+                        @Override
+                        public void onFailure(final FunctionContext context) {
+                            logger.error("Unable to select finder path {}: {}", path, context.getErrorMessage()); //NON-NLS
+                        }
+
+                        @Override
+                        public void onSuccess(final FunctionContext context) {}
+                    }, functions);
+        }
     }
 
     @Override

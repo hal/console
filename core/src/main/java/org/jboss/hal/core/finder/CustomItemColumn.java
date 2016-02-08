@@ -21,23 +21,25 @@
  */
 package org.jboss.hal.core.finder;
 
-import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
+ * The finder column for {@link CustomItem}.
+ *
  * @author Harald Pehl
  */
-public class StaticItemColumn extends FinderColumn<StaticItem> {
+public class CustomItemColumn extends FinderColumn<CustomItem> {
 
-    public StaticItemColumn(final String id, String title) {
-        super(new Builder<StaticItem>(id, title,
-                item -> new ItemDisplay<StaticItem>() {
+    public CustomItemColumn(final Finder finder, final String id, String title) {
+        super(new Builder<CustomItem>(finder, id, title,
+                item -> new ItemDisplay<CustomItem>() {
                     @Override
                     public String getTitle() {
                         return item.getTitle();
                     }
 
                     @Override
-                    public LinkedHashMap<String, ItemAction<StaticItem>> actions() {
+                    public List<ItemAction<CustomItem>> actions() {
                         return item.getActions();
                     }
 
@@ -46,10 +48,10 @@ public class StaticItemColumn extends FinderColumn<StaticItem> {
                         return item.isFolder();
                     }
                 })
-                .onPreview(StaticItem::getPreviewContent)
-                .onSelect((finder, item) -> {
+                .onPreview(CustomItem::getPreviewContent)
+                .onSelect(item -> {
                     if (item.getSelectCallback() != null) {
-                        item.getSelectCallback().onSelect(finder, item);
+                        item.getSelectCallback().onSelect(item);
                     }
                 }));
     }

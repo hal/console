@@ -19,21 +19,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.finder;
+package org.jboss.hal.core.mvp;
 
-import org.jboss.hal.core.mbui.LabelBuilder;
-import org.jboss.hal.dmr.Property;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.Proxy;
 
 /**
  * @author Harald Pehl
  */
-public class PropertyColumn extends FinderColumn<Property> {
+public class ApplicationPresenter<V extends PatternFlyView, Proxy_ extends Proxy<?>>
+        extends PatternFlyPresenter<V, Proxy_> {
 
-    public PropertyColumn(final String id, final String title,
-            final PreviewCallback<Property> previewCallback) {
-        super(new Builder<Property>(id, title, property -> () -> new LabelBuilder().label(property))
-                .onPreview(previewCallback)
-                .showCount()
-                .withFilter());
+    public ApplicationPresenter(final EventBus eventBus, final V view, final Proxy_ proxy) {
+        super(eventBus, view, proxy, Slots.MAIN);
     }
 }

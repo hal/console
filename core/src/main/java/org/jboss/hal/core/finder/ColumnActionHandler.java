@@ -21,28 +21,12 @@
  */
 package org.jboss.hal.core.finder;
 
-import elemental.dom.Element;
-
 /**
+ * Action handler for a column action.
+ *
  * @author Harald Pehl
  */
-class ActionStruct<T> {
+public interface ColumnActionHandler<T> {
 
-    final String title;
-    final Element content;
-    final ColumnAction<T> columnAction;
-
-    ActionStruct(final String title, final ColumnAction<T> columnAction) {
-        this(title, null, columnAction);
-    }
-
-    ActionStruct(final Element content, final ColumnAction<T> columnAction) {
-        this(null, content, columnAction);
-    }
-
-    private ActionStruct(final String title, final Element content, final ColumnAction<T> columnAction) {
-        this.columnAction = columnAction;
-        this.title = title;
-        this.content = content;
-    }
+    void execute(FinderColumn<T> column);
 }

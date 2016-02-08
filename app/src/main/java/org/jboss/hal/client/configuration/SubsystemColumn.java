@@ -21,9 +21,21 @@
  */
 package org.jboss.hal.client.configuration;
 
+import com.google.common.collect.Lists;
+import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.core.finder.ColumnRegistry;
+import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.core.mbui.LabelBuilder;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
 
+import javax.inject.Inject;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 import static org.jboss.hal.resources.Ids.SUBSYSTEM_COLUMN;
 import static org.jboss.hal.resources.Names.SUBSYSTEM;
 
@@ -32,9 +44,20 @@ import static org.jboss.hal.resources.Names.SUBSYSTEM;
  */
 public class SubsystemColumn extends FinderColumn<String> {
 
-    public SubsystemColumn() {
-        super(new Builder<>(SUBSYSTEM_COLUMN, SUBSYSTEM, (String item) -> () -> new LabelBuilder().label(item))
+    @Inject
+    public SubsystemColumn(final Finder finder,
+            final ColumnRegistry columnRegistry,
+            final Dispatcher dispatcher) {
+
+        super(new Builder<>(finder, SUBSYSTEM_COLUMN, SUBSYSTEM, (String item) -> () -> new LabelBuilder().label(item))
                 .showCount()
                 .withFilter());
+
+        Operation subsystemOp = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, ResourceAddress.ROOT)
+                .param(CHILD_TYPE, ModelDescriptionConstants.SUBSYSTEM).build();
+        columnRegistry.registerColumn(this, callback ->
+                dispatcher.execute(subsystemOp, result -> {
+                    callback.onSuccess(Lists.transform(result.asList(), ModelNode::asString));
+                }));
     }
 }

@@ -25,14 +25,10 @@ import com.google.gwt.core.client.GWT;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.Constants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.inject.Provider;
-import java.util.Map;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.core.finder.Finder.BREADCRUMB_VALUE;
@@ -40,20 +36,21 @@ import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.*;
 
 /**
+ * UI class for a single row in in a finder column. Only used internally in the finder.
+ *
  * @author Harald Pehl
  */
-class FinderItem<T> implements IsElement, SecurityContextAware {
+class FinderRow<T> implements IsElement, SecurityContextAware {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String FOLDER_ELEMENT = "folderElement";
     private static final String BUTTON_CONTAINER = "buttonContainer";
-    private static final Logger logger = LoggerFactory.getLogger(FinderItem.class);
 
     private final Element root;
     private final Element folderElement;
     private final Element buttonContainer;
 
-    public FinderItem(final Provider<Finder> finder,
+    FinderRow(final Finder finder,
             final FinderColumn<T> column,
             final T item,
             final ItemDisplay<T> display,
@@ -61,6 +58,7 @@ class FinderItem<T> implements IsElement, SecurityContextAware {
             final PreviewCallback<T> previewCallback) {
 
         Elements.Builder eb = new Elements.Builder().li()
+                .id(IdBuilder.build(column.getId(), display.getId()))
                 .data(BREADCRUMB_VALUE, display.getTitle())
                 .data(filter, display.getFilterData());
 
@@ -88,24 +86,24 @@ class FinderItem<T> implements IsElement, SecurityContextAware {
 
         if (!display.actions().isEmpty()) {
             if (display.actions().size() == 1) {
-                Map.Entry<String, ItemAction<T>> entry = display.actions().entrySet().iterator().next();
+                ItemAction<T> action = display.actions().get(0);
                 eb.button()
                         .css(btn, btnFinder)
-                        .innerText(entry.getKey())
-                        .on(click, event -> entry.getValue().execute(item))
+                        .innerText(action.title)
+                        .on(click, event -> action.handler.execute(item))
                         .rememberAs(BUTTON_CONTAINER)
                         .end();
             } else {
                 boolean firstAction = true;
                 boolean ulCreated = false;
                 eb.div().css(btnGroup, pullRight).rememberAs(BUTTON_CONTAINER);
-                for (Map.Entry<String, ItemAction<T>> entry : display.actions().entrySet()) {
+                for (ItemAction<T> action : display.actions()) {
                     if (firstAction) {
                         // @formatter:off
                         eb.button()
                                 .css(btn, btnFinder)
-                                .innerText(entry.getKey())
-                                .on(click, event -> entry.getValue().execute(item))
+                                .innerText(action.title)
+                                .on(click, event -> action.handler.execute(item))
                         .end();
                         eb.button()
                                 .css(btn, btnFinder, dropdownToggle)
@@ -124,9 +122,9 @@ class FinderItem<T> implements IsElement, SecurityContextAware {
                             ulCreated = true;
                         }
                         eb.li().a()
-                                .innerText(entry.getKey())
+                                .innerText(action.title)
                                 .css(clickable)
-                                .on(click, event -> entry.getValue().execute(item))
+                                .on(click, event -> action.handler.execute(item))
                                 .end().end();
                     }
                 }
@@ -141,37 +139,40 @@ class FinderItem<T> implements IsElement, SecurityContextAware {
         Elements.setVisible(buttonContainer, false);
 
         root.setOnclick(event -> {
-            for (Element sibling : Elements.children(root.getParentElement())) {
-                if (sibling == root) {
-                    sibling.getClassList().add(active);
-                    if (buttonContainer != null) {
-                        Elements.setVisible(folderElement, false);
-                        Elements.setVisible(buttonContainer, true);
+                    for (Element sibling : Elements.children(root.getParentElement())) {
+                        if (sibling == root) {
+                            sibling.getClassList().add(active);
+                            if (buttonContainer != null) {
+                                Elements.setVisible(folderElement, false);
+                                Elements.setVisible(buttonContainer, true);
+                            }
+
+                        } else {
+                            sibling.getClassList().remove(active);
+                            Element buttonContainer = sibling.querySelector("." + btnGroup);
+                            if (buttonContainer != null) {
+                                Elements.setVisible(buttonContainer, false);
+                            } else {
+                                buttonContainer = sibling.querySelector("button"); //NON-NLS
+                                Elements.setVisible(buttonContainer, false);
+                            }
+                            Elements.setVisible(sibling.querySelector("div." + btnGroup), false); //NON-NLS
+                            Elements.setVisible(sibling.querySelector("span." + folder), true); //NON-NLS
+                        }
                     }
 
-                } else {
-                    sibling.getClassList().remove(active);
-                    Elements.setVisible(sibling.querySelector("button"), false); //NON-NLS
-                    Elements.setVisible(sibling.querySelector("div." + btnGroup), false); //NON-NLS
-                    Elements.setVisible(sibling.querySelector("span." + folder), true); //NON-NLS
-                }
-            }
+                    finder.reduceTo(column);
+                    finder.navigate();
 
-            Finder finderInstance = finder.get();
-            if (finderInstance != null) {
-                finderInstance.reduceTo(column);
-                finderInstance.updateBreadcrumb();
-                if (selectCallback != null) {
-                    selectCallback.onSelect(finderInstance, item);
+                    if (selectCallback != null) {
+                        selectCallback.onSelect(item);
+                    }
+                    if (previewCallback != null) {
+                        PreviewContent content = previewCallback.onPreview(item);
+                        finder.preview(content);
+                    }
                 }
-                if (previewCallback != null) {
-                    PreviewContent content = previewCallback.onPreview(item);
-                    finderInstance.preview(content);
-                }
-            } else {
-                logger.error("Finder instance for selected item in column '{}' is null", column.getId()); //NON-NLS
-            }
-        });
+        );
     }
 
     @Override

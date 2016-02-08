@@ -22,6 +22,8 @@
 package org.jboss.hal.core.finder;
 
 /**
+ * Function which turns an item into an {@link ItemCallback}.
+ *
  * @author Harald Pehl
  */
 public interface ItemCallback<T> {

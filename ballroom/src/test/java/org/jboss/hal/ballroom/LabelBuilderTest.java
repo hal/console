@@ -1,4 +1,4 @@
-package org.jboss.hal.core.mbui;
+package org.jboss.hal.ballroom;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;

@@ -21,45 +21,44 @@
  */
 package org.jboss.hal.core.finder;
 
-import com.google.gwt.core.client.GWT;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.resources.Constants;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
+ * A customizable finder item useful when you need full control over each and every item.
+ *
  * @author Harald Pehl
  */
-public class StaticItem {
+public class CustomItem {
 
     public static class Builder {
 
-        static final Constants CONSTANTS = GWT.create(Constants.class);
-
         private final String title;
-        private final LinkedHashMap<String, ItemAction<StaticItem>> actions;
+        private final List<ItemAction<CustomItem>> actions;
         private boolean folder;
-        private SelectCallback<StaticItem> selectCallback;
+        private SelectCallback<CustomItem> selectCallback;
         private PreviewContent previewContent;
 
         public Builder(final String title) {
             this.title = title;
-            this.actions = new LinkedHashMap<>();
+            this.actions = new ArrayList<>();
             this.folder = false;
         }
 
-        public Builder token(PlaceManager placeManager, String token) {
-            actions.put(CONSTANTS.view(), item -> {
-                PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token).build();
-                placeManager.revealPlace(placeRequest);
-            });
+        public Builder action(String title, ItemActionHandler<CustomItem> action) {
+            actions.add(new ItemAction<>(title, action));
             return this;
         }
 
-        public Builder action(String name, ItemAction<StaticItem> action) {
-            actions.put(name, action);
-            return this;
+        public Builder tokenAction(String title, PlaceManager placeManager, String token) {
+            return placeRequestAction(title, placeManager, new PlaceRequest.Builder().nameToken(token).build());
+        }
+
+        public Builder placeRequestAction(String title, PlaceManager placeManager, PlaceRequest placeRequest) {
+            return action(title, item -> placeManager.revealPlace(placeRequest));
         }
 
         public Builder folder() {
@@ -67,7 +66,7 @@ public class StaticItem {
             return this;
         }
 
-        public Builder onSelect(SelectCallback<StaticItem> selectCallback) {
+        public Builder onSelect(SelectCallback<CustomItem> selectCallback) {
             this.selectCallback = selectCallback;
             return this;
         }
@@ -77,19 +76,19 @@ public class StaticItem {
             return this;
         }
 
-        public StaticItem build() {
-            return new StaticItem(this);
+        public CustomItem build() {
+            return new CustomItem(this);
         }
     }
 
 
     private final String title;
-    private final LinkedHashMap<String, ItemAction<StaticItem>> actions;
+    private final List<ItemAction<CustomItem>> actions;
     private final boolean folder;
-    private final SelectCallback<StaticItem> selectCallback;
+    private final SelectCallback<CustomItem> selectCallback;
     private final PreviewContent previewContent;
 
-    StaticItem(Builder builder) {
+    CustomItem(Builder builder) {
         this.title = builder.title;
         this.actions = builder.actions;
         this.folder = builder.folder;
@@ -97,7 +96,7 @@ public class StaticItem {
         this.previewContent = builder.previewContent;
     }
 
-    public LinkedHashMap<String, ItemAction<StaticItem>> getActions() {
+    public List<ItemAction<CustomItem>> getActions() {
         return actions;
     }
 
@@ -109,7 +108,7 @@ public class StaticItem {
         return previewContent;
     }
 
-    public SelectCallback<StaticItem> getSelectCallback() {
+    public SelectCallback<CustomItem> getSelectCallback() {
         return selectCallback;
     }
 

@@ -83,7 +83,7 @@ public final class ModelNodeHelper {
     }
 
     /**
-     * Turns a list of properties into a list of model nodes which contain a {@link
+     * Turns a list of properties into a list of model nodes which contains a {@link
      * org.jboss.hal.resources.Names#NAME_KEY} key with the properties name.
      */
     public static List<ModelNode> asNodesWithNames(List<Property> properties) {

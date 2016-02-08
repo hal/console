@@ -21,7 +21,6 @@
  */
 package org.jboss.hal.client.homepage;
 
-import com.gwtplatform.mvp.client.ViewImpl;
 import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 import elemental.client.Browser;
 import elemental.dom.Document;
@@ -29,6 +28,7 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
+import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -44,7 +44,7 @@ import static org.jboss.hal.resources.CSS.*;
 /**
  * @author Harald Pehl
  */
-public class HomepageView extends ViewImpl implements HomepagePresenter.MyView {
+public class HomepageView extends PatternFlyViewImpl implements HomepagePresenter.MyView {
 
     private HomepagePresenter presenter;
 

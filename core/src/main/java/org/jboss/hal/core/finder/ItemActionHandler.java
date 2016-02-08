@@ -22,11 +22,11 @@
 package org.jboss.hal.core.finder;
 
 /**
- * Function which generates the preview content for an item.
+ * Action handler for an item.
  *
  * @author Harald Pehl
  */
-public interface PreviewCallback<T> {
+public interface ItemActionHandler<T> {
 
-    PreviewContent onPreview(T item);
+    void execute(T item);
 }

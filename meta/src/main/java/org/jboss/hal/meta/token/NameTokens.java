@@ -27,13 +27,15 @@ public interface NameTokens {
 
     String ACCESS_CONTROL = "/access-control";
     String BATCH = "/configuration/{profile}/batch";
-    String CONFIGURATION = "/configuration";
+    String CONFIGURATION = "/configuration/{path}";
     String DATASOURCE = "/configuration/{profile}/datasource";
     String DEPLOYMENTS = "/deployments";
     String HOMEPAGE = "/home";
+    String INTERFACE = "/interface/{interface}";
     String PATCHING = "/patching";
     String PATH = "/path";
     String RUNTIME = "/runtime";
+    String SOCKET_BINDING = "/socket-binding/{socket-binding}";
     String SYSTEM_PROPERTIES = "/system-properties";
     String UNDER_THE_BRIDGE = "/utb";
 

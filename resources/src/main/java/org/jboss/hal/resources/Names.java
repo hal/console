@@ -42,6 +42,7 @@ public interface Names {
     String HAS_POPUP = "haspopup";
     String HIDDEN = "hidden";
     String HOST = "host";
+    String interfce = "interface";
     String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";
     String JNDI_NAME = "jndi-name";
@@ -66,6 +67,7 @@ public interface Names {
     String SERVER = "server";
     String SERVER_GROUP = "server-group";
     String SELECTED = "selected";
+    String socketBinding = "socket-binding";
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDINGS = "Socket Bindings";
     String SUBSYSTEM = "Subsystem";
