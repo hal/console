@@ -22,69 +22,79 @@
 package org.jboss.hal.core.finder;
 
 import com.google.gwt.inject.client.AsyncProvider;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import static org.jboss.hal.core.finder.ColumnRegistry.LookupResult.*;
 
 /**
  * @author Harald Pehl
  */
 public class ColumnRegistry {
 
-    private static class AsyncColumn {
+    public enum LookupResult {ASYNC, READY, UNKNOWN}
 
-        final String id;
-        final FinderColumn column;
-        final AsyncProvider<List> itemProvider;
 
-        private AsyncColumn(final FinderColumn column, final AsyncProvider<List> itemProvider) {
-            this.id = column.getId();
-            this.column = column;
-            this.itemProvider = itemProvider;
-        }
+    @FunctionalInterface
+    public interface ColumnReadyCallback {
 
-        @Override
-        public boolean equals(final Object o) {
-            if (this == o) { return true; }
-            if (!(o instanceof AsyncColumn)) { return false; }
-
-            AsyncColumn that = (AsyncColumn) o;
-
-            return id.equals(that.id);
-
-        }
-
-        @Override
-        public int hashCode() {
-            return id.hashCode();
-        }
+        void ready(FinderColumn column);
     }
 
 
-    private final Map<String, AsyncColumn> columns;
+    private static final Logger logger = LoggerFactory.getLogger(ColumnRegistry.class);
+
+    private final Map<String, FinderColumn> columns;
+    private final Map<String, AsyncProvider> asyncColumns;
 
     public ColumnRegistry() {
         columns = new HashMap<>();
+        asyncColumns = new HashMap<>();
     }
 
-    public void registerColumn(FinderColumn column, AsyncProvider<List> itemProvider) {
-        columns.put(column.getId(), new AsyncColumn(column, itemProvider));
+    public void registerColumn(FinderColumn column) {
+        columns.put(column.getId(), column);
+    }
+
+    public <C extends FinderColumn> void registerColumn(String id, AsyncProvider<C> column) {
+        asyncColumns.put(id, column);
     }
 
     public FinderColumn getColumn(String id) {
-        AsyncColumn asyncColumn = columns.get(id);
-        if (asyncColumn != null) {
-            return asyncColumn.column;
-        }
-        return null;
+        return columns.get(id);
     }
 
-    public AsyncProvider<List> getItemProvider(String id) {
-        AsyncColumn asyncColumn = columns.get(id);
-        if (asyncColumn != null) {
-            return asyncColumn.itemProvider;
+    public LookupResult lookup(String id) {
+        if (columns.containsKey(id)) {
+            return READY;
+        } else if (asyncColumns.containsKey(id)) {
+            return ASYNC;
+        } else {
+            return UNKNOWN;
         }
-        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void loadColumn(String id, ColumnReadyCallback callback) {
+        if (asyncColumns.containsKey(id)) {
+            AsyncProvider<FinderColumn> asyncProvider = asyncColumns.get(id);
+            asyncProvider.get(new AsyncCallback<FinderColumn>() {
+                @Override
+                public void onFailure(final Throwable throwable) {
+                    logger.error("Unable to load column {}: {}", id, throwable.getMessage()); //NON-NLS
+                }
+
+                @Override
+                public void onSuccess(final FinderColumn column) {
+                    asyncColumns.remove(id);
+                    registerColumn(column);
+                    callback.ready(column);
+                }
+            });
+        }
     }
 }

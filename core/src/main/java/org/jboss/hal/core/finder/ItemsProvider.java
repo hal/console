@@ -21,38 +21,15 @@
  */
 package org.jboss.hal.core.finder;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import java.util.List;
 
 /**
- * The finder column for {@link CustomItem}.
- *
  * @author Harald Pehl
  */
-public class CustomItemColumn extends FinderColumn<CustomItem> {
+@FunctionalInterface
+public interface ItemsProvider<T> {
 
-    public CustomItemColumn(final Finder finder, final String id, String title) {
-        super(new Builder<CustomItem>(finder, id, title,
-                item -> new ItemDisplay<CustomItem>() {
-                    @Override
-                    public String getTitle() {
-                        return item.getTitle();
-                    }
-
-                    @Override
-                    public List<ItemAction<CustomItem>> actions() {
-                        return item.getActions();
-                    }
-
-                    @Override
-                    public boolean isFolder() {
-                        return item.isFolder();
-                    }
-                })
-                .onPreview(CustomItem::getPreviewContent)
-                .onSelect(item -> {
-                    if (item.getSelectCallback() != null) {
-                        item.getSelectCallback().onSelect(item);
-                    }
-                }));
-    }
+    void get(FinderContext context, AsyncCallback<List<T>> callback);
 }

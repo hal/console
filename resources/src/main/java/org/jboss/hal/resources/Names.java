@@ -42,8 +42,8 @@ public interface Names {
     String HAS_POPUP = "haspopup";
     String HIDDEN = "hidden";
     String HOST = "host";
-    String interfce = "interface";
     String INTERFACE = "Interface";
+    String INTERFACE_RESOURCE = "interface";
     String INTERFACES = "Interfaces";
     String JNDI_NAME = "jndi-name";
     String LABEL = "label";

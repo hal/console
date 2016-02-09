@@ -26,7 +26,6 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import org.jboss.hal.ballroom.LabelBuilder;
-import org.jboss.hal.core.finder.ColumnRegistry;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
@@ -48,7 +47,6 @@ import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 import static org.jboss.hal.resources.Names.NYI;
-import static org.jboss.hal.resources.Names.interfce;
 
 /**
  * @author Harald Pehl
@@ -57,7 +55,6 @@ public class InterfaceColumn extends FinderColumn<Property> {
 
     @Inject
     public InterfaceColumn(final Finder finder,
-            final ColumnRegistry columnRegistry,
             final Resources resources,
             final PlaceManager placeManager,
             final Dispatcher dispatcher) {
@@ -76,18 +73,18 @@ public class InterfaceColumn extends FinderColumn<Property> {
                                         p -> placeManager.revealPlace(
                                                 new PlaceRequest.Builder()
                                                         .nameToken(NameTokens.INTERFACE)
-                                                        .with(interfce, p.getName())
+                                                        .with(Names.INTERFACE_RESOURCE, p.getName())
                                                         .build())),
                                 new ItemAction<>(resources.constants().remove(),
                                         p -> Browser.getWindow().alert(Names.NYI)));
                     }
                 })
+                .itemsProvider((context, callback) -> {
+                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
+                            .param(CHILD_TYPE, Names.INTERFACE_RESOURCE).build();
+                    dispatcher.execute(operation, result -> { callback.onSuccess(result.asPropertyList()); });
+                })
                 .onPreview(property -> new PreviewContent(new LabelBuilder().label(property),
                         SafeHtmlUtils.fromString(NYI))));
-
-        Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
-                .param(CHILD_TYPE, interfce).build();
-        columnRegistry.registerColumn(this,
-                callback -> dispatcher.execute(operation, result -> { callback.onSuccess(result.asPropertyList()); }));
     }
 }

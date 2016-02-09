@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core;
+package org.jboss.hal.core.finder;
 
 import com.google.common.base.Joiner;
 
@@ -52,7 +52,7 @@ public class Breadcrumb implements Iterable<Breadcrumb.Segment> {
         return new Breadcrumb(new ArrayList<>());
     }
 
-    public static Breadcrumb of(String[][] segments) {
+    public static Breadcrumb from(String[][] segments) {
         List<Segment> s = new ArrayList<>();
         for (String[] segment : segments) {
             s.add(new Segment(segment[0], segment[1]));
@@ -78,6 +78,8 @@ public class Breadcrumb implements Iterable<Breadcrumb.Segment> {
     public boolean isEmpty() {return segments.isEmpty();}
 
     public int size() {return segments.size();}
+
+    public void clear() {segments.clear();}
 
     @Override
     public String toString() {

@@ -46,7 +46,7 @@ import static org.jboss.hal.resources.Names.ROLE;
 
 /**
  * Describes and renders a column in a finder. A column has a unique id, a title, a number of optional column actions
- * and an {@link ItemCallback} which defines how the items of this column are rendered.
+ * and an {@link ItemRenderer} which defines how the items of this column are rendered.
  *
  * @param <T> The columns type.
  * @author Harald Pehl
@@ -58,22 +58,24 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         private final Finder finder;
         private final String id;
         private final String title;
-        private final ItemCallback<T> itemCallback;
+        private final ItemRenderer<T> itemRenderer;
         private final List<ColumnAction<T>> columnActions;
         private boolean showCount;
         private boolean withFilter;
-        private SelectCallback<T> selectCallback;
         private PreviewCallback<T> previewCallback;
+        private List<T> items;
+        private ItemsProvider<T> itemsProvider;
 
         public Builder(final Finder finder, final String id, final String title,
-                final ItemCallback<T> itemCallback) {
+                final ItemRenderer<T> itemRenderer) {
             this.finder = finder;
             this.id = id;
             this.title = title;
-            this.itemCallback = itemCallback;
+            this.itemRenderer = itemRenderer;
             this.columnActions = new ArrayList<>();
             this.showCount = false;
             this.withFilter = false;
+            this.items = new ArrayList<>();
         }
 
         public Builder<T> columnAction(String title, ColumnActionHandler<T> action) {
@@ -106,8 +108,15 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             return this;
         }
 
-        public Builder<T> onSelect(SelectCallback<T> selectCallback) {
-            this.selectCallback = selectCallback;
+        public Builder<T> initialItems(List<T> items) {
+            if (items != null && !items.isEmpty()) {
+                this.items.addAll(items);
+            }
+            return this;
+        }
+
+        public Builder<T> itemsProvider(ItemsProvider<T> itemsProvider) {
+            this.itemsProvider = itemsProvider;
             return this;
         }
 
@@ -131,8 +140,9 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     private final String id;
     private final String title;
     private final boolean showCount;
-    private final ItemCallback<T> itemCallback;
-    private final SelectCallback<T> selectCallback;
+    private final ItemRenderer<T> itemRenderer;
+    private final List<T> initialItems;
+    private final ItemsProvider<T> itemsProvider;
     private final PreviewCallback<T> previewCallback;
     private final List<FinderRow<T>> rows;
 
@@ -147,8 +157,9 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         this.id = builder.id;
         this.title = builder.title;
         this.showCount = builder.showCount;
-        this.itemCallback = builder.itemCallback;
-        this.selectCallback = builder.selectCallback;
+        this.itemRenderer = builder.itemRenderer;
+        this.initialItems = builder.items;
+        this.itemsProvider = builder.itemsProvider;
         this.previewCallback = builder.previewCallback;
         this.rows = new ArrayList<>();
 
@@ -254,7 +265,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
     }
 
-    public void setItems(List<T> items) {
+    void setItems(List<T> items) {
         rows.clear();
         Elements.removeChildrenFrom(ulElement);
         if (filterElement != null) {
@@ -263,7 +274,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
         for (T item : items) {
             FinderRow<T> row = new FinderRow<>(finder, this, item,
-                    itemCallback.render(item), selectCallback, previewCallback);
+                    itemRenderer.render(item), previewCallback);
             rows.add(row);
             ulElement.appendChild(row.asElement());
         }
@@ -290,5 +301,13 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
     public String getTitle() {
         return title;
+    }
+
+    public List<T> getInitialItems() {
+        return initialItems;
+    }
+
+    public ItemsProvider<T> getItemsProvider() {
+        return itemsProvider;
     }
 }

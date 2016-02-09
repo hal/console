@@ -25,7 +25,6 @@ import com.google.gwt.core.client.GWT;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.Constants;
@@ -54,11 +53,10 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
             final FinderColumn<T> column,
             final T item,
             final ItemDisplay<T> display,
-            final SelectCallback<T> selectCallback,
             final PreviewCallback<T> previewCallback) {
 
         Elements.Builder eb = new Elements.Builder().li()
-                .id(IdBuilder.build(column.getId(), display.getId()))
+                .id(display.getId())
                 .data(BREADCRUMB_VALUE, display.getTitle())
                 .data(filter, display.getFilterData());
 
@@ -80,7 +78,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
             eb.span().css(itemText).innerText(NOT_AVAILABLE).end();
         }
 
-        if (display.isFolder()) {
+        if (display.nextColumn() != null) {
             eb.span().css(folder, fontAwesome("angle-right")).rememberAs(FOLDER_ELEMENT).end();
         }
 
@@ -134,7 +132,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         eb.end(); // </li>
 
         root = eb.build();
-        folderElement = display.isFolder() ? eb.referenceFor(FOLDER_ELEMENT) : null;
+        folderElement = display.nextColumn() != null ? eb.referenceFor(FOLDER_ELEMENT) : null;
         buttonContainer = display.actions().isEmpty() ? null : eb.referenceFor(BUTTON_CONTAINER);
         Elements.setVisible(buttonContainer, false);
 
@@ -161,12 +159,15 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                         }
                     }
 
+                    // <keep> this in order!
                     finder.reduceTo(column);
-                    finder.navigate();
-
-                    if (selectCallback != null) {
-                        selectCallback.onSelect(item);
+                    finder.updateContext();
+                    finder.firePlaceRequest();
+                    if (display.nextColumn() != null) {
+                        finder.appendColumn(display.nextColumn());
                     }
+                    // </keep>
+
                     if (previewCallback != null) {
                         PreviewContent content = previewCallback.onPreview(item);
                         finder.preview(content);

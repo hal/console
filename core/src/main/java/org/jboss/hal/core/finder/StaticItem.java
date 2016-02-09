@@ -32,23 +32,21 @@ import java.util.List;
  *
  * @author Harald Pehl
  */
-public class CustomItem {
+public class StaticItem {
 
     public static class Builder {
 
         private final String title;
-        private final List<ItemAction<CustomItem>> actions;
-        private boolean folder;
-        private SelectCallback<CustomItem> selectCallback;
+        private final List<ItemAction<StaticItem>> actions;
         private PreviewContent previewContent;
+        private String nextColumn;
 
         public Builder(final String title) {
             this.title = title;
             this.actions = new ArrayList<>();
-            this.folder = false;
         }
 
-        public Builder action(String title, ItemActionHandler<CustomItem> action) {
+        public Builder action(String title, ItemActionHandler<StaticItem> action) {
             actions.add(new ItemAction<>(title, action));
             return this;
         }
@@ -61,13 +59,8 @@ public class CustomItem {
             return action(title, item -> placeManager.revealPlace(placeRequest));
         }
 
-        public Builder folder() {
-            this.folder = true;
-            return this;
-        }
-
-        public Builder onSelect(SelectCallback<CustomItem> selectCallback) {
-            this.selectCallback = selectCallback;
+        public Builder nextColumn(String nextColumn) {
+            this.nextColumn = nextColumn;
             return this;
         }
 
@@ -76,43 +69,37 @@ public class CustomItem {
             return this;
         }
 
-        public CustomItem build() {
-            return new CustomItem(this);
+        public StaticItem build() {
+            return new StaticItem(this);
         }
     }
 
 
     private final String title;
-    private final List<ItemAction<CustomItem>> actions;
-    private final boolean folder;
-    private final SelectCallback<CustomItem> selectCallback;
+    private final List<ItemAction<StaticItem>> actions;
+    private final String nextColumn;
     private final PreviewContent previewContent;
 
-    CustomItem(Builder builder) {
+    StaticItem(Builder builder) {
         this.title = builder.title;
         this.actions = builder.actions;
-        this.folder = builder.folder;
-        this.selectCallback = builder.selectCallback;
+        this.nextColumn = builder.nextColumn;
         this.previewContent = builder.previewContent;
     }
 
-    public List<ItemAction<CustomItem>> getActions() {
+    public List<ItemAction<StaticItem>> getActions() {
         return actions;
-    }
-
-    public boolean isFolder() {
-        return folder;
     }
 
     public PreviewContent getPreviewContent() {
         return previewContent;
     }
 
-    public SelectCallback<CustomItem> getSelectCallback() {
-        return selectCallback;
-    }
-
     public String getTitle() {
         return title;
+    }
+
+    public String getNextColumn() {
+        return nextColumn;
     }
 }

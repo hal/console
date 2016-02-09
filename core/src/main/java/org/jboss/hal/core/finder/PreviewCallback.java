@@ -26,6 +26,7 @@ package org.jboss.hal.core.finder;
  *
  * @author Harald Pehl
  */
+@FunctionalInterface
 public interface PreviewCallback<T> {
 
     PreviewContent onPreview(T item);

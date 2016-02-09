@@ -21,12 +21,34 @@
  */
 package org.jboss.hal.core.finder;
 
+import java.util.List;
+
 /**
- * Function which turns an item into an {@link ItemCallback}.
+ * The finder column for {@link StaticItem}.
  *
  * @author Harald Pehl
  */
-public interface ItemCallback<T> {
+public class StaticItemColumn extends FinderColumn<StaticItem> {
 
-    ItemDisplay<T> render(T item);
+    public StaticItemColumn(final Finder finder, final String id, String title, List<StaticItem> items) {
+        super(new Builder<StaticItem>(finder, id, title,
+                item -> new ItemDisplay<StaticItem>() {
+                    @Override
+                    public String getTitle() {
+                        return item.getTitle();
+                    }
+
+                    @Override
+                    public List<ItemAction<StaticItem>> actions() {
+                        return item.getActions();
+                    }
+
+                    @Override
+                    public String nextColumn() {
+                        return item.getNextColumn();
+                    }
+                })
+                .initialItems(items)
+                .onPreview(StaticItem::getPreviewContent));
+    }
 }

@@ -62,7 +62,7 @@ public class FinderPath implements Iterable<FinderPath.Segment> {
         return new FinderPath(new ArrayList<>());
     }
 
-    public static FinderPath of(String path) {
+    public static FinderPath from(String path) {
         List<Segment> s = new ArrayList<>();
         Map<String, String> segments = Splitter.on('/').withKeyValueSeparator('=').split(path);
         for (Map.Entry<String, String> entry : segments.entrySet()) {
@@ -89,6 +89,15 @@ public class FinderPath implements Iterable<FinderPath.Segment> {
     public boolean isEmpty() {return segments.isEmpty();}
 
     public int size() {return segments.size();}
+
+    public Segment last() {
+        if (!isEmpty()) {
+            return segments.get(segments.size() - 1);
+        }
+        return null;
+    }
+
+    public void clear() {segments.clear();}
 
     @Override
     public String toString() {

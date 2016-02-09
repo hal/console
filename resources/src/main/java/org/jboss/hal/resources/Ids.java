@@ -23,7 +23,7 @@ package org.jboss.hal.resources;
  */
 public interface Ids {
 
-    String CONFIGURATION_COLUMN = "configuration-column";
+    String CONFIGURATION_COLUMN = "config";
 
     String DATA_SOURCE_ATTRIBUTES_FORM = "data-source-attributes-form";
     String DATA_SOURCE_ATTRIBUTES_TAB = "data-source-attributes-tab";
@@ -51,12 +51,12 @@ public interface Ids {
     String HOMEPAGE_RUNTIME_SERVER_SECTION = "homepage-runtime-server-section";
     String HOMEPAGE_RUNTIME_SERVER_GROUP_SECTION = "homepage-runtime-server-group-section";
 
-    String INTERFACE_COLUMN = "interface-column";
+    String INTERFACE_COLUMN = "interface";
     String PATHS_FORM = "paths-form";
     String PATHS_TABLE = "paths-table";
     String ROOT_CONTAINER = "hal-root-container";
-    String SOCKET_BINDING_COLUMN = "socket-binding-column";
-    String SUBSYSTEM_COLUMN = "subsystem-column";
+    String SOCKET_BINDING_COLUMN = "socket-binding";
+    String SUBSYSTEM_COLUMN = "subsystem";
 
     String TLC_ACCESS_CONTROL = "tlc-access-control";
     String TLC_CONFIGURATION = "tlc-configuration";

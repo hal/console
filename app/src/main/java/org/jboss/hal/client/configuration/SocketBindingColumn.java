@@ -51,8 +51,6 @@ import static org.jboss.hal.resources.Names.*;
  */
 public class SocketBindingColumn extends FinderColumn<Property> {
 
-    private final Dispatcher dispatcher;
-
     @Inject
     public SocketBindingColumn(final Finder finder,
             final Resources resources,
@@ -77,19 +75,12 @@ public class SocketBindingColumn extends FinderColumn<Property> {
                                                         .build())));
                     }
                 })
+                .itemsProvider((context, callback) -> {
+                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
+                            .param(CHILD_TYPE, "socket-binding-group").build();
+                    dispatcher.execute(operation, result -> { callback.onSuccess(result.asPropertyList()); });
+                })
                 .onPreview(property -> new PreviewContent(new LabelBuilder().label(property),
                         SafeHtmlUtils.fromString(NYI))));
-
-        this.dispatcher = dispatcher;
-        load();
-    }
-
-    private void load() {
-        Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
-                .param(CHILD_TYPE, "socket-binding-group").build();
-        dispatcher.execute(operation, result -> {
-            setItems(result.asPropertyList());
-        });
-
     }
 }

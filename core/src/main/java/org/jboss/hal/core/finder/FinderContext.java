@@ -22,12 +22,28 @@
 package org.jboss.hal.core.finder;
 
 /**
- * Action handler for an item.
- *
  * @author Harald Pehl
  */
-@FunctionalInterface
-public interface ItemActionHandler<T> {
+public class FinderContext {
 
-    void execute(T item);
+    private final FinderPath path;
+    private final Breadcrumb breadcrumb;
+
+    public FinderContext() {
+        path = FinderPath.empty();
+        breadcrumb = Breadcrumb.empty();
+    }
+
+    public void reset() {
+        path.clear();
+        breadcrumb.clear();
+    }
+
+    public FinderPath getPath() {
+        return path;
+    }
+
+    public Breadcrumb getBreadcrumb() {
+        return breadcrumb;
+    }
 }

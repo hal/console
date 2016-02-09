@@ -89,7 +89,7 @@ public class InterfacePresenter extends
 
     @Override
     public void prepareFromRequest(final PlaceRequest request) {
-        interfce = request.getParameter(Names.interfce, null);
+        interfce = request.getParameter(Names.INTERFACE_RESOURCE, null);
     }
 
     @Override

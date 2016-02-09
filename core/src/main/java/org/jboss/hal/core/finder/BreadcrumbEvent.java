@@ -21,12 +21,41 @@
  */
 package org.jboss.hal.core.finder;
 
+import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
+
 /**
- * A callback when an item is selected.
- *
  * @author Harald Pehl
  */
-public interface SelectCallback<T> {
+public class BreadcrumbEvent extends GwtEvent<BreadcrumbEvent.BreadcrumbHandler> {
 
-    void onSelect(T item);
+    public interface BreadcrumbHandler extends EventHandler {
+
+        void onBreadcrumb(BreadcrumbEvent event);
+    }
+
+
+    private static final Type<BreadcrumbHandler> TYPE = new Type<>();
+
+    public static Type<BreadcrumbHandler> getType() {
+        return TYPE;
+    }
+
+    private final Breadcrumb breadcrumb;
+
+    public BreadcrumbEvent(final Breadcrumb breadcrumb) {this.breadcrumb = breadcrumb;}
+
+    public Breadcrumb getBreadcrumb() {
+        return breadcrumb;
+    }
+
+    @Override
+    protected void dispatch(BreadcrumbHandler handler) {
+        handler.onBreadcrumb(this);
+    }
+
+    @Override
+    public Type<BreadcrumbHandler> getAssociatedType() {
+        return TYPE;
+    }
 }

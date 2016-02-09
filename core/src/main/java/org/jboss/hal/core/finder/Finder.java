@@ -21,25 +21,18 @@
  */
 package org.jboss.hal.core.finder;
 
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.gwt.flow.Outcome;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.IdBuilder;
-import org.jboss.hal.core.Breadcrumb;
-import org.jboss.hal.core.BreadcrumbEvent;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
@@ -54,6 +47,8 @@ import java.util.Map;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.lang.Math.min;
+import static org.jboss.hal.core.finder.ColumnRegistry.LookupResult.ASYNC;
+import static org.jboss.hal.core.finder.ColumnRegistry.LookupResult.READY;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Ids.FINDER;
 
@@ -77,31 +72,32 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             FinderColumn column = columnRegistry.getColumn(segment.getKey());
             if (column != null) {
                 appendColumn(column);
-                AsyncProvider<List> itemProvider = columnRegistry.getItemProvider(segment.getKey());
-                if (itemProvider != null) {
-                    itemProvider.get(new AsyncCallback<List>() {
-                        @Override
-                        public void onFailure(final Throwable throwable) {
-                            control.abort();
-                        }
-
-                        @Override
-                        public void onSuccess(final List list) {
-                            //noinspection unchecked
-                            column.setItems(list);
-                            column.markSelected(segment.getValue());
-                            control.proceed();
-                        }
-                    });
-                } else {
-                    control.proceed();
-                }
+                //                AsyncProvider<List> itemProvider = columnRegistry.getItemProvider(segment.getKey());
+                //                if (itemProvider != null) {
+                //                    itemProvider.get(new AsyncCallback<List>() {
+                //                        @Override
+                //                        public void onFailure(final Throwable throwable) {
+                //                            control.abort();
+                //                        }
+                //
+                //                        @Override
+                //                        public void onSuccess(final List list) {
+                //                            //noinspection unchecked
+                //                            column.setItems(list);
+                //                            column.markSelected(segment.getValue());
+                //                            control.proceed();
+                //                        }
+                //                    });
+                //                } else {
+                control.proceed();
+                //                }
 
             } else {
                 control.abort();
             }
         }
     }
+
 
     /**
      * The maximum number of visible columns. If there are more columns given the first column is hidden when column
@@ -120,10 +116,11 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     private final EventBus eventBus;
     private final ColumnRegistry columnRegistry;
     private final String id;
+    private final FinderContext context;
     private final Map<String, FinderColumn> columns;
     private final Element root;
     private final Element previewColumn;
-    private String token;
+    private String finderToken; // the token of the presenter containing the finder
 
 
     // ------------------------------------------------------ ui setup
@@ -135,7 +132,9 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         this.placeManager = placeManager;
         this.eventBus = eventBus;
         this.columnRegistry = columnRegistry;
+
         this.id = FINDER;
+        this.context = new FinderContext();
         this.columns = new HashMap<>();
 
         // @formatter:off
@@ -209,7 +208,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         }
     }
 
-    void navigate() {
+    void updateContext() {
         FinderPath path = FinderPath.empty();
         Breadcrumb breadcrumb = Breadcrumb.empty();
         for (Element column : Elements.children(root)) {
@@ -230,39 +229,74 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 }
             }
         }
-        if (token != null) {
-            PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token).with("path", path.toString())
-                    .build();
-            placeManager.updateHistory();
-            placeManager.revealPlace(placeRequest);
-        }
-        eventBus.fireEvent(new BreadcrumbEvent(breadcrumb));
+//        if (finderToken != null) {
+//            PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(finderToken).with("path", path.toString())
+//                    .build();
+//            placeManager.revealPlace(placeRequest);
+//        }
+//        eventBus.fireEvent(new BreadcrumbEvent(breadcrumb));
+    }
+
+    void firePlaceRequest() {
+
     }
 
 
     // ------------------------------------------------------ public interface
 
-    public void reset(final String token,
-            final FinderColumn initialColumn, final PreviewContent initialPreview) {
-
-        this.token = token;
+    public void reset(final String finderToken, final String initialColumn, final PreviewContent initialPreview) {
+        this.finderToken = finderToken;
         while (root.getFirstChild() != previewColumn) {
             root.removeChild(root.getFirstChild());
         }
+        context.reset();
         appendColumn(initialColumn);
         preview(initialPreview);
     }
 
-    public void appendColumn(FinderColumn column) {
+    public void appendColumn(String columnId) {
+        ColumnRegistry.LookupResult lookupResult = columnRegistry.lookup(columnId);
+        if (lookupResult == READY) {
+            appendColumn(columnRegistry.getColumn(columnId));
+
+        } else if (lookupResult == ASYNC) {
+            columnRegistry.loadColumn(columnId, this::appendColumn);
+
+        } else {
+            //noinspection HardCodedStringLiteral
+            logger.error("Unknown column '{}'. Please make sure to register all columns in the column registry, before appending them.");
+        }
+    }
+
+    private <T> void appendColumn(FinderColumn<T> column) {
         columns.put(column.getId(), column);
         root.insertBefore(column.asElement(), previewColumn);
 
         int columns = root.getChildren().length() - 1;
         int previewSize = MAX_COLUMNS - 2 * min(columns, MAX_VISIBLE_COLUMNS);
         previewColumn.setClassName(finderPreview + " " + column(previewSize));
+
+        if (!column.getInitialItems().isEmpty()) {
+            column.setItems(column.getInitialItems());
+
+        } else if (column.getItemsProvider() != null) {
+            column.getItemsProvider().get(context, new AsyncCallback<List<T>>() {
+                @Override
+                public void onFailure(final Throwable throwable) {
+                    //noinspection HardCodedStringLiteral
+                    logger.error("Unable to provide items for column '{}': {}", column.getId(), throwable.getMessage());
+                }
+
+                @Override
+                public void onSuccess(final List<T> items) {
+                    column.setItems(items);
+                }
+            });
+        }
     }
 
     public void select(FinderPath path) {
+/*
         if (!path.isEmpty()) {
 
             int index = 0;
@@ -281,6 +315,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                         public void onSuccess(final FunctionContext context) {}
                     }, functions);
         }
+*/
     }
 
     @Override

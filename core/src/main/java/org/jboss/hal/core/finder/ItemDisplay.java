@@ -38,6 +38,7 @@ import java.util.List;
  *
  * @author Harald Pehl
  */
+@FunctionalInterface
 public interface ItemDisplay<T> extends IsElement {
 
     String getTitle();
@@ -50,15 +51,6 @@ public interface ItemDisplay<T> extends IsElement {
     default String getId() {
         Iterable<String> parts = Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings().trimResults().split(getTitle());
         return FluentIterable.from(parts).transform(String::toLowerCase).join(Joiner.on('-'));
-    }
-
-    /**
-     * If this method returns an element != {@code null} this element is used to display the item.
-     *
-     * @return {@code null} by default
-     */
-    default Element asElement() {
-        return null;
     }
 
     /**
@@ -89,12 +81,12 @@ public interface ItemDisplay<T> extends IsElement {
     }
 
     /**
-     * Whether this item is a folder or not.
+     * Whether this item triggers a next column (hence is a folder not a leaf).
      *
-     * @return {@code false} by default
+     * @return {@code null} by default
      */
-    default boolean isFolder() {
-        return false;
+    default String nextColumn() {
+        return null;
     }
 
     /**
@@ -104,5 +96,14 @@ public interface ItemDisplay<T> extends IsElement {
      */
     default List<ItemAction<T>> actions() {
         return new ArrayList<>();
+    }
+
+    /**
+     * If this method returns an element != {@code null} this element is used to display the item.
+     *
+     * @return {@code null} by default
+     */
+    default Element asElement() {
+        return null;
     }
 }

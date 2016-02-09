@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.client.configuration;
 
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
@@ -28,12 +29,12 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.finder.ColumnRegistry;
-import org.jboss.hal.core.finder.CustomItem;
-import org.jboss.hal.core.finder.CustomItemColumn;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.HasFinder;
 import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.core.finder.StaticItem;
+import org.jboss.hal.core.finder.StaticItemColumn;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.core.mvp.TopLevelPresenter;
 import org.jboss.hal.meta.token.NameTokens;
@@ -62,7 +63,7 @@ public class ConfigurationPresenter
 
 
     private final Finder finder;
-    private final CustomItemColumn initialColumn;
+    private final StaticItemColumn initialColumn;
     private final PreviewContent initialPreview;
     private String path;
 
@@ -75,45 +76,50 @@ public class ConfigurationPresenter
             final Resources resources,
             final ColumnRegistry columnRegistry,
             final SubsystemColumn subsystemColumn,
-            final InterfaceColumn interfaceColumn,
-            final SocketBindingColumn socketBindingColumn) {
+            final AsyncProvider<InterfaceColumn> interfaceColumn,
+            final AsyncProvider<SocketBindingColumn> socketBindingColumn) {
         super(eventBus, view, proxy);
         this.finder = finder;
 
-        initialColumn = new CustomItemColumn(finder, Ids.CONFIGURATION_COLUMN, Names.CONFIGURATION);
-        initialColumn.setItems(asList(
-                new CustomItem.Builder(Names.SUBSYSTEMS)
-                        .folder()
-                        .onPreview(new PreviewContent(Names.SUBSYSTEMS,
+        initialColumn = new StaticItemColumn(finder, Ids.CONFIGURATION_COLUMN, Names.CONFIGURATION, asList(
+
+                new StaticItem.Builder(Names.SUBSYSTEMS)
+                        .nextColumn(Ids.SUBSYSTEM_COLUMN)
+                        .onPreview(new PreviewContent(Names.INTERFACES,
                                 fromSafeConstant(resources.previews().subsystems().getText())))
                         .build(),
 
-                new CustomItem.Builder(Names.INTERFACES)
-                        .folder()
+                new StaticItem.Builder(Names.INTERFACES)
+                        .nextColumn(Ids.INTERFACE_COLUMN)
                         .onPreview(new PreviewContent(Names.INTERFACES,
                                 fromSafeConstant(resources.previews().interfaces().getText())))
                         .build(),
 
-                new CustomItem.Builder(Names.SOCKET_BINDINGS)
-                        .folder()
+                new StaticItem.Builder(Names.SOCKET_BINDINGS)
+                        .nextColumn(Ids.SOCKET_BINDING_COLUMN)
                         .onPreview(new PreviewContent(Names.SOCKET_BINDINGS,
                                 fromSafeConstant(resources.previews().socketBindings().getText())))
                         .build(),
 
-                new CustomItem.Builder(Names.PATHS)
+                new StaticItem.Builder(Names.PATHS)
                         .tokenAction(resources.constants().view(), placeManager, NameTokens.PATH)
-                        .onPreview(new PreviewContent(Names.PATHS, fromSafeConstant(resources.previews().paths().getText())))
+                        .onPreview(new PreviewContent(Names.PATHS,
+                                fromSafeConstant(resources.previews().paths().getText())))
                         .build(),
 
-                new CustomItem.Builder(Names.SYSTEM_PROPERTIES)
+                new StaticItem.Builder(Names.SYSTEM_PROPERTIES)
                         .tokenAction(resources.constants().view(), placeManager, NameTokens.SYSTEM_PROPERTIES)
                         .onPreview(new PreviewContent(Names.SYSTEM_PROPERTIES,
                                 fromSafeConstant(resources.previews().systemProperties().getText())))
                         .build()
         ));
-        columnRegistry.registerColumn(initialColumn, null);
         initialPreview = new PreviewContent(Names.CONFIGURATION,
                 fromSafeConstant(resources.previews().standaloneConfiguration().getText()));
+
+        columnRegistry.registerColumn(initialColumn);
+        columnRegistry.registerColumn(subsystemColumn);
+        columnRegistry.registerColumn(Ids.INTERFACE_COLUMN, interfaceColumn);
+        columnRegistry.registerColumn(Ids.SOCKET_BINDING_COLUMN, socketBindingColumn);
     }
 
     @Override
@@ -131,9 +137,9 @@ public class ConfigurationPresenter
     protected void onReset() {
         super.onReset();
         if (path != null) {
-            finder.select(FinderPath.of(path));
+            finder.select(FinderPath.from(path));
         } else {
-            finder.reset(getProxy().getNameToken(), initialColumn, initialPreview);
+            finder.reset(getProxy().getNameToken(), Ids.CONFIGURATION_COLUMN, initialPreview);
         }
     }
 }
