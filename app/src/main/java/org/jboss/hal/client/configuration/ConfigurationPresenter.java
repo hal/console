@@ -85,7 +85,7 @@ public class ConfigurationPresenter
 
                 new StaticItem.Builder(Names.SUBSYSTEMS)
                         .nextColumn(Ids.SUBSYSTEM_COLUMN)
-                        .onPreview(new PreviewContent(Names.INTERFACES,
+                        .onPreview(new PreviewContent(Names.SUBSYSTEMS,
                                 fromSafeConstant(resources.previews().subsystems().getText())))
                         .build(),
 

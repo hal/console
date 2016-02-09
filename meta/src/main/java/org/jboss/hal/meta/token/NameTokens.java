@@ -29,7 +29,7 @@ public interface NameTokens {
     String BATCH = "/configuration/{profile}/batch";
     String CONFIGURATION = "/config/finder/{path}";
     String DATASOURCE = "/config/app/{profile}/datasource";
-    String DEPLOYMENTS = "/deployments/{path}";
+    String DEPLOYMENTS = "/deployments";
     String HOMEPAGE = "/home";
     String INTERFACE = "/interface/{interface}";
     String PATCHING = "/patching";

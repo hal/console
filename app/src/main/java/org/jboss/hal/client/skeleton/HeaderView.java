@@ -96,7 +96,6 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         Element root = asElement();
 
         tlc = new HashMap<>();
-        resources();
         tlc.put(NameTokens.HOMEPAGE, root.querySelector("#" + Ids.TLC_HOMEPAGE));
         tlc.put(NameTokens.DEPLOYMENTS, root.querySelector("#" + Ids.TLC_DEPLOYMENTS));
         tlc.put(NameTokens.CONFIGURATION, root.querySelector("#" + Ids.TLC_CONFIGURATION));

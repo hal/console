@@ -164,7 +164,8 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                     finder.updateContext();
                     finder.firePlaceRequest();
                     if (display.nextColumn() != null) {
-                        finder.appendColumn(display.nextColumn());
+                        finder.appendColumn(display.nextColumn(), null);
+
                     }
                     // </keep>
 
