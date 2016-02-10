@@ -19,19 +19,20 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client;
+package org.jboss.hal.core.mvp;
+
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.Proxy;
+import org.jboss.hal.core.TopLevelCategory;
 
 /**
  * @author Harald Pehl
  */
-public interface NameTokens {
+public class TopLevelPresenter<V extends PatternFlyView, Proxy_ extends Proxy<?>>
+        extends PatternFlyPresenter<V, Proxy_>
+        implements TopLevelCategory {
 
-    String ACCESS_CONTROL = "/access-control";
-    String CONFIGURATION = "/configuration";
-    String DATASOURCE = "/configuration/{profile}/datasource";
-    String DEPLOYMENTS = "/deployments";
-    String HOMEPAGE = "/home";
-    String PATCHING = "/patching";
-    String RUNTIME = "/runtime";
-    String UNDER_THE_BRIDGE = "/utb";
+    public TopLevelPresenter(final EventBus eventBus, final V view, final Proxy_ proxy) {
+        super(eventBus, view, proxy, Slots.MAIN);
+    }
 }

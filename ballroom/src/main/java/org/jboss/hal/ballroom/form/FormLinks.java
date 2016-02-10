@@ -34,6 +34,7 @@ import org.jboss.hal.resources.Constants;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static com.google.gwt.safehtml.shared.SafeHtmlUtils.fromSafeConstant;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Form.Operation.EDIT;
 import static org.jboss.hal.ballroom.form.Form.Operation.RESET;
@@ -135,7 +136,7 @@ class FormLinks<T> implements IsElement {
                 .end()
                 .div().css(column(inputColumns))
                     .p().css(formControlStatic)
-                        .innerText(description)
+                        .innerHtml(fromSafeConstant(description))
                     .end()
                 .end()
             .end().build();

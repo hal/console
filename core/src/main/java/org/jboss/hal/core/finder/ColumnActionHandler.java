@@ -19,43 +19,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core;
-
-import com.google.gwt.event.shared.EventHandler;
-import com.google.gwt.event.shared.GwtEvent;
+package org.jboss.hal.core.finder;
 
 /**
+ * Action handler for a column action.
+ *
  * @author Harald Pehl
  */
-public class BreadcrumbEvent extends GwtEvent<BreadcrumbEvent.BreadcrumbHandler> {
+public interface ColumnActionHandler<T> {
 
-    public interface BreadcrumbHandler extends EventHandler {
-
-        void onBreadcrumb(BreadcrumbEvent event);
-    }
-
-
-    private static final Type<BreadcrumbHandler> TYPE = new Type<>();
-
-    public static Type<BreadcrumbHandler> getType() {
-        return TYPE;
-    }
-
-    private final Breadcrumb breadcrumb;
-
-    public BreadcrumbEvent(final Breadcrumb breadcrumb) {this.breadcrumb = breadcrumb;}
-
-    public Breadcrumb getBreadcrumb() {
-        return breadcrumb;
-    }
-
-    @Override
-    protected void dispatch(BreadcrumbHandler handler) {
-        handler.onBreadcrumb(this);
-    }
-
-    @Override
-    public Type<BreadcrumbHandler> getAssociatedType() {
-        return TYPE;
-    }
+    void execute(FinderColumn<T> column);
 }

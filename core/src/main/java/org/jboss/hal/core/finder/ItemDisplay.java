@@ -21,41 +21,89 @@
  */
 package org.jboss.hal.core.finder;
 
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.collect.FluentIterable;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.spi.Message;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Controls the layout of a finder item <em>w/o</em> the actions. For simple items implement the {@link #getText()}
- * method and let the {@link #asElement()} return {@code null}. If you need a special layout implement the
- * {@link #asElement()} method, but provide a text as well (used for the breadcrumb).
+ * Controls the layout of a finder item. For simple items you only need to implement the {@link #getTitle()} method.
+ * Override the default implementations if you need more control over the display and behaviour of the item.
  *
  * @author Harald Pehl
  */
-public interface ItemDisplay extends IsElement {
+@FunctionalInterface
+public interface ItemDisplay<T> extends IsElement {
 
-    String getText();
+    String getTitle();
 
-    default Element asElement() {
-        return null;
+    /**
+     * An unique id for this item
+     *
+     * @return an id based on {@link #getTitle()}
+     */
+    default String getId() {
+        Iterable<String> parts = Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings().trimResults().split(getTitle());
+        return FluentIterable.from(parts).transform(String::toLowerCase).join(Joiner.on('-'));
     }
 
     /**
-     * The data which is used to filter items. Defaults to {@link #getText()}.
+     * The data which is used to filter items.
+     *
+     * @return {@link #getTitle()} by default
      */
     default String getFilterData() {
-        return getText();
+        return getTitle();
     }
 
+    /**
+     * Whether the item should be decorated with a colorful marker as left border.
+     *
+     * @return {@code null} by default
+     */
     default Message.Level getMarker() {
         return null;
     }
 
+    /**
+     * Whether a tooltip shoudl be shown for the item.
+     *
+     * @return {@code null} by default
+     */
     default String getTooltip() {
         return null;
     }
 
-    default boolean isFolder() {
-        return false;
+    /**
+     * Whether this item triggers a next column (hence is a folder not a leaf).
+     *
+     * @return {@code null} by default
+     */
+    default String nextColumn() {
+        return null;
+    }
+
+    /**
+     * Defines the action(s) available for the item.
+     *
+     * @return an empty map by default.
+     */
+    default List<ItemAction<T>> actions() {
+        return new ArrayList<>();
+    }
+
+    /**
+     * If this method returns an element != {@code null} this element is used to display the item.
+     *
+     * @return {@code null} by default
+     */
+    default Element asElement() {
+        return null;
     }
 }

@@ -21,28 +21,13 @@
  */
 package org.jboss.hal.core.finder;
 
-import elemental.dom.Element;
-
 /**
+ * Function which turns an item into an {@link ItemRenderer}.
+ *
  * @author Harald Pehl
  */
-public class ItemAction<T> {
+@FunctionalInterface
+public interface ItemRenderer<T> {
 
-    final String title;
-    final Element element;
-    final ItemActionHandler<T> handler;
-
-    public ItemAction(final String title, final ItemActionHandler<T> handler) {
-        this(title, null, handler);
-    }
-
-    public ItemAction(final Element element, final ItemActionHandler<T> handler) {
-        this(null, element, handler);
-    }
-
-    private ItemAction(final String title, final Element element, final ItemActionHandler<T> handler) {
-        this.title = title;
-        this.element = element;
-        this.handler = handler;
-    }
+    ItemDisplay<T> render(T item);
 }

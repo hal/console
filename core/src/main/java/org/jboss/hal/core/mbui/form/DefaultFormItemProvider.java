@@ -22,6 +22,7 @@
 package org.jboss.hal.core.mbui.form;
 
 import com.google.common.collect.Lists;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.ListItem;
@@ -31,7 +32,6 @@ import org.jboss.hal.ballroom.form.PropertiesItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.SwitchItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
-import org.jboss.hal.core.mbui.LabelBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.ModelType;
@@ -68,6 +68,9 @@ public class DefaultFormItemProvider implements FormItemProvider {
 
         if (modelNode.hasDefined(TYPE)) {
             ModelType type = modelNode.get(TYPE).asType();
+            ModelType valueType = (modelNode.has(VALUE_TYPE) && modelNode.get(VALUE_TYPE).getType() != ModelType.OBJECT)
+                    ? ModelType.valueOf(modelNode.get(VALUE_TYPE).asString()) : null;
+
             switch (type) {
                 case BOOLEAN: {
                     SwitchItem switchItem = new SwitchItem(name, label);
@@ -99,8 +102,7 @@ public class DefaultFormItemProvider implements FormItemProvider {
                 }
 
                 case LIST: {
-                    if (modelNode.hasDefined(VALUE_TYPE) &&
-                            ModelType.STRING.equals(modelNode.get(VALUE_TYPE).asType())) {
+                    if (valueType != null && ModelType.STRING == valueType) {
                         List<String> allowedValues = stringValues(modelNode, ALLOWED);
                         if (!allowedValues.isEmpty()) {
                             MultiSelectBoxItem multiSelectBoxItem = new MultiSelectBoxItem(name, label, allowedValues);
@@ -126,8 +128,7 @@ public class DefaultFormItemProvider implements FormItemProvider {
                 }
 
                 case OBJECT: {
-                    if (modelNode.hasDefined(VALUE_TYPE) &&
-                            ModelType.STRING.equals(modelNode.get(VALUE_TYPE).asType())) {
+                    if (valueType != null && ModelType.STRING == valueType) {
                         PropertiesItem propertiesItem = new PropertiesItem(name, label);
                         List<Property> properties = ModelNodeHelper
                                 .getOrDefault(modelNode, () -> modelNode.get(DEFAULT).asPropertyList(), emptyList());

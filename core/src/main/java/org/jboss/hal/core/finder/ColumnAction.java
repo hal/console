@@ -21,10 +21,28 @@
  */
 package org.jboss.hal.core.finder;
 
+import elemental.dom.Element;
+
 /**
  * @author Harald Pehl
  */
-public interface ColumnAction<T> {
+public class ColumnAction<T> {
 
-    void execute(FinderColumn<T> column);
+    final String title;
+    final Element element;
+    final ColumnActionHandler<T> handler;
+
+    public ColumnAction(final String title, final ColumnActionHandler<T> handler) {
+        this(title, null, handler);
+    }
+
+    public ColumnAction(final Element element, final ColumnActionHandler<T> handler) {
+        this(null, element, handler);
+    }
+
+    private ColumnAction(final String title, final Element element, final ColumnActionHandler<T> handler) {
+        this.title = title;
+        this.element = element;
+        this.handler = handler;
+    }
 }

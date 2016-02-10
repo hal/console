@@ -19,20 +19,43 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.configuration;
+package org.jboss.hal.core.finder;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
 
 /**
  * @author Harald Pehl
  */
-public class StandaloneConfigurationView extends PatternFlyViewImpl implements StandaloneConfigurationPresenter.MyView {
+public class FinderContextEvent extends GwtEvent<FinderContextEvent.FinderContextHandler> {
+
+    public interface FinderContextHandler extends EventHandler {
+
+        void onFinderContext(FinderContextEvent event);
+    }
+
+
+    private static final Type<FinderContextHandler> TYPE = new Type<>();
+
+    public static Type<FinderContextHandler> getType() {
+        return TYPE;
+    }
+
+    private final FinderContext finderContext;
+
+    public FinderContextEvent(final FinderContext finderContext) {this.finderContext = finderContext;}
+
+    public FinderContext getFinderContext() {
+        return finderContext;
+    }
 
     @Override
-    public void setFinder(final Finder finder) {
-        registerAttachable(finder);
-        initWidget(Elements.asWidget(finder.asElement()));
+    protected void dispatch(FinderContextHandler handler) {
+        handler.onFinderContext(this);
+    }
+
+    @Override
+    public Type<FinderContextHandler> getAssociatedType() {
+        return TYPE;
     }
 }

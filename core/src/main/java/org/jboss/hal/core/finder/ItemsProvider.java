@@ -21,19 +21,15 @@
  */
 package org.jboss.hal.core.finder;
 
-import org.jboss.hal.core.mbui.LabelBuilder;
-import org.jboss.hal.dmr.Property;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import java.util.List;
 
 /**
  * @author Harald Pehl
  */
-public class PropertyColumn extends FinderColumn<Property> {
+@FunctionalInterface
+public interface ItemsProvider<T> {
 
-    public PropertyColumn(final String id, final String title,
-            final PreviewCallback<Property> previewCallback) {
-        super(new Builder<Property>(id, title, property -> () -> new LabelBuilder().label(property))
-                .onPreview(previewCallback)
-                .showCount()
-                .withFilter());
-    }
+    void get(FinderContext context, AsyncCallback<List<T>> callback);
 }

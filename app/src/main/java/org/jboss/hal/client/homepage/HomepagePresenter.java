@@ -23,34 +23,31 @@ package org.jboss.hal.client.homepage;
 
 import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.Presenter;
-import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.Slots;
-import org.jboss.hal.core.TopLevelCategory;
+import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.TopLevelPresenter;
 
 import javax.inject.Inject;
 
+import static org.jboss.hal.meta.token.NameTokens.HOMEPAGE;
 import static org.jboss.hal.resources.Names.NYI;
 
 /**
  * @author Harald Pehl
  */
-public class HomepagePresenter extends Presenter<HomepagePresenter.MyView, HomepagePresenter.MyProxy>
-        implements TopLevelCategory {
+public class HomepagePresenter extends TopLevelPresenter<HomepagePresenter.MyView, HomepagePresenter.MyProxy> {
 
     // @formatter:off
     @NoGatekeeper
     @ProxyStandard
-    @NameToken(NameTokens.HOMEPAGE)
+    @NameToken(HOMEPAGE)
     public interface MyProxy extends ProxyPlace<HomepagePresenter> {}
 
-    public interface MyView extends View, HasPresenter<HomepagePresenter> {}
+    public interface MyView extends PatternFlyView, HasPresenter<HomepagePresenter> {}
     // @formatter:on
 
 
@@ -58,7 +55,7 @@ public class HomepagePresenter extends Presenter<HomepagePresenter.MyView, Homep
     public HomepagePresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy proxy) {
-        super(eventBus, view, proxy, Slots.MAIN);
+        super(eventBus, view, proxy);
     }
 
     @Override

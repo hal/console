@@ -26,12 +26,10 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.client.NameTokens;
 import org.jboss.hal.core.ProfileSelectionEvent;
+import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.PatternFlyPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
-import org.jboss.hal.core.mvp.Slots;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.ChangeSetAdapter;
@@ -52,25 +50,18 @@ import java.util.Map;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNodesWithNames;
+import static org.jboss.hal.meta.token.NameTokens.DATASOURCE;
 import static org.jboss.hal.resources.Names.PROFILE;
 
 /**
  * @author Harald Pehl
  */
 public class DataSourcePresenter extends
-        PatternFlyPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy> {
-
-    static final String ROOT_ADDRESS = "/{any.profile}/subsystem=datasources/data-source=*";
-    static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
-    static final AddressTemplate DATA_SOURCE_SUBSYSTEM = AddressTemplate
-            .of("/{selected.profile}/subsystem=datasources");
-
-    private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
-
+        ApplicationPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(NameTokens.DATASOURCE)
+    @NameToken(DATASOURCE)
     @Requires(ROOT_ADDRESS)
     public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
 
@@ -79,6 +70,13 @@ public class DataSourcePresenter extends
     }
     // @formatter:on
 
+
+    static final String ROOT_ADDRESS = "/{any.profile}/subsystem=datasources/data-source=*";
+    static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
+    static final AddressTemplate DATA_SOURCE_SUBSYSTEM = AddressTemplate
+            .of("/{selected.profile}/subsystem=datasources");
+
+    private static final Logger logger = LoggerFactory.getLogger(DataSourcePresenter.class);
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
@@ -90,7 +88,7 @@ public class DataSourcePresenter extends
             final MyProxy proxy,
             final Dispatcher dispatcher,
             final StatementContext statementContext) {
-        super(eventBus, view, proxy, Slots.MAIN);
+        super(eventBus, view, proxy);
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
         this.changeSetAdapter = new ChangeSetAdapter();

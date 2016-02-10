@@ -21,28 +21,36 @@
  */
 package org.jboss.hal.core.finder;
 
-import elemental.dom.Element;
-
 /**
  * @author Harald Pehl
  */
-public class ItemAction<T> {
+public class FinderContext {
 
-    final String title;
-    final Element element;
-    final ItemActionHandler<T> handler;
+    private String token;
+    private final FinderPath path;
+    private final Breadcrumb breadcrumb;
 
-    public ItemAction(final String title, final ItemActionHandler<T> handler) {
-        this(title, null, handler);
+    public FinderContext() {
+        token = null;
+        path = FinderPath.empty();
+        breadcrumb = Breadcrumb.empty();
     }
 
-    public ItemAction(final Element element, final ItemActionHandler<T> handler) {
-        this(null, element, handler);
+    public void reset(final String token) {
+        this.token = token;
+        path.clear();
+        breadcrumb.clear();
     }
 
-    private ItemAction(final String title, final Element element, final ItemActionHandler<T> handler) {
-        this.title = title;
-        this.element = element;
-        this.handler = handler;
+    public String getToken() {
+        return token;
+    }
+
+    public FinderPath getPath() {
+        return path;
+    }
+
+    public Breadcrumb getBreadcrumb() {
+        return breadcrumb;
     }
 }

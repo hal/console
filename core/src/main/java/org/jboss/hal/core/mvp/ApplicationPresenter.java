@@ -19,41 +19,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.finder;
+package org.jboss.hal.core.mvp;
 
-import elemental.dom.Element;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.Proxy;
 
 /**
  * @author Harald Pehl
  */
-class ActionStruct<T> {
+public class ApplicationPresenter<V extends PatternFlyView, Proxy_ extends Proxy<?>>
+        extends PatternFlyPresenter<V, Proxy_> {
 
-    final String title;
-    final Element content;
-    final ColumnAction<T> columnAction;
-    final ItemAction<T> itemAction;
-
-    ActionStruct(final String title, final ColumnAction<T> columnAction) {
-        this(title, null, columnAction, null);
-    }
-
-    ActionStruct(final Element content, final ColumnAction<T> columnAction) {
-        this(null, content, columnAction, null);
-    }
-
-    ActionStruct(final String title, final ItemAction<T> itemAction) {
-        this(title, null, null, itemAction);
-    }
-
-    ActionStruct(final Element content, final ItemAction<T> itemAction) {
-        this(null, content, null, itemAction);
-    }
-
-    private ActionStruct(final String title, final Element content, final ColumnAction<T> columnAction,
-            final ItemAction<T> itemAction) {
-        this.columnAction = columnAction;
-        this.title = title;
-        this.content = content;
-        this.itemAction = itemAction;
+    public ApplicationPresenter(final EventBus eventBus, final V view, final Proxy_ proxy) {
+        super(eventBus, view, proxy, Slots.MAIN);
     }
 }

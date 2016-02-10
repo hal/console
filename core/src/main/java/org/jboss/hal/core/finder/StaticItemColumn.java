@@ -21,28 +21,34 @@
  */
 package org.jboss.hal.core.finder;
 
-import elemental.dom.Element;
+import java.util.List;
 
 /**
+ * The finder column for {@link StaticItem}.
+ *
  * @author Harald Pehl
  */
-public class ItemAction<T> {
+public class StaticItemColumn extends FinderColumn<StaticItem> {
 
-    final String title;
-    final Element element;
-    final ItemActionHandler<T> handler;
+    public StaticItemColumn(final Finder finder, final String id, String title, List<StaticItem> items) {
+        super(new Builder<StaticItem>(finder, id, title,
+                item -> new ItemDisplay<StaticItem>() {
+                    @Override
+                    public String getTitle() {
+                        return item.getTitle();
+                    }
 
-    public ItemAction(final String title, final ItemActionHandler<T> handler) {
-        this(title, null, handler);
-    }
+                    @Override
+                    public List<ItemAction<StaticItem>> actions() {
+                        return item.getActions();
+                    }
 
-    public ItemAction(final Element element, final ItemActionHandler<T> handler) {
-        this(null, element, handler);
-    }
-
-    private ItemAction(final String title, final Element element, final ItemActionHandler<T> handler) {
-        this.title = title;
-        this.element = element;
-        this.handler = handler;
+                    @Override
+                    public String nextColumn() {
+                        return item.getNextColumn();
+                    }
+                })
+                .initialItems(items)
+                .onPreview(StaticItem::getPreviewContent));
     }
 }

@@ -22,10 +22,12 @@
 package org.jboss.hal.core.finder;
 
 /**
- * @param <T> The type of the current column
+ * Action handler for an item.
+ *
  * @author Harald Pehl
  */
-public interface SelectCallback<T> {
+@FunctionalInterface
+public interface ItemActionHandler<T> {
 
-    void onSelect(Finder finder, T item);
+    void execute(T item);
 }

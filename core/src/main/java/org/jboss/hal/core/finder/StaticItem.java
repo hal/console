@@ -21,37 +21,85 @@
  */
 package org.jboss.hal.core.finder;
 
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
+ * A customizable finder item useful when you need full control over each and every item.
+ *
  * @author Harald Pehl
  */
 public class StaticItem {
 
+    public static class Builder {
+
+        private final String title;
+        private final List<ItemAction<StaticItem>> actions;
+        private PreviewContent previewContent;
+        private String nextColumn;
+
+        public Builder(final String title) {
+            this.title = title;
+            this.actions = new ArrayList<>();
+        }
+
+        public Builder action(String title, ItemActionHandler<StaticItem> action) {
+            actions.add(new ItemAction<>(title, action));
+            return this;
+        }
+
+        public Builder tokenAction(String title, PlaceManager placeManager, String token) {
+            return placeRequestAction(title, placeManager, new PlaceRequest.Builder().nameToken(token).build());
+        }
+
+        public Builder placeRequestAction(String title, PlaceManager placeManager, PlaceRequest placeRequest) {
+            return action(title, item -> placeManager.revealPlace(placeRequest));
+        }
+
+        public Builder nextColumn(String nextColumn) {
+            this.nextColumn = nextColumn;
+            return this;
+        }
+
+        public Builder onPreview(PreviewContent previewContent) {
+            this.previewContent = previewContent;
+            return this;
+        }
+
+        public StaticItem build() {
+            return new StaticItem(this);
+        }
+    }
+
+
     private final String title;
-    private final boolean folder;
-    private final SelectCallback<StaticItem> selectCallback;
+    private final List<ItemAction<StaticItem>> actions;
+    private final String nextColumn;
     private final PreviewContent previewContent;
 
-    public StaticItem(final String title, final boolean folder, final SelectCallback<StaticItem> selectCallback,
-            final PreviewContent previewContent) {
-        this.title = title;
-        this.folder = folder;
-        this.selectCallback = selectCallback;
-        this.previewContent = previewContent;
+    StaticItem(Builder builder) {
+        this.title = builder.title;
+        this.actions = builder.actions;
+        this.nextColumn = builder.nextColumn;
+        this.previewContent = builder.previewContent;
+    }
+
+    public List<ItemAction<StaticItem>> getActions() {
+        return actions;
     }
 
     public PreviewContent getPreviewContent() {
         return previewContent;
     }
 
-    public SelectCallback<StaticItem> getSelectCallback() {
-        return selectCallback;
-    }
-
     public String getTitle() {
         return title;
     }
 
-    public boolean isFolder() {
-        return folder;
+    public String getNextColumn() {
+        return nextColumn;
     }
 }

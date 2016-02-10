@@ -33,7 +33,7 @@ import org.jboss.hal.ballroom.tab.Tabs;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
-import org.jboss.hal.core.mbui.LabelBuilder;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.Operation;

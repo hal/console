@@ -19,37 +19,20 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core;
+package org.jboss.hal.client.configuration;
 
-import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.core.finder.ColumnRegistry;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.ui.UIRegistry;
-import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.spi.Footer;
-import org.jboss.hal.spi.GinModule;
+import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 
-@GinModule
-public class CoreModule extends AbstractGinModule {
+/**
+ * @author Harald Pehl
+ */
+public class ConfigurationView extends PatternFlyViewImpl implements ConfigurationPresenter.MyView {
 
     @Override
-    protected void configure() {
-        bind(StatementContext.class).to(CoreStatementContext.class).asEagerSingleton(); // to register the event
-        bind(Finder.class).in(Singleton.class);
-        bind(ColumnRegistry.class).in(Singleton.class);
-        bind(UIRegistry.class).in(Singleton.class);
-    }
-
-    /**
-     * Convenience provider to make the global {@link Progress} implementation in HAL's footer injectable. Please use
-     * the qualifier {@code @Footer} for injections.
-     */
-    @Provides
-    @Footer
-    public Progress provideProgress(UIRegistry uiRegistry) {
-        return uiRegistry.getProgress();
+    public void setFinder(final Finder finder) {
+        registerAttachable(finder);
+        initWidget(Elements.asWidget(finder.asElement()));
     }
 }

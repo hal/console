@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.mbui;
+package org.jboss.hal.ballroom;
 
 import com.google.common.collect.ImmutableMap;
 import org.jboss.hal.dmr.Property;
@@ -27,21 +27,34 @@ import org.jboss.hal.dmr.Property;
 import java.util.Map;
 
 /**
- * Generates a human readable label from an attribute description of a {@link org.jboss.hal.meta.description.ResourceDescription}.
+ * Generates a human readable label from terms used in the management model.
  *
  * @author Harald Pehl
  */
 public class LabelBuilder {
 
-    private final ImmutableMap<String, String> SPECIALS = ImmutableMap
-            .of("jndi", "JNDI", "sql", "SQL", "url", "URL"); //NON-NLS
+    @SuppressWarnings("HardCodedStringLiteral")
+    private final ImmutableMap<String, String> SPECIALS = ImmutableMap.<String, String>builder()
+            .put("ee", "EE")
+            .put("ejb3", "EJB3")
+            .put("jaxrs", "JAX-RS")
+            .put("jca", "JCA")
+            .put("jdr", "JDA")
+            .put("jmx", "JMX")
+            .put("jndi", "JNDI")
+            .put("jpa", "JPA")
+            .put("jsf", "JSF")
+            .put("sar", "SAR")
+            .put("sql", "SQL")
+            .put("url", "URL")
+            .build();
 
     public String label(Property property) {
         return label(property.getName());
     }
 
-    public String label(String key) {
-        String label = key;
+    public String label(String name) {
+        String label = name;
         label = replaceSpecial(label);
         label = label.replace('-', ' ');
         label = capitalize(label);

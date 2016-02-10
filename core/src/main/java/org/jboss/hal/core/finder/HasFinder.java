@@ -22,6 +22,8 @@
 package org.jboss.hal.core.finder;
 
 /**
+ * Marker interface for views which have a finder as UI element.
+ *
  * @author Harald Pehl
  */
 public interface HasFinder {

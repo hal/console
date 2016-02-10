@@ -43,6 +43,7 @@ public interface Names {
     String HIDDEN = "hidden";
     String HOST = "host";
     String INTERFACE = "Interface";
+    String INTERFACE_RESOURCE = "interface";
     String INTERFACES = "Interfaces";
     String JNDI_NAME = "jndi-name";
     String LABEL = "label";
@@ -66,6 +67,7 @@ public interface Names {
     String SERVER = "server";
     String SERVER_GROUP = "server-group";
     String SELECTED = "selected";
+    String socketBinding = "socket-binding";
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDINGS = "Socket Bindings";
     String SUBSYSTEM = "Subsystem";

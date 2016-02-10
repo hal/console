@@ -28,6 +28,8 @@ import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 
 /**
+ * Wrapper for the preview content which consists of a header and either a safe html string or one or more elements.
+ *
  * @author Harald Pehl
  */
 public class PreviewContent implements SecurityContextAware {
@@ -35,15 +37,19 @@ public class PreviewContent implements SecurityContextAware {
     private Elements.Builder builder;
 
     public PreviewContent(final String header, final SafeHtml content) {
-        builder = new Elements.Builder().header().h(1).innerText(header).end();
-        builder.end(); // </header>
+        builder = new Elements.Builder().h(1).innerText(header).end();
         builder.section().innerHtml(content).end();
     }
 
-    public PreviewContent(final String header, final Element content) {
-        builder = new Elements.Builder().header().h(1).innerText(header).end();
-        builder.end(); // </header>
-        builder.section().add(content).end();
+    public PreviewContent(final String header, final Element first, final Element... rest) {
+        builder = new Elements.Builder().h(1).innerText(header).end();
+        builder.section().add(first);
+        if (rest != null) {
+            for (Element element : rest) {
+                builder.add(element);
+            }
+        }
+        builder.end();
     }
 
     public Iterable<Element> elements() {

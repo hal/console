@@ -30,15 +30,14 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
-import org.jboss.hal.core.Breadcrumb;
-import org.jboss.hal.core.BreadcrumbEvent;
-import org.jboss.hal.core.BreadcrumbEvent.BreadcrumbHandler;
+import org.jboss.hal.core.finder.Breadcrumb;
+import org.jboss.hal.core.finder.FinderContextEvent;
+import org.jboss.hal.core.finder.FinderContextEvent.FinderContextHandler;
+import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.MessageEvent.MessageHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
@@ -48,7 +47,7 @@ import static org.jboss.hal.resources.Names.NYI;
  * @author Harald Pehl
  */
 public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
-        implements BreadcrumbHandler, MessageHandler{
+        implements MessageHandler, FinderContextHandler {
 
     // @formatter:off
     public interface MyView extends View, HasPresenter<HeaderPresenter> {
@@ -57,12 +56,11 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         void showMessage(Message message);
         void tlcMode();
         void applicationMode();
+        void updateTlc(String token, FinderPath finderPath);
         void updateBreadcrumb(Breadcrumb breadcrumb);
     }
     // @formatter:on
 
-
-    private static final Logger logger = LoggerFactory.getLogger(HeaderPresenter.class);
 
     private final PlaceManager placeManager;
     private final Environment environment;
@@ -87,7 +85,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
     protected void onBind() {
         super.onBind();
         registerHandler(getEventBus().addHandler(MessageEvent.getType(), this));
-        registerHandler(getEventBus().addHandler(BreadcrumbEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(FinderContextEvent.getType(), this));
         getView().setPresenter(this);
         getView().update(environment, endpoints, user);
     }
@@ -121,14 +119,14 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
     }
 
     @Override
-    public void onBreadcrumb(final BreadcrumbEvent event) {
-        getView().updateBreadcrumb(event.getBreadcrumb());
-        logger.debug("New breadcrumb: '{}'", event.getBreadcrumb()); //NON-NLS
+    public void onMessage(final MessageEvent event) {
+        getView().showMessage(event.getMessage());
     }
 
     @Override
-    public void onMessage(final MessageEvent event) {
-        getView().showMessage(event.getMessage());
+    public void onFinderContext(final FinderContextEvent event) {
+        getView().updateTlc(event.getFinderContext().getToken(), event.getFinderContext().getPath());
+        getView().updateBreadcrumb(event.getFinderContext().getBreadcrumb());
     }
 
     public void tlcMode() {

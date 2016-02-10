@@ -21,59 +21,132 @@
  */
 package org.jboss.hal.core.finder;
 
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import elemental.dom.Element;
+import elemental.html.HTMLCollection;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.gwt.flow.Async;
+import org.jboss.gwt.flow.Control;
+import org.jboss.gwt.flow.Function;
+import org.jboss.gwt.flow.FunctionContext;
+import org.jboss.gwt.flow.Outcome;
+import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.IdBuilder;
-import org.jboss.hal.core.Breadcrumb;
-import org.jboss.hal.core.BreadcrumbEvent;
+import org.jboss.hal.core.finder.ColumnRegistry.LookupCallback;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import javax.inject.Inject;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.lang.Math.min;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.Ids.FINDER;
 
 /**
+ * The one and only finder which is shared across all different top level categories in HAL. The same finder instance
+ * gets injected into the different top level presenters. Only the columns will change when navigating between the
+ * different places
+ *
  * @author Harald Pehl
  */
 public class Finder implements IsElement, SecurityContextAware, Attachable {
+
+    private class SelectFunction implements Function<FunctionContext> {
+
+        private final FinderPath.Segment segment;
+        private final Element columnElement;
+
+        private SelectFunction(final FinderPath.Segment segment, final Element columnElement) {
+            this.segment = segment;
+            this.columnElement = columnElement;
+        }
+
+        @Override
+        public void execute(final Control<FunctionContext> control) {
+            if (columnElement != null &&
+                    columns.containsKey(columnElement.getId()) &&
+                    segment.getKey().equals(columnElement.getId())) {
+                // column is already in place just select the item
+                FinderColumn finderColumn = columns.get(columnElement.getId());
+                selectItem(finderColumn, control);
+
+            } else {
+                // append the column
+                appendColumn(segment.getKey(), new AsyncCallback<FinderColumn>() {
+                    @Override
+                    public void onFailure(final Throwable throwable) {
+                        control.abort();
+                    }
+
+                    @Override
+                    public void onSuccess(final FinderColumn finderColumn) {
+                        selectItem(finderColumn, control);
+                    }
+                });
+            }
+        }
+
+        private void selectItem(FinderColumn finderColumn, Control<FunctionContext> control) {
+            if (finderColumn.selectItem(segment.getValue())) {
+                updateContext();
+                control.getContext().push(finderColumn);
+                control.proceed();
+            } else {
+                logger.error("Unable to select item '{}'", segment.getValue()); //NON-NLS
+                control.abort();
+            }
+        }
+    }
+
 
     /**
      * The maximum number of visible columns. If there are more columns given the first column is hidden when column
      * {@code MAX_VISIBLE_COLUMNS + 1} is shown.
      */
     public static final int MAX_VISIBLE_COLUMNS = 4;
-    static final String BREADCRUMB_KEY = "breadcrumbKey";
-    static final String BREADCRUMB_VALUE = "breadcrumbValue";
+    static final String DATA_BREADCRUMB = "breadcrumb";
 
     private static final int MAX_COLUMNS = 12;
     private static final String PREVIEW_COLUMN = "previewColumn";
 
-    private final String id;
+    private static final Logger logger = LoggerFactory.getLogger(Finder.class);
+
+    private final PlaceManager placeManager;
     private final EventBus eventBus;
-    private final FinderColumn initialColumn;
-    private final PreviewContent initialPreview;
+    private final ColumnRegistry columnRegistry;
+    private final String id;
+    private final FinderContext context;
     private final Map<String, FinderColumn> columns;
     private final Element root;
     private final Element previewColumn;
 
-    public Finder(String id, final EventBus eventBus,
-            final FinderColumn initialColumn, final PreviewContent initialPreview) {
-        this.id = id;
+
+    // ------------------------------------------------------ ui
+
+    @Inject
+    public Finder(final PlaceManager placeManager,
+            final EventBus eventBus,
+            final ColumnRegistry columnRegistry) {
+        this.placeManager = placeManager;
         this.eventBus = eventBus;
-        this.initialColumn = initialColumn;
-        this.initialPreview = initialPreview;
+        this.columnRegistry = columnRegistry;
+
+        this.id = FINDER;
+        this.context = new FinderContext();
         this.columns = new HashMap<>();
 
         // @formatter:off
@@ -89,7 +162,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
         root = builder.build();
         previewColumn = builder.referenceFor(PREVIEW_COLUMN);
-        Browser.getWindow().setOnresize(event -> resize());
+        Browser.getWindow().setOnresize(event -> adjustHeight());
     }
 
     @Override
@@ -99,12 +172,10 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     @Override
     public void attach() {
-        appendColumn(initialColumn);
-        preview(initialPreview);
-        resize();
+        adjustHeight();
     }
 
-    private void resize() {
+    private void adjustHeight() {
         int window = Browser.getWindow().getInnerHeight();
         int navigation = 0, footer = 0;
         Element element = Browser.getDocument().querySelector("nav." + navbar); //NON-NLS
@@ -121,6 +192,85 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         }
     }
 
+
+    // ------------------------------------------------------ internal API
+
+    void appendColumn(String columnId, AsyncCallback<FinderColumn> callback) {
+        columnRegistry.lookup(columnId, new LookupCallback() {
+            @Override
+            public void found(final FinderColumn column) {
+                appendColumn(column, callback);
+            }
+
+            @Override
+            public void error(final String failure) {
+                logger.error(failure);
+                if (callback != null) {
+                    callback.onFailure(new RuntimeException(failure));
+                }
+            }
+        });
+    }
+
+    private void appendColumn(FinderColumn column, AsyncCallback<FinderColumn> callback) {
+        columns.put(column.getId(), column);
+        root.insertBefore(column.asElement(), previewColumn);
+
+        int columns = root.getChildren().length() - 1;
+        int previewSize = MAX_COLUMNS - 2 * min(columns, MAX_VISIBLE_COLUMNS);
+        previewColumn.setClassName(finderPreview + " " + column(previewSize));
+
+        column.setItems(callback);
+    }
+
+    void reduceTo(FinderColumn column) {
+        boolean removeFromHere = false;
+        for (Iterator<Element> iterator = Elements.children(root).iterator(); iterator.hasNext(); ) {
+            Element element = iterator.next();
+            if (element == column.asElement()) {
+                removeFromHere = true;
+                continue;
+            }
+            if (element == previewColumn) {
+                break;
+            }
+            if (removeFromHere) {
+                columns.remove(element.getId());
+                iterator.remove();
+            }
+        }
+    }
+
+    void updateContext() {
+        context.getPath().clear();
+        context.getBreadcrumb().clear();
+
+        for (Element column : Elements.children(root)) {
+            if (column == previewColumn) {
+                break;
+            }
+            String key = column.getId();
+            String breadcrumbKey = String.valueOf(column.getDataset().at(DATA_BREADCRUMB));
+            Element activeItem = column.querySelector("li." + CSS.active); //NON-NLS
+            if (activeItem != null) {
+                String value = activeItem.getId();
+                String breadcrumbValue = String.valueOf(activeItem.getDataset().at(DATA_BREADCRUMB));
+                if (key != null && value != null) {
+                    context.getPath().append(key, value);
+                }
+                if (breadcrumbKey != null && breadcrumbValue != null) {
+                    context.getBreadcrumb().append(breadcrumbKey, breadcrumbValue);
+                }
+            }
+        }
+
+        PlaceRequest current = placeManager.getCurrentPlaceRequest();
+        PlaceRequest update = new PlaceRequest.Builder().nameToken(current.getNameToken())
+                .with("path", context.getPath().toString()).build();
+        placeManager.updateHistory(update, true);
+        eventBus.fireEvent(new FinderContextEvent(context));
+    }
+
     void preview(PreviewContent preview) {
         Elements.removeChildrenFrom(previewColumn);
         for (Element element : preview.elements()) {
@@ -128,51 +278,56 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         }
     }
 
-    void reduceTo(FinderColumn column) {
-        List<Element> reverseColumns = new ArrayList<>();
-        for (Element element : Elements.children(root)) {
-            if (element == previewColumn) {
-                continue;
-            }
-            reverseColumns.add(element);
+
+    // ------------------------------------------------------ public interface
+
+    public void reset(final String token, final String initialColumn, final PreviewContent initialPreview) {
+        while (root.getFirstChild() != previewColumn) {
+            root.removeChild(root.getFirstChild());
         }
-        Collections.reverse(reverseColumns);
-        for (Element element : reverseColumns) {
-            if (element == column.asElement()) {
-                break;
-            }
-            columns.remove(element.getId());
-            root.removeChild(element);
-        }
+        context.reset(token);
+        appendColumn(initialColumn, null);
+        preview(initialPreview);
     }
 
-    void updateBreadcrumb() {
-        Breadcrumb breadcrumb = Breadcrumb.empty();
-        for (Element column : Elements.children(root)) {
-            if (column == previewColumn) {
-                break;
+    public void select(final String token, final FinderPath path, final ScheduledCommand fallback) {
+        context.reset(token);
+
+        if (path.isEmpty()) {
+            fallback.execute();
+
+        } else{
+            FinderColumn lastColumn = columns.get(path.last().getKey());
+            if (lastColumn != null) {
+                reduceTo(lastColumn);
             }
-            String key = String.valueOf(column.getDataset().at(BREADCRUMB_KEY));
-            Element activeItem = column.querySelector("li." + CSS.active); //NON-NLS
-            if (activeItem != null) {
-                String value = String.valueOf(activeItem.getDataset().at(BREADCRUMB_VALUE));
-                if (key != null && value != null) {
-                    breadcrumb.append(key, value);
-                }
+
+            int index = 0;
+            Function[] functions = new Function[path.size()];
+            HTMLCollection columns = root.getChildren();
+            for (FinderPath.Segment segment : path) {
+                Element column = index < columns.getLength() ? (Element) columns.item(index) : null;
+                functions[index] = new SelectFunction(segment, column);
+                index++;
             }
+            new Async<FunctionContext>(Progress.NOOP).waterfall(new FunctionContext(), new Outcome<FunctionContext>() {
+                        @Override
+                        public void onFailure(final FunctionContext context) {
+                            if (Finder.this.context.getPath().isEmpty()) {
+                                fallback.execute();
+                            } else if (!context.emptyStack()) {
+                                FinderColumn column = context.pop();
+                                column.previewSelectedItem();
+                            }
+                        }
+
+                        @Override
+                        public void onSuccess(final FunctionContext context) {
+                            FinderColumn column = context.pop();
+                            column.previewSelectedItem();
+                        }
+                    }, functions);
         }
-        eventBus.fireEvent(new BreadcrumbEvent(breadcrumb));
-    }
-
-    public void appendColumn(FinderColumn column) {
-        // always make sure the finder instance is there
-        column.setFinder(this);
-        columns.put(column.getId(), column);
-        root.insertBefore(column.asElement(), previewColumn);
-
-        int columns = root.getChildren().length() - 1;
-        int previewSize = MAX_COLUMNS - 2 * min(columns, MAX_VISIBLE_COLUMNS);
-        previewColumn.setClassName(finderPreview + " " + column(previewSize));
     }
 
     @Override
@@ -184,5 +339,9 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     public String getId() {
         return id;
+    }
+
+    public FinderContext getContext() {
+        return context;
     }
 }
