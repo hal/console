@@ -26,17 +26,24 @@ package org.jboss.hal.core.finder;
  */
 public class FinderContext {
 
+    private String token;
     private final FinderPath path;
     private final Breadcrumb breadcrumb;
 
     public FinderContext() {
+        token = null;
         path = FinderPath.empty();
         breadcrumb = Breadcrumb.empty();
     }
 
-    public void reset() {
+    public void reset(final String token) {
+        this.token = token;
         path.clear();
         breadcrumb.clear();
+    }
+
+    public String getToken() {
+        return token;
     }
 
     public FinderPath getPath() {

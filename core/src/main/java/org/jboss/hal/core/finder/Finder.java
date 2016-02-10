@@ -21,10 +21,11 @@
  */
 package org.jboss.hal.core.finder;
 
-import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.HTMLCollection;
@@ -81,7 +82,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                     segment.getKey().equals(columnElement.getId())) {
                 // column is already in place just select the item
                 FinderColumn finderColumn = columns.get(columnElement.getId());
-                markItem(finderColumn, control);
+                selectItem(finderColumn, control);
 
             } else {
                 // append the column
@@ -93,14 +94,14 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
                     @Override
                     public void onSuccess(final FinderColumn finderColumn) {
-                        markItem(finderColumn, control);
+                        selectItem(finderColumn, control);
                     }
                 });
             }
         }
 
-        private void markItem(FinderColumn finderColumn, Control<FunctionContext> control) {
-            if (finderColumn.markSelected(segment.getValue())) {
+        private void selectItem(FinderColumn finderColumn, Control<FunctionContext> control) {
+            if (finderColumn.selectItem(segment.getValue())) {
                 updateContext();
                 control.getContext().push(finderColumn);
                 control.proceed();
@@ -132,10 +133,9 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     private final Map<String, FinderColumn> columns;
     private final Element root;
     private final Element previewColumn;
-    private String finderToken; // the token of the presenter containing the finder
 
 
-    // ------------------------------------------------------ ui setup
+    // ------------------------------------------------------ ui
 
     @Inject
     public Finder(final PlaceManager placeManager,
@@ -263,16 +263,12 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 }
             }
         }
-//        if (finderToken != null) {
-//            PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(finderToken).with("path", path.toString())
-//                    .build();
-//            placeManager.revealPlace(placeRequest);
-//        }
-//        eventBus.fireEvent(new BreadcrumbEvent(breadcrumb));
-    }
 
-    void firePlaceRequest() {
-
+        PlaceRequest current = placeManager.getCurrentPlaceRequest();
+        PlaceRequest update = new PlaceRequest.Builder().nameToken(current.getNameToken())
+                .with("path", context.getPath().toString()).build();
+        placeManager.updateHistory(update, true);
+        eventBus.fireEvent(new FinderContextEvent(context));
     }
 
     void preview(PreviewContent preview) {
@@ -285,18 +281,26 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     // ------------------------------------------------------ public interface
 
-    public void reset(final String finderToken, final String initialColumn, final PreviewContent initialPreview) {
-        this.finderToken = finderToken;
+    public void reset(final String token, final String initialColumn, final PreviewContent initialPreview) {
         while (root.getFirstChild() != previewColumn) {
             root.removeChild(root.getFirstChild());
         }
-        context.reset();
+        context.reset(token);
         appendColumn(initialColumn, null);
         preview(initialPreview);
     }
 
-    public void select(FinderPath path, Scheduler.ScheduledCommand fallback) {
-        if (!path.isEmpty()) {
+    public void select(final String token, final FinderPath path, final ScheduledCommand fallback) {
+        context.reset(token);
+
+        if (path.isEmpty()) {
+            fallback.execute();
+
+        } else{
+            FinderColumn lastColumn = columns.get(path.last().getKey());
+            if (lastColumn != null) {
+                reduceTo(lastColumn);
+            }
 
             int index = 0;
             Function[] functions = new Function[path.size()];

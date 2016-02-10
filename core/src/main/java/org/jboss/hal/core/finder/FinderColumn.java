@@ -259,9 +259,12 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
     }
 
-    boolean markSelected(String itemId) {
+    boolean selectItem(String itemId) {
         FinderRow<T> row = rows.get(itemId);
         if (row != null) {
+            for (Element element : Elements.children(ulElement)) {
+                element.getClassList().remove(active);
+            }
             row.markSelected();
             return true;
         }

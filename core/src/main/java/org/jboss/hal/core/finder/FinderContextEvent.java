@@ -27,35 +27,35 @@ import com.google.gwt.event.shared.GwtEvent;
 /**
  * @author Harald Pehl
  */
-public class BreadcrumbEvent extends GwtEvent<BreadcrumbEvent.BreadcrumbHandler> {
+public class FinderContextEvent extends GwtEvent<FinderContextEvent.FinderContextHandler> {
 
-    public interface BreadcrumbHandler extends EventHandler {
+    public interface FinderContextHandler extends EventHandler {
 
-        void onBreadcrumb(BreadcrumbEvent event);
+        void onFinderContext(FinderContextEvent event);
     }
 
 
-    private static final Type<BreadcrumbHandler> TYPE = new Type<>();
+    private static final Type<FinderContextHandler> TYPE = new Type<>();
 
-    public static Type<BreadcrumbHandler> getType() {
+    public static Type<FinderContextHandler> getType() {
         return TYPE;
     }
 
-    private final Breadcrumb breadcrumb;
+    private final FinderContext finderContext;
 
-    public BreadcrumbEvent(final Breadcrumb breadcrumb) {this.breadcrumb = breadcrumb;}
+    public FinderContextEvent(final FinderContext finderContext) {this.finderContext = finderContext;}
 
-    public Breadcrumb getBreadcrumb() {
-        return breadcrumb;
+    public FinderContext getFinderContext() {
+        return finderContext;
     }
 
     @Override
-    protected void dispatch(BreadcrumbHandler handler) {
-        handler.onBreadcrumb(this);
+    protected void dispatch(FinderContextHandler handler) {
+        handler.onFinderContext(this);
     }
 
     @Override
-    public Type<BreadcrumbHandler> getAssociatedType() {
+    public Type<FinderContextHandler> getAssociatedType() {
         return TYPE;
     }
 }

@@ -137,11 +137,11 @@ public class ConfigurationPresenter
     @Override
     protected void onReset() {
         super.onReset();
+        String token = getProxy().getNameToken();
         if (path != null) {
-            finder.select(FinderPath.from(path),
-                    () -> finder.reset(getProxy().getNameToken(), Ids.CONFIGURATION_COLUMN, initialPreview));
+            finder.select(token, FinderPath.from(path), () -> finder.reset(token, Ids.CONFIGURATION_COLUMN, initialPreview));
         } else {
-            finder.reset(getProxy().getNameToken(), Ids.CONFIGURATION_COLUMN, initialPreview);
+            finder.reset(token, Ids.CONFIGURATION_COLUMN, initialPreview);
         }
     }
 }

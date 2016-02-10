@@ -38,6 +38,7 @@ import org.jboss.hal.config.InstanceInfo;
 import org.jboss.hal.config.User;
 import org.jboss.hal.core.finder.Breadcrumb;
 import org.jboss.hal.core.finder.Breadcrumb.Segment;
+import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
@@ -113,6 +114,11 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     String historyToken(String token) {
         PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token).build();
+        return "#" + tokenFormatter().toHistoryToken(Collections.singletonList(placeRequest));
+    }
+
+    String historyToken(String token, String path) {
+        PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token).with("path", path).build();
         return "#" + tokenFormatter().toHistoryToken(Collections.singletonList(placeRequest));
     }
 
@@ -193,6 +199,16 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     public void applicationMode() {
         Elements.setVisible(topLevelTabs, false);
         Elements.setVisible(breadcrumbs, true);
+    }
+
+    @Override
+    public void updateTlc(final String token, final FinderPath finderPath) {
+        if (token != null) {
+            Element link = tlc.get(token);
+            if (link != null) {
+                link.setAttribute("href", historyToken(token, finderPath.toString())); //NON-NLS
+            }
+        }
     }
 
     @Override
