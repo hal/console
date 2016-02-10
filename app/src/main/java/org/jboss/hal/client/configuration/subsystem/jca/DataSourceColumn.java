@@ -19,66 +19,74 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.configuration;
+package org.jboss.hal.client.configuration.subsystem.jca;
 
+import com.google.gwt.user.client.Window;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
 import javax.inject.Inject;
+import java.util.Arrays;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 
 /**
  * @author Harald Pehl
  */
-@AsyncColumn(value = Ids.INTERFACE_COLUMN)
-public class InterfaceColumn extends FinderColumn<Property> {
+@AsyncColumn(Ids.DATA_SOURCE_COLUMN)
+public class DataSourceColumn extends FinderColumn<Property> {
 
     @Inject
-    public InterfaceColumn(final Finder finder,
-            final Resources resources,
+    public DataSourceColumn(final Finder finder,
+            final Dispatcher dispatcher,
             final PlaceManager placeManager,
-            final Dispatcher dispatcher) {
+            final StatementContext statementContext,
+            final Resources resources) {
 
-        super(new Builder<Property>(finder, Ids.INTERFACE_COLUMN, Names.INTERFACE,
-                property -> new ItemDisplay<Property>() {
+        super(new Builder<Property>(finder, Ids.DATA_SOURCE_COLUMN, "Datasource", item -> //NON-NLS
+                new ItemDisplay<Property>() {
                     @Override
                     public String getTitle() {
-                        return new LabelBuilder().label(property);
+                        return item.getName();
                     }
 
                     @Override
                     public List<ItemAction<Property>> actions() {
-                        return singletonList(
-                                new ItemAction<>(resources.constants().view(),
-                                        p -> placeManager.revealPlace(
-                                                new PlaceRequest.Builder()
-                                                        .nameToken(NameTokens.INTERFACE)
-                                                        .with(Names.INTERFACE_RESOURCE, p.getName())
-                                                        .build())));
+                        return Arrays.asList(
+                                new ItemAction<>(resources.constants().view(), item -> Window.alert(Names.NYI)),
+                                new ItemAction<>(resources.constants().remove(), item -> Window.alert(Names.NYI)),
+                                new ItemAction<>(resources.constants().testConnection(),
+                                        item -> Window.alert(Names.NYI))
+                        );
                     }
                 })
                 .itemsProvider((context, callback) -> {
-                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
-                            .param(CHILD_TYPE, Names.INTERFACE_RESOURCE).build();
-                    dispatcher.execute(operation, result -> { callback.onSuccess(result.asPropertyList()); });
-                }));
+                    ResourceAddress address = AddressTemplate.of("/{selected.profile}/subsystem=datasources")
+                            .resolve(statementContext);
+                    String childType = "xa".equals(context.getPath().last().getValue())
+                            ? "xa-data-source" : "data-source";
+                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
+                            .param(CHILD_TYPE, childType).build();
+                    dispatcher.execute(operation, result -> {
+                        callback.onSuccess(result.asPropertyList());
+                    });
+                })
+                .onPreview(item -> new PreviewContent(item.getName())));
     }
 }

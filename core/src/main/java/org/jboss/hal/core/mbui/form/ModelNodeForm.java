@@ -103,12 +103,12 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             return this;
         }
 
-        public Builder<T> include(final String first, final String... rest) {
+        public Builder<T> include(@NonNls final String first, @NonNls final String... rest) {
             includes.addAll(Lists.asList(first, rest));
             return this;
         }
 
-        public Builder<T> exclude(final String first, final String... rest) {
+        public Builder<T> exclude(@NonNls final String first, @NonNls final String... rest) {
             excludes.addAll(Lists.asList(first, rest));
             return this;
         }
@@ -138,7 +138,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             return this;
         }
 
-        public Builder<T> customFormItem(final String attribute, final FormItemProvider provider) {
+        public Builder<T> customFormItem(@NonNls final String attribute, final FormItemProvider provider) {
             providers.put(attribute, provider);
             return this;
         }

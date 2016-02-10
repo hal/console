@@ -158,11 +158,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String start();
     String supportsExpressions();
 
+    String testConnection();
     String toggleDropdown();
     String toggleNavigation();
     String tools();
+    String type();
     String unknownError();
     String view();
-
     //@formatter:on
 }

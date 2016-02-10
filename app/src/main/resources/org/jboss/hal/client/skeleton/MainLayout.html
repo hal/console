@@ -62,7 +62,7 @@
             <li data-element="patching"><a id="{{resources().TLC_PATCHING}}" href="{{historyToken(org.jboss.hal.meta.token.NameTokens.PATCHING)}}">Patching</a></li>
         </ul>
         <ol class="breadcrumb breadcrumb-hal" data-element="breadcrumbs">
-            <li><a class="back" href="javascript:history.back()"><i class="fa fa-angle-double-left"></i>&nbsp;{{resources().constants().back()}}</a></li>
+            <li><a data-element="backLink" class="back" href="{{historyToken(org.jboss.hal.meta.token.NameTokens.HOMEPAGE)}}"><i class="fa fa-angle-double-left"></i>&nbsp;{{resources().constants().back()}}</a></li>
             <!-- Sample breadcrumb
             <li><span class="key">Foo</span><span class="value">Bar</span></li>
             <li class="active"><span class="key">Foo</span><span class="value">Bar</span></li>

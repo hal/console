@@ -46,6 +46,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
     private static final String BUTTON_CONTAINER = "buttonContainer";
 
     private final String id;
+    private final String nextColumn;
     private final Finder finder;
     private final PreviewContent previewContent;
 
@@ -60,6 +61,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
             final PreviewCallback<T> previewCallback) {
 
         this.id = display.getId();
+        this.nextColumn = display.nextColumn();
         this.finder = finder;
         this.previewContent = previewCallback != null ? previewCallback.onPreview(item) : new PreviewContent(
                 display.getTitle());
@@ -151,9 +153,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                     finder.reduceTo(column);
                     finder.updateContext();
                     finder.publishContext();
-                    if (display.nextColumn() != null) {
-                        finder.appendColumn(display.nextColumn(), null);
-                    }
+                    appendNextColumn();
                     // </keep>
                     preview();
                 }
@@ -172,6 +172,12 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
             root.getClassList().remove(active);
             Elements.setVisible(buttonContainer, false);
             Elements.setVisible(folderElement, true);
+        }
+    }
+
+    void appendNextColumn() {
+        if (nextColumn != null) {
+            finder.appendColumn(nextColumn, null);
         }
     }
 

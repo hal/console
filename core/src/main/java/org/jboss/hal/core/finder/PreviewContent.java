@@ -41,39 +41,21 @@ import org.slf4j.LoggerFactory;
  */
 public class PreviewContent implements SecurityContextAware {
 
-    private static final String CONTENT_ELEMENT = "content";
+    protected static final String CONTENT_ELEMENT = "content";
     private static final String ERROR_MESSAGE = "Unable to get preview content from '{}': {}";
     private static final Logger logger = LoggerFactory.getLogger(PreviewContent.class);
 
-    private Elements.Builder builder;
+    protected Elements.Builder builder;
 
     /**
      * Empty preview w/o content
      */
     public PreviewContent(final String header) {
-        builder = new Elements.Builder().h(1).innerText(header).end();
+        builder = header(header);
     }
 
-    public PreviewContent(final String header, final ExternalTextResource resource) {
-        builder = header(header).section().rememberAs(CONTENT_ELEMENT).end();
-        Element content = builder.referenceFor(CONTENT_ELEMENT);
-
-        try {
-            resource.getText(new ResourceCallback<TextResource>() {
-                @Override
-                public void onError(final ResourceException e) {
-                    logger.error(ERROR_MESSAGE, resource.getName(), e.getMessage());
-                }
-
-                @Override
-                public void onSuccess(final TextResource textResource) {
-                    SafeHtml html = SafeHtmlUtils.fromSafeConstant(textResource.getText());
-                    content.setInnerHTML(html.asString());
-                }
-            });
-        } catch (ResourceException e) {
-            logger.error(ERROR_MESSAGE, resource.getName(), e.getMessage());
-        }
+    public PreviewContent(final String header, SafeHtml html) {
+        builder = header(header).section().innerHtml(html).end();
     }
 
     public PreviewContent(final String header, final Element first, final Element... rest) {
@@ -85,6 +67,30 @@ public class PreviewContent implements SecurityContextAware {
             }
         }
         builder.end();
+    }
+
+    public PreviewContent(final String header, final ExternalTextResource resource) {
+        builder = header(header).section().rememberAs(CONTENT_ELEMENT).end();
+        Element content = builder.referenceFor(CONTENT_ELEMENT);
+
+        if (resource != null) {
+            try {
+                resource.getText(new ResourceCallback<TextResource>() {
+                    @Override
+                    public void onError(final ResourceException e) {
+                        logger.error(ERROR_MESSAGE, resource.getName(), e.getMessage());
+                    }
+
+                    @Override
+                    public void onSuccess(final TextResource textResource) {
+                        SafeHtml html = SafeHtmlUtils.fromSafeConstant(textResource.getText());
+                        content.setInnerHTML(html.asString());
+                    }
+                });
+            } catch (ResourceException e) {
+                logger.error(ERROR_MESSAGE, resource.getName(), e.getMessage());
+            }
+        }
     }
 
     private Elements.Builder header(String header) {

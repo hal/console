@@ -269,11 +269,12 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
     }
 
-    void previewSelectedItem() {
+    FinderRow<T> getSelectedRow(String id) {
         Element activeItem = ulElement.querySelector("li." + CSS.active); //NON-NLS
         if (activeItem != null && rows.containsKey(activeItem.getId())) {
-            rows.get(activeItem.getId()).preview();
+            return rows.get(activeItem.getId());
         }
+        return null;
     }
 
     void setItems(AsyncCallback<FinderColumn> callback) {

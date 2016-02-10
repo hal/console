@@ -309,6 +309,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             fallback.execute();
 
         } else{
+            // TODO Reduce to the last column that matches with the curent path!
             FinderColumn lastColumn = columns.get(path.last().getKey());
             if (lastColumn != null) {
                 reduceTo(lastColumn);
@@ -330,7 +331,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
                             } else if (!context.emptyStack()) {
                                 FinderColumn column = context.pop();
-                                column.previewSelectedItem();
+                                processLastSelectedItem(column);
                                 publishContext();
                             }
                         }
@@ -338,8 +339,16 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                         @Override
                         public void onSuccess(final FunctionContext context) {
                             FinderColumn column = context.pop();
-                            column.previewSelectedItem();
+                            processLastSelectedItem(column);
                             publishContext();
+                        }
+
+                        private void processLastSelectedItem(FinderColumn column) {
+                            FinderRow row = column.getSelectedRow(context.getPath().last().getValue());
+                            if (row != null) {
+                                row.appendNextColumn();
+                                row.preview();
+                            }
                         }
                     }, functions);
         }

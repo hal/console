@@ -56,7 +56,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         void showMessage(Message message);
         void tlcMode();
         void applicationMode();
-        void updateTlc(String token, FinderPath finderPath);
+        void updatePath(String token, FinderPath finderPath);
         void updateBreadcrumb(Breadcrumb breadcrumb);
     }
     // @formatter:on
@@ -125,7 +125,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
 
     @Override
     public void onFinderContext(final FinderContextEvent event) {
-        getView().updateTlc(event.getFinderContext().getToken(), event.getFinderContext().getPath());
+        getView().updatePath(event.getFinderContext().getToken(), event.getFinderContext().getPath());
         getView().updateBreadcrumb(event.getFinderContext().getBreadcrumb());
     }
 

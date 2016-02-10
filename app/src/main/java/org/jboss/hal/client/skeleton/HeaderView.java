@@ -90,6 +90,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     @DataElement Element patching;
     @DataElement Element topLevelTabs;
     @DataElement Element breadcrumbs;
+    @DataElement Element backLink;
 
 
     @PostConstruct
@@ -206,11 +207,13 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     }
 
     @Override
-    public void updateTlc(final String token, final FinderPath finderPath) {
+    public void updatePath(final String token, final FinderPath finderPath) {
         if (token != null) {
+            String historyToken = historyToken(token, finderPath);
+            backLink.setAttribute("href", historyToken); //NON-NLS
             Element link = tlc.get(token);
             if (link != null) {
-                link.setAttribute("href", historyToken(token, finderPath)); //NON-NLS
+                link.setAttribute("href", historyToken); //NON-NLS
             }
         }
     }

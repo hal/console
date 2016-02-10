@@ -53,7 +53,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
             this.columnFactory = new ColumnFactory();
         }
 
-        public Builder<T> columns(String first, String... rest) {
+        public Builder<T> columns(@NonNls String first, @NonNls String... rest) {
             List<String> columns = Lists.asList(first, rest);
             for (String column : columns) {
                 column(column);
@@ -61,7 +61,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
             return that();
         }
 
-        public Builder<T> column(String attribute) {
+        public Builder<T> column(@NonNls String attribute) {
             Property attributeDescription = findDescription(resourceDescription.getAttributes(), attribute);
             if (attributeDescription != null) {
                 Column<T> column = columnFactory.createColumn(attributeDescription);

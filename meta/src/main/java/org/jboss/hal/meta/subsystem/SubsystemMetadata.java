@@ -28,47 +28,24 @@ public class SubsystemMetadata {
 
     private final String name;
     private final String title;
+    private final String subtitle;
     private final String token;
-    private final boolean folder;
+    private final String nextColumn;
+    private final boolean builtIn;
 
-    public SubsystemMetadata(final String name, final String title) {
-        this(name, title, null, true);
-    }
-
-    public SubsystemMetadata(final String name, final String title, final String token) {
-        this(name, title, token, false);
-    }
-
-    private SubsystemMetadata(final String name, final String title, final String token, final boolean folder) {
+    public SubsystemMetadata(final String name, final String title, final String subtitle, final String token,
+            final String nextColumn, final boolean builtIn) {
         this.name = name;
         this.title = title;
+        this.subtitle = subtitle;
         this.token = token;
-        this.folder = folder;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof SubsystemMetadata)) { return false; }
-
-        SubsystemMetadata that = (SubsystemMetadata) o;
-
-        return name.equals(that.name);
-
-    }
-
-    @Override
-    public int hashCode() {
-        return name.hashCode();
+        this.nextColumn = nextColumn;
+        this.builtIn = builtIn;
     }
 
     @Override
     public String toString() {
         return "Subsystem(" + name + ")";
-    }
-
-    public boolean isFolder() {
-        return folder;
     }
 
     public String getName() {
@@ -79,7 +56,19 @@ public class SubsystemMetadata {
         return title;
     }
 
+    public String getSubtitle() {
+        return subtitle;
+    }
+
     public String getToken() {
         return token;
+    }
+
+    public String getNextColumn() {
+        return nextColumn;
+    }
+
+    public boolean isBuiltIn() {
+        return builtIn;
     }
 }
