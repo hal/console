@@ -61,7 +61,8 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
 
         this.id = display.getId();
         this.finder = finder;
-        this.previewContent = previewCallback != null ? previewCallback.onPreview(item) : null;
+        this.previewContent = previewCallback != null ? previewCallback.onPreview(item) : new PreviewContent(
+                display.getTitle());
 
         Elements.Builder eb = new Elements.Builder().li()
                 .id(display.getId())

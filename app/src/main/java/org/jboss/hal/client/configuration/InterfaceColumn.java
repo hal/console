@@ -21,7 +21,6 @@
  */
 package org.jboss.hal.client.configuration;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
@@ -30,7 +29,6 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
-import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -46,7 +44,6 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
-import static org.jboss.hal.resources.Names.NYI;
 
 /**
  * @author Harald Pehl
@@ -83,8 +80,6 @@ public class InterfaceColumn extends FinderColumn<Property> {
                     Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
                             .param(CHILD_TYPE, Names.INTERFACE_RESOURCE).build();
                     dispatcher.execute(operation, result -> { callback.onSuccess(result.asPropertyList()); });
-                })
-                .onPreview(property -> new PreviewContent(new LabelBuilder().label(property),
-                        SafeHtmlUtils.fromString(NYI))));
+                }));
     }
 }

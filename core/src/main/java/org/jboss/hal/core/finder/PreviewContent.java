@@ -36,6 +36,10 @@ public class PreviewContent implements SecurityContextAware {
 
     private Elements.Builder builder;
 
+    public PreviewContent(final String header) {
+        builder = new Elements.Builder().h(1).innerText(header).end();
+    }
+
     public PreviewContent(final String header, final SafeHtml content) {
         builder = new Elements.Builder().h(1).innerText(header).end();
         builder.section().innerHtml(content).end();

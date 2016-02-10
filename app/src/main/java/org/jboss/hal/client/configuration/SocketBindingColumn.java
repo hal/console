@@ -21,7 +21,6 @@
  */
 package org.jboss.hal.client.configuration;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -29,7 +28,6 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
-import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -44,7 +42,8 @@ import static java.util.Collections.singletonList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 import static org.jboss.hal.resources.Ids.SOCKET_BINDING_COLUMN;
-import static org.jboss.hal.resources.Names.*;
+import static org.jboss.hal.resources.Names.SOCKET_BINDING;
+import static org.jboss.hal.resources.Names.socketBinding;
 
 /**
  * @author Harald Pehl
@@ -79,8 +78,6 @@ public class SocketBindingColumn extends FinderColumn<Property> {
                     Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
                             .param(CHILD_TYPE, "socket-binding-group").build();
                     dispatcher.execute(operation, result -> { callback.onSuccess(result.asPropertyList()); });
-                })
-                .onPreview(property -> new PreviewContent(new LabelBuilder().label(property),
-                        SafeHtmlUtils.fromString(NYI))));
+                }));
     }
 }
