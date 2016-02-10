@@ -22,6 +22,7 @@
 package org.jboss.hal.client.skeleton;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.gwt.user.client.Window;
 import com.gwtplatform.mvp.client.ViewImpl;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
@@ -118,7 +119,11 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     }
 
     String historyToken(String token, String path) {
-        PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token).with("path", path).build();
+        PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(token);
+        if (!Strings.isNullOrEmpty(path)) {
+            builder.with("path", path);
+        }
+        PlaceRequest placeRequest = builder.build();
         return "#" + tokenFormatter().toHistoryToken(Collections.singletonList(placeRequest));
     }
 

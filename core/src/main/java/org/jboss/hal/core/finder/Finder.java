@@ -263,11 +263,18 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 }
             }
         }
+    }
 
+    void publishContext() {
         PlaceRequest current = placeManager.getCurrentPlaceRequest();
-        PlaceRequest update = new PlaceRequest.Builder().nameToken(current.getNameToken())
-                .with("path", context.getPath().toString()).build();
-        placeManager.updateHistory(update, true);
+        PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(current.getNameToken());
+        if (!context.getPath().isEmpty()) {
+            builder.with("path", context.getPath().toString());
+        }
+        PlaceRequest update = builder.build();
+        if (!current.equals(update)) {
+            placeManager.updateHistory(update, true);
+        }
         eventBus.fireEvent(new FinderContextEvent(context));
     }
 
@@ -288,6 +295,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         context.reset(token);
         appendColumn(initialColumn, null);
         preview(initialPreview);
+        publishContext();
     }
 
     public void select(final String token, final FinderPath path, final ScheduledCommand fallback) {
@@ -315,9 +323,11 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                         public void onFailure(final FunctionContext context) {
                             if (Finder.this.context.getPath().isEmpty()) {
                                 fallback.execute();
+
                             } else if (!context.emptyStack()) {
                                 FinderColumn column = context.pop();
                                 column.previewSelectedItem();
+                                publishContext();
                             }
                         }
 
@@ -325,6 +335,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                         public void onSuccess(final FunctionContext context) {
                             FinderColumn column = context.pop();
                             column.previewSelectedItem();
+                            publishContext();
                         }
                     }, functions);
         }
