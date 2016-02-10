@@ -32,7 +32,10 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import javax.inject.Inject;
@@ -41,13 +44,12 @@ import java.util.List;
 import static java.util.Collections.singletonList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
-import static org.jboss.hal.resources.Ids.SOCKET_BINDING_COLUMN;
-import static org.jboss.hal.resources.Names.SOCKET_BINDING;
 import static org.jboss.hal.resources.Names.socketBinding;
 
 /**
  * @author Harald Pehl
  */
+@AsyncColumn(Ids.SOCKET_BINDING_COLUMN)
 public class SocketBindingColumn extends FinderColumn<Property> {
 
     @Inject
@@ -56,7 +58,7 @@ public class SocketBindingColumn extends FinderColumn<Property> {
             final PlaceManager placeManager,
             final Dispatcher dispatcher) {
 
-        super(new FinderColumn.Builder<Property>(finder, SOCKET_BINDING_COLUMN, SOCKET_BINDING,
+        super(new FinderColumn.Builder<Property>(finder, Ids.SOCKET_BINDING_COLUMN, Names.SOCKET_BINDING,
                 property -> new ItemDisplay<Property>() {
                     @Override
                     public String getTitle() {

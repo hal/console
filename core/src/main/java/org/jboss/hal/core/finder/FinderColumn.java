@@ -259,16 +259,14 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
     }
 
-    boolean selectItem(String itemId) {
-        FinderRow<T> row = rows.get(itemId);
-        if (row != null) {
-            for (Element element : Elements.children(ulElement)) {
-                element.getClassList().remove(active);
-            }
-            row.markSelected();
-            return true;
+    boolean containsItem(String itemId) {
+        return rows.containsKey(itemId);
+    }
+
+    void selectItem(String itemId) {
+        for (Map.Entry<String, FinderRow<T>> entry : rows.entrySet()) {
+            entry.getValue().markSelected(itemId.equals(entry.getKey()));
         }
-        return false;
     }
 
     void previewSelectedItem() {

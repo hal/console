@@ -146,28 +146,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         Elements.setVisible(buttonContainer, false);
 
         root.setOnclick(event -> {
-                    for (Element sibling : Elements.children(root.getParentElement())) {
-                        if (sibling == root) {
-                            sibling.getClassList().add(active);
-                            if (buttonContainer != null) {
-                                Elements.setVisible(folderElement, false);
-                                Elements.setVisible(buttonContainer, true);
-                            }
-
-                        } else {
-                            sibling.getClassList().remove(active);
-                            Element buttonContainer = sibling.querySelector("." + btnGroup);
-                            if (buttonContainer != null) {
-                                Elements.setVisible(buttonContainer, false);
-                            } else {
-                                buttonContainer = sibling.querySelector("button"); //NON-NLS
-                                Elements.setVisible(buttonContainer, false);
-                            }
-                            Elements.setVisible(sibling.querySelector("div." + btnGroup), false); //NON-NLS
-                            Elements.setVisible(sibling.querySelector("span." + folder), true); //NON-NLS
-                        }
-                    }
-
+                    column.selectItem(id);
                     // <keep> this in order!
                     finder.reduceTo(column);
                     finder.updateContext();
@@ -181,8 +160,19 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         );
     }
 
-    void markSelected() {
-        root.getClassList().add(active);
+    void markSelected(boolean select) {
+        if (select) {
+            root.getClassList().add(active);
+            if (buttonContainer != null) {
+                Elements.setVisible(buttonContainer, true);
+                Elements.setVisible(folderElement, false);
+            }
+
+        } else {
+            root.getClassList().remove(active);
+            Elements.setVisible(buttonContainer, false);
+            Elements.setVisible(folderElement, true);
+        }
     }
 
     void preview() {

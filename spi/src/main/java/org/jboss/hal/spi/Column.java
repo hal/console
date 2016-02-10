@@ -19,31 +19,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.resources;
+package org.jboss.hal.spi;
 
-import com.google.gwt.resources.client.ClientBundleWithLookup;
-import com.google.gwt.resources.client.ExternalTextResource;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
 
 /**
+ * Triggers registration for a finder column.
+ *
  * @author Harald Pehl
  */
-public interface Previews extends ClientBundleWithLookup {
+@Target(ElementType.TYPE)
+public @interface Column {
 
-    @Source("previews/interfaces.html")
-    ExternalTextResource interfaces();
-
-    @Source("previews/paths.html")
-    ExternalTextResource paths();
-
-    @Source("previews/socket-bindings.html")
-    ExternalTextResource socketBindings();
-
-    @Source("previews/standalone-configuration.html")
-    ExternalTextResource standaloneConfiguration();
-
-    @Source("previews/subsystems.html")
-    ExternalTextResource subsystems();
-
-    @Source("previews/system-properties.html")
-    ExternalTextResource systemProperties();
+    String value();
 }

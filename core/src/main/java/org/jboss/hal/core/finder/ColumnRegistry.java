@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Registry for finder columns. Manages both sync and async columns behind a split point.
+ *
  * @author Harald Pehl
  */
 public class ColumnRegistry {

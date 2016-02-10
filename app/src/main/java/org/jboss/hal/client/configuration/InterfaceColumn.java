@@ -33,6 +33,7 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -48,6 +49,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCE
 /**
  * @author Harald Pehl
  */
+@AsyncColumn(value = Ids.INTERFACE_COLUMN)
 public class InterfaceColumn extends FinderColumn<Property> {
 
     @Inject

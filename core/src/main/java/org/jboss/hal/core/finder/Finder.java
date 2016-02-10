@@ -65,6 +65,9 @@ import static org.jboss.hal.resources.Ids.FINDER;
  */
 public class Finder implements IsElement, SecurityContextAware, Attachable {
 
+    /**
+     * Function used in {@link #select(String, FinderPath, ScheduledCommand)} to select one segment in a finder path.
+     */
     private class SelectFunction implements Function<FunctionContext> {
 
         private final FinderPath.Segment segment;
@@ -101,7 +104,8 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         }
 
         private void selectItem(FinderColumn finderColumn, Control<FunctionContext> control) {
-            if (finderColumn.selectItem(segment.getValue())) {
+            if (finderColumn.containsItem(segment.getValue())) {
+                finderColumn.selectItem(segment.getValue());
                 updateContext();
                 control.getContext().push(finderColumn);
                 control.proceed();

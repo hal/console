@@ -30,24 +30,27 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.spi.Column;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 
 import javax.inject.Inject;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
-import static org.jboss.hal.resources.Ids.SUBSYSTEM_COLUMN;
-import static org.jboss.hal.resources.Names.SUBSYSTEM;
 
 /**
  * @author Harald Pehl
  */
+@Column(Ids.SUBSYSTEM_COLUMN)
 public class SubsystemColumn extends FinderColumn<String> {
 
     @Inject
     public SubsystemColumn(final Finder finder,
             final Dispatcher dispatcher) {
 
-        super(new Builder<>(finder, SUBSYSTEM_COLUMN, SUBSYSTEM, (String item) -> () -> new LabelBuilder().label(item))
+        super(new Builder<>(finder, Ids.SUBSYSTEM_COLUMN, Names.SUBSYSTEM,
+                (String item) -> () -> new LabelBuilder().label(item))
                 .showCount()
                 .withFilter()
                 .itemsProvider((context, callback) -> {

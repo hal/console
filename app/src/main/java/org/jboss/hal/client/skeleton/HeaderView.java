@@ -22,7 +22,6 @@
 package org.jboss.hal.client.skeleton;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 import com.google.gwt.user.client.Window;
 import com.gwtplatform.mvp.client.ViewImpl;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
@@ -118,10 +117,10 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         return "#" + tokenFormatter().toHistoryToken(Collections.singletonList(placeRequest));
     }
 
-    String historyToken(String token, String path) {
+    String historyToken(String token, FinderPath path) {
         PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(token);
-        if (!Strings.isNullOrEmpty(path)) {
-            builder.with("path", path);
+        if (!path.isEmpty()) {
+            builder.with("path", path.toString());
         }
         PlaceRequest placeRequest = builder.build();
         return "#" + tokenFormatter().toHistoryToken(Collections.singletonList(placeRequest));
@@ -211,7 +210,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         if (token != null) {
             Element link = tlc.get(token);
             if (link != null) {
-                link.setAttribute("href", historyToken(token, finderPath.toString())); //NON-NLS
+                link.setAttribute("href", historyToken(token, finderPath)); //NON-NLS
             }
         }
     }

@@ -1,3 +1,4 @@
+<#-- @ftlvariable name="generatedWith" type="java.lang.String" -->
 <#-- @ftlvariable name="packageName" type="java.lang.String" -->
 <#-- @ftlvariable name="className" type="java.lang.String" -->
 <#-- @ftlvariable name="modules" type="java.util.Set<String>" -->
@@ -10,7 +11,7 @@ import com.google.gwt.inject.client.AbstractGinModule;
 /*
 * WARNING! This class is generated. Do not modify.
 */
-@Generated("org.jboss.hal.processors.GinModuleProcessor")
+@Generated("${generatedWith}")
 public class ${className} extends AbstractGinModule {
 
     @Override
