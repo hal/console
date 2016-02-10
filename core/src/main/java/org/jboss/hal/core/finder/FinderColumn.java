@@ -22,6 +22,7 @@
 package org.jboss.hal.core.finder;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental.dom.Element;
 import elemental.events.Event;
 import elemental.html.InputElement;
@@ -34,12 +35,14 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.keyup;
 import static org.jboss.gwt.elemento.core.InputType.text;
-import static org.jboss.hal.core.finder.Finder.BREADCRUMB_KEY;
+import static org.jboss.hal.core.finder.Finder.DATA_BREADCRUMB;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
 import static org.jboss.hal.resources.Names.ROLE;
@@ -144,7 +147,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     private final List<T> initialItems;
     private final ItemsProvider<T> itemsProvider;
     private final PreviewCallback<T> previewCallback;
-    private final List<FinderRow<T>> rows;
+    private final Map<String, FinderRow<T>> rows;
 
     private final Element root;
     private final Element headerElement;
@@ -161,11 +164,11 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         this.initialItems = builder.items;
         this.itemsProvider = builder.itemsProvider;
         this.previewCallback = builder.previewCallback;
-        this.rows = new ArrayList<>();
+        this.rows = new HashMap<>();
 
         // header
         Elements.Builder eb = new Elements.Builder()
-                .div().id(id).css(finderColumn, column(2)).data(BREADCRUMB_KEY, title)
+                .div().id(id).data(DATA_BREADCRUMB, title).css(finderColumn, column(2))
                 .header()
                 .h(1).innerText(builder.title).title(builder.title).rememberAs(HEADER_ELEMENT).end();
 
@@ -256,30 +259,58 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
     }
 
-    void markSelected(String itemId) {
-        for (Element li : Elements.children(ulElement)) {
-            if (itemId.equals(li.getId())) {
-                li.getClassList().add(active);
-                break;
-            }
+    boolean markSelected(String itemId) {
+        FinderRow<T> row = rows.get(itemId);
+        if (row != null) {
+            row.markSelected();
+            return true;
+        }
+        return false;
+    }
+
+    void previewSelectedItem() {
+        Element activeItem = ulElement.querySelector("li." + CSS.active); //NON-NLS
+        if (activeItem != null && rows.containsKey(activeItem.getId())) {
+            rows.get(activeItem.getId()).preview();
         }
     }
 
-    void setItems(List<T> items) {
+    void setItems(AsyncCallback<FinderColumn> callback) {
+        if (!initialItems.isEmpty()) {
+            setItems(initialItems, callback);
+
+        } else if (itemsProvider != null) {
+            itemsProvider.get(finder.getContext(), new AsyncCallback<List<T>>() {
+                @Override
+                public void onFailure(final Throwable throwable) {
+                    callback.onFailure(throwable);
+                }
+
+                @Override
+                public void onSuccess(final List<T> items) {
+                    setItems(items, callback);
+                }
+            });
+        }
+    }
+
+    private void setItems(List<T> items, AsyncCallback<FinderColumn> callback) {
         rows.clear();
         Elements.removeChildrenFrom(ulElement);
         if (filterElement != null) {
             filterElement.setValue("");
         }
-
         for (T item : items) {
             FinderRow<T> row = new FinderRow<>(finder, this, item,
                     itemRenderer.render(item), previewCallback);
-            rows.add(row);
+            rows.put(row.getId(), row);
             ulElement.appendChild(row.asElement());
         }
-
         updateHeader(items.size());
+
+        if (callback != null) {
+            callback.onSuccess(this);
+        }
     }
 
     @Override
@@ -290,7 +321,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     @Override
     public void onSecurityContextChange(final SecurityContext securityContext) {
         // TODO Check column actions
-        for (FinderRow<T> row : rows) {
+        for (FinderRow<T> row : rows.values()) {
             row.onSecurityContextChange(securityContext);
         }
     }
@@ -301,13 +332,5 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
     public String getTitle() {
         return title;
-    }
-
-    public List<T> getInitialItems() {
-        return initialItems;
-    }
-
-    public ItemsProvider<T> getItemsProvider() {
-        return itemsProvider;
     }
 }

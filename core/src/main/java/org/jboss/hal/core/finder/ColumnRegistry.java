@@ -23,30 +23,22 @@ package org.jboss.hal.core.finder;
 
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.jboss.hal.core.finder.ColumnRegistry.LookupResult.*;
 
 /**
  * @author Harald Pehl
  */
 public class ColumnRegistry {
 
-    public enum LookupResult {ASYNC, READY, UNKNOWN}
+    public interface LookupCallback {
 
+        void found(FinderColumn column);
 
-    @FunctionalInterface
-    public interface ColumnReadyCallback {
-
-        void ready(FinderColumn column);
+        void error(String failure);
     }
 
-
-    private static final Logger logger = LoggerFactory.getLogger(ColumnRegistry.class);
 
     private final Map<String, FinderColumn> columns;
     private final Map<String, AsyncProvider> asyncColumns;
@@ -60,41 +52,34 @@ public class ColumnRegistry {
         columns.put(column.getId(), column);
     }
 
-    public <C extends FinderColumn> void registerColumn(String id, AsyncProvider<C> column) {
+    public void registerColumn(String id, AsyncProvider column) {
         asyncColumns.put(id, column);
     }
 
-    public FinderColumn getColumn(String id) {
-        return columns.get(id);
-    }
-
-    public LookupResult lookup(String id) {
-        if (columns.containsKey(id)) {
-            return READY;
-        } else if (asyncColumns.containsKey(id)) {
-            return ASYNC;
-        } else {
-            return UNKNOWN;
-        }
-    }
-
     @SuppressWarnings("unchecked")
-    public void loadColumn(String id, ColumnReadyCallback callback) {
-        if (asyncColumns.containsKey(id)) {
+    void lookup(String id, LookupCallback callback) {
+        if (columns.containsKey(id)) {
+            callback.found(columns.get(id));
+
+        } else if (asyncColumns.containsKey(id)) {
             AsyncProvider<FinderColumn> asyncProvider = asyncColumns.get(id);
             asyncProvider.get(new AsyncCallback<FinderColumn>() {
                 @Override
                 public void onFailure(final Throwable throwable) {
-                    logger.error("Unable to load column {}: {}", id, throwable.getMessage()); //NON-NLS
+                    callback.error("Unable to load column '" + id + "': " + throwable.getMessage()); //NON-NLS
                 }
 
                 @Override
                 public void onSuccess(final FinderColumn column) {
                     asyncColumns.remove(id);
                     registerColumn(column);
-                    callback.ready(column);
+                    callback.found(column);
                 }
             });
+
+        } else {
+            //noinspection HardCodedStringLiteral
+            callback.error("Unknown column '" + id + "'. Please make sure to register all columns, before using them.");
         }
     }
 }

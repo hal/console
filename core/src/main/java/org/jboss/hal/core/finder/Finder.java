@@ -27,6 +27,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import elemental.client.Browser;
 import elemental.dom.Element;
+import elemental.html.HTMLCollection;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.flow.Async;
@@ -37,6 +38,7 @@ import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.core.finder.ColumnRegistry.LookupCallback;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
@@ -46,13 +48,10 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.lang.Math.min;
-import static org.jboss.hal.core.finder.ColumnRegistry.LookupResult.ASYNC;
-import static org.jboss.hal.core.finder.ColumnRegistry.LookupResult.READY;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Ids.FINDER;
 
@@ -67,37 +66,46 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     private class SelectFunction implements Function<FunctionContext> {
 
-        final FinderPath.Segment segment;
+        private final FinderPath.Segment segment;
+        private final Element columnElement;
 
-        private SelectFunction(final FinderPath.Segment segment) {this.segment = segment;}
+        private SelectFunction(final FinderPath.Segment segment, final Element columnElement) {
+            this.segment = segment;
+            this.columnElement = columnElement;
+        }
 
         @Override
         public void execute(final Control<FunctionContext> control) {
-            appendColumn(segment.getKey());
-            FinderColumn column = columnRegistry.getColumn(segment.getKey());
-            if (column != null) {
-                appendColumn(column);
-                AsyncProvider<List> itemProvider = columnRegistry.getItemProvider(segment.getKey());
-                if (itemProvider != null) {
-                    itemProvider.get(new AsyncCallback<List>() {
-                        @Override
-                        public void onFailure(final Throwable throwable) {
-                            control.abort();
-                        }
-
-                        @Override
-                        public void onSuccess(final List list) {
-                            //noinspection unchecked
-                            column.setItems(list);
-                            column.markSelected(segment.getValue());
-                            control.proceed();
-                        }
-                    });
-                } else {
-                    control.proceed();
-                }
+            if (columnElement != null &&
+                    columns.containsKey(columnElement.getId()) &&
+                    segment.getKey().equals(columnElement.getId())) {
+                // column is already in place just select the item
+                FinderColumn finderColumn = columns.get(columnElement.getId());
+                markItem(finderColumn, control);
 
             } else {
+                // append the column
+                appendColumn(segment.getKey(), new AsyncCallback<FinderColumn>() {
+                    @Override
+                    public void onFailure(final Throwable throwable) {
+                        control.abort();
+                    }
+
+                    @Override
+                    public void onSuccess(final FinderColumn finderColumn) {
+                        markItem(finderColumn, control);
+                    }
+                });
+            }
+        }
+
+        private void markItem(FinderColumn finderColumn, Control<FunctionContext> control) {
+            if (finderColumn.markSelected(segment.getValue())) {
+                updateContext();
+                control.getContext().push(finderColumn);
+                control.proceed();
+            } else {
+                logger.error("Unable to select item '{}'", segment.getValue()); //NON-NLS
                 control.abort();
             }
         }
@@ -109,8 +117,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
      * {@code MAX_VISIBLE_COLUMNS + 1} is shown.
      */
     public static final int MAX_VISIBLE_COLUMNS = 4;
-    static final String BREADCRUMB_KEY = "breadcrumbKey";
-    static final String BREADCRUMB_VALUE = "breadcrumbValue";
+    static final String DATA_BREADCRUMB = "breadcrumb";
 
     private static final int MAX_COLUMNS = 12;
     private static final String PREVIEW_COLUMN = "previewColumn";
@@ -188,25 +195,24 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     // ------------------------------------------------------ internal API
 
-    void <T> appendColumn(String columnId, AsyncCallback<FinderColumn<T>> callback) {
-        ColumnRegistry.LookupResult lookupResult = columnRegistry.lookup(columnId);
-        if (lookupResult == READY) {
-            FinderColumn column = columnRegistry.getColumn(columnId);
-            appendColumn(column);
-            if (callback != null) {
-                callback.onSuccess(null);
+    void appendColumn(String columnId, AsyncCallback<FinderColumn> callback) {
+        columnRegistry.lookup(columnId, new LookupCallback() {
+            @Override
+            public void found(final FinderColumn column) {
+                appendColumn(column, callback);
             }
 
-        } else if (lookupResult == ASYNC) {
-            columnRegistry.loadColumn(columnId, (column) -> appendColumn(column, callback));
-
-        } else {
-            //noinspection HardCodedStringLiteral
-            logger.error("Unknown column '{}'. Please make sure to register all columns in the column registry, before appending them.");
-        }
+            @Override
+            public void error(final String failure) {
+                logger.error(failure);
+                if (callback != null) {
+                    callback.onFailure(new RuntimeException(failure));
+                }
+            }
+        });
     }
 
-    private <T> void appendColumn(FinderColumn<T> column, AsyncCallback<FinderColumn<T>> callback) {
+    private void appendColumn(FinderColumn column, AsyncCallback<FinderColumn> callback) {
         columns.put(column.getId(), column);
         root.insertBefore(column.asElement(), previewColumn);
 
@@ -214,23 +220,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         int previewSize = MAX_COLUMNS - 2 * min(columns, MAX_VISIBLE_COLUMNS);
         previewColumn.setClassName(finderPreview + " " + column(previewSize));
 
-        if (!column.getInitialItems().isEmpty()) {
-            column.setItems(column.getInitialItems());
-
-        } else if (column.getItemsProvider() != null) {
-            column.getItemsProvider().get(context, new AsyncCallback<List<T>>() {
-                @Override
-                public void onFailure(final Throwable throwable) {
-                    //noinspection HardCodedStringLiteral
-                    logger.error("Unable to provide items for column '{}': {}", column.getId(), throwable.getMessage());
-                }
-
-                @Override
-                public void onSuccess(final List<T> items) {
-                    column.setItems(items);
-                }
-            });
-        }
+        column.setItems(callback);
     }
 
     void reduceTo(FinderColumn column) {
@@ -252,23 +242,24 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     }
 
     void updateContext() {
-        FinderPath path = FinderPath.empty();
-        Breadcrumb breadcrumb = Breadcrumb.empty();
+        context.getPath().clear();
+        context.getBreadcrumb().clear();
+
         for (Element column : Elements.children(root)) {
             if (column == previewColumn) {
                 break;
             }
             String key = column.getId();
-            String breadcrumbKey = String.valueOf(column.getDataset().at(BREADCRUMB_KEY));
+            String breadcrumbKey = String.valueOf(column.getDataset().at(DATA_BREADCRUMB));
             Element activeItem = column.querySelector("li." + CSS.active); //NON-NLS
             if (activeItem != null) {
                 String value = activeItem.getId();
-                String breadcrumbValue = String.valueOf(activeItem.getDataset().at(BREADCRUMB_VALUE));
+                String breadcrumbValue = String.valueOf(activeItem.getDataset().at(DATA_BREADCRUMB));
                 if (key != null && value != null) {
-                    path.append(key, value);
+                    context.getPath().append(key, value);
                 }
                 if (breadcrumbKey != null && breadcrumbValue != null) {
-                    breadcrumb.append(breadcrumbKey, breadcrumbValue);
+                    context.getBreadcrumb().append(breadcrumbKey, breadcrumbValue);
                 }
             }
         }
@@ -300,27 +291,37 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             root.removeChild(root.getFirstChild());
         }
         context.reset();
-        appendColumn(initialColumn);
+        appendColumn(initialColumn, null);
         preview(initialPreview);
     }
 
-    public void select(FinderPath path) {
+    public void select(FinderPath path, Scheduler.ScheduledCommand fallback) {
         if (!path.isEmpty()) {
 
             int index = 0;
             Function[] functions = new Function[path.size()];
+            HTMLCollection columns = root.getChildren();
             for (FinderPath.Segment segment : path) {
-                functions[index] = new SelectFunction(segment);
+                Element column = index < columns.getLength() ? (Element) columns.item(index) : null;
+                functions[index] = new SelectFunction(segment, column);
                 index++;
             }
             new Async<FunctionContext>(Progress.NOOP).waterfall(new FunctionContext(), new Outcome<FunctionContext>() {
                         @Override
                         public void onFailure(final FunctionContext context) {
-                            logger.error("Unable to select finder path {}: {}", path, context.getErrorMessage()); //NON-NLS
+                            if (Finder.this.context.getPath().isEmpty()) {
+                                fallback.execute();
+                            } else if (!context.emptyStack()) {
+                                FinderColumn column = context.pop();
+                                column.previewSelectedItem();
+                            }
                         }
 
                         @Override
-                        public void onSuccess(final FunctionContext context) {}
+                        public void onSuccess(final FunctionContext context) {
+                            FinderColumn column = context.pop();
+                            column.previewSelectedItem();
+                        }
                     }, functions);
         }
     }
@@ -334,5 +335,9 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     public String getId() {
         return id;
+    }
+
+    public FinderContext getContext() {
+        return context;
     }
 }

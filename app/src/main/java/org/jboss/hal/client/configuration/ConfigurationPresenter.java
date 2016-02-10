@@ -68,7 +68,8 @@ public class ConfigurationPresenter
     private String path;
 
     @Inject
-    public ConfigurationPresenter(final EventBus eventBus,
+    public ConfigurationPresenter(
+            final EventBus eventBus,
             final MyView view,
             final MyProxy proxy,
             final Finder finder,
@@ -137,7 +138,8 @@ public class ConfigurationPresenter
     protected void onReset() {
         super.onReset();
         if (path != null) {
-            finder.select(FinderPath.from(path));
+            finder.select(FinderPath.from(path),
+                    () -> finder.reset(getProxy().getNameToken(), Ids.CONFIGURATION_COLUMN, initialPreview));
         } else {
             finder.reset(getProxy().getNameToken(), Ids.CONFIGURATION_COLUMN, initialPreview);
         }

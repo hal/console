@@ -30,7 +30,7 @@ import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.Constants;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.core.finder.Finder.BREADCRUMB_VALUE;
+import static org.jboss.hal.core.finder.Finder.DATA_BREADCRUMB;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.*;
 
@@ -45,6 +45,10 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
     private static final String FOLDER_ELEMENT = "folderElement";
     private static final String BUTTON_CONTAINER = "buttonContainer";
 
+    private final String id;
+    private final Finder finder;
+    private final PreviewContent previewContent;
+
     private final Element root;
     private final Element folderElement;
     private final Element buttonContainer;
@@ -55,9 +59,13 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
             final ItemDisplay<T> display,
             final PreviewCallback<T> previewCallback) {
 
+        this.id = display.getId();
+        this.finder = finder;
+        this.previewContent = previewCallback != null ? previewCallback.onPreview(item) : null;
+
         Elements.Builder eb = new Elements.Builder().li()
                 .id(display.getId())
-                .data(BREADCRUMB_VALUE, display.getTitle())
+                .data(DATA_BREADCRUMB, display.getTitle())
                 .data(filter, display.getFilterData());
 
         if (display.getTooltip() != null) {
@@ -169,12 +177,19 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                     }
                     // </keep>
 
-                    if (previewCallback != null) {
-                        PreviewContent content = previewCallback.onPreview(item);
-                        finder.preview(content);
-                    }
+                    preview();
                 }
         );
+    }
+
+    void markSelected() {
+        root.getClassList().add(active);
+    }
+
+    void preview() {
+        if (previewContent != null) {
+            finder.preview(previewContent);
+        }
     }
 
     @Override
@@ -185,5 +200,9 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
     @Override
     public void onSecurityContextChange(final SecurityContext securityContext) {
 
+    }
+
+    public String getId() {
+        return id;
     }
 }

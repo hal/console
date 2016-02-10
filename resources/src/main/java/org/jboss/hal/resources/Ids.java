@@ -23,7 +23,7 @@ package org.jboss.hal.resources;
  */
 public interface Ids {
 
-    String CONFIGURATION_COLUMN = "config";
+    String CONFIGURATION_COLUMN = "configuration";
 
     String DATA_SOURCE_ATTRIBUTES_FORM = "data-source-attributes-form";
     String DATA_SOURCE_ATTRIBUTES_TAB = "data-source-attributes-tab";

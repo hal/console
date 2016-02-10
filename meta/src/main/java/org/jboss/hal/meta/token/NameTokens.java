@@ -27,8 +27,8 @@ public interface NameTokens {
 
     String ACCESS_CONTROL = "/access-control";
     String BATCH = "/configuration/{profile}/batch";
-    String CONFIGURATION = "/config/finder/{path}";
-    String DATASOURCE = "/config/app/{profile}/datasource";
+    String CONFIGURATION = "/configuration";
+    String DATASOURCE = "/configuration/{profile}/datasource";
     String DEPLOYMENTS = "/deployments";
     String HOMEPAGE = "/home";
     String INTERFACE = "/interface/{interface}";
