@@ -102,8 +102,6 @@ public interface ModelDescriptionConstants {
     String READ_RESOURCE_OPERATION = "read-resource";
     String RELATIVE_TO = "relative-to";
     String REMOVE = "remove";
-    String REMOTE = "remote";
-    String REMOVE_OPERATION = "remove-operation";
     String REQUEST_PROPERTIES = "request-properties";
     String RECURSIVE = "recursive";
     String RECURSIVE_DEPTH = "recursive-depth";

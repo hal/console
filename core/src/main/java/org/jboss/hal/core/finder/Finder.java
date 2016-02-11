@@ -369,7 +369,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 }
 
                 private void processLastColumnSelection(FinderColumn column) {
-                    FinderRow row = column.getSelectedRow(context.getPath().last().getValue());
+                    FinderRow row = column.getSelectedRow();
                     if (row != null) {
                         row.appendNextColumn();
                         row.preview();

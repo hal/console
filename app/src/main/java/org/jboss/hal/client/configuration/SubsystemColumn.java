@@ -91,8 +91,8 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
             final Subsystems subsystems,
             final Resources resources) {
 
-        super(new Builder<>(finder, Ids.SUBSYSTEM_COLUMN, Names.SUBSYSTEM,
-                (SubsystemMetadata item) -> new ItemDisplay<SubsystemMetadata>() {
+        super(new Builder<SubsystemMetadata>(finder, Ids.SUBSYSTEM_COLUMN, Names.SUBSYSTEM)
+                .itemRenderer(item -> new ItemDisplay<SubsystemMetadata>() {
 
                     @Override
                     public Element asElement() {

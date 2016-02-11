@@ -131,6 +131,16 @@ public class Dialog implements IsElement {
             return this;
         }
 
+        /**
+         * Shortcut for a dialog with a 'No' and 'Yes' button. Clicking on yes will execute the specified
+         * callback.
+         */
+        public Builder noYes(Callback yesCallback) {
+            primaryButton = new Button(CONSTANTS.yes(), yesCallback, true);
+            secondaryButton = new Button(CONSTANTS.no(), () -> true, false);
+            return this;
+        }
+
         public Builder primary(Callback callback) {
             return primary(CONSTANTS.save(), callback);
         }

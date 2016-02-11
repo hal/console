@@ -33,6 +33,8 @@ import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,35 +55,38 @@ import static org.jboss.hal.resources.Names.ROLE;
  * and an {@link ItemRenderer} which defines how the items of this column are rendered.
  *
  * @param <T> The columns type.
+ *
  * @author Harald Pehl
  */
 public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
-    // TODO Make the ItemRenderer optional with a default implementation
-    // TODO Let the FinderColumn override the renderer
     public static class Builder<T> {
 
         private final Finder finder;
         private final String id;
         private final String title;
-        private final ItemRenderer<T> itemRenderer;
         private final List<ColumnAction<T>> columnActions;
+        private ItemRenderer<T> itemRenderer;
         private boolean showCount;
         private boolean withFilter;
         private PreviewCallback<T> previewCallback;
         private List<T> items;
         private ItemsProvider<T> itemsProvider;
 
-        public Builder(final Finder finder, final String id, final String title,
-                final ItemRenderer<T> itemRenderer) {
+        public Builder(final Finder finder, final String id, final String title) {
             this.finder = finder;
             this.id = id;
             this.title = title;
-            this.itemRenderer = itemRenderer;
+            this.itemRenderer = item -> () -> String.valueOf(item);
             this.columnActions = new ArrayList<>();
             this.showCount = false;
             this.withFilter = false;
             this.items = new ArrayList<>();
+        }
+
+        public Builder<T> itemRenderer(ItemRenderer<T> itemRenderer) {
+            this.itemRenderer = itemRenderer;
+            return this;
         }
 
         public Builder<T> columnAction(String title, ColumnActionHandler<T> action) {
@@ -141,22 +146,25 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     private static final String HEADER_ELEMENT = "headerElement";
     private static final String FILTER_ELEMENT = "filterElement";
     private static final String UL_ELEMENT = "ulElement";
+    private static final Logger logger = LoggerFactory.getLogger(FinderColumn.class);
 
     private final Finder finder;
     private final String id;
     private final String title;
     private final boolean showCount;
-    private final ItemRenderer<T> itemRenderer;
     private final List<T> initialItems;
     private final ItemsProvider<T> itemsProvider;
     private final PreviewCallback<T> previewCallback;
     private final Map<String, FinderRow<T>> rows;
+    private ItemRenderer<T> itemRenderer;
 
     private final Element root;
     private final Element headerElement;
     private final InputElement filterElement;
     private final Element ulElement;
     private final Element noItems;
+
+    private boolean asElement;
 
 
     protected FinderColumn(final Builder<T> builder) {
@@ -220,6 +228,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         headerElement = eb.referenceFor(HEADER_ELEMENT);
         filterElement = builder.withFilter ? eb.referenceFor(FILTER_ELEMENT) : null;
         ulElement = eb.referenceFor(UL_ELEMENT);
+        asElement = false;
     }
 
     private void addColumnButton(final Elements.Builder builder, final ColumnAction<T> action) {
@@ -278,7 +287,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
     }
 
-    FinderRow<T> getSelectedRow(String id) {
+    FinderRow<T> getSelectedRow() {
         Element activeItem = ulElement.querySelector("li." + CSS.active); //NON-NLS
         if (activeItem != null && rows.containsKey(activeItem.getId())) {
             return rows.get(activeItem.getId());
@@ -332,8 +341,26 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
     }
 
+    /**
+     * Sometimes you need to reference {@code this} in the actions created by {@link ItemDisplay#actions()}. This is
+     * not possible if they're part of the builder which is passed to {@code super()}. In this case the item renderer
+     * can be specified <strong>after</strong> the call to {@code super()} using this setter.
+     */
+    protected void setItemRenderer(final ItemRenderer<T> itemRenderer) {
+        assertNotAsElement("setItemRenderer()");
+        this.itemRenderer = itemRenderer;
+    }
+
+    private void assertNotAsElement(String method) {
+        if (asElement) {
+            throw new IllegalStateException(
+                    "Illegal call to 'FinderColumn." + method + "' after FinderColumn.asElement()");
+        }
+    }
+
     @Override
     public Element asElement() {
+        asElement = true;
         return root;
     }
 
@@ -343,6 +370,24 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         for (FinderRow<T> row : rows.values()) {
             row.onSecurityContextChange(securityContext);
         }
+    }
+
+    public void refresh() {
+        setItems(new AsyncCallback<FinderColumn>() {
+            @Override
+            public void onFailure(final Throwable throwable) {
+                logger.error("Unable to refresh column {}: {}", id, throwable.getMessage()); //NON-NLS
+            }
+
+            @Override
+            public void onSuccess(final FinderColumn column) {
+                finder.updateContext();
+                finder.publishContext();
+                if (getSelectedRow() == null) {
+                    // TODO remove current preview
+                }
+            }
+        });
     }
 
     public String getId() {

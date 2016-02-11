@@ -61,35 +61,11 @@ public class DataSourceColumn extends FinderColumn<Property> {
             final StatementContext statementContext,
             final Resources resources) {
 
-        super(new Builder<Property>(finder, Ids.DATA_SOURCE_COLUMN, "Datasource", item -> //NON-NLS
-                new ItemDisplay<Property>() {
-                    @Override
-                    public String getTitle() {
-                        return item.getName();
-                    }
-
-                    @Override
-                    public List<ItemAction<Property>> actions() {
-                        String profile = statementContext.selectedProfile() != null ? statementContext
-                                .selectedProfile() : "standalone";
-                        PlaceRequest view = new PlaceRequest.Builder()
-                                .nameToken(NameTokens.DATASOURCE)
-                                .with(Names.PROFILE, profile)
-                                .with("datasource", item.getName()) //NON-NLS
-                                .build();
-
-                        return Arrays.asList(
-                                new ItemAction<>(resources.constants().view(),
-                                        item -> placeManager.revealPlace(view)),
-                                new ItemAction<>(resources.constants().remove(), item -> Window.alert(Names.NYI)),
-                                new ItemAction<>(resources.constants().testConnection(),
-                                        item -> Window.alert(Names.NYI))
-                        );
-                    }
-                })
+        super(new Builder<Property>(finder, Ids.DATA_SOURCE_COLUMN, "Datasource")
                 .itemsProvider((context, callback) -> {
                     ResourceAddress address = AddressTemplate.of("/{selected.profile}/subsystem=datasources")
                             .resolve(statementContext);
+                    // TODO Remove dirty hack which relies on the *generated* id of the last column
                     String childType = "xa".equals(context.getPath().last().getValue())
                             ? "xa-data-source" : "data-source";
                     Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
@@ -99,5 +75,31 @@ public class DataSourceColumn extends FinderColumn<Property> {
                     });
                 })
                 .onPreview(item -> new PreviewContent(item.getName())));
+
+        setItemRenderer(item -> new ItemDisplay<Property>() {
+            @Override
+            public String getTitle() {
+                return item.getName();
+            }
+
+            @Override
+            public List<ItemAction<Property>> actions() {
+                String profile = statementContext.selectedProfile() != null ? statementContext
+                        .selectedProfile() : "standalone";
+                PlaceRequest view = new PlaceRequest.Builder()
+                        .nameToken(NameTokens.DATASOURCE)
+                        .with(Names.PROFILE, profile)
+                        .with("datasource", item.getName()) //NON-NLS
+                        .build();
+
+                return Arrays.asList(
+                        new ItemAction<>(resources.constants().view(),
+                                item -> placeManager.revealPlace(view)),
+                        new ItemAction<>(resources.constants().remove(), item -> Window.alert(Names.NYI)),
+                        new ItemAction<>(resources.constants().testConnection(),
+                                item -> Window.alert(Names.NYI))
+                );
+            }
+        });
     }
 }

@@ -137,6 +137,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String logout();
     String modelBrowser();
     String metadataError();
+    String no();
     String noItems();
     String noResults();
     String notANumber();
@@ -166,5 +167,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String type();
     String unknownError();
     String view();
+    String yes();
     //@formatter:on
 }

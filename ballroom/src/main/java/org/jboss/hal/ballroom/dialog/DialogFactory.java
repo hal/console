@@ -19,36 +19,36 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.finder;
+package org.jboss.hal.ballroom.dialog;
 
-import java.util.List;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import elemental.client.Browser;
+import elemental.html.ParagraphElement;
+import org.jboss.hal.resources.Constants;
+
+import static org.jboss.hal.ballroom.dialog.Dialog.Size.SMALL;
 
 /**
- * The finder column for {@link StaticItem}.
- *
  * @author Harald Pehl
  */
-public class StaticItemColumn extends FinderColumn<StaticItem> {
+public final class DialogFactory {
 
-    public StaticItemColumn(final Finder finder, final String id, String title, List<StaticItem> items) {
-        super(new Builder<StaticItem>(finder, id, title)
-                .itemRenderer(item -> new ItemDisplay<StaticItem>() {
-                    @Override
-                    public String getTitle() {
-                        return item.getTitle();
-                    }
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
 
-                    @Override
-                    public List<ItemAction<StaticItem>> actions() {
-                        return item.getActions();
-                    }
+    private DialogFactory() {}
 
-                    @Override
-                    public String nextColumn() {
-                        return item.getNextColumn();
-                    }
-                })
-                .initialItems(items)
-                .onPreview(StaticItem::getPreviewContent));
+    public static Dialog confirmation(String title, SafeHtml question, Dialog.Callback confirm) {
+        ParagraphElement p = Browser.getDocument().createParagraphElement();
+        p.setInnerHTML(question.asString());
+
+        return new Dialog.Builder(title)
+                .closeIcon(true)
+                .closeOnEsc(true)
+                .noYes(confirm)
+                .size(SMALL)
+                .primary(CONSTANTS.yes(), confirm)
+                .add(p)
+                .build();
     }
 }
