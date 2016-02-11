@@ -29,6 +29,7 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -88,7 +89,7 @@ public class DataSourceColumn extends FinderColumn<Property> {
                         .selectedProfile() : "standalone";
                 PlaceRequest view = new PlaceRequest.Builder()
                         .nameToken(NameTokens.DATASOURCE)
-                        .with(Names.PROFILE, profile)
+                        .with(ModelDescriptionConstants.PROFILE, profile)
                         .with("datasource", item.getName()) //NON-NLS
                         .build();
 

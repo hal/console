@@ -19,34 +19,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.ballroom.table;
-
-import jsinterop.annotations.JsOverlay;
-import jsinterop.annotations.JsType;
-
-import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.resources.UIConstants.OBJECT;
+package org.jboss.hal.resources;
 
 /**
- * Select options.
+ * UI related constants used in more than one place.
  *
  * @author Harald Pehl
- * @see <a href="https://datatables.net/reference/option/#select">https://datatables.net/reference/option/#select</a>
  */
-@JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-class Select {
+public interface UIConstants {
 
-    @JsOverlay
-    @SuppressWarnings("HardCodedStringLiteral")
-    static Select build(boolean multiselect) {
-        Select select = new Select();
-        select.info = false;
-        select.items = "row";
-        select.style = multiselect ? "multi" : "single";
-        return select;
-    }
-
-    public boolean info;
-    public String items;
-    public String style;
+    String CONTROLS = "controls";
+    String EXPANDED = "expanded";
+    String HAS_POPUP = "haspopup";
+    String OBJECT = "Object";
+    String PLACEMENT = "placement";
+    String ROLE = "role";
+    String TOGGLE = "toggle";
+    String TOOLTIP = "tooltip";
 }

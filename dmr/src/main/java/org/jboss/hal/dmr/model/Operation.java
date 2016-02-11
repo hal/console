@@ -23,7 +23,6 @@ package org.jboss.hal.dmr.model;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.resources.Names;
 import org.jetbrains.annotations.NonNls;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -81,9 +80,6 @@ public class Operation extends ModelNode {
         }
     }
 
-
-    public final static Operation UNDEFINED = new Operation(Names.UNDEFINED, ResourceAddress.ROOT, new ModelNode(),
-            null);
 
     private Operation(final ModelNode modelNode) {
         set(modelNode);

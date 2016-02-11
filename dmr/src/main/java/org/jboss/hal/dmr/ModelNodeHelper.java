@@ -29,7 +29,7 @@ import com.google.inject.Provider;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jboss.hal.resources.Names.NAME_KEY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
  * Static helper methods for dealing with {@link ModelNode}s.
@@ -84,12 +84,12 @@ public final class ModelNodeHelper {
 
     /**
      * Turns a list of properties into a list of model nodes which contains a {@link
-     * org.jboss.hal.resources.Names#NAME_KEY} key with the properties name.
+     * ModelDescriptionConstants#NAME} key with the properties name.
      */
     public static List<ModelNode> asNodesWithNames(List<Property> properties) {
         List<ModelNode> nodes = new ArrayList<>(properties.size());
         for (Property property : properties) {
-            property.getValue().get(NAME_KEY).set(property.getName());
+            property.getValue().get(NAME).set(property.getName());
             nodes.add(property.getValue());
         }
         return nodes;

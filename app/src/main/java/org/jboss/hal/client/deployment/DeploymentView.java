@@ -56,7 +56,7 @@ import java.util.Arrays;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
-import static org.jboss.hal.resources.Names.NAME_KEY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
  * @author Harald Pehl
@@ -75,7 +75,7 @@ public class DeploymentView extends PatternFlyViewImpl implements DeploymentPres
                     .param(CHILD_TYPE, "security-domain")
                     .build();
 
-            TextBoxItem name = new TextBoxItem(NAME_KEY, "Name");
+            TextBoxItem name = new TextBoxItem(NAME, "Name");
             name.setRequired(true);
             name.setExpressionAllowed(false);
             name.registerSuggestHandler(new Typeahead.ReadChildrenNamesBuilder(operation).build());

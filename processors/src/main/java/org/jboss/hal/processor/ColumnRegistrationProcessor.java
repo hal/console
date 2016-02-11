@@ -50,11 +50,11 @@ import static org.jboss.hal.processor.TemplateNames.*;
 public class ColumnRegistrationProcessor extends AbstractProcessor {
 
     private static final String COLUMN_INIT_TEMPLATE = "ColumnInit.ftl";
-    private static final String COLUMN_INIT_PACKAGE = TemplateNames.GIN_PACKAGE;
+    private static final String COLUMN_INIT_PACKAGE = "org.jboss.hal.client.finder";
     private static final String COLUMN_INIT_CLASS = "ColumnInit";
 
     private static final String COLUMN_MODULE_TEMPLATE = "ColumnModule.ftl";
-    private static final String COLUMN_MODULE_PACKAGE = TemplateNames.GIN_PACKAGE;
+    private static final String COLUMN_MODULE_PACKAGE = COLUMN_INIT_PACKAGE;
     private static final String COLUMN_MODULE_CLASS = "ColumnModule";
 
     private final Set<ColumnInfo> columnInfos;

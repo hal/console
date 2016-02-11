@@ -37,7 +37,7 @@ import java.util.List;
 import static elemental.events.KeyboardEvent.KeyCode.ENTER;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.CSS.tagManagerTag;
-import static org.jboss.hal.resources.Names.OBJECT;
+import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /**
  * @author Harald Pehl

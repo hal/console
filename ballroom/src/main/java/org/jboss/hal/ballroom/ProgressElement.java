@@ -30,7 +30,7 @@ import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.lang.Math.min;
 import static java.lang.Math.round;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.Names.ROLE;
+import static org.jboss.hal.resources.UIConstants.ROLE;
 
 /**
  * @author Harald Pehl

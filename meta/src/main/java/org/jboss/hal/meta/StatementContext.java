@@ -1,6 +1,6 @@
 package org.jboss.hal.meta;
 
-import static org.jboss.hal.resources.Names.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 public interface StatementContext {
 

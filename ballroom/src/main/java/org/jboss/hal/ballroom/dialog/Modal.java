@@ -28,7 +28,7 @@ import jsinterop.annotations.JsType;
 import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.resources.Names.OBJECT;
+import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 @JsType(isNative = true)
 abstract class Modal {

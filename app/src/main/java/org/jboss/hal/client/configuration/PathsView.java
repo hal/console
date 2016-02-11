@@ -29,6 +29,7 @@ import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptions;
@@ -43,7 +44,8 @@ import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED_SINGLE;
 import static org.jboss.hal.resources.Ids.PATHS_FORM;
 import static org.jboss.hal.resources.Ids.PATHS_TABLE;
-import static org.jboss.hal.resources.Names.*;
+import static org.jboss.hal.resources.Names.NAME;
+import static org.jboss.hal.resources.Names.PATHS;
 
 /**
  * @author Harald Pehl
@@ -67,14 +69,15 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
 
         Element info = new Elements.Builder().p().innerText(description.getDescription()).end().build();
         Options<ModelNode> options = new ModelNodeTable.Builder<>(description)
-                .column(NAME_KEY, NAME_LABEL, (cell, type, row, meta) -> row.get(NAME_KEY).asString())
+                .column(ModelDescriptionConstants.NAME, NAME, (cell, type, row, meta) -> row.get(
+                        ModelDescriptionConstants.NAME).asString())
                 .button(resources.constants().add(), (event, api) -> {
                     // dialog.open();
                 })
                 .button(resources.constants().remove(), SELECTED_SINGLE, (event, api) -> {
                     ModelNode selectedRow = api.selectedRow();
                     if (selectedRow != null) {
-                        presenter.removePath(selectedRow.get(NAME_KEY).asString());
+                        presenter.removePath(selectedRow.get(ModelDescriptionConstants.NAME).asString());
                     }
                 })
                 .build();
@@ -86,7 +89,7 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
                 .onSave((form, changedValues) -> {
                     ModelNode selectedRow = table.api().selectedRow();
                     if (selectedRow != null) {
-                        presenter.savePath(selectedRow.get(NAME_KEY).asString(), changedValues);
+                        presenter.savePath(selectedRow.get(ModelDescriptionConstants.NAME).asString(), changedValues);
                     }
                 })
                 .build();

@@ -25,7 +25,7 @@ import jsinterop.annotations.JsConstructor;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.resources.Names.OBJECT;
+import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /**
  * Mapping for the Bloodhound class from typeahead.js

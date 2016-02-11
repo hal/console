@@ -30,6 +30,7 @@ import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.form.Form.State;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.UIConstants;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -39,7 +40,6 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Form.Operation.EDIT;
 import static org.jboss.hal.ballroom.form.Form.Operation.RESET;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.Names.*;
 
 /**
  * @author Harald Pehl
@@ -87,8 +87,8 @@ class FormLinks<T> implements IsElement {
         }
         if (stateMachine.supports(RESET)) {
             resetLink = link(CONSTANTS.reset(), pfIcon("restart"), onReset);
-            resetLink.getDataset().setAt(TOGGLE, TOOLTIP);
-            resetLink.getDataset().setAt(PLACEMENT, "right"); //NON-NLS
+            resetLink.getDataset().setAt(UIConstants.TOGGLE, UIConstants.TOOLTIP);
+            resetLink.getDataset().setAt(UIConstants.PLACEMENT, "right"); //NON-NLS
             resetLink.setTitle(CONSTANTS.formResetDesc());
 
             links.appendChild(resetLink);
@@ -98,9 +98,9 @@ class FormLinks<T> implements IsElement {
             helpLink = new Elements.Builder()
                 .li()
                     .a().attr("href", "#" + helpId + "")
-                            .data(TOGGLE, "collapse") //NON-NLS
-                            .aria("expanded", "false") //NON-NLS
-                            .aria(CONTROLS, helpId)
+                            .data(UIConstants.TOGGLE, "collapse") //NON-NLS
+                            .aria(UIConstants.EXPANDED, String.valueOf(false))
+                            .aria(UIConstants.CONTROLS, helpId)
                         .start("i").css(pfIcon("help")).end()
                         .span().css(formLinkLabel).innerText(CONSTANTS.help()).end()
                     .end()

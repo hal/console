@@ -32,6 +32,7 @@ import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptions;
@@ -64,8 +65,9 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
 
         Element info = new Elements.Builder().p().innerText(description.getDescription()).end().build();
         Options<ModelNode> options = new ModelNodeTable.Builder<>(description)
-                .column(NAME_KEY, NAME_LABEL, (cell, type, row, meta) -> row.get(NAME_KEY).asString())
-                .columns(JNDI_NAME, ENABLED)
+                .column(ModelDescriptionConstants.NAME, NAME, (cell, type, row, meta) -> row.get(
+                        ModelDescriptionConstants.NAME).asString())
+                .columns(ModelDescriptionConstants.JNDI_NAME, ModelDescriptionConstants.ENABLED)
                 .build();
         table = new ModelNodeTable<>(DATA_SOURCE_TABLE, securityContext, options);
 
@@ -75,12 +77,12 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
         Form.SaveCallback<ModelNode> saveCallback = (form, changedValues) -> {
             ModelNode selectedRow = table.api().selectedRow();
             if (selectedRow != null) {
-                presenter.saveDataSource(selectedRow.get(NAME_KEY).asString(), changedValues);
+                presenter.saveDataSource(selectedRow.get(ModelDescriptionConstants.NAME).asString(), changedValues);
             }
         };
 
         currentForm = new ModelNodeForm.Builder<>(DATA_SOURCE_ATTRIBUTES_FORM, securityContext, description)
-                .include(JNDI_NAME, ENABLED, "statistics-enabled", "driver-name")
+                .include(ModelDescriptionConstants.JNDI_NAME, ModelDescriptionConstants.ENABLED, "statistics-enabled", "driver-name")
                 .onSave(saveCallback)
                 .build();
         forms.add(currentForm);

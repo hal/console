@@ -40,6 +40,7 @@ public class LabelBuilder {
             .put("jaxrs", "JAX-RS")
             .put("jca", "JCA")
             .put("jdr", "JDA")
+            .put("jsr", "JSR")
             .put("jmx", "JMX")
             .put("jndi", "JNDI")
             .put("jpa", "JPA")

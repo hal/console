@@ -51,7 +51,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNodesWithNames;
 import static org.jboss.hal.meta.token.NameTokens.DATASOURCE;
-import static org.jboss.hal.resources.Names.PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 
 /**
  * @author Harald Pehl

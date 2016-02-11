@@ -28,6 +28,7 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.UIConstants;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.core.finder.Finder.DATA_BREADCRUMB;
@@ -73,8 +74,8 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
 
         if (display.getTooltip() != null) {
             eb.title(display.getTooltip())
-                    .data(TOGGLE, TOOLTIP)
-                    .data(PLACEMENT, "top");
+                    .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
+                    .data(UIConstants.PLACEMENT, "top");
         }
 
         if (display.getMarker() != null) {
@@ -116,9 +117,9 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                         .end();
                         eb.button()
                                 .css(btn, btnFinder, dropdownToggle)
-                                .data(TOGGLE,  DROPDOWN)
-                                .aria(HAS_POPUP, String.valueOf(true))
-                                .aria(EXPANDED, String.valueOf(false))
+                                .data(UIConstants.TOGGLE,  "dropdown") //NON-NLS
+                                .aria(UIConstants.HAS_POPUP, String.valueOf(true))
+                                .aria(UIConstants.EXPANDED, String.valueOf(false))
                             .span().css(caret).end()
                             .span().css(srOnly).innerText(CONSTANTS.toggleDropdown()).end()
                         .end();

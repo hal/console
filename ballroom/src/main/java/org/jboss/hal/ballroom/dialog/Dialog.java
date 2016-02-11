@@ -32,6 +32,7 @@ import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.dialog.Modal.ModalOptions;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.UIConstants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -194,14 +195,17 @@ public class Dialog implements IsElement {
 
     // ------------------------------------------------------ dialog singleton
 
-    private final static String ID = "hal-modal";
-    private final static String SELECTOR_ID = "#" + ID;
+    private static final String ID = "hal-modal";
+    private static final String LABEL = "label";
+    private static final String SELECTOR_ID = "#" + ID;
+
     private static final Element root;
     private static final Element dialog;
     private static final Element closeIcon;
     private static final Element title;
     private static final Element body;
     private static final Element footer;
+
     private static boolean open;
 
     static {
@@ -209,7 +213,7 @@ public class Dialog implements IsElement {
         // @formatter:off
         Elements.Builder rootBuilder = new Elements.Builder()
             .div().id(ID).css(modal)
-                    .attr(ROLE, "dialog") //NON-NLS
+                    .attr(UIConstants.ROLE, "dialog") //NON-NLS
                     .attr("tabindex", "-1")
                     .aria("labelledby", labelId)
                 .div().css(modalDialog).attr("role", "document").rememberAs("dialog") //NON-NLS

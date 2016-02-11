@@ -23,12 +23,15 @@ package org.jboss.hal.client.bootstrap.endpoint;
 
 import org.jboss.hal.dmr.ModelNode;
 
-import static org.jboss.hal.resources.Names.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
  * @author Harald Pehl
  */
 public class Endpoint extends ModelNode {
+
+    private static final String SELECTED = "selected";
 
     public Endpoint() {
         this(new ModelNode());
@@ -49,7 +52,7 @@ public class Endpoint extends ModelNode {
     }
 
     public String getName() {
-        return get(NAME_KEY).asString();
+        return get(NAME).asString();
     }
 
     public boolean isSelected() {

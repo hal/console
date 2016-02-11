@@ -26,7 +26,6 @@ import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.resources.Names;
 
 import java.util.Collections;
 import java.util.List;
@@ -150,6 +149,10 @@ public class Api<T> {
     }
 
 
+    private static final String DESELECT = "deselect";
+    private static final String ROW = "row";
+    private static final String SELECT = "select";
+
     // We cannot have both a property and a method named equally.
     // That's why the API defines the property "row" and the method "rows"
     @JsProperty Row<T> row;
@@ -202,10 +205,10 @@ public class Api<T> {
 
     @JsOverlay
     public final Api<T> onSelect(SelectionHandler<T> handler) {
-        on(Names.SELECT, new SelectCallback<T>() {
+        on(SELECT, new SelectCallback<T>() {
             @Override
             public void onSelect(final Object event, final Api<T> api, final String type) {
-                if (Names.ROW.equals(type)) {
+                if (ROW.equals(type)) {
                     handler.onSelect(api, api.selectedRow());
                 }
             }
@@ -215,10 +218,10 @@ public class Api<T> {
 
     @JsOverlay
     public final Api<T> onDeselect(DeselectionHandler<T> handler) {
-        on(Names.DESELECT, new SelectCallback<T>() {
+        on(DESELECT, new SelectCallback<T>() {
             @Override
             public void onSelect(final Object event, final Api<T> api, final String type) {
-                if (Names.ROW.equals(type)) {
+                if (ROW.equals(type)) {
                     handler.onDeselect(api);
                 }
             }
@@ -228,18 +231,18 @@ public class Api<T> {
 
     @JsOverlay
     public final Api<T> onSelectionChange(SelectionChangeHandler<T> handler) {
-        on(Names.SELECT, new SelectCallback<T>() {
+        on(SELECT, new SelectCallback<T>() {
             @Override
             public void onSelect(final Object event, final Api<T> api, final String type) {
-                if (Names.ROW.equals(type)) {
+                if (ROW.equals(type)) {
                     handler.onSelectionChanged(api);
                 }
             }
         });
-        on(Names.DESELECT, new SelectCallback<T>() {
+        on(DESELECT, new SelectCallback<T>() {
             @Override
             public void onSelect(final Object event, final Api<T> api, final String type) {
-                if (Names.ROW.equals(type)) {
+                if (ROW.equals(type)) {
                     handler.onSelectionChanged(api);
                 }
             }

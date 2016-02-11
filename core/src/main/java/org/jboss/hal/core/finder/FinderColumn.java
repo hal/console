@@ -48,7 +48,7 @@ import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.core.finder.Finder.DATA_BREADCRUMB;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
-import static org.jboss.hal.resources.Names.ROLE;
+import static org.jboss.hal.resources.UIConstants.ROLE;
 
 /**
  * Describes and renders a column in a finder. A column has a unique id, a title, a number of optional column actions

@@ -47,6 +47,7 @@ public interface ModelDescriptionConstants {
     String DEFAULT = "default";
     String DESCRIBE = "describe";
     String DESCRIPTION = "description";
+    String ENABLED = "enabled";
     String EXCEPTIONS = "exceptions";
     String EXECUTE = "execute";
     String EXPRESSION_ALLOWED = "expression-allowed";
@@ -67,6 +68,8 @@ public interface ModelDescriptionConstants {
     String INCLUDE_RUNTIME = "include-runtime";
     String INHERITED = "inherited";
     String INPUT_STREAM_INDEX = "input-stream-index";
+    String INTERFACE = "interface";
+    String JNDI_NAME = "jndi-name";
     String LOCAL = "local";
     String LOCALE = "locale";
     String MASK = "mask";
@@ -89,6 +92,8 @@ public interface ModelDescriptionConstants {
     String OPERATIONS = "operations";
     String OPERATION_HEADERS = "operation-headers";
     String OUTCOME = "outcome";
+    String PORT = "port";
+    String PROFILE = "profile";
     String PROXIES = "proxies";
     String READ = "read";
     String READ_ATTRIBUTE_OPERATION = "read-attribute";
@@ -111,12 +116,14 @@ public interface ModelDescriptionConstants {
     String RESULT = "result";
     String ROLES = "HEADER_ROLES";
     String RUNTIME_NAME = "runtime-name";
+    String SCHEME = "scheme";
     String SERVER = "server";
     String SERVERS = "servers";
     String SERVER_CONFIG = "server-config";
     String SERVER_GROUP = "server-group";
     String SERVER_GROUPS = "server-groups";
     String SERVER_OPERATIONS = "server-operations";
+    String SOCKET_BINDING = "socket-binding";
     String SHUTDOWN = "shutdown";
     String START = "start";
     String STEPS = "steps";

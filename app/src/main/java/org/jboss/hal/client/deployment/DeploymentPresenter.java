@@ -33,7 +33,9 @@ import org.jboss.hal.meta.token.NameTokens;
 
 import javax.inject.Inject;
 
-import static org.jboss.hal.resources.Names.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SCHEME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
  * @author Harald Pehl
@@ -59,7 +61,7 @@ public class DeploymentPresenter extends TopLevelPresenter<DeploymentPresenter.M
         super(eventBus, view, proxy);
 
         endpoint = new Endpoint();
-        endpoint.get(NAME_KEY).set("foo");
+        endpoint.get(NAME).set("foo");
         endpoint.get(HOST).set("access-halproject.rhcloud.com");
         endpoint.get(SCHEME).set("https");
     }

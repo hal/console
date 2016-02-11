@@ -29,6 +29,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -36,7 +37,6 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
 import javax.inject.Inject;
@@ -89,7 +89,7 @@ public class InterfacePresenter extends
 
     @Override
     public void prepareFromRequest(final PlaceRequest request) {
-        interfce = request.getParameter(Names.INTERFACE_RESOURCE, null);
+        interfce = request.getParameter(ModelDescriptionConstants.INTERFACE, null);
     }
 
     @Override

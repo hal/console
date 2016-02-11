@@ -27,6 +27,7 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -44,9 +45,6 @@ import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 
-/**
- * @author Harald Pehl
- */
 @AsyncColumn(value = Ids.INTERFACE_COLUMN)
 public class InterfaceColumn extends FinderColumn<Property> {
 
@@ -58,7 +56,7 @@ public class InterfaceColumn extends FinderColumn<Property> {
         super(new Builder<Property>(finder, Ids.INTERFACE_COLUMN, Names.INTERFACE)
                 .itemsProvider((context, callback) -> {
                     Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
-                            .param(CHILD_TYPE, Names.INTERFACE_RESOURCE).build();
+                            .param(CHILD_TYPE, ModelDescriptionConstants.INTERFACE).build();
                     dispatcher.execute(operation, result -> { callback.onSuccess(result.asPropertyList()); });
                 }));
 
@@ -71,8 +69,8 @@ public class InterfaceColumn extends FinderColumn<Property> {
             @Override
             public List<ItemAction<Property>> actions() {
                 return asList(
-                        itemActionFactory.view(NameTokens.INTERFACE, Names.INTERFACE_RESOURCE, property.getName()),
-                        itemActionFactory.remove(property.getName(), AddressTemplate.of("/interfaces=*"),
+                        itemActionFactory.view(NameTokens.INTERFACE, ModelDescriptionConstants.INTERFACE, property.getName()),
+                        itemActionFactory.remove(property.getName(), AddressTemplate.of("/interface=*"),
                                 InterfaceColumn.this));
             }
         });
