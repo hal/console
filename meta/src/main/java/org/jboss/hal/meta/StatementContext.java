@@ -53,6 +53,11 @@ public interface StatementContext {
             // tuples are resolved as "echo"
             return new String[]{key, key};
         }
+
+        @Override
+        public String selectedProfile() {
+            return null;
+        }
     };
 
 
@@ -65,4 +70,6 @@ public interface StatementContext {
      * Resolves a tuple matching the key.
      */
     String[] resolveTuple(String key);
+
+    String selectedProfile();
 }

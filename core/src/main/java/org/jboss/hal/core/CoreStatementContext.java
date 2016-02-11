@@ -78,6 +78,11 @@ public class CoreStatementContext implements StatementContext, ProfileSelectionH
     }
 
     @Override
+    public String selectedProfile() {
+        return environment.isStandalone() ? null : context.get(SELECTED_PROFILE);
+    }
+
+    @Override
     public void onProfileSelected(final ProfileSelectionEvent event) {
         context.put(SELECTED_PROFILE, event.getProfile());
         logger.debug("Selected profile: '{}'", event.getProfile()); //NON-NLS

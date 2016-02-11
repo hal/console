@@ -43,10 +43,12 @@ import org.jboss.hal.core.finder.ColumnRegistry.LookupCallback;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.spi.Footer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -126,17 +128,18 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     private static final int MAX_COLUMNS = 12;
     private static final String PREVIEW_COLUMN = "previewColumn";
-
     private static final Logger logger = LoggerFactory.getLogger(Finder.class);
 
     private final PlaceManager placeManager;
     private final EventBus eventBus;
     private final ColumnRegistry columnRegistry;
+    private final Provider<Progress> progress;
     private final String id;
     private final FinderContext context;
     private final Map<String, FinderColumn> columns;
     private final Element root;
     private final Element previewColumn;
+    private String initialColumn;
 
 
     // ------------------------------------------------------ ui
@@ -144,10 +147,12 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     @Inject
     public Finder(final PlaceManager placeManager,
             final EventBus eventBus,
-            final ColumnRegistry columnRegistry) {
+            final ColumnRegistry columnRegistry,
+            @Footer final Provider<Progress> progress) {
         this.placeManager = placeManager;
         this.eventBus = eventBus;
         this.columnRegistry = columnRegistry;
+        this.progress = progress;
 
         this.id = FINDER;
         this.context = new FinderContext();
@@ -162,7 +167,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                     .rememberAs(PREVIEW_COLUMN)
                 .end()
             .end();
-        // @formatter:off
+        // @formatter:on
 
         root = builder.build();
         previewColumn = builder.referenceFor(PREVIEW_COLUMN);
@@ -194,6 +199,10 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             int finder = window - navigation - footer;
             root.getStyle().setHeight(finder, PX);
         }
+    }
+
+    private FinderColumn firstColumn() {
+        return columns.get(initialColumn);
     }
 
 
@@ -293,6 +302,8 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     // ------------------------------------------------------ public interface
 
     public void reset(final String token, final String initialColumn, final PreviewContent initialPreview) {
+        this.initialColumn = initialColumn;
+
         while (root.getFirstChild() != previewColumn) {
             root.removeChild(root.getFirstChild());
         }
@@ -303,16 +314,30 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     }
 
     public void select(final String token, final FinderPath path, final ScheduledCommand fallback) {
-        context.reset(token);
-
         if (path.isEmpty()) {
             fallback.execute();
 
-        } else{
-            // TODO Reduce to the last column that matches with the curent path!
-            FinderColumn lastColumn = columns.get(path.last().getKey());
-            if (lastColumn != null) {
-                reduceTo(lastColumn);
+        } else {
+            context.setToken(token);
+
+            // Find the last common column between the new and the current path
+            String match = null;
+            FinderPath newPath = path.reversed();
+            FinderPath currentPath = context.getPath().reversed();
+            for (FinderPath.Segment newSegment : newPath) {
+                for (FinderPath.Segment currentSegment : currentPath) {
+                    if (newSegment.getKey().equals(currentSegment.getKey())) {
+                        match = newSegment.getKey();
+                        break;
+                    }
+                }
+                if (match != null) {
+                    break;
+                }
+            }
+            FinderColumn lastCommonColumn = match != null ? columns.get(match) : firstColumn();
+            if (lastCommonColumn != null) {
+                reduceTo(lastCommonColumn);
             }
 
             int index = 0;
@@ -323,34 +348,34 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 functions[index] = new SelectFunction(segment, column);
                 index++;
             }
-            new Async<FunctionContext>(Progress.NOOP).waterfall(new FunctionContext(), new Outcome<FunctionContext>() {
-                        @Override
-                        public void onFailure(final FunctionContext context) {
-                            if (Finder.this.context.getPath().isEmpty()) {
-                                fallback.execute();
+            new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), new Outcome<FunctionContext>() {
+                @Override
+                public void onFailure(final FunctionContext context) {
+                    if (Finder.this.context.getPath().isEmpty()) {
+                        fallback.execute();
 
-                            } else if (!context.emptyStack()) {
-                                FinderColumn column = context.pop();
-                                processLastSelectedItem(column);
-                                publishContext();
-                            }
-                        }
+                    } else if (!context.emptyStack()) {
+                        FinderColumn column = context.pop();
+                        processLastColumnSelection(column);
+                        publishContext();
+                    }
+                }
 
-                        @Override
-                        public void onSuccess(final FunctionContext context) {
-                            FinderColumn column = context.pop();
-                            processLastSelectedItem(column);
-                            publishContext();
-                        }
+                @Override
+                public void onSuccess(final FunctionContext context) {
+                    FinderColumn column = context.pop();
+                    processLastColumnSelection(column);
+                    publishContext();
+                }
 
-                        private void processLastSelectedItem(FinderColumn column) {
-                            FinderRow row = column.getSelectedRow(context.getPath().last().getValue());
-                            if (row != null) {
-                                row.appendNextColumn();
-                                row.preview();
-                            }
-                        }
-                    }, functions);
+                private void processLastColumnSelection(FinderColumn column) {
+                    FinderRow row = column.getSelectedRow(context.getPath().last().getValue());
+                    if (row != null) {
+                        row.appendNextColumn();
+                        row.preview();
+                    }
+                }
+            }, functions);
         }
     }
 

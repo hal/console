@@ -137,6 +137,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String logout();
     String modelBrowser();
     String metadataError();
+    String noItems();
     String noResults();
     String notANumber();
     String nothingSelected();

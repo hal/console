@@ -85,10 +85,6 @@
       padding: 0;
       overflow-y: auto;
 
-      > li:hover, li.active:hover {
-        background-color: #bee1f4;
-      }
-
       > li {
         align-items: center;
         cursor: pointer;
@@ -129,6 +125,25 @@
           font-size: 10px;
           color: #8b8d8f;
         }
+      }
+
+      > li:hover, li.active:hover {
+        background-color: #bee1f4;
+      }
+
+      > li.empty {
+        cursor: inherit;
+        justify-content: center;
+        padding-top: 30px;
+
+        .item-text {
+          font-style: italic;
+          color: #8b8d8f;
+        }
+      }
+
+      > li.empty:hover {
+        background: none;
       }
     }
   }

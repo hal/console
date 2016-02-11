@@ -23,6 +23,7 @@ package org.jboss.hal.client.configuration.subsystem.jca;
 
 import com.google.gwt.user.client.Window;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
@@ -34,6 +35,7 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -68,8 +70,17 @@ public class DataSourceColumn extends FinderColumn<Property> {
 
                     @Override
                     public List<ItemAction<Property>> actions() {
+                        String profile = statementContext.selectedProfile() != null ? statementContext
+                                .selectedProfile() : "standalone";
+                        PlaceRequest view = new PlaceRequest.Builder()
+                                .nameToken(NameTokens.DATASOURCE)
+                                .with(Names.PROFILE, profile)
+                                .with("datasource", item.getName()) //NON-NLS
+                                .build();
+
                         return Arrays.asList(
-                                new ItemAction<>(resources.constants().view(), item -> Window.alert(Names.NYI)),
+                                new ItemAction<>(resources.constants().view(),
+                                        item -> placeManager.revealPlace(view)),
                                 new ItemAction<>(resources.constants().remove(), item -> Window.alert(Names.NYI)),
                                 new ItemAction<>(resources.constants().testConnection(),
                                         item -> Window.alert(Names.NYI))

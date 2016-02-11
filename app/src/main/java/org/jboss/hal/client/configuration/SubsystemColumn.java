@@ -128,14 +128,14 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                         if (item.isBuiltIn() && item.getToken() != null) {
                             placeRequest = new PlaceRequest.Builder().nameToken(item.getToken()).build();
                             return Collections.singletonList(new ItemAction<>(resources.constants().view(),
-                                    item -> placeManager.revealPlace(placeRequest, true)));
+                                    item -> placeManager.revealPlace(placeRequest)));
 
                         } else if (!item.isBuiltIn()) {
                             placeRequest = new PlaceRequest.Builder().nameToken(NameTokens.MODEL_BROWSER)
                                     .with("path", item.getName())
                                     .build();
                             return Collections.singletonList(new ItemAction<>(resources.constants().view(),
-                                    item -> placeManager.revealPlace(placeRequest, true)));
+                                    item -> placeManager.revealPlace(placeRequest)));
 
                         } else {
                             return ItemDisplay.super.actions();

@@ -46,6 +46,10 @@ public class FinderContext {
         return token;
     }
 
+    public void setToken(final String token) {
+        this.token = token;
+    }
+
     public FinderPath getPath() {
         return path;
     }

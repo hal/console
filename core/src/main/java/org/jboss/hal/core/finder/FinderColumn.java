@@ -35,6 +35,7 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,8 @@ import static org.jboss.hal.resources.Names.ROLE;
  */
 public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
+    // TODO Make the ItemRenderer optional with a default implementation
+    // TODO Let the FinderColumn override the renderer
     public static class Builder<T> {
 
         private final Finder finder;
@@ -153,6 +156,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     private final Element headerElement;
     private final InputElement filterElement;
     private final Element ulElement;
+    private final Element noItems;
 
 
     protected FinderColumn(final Builder<T> builder) {
@@ -206,6 +210,11 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
         // rows
         eb.ul().rememberAs(UL_ELEMENT).end().end(); // </ul> && </div>
+
+        // no items marker
+        noItems = new Elements.Builder().li().css(empty)
+                .span().css(itemText).innerText(CONSTANTS.noItems()).end()
+                .end().build();
 
         root = eb.build();
         headerElement = eb.referenceFor(HEADER_ELEMENT);
@@ -293,6 +302,9 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                     setItems(items, callback);
                 }
             });
+
+        } else {
+            setItems(Collections.emptyList(), callback);
         }
     }
 
@@ -302,6 +314,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         if (filterElement != null) {
             filterElement.setValue("");
         }
+
         for (T item : items) {
             FinderRow<T> row = new FinderRow<>(finder, this, item,
                     itemRenderer.render(item), previewCallback);
@@ -309,6 +322,10 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             ulElement.appendChild(row.asElement());
         }
         updateHeader(items.size());
+
+        if (items.isEmpty()) {
+            ulElement.appendChild(noItems);
+        }
 
         if (callback != null) {
             callback.onSuccess(this);
