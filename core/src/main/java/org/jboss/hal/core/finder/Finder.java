@@ -291,6 +291,11 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         eventBus.fireEvent(new FinderContextEvent(context));
     }
 
+    void selectColumn(final String column) {
+        FinderColumn finderColumn = columns.get(column);
+        finderColumn.asElement().focus();
+    }
+
     void preview(PreviewContent preview) {
         Elements.removeChildrenFrom(previewColumn);
         for (Element element : preview.elements()) {
@@ -309,6 +314,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         }
         context.reset(token);
         appendColumn(initialColumn, null);
+        selectColumn(initialColumn);
         preview(initialPreview);
         publishContext();
     }
@@ -369,6 +375,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 }
 
                 private void processLastColumnSelection(FinderColumn column) {
+                    selectColumn(column.getId());
                     FinderRow row = column.getSelectedRow();
                     if (row != null) {
                         row.appendNextColumn();

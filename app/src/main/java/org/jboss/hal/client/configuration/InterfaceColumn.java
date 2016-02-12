@@ -32,7 +32,6 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -43,6 +42,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 
 @AsyncColumn(value = Ids.INTERFACE_COLUMN)
@@ -69,8 +69,8 @@ public class InterfaceColumn extends FinderColumn<Property> {
             @Override
             public List<ItemAction<Property>> actions() {
                 return asList(
-                        itemActionFactory.view(NameTokens.INTERFACE, ModelDescriptionConstants.INTERFACE, property.getName()),
-                        itemActionFactory.remove(property.getName(), AddressTemplate.of("/interface=*"),
+                        itemActionFactory.view(NameTokens.INTERFACE, NAME, property.getName()),
+                        itemActionFactory.remove(property.getName(), Names.INTERFACE, InterfacePresenter.ROOT_TEMPLATE,
                                 InterfaceColumn.this));
             }
         });

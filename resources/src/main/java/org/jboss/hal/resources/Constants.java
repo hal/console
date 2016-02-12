@@ -32,10 +32,14 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String connectToServer();
 
     String defaultValue();
+    String disable();
+    String disabled();
     String dispatcherException();
     String dispatcherFailed();
 
     String edit();
+    String enable();
+    String enabled();
 
     String endpointSelectTitle();
     String endpointSelectDescription();
@@ -139,7 +143,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String metadataError();
     String no();
     String noItems();
-    String noResults();
     String notANumber();
     String nothingSelected();
     String ping();

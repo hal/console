@@ -44,14 +44,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.List;
 import java.util.Map;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
-import static org.jboss.hal.dmr.ModelNodeHelper.asNodesWithNames;
-import static org.jboss.hal.meta.token.NameTokens.DATASOURCE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.meta.token.NameTokens.DATA_SOURCE;
 
 /**
  * @author Harald Pehl
@@ -61,26 +57,27 @@ public class DataSourcePresenter extends
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(DATASOURCE)
+    @NameToken(DATA_SOURCE)
     @Requires(ROOT_ADDRESS)
     public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<DataSourcePresenter> {
-        void update(List<ModelNode> datasources);
+        void update(String name, ModelNode datasource);
     }
     // @formatter:on
 
 
     static final String ROOT_ADDRESS = "/{any.profile}/subsystem=datasources/data-source=*";
     static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
-    static final AddressTemplate DATA_SOURCE_SUBSYSTEM = AddressTemplate
-            .of("/{selected.profile}/subsystem=datasources");
+    static final AddressTemplate DATA_SOURCE_RESOURCE = AddressTemplate
+            .of("/{selected.profile}/subsystem=datasources/data-source=*");
 
     private static final Logger logger = LoggerFactory.getLogger(DataSourcePresenter.class);
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final ChangeSetAdapter changeSetAdapter;
+    private String datasource;
 
     @Inject
     public DataSourcePresenter(final EventBus eventBus,
@@ -104,35 +101,34 @@ public class DataSourcePresenter extends
     public void prepareFromRequest(final PlaceRequest request) {
         super.prepareFromRequest(request);
         String profile = request.getParameter(PROFILE, null);
-        if (profile != null) {
+        if (profile != null && !STANDALONE.equals(profile)) {
             getEventBus().fireEvent(new ProfileSelectionEvent(profile));
         }
+        datasource = request.getParameter(NAME, null);
+        // TODO error handling when profile / datasource is invalid or null
     }
 
     @Override
     protected void onReset() {
         super.onReset();
-        loadDataSources();
+        loadDataSource();
     }
 
-    private void loadDataSources() {
-        Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
-                DATA_SOURCE_SUBSYSTEM.resolve(statementContext))
-                .param(CHILD_TYPE, "data-source")
-                .build();
-        dispatcher.execute(operation, result -> getView().update(asNodesWithNames(result.asPropertyList())));
+    private void loadDataSource() {
+        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
+                DATA_SOURCE_RESOURCE.resolve(statementContext, datasource)).build();
+        dispatcher.execute(operation, result -> getView().update(datasource, result));
     }
 
-    void saveDataSource(final String dataSource, final Map<String, Object> changedValues) {
-        logger.debug("About to save changes for {}: {}", dataSource, changedValues); //NON-NLS
+    void saveDataSource(final Map<String, Object> changedValues) {
+        logger.debug("About to save changes for {}: {}", datasource, changedValues); //NON-NLS
 
-        AddressTemplate template = DATA_SOURCE_SUBSYSTEM.append("data-source=" + dataSource);
-        ResourceAddress resourceAddress = template.resolve(statementContext);
+        ResourceAddress resourceAddress = DATA_SOURCE_RESOURCE.resolve(statementContext, datasource);
         Composite composite = changeSetAdapter.fromChangeSet(resourceAddress, changedValues);
 
         dispatcher.execute(composite, (CompositeResult result) -> {
-            logger.debug("Datasource {} successfully modified", dataSource); //NON-NLS
-            loadDataSources();
+            logger.debug("Datasource {} successfully modified", datasource); //NON-NLS
+            loadDataSource();
         });
     }
 }

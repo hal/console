@@ -30,10 +30,9 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
-import org.jboss.hal.core.finder.Breadcrumb;
+import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderContextEvent;
 import org.jboss.hal.core.finder.FinderContextEvent.FinderContextHandler;
-import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -56,8 +55,8 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         void showMessage(Message message);
         void tlcMode();
         void applicationMode();
-        void updatePath(String token, FinderPath finderPath);
-        void updateBreadcrumb(Breadcrumb breadcrumb);
+        void updatePath(FinderContext finderContext);
+        void updateBreadcrumb(FinderContext finderContext);
     }
     // @formatter:on
 
@@ -125,8 +124,8 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
 
     @Override
     public void onFinderContext(final FinderContextEvent event) {
-        getView().updatePath(event.getFinderContext().getToken(), event.getFinderContext().getPath());
-        getView().updateBreadcrumb(event.getFinderContext().getBreadcrumb());
+        getView().updatePath(event.getFinderContext());
+        getView().updateBreadcrumb(event.getFinderContext());
     }
 
     public void tlcMode() {

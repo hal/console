@@ -26,6 +26,7 @@
   .finder-column {
     background-color: #fafafa;
     border-right: 1px solid @finder-border-color;
+    cursor: pointer;
     padding: 0;
 
     > header, > ul > li {
@@ -104,7 +105,7 @@
           border-left-color: @brand-danger;
         }
         &.info-marker {
-          border-left-color: @brand-primary;
+          border-left-color: #8b8d8f;
         }
         &.success-marker {
           border-left-color: @brand-success;
@@ -145,6 +146,14 @@
       > li.empty:hover {
         background: none;
       }
+    }
+  }
+
+  .finder-column:focus {
+    outline: none;
+
+    header > h1 {
+      text-decoration: underline;
     }
   }
 

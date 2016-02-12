@@ -25,6 +25,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental.dom.Element;
 import elemental.events.Event;
+import elemental.events.KeyboardEvent;
+import elemental.events.KeyboardEvent.KeyCode;
 import elemental.html.InputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
@@ -42,13 +44,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.gwt.elemento.core.EventType.keyup;
+import static org.jboss.gwt.elemento.core.EventType.*;
 import static org.jboss.gwt.elemento.core.InputType.text;
+import static org.jboss.hal.ballroom.PatternFly.$;
 import static org.jboss.hal.core.finder.Finder.DATA_BREADCRUMB;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
 import static org.jboss.hal.resources.UIConstants.ROLE;
+import static org.jboss.hal.resources.UIConstants.TABINDEX;
 
 /**
  * Describes and renders a column in a finder. A column has a unique id, a title, a number of optional column actions
@@ -82,11 +85,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             this.showCount = false;
             this.withFilter = false;
             this.items = new ArrayList<>();
-        }
-
-        public Builder<T> itemRenderer(ItemRenderer<T> itemRenderer) {
-            this.itemRenderer = itemRenderer;
-            return this;
         }
 
         public Builder<T> columnAction(String title, ColumnActionHandler<T> action) {
@@ -131,6 +129,11 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             return this;
         }
 
+        public Builder<T> itemRenderer(ItemRenderer<T> itemRenderer) {
+            this.itemRenderer = itemRenderer;
+            return this;
+        }
+
         public Builder<T> onPreview(PreviewCallback<T> previewCallback) {
             this.previewCallback = previewCallback;
             return this;
@@ -153,10 +156,10 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     private final String title;
     private final boolean showCount;
     private final List<T> initialItems;
-    private final ItemsProvider<T> itemsProvider;
-    private final PreviewCallback<T> previewCallback;
-    private final Map<String, FinderRow<T>> rows;
+    private ItemsProvider<T> itemsProvider;
     private ItemRenderer<T> itemRenderer;
+    private final Map<String, FinderRow<T>> rows;
+    private final PreviewCallback<T> previewCallback;
 
     private final Element root;
     private final Element headerElement;
@@ -172,15 +175,19 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         this.id = builder.id;
         this.title = builder.title;
         this.showCount = builder.showCount;
-        this.itemRenderer = builder.itemRenderer;
         this.initialItems = builder.items;
         this.itemsProvider = builder.itemsProvider;
-        this.previewCallback = builder.previewCallback;
+        this.itemRenderer = builder.itemRenderer;
         this.rows = new HashMap<>();
+        this.previewCallback = builder.previewCallback;
 
         // header
         Elements.Builder eb = new Elements.Builder()
-                .div().id(id).data(DATA_BREADCRUMB, title).css(finderColumn, column(2))
+                .div().id(id)
+                .data(DATA_BREADCRUMB, title)
+                .css(finderColumn, column(2))
+                .attr(TABINDEX, "-1")
+                .on(keydown, this::onNavigation)
                 .header()
                 .h(1).innerText(builder.title).title(builder.title).rememberAs(HEADER_ELEMENT).end();
 
@@ -209,7 +216,8 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                     .css(formControl)
                     .aria("describedby", iconId)
                     .attr("placeholder", CONSTANTS.filter())
-                    .on(keyup, (this::onFilter))
+                    .on(keydown, this::onNavigation)
+                    .on(keyup, this::onFilter)
                     .rememberAs(FILTER_ELEMENT)
                 .span().id(iconId).css(inputGroupAddon, fontAwesome("search")).end()
             .end();
@@ -247,23 +255,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         builder.end(); // </button>
     }
 
-    private void onFilter(final Event event) {
-        int matched = 0;
-        String filter = filterElement.getValue();
-        for (Element li : Elements.children(ulElement)) {
-            Object filterData = li.getDataset().at(CSS.filter); //NON-NLS
-            boolean match = filter == null
-                    || filter.trim().length() == 0
-                    || filterData == null
-                    || String.valueOf(filterData).toLowerCase().contains(filter.toLowerCase());
-            Elements.setVisible(li, match);
-            if (match) {
-                matched++;
-            }
-        }
-        updateHeader(matched);
-    }
-
     private void updateHeader(int matched) {
         if (showCount) {
             String titleWithSize;
@@ -277,6 +268,139 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
     }
 
+    private void onFilter(final Event event) {
+        KeyboardEvent keyboardEvent = (KeyboardEvent) event;
+        if (keyboardEvent.getKeyCode() == KeyCode.ESC) {
+            filterElement.setValue("");
+        }
+
+        int matched = 0;
+        String filter = filterElement.getValue();
+        for (Element li : Elements.children(ulElement)) {
+            if (li == noItems) {
+                continue;
+            }
+            Object filterData = li.getDataset().at(CSS.filter); //NON-NLS
+            boolean match = filter == null
+                    || filter.trim().length() == 0
+                    || filterData == null
+                    || String.valueOf(filterData).toLowerCase().contains(filter.toLowerCase());
+            Elements.setVisible(li, match);
+            if (match) {
+                matched++;
+            }
+        }
+        updateHeader(matched);
+        if (matched == 0) {
+            if (!ulElement.contains(noItems)) {
+                ulElement.appendChild(noItems);
+            }
+        } else {
+            if (ulElement.contains(noItems)) {
+                ulElement.removeChild(noItems);
+            }
+        }
+    }
+
+    private void onNavigation(Event event) {
+        if (hasVisibleItems()) {
+            KeyboardEvent keyboardEvent = (KeyboardEvent) event;
+            int keyCode = keyboardEvent.getKeyCode();
+            switch (keyCode) {
+                case KeyCode.UP:
+                case KeyCode.DOWN: {
+                    Element activeItem = ulElement.querySelector("li." + CSS.active); //NON-NLS
+                    if (!Elements.isVisible(activeItem)) {
+                        activeItem = null;
+                    }
+                    Element select = keyCode == KeyCode.UP
+                            ? previousVisibleItem(activeItem)
+                            : nextVisibleItem(activeItem);
+                    if (select != null && select != noItems) {
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        selectItem(select.getId());
+                        row(select).preview();
+                        select.scrollIntoView(false);
+                    }
+                    break;
+                }
+
+                case KeyCode.RIGHT: {
+                    Element activeItem = ulElement.querySelector("li." + CSS.active); //NON-NLS
+                    String nextColumn = row(activeItem).getNextColumn();
+                    if (Elements.isVisible(activeItem) && nextColumn != null) {
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        finder.reduceTo(this);
+                        finder.appendColumn(nextColumn,
+                                new AsyncCallback<FinderColumn>() {
+                                    @Override
+                                    public void onFailure(final Throwable throwable) {
+                                        //noinspection HardCodedStringLiteral
+                                        logger.error("Unable to append next column '{}' on keyboard right: {}",
+                                                nextColumn, throwable.getMessage());
+                                    }
+
+                                    @Override
+                                    public void onSuccess(final FinderColumn column) {
+                                        finder.updateContext();
+                                        finder.publishContext();
+                                        finder.selectColumn(nextColumn);
+                                    }
+                                });
+                    }
+                    break;
+                }
+
+                case KeyCode.ENTER: {
+                    Element activeItem = ulElement.querySelector("li." + CSS.active); //NON-NLS
+                    T item = row(activeItem).getItem();
+                    ItemActionHandler<T> primaryAction = row(activeItem).getPrimaryAction();
+                    if (Elements.isVisible(activeItem) && item != null && primaryAction != null) {
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        row(activeItem).click();
+                        primaryAction.execute(item);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    private boolean hasVisibleItems() {
+        for (Element element : Elements.children(ulElement)) {
+            if (Elements.isVisible(element) && element != noItems) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Element previousVisibleItem(Element start) {
+        Element element = start == null ? ulElement.getLastElementChild() : start.getPreviousElementSibling();
+        while (element != null && !Elements.isVisible(element)) {
+            element = element.getPreviousElementSibling();
+        }
+        return element;
+    }
+
+    private Element nextVisibleItem(Element start) {
+        Element element = start == null ? ulElement.getFirstElementChild() : start.getNextElementSibling();
+        while (element != null && !Elements.isVisible(element)) {
+            element = element.getNextElementSibling();
+        }
+        return element;
+    }
+
+    private FinderRow<T> row(Element element) {
+        return rows.get(element.getId());
+    }
+
     boolean containsItem(String itemId) {
         return rows.containsKey(itemId);
     }
@@ -288,7 +412,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     }
 
     FinderRow<T> getSelectedRow() {
-        Element activeItem = ulElement.querySelector("li." + CSS.active); //NON-NLS
+        Element activeItem = ulElement.querySelector("li." + active); //NON-NLS
         if (activeItem != null && rows.containsKey(activeItem.getId())) {
             return rows.get(activeItem.getId());
         }
@@ -331,6 +455,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             ulElement.appendChild(row.asElement());
         }
         updateHeader(items.size());
+        $("#" + id + " [data-toggle=tooltip]").tooltip();
 
         if (items.isEmpty()) {
             ulElement.appendChild(noItems);
@@ -351,10 +476,20 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         this.itemRenderer = itemRenderer;
     }
 
+    /**
+     * Sometimes you need to reference {@code this} in the items provider. This is not possible if the items provider
+     * is part of the builder which is passed to {@code super()}. In this case the items provider can be specified
+     * <strong>after</strong> the call to {@code super()} using this setter.
+     */
+    protected void setItemsProvider(final ItemsProvider<T> itemsProvider) {
+        assertNotAsElement("setItemsProvider()");
+        this.itemsProvider = itemsProvider;
+    }
+
     private void assertNotAsElement(String method) {
         if (asElement) {
-            throw new IllegalStateException(
-                    "Illegal call to 'FinderColumn." + method + "' after FinderColumn.asElement()");
+            throw new IllegalStateException("Illegal call to FinderColumn." + method +
+                    " after FinderColumn.asElement(). Make sure to setup the column before it's used as an element.");
         }
     }
 

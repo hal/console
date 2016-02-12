@@ -45,10 +45,14 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String FOLDER_ELEMENT = "folderElement";
     private static final String BUTTON_CONTAINER = "buttonContainer";
+    private static final String TOOLTIP_TARGET = "tooltipTarget";
 
-    private final String id;
-    private final String nextColumn;
     private final Finder finder;
+    private final FinderColumn<T> column;
+    private final String nextColumn;
+    private final String id;
+    private final T item;
+    private ItemActionHandler<T> primaryAction;
     private final PreviewContent previewContent;
 
     private final Element root;
@@ -61,9 +65,12 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
             final ItemDisplay<T> display,
             final PreviewCallback<T> previewCallback) {
 
-        this.id = display.getId();
-        this.nextColumn = display.nextColumn();
         this.finder = finder;
+        this.column = column;
+        this.nextColumn = display.nextColumn();
+        this.id = display.getId();
+        this.item = item;
+        this.primaryAction = display.actions().isEmpty() ? null : display.actions().iterator().next().handler;
         this.previewContent = previewCallback != null ? previewCallback.onPreview(item) : new PreviewContent(
                 display.getTitle());
 
@@ -72,22 +79,26 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                 .data(DATA_BREADCRUMB, display.getTitle())
                 .data(filter, display.getFilterData());
 
-        if (display.getTooltip() != null) {
-            eb.title(display.getTooltip())
-                    .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                    .data(UIConstants.PLACEMENT, "top");
-        }
-
         if (display.getMarker() != null) {
             eb.css(display.getMarker().name().toLowerCase() + "-marker");
         }
 
+        Element tooltipTarget;
         if (display.asElement() != null) {
             eb.add(display.asElement());
+            tooltipTarget = display.asElement();
         } else if (display.getTitle() != null) {
-            eb.span().css(itemText).innerText(display.getTitle()).end();
+            eb.span().css(itemText).innerText(display.getTitle()).rememberAs(TOOLTIP_TARGET).end();
+            tooltipTarget = eb.referenceFor(TOOLTIP_TARGET);
         } else {
-            eb.span().css(itemText).innerText(NOT_AVAILABLE).end();
+            eb.span().css(itemText).innerText(NOT_AVAILABLE).rememberAs(TOOLTIP_TARGET).end();
+            tooltipTarget = eb.referenceFor(TOOLTIP_TARGET);
+        }
+
+        if (display.getTooltip() != null && tooltipTarget != null) {
+            tooltipTarget.setTitle(display.getTooltip());
+            tooltipTarget.getDataset().setAt(UIConstants.TOGGLE, UIConstants.TOOLTIP);
+            tooltipTarget.getDataset().setAt(UIConstants.PLACEMENT, "top");
         }
 
         if (display.nextColumn() != null) {
@@ -148,17 +159,18 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         buttonContainer = display.actions().isEmpty() ? null : eb.referenceFor(BUTTON_CONTAINER);
         Elements.setVisible(buttonContainer, false);
 
-        root.setOnclick(event -> {
-                    column.selectItem(id);
-                    // <keep> this in order!
-                    finder.reduceTo(column);
-                    finder.updateContext();
-                    finder.publishContext();
-                    appendNextColumn();
-                    // </keep>
-                    preview();
-                }
-        );
+        root.setOnclick(event -> click());
+    }
+
+    void click() {
+        column.selectItem(id);
+        // <keep> this in order!
+        finder.reduceTo(column);
+        finder.updateContext();
+        finder.publishContext();
+        appendNextColumn();
+        // </keep>
+        preview();
     }
 
     void markSelected(boolean select) {
@@ -200,5 +212,17 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
 
     public String getId() {
         return id;
+    }
+
+    String getNextColumn() {
+        return nextColumn;
+    }
+
+    ItemActionHandler<T> getPrimaryAction() {
+        return primaryAction;
+    }
+
+    T getItem() {
+        return item;
     }
 }

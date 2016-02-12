@@ -34,6 +34,7 @@ public interface UIConstants {
     String OBJECT = "Object";
     String PLACEMENT = "placement";
     String ROLE = "role";
+    String TABINDEX = "tabindex";
     String TOGGLE = "toggle";
     String TOOLTIP = "tooltip";
 }

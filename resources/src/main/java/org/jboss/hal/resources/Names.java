@@ -30,6 +30,8 @@ public interface Names {
 
     String ATTRIBUTES = "Attributes";
     String CONFIGURATION = "Configuration";
+    String DATASOURCE = "Datasource";
+    String DATASOURCES = "Datasources";
     String DEPLOYMENTS = "Deployments";
     String HAL = "HAL";
     String HIDDEN = "hidden";

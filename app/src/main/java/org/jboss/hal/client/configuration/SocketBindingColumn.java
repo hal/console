@@ -27,7 +27,6 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -42,8 +41,7 @@ import javax.inject.Inject;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
@@ -72,9 +70,9 @@ public class SocketBindingColumn extends FinderColumn<Property> {
             @Override
             public List<ItemAction<Property>> actions() {
                 return asList(
-                        itemActionFactory.view(NameTokens.SOCKET_BINDING, ModelDescriptionConstants.SOCKET_BINDING, property.getName()),
-                        itemActionFactory.remove(property.getName(), AddressTemplate.of("/socket-binding=*"),
-                                SocketBindingColumn.this));
+                        itemActionFactory.view(NameTokens.SOCKET_BINDING, NAME, property.getName()),
+                        itemActionFactory.remove(property.getName(), Names.SOCKET_BINDING,
+                                AddressTemplate.of("/socket-binding=*"), SocketBindingColumn.this));
             }
         });
     }

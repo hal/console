@@ -31,6 +31,9 @@ import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static org.jboss.hal.ballroom.table.DataTable.DESELECT;
+import static org.jboss.hal.ballroom.table.DataTable.ROW;
+import static org.jboss.hal.ballroom.table.DataTable.SELECT;
 
 /**
  * Subset of the DataTables API.
@@ -148,10 +151,6 @@ public class Api<T> {
         void onSelectionChanged(Api<T> api);
     }
 
-
-    private static final String DESELECT = "deselect";
-    private static final String ROW = "row";
-    private static final String SELECT = "select";
 
     // We cannot have both a property and a method named equally.
     // That's why the API defines the property "row" and the method "rows"

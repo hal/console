@@ -32,7 +32,6 @@ import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.dialog.Modal.ModalOptions;
 import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.UIConstants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +40,9 @@ import java.util.List;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.dialog.Modal.$;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.Names.*;
+import static org.jboss.hal.resources.Names.HIDDEN;
+import static org.jboss.hal.resources.UIConstants.ROLE;
+import static org.jboss.hal.resources.UIConstants.TABINDEX;
 
 /**
  * @author Harald Pehl
@@ -86,8 +87,6 @@ public class Dialog implements IsElement {
 
 
     public static final class Builder {
-
-        static final Constants CONSTANTS = GWT.create(Constants.class);
 
         // mandatory attributes
         private final String title;
@@ -195,9 +194,15 @@ public class Dialog implements IsElement {
 
     // ------------------------------------------------------ dialog singleton
 
+    static final Constants CONSTANTS = GWT.create(Constants.class);
+    private static final String BODY_ELEMENT = "body";
+    private static final String CLOSE_ICON_ELEMENT = "closeIcon";
+    private static final String DIALOG_ELEMENT = "dialog";
+    private static final String FOOTER_ELEMENT = "footer";
     private static final String ID = "hal-modal";
     private static final String LABEL = "label";
     private static final String SELECTOR_ID = "#" + ID;
+    private static final String TITLE_ELEMENT = "title";
 
     private static final Element root;
     private static final Element dialog;
@@ -208,35 +213,36 @@ public class Dialog implements IsElement {
 
     private static boolean open;
 
+
     static {
         String labelId = IdBuilder.build(ID, LABEL);
         // @formatter:off
         Elements.Builder rootBuilder = new Elements.Builder()
             .div().id(ID).css(modal)
-                    .attr(UIConstants.ROLE, "dialog") //NON-NLS
-                    .attr("tabindex", "-1")
-                    .aria("labelledby", labelId)
-                .div().css(modalDialog).attr("role", "document").rememberAs("dialog") //NON-NLS
+                    .attr(ROLE, DIALOG_ELEMENT)
+                    .attr(TABINDEX, "-1")
+                    .aria("labeledby", labelId)
+                .div().css(modalDialog).attr("role", "document").rememberAs(DIALOG_ELEMENT) //NON-NLS
                     .div().css(modalContent)
                         .div().css(modalHeader)
-                            .button().css(close).aria(LABEL, "Close").rememberAs("closeIcon") //NON-NLS
-                                .span().css(pfIcon("close")).aria(HIDDEN, "true").end() //NON-NLS
+                            .button().css(close).aria(LABEL, CONSTANTS.close()).rememberAs(CLOSE_ICON_ELEMENT)
+                                .span().css(pfIcon("close")).aria(HIDDEN, String.valueOf(true)).end()
                             .end()
-                            .h(4).css(modalTitle).id(labelId).rememberAs("title").end()
+                            .h(4).css(modalTitle).id(labelId).rememberAs(TITLE_ELEMENT).end()
                         .end()
-                        .div().css(modalBody).rememberAs("body").end()
-                        .div().css(modalFooter).rememberAs("footer").end()
+                        .div().css(modalBody).rememberAs(BODY_ELEMENT).end()
+                        .div().css(modalFooter).rememberAs(FOOTER_ELEMENT).end()
                     .end()
                 .end()
             .end();
         // @formatter:on
 
         root = rootBuilder.build();
-        dialog = rootBuilder.referenceFor("dialog");
-        closeIcon = rootBuilder.referenceFor("closeIcon");
-        title = rootBuilder.referenceFor("title");
-        body = rootBuilder.referenceFor("body");
-        footer = rootBuilder.referenceFor("footer");
+        dialog = rootBuilder.referenceFor(DIALOG_ELEMENT);
+        closeIcon = rootBuilder.referenceFor(CLOSE_ICON_ELEMENT);
+        title = rootBuilder.referenceFor(TITLE_ELEMENT);
+        body = rootBuilder.referenceFor(BODY_ELEMENT);
+        footer = rootBuilder.referenceFor(FOOTER_ELEMENT);
         Browser.getDocument().getBody().appendChild(root);
         initEventHandler();
     }

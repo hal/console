@@ -39,17 +39,22 @@ import static java.util.Arrays.asList;
 @AsyncColumn(Ids.DATA_SOURCE_TYPE_COLUMN)
 public class DataSourceTypeColumn extends StaticItemColumn {
 
+    static final String NON_XA = "non-xa";
+    static final String XA = "xa";
+
     @Inject
     public DataSourceTypeColumn(final Finder finder,
             final Resources resources) {
         super(finder, Ids.DATA_SOURCE_TYPE_COLUMN, resources.constants().type(), asList(
 
                 new StaticItem.Builder("Non-XA") //NON-NLS
+                        .id(NON_XA)
                         .nextColumn(Ids.DATA_SOURCE_COLUMN)
                         .onPreview(new PreviewContent("Non-XA Datasource", resources.previews().nonXa())) //NON-NLS
                         .build(),
 
                 new StaticItem.Builder("XA") //NON-NLS
+                        .id(XA)
                         .nextColumn(Ids.DATA_SOURCE_COLUMN)
                         .onPreview(new PreviewContent("XA Datasources", resources.previews().xa())) //NON-NLS
                         .build()));

@@ -28,14 +28,14 @@ public interface NameTokens {
     String ACCESS_CONTROL = "/access-control";
     String BATCH = "/configuration/{profile}/batch";
     String CONFIGURATION = "/configuration";
-    String DATASOURCE = "/configuration/{profile}/datasource/{datasource}";
+    String DATA_SOURCE = "/configuration/{profile}/data-source/{name}";
     String DEPLOYMENT_SCANNERS = "/configuration/{profile}/deployment-scanners";
     String DEPLOYMENTS = "/deployments";
     String EE = "/configuration/{profile}/ee";
     String EJB3 = "/configuration/{profile}/ejb3";
     String HOMEPAGE = "/home";
     String IIOP = "/configuration/{profile}/iiop";
-    String INTERFACE = "/interface/{interface}";
+    String INTERFACE = "/interface/{name}";
     String IO = "/configuration/{profile}/io";
     String JCA = "/configuration/{profile}/jca";
     String JMX = "/configuration/{profile}/jmx";
@@ -47,11 +47,12 @@ public interface NameTokens {
     String REMOTING = "/configuration/{profile}/remoting";
     String REQUEST_CONTROLLER = "/configuration/{profile}/request-controller";
     String RUNTIME = "/runtime";
-    String SOCKET_BINDING = "/socket-binding/{socket-binding}";
+    String SOCKET_BINDING = "/socket-binding/{name}";
     String SYSTEM_PROPERTIES = "/system-properties";
     String TRANSACTIONS = "/configuration/{profile}/transactions";
     String UNDER_THE_BRIDGE = "/utb";
     String WEBSERVICES = "/configuration/{profile}/webservices";
+    String XA_DATA_SOURCE = "/configuration/{profile}/xa-data-source/{name}";
 
     Set<String> getTokens();
 

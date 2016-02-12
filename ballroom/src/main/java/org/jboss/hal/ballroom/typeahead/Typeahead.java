@@ -230,7 +230,7 @@ public class Typeahead implements SuggestHandler, Attachable {
         Dataset.Templates templates = new Dataset.Templates();
         //noinspection HardCodedStringLiteral
         templates.notFound = context -> "<div class=\"empty-message\">" +
-                "<span class=\"pficon pficon-warning-triangle-o\"></span>" + CONSTANTS.noResults() +
+                "<span class=\"pficon pficon-warning-triangle-o\"></span>" + CONSTANTS.noItems() +
                 "</div>";
 
         dataset = new Dataset();

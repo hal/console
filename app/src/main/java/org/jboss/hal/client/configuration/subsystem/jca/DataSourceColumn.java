@@ -22,11 +22,12 @@
 package org.jboss.hal.client.configuration.subsystem.jca;
 
 import com.google.gwt.user.client.Window;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.ItemAction;
+import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
@@ -41,13 +42,13 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
+import org.jboss.hal.spi.Message.Level;
 
 import javax.inject.Inject;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
@@ -55,52 +56,107 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCE
 @AsyncColumn(Ids.DATA_SOURCE_COLUMN)
 public class DataSourceColumn extends FinderColumn<Property> {
 
+    private final StatementContext statementContext;
+
     @Inject
     public DataSourceColumn(final Finder finder,
             final Dispatcher dispatcher,
-            final PlaceManager placeManager,
             final StatementContext statementContext,
-            final Resources resources) {
+            final Resources resources,
+            final ItemActionFactory itemActionFactory) {
 
-        super(new Builder<Property>(finder, Ids.DATA_SOURCE_COLUMN, "Datasource")
-                .itemsProvider((context, callback) -> {
-                    ResourceAddress address = AddressTemplate.of("/{selected.profile}/subsystem=datasources")
-                            .resolve(statementContext);
-                    // TODO Remove dirty hack which relies on the *generated* id of the last column
-                    String childType = "xa".equals(context.getPath().last().getValue())
-                            ? "xa-data-source" : "data-source";
-                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
-                            .param(CHILD_TYPE, childType).build();
-                    dispatcher.execute(operation, result -> {
-                        callback.onSuccess(result.asPropertyList());
-                    });
-                })
+        super(new Builder<Property>(finder, Ids.DATA_SOURCE_COLUMN, Names.DATASOURCE)
+                .withColumnAdd(column -> Window.alert(Names.NYI))
+                .withColumnRefresh(column -> Window.alert(Names.NYI))
                 .onPreview(item -> new PreviewContent(item.getName())));
 
-        setItemRenderer(item -> new ItemDisplay<Property>() {
+        this.statementContext = statementContext;
+
+        setItemsProvider((context, callback) -> {
+            ResourceAddress address = AddressTemplate.of("/{selected.profile}/subsystem=datasources")
+                    .resolve(statementContext);
+            Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
+                    .param(CHILD_TYPE, resourceType(context.getPath())).build();
+            dispatcher.execute(operation, result -> {
+                callback.onSuccess(result.asPropertyList());
+            });
+        });
+
+        setItemRenderer(property -> new ItemDisplay<Property>() {
             @Override
             public String getTitle() {
-                return item.getName();
+                return property.getName();
+            }
+
+            @Override
+            public Level getMarker() {
+                return isEnabled(property) ? Level.SUCCESS : Level.INFO;
+            }
+
+            @Override
+            public String getTooltip() {
+                return isEnabled(property) ? resources.constants().enabled() : resources.constants().disabled();
             }
 
             @Override
             public List<ItemAction<Property>> actions() {
+                FinderPath path = finder.getContext().getPath();
+                ResourceAddress address = address(path, property);
+
                 String profile = statementContext.selectedProfile() != null ? statementContext
-                        .selectedProfile() : "standalone";
-                PlaceRequest view = new PlaceRequest.Builder()
-                        .nameToken(NameTokens.DATASOURCE)
-                        .with(ModelDescriptionConstants.PROFILE, profile)
-                        .with("datasource", item.getName()) //NON-NLS
+                        .selectedProfile() : STANDALONE;
+                PlaceRequest viewRequest = new PlaceRequest.Builder()
+                        .nameToken(xa(path) ? NameTokens.XA_DATA_SOURCE : NameTokens.DATA_SOURCE)
+                        .with(PROFILE, profile)
+                        .with(NAME, property.getName()) //NON-NLS
                         .build();
 
-                return Arrays.asList(
-                        new ItemAction<>(resources.constants().view(),
-                                item -> placeManager.revealPlace(view)),
-                        new ItemAction<>(resources.constants().remove(), item -> Window.alert(Names.NYI)),
-                        new ItemAction<>(resources.constants().testConnection(),
-                                item -> Window.alert(Names.NYI))
-                );
+                List<ItemAction<Property>> actions = new ArrayList<>();
+                actions.add(itemActionFactory.view(viewRequest));
+                actions.add(itemActionFactory.remove(property.getName(), Names.DATASOURCE,
+                        DataSourcePresenter.DATA_SOURCE_RESOURCE, DataSourceColumn.this));
+                if (isEnabled(property)) {
+                    actions.add(new ItemAction<>(resources.constants().disable(), p -> disable(p, address)));
+                    actions.add(new ItemAction<>(resources.constants().testConnection(),
+                            p -> testConnection(p, address)));
+                } else {
+                    actions.add(new ItemAction<>(resources.constants().enable(), p -> enable(p, address)));
+                }
+                return actions;
             }
         });
+    }
+
+    private String resourceType(FinderPath path) {
+        return DataSourceTypeColumn.XA.equals(path.last().getValue()) ? XA_DATA_SOURCE : DATA_SOURCE;
+    }
+
+    private boolean xa(FinderPath path) {
+        return DataSourceTypeColumn.XA.equals(path.last().getValue());
+    }
+
+    private ResourceAddress address(FinderPath path, Property property) {
+        return xa(path)
+                ? null
+                : DataSourcePresenter.DATA_SOURCE_RESOURCE.resolve(statementContext, property.getName());
+    }
+
+    private boolean isEnabled(Property datasource) {
+        if (!datasource.getValue().has(ModelDescriptionConstants.ENABLED)) {
+            throw new IllegalStateException("Datasource " + datasource.getName() + " does not have enabled attribute");
+        }
+        return datasource.getValue().get(ENABLED).asBoolean();
+    }
+
+    private void disable(final Property property, final ResourceAddress address) {
+        Window.alert(Names.NYI);
+    }
+
+    private void enable(final Property property, final ResourceAddress address) {
+        Window.alert(Names.NYI);
+    }
+
+    private void testConnection(final Property property, final ResourceAddress address) {
+        Window.alert(Names.NYI);
     }
 }

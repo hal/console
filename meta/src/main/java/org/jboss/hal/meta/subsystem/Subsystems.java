@@ -23,6 +23,7 @@ package org.jboss.hal.meta.subsystem;
 
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class Subsystems {
 
         // built-in subsystems
         add(new SubsystemMetadata("batch-jberet", "Batch", "JBeret", NameTokens.BATCH, null, true));
-        add(new SubsystemMetadata("datasources", "Datasources", null, null, Ids.DATA_SOURCE_TYPE_COLUMN, true));
+        add(new SubsystemMetadata("datasources", Names.DATASOURCE, null, null, Ids.DATA_SOURCE_TYPE_COLUMN, true));
         add(new SubsystemMetadata("deployment-scanner", "Deployment Scanners", null, NameTokens.DEPLOYMENT_SCANNERS, null, true));
         add(new SubsystemMetadata("ee", "EE", null, NameTokens.EE, null, true));
         add(new SubsystemMetadata("ejb3", "EJB3", null, NameTokens.EJB3, null, true));

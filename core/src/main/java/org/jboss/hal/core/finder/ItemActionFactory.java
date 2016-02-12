@@ -74,7 +74,10 @@ public class ItemActionFactory {
             }
             builder.with(map);
         }
-        PlaceRequest placeRequest = builder.build();
+        return view(builder.build());
+    }
+
+    public <T> ItemAction<T> view(PlaceRequest placeRequest) {
         return new ItemAction<>(resources.constants().view(), item -> placeManager.revealPlace(placeRequest));
     }
 
@@ -83,8 +86,8 @@ public class ItemActionFactory {
      * wildcard which is replace by the resource name. The action wil bring up a confirmation dialog. If confirmed the
      * resource is removed and {@link FinderColumn#refresh()} is called.
      */
-    public <T> ItemAction<T> remove(String name, AddressTemplate addressTemplate, FinderColumn<T> column) {
-        Dialog dialog = DialogFactory.confirmation(resources.messages().removeConfirmationTitle(name),
+    public <T> ItemAction<T> remove(String name, String type, AddressTemplate addressTemplate, FinderColumn<T> column) {
+        Dialog dialog = DialogFactory.confirmation(resources.messages().removeConfirmationTitle(type),
                 resources.messages().removeConfirmationQuestion(name),
                 () -> {
                     ResourceAddress address = addressTemplate.resolve(statementContext, name);

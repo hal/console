@@ -34,6 +34,11 @@ public class StaticItemColumn extends FinderColumn<StaticItem> {
         super(new Builder<StaticItem>(finder, id, title)
                 .itemRenderer(item -> new ItemDisplay<StaticItem>() {
                     @Override
+                    public String getId() {
+                        return item.getId() != null ? item.getId() : ItemDisplay.super.getId();
+                    }
+
+                    @Override
                     public String getTitle() {
                         return item.getTitle();
                     }

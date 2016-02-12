@@ -37,7 +37,7 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.InstanceInfo;
 import org.jboss.hal.config.User;
 import org.jboss.hal.core.finder.Breadcrumb;
-import org.jboss.hal.core.finder.Breadcrumb.Segment;
+import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -56,7 +56,6 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.config.InstanceInfo.WILDFLY;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.*;
-
 
 /**
  * @author Harald Pehl
@@ -207,9 +206,10 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     }
 
     @Override
-    public void updatePath(final String token, final FinderPath finderPath) {
+    public void updatePath(final FinderContext finderContext) {
+        String token = finderContext.getToken();
         if (token != null) {
-            String historyToken = historyToken(token, finderPath);
+            String historyToken = historyToken(token, finderContext.getPath());
             backLink.setAttribute("href", historyToken); //NON-NLS
             Element link = tlc.get(token);
             if (link != null) {
@@ -219,24 +219,35 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     }
 
     @Override
-    public void updateBreadcrumb(final Breadcrumb breadcrumb) {
+    public void updateBreadcrumb(final FinderContext finderContext) {
         while (breadcrumbs.getLastChild() != null && breadcrumbs.getChildren().getLength() > 1) {
             breadcrumbs.removeChild(breadcrumbs.getLastChild());
         }
-        for (Iterator<Segment> iterator = breadcrumb.iterator(); iterator.hasNext(); ) {
-            Segment segment = iterator.next();
-            // @formatter:off
-            Element li = new Elements.Builder()
-                .li()
-                    .span().css(key).innerText(segment.key).end()
-                    .span().css(value).innerText(segment.value).end()
-                .end()
-            .build();
-            // @formatter:off
-            if (!iterator.hasNext()) {
-                li.getClassList().add(active);
+
+        FinderPath currentPath = FinderPath.empty();
+        Iterator<FinderPath.Segment> pathIterator = finderContext.getPath().iterator();
+        Iterator<Breadcrumb.Segment> breadcrumbIterator = finderContext.getBreadcrumb().iterator();
+        //noinspection WhileLoopReplaceableByForEach
+        while (breadcrumbIterator.hasNext()) {
+
+            Breadcrumb.Segment breadcrumbSegment = breadcrumbIterator.next();
+            FinderPath.Segment pathSegment = pathIterator.next();
+            currentPath.append(pathSegment.getKey(), pathSegment.getValue());
+            boolean last = currentPath.size() == finderContext.getPath().size();
+
+            Elements.Builder builder = new Elements.Builder().li();
+            if (last) {
+                builder.css(active);
+            } else {
+                builder.a(historyToken(finderContext.getToken(), currentPath));
             }
-            breadcrumbs.appendChild(li);
+            builder.span().css(key).innerText(breadcrumbSegment.key).end()
+                    .span().css(value).innerText(breadcrumbSegment.value).end();
+            if (!last) {
+                builder.end(); // </a>
+            }
+            builder.end(); // </li>
+            breadcrumbs.appendChild(builder.build());
         }
     }
 

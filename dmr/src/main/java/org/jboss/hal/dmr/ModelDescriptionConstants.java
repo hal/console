@@ -44,6 +44,7 @@ public interface ModelDescriptionConstants {
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
     String COMPOSITE = "composite";
     String CRITERIA = "criteria";
+    String DATA_SOURCE = "data-source";
     String DEFAULT = "default";
     String DESCRIBE = "describe";
     String DESCRIPTION = "description";
@@ -125,6 +126,7 @@ public interface ModelDescriptionConstants {
     String SERVER_OPERATIONS = "server-operations";
     String SOCKET_BINDING = "socket-binding";
     String SHUTDOWN = "shutdown";
+    String STANDALONE = "standalone";
     String START = "start";
     String STEPS = "steps";
     String STORAGE = "storage";
@@ -140,5 +142,6 @@ public interface ModelDescriptionConstants {
     String WRITE = "write";
     String WRITE_ATTRIBUTE_OPERATION = "write-attribute";
     String UNDEFINE_ATTRIBUTE_OPERATION = "undefine-attribute";
+    String XA_DATA_SOURCE = "xa-data-source";
 }
 

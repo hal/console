@@ -50,6 +50,10 @@ public abstract class PatternFlyViewImpl extends ViewImpl implements PatternFlyV
         }
     }
 
+    protected <A extends Attachable> void registerAttachables(List<A> attachables) {
+        this.attachables.addAll(attachables);
+    }
+
     @Override
     public void attach() {
         if (!attached) {
