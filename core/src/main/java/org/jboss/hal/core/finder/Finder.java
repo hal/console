@@ -296,6 +296,10 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         finderColumn.asElement().focus();
     }
 
+    FinderColumn getColumn(String columnId) {
+        return columns.get(columnId);
+    }
+
     void preview(PreviewContent preview) {
         Elements.removeChildrenFrom(previewColumn);
         for (Element element : preview.elements()) {

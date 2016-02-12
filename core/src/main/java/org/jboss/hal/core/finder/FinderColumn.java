@@ -307,6 +307,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             KeyboardEvent keyboardEvent = (KeyboardEvent) event;
             int keyCode = keyboardEvent.getKeyCode();
             switch (keyCode) {
+
                 case KeyCode.UP:
                 case KeyCode.DOWN: {
                     Element activeItem = ulElement.querySelector("li." + CSS.active); //NON-NLS
@@ -323,6 +324,27 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                         selectItem(select.getId());
                         row(select).preview();
                         select.scrollIntoView(false);
+                    }
+                    break;
+                }
+
+                case KeyCode.LEFT: {
+                    Element previousElement = root.getPreviousElementSibling();
+                    if (previousElement != null) {
+                        FinderColumn previousColumn = finder.getColumn(previousElement.getId());
+                        if (previousColumn != null) {
+                            event.preventDefault();
+                            event.stopPropagation();
+
+                            finder.reduceTo(previousColumn);
+                            finder.selectColumn(previousColumn.getId());
+                            FinderRow selectedRow = previousColumn.getSelectedRow();
+                            if (selectedRow != null) {
+                                selectedRow.preview();
+                            }
+                            finder.updateContext();
+                            finder.publishContext();
+                        }
                     }
                     break;
                 }
