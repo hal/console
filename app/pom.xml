@@ -38,6 +38,10 @@
     <description>The HAL application containing the GWT entry point and the UI.</description>
     <packaging>gwt-app</packaging>
 
+    <properties>
+        <gulp-task>prod</gulp-task>
+    </properties>
+
     <dependencies>
         <!-- HAL -->
         <dependency>
@@ -154,6 +158,9 @@
                         <goals>
                             <goal>gulp</goal>
                         </goals>
+                        <configuration>
+                            <arguments>${gulp-task}</arguments>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -265,6 +272,9 @@
                 to enable browser refresh after changing sources
             -->
             <id>devmode</id>
+            <properties>
+                <gulp-task>dev</gulp-task>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
