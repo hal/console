@@ -28,8 +28,8 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
@@ -41,7 +41,7 @@ import java.util.Map;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
-import static org.jboss.hal.dmr.ModelNodeHelper.asNodesWithNames;
+import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.meta.token.NameTokens.PATH;
 
 /**
@@ -57,7 +57,7 @@ public class PathsPresenter extends
     public interface MyProxy extends ProxyPlace<PathsPresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<PathsPresenter> {
-        void update(List<ModelNode> paths);
+        void update(List<NamedNode> paths);
     }
     // @formatter:on
 
@@ -92,7 +92,7 @@ public class PathsPresenter extends
         Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
                 .param(CHILD_TYPE, "path")
                 .build();
-        dispatcher.execute(operation, result -> getView().update(asNodesWithNames(result.asPropertyList())));
+        dispatcher.execute(operation, result -> getView().update(asNamedNodes(result.asPropertyList())));
     }
 
     public void savePath(final String name, final Map<String, Object> changedValues) {

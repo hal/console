@@ -19,8 +19,20 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.runtime;
+package org.jboss.hal.core.mvp;
 
-import org.jboss.hal.core.mvp.FinderViewImpl;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.HasFinder;
 
-public class RuntimeView extends FinderViewImpl implements RuntimePresenter.MyView {}
+/**
+ * @author Harald Pehl
+ */
+public class FinderViewImpl extends PatternFlyViewImpl implements HasFinder {
+
+    @Override
+    public void setFinder(final Finder finder) {
+        registerAttachable(finder);
+        initWidget(Elements.asWidget(finder.asElement()));
+    }
+}

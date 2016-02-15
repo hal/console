@@ -19,8 +19,43 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.runtime;
+package org.jboss.hal.client.deployment;
 
-import org.jboss.hal.core.mvp.FinderViewImpl;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.model.NamedNode;
 
-public class RuntimeView extends FinderViewImpl implements RuntimePresenter.MyView {}
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * An uploaded deployment blob.
+ *
+ * @author Harald Pehl
+ */
+public class Content extends NamedNode {
+
+    private final List<Assignment> assignments;
+
+    public Content(final ModelNode node) {
+        super(node);
+        this.assignments = new ArrayList<>();
+    }
+
+    public String getRuntimeName() {
+        ModelNode runtimeName = get("runtime-name");
+        return runtimeName.isDefined() ? runtimeName.asString() : null;
+    }
+
+    public void addAssignment(Assignment assignment) {
+        assignments.add(assignment);
+    }
+
+    public List<Assignment> getAssignments() {
+        return assignments;
+    }
+
+    @Override
+    public String toString() {
+        return "Content{" + getName() + ", assigned to " + assignments + "}";
+    }
+}

@@ -21,6 +21,30 @@
  */
 package org.jboss.hal.client.runtime;
 
-import org.jboss.hal.core.mvp.FinderViewImpl;
+import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.StaticItem;
+import org.jboss.hal.core.finder.StaticItemColumn;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Column;
 
-public class RuntimeView extends FinderViewImpl implements RuntimePresenter.MyView {}
+import javax.inject.Inject;
+import java.util.Arrays;
+
+/**
+ * @author Harald Pehl
+ */
+@Column(Ids.DOMAIN_BROWSE_BY)
+public class BrowseByColumn extends StaticItemColumn {
+
+    @Inject
+    public BrowseByColumn(final Finder finder,
+            final Resources resources) {
+        super(finder, Ids.DOMAIN_BROWSE_BY, resources.constants().browseBy(),
+                Arrays.asList(
+                        new StaticItem.Builder(Names.HOSTS).build(),
+                        new StaticItem.Builder(Names.SERVER_GROUPS).build()
+                ));
+    }
+}

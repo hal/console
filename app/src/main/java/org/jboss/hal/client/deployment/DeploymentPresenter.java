@@ -25,61 +25,57 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.client.bootstrap.endpoint.Endpoint;
-import org.jboss.hal.core.mvp.HasPresenter;
+import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.HasFinder;
+import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.core.mvp.FinderPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
-import org.jboss.hal.core.mvp.TopLevelPresenter;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 
 import javax.inject.Inject;
-
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SCHEME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
  * @author Harald Pehl
  */
-public class DeploymentPresenter extends TopLevelPresenter<DeploymentPresenter.MyView, DeploymentPresenter.MyProxy> {
+public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyView, DeploymentPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyStandard
     @NameToken(NameTokens.DEPLOYMENTS)
     public interface MyProxy extends ProxyPlace<DeploymentPresenter> {}
 
-    public interface MyView extends PatternFlyView, HasPresenter<DeploymentPresenter> {
-        void update(Endpoint endpoint);
-    }
+    public interface MyView extends PatternFlyView, HasFinder {}
     // @formatter:on
 
-    private Endpoint endpoint;
+
+    private final Environment environment;
 
     @Inject
-    public DeploymentPresenter(final EventBus eventBus,
+    public DeploymentPresenter(
+            final EventBus eventBus,
             final MyView view,
-            final MyProxy proxy) {
-        super(eventBus, view, proxy);
-
-        endpoint = new Endpoint();
-        endpoint.get(NAME).set("foo");
-        endpoint.get(HOST).set("access-halproject.rhcloud.com");
-        endpoint.get(SCHEME).set("https");
+            final MyProxy proxy,
+            final Finder finder,
+            final Resources resources,
+            final Environment environment) {
+        super(eventBus, view, proxy, finder, resources);
+        this.environment = environment;
     }
 
     @Override
-    protected void onBind() {
-        super.onBind();
-        getView().setPresenter(this);
+    protected String initialColumn() {
+        return environment.isStandalone() ? Ids.DEPLOYMENT_COLUMN : Ids.DEPLOYMENT_BROWSE_BY;
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        getView().update(endpoint);
-    }
-
-    public void saveEndpoint(Endpoint endpoint) {
-        this.endpoint = endpoint;
-        getView().update(endpoint);
+    protected PreviewContent initialPreview() {
+        return new PreviewContent(Names.DEPLOYMENTS,
+                environment.isStandalone() ?
+                        resources.previews().runtimeStandalone() :
+                        resources.previews().runtimeDomain());
     }
 }

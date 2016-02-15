@@ -137,9 +137,9 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     private final String id;
     private final FinderContext context;
     private final Map<String, FinderColumn> columns;
+    private final Map<String, String> initialColumnsByToken;
     private final Element root;
     private final Element previewColumn;
-    private String initialColumn;
 
 
     // ------------------------------------------------------ ui
@@ -157,6 +157,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         this.id = FINDER;
         this.context = new FinderContext();
         this.columns = new HashMap<>();
+        this.initialColumnsByToken = new HashMap<>();
 
         // @formatter:off
         Elements.Builder builder = new Elements.Builder()
@@ -201,8 +202,12 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         }
     }
 
-    private FinderColumn firstColumn() {
-        return columns.get(initialColumn);
+    private FinderColumn initialColumn() {
+        String columnId = initialColumnsByToken.get(context.getToken());
+        if (columnId != null) {
+            return columns.get(columnId);
+        }
+        return null;
     }
 
     private void resizePreview() {
@@ -239,6 +244,17 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         root.insertBefore(column.asElement(), previewColumn);
         column.setItems(callback);
         resizePreview();
+    }
+
+    private void reduceAll() {
+        for (Iterator<Element> iterator = Elements.children(root).iterator(); iterator.hasNext(); ) {
+            Element element = iterator.next();
+            if (element == previewColumn) {
+                break;
+            }
+            columns.remove(element.getId());
+            iterator.remove();
+        }
     }
 
     void reduceTo(FinderColumn column) {
@@ -308,8 +324,10 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     void showPreview(PreviewContent preview) {
         Elements.removeChildrenFrom(previewColumn);
-        for (Element element : preview.elements()) {
-            previewColumn.appendChild(element);
+        if (preview != null) {
+            for (Element element : preview.elements()) {
+                previewColumn.appendChild(element);
+            }
         }
     }
 
@@ -317,7 +335,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     // ------------------------------------------------------ public interface
 
     public void reset(final String token, final String initialColumn, final PreviewContent initialPreview) {
-        this.initialColumn = initialColumn;
+        initialColumnsByToken.put(token, initialColumn);
 
         while (root.getFirstChild() != previewColumn) {
             root.removeChild(root.getFirstChild());
@@ -334,26 +352,30 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             fallback.execute();
 
         } else {
-            context.setToken(token);
+            if (!token.equals(context.getToken())) {
+                context.reset(token);
+                reduceAll();
 
-            // Find the last common column between the new and the current path
-            String match = null;
-            FinderPath newPath = path.reversed();
-            FinderPath currentPath = context.getPath().reversed();
-            for (FinderPath.Segment newSegment : newPath) {
-                for (FinderPath.Segment currentSegment : currentPath) {
-                    if (newSegment.getKey().equals(currentSegment.getKey())) {
-                        match = newSegment.getKey();
+            } else {
+                // Find the last common column between the new and the current path
+                String match = null;
+                FinderPath newPath = path.reversed();
+                FinderPath currentPath = context.getPath().reversed();
+                for (FinderPath.Segment newSegment : newPath) {
+                    for (FinderPath.Segment currentSegment : currentPath) {
+                        if (newSegment.getKey().equals(currentSegment.getKey())) {
+                            match = newSegment.getKey();
+                            break;
+                        }
+                    }
+                    if (match != null) {
                         break;
                     }
                 }
-                if (match != null) {
-                    break;
+                FinderColumn lastCommonColumn = match != null ? columns.get(match) : initialColumn();
+                if (lastCommonColumn != null) {
+                    reduceTo(lastCommonColumn);
                 }
-            }
-            FinderColumn lastCommonColumn = match != null ? columns.get(match) : firstColumn();
-            if (lastCommonColumn != null) {
-                reduceTo(lastCommonColumn);
             }
 
             int index = 0;

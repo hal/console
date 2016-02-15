@@ -30,9 +30,11 @@ public interface Names {
 
     String ATTRIBUTES = "Attributes";
     String CONFIGURATION = "Configuration";
+    String CONTENT_REPOSITORY = "Content Repository";
     String DATASOURCE = "Datasource";
     String DEPLOYMENTS = "Deployments";
     String HAL = "HAL";
+    String HOSTS = "Hosts";
     String HIDDEN = "hidden";
     String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";
@@ -44,12 +46,13 @@ public interface Names {
     String PATHS = "Paths";
     String PROFILES = "Profiles";
     String RUNTIME = "Runtime";
+    String SERVER = "Server";
+    String SERVER_GROUPS = "Server Groups";
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDINGS = "Socket Bindings";
     String SUBSYSTEM = "Subsystem";
     String SUBSYSTEMS = "Subsystems";
-    @SuppressWarnings("DuplicateStringLiteralInspection")
-    String UNDEFINED = "undefined";
-    String UNKNOWN = "unknown";
     String SYSTEM_PROPERTIES = "System Properties";
+    String UNASSIGNED_CONTENT = "Unassigned Content";
+    String UNKNOWN = "unknown";
 }

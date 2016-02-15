@@ -19,8 +19,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.runtime;
+package org.jboss.hal.client.deployment;
 
-import org.jboss.hal.core.mvp.FinderViewImpl;
+import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.spi.Column;
 
-public class RuntimeView extends FinderViewImpl implements RuntimePresenter.MyView {}
+import javax.inject.Inject;
+
+/**
+ * @author Harald Pehl
+ */
+@Column(Ids.DEPLOYMENT_COLUMN)
+public class DeploymentColumn extends FinderColumn<Deployment> {
+
+    @Inject
+    public DeploymentColumn(final Finder finder) {
+        super(new Builder<>(finder, Ids.DEPLOYMENT_COLUMN, Names.DEPLOYMENTS));
+    }
+}

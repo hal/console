@@ -30,7 +30,7 @@ import elemental.html.SelectElement;
 import java.util.List;
 
 import static com.google.common.base.Strings.emptyToNull;
-import static org.jboss.hal.resources.Names.UNDEFINED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
 
 /**
  * @author Harald Pehl

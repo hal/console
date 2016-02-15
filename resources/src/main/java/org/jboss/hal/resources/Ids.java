@@ -31,8 +31,12 @@ public interface Ids {
     String DATA_SOURCE_COLUMN = "datasource";
     String DATA_SOURCE_CONNECTION_FORM = "data-source-connection-form";
     String DATA_SOURCE_CONNECTION_TAB = "data-source-connection-tab";
-    String DATA_SOURCE_TABLE = "data-source-table";
     String DATA_SOURCE_TYPE_COLUMN = "type";
+
+    String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
+    String DEPLOYMENT_COLUMN = "deployment";
+
+    String DOMAIN_BROWSE_BY = "domain-browse-by";
 
     String ENDPOINT_ADD = "endpoint-add";
     String ENDPOINT_PING = "endpoint-ping";
@@ -64,6 +68,7 @@ public interface Ids {
     String ROOT_CONTAINER = "hal-root-container";
     String SOCKET_BINDING_COLUMN = "socket-binding";
     String SECURITY_DOMAIN_COLUMN = "security-domain";
+    String SERVER_COLUMN = "server";
     String SUBSYSTEM_COLUMN = "subsystem";
 
     String TLC_ACCESS_CONTROL = "tlc-access-control";

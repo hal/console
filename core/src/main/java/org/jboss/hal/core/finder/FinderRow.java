@@ -38,6 +38,9 @@ import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
 /**
  * UI class for a single row in in a finder column. Only used internally in the finder.
  *
+ * TODO Add an option to activate an inline progress element which sets a striped background for long running
+ * actions like 'restart server group'. Think about replacing the actions with a cancel button
+ *
  * @author Harald Pehl
  */
 class FinderRow<T> implements IsElement, SecurityContextAware {
@@ -195,9 +198,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
     }
 
     void showPreview() {
-        if (previewContent != null) {
-            finder.showPreview(previewContent);
-        }
+        finder.showPreview(previewContent);
     }
 
     @Override

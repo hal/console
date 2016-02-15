@@ -21,6 +21,22 @@
  */
 package org.jboss.hal.client.runtime;
 
-import org.jboss.hal.core.mvp.FinderViewImpl;
+import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.spi.Column;
 
-public class RuntimeView extends FinderViewImpl implements RuntimePresenter.MyView {}
+import javax.inject.Inject;
+
+/**
+ * @author Harald Pehl
+ */
+@Column(Ids.SERVER_COLUMN)
+public class ServerColumn extends FinderColumn<Server> {
+
+    @Inject
+    public ServerColumn(final Finder finder) {
+        super(new Builder<>(finder, Ids.SERVER_COLUMN, Names.SERVER));
+    }
+}

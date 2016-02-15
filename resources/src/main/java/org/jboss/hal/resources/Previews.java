@@ -29,8 +29,17 @@ import com.google.gwt.resources.client.ExternalTextResource;
  */
 public interface Previews extends ClientBundleWithLookup {
 
+    @Source("previews/configuration-domain.html")
+    ExternalTextResource configurationDomain();
+
+    @Source("previews/configuration-standalone.html")
+    ExternalTextResource configurationStandalone();
+
     @Source("previews/subsystems/datasources.html")
     ExternalTextResource datasources();
+
+    @Source("previews/deployments.html")
+    ExternalTextResource deployments();
 
     @Source("previews/interfaces.html")
     ExternalTextResource interfaces();
@@ -44,11 +53,14 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/profiles.html")
     ExternalTextResource profiles();
 
+    @Source("previews/runtime-domain.html")
+    ExternalTextResource runtimeDomain();
+
+    @Source("previews/runtime-standalone.html")
+    ExternalTextResource runtimeStandalone();
+
     @Source("previews/socket-bindings.html")
     ExternalTextResource socketBindings();
-
-    @Source("previews/standalone-configuration.html")
-    ExternalTextResource standaloneConfiguration();
 
     @Source("previews/subsystems.html")
     ExternalTextResource subsystems();

@@ -21,6 +21,15 @@
  */
 package org.jboss.hal.client.runtime;
 
-import org.jboss.hal.core.mvp.FinderViewImpl;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.model.NamedNode;
 
-public class RuntimeView extends FinderViewImpl implements RuntimePresenter.MyView {}
+/**
+ * @author Harald Pehl
+ */
+public class Server extends NamedNode {
+
+    public Server(final Property property) {
+        super(property);
+    }
+}

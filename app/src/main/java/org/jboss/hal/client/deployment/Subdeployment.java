@@ -19,20 +19,49 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.mvp;
+package org.jboss.hal.client.deployment;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.Proxy;
-import org.jboss.hal.core.TopLevelCategory;
+import org.jboss.hal.dmr.ModelNode;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
 
 /**
  * @author Harald Pehl
  */
-public abstract class TopLevelPresenter<V extends PatternFlyView, Proxy_ extends Proxy<?>>
-        extends PatternFlyPresenter<V, Proxy_>
-        implements TopLevelCategory {
+public class Subdeployment extends ModelNode {
 
-    public TopLevelPresenter(final EventBus eventBus, final V view, final Proxy_ proxy) {
-        super(eventBus, view, proxy, Slots.MAIN);
+    private final Deployment parent;
+    private final String name;
+    private final List<Subsystem> subsystems;
+
+    public Subdeployment(final Deployment parent, final String name, final ModelNode node) {
+        this.parent = parent;
+        this.name = name;
+        this.subsystems = new ArrayList<>();
+        set(node);
+
+        if (node.hasDefined(SUBSYSTEM)) {
+            Deployment.parseSubsystems(node, subsystems);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Subdeployment{" + name + "}";
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Deployment getParent() {
+        return parent;
+    }
+
+    public List<Subsystem> getSubsystems() {
+        return subsystems;
     }
 }

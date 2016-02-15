@@ -24,12 +24,11 @@ package org.jboss.hal.dmr;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.inject.Provider;
+import org.jboss.hal.dmr.model.NamedNode;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
  * Static helper methods for dealing with {@link ModelNode}s.
@@ -83,15 +82,10 @@ public final class ModelNodeHelper {
     }
 
     /**
-     * Turns a list of properties into a list of model nodes which contains a {@link
+     * Turns a list of properties into a list of named model nodes which contains a {@link
      * ModelDescriptionConstants#NAME} key with the properties name.
      */
-    public static List<ModelNode> asNodesWithNames(List<Property> properties) {
-        List<ModelNode> nodes = new ArrayList<>(properties.size());
-        for (Property property : properties) {
-            property.getValue().get(NAME).set(property.getName());
-            nodes.add(property.getValue());
-        }
-        return nodes;
+    public static List<NamedNode> asNamedNodes(List<Property> properties) {
+        return Lists.transform(properties, NamedNode::new);
     }
 }

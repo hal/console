@@ -19,8 +19,38 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.runtime;
+package org.jboss.hal.dmr.model;
 
-import org.jboss.hal.core.mvp.FinderViewImpl;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
 
-public class RuntimeView extends FinderViewImpl implements RuntimePresenter.MyView {}
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
+
+/**
+ * @author Harald Pehl
+ */
+public class NamedNode extends ModelNode {
+
+    protected final String name;
+    protected final ModelNode node;
+
+    public NamedNode(final ModelNode node) {
+        this(UNDEFINED + "_" + NamedNode.class.getSimpleName() + "_" + System.currentTimeMillis(), node);
+    }
+
+    public NamedNode(final Property property) {
+        this(property.getName(), property.getValue());
+    }
+
+    public NamedNode(final String name, final ModelNode node) {
+        this.name = name;
+        this.node = node;
+        set(node);
+        get(NAME).set(name);
+    }
+
+    public String getName() {
+        return get(NAME).asString();
+    }
+}

@@ -19,20 +19,46 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.mvp;
+package org.jboss.hal.client.deployment;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.Proxy;
-import org.jboss.hal.core.TopLevelCategory;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.model.NamedNode;
 
 /**
  * @author Harald Pehl
  */
-public abstract class TopLevelPresenter<V extends PatternFlyView, Proxy_ extends Proxy<?>>
-        extends PatternFlyPresenter<V, Proxy_>
-        implements TopLevelCategory {
+public class Subsystem extends NamedNode {
 
-    public TopLevelPresenter(final EventBus eventBus, final V view, final Proxy_ proxy) {
-        super(eventBus, view, proxy, Slots.MAIN);
+    public Subsystem(Property property) {
+        super(property);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) { return true; }
+        if (!(o instanceof Subsystem)) { return false; }
+        if (!super.equals(o)) { return false; }
+
+        Subsystem subsystem = (Subsystem) o;
+        //noinspection SimplifiableIfStatement
+        if (!name.equals(subsystem.name)) { return false; }
+        return node.equals(subsystem.node);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + node.hashCode();
+        return result;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return "Subsystem{" + name + "}";
     }
 }

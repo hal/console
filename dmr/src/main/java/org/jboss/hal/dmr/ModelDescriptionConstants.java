@@ -48,6 +48,8 @@ public interface ModelDescriptionConstants {
     String DEFAULT = "default";
     String DESCRIBE = "describe";
     String DESCRIPTION = "description";
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    String DISABLED = "disabled";
     String ENABLED = "enabled";
     String EXCEPTIONS = "exceptions";
     String EXECUTE = "execute";
@@ -130,6 +132,7 @@ public interface ModelDescriptionConstants {
     String START = "start";
     String STEPS = "steps";
     String STORAGE = "storage";
+    String SUBDEPLOYMENT = "subdeployment";
     String SUBSYSTEM = "subsystem";
     String SUCCESS = "success";
     String TRIM_DESCRIPTIONS = "trim-descriptions";
@@ -142,6 +145,8 @@ public interface ModelDescriptionConstants {
     String WRITE = "write";
     String WRITE_ATTRIBUTE_OPERATION = "write-attribute";
     String UNDEFINE_ATTRIBUTE_OPERATION = "undefine-attribute";
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    String UNDEFINED = "undefined";
     String XA_DATA_SOURCE = "xa-data-source";
 }
 

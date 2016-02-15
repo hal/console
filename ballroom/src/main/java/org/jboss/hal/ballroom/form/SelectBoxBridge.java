@@ -36,7 +36,7 @@ import java.util.List;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.ballroom.js.JsHelper.asJsArray;
 import static org.jboss.hal.ballroom.js.JsHelper.asList;
-import static org.jboss.hal.resources.Names.UNDEFINED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /**

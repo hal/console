@@ -31,6 +31,7 @@ import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.security.SecurityContext;
@@ -52,8 +53,8 @@ import static org.jboss.hal.resources.Names.PATHS;
  */
 public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyView {
 
-    private final DataTable<ModelNode> table;
-    private final ModelNodeForm<ModelNode> form;
+    private final DataTable<NamedNode> table;
+    private final ModelNodeForm<NamedNode> form;
 //    private final Dialog dialog;
     private PathsPresenter presenter;
 
@@ -68,7 +69,7 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
 //        new Dialog.Builder(resources.messages())
 
         Element info = new Elements.Builder().p().innerText(description.getDescription()).end().build();
-        Options<ModelNode> options = new ModelNodeTable.Builder<>(description)
+        Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(description)
                 .column(ModelDescriptionConstants.NAME, NAME, (cell, type, row, meta) -> row.get(
                         ModelDescriptionConstants.NAME).asString())
                 .button(resources.constants().add(), (event, api) -> {
@@ -83,7 +84,7 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
                 .build();
         table = new ModelNodeTable<>(PATHS_TABLE, securityContext, options);
 
-        form = new ModelNodeForm.Builder<>(PATHS_FORM, securityContext, description)
+        form = new ModelNodeForm.Builder<NamedNode>(PATHS_FORM, securityContext, description)
                 .include("path", "read-only", "relative-to")
                 .unsorted()
                 .onSave((form, changedValues) -> {
@@ -121,7 +122,7 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
     }
 
     @Override
-    public void update(final List<ModelNode> paths) {
+    public void update(final List<NamedNode> paths) {
         table.api().add(paths).refresh(RESET);
     }
 }
