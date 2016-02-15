@@ -55,7 +55,6 @@ import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.HIDDEN;
-import static org.jboss.hal.resources.Names.RESTRICTED;
 
 /**
  * TODO Implement org.jboss.hal.ballroom.form.Form.State#READONLY
@@ -66,6 +65,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     private static final String ARIA_DESCRIBEDBY = "aria-describedby";
     private static final String FORM_ITEM_GROUP = "formItemGroup";
+    private static final String RESTRICTED = "restricted";
     private static final String RESTRICTED_ELEMENT = "restrictedElement";
 
     static final Constants CONSTANTS = GWT.create(Constants.class);

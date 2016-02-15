@@ -26,6 +26,7 @@ import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.resources.UIConstants;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +37,6 @@ import java.util.Map;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.Names.*;
 
 /**
  * @author Harald Pehl
@@ -66,7 +66,7 @@ public class Tabs implements IsElement {
         // @formatter:off
         Elements.Builder builder = new Elements.Builder()
             .div()
-                .ul().css(nav, navTabs, navTabsPf, navTabsHal).attr(ROLE, "tablist").rememberAs(TABS).end() //NON-NLS
+                .ul().css(nav, navTabs, navTabsPf, navTabsHal).attr(UIConstants.ROLE, "tablist").rememberAs(TABS).end() //NON-NLS
                 .div().css(tabContent).rememberAs(PANES).end()
             .end();
         // @formatter:on
@@ -92,8 +92,8 @@ public class Tabs implements IsElement {
 
         // @formatter:off
         Element tab = new Elements.Builder()
-            .li().attr(ROLE, "presentation") //NON-NLS
-                .a("#" + id).aria(CONTROLS, id).attr(ROLE, TAB).data(TOGGLE, TAB)
+            .li().attr(UIConstants.ROLE, "presentation") //NON-NLS
+                .a("#" + id).aria(UIConstants.CONTROLS, id).attr(UIConstants.ROLE, TAB).data(UIConstants.TOGGLE, TAB)
                     .on(click, event -> {
                         event.preventDefault();
                         showTab(id);
@@ -107,7 +107,7 @@ public class Tabs implements IsElement {
             .div()
                 .id(id)
                 .css(tabPane)
-                .attr(ROLE, "tabpanel") //NON-NLS
+                .attr(UIConstants.ROLE, "tabpanel") //NON-NLS
             .end()
         .build();
         // @formatter:on

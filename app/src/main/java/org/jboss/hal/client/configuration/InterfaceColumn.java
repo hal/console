@@ -21,16 +21,13 @@
  */
 package org.jboss.hal.client.configuration;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.client.Browser;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
+import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
-import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -38,53 +35,44 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.AsyncColumn;
 
 import javax.inject.Inject;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
-import static org.jboss.hal.resources.Names.NYI;
 
-/**
- * @author Harald Pehl
- */
+@AsyncColumn(value = Ids.INTERFACE_COLUMN)
 public class InterfaceColumn extends FinderColumn<Property> {
 
     @Inject
     public InterfaceColumn(final Finder finder,
-            final Resources resources,
-            final PlaceManager placeManager,
-            final Dispatcher dispatcher) {
+            final Dispatcher dispatcher,
+            final ItemActionFactory itemActionFactory) {
 
-        super(new Builder<Property>(finder, Ids.INTERFACE_COLUMN, Names.INTERFACE,
-                property -> new ItemDisplay<Property>() {
-                    @Override
-                    public String getTitle() {
-                        return new LabelBuilder().label(property);
-                    }
-
-                    @Override
-                    public List<ItemAction<Property>> actions() {
-                        return asList(
-                                new ItemAction<>(resources.constants().view(),
-                                        p -> placeManager.revealPlace(
-                                                new PlaceRequest.Builder()
-                                                        .nameToken(NameTokens.INTERFACE)
-                                                        .with(Names.INTERFACE_RESOURCE, p.getName())
-                                                        .build())),
-                                new ItemAction<>(resources.constants().remove(),
-                                        p -> Browser.getWindow().alert(Names.NYI)));
-                    }
-                })
+        super(new Builder<Property>(finder, Ids.INTERFACE_COLUMN, Names.INTERFACE)
                 .itemsProvider((context, callback) -> {
                     Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
-                            .param(CHILD_TYPE, Names.INTERFACE_RESOURCE).build();
+                            .param(CHILD_TYPE, ModelDescriptionConstants.INTERFACE).build();
                     dispatcher.execute(operation, result -> { callback.onSuccess(result.asPropertyList()); });
-                })
-                .onPreview(property -> new PreviewContent(new LabelBuilder().label(property),
-                        SafeHtmlUtils.fromString(NYI))));
+                }));
+
+        setItemRenderer(property -> new ItemDisplay<Property>() {
+            @Override
+            public String getTitle() {
+                return new LabelBuilder().label(property);
+            }
+
+            @Override
+            public List<ItemAction<Property>> actions() {
+                return asList(
+                        itemActionFactory.view(NameTokens.INTERFACE, NAME, property.getName()),
+                        itemActionFactory.remove(property.getName(), Names.INTERFACE, InterfacePresenter.ROOT_TEMPLATE,
+                                InterfaceColumn.this));
+            }
+        });
     }
 }

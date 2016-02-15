@@ -24,7 +24,7 @@ package org.jboss.hal.ballroom.typeahead;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.resources.Names.OBJECT;
+import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /**
  * Mapping for the basic options from typeahead.js

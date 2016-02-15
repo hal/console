@@ -33,13 +33,13 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.ui.UIRegistry;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.resources.Names.*;
 
 /**
  * @author Harald Pehl
@@ -91,8 +91,8 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
             String updateAvailable = resources().messages().updateAvailable(environment.getHalVersion().toString(),
                     version.toString());
             this.updateAvailable.setTitle(updateAvailable);
-            this.updateAvailable.getDataset().setAt(TOGGLE, TOOLTIP);
-            this.updateAvailable.getDataset().setAt(PLACEMENT, "top");
+            this.updateAvailable.getDataset().setAt(UIConstants.TOGGLE, UIConstants.TOOLTIP);
+            this.updateAvailable.getDataset().setAt(UIConstants.PLACEMENT, "top");
             this.updateAvailable.getDataset().setAt("container", "body"); //NON-NLS
             Elements.setVisible(this.updateAvailable, true);
         }

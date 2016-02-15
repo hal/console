@@ -27,9 +27,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * @author Harald Pehl
- */
 public class Breadcrumb implements Iterable<Breadcrumb.Segment> {
 
     public static final class Segment {

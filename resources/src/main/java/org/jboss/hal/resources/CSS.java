@@ -53,7 +53,6 @@ public interface CSS {
     String columnMedium = "md";
     String collapse = "collapse";
     String containerFluid = "container-fluid";
-    String itemText = "item-text";
     String controlLabel = "control-label";
     String dataTable = "datatable";
     String defaultValue = "default-value";
@@ -63,6 +62,7 @@ public interface CSS {
     String eapHomeTitle = "eap-home-title";
     String editing = "editing";
     String equals = "equals";
+    String empty = "empty";
     String fade = "fade";
     String filter = "filter";
     String finder = "finder";
@@ -88,6 +88,7 @@ public interface CSS {
     String inputGroup = "input-group";
     String inputGroupAddon = "input-group-addon";
     String inputGroupBtn = "input-group-btn";
+    String itemText = "item-text";
     String key = "key";
     String loading = "loading";
     String loadingContainer = "loading-container";

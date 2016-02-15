@@ -21,36 +21,6 @@
  */
 package org.jboss.hal.client.runtime;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.layout.LayoutBuilder;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.FinderViewImpl;
 
-/**
- * @author Harald Pehl
- */
-public class RuntimeView extends PatternFlyViewImpl implements RuntimePresenter.MyView {
-
-    public RuntimeView() {
-        Element someText = new Elements.Builder().p().innerText("First some text above the tabs.").end().build();
-        // @formatter:off
-        Element root = new LayoutBuilder()
-            .startRow()
-                .header("Tabs Demo")
-                .add(someText)
-                .startTabs()
-                    .tab("first", "First", sampleContent(1))
-                    .tab("second", "Second", sampleContent(2))
-                    .tab("third", "Third", sampleContent(3))
-                .endTabs()
-            .endRow()
-        .build();
-        // @formatter:on
-        initWidget(Elements.asWidget(root));
-    }
-
-    private Element sampleContent(int number) {
-        return new Elements.Builder().div().h(3).innerText("Sample Content #" + number).end()
-                .p().innerText("Lorem ipsum " + number).end().end().build();
-    }
-}
+public class RuntimeView extends FinderViewImpl implements RuntimePresenter.MyView {}

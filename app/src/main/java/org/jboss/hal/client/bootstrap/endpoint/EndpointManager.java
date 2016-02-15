@@ -10,7 +10,7 @@ import org.jboss.hal.config.Endpoints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.jboss.hal.resources.Names.GET;
+import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.resources.Urls.MANAGEMENT;
 
 /**
@@ -90,7 +90,7 @@ public class EndpointManager {
                     }
                 }
             });
-            xhr.open(GET, managementEndpoint, true);
+            xhr.open(GET.name(), managementEndpoint, true);
             xhr.setWithCredentials(true);
             xhr.send();
         }
@@ -115,7 +115,7 @@ public class EndpointManager {
                 }
             }
         });
-        xhr.open(GET, managementEndpoint, true);
+        xhr.open(GET.name(), managementEndpoint, true);
         xhr.setWithCredentials(true);
         xhr.send();
     }

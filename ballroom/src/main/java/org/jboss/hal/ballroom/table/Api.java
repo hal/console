@@ -26,12 +26,14 @@ import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.resources.Names;
 
 import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static org.jboss.hal.ballroom.table.DataTable.DESELECT;
+import static org.jboss.hal.ballroom.table.DataTable.ROW;
+import static org.jboss.hal.ballroom.table.DataTable.SELECT;
 
 /**
  * Subset of the DataTables API.
@@ -202,10 +204,10 @@ public class Api<T> {
 
     @JsOverlay
     public final Api<T> onSelect(SelectionHandler<T> handler) {
-        on(Names.SELECT, new SelectCallback<T>() {
+        on(SELECT, new SelectCallback<T>() {
             @Override
             public void onSelect(final Object event, final Api<T> api, final String type) {
-                if (Names.ROW.equals(type)) {
+                if (ROW.equals(type)) {
                     handler.onSelect(api, api.selectedRow());
                 }
             }
@@ -215,10 +217,10 @@ public class Api<T> {
 
     @JsOverlay
     public final Api<T> onDeselect(DeselectionHandler<T> handler) {
-        on(Names.DESELECT, new SelectCallback<T>() {
+        on(DESELECT, new SelectCallback<T>() {
             @Override
             public void onSelect(final Object event, final Api<T> api, final String type) {
-                if (Names.ROW.equals(type)) {
+                if (ROW.equals(type)) {
                     handler.onDeselect(api);
                 }
             }
@@ -228,18 +230,18 @@ public class Api<T> {
 
     @JsOverlay
     public final Api<T> onSelectionChange(SelectionChangeHandler<T> handler) {
-        on(Names.SELECT, new SelectCallback<T>() {
+        on(SELECT, new SelectCallback<T>() {
             @Override
             public void onSelect(final Object event, final Api<T> api, final String type) {
-                if (Names.ROW.equals(type)) {
+                if (ROW.equals(type)) {
                     handler.onSelectionChanged(api);
                 }
             }
         });
-        on(Names.DESELECT, new SelectCallback<T>() {
+        on(DESELECT, new SelectCallback<T>() {
             @Override
             public void onSelect(final Object event, final Api<T> api, final String type) {
-                if (Names.ROW.equals(type)) {
+                if (ROW.equals(type)) {
                     handler.onSelectionChanged(api);
                 }
             }

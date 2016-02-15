@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 
 import static org.jboss.hal.config.rebind.GeneratorUtils.failSafeGetProperty;
 
-@SuppressWarnings("HardCodedStringLiteral")
+@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class EnvironmentGenerator extends Generator {
 
     private static final String PRODUCT_INFO_TEMPLATE = "Environment.ftl";

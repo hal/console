@@ -58,15 +58,11 @@
             <li><a id="{{resources().TLC_DEPLOYMENTS}}" href="{{historyToken(org.jboss.hal.meta.token.NameTokens.DEPLOYMENTS)}}">Deployments</a></li>
             <li><a id="{{resources().TLC_CONFIGURATION}}" href="{{historyToken(org.jboss.hal.meta.token.NameTokens.CONFIGURATION)}}">Configuration</a></li>
             <li><a id="{{resources().TLC_RUNTIME}}" href="{{historyToken(org.jboss.hal.meta.token.NameTokens.RUNTIME)}}">Runtime</a></li>
-            <li data-element="accessControl"><a id="{{resources().TLC_ACCESS_CONTROL}}" href="{{historyToken(org.jboss.hal.meta.token.NameTokens.ACCESS_CONTROL)}}">Access Control</a></li>
             <li data-element="patching"><a id="{{resources().TLC_PATCHING}}" href="{{historyToken(org.jboss.hal.meta.token.NameTokens.PATCHING)}}">Patching</a></li>
+            <li data-element="accessControl"><a id="{{resources().TLC_ACCESS_CONTROL}}" href="{{historyToken(org.jboss.hal.meta.token.NameTokens.ACCESS_CONTROL)}}">Access Control</a></li>
         </ul>
         <ol class="breadcrumb breadcrumb-hal" data-element="breadcrumbs">
-            <li><a class="back" href="javascript:history.back()"><i class="fa fa-angle-double-left"></i>&nbsp;{{resources().constants().back()}}</a></li>
-            <!-- Sample breadcrumb
-            <li><span class="key">Foo</span><span class="value">Bar</span></li>
-            <li class="active"><span class="key">Foo</span><span class="value">Bar</span></li>
-            -->
+            <li><a data-element="backLink" class="back" href="{{historyToken(org.jboss.hal.meta.token.NameTokens.HOMEPAGE)}}"><i class="fa fa-angle-double-left"></i>&nbsp;{{resources().constants().back()}}</a></li>
         </ol>
     </div>
 </nav>

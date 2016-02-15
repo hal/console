@@ -21,12 +21,14 @@
  */
 package org.jboss.hal.resources;
 
+import com.google.gwt.resources.client.ExternalTextResource;
+
 import javax.inject.Inject;
 
 /**
  * @author Harald Pehl
  */
-public class Resources implements Ids, Names, CSS {
+public class Resources implements Ids, Names, UIConstants, CSS {
 
     private final Constants constants;
     private final Messages messages;
@@ -51,6 +53,10 @@ public class Resources implements Ids, Names, CSS {
 
     public Previews previews() {
         return previews;
+    }
+
+    public ExternalTextResource preview(String name) {
+        return (ExternalTextResource) previews.getResource(name);
     }
 
     public Images images() {

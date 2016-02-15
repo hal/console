@@ -1,3 +1,4 @@
+<#-- @ftlvariable name="generatedWith" type="java.lang.String" -->
 <#-- @ftlvariable name="packageName" type="java.lang.String" -->
 <#-- @ftlvariable name="className" type="java.lang.String" -->
 <#-- @ftlvariable name="tokenInfos" type="java.util.Set<org.jboss.hal.processor.NameTokenProcessor.TokenInfo>" -->
@@ -16,7 +17,7 @@ import static java.util.Arrays.asList;
 /*
 * WARNING! This class is generated. Do not modify.
 */
-@Generated("org.jboss.hal.processors.NameTokenProcessor")
+@Generated("${generatedWith}")
 public class ${className} implements org.jboss.hal.meta.resource.RequiredResources {
 
     private final HashMultimap<String, String> resources;

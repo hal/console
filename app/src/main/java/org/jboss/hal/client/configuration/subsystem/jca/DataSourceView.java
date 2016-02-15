@@ -23,36 +23,34 @@ package org.jboss.hal.client.configuration.subsystem.jca;
 
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
 import org.jboss.hal.ballroom.tab.Tabs;
-import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.ballroom.table.Options;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityFramework;
+import org.jboss.hal.resources.Names;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jboss.hal.ballroom.table.Api.RefreshMode.HOLD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
 import static org.jboss.hal.resources.Ids.*;
-import static org.jboss.hal.resources.Names.*;
+import static org.jboss.hal.resources.Names.ATTRIBUTES;
 
 /**
  * @author Harald Pehl
  */
 public class DataSourceView extends PatternFlyViewImpl implements DataSourcePresenter.MyView {
 
-    private final DataTable<ModelNode> table;
     private final List<Form<ModelNode>> forms;
+    private Element header;
     private DataSourcePresenter presenter;
 
     @Inject
@@ -63,24 +61,14 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
         SecurityContext securityContext = securityFramework.lookup(DataSourcePresenter.ROOT_TEMPLATE);
 
         Element info = new Elements.Builder().p().innerText(description.getDescription()).end().build();
-        Options<ModelNode> options = new ModelNodeTable.Builder<>(description)
-                .column(NAME_KEY, NAME_LABEL, (cell, type, row, meta) -> row.get(NAME_KEY).asString())
-                .columns(JNDI_NAME, ENABLED)
-                .build();
-        table = new ModelNodeTable<>(DATA_SOURCE_TABLE, securityContext, options);
 
         forms = new ArrayList<>();
         Tabs tabs = new Tabs();
         ModelNodeForm<ModelNode> currentForm;
-        Form.SaveCallback<ModelNode> saveCallback = (form, changedValues) -> {
-            ModelNode selectedRow = table.api().selectedRow();
-            if (selectedRow != null) {
-                presenter.saveDataSource(selectedRow.get(NAME_KEY).asString(), changedValues);
-            }
-        };
+        Form.SaveCallback<ModelNode> saveCallback = (form, changedValues) -> presenter.saveDataSource(changedValues);
 
         currentForm = new ModelNodeForm.Builder<>(DATA_SOURCE_ATTRIBUTES_FORM, securityContext, description)
-                .include(JNDI_NAME, ENABLED, "statistics-enabled", "driver-name")
+                .include(ModelDescriptionConstants.JNDI_NAME, ENABLED, "statistics-enabled", "driver-name")
                 .onSave(saveCallback)
                 .build();
         forms.add(currentForm);
@@ -91,26 +79,20 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
                 .onSave(saveCallback)
                 .build();
         forms.add(currentForm);
-        tabs.add(DATA_SOURCE_CONNECTION_TAB, "Connection", currentForm.asElement());
+        tabs.add(DATA_SOURCE_CONNECTION_TAB, "Connection", currentForm.asElement()); //NON-NLS
 
         // @formatter:off
-        Element element = new LayoutBuilder()
+        LayoutBuilder layoutBuilder = new LayoutBuilder()
             .startRow()
-                .header("DataSources")
+                .header(Names.DATASOURCE)
                 .add(info)
-                .add(table.asElement(), tabs.asElement())
-            .endRow()
-        .build();
+                .add(tabs.asElement())
+            .endRow();
         // @formatter:on
 
-        registerAttachable(table, forms.toArray(new Attachable[forms.size()]));
-        initWidget(Elements.asWidget(element));
-    }
-
-    @Override
-    public void attach() {
-        super.attach();
-        table.api().bindForms(forms);
+        header = layoutBuilder.headerElement();
+        registerAttachables(forms);
+        initWidget(Elements.asWidget(layoutBuilder.build()));
     }
 
     @Override
@@ -119,8 +101,10 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
     }
 
     @Override
-    public void update(final List<ModelNode> datasources) {
-        // TODO Restore selection!
-        table.api().clear().add(datasources).refresh(HOLD);
+    public void update(final String name, final ModelNode datasource) {
+        header.setTextContent(name);
+        for (Form<ModelNode> form : forms) {
+            form.view(datasource);
+        }
     }
 }

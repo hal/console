@@ -48,7 +48,6 @@ import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.*;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
-import static org.jboss.hal.resources.Names.VALUE;
 
 /**
  * A type ahead engine based on <a href="https://twitter.github.io/typeahead.js/">typeahead.js</a> ready to be used
@@ -178,6 +177,7 @@ public class Typeahead implements SuggestHandler, Attachable {
     private static final String CLOSE = "close";
     private static final String SELECTED_EVENT = "typeahead:selected";
     private static final String VAL = "val";
+    private static final String VALUE = "value";
 
     private final Options options;
     private final Dataset dataset;
@@ -230,7 +230,7 @@ public class Typeahead implements SuggestHandler, Attachable {
         Dataset.Templates templates = new Dataset.Templates();
         //noinspection HardCodedStringLiteral
         templates.notFound = context -> "<div class=\"empty-message\">" +
-                "<span class=\"pficon pficon-warning-triangle-o\"></span>" + CONSTANTS.noResults() +
+                "<span class=\"pficon pficon-warning-triangle-o\"></span>" + CONSTANTS.noItems() +
                 "</div>";
 
         dataset = new Dataset();

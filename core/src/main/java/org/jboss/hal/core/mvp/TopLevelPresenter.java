@@ -28,7 +28,7 @@ import org.jboss.hal.core.TopLevelCategory;
 /**
  * @author Harald Pehl
  */
-public class TopLevelPresenter<V extends PatternFlyView, Proxy_ extends Proxy<?>>
+public abstract class TopLevelPresenter<V extends PatternFlyView, Proxy_ extends Proxy<?>>
         extends PatternFlyPresenter<V, Proxy_>
         implements TopLevelCategory {
 

@@ -28,13 +28,14 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.Names.FAILURE;
 import static org.jboss.hal.resources.Names.UNKNOWN;
 
 /**
  * @author Harald Pehl
  */
 public class UploadPayloadProcessor implements PayloadProcessor {
+
+    private static final String FAILURE = "failure";
 
     @Override
     public ModelNode processPayload(final HttpMethod method, final String contentType, final String payload) {

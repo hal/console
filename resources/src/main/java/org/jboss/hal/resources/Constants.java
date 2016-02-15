@@ -26,16 +26,21 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String back();
     String bootstrapFailed();
     String bootstrapException();
+    String browseBy();
 
     String cancel();
     String close();
     String connectToServer();
 
     String defaultValue();
+    String disable();
+    String disabled();
     String dispatcherException();
     String dispatcherFailed();
 
     String edit();
+    String enable();
+    String enabled();
 
     String endpointSelectTitle();
     String endpointSelectDescription();
@@ -137,7 +142,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String logout();
     String modelBrowser();
     String metadataError();
-    String noResults();
+    String no();
+    String noItems();
     String notANumber();
     String nothingSelected();
     String ping();
@@ -158,11 +164,13 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String start();
     String supportsExpressions();
 
+    String testConnection();
     String toggleDropdown();
     String toggleNavigation();
     String tools();
+    String type();
     String unknownError();
     String view();
-
+    String yes();
     //@formatter:on
 }

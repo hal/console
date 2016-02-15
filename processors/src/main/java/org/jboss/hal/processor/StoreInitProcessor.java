@@ -36,6 +36,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jboss.hal.processor.TemplateNames.*;
+
 /**
  * Processor which automates initialization of stores and their adapters. The processor generates the following
  * artifacts:
@@ -59,13 +61,13 @@ public class StoreInitProcessor extends AbstractProcessor {
     private static final String ADAPTER_SUFFIX = "Adapter";
 
     private static final String STORE_MODULE_TEMPLATE = "StoreModule.ftl";
-    private static final String STORE_MODULE_PACKAGE = "org.jboss.hal.client.gin";
+    private static final String STORE_MODULE_PACKAGE = GIN_PACKAGE;
     private static final String STORE_MODULE_CLASS = "StoreModule";
 
     private final Set<StoreInfo> storeInfos;
 
     public StoreInitProcessor() {
-        super(StoreInitProcessor.class, "templates");
+        super(StoreInitProcessor.class, TemplateNames.TEMPLATES);
         storeInfos = new HashSet<>();
     }
 
@@ -89,13 +91,14 @@ public class StoreInitProcessor extends AbstractProcessor {
             code(STORE_MODULE_TEMPLATE, STORE_MODULE_PACKAGE, STORE_MODULE_CLASS,
                     () -> {
                         Map<String, Object> context = new HashMap<>();
-                        context.put("packageName", STORE_MODULE_PACKAGE);
-                        context.put("className", STORE_MODULE_CLASS);
+                        context.put(GENERATED_WITH, StoreInitProcessor.class.getName());
+                        context.put(PACKAGE_NAME, STORE_MODULE_PACKAGE);
+                        context.put(CLASS_NAME, STORE_MODULE_CLASS);
                         context.put("storeInfos", storeInfos);
                         return context;
                     });
 
-            info("Successfully generated store initialization classes [%s].", STORE_MODULE_CLASS);
+            info("Successfully generated store initialization class [%s].", STORE_MODULE_CLASS);
             storeInfos.clear();
         }
         return false;

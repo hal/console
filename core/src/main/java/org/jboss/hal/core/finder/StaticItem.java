@@ -36,6 +36,7 @@ public class StaticItem {
 
     public static class Builder {
 
+        private String id;
         private final String title;
         private final List<ItemAction<StaticItem>> actions;
         private PreviewContent previewContent;
@@ -44,6 +45,11 @@ public class StaticItem {
         public Builder(final String title) {
             this.title = title;
             this.actions = new ArrayList<>();
+        }
+
+        public Builder id(String id) {
+            this.id = id;
+            return this;
         }
 
         public Builder action(String title, ItemActionHandler<StaticItem> action) {
@@ -75,16 +81,22 @@ public class StaticItem {
     }
 
 
+    private String id;
     private final String title;
     private final List<ItemAction<StaticItem>> actions;
     private final String nextColumn;
     private final PreviewContent previewContent;
 
     StaticItem(Builder builder) {
+        this.id = builder.id;
         this.title = builder.title;
         this.actions = builder.actions;
         this.nextColumn = builder.nextColumn;
         this.previewContent = builder.previewContent;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public List<ItemAction<StaticItem>> getActions() {

@@ -39,6 +39,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String messages(@PluralCount int count);
     String patternMismatch(String pattern);
     SafeHtml propertiesHint();
+    String removeConfirmationTitle(String name);
+    SafeHtml removeConfirmationQuestion(String name);
     SafeHtml requiredHelp();
     SafeHtml requiredMarker();
     String updateAvailable(String current, String update);

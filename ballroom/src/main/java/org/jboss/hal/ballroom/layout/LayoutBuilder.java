@@ -36,9 +36,7 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public class LayoutBuilder {
 
-    private static final String TABS = "tabs";
-    private static final String TAB = "tab";
-    private static final String PANES = "panes";
+    private static final String HEADER_ELEMENT = "headerElement";
 
     private final Elements.Builder eb;
     private int offset;
@@ -72,7 +70,7 @@ public class LayoutBuilder {
 
     public LayoutBuilder header(String title) {
         assertNoTabs();
-        eb.h(1).innerText(title).end();
+        eb.h(1).innerText(title).rememberAs(HEADER_ELEMENT).end();
         return this;
     }
 
@@ -129,6 +127,10 @@ public class LayoutBuilder {
         eb.add(tabs.asElement());
         tabs = null;
         return this;
+    }
+
+    public Element headerElement() {
+        return eb.referenceFor(HEADER_ELEMENT);
     }
 
     private String rowCss() {

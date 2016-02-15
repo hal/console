@@ -34,6 +34,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jboss.hal.processor.TemplateNames.*;
+
 /**
  * Processor for GIN modules.
  *
@@ -46,13 +48,13 @@ import java.util.Set;
 public class GinModuleProcessor extends AbstractProcessor {
 
     private static final String MODULE_TEMPLATE = "CompositeModule.ftl";
-    private static final String MODULE_PACKAGE = "org.jboss.hal.client.gin";
+    private static final String MODULE_PACKAGE = GIN_PACKAGE;
     private static final String MODULE_CLASS = "CompositeModule";
 
     private final Set<String> modules;
 
     public GinModuleProcessor() {
-        super(GinModuleProcessor.class, "templates");
+        super(GinModuleProcessor.class, TemplateNames.TEMPLATES);
         modules = new HashSet<>();
     }
 
@@ -68,8 +70,9 @@ public class GinModuleProcessor extends AbstractProcessor {
             debug("Generating composite GIN module");
             code(MODULE_TEMPLATE, MODULE_PACKAGE, MODULE_CLASS, () -> {
                 Map<String, Object> context = new HashMap<>();
-                context.put("packageName", MODULE_PACKAGE);
-                context.put("className", MODULE_CLASS);
+                context.put(GENERATED_WITH, GinModuleProcessor.class.getName());
+                context.put(PACKAGE_NAME, MODULE_PACKAGE);
+                context.put(CLASS_NAME, MODULE_CLASS);
                 context.put("modules", modules);
                 return context;
             });

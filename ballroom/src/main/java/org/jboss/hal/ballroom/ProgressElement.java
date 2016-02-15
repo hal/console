@@ -25,8 +25,12 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.flow.Progress;
 
+import static elemental.css.CSSStyleDeclaration.Unit.PCT;
+import static elemental.css.CSSStyleDeclaration.Unit.PX;
+import static java.lang.Math.min;
+import static java.lang.Math.round;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.Names.ROLE;
+import static org.jboss.hal.resources.UIConstants.ROLE;
 
 /**
  * @author Harald Pehl
@@ -84,12 +88,12 @@ public class ProgressElement implements IsElement, Progress {
             progressBarElement.getClassList().remove(progressBarStriped);
             progressBarElement.getClassList().remove(active);
             progressBarElement.setAttribute(ARIA_VALUENOW, "0");
-            progressBarElement.getStyle().setWidth("0");
+            progressBarElement.getStyle().setWidth(0, PX);
         } else {
             progressBarElement.getClassList().add(progressBarStriped);
             progressBarElement.getClassList().add(active);
             progressBarElement.setAttribute(ARIA_VALUENOW, "100");
-            progressBarElement.getStyle().setWidth("100%");
+            progressBarElement.getStyle().setWidth(100.0, PCT);
         }
         Elements.setVisible(root, true);
     }
@@ -99,9 +103,9 @@ public class ProgressElement implements IsElement, Progress {
         if (determinate) {
             if (value < max) {
                 value++;
-                String percent = String.valueOf(Math.round(value / max * 100));
-                progressBarElement.setAttribute(ARIA_VALUENOW, percent); //NON-NLS
-                progressBarElement.getStyle().setWidth(percent);
+                double percent = min(round(((double) value / (double) max) * 100.0), 100.0);
+                progressBarElement.setAttribute(ARIA_VALUENOW, String.valueOf(percent));
+                progressBarElement.getStyle().setWidth(percent, PCT);
             }
         }
     }

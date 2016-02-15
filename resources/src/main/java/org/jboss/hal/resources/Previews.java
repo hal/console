@@ -21,29 +21,53 @@
  */
 package org.jboss.hal.resources;
 
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.TextResource;
+import com.google.gwt.resources.client.ClientBundleWithLookup;
+import com.google.gwt.resources.client.ExternalTextResource;
 
 /**
  * @author Harald Pehl
  */
-public interface Previews extends ClientBundle {
+public interface Previews extends ClientBundleWithLookup {
+
+    @Source("previews/configuration-domain.html")
+    ExternalTextResource configurationDomain();
+
+    @Source("previews/configuration-standalone.html")
+    ExternalTextResource configurationStandalone();
+
+    @Source("previews/subsystems/datasources.html")
+    ExternalTextResource datasources();
+
+    @Source("previews/deployments.html")
+    ExternalTextResource deployments();
 
     @Source("previews/interfaces.html")
-    TextResource interfaces();
+    ExternalTextResource interfaces();
+
+    @Source("previews/subsystems/non-xa.html")
+    ExternalTextResource nonXa();
 
     @Source("previews/paths.html")
-    TextResource paths();
+    ExternalTextResource paths();
+
+    @Source("previews/profiles.html")
+    ExternalTextResource profiles();
+
+    @Source("previews/runtime-domain.html")
+    ExternalTextResource runtimeDomain();
+
+    @Source("previews/runtime-standalone.html")
+    ExternalTextResource runtimeStandalone();
 
     @Source("previews/socket-bindings.html")
-    TextResource socketBindings();
-
-    @Source("previews/standalone-configuration.html")
-    TextResource standaloneConfiguration();
+    ExternalTextResource socketBindings();
 
     @Source("previews/subsystems.html")
-    TextResource subsystems();
+    ExternalTextResource subsystems();
 
     @Source("previews/system-properties.html")
-    TextResource systemProperties();
+    ExternalTextResource systemProperties();
+
+    @Source("previews/subsystems/xa.html")
+    ExternalTextResource xa();
 }

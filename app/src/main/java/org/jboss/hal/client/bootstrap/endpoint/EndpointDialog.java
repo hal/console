@@ -25,9 +25,10 @@ import static org.jboss.hal.ballroom.table.Api.RefreshMode.HOLD;
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.ADD;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.SELECT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.security.SecurityContext.RWX;
 import static org.jboss.hal.resources.Ids.ENDPOINT_ADD;
-import static org.jboss.hal.resources.Names.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
  * Modal dialog to manage bootstrap servers. The dialog offers a page to connect to an existing server and a page to
@@ -67,7 +68,7 @@ class EndpointDialog {
                     api.clear().add(storage.list()).refresh(HOLD);
                     dialog.setPrimaryButtonDisabled(!table.api().hasSelection());
                 })
-                .column(NAME_KEY)
+                .column(NAME)
                 .column("url", "URL", (cell, type, row, meta) -> row.getUrl()) //NON-NLS
                 .build();
         table = new ModelNodeTable<>(Ids.ENDPOINT_SELECT, RWX, endpointOptions);
@@ -98,7 +99,7 @@ class EndpointDialog {
 
         form = new ModelNodeForm.Builder<Endpoint>(ENDPOINT_ADD, SecurityContext.RWX, description)
                 .addOnly()
-                .include(NAME_KEY, SCHEME, HOST, PORT)
+                .include(NAME, SCHEME, HOST, PORT)
                 .unboundFormItem(ping)
                 .unsorted()
                 .onCancel((form) -> switchTo(SELECT))
@@ -127,7 +128,7 @@ class EndpointDialog {
 
     private Endpoint transientEndpoint() {
         Endpoint endpoint = new Endpoint();
-        endpoint.get(NAME_KEY).set("__transientEndpoint__"); //NON-NLS
+        endpoint.get(NAME).set("__transientEndpoint__"); //NON-NLS
         FormItem<String> scheme = form.getFormItem(SCHEME);
         endpoint.get(SCHEME).set(scheme.getValue());
         FormItem<String> host = form.getFormItem(HOST);

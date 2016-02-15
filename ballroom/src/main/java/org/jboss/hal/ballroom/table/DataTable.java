@@ -82,6 +82,10 @@ public class DataTable<T> implements IsElement, Attachable {
 
     // ------------------------------------------------------ instance & lifecycle
 
+    static final String DESELECT = "deselect";
+    static final String ROW = "row";
+    static final String SELECT = "select";
+
     private final String id;
     private final SecurityContext securityContext;
     private final Options<T> options;

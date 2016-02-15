@@ -29,7 +29,9 @@ import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.security.SecurityContext;
@@ -43,15 +45,16 @@ import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED_SINGLE;
 import static org.jboss.hal.resources.Ids.PATHS_FORM;
 import static org.jboss.hal.resources.Ids.PATHS_TABLE;
-import static org.jboss.hal.resources.Names.*;
+import static org.jboss.hal.resources.Names.NAME;
+import static org.jboss.hal.resources.Names.PATHS;
 
 /**
  * @author Harald Pehl
  */
 public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyView {
 
-    private final DataTable<ModelNode> table;
-    private final ModelNodeForm<ModelNode> form;
+    private final DataTable<NamedNode> table;
+    private final ModelNodeForm<NamedNode> form;
 //    private final Dialog dialog;
     private PathsPresenter presenter;
 
@@ -66,27 +69,28 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
 //        new Dialog.Builder(resources.messages())
 
         Element info = new Elements.Builder().p().innerText(description.getDescription()).end().build();
-        Options<ModelNode> options = new ModelNodeTable.Builder<>(description)
-                .column(NAME_KEY, NAME_LABEL, (cell, type, row, meta) -> row.get(NAME_KEY).asString())
+        Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(description)
+                .column(ModelDescriptionConstants.NAME, NAME, (cell, type, row, meta) -> row.get(
+                        ModelDescriptionConstants.NAME).asString())
                 .button(resources.constants().add(), (event, api) -> {
                     // dialog.open();
                 })
                 .button(resources.constants().remove(), SELECTED_SINGLE, (event, api) -> {
                     ModelNode selectedRow = api.selectedRow();
                     if (selectedRow != null) {
-                        presenter.removePath(selectedRow.get(NAME_KEY).asString());
+                        presenter.removePath(selectedRow.get(ModelDescriptionConstants.NAME).asString());
                     }
                 })
                 .build();
         table = new ModelNodeTable<>(PATHS_TABLE, securityContext, options);
 
-        form = new ModelNodeForm.Builder<>(PATHS_FORM, securityContext, description)
+        form = new ModelNodeForm.Builder<NamedNode>(PATHS_FORM, securityContext, description)
                 .include("path", "read-only", "relative-to")
                 .unsorted()
                 .onSave((form, changedValues) -> {
                     ModelNode selectedRow = table.api().selectedRow();
                     if (selectedRow != null) {
-                        presenter.savePath(selectedRow.get(NAME_KEY).asString(), changedValues);
+                        presenter.savePath(selectedRow.get(ModelDescriptionConstants.NAME).asString(), changedValues);
                     }
                 })
                 .build();
@@ -118,7 +122,7 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
     }
 
     @Override
-    public void update(final List<ModelNode> paths) {
+    public void update(final List<NamedNode> paths) {
         table.api().add(paths).refresh(RESET);
     }
 }

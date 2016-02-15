@@ -1,3 +1,4 @@
+<#-- @ftlvariable name="generatedWith" type="java.lang.String" -->
 <#-- @ftlvariable name="packageName" type="java.lang.String" -->
 <#-- @ftlvariable name="className" type="java.lang.String" -->
 <#-- @ftlvariable name="storeInfos" type="java.util.Set<org.jboss.hal.processor.StoreInitProcessor.StoreInfo>" -->
@@ -7,13 +8,14 @@ import javax.annotation.Generated;
 
 import com.google.inject.Singleton;
 import com.google.gwt.inject.client.AbstractGinModule;
+
 import org.jboss.hal.spi.GinModule;
 
 /*
 * WARNING! This class is generated. Do not modify.
 */
 @GinModule
-@Generated("org.jboss.hal.processors.StoreInitProcessor")
+@Generated("${generatedWith}")
 public class ${className} extends AbstractGinModule {
 
     @Override

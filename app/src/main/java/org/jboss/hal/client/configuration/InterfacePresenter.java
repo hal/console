@@ -36,12 +36,12 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
 import javax.inject.Inject;
 import java.util.Map;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
 /**
@@ -89,7 +89,7 @@ public class InterfacePresenter extends
 
     @Override
     public void prepareFromRequest(final PlaceRequest request) {
-        interfce = request.getParameter(Names.INTERFACE_RESOURCE, null);
+        interfce = request.getParameter(NAME, null);
     }
 
     @Override

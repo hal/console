@@ -23,13 +23,20 @@ package org.jboss.hal.resources;
  */
 public interface Ids {
 
+    String CACHE_CONTAINER_COLUMN = "cache-container";
     String CONFIGURATION_COLUMN = "configuration";
 
     String DATA_SOURCE_ATTRIBUTES_FORM = "data-source-attributes-form";
     String DATA_SOURCE_ATTRIBUTES_TAB = "data-source-attributes-tab";
+    String DATA_SOURCE_COLUMN = "datasource";
     String DATA_SOURCE_CONNECTION_FORM = "data-source-connection-form";
     String DATA_SOURCE_CONNECTION_TAB = "data-source-connection-tab";
-    String DATA_SOURCE_TABLE = "data-source-table";
+    String DATA_SOURCE_TYPE_COLUMN = "type";
+
+    String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
+    String DEPLOYMENT_COLUMN = "deployment";
+
+    String DOMAIN_BROWSE_BY = "domain-browse-by";
 
     String ENDPOINT_ADD = "endpoint-add";
     String ENDPOINT_PING = "endpoint-ping";
@@ -52,10 +59,16 @@ public interface Ids {
     String HOMEPAGE_RUNTIME_SERVER_GROUP_SECTION = "homepage-runtime-server-group-section";
 
     String INTERFACE_COLUMN = "interface";
+    String MAIL_SESSION_COLUMN = "mail-session";
+    String MESSAGING_SERVER_COLUMN = "messaging-server";
     String PATHS_FORM = "paths-form";
     String PATHS_TABLE = "paths-table";
+    String PROFILE_COLUMN = "profile";
+    String RESOURCE_ADAPTER_COLUMN = "resource-adapter";
     String ROOT_CONTAINER = "hal-root-container";
     String SOCKET_BINDING_COLUMN = "socket-binding";
+    String SECURITY_DOMAIN_COLUMN = "security-domain";
+    String SERVER_COLUMN = "server";
     String SUBSYSTEM_COLUMN = "subsystem";
 
     String TLC_ACCESS_CONTROL = "tlc-access-control";
@@ -64,4 +77,6 @@ public interface Ids {
     String TLC_HOMEPAGE = "tlc-homepage";
     String TLC_PATCHING = "tlc-patching";
     String TLC_RUNTIME = "tlc-runtime";
+
+    String WEB_SETTINGS_COLUMN = "settings";
 }

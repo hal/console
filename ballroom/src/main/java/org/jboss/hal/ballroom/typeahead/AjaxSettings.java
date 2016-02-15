@@ -26,7 +26,7 @@ import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.resources.Names.OBJECT;
+import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /**
  * Mapping for the settings used in the {@linkplain org.jboss.hal.ballroom.typeahead.RemoteOptions.Preparator#prepare

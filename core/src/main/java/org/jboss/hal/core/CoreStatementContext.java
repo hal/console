@@ -25,8 +25,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.ProfileSelectionEvent.ProfileSelectionHandler;
 import org.jboss.hal.meta.StatementContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.EnumMap;
@@ -38,8 +36,6 @@ import static org.jboss.hal.meta.StatementContext.Key.*;
  * @author Harald Pehl
  */
 public class CoreStatementContext implements StatementContext, ProfileSelectionHandler {
-
-    private static final Logger logger = LoggerFactory.getLogger(CoreStatementContext.class);
 
     private final Environment environment;
     private final Map<Key, String> context;
@@ -78,8 +74,12 @@ public class CoreStatementContext implements StatementContext, ProfileSelectionH
     }
 
     @Override
+    public String selectedProfile() {
+        return environment.isStandalone() ? null : context.get(SELECTED_PROFILE);
+    }
+
+    @Override
     public void onProfileSelected(final ProfileSelectionEvent event) {
         context.put(SELECTED_PROFILE, event.getProfile());
-        logger.debug("Selected profile: '{}'", event.getProfile()); //NON-NLS
     }
 }

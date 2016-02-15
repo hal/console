@@ -56,6 +56,7 @@ public class InterfaceView extends PatternFlyViewImpl implements InterfacePresen
 //        new Dialog.Builder(resources.messages())
 
         form = new ModelNodeForm.Builder<>(PATHS_FORM, securityContext, description)
+                .exclude("resolved-address")
                 .onSave((form, changedValues) -> presenter.saveInterface(changedValues))
                 .build();
 

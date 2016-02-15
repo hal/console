@@ -276,9 +276,7 @@ public final class AddressTemplate {
                     resolvedValue = tokenRef.split("=");
                 }
 
-                if (resolvedValue == null) {
-                    logger.warn("Suppress token expression '{}'. It cannot be resolved", tokenRef); //NON-NLS
-                } else {
+                if (resolvedValue != null) {
                     model.add(resolvedValue[0], resolvedValue[1]);
                 }
 

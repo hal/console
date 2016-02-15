@@ -21,11 +21,11 @@
  */
 package org.jboss.hal.config.rebind;
 
-import java.util.List;
-
 import com.google.gwt.core.ext.BadPropertyValueException;
 import com.google.gwt.core.ext.ConfigurationProperty;
 import com.google.gwt.core.ext.PropertyOracle;
+
+import java.util.List;
 
 /**
  * @author Harald Pehl
@@ -33,20 +33,6 @@ import com.google.gwt.core.ext.PropertyOracle;
 final class GeneratorUtils {
 
     private GeneratorUtils() {
-    }
-
-    static String failFastGetProperty(PropertyOracle propertyOracle, String name) throws BadPropertyValueException {
-        ConfigurationProperty property = propertyOracle.getConfigurationProperty(name);
-        if (property != null) {
-            List<String> values = property.getValues();
-            if (values != null && !values.isEmpty()) {
-                return values.get(0);
-            } else {
-                throw new BadPropertyValueException("Missing configuration property '" + name + "'!");
-            }
-        } else {
-            throw new BadPropertyValueException("Missing configuration property '" + name + "'!");
-        }
     }
 
     static String failSafeGetProperty(PropertyOracle propertyOracle, String name, String defaultValue) {

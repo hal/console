@@ -43,6 +43,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import static java.util.Arrays.asList;
+import static org.jboss.hal.processor.TemplateNames.*;
 
 /**
  * Processor which scans all {@code @NameToken}s annotations and generates several registry and helper classes based
@@ -50,8 +51,8 @@ import static java.util.Arrays.asList;
  *
  * @author Harald Pehl
  */
-@SuppressWarnings("HardCodedStringLiteral")
 @AutoService(Processor.class)
+@SuppressWarnings("HardCodedStringLiteral")
 @SupportedAnnotationTypes("com.gwtplatform.mvp.client.annotations.NameToken")
 public class NameTokenProcessor extends AbstractProcessor {
 
@@ -74,7 +75,7 @@ public class NameTokenProcessor extends AbstractProcessor {
     private final Set<TokenInfo> tokenInfos;
 
     public NameTokenProcessor() {
-        super(NameTokenProcessor.class, "templates");
+        super(NameTokenProcessor.class, TEMPLATES);
         tokenInfos = new HashSet<>();
     }
 
@@ -132,8 +133,9 @@ public class NameTokenProcessor extends AbstractProcessor {
             code(REGISTRY_MODULE_TEMPLATE, REGISTRY_MODULE_PACKAGE, REGISTRY_MODULE_CLASS,
                     () -> {
                         Map<String, Object> context = new HashMap<>();
-                        context.put("packageName", REGISTRY_MODULE_PACKAGE);
-                        context.put("className", REGISTRY_MODULE_CLASS);
+                        context.put(GENERATED_WITH, NameTokenProcessor.class.getName());
+                        context.put(PACKAGE_NAME, REGISTRY_MODULE_PACKAGE);
+                        context.put(CLASS_NAME, REGISTRY_MODULE_CLASS);
                         context.put("bindings", bindings);
                         return context;
                     });
@@ -148,8 +150,9 @@ public class NameTokenProcessor extends AbstractProcessor {
     private Supplier<Map<String, Object>> context(final String packageName, final String className) {
         return () -> {
             Map<String, Object> context = new HashMap<>();
-            context.put("packageName", packageName);
-            context.put("className", className);
+            context.put(GENERATED_WITH, NameTokenProcessor.class.getName());
+            context.put(PACKAGE_NAME, packageName);
+            context.put(CLASS_NAME, className);
             context.put("tokenInfos", tokenInfos);
             return context;
         };

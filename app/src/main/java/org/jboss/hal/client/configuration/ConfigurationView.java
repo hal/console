@@ -21,18 +21,6 @@
  */
 package org.jboss.hal.client.configuration;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.FinderViewImpl;
 
-/**
- * @author Harald Pehl
- */
-public class ConfigurationView extends PatternFlyViewImpl implements ConfigurationPresenter.MyView {
-
-    @Override
-    public void setFinder(final Finder finder) {
-        registerAttachable(finder);
-        initWidget(Elements.asWidget(finder.asElement()));
-    }
-}
+public class ConfigurationView extends FinderViewImpl implements ConfigurationPresenter.MyView {}

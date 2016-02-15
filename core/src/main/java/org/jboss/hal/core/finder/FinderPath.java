@@ -23,6 +23,7 @@ package org.jboss.hal.core.finder;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -90,6 +91,8 @@ public class FinderPath implements Iterable<FinderPath.Segment> {
 
     public int size() {return segments.size();}
 
+    public void clear() {segments.clear();}
+
     public Segment last() {
         if (!isEmpty()) {
             return segments.get(segments.size() - 1);
@@ -97,7 +100,12 @@ public class FinderPath implements Iterable<FinderPath.Segment> {
         return null;
     }
 
-    public void clear() {segments.clear();}
+    /**
+     * @return a reversed copy of this path. The current path is not modified.
+     */
+    public FinderPath reversed() {
+        return new FinderPath(Lists.reverse(segments));
+    }
 
     @Override
     public String toString() {
