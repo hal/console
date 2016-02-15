@@ -54,7 +54,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
-import static java.lang.Math.min;
+import static java.lang.Math.max;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Ids.FINDER;
 
@@ -205,6 +205,14 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         return columns.get(initialColumn);
     }
 
+    private void resizePreview() {
+        int columns = root.getChildren().length() - 1;
+        // TODO Restrict to MAX_VISIBLE_COLUMNS and enable / disable horizontal scrolling
+        // int previewSize = MAX_COLUMNS - 2 * min(columns, MAX_VISIBLE_COLUMNS);
+        int previewSize = max(1, MAX_COLUMNS - 2 * columns);
+        previewColumn.setClassName(finderPreview + " " + column(previewSize));
+    }
+
 
     // ------------------------------------------------------ internal API
 
@@ -226,14 +234,11 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     }
 
     private void appendColumn(FinderColumn column, AsyncCallback<FinderColumn> callback) {
+        column.resetSelection();
         columns.put(column.getId(), column);
         root.insertBefore(column.asElement(), previewColumn);
-
-        int columns = root.getChildren().length() - 1;
-        int previewSize = MAX_COLUMNS - 2 * min(columns, MAX_VISIBLE_COLUMNS);
-        previewColumn.setClassName(finderPreview + " " + column(previewSize));
-
         column.setItems(callback);
+        resizePreview();
     }
 
     void reduceTo(FinderColumn column) {
@@ -252,6 +257,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 iterator.remove();
             }
         }
+        resizePreview();
     }
 
     void updateContext() {

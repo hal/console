@@ -146,7 +146,8 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 .withFilter()
 
                 .itemsProvider((context, callback) -> {
-                    Operation subsystemOp = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, ResourceAddress.ROOT)
+                    ResourceAddress address = AddressTemplate.of("/{selected.profile}").resolve(statementContext);
+                    Operation subsystemOp = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, address)
                             .param(CHILD_TYPE, ModelDescriptionConstants.SUBSYSTEM).build();
                     dispatcher.execute(subsystemOp, result -> {
 

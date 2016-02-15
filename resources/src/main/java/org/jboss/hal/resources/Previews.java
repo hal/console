@@ -41,6 +41,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/paths.html")
     ExternalTextResource paths();
 
+    @Source("previews/profiles.html")
+    ExternalTextResource profiles();
+
     @Source("previews/socket-bindings.html")
     ExternalTextResource socketBindings();
 

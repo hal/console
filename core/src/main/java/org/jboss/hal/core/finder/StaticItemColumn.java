@@ -30,30 +30,48 @@ import java.util.List;
  */
 public class StaticItemColumn extends FinderColumn<StaticItem> {
 
-    public StaticItemColumn(final Finder finder, final String id, String title, List<StaticItem> items) {
+    private static class StaticItemDisplay implements ItemDisplay<StaticItem> {
+
+        private final StaticItem item;
+
+        private StaticItemDisplay(StaticItem item) {
+            this.item = item;
+        }
+
+        @Override
+        public String getId() {
+            return item.getId() != null ? item.getId() : ItemDisplay.super.getId();
+        }
+
+        @Override
+        public String getTitle() {
+            return item.getTitle();
+        }
+
+        @Override
+        public List<ItemAction<StaticItem>> actions() {
+            return item.getActions();
+        }
+
+        @Override
+        public String nextColumn() {
+            return item.getNextColumn();
+        }
+    }
+
+    public StaticItemColumn(final Finder finder, final String id, String title,
+            List<StaticItem> items) {
         super(new Builder<StaticItem>(finder, id, title)
-                .itemRenderer(item -> new ItemDisplay<StaticItem>() {
-                    @Override
-                    public String getId() {
-                        return item.getId() != null ? item.getId() : ItemDisplay.super.getId();
-                    }
-
-                    @Override
-                    public String getTitle() {
-                        return item.getTitle();
-                    }
-
-                    @Override
-                    public List<ItemAction<StaticItem>> actions() {
-                        return item.getActions();
-                    }
-
-                    @Override
-                    public String nextColumn() {
-                        return item.getNextColumn();
-                    }
-                })
+                .itemRenderer(StaticItemDisplay::new)
                 .initialItems(items)
+                .onPreview(StaticItem::getPreviewContent));
+    }
+
+    public StaticItemColumn(final Finder finder, final String id, String title,
+            ItemsProvider<StaticItem> itemsProvider) {
+        super(new Builder<StaticItem>(finder, id, title)
+                .itemRenderer(StaticItemDisplay::new)
+                .itemsProvider(itemsProvider)
                 .onPreview(StaticItem::getPreviewContent));
     }
 }

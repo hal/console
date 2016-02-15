@@ -56,8 +56,6 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
 /**
  * Describes and renders a column in a finder. A column has a unique id, a title, a number of optional column actions
  * and an {@link ItemRenderer} which defines how the items of this column are rendered.
- * <p>
- * TODO Keep selected row when adding / removing columns to simplify keyboard navigation
  *
  * @param <T> The columns type.
  *
@@ -77,6 +75,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         private PreviewCallback<T> previewCallback;
         private List<T> items;
         private ItemsProvider<T> itemsProvider;
+        private ItemSelectionHandler<T> selectionHandler;
 
         public Builder(final Finder finder, final String id, final String title) {
             this.finder = finder;
@@ -129,6 +128,11 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             return this;
         }
 
+        public Builder<T> onItemSelect(ItemSelectionHandler<T> selectionHandler) {
+            this.selectionHandler = selectionHandler;
+            return this;
+        }
+
         public Builder<T> onPreview(PreviewCallback<T> previewCallback) {
             this.previewCallback = previewCallback;
             return this;
@@ -153,6 +157,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     private final List<T> initialItems;
     private ItemsProvider<T> itemsProvider;
     private ItemRenderer<T> itemRenderer;
+    private final ItemSelectionHandler<T> selectionHandler;
     private final Map<String, FinderRow<T>> rows;
     private final PreviewCallback<T> previewCallback;
 
@@ -175,6 +180,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         this.initialItems = builder.items;
         this.itemsProvider = builder.itemsProvider;
         this.itemRenderer = builder.itemRenderer;
+        this.selectionHandler = builder.selectionHandler;
         this.rows = new HashMap<>();
         this.previewCallback = builder.previewCallback;
         this.asElement = false;
@@ -321,9 +327,8 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                         event.preventDefault();
                         event.stopPropagation();
 
-                        markSelected(select.getId());
-                        row(select).showPreview();
                         select.scrollIntoView(false);
+                        row(select).click();
                     }
                     break;
                 }
@@ -402,7 +407,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
     // ------------------------------------------------------ internal API
 
-    private Element activeElement() {return ulElement.querySelector("li." + CSS.active);} //NON-NLS
+    private Element activeElement() {return ulElement.querySelector("li." + active);} //NON-NLS
 
     private boolean hasVisibleElements() {
         for (Element element : Elements.children(ulElement)) {
@@ -447,16 +452,24 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
     void markSelected(String itemId) {
         for (Map.Entry<String, FinderRow<T>> entry : rows.entrySet()) {
-            entry.getValue().markSelected(itemId.equals(entry.getKey()));
+            boolean select = itemId.equals(entry.getKey());
+            entry.getValue().markSelected(select);
+            if (select && selectionHandler != null) {
+                selectionHandler.onSelect(entry.getValue().getItem());
+            }
+        }
+    }
+
+    void resetSelection() {
+        Element element = activeElement();
+        if (element != null) {
+            element.getClassList().remove(active);
         }
     }
 
     void setItems(AsyncCallback<FinderColumn> callback) {
-        Element activeElement = activeElement();
-        String selectedItem = activeElement != null ? activeElement.getId() : null;
-
         if (!initialItems.isEmpty()) {
-            setItems(initialItems, selectedItem, callback);
+            setItems(initialItems, callback);
 
         } else if (itemsProvider != null) {
             itemsProvider.get(finder.getContext(), new AsyncCallback<List<T>>() {
@@ -467,16 +480,16 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
                 @Override
                 public void onSuccess(final List<T> items) {
-                    setItems(items, selectedItem, callback);
+                    setItems(items, callback);
                 }
             });
 
         } else {
-            setItems(Collections.emptyList(), selectedItem, callback);
+            setItems(Collections.emptyList(), callback);
         }
     }
 
-    private void setItems(List<T> items, String selectedItem, AsyncCallback<FinderColumn> callback) {
+    private void setItems(List<T> items, AsyncCallback<FinderColumn> callback) {
         rows.clear();
         Elements.removeChildrenFrom(ulElement);
         if (filterElement != null) {
@@ -494,11 +507,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
         if (items.isEmpty()) {
             ulElement.appendChild(noItems);
-        } else {
-            if (contains(selectedItem)) {
-                markSelected(selectedItem);
-                rows.get(selectedItem).showPreview();
-            }
         }
 
         if (callback != null) {

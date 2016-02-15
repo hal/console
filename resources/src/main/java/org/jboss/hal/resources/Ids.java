@@ -59,6 +59,7 @@ public interface Ids {
     String MESSAGING_SERVER_COLUMN = "messaging-server";
     String PATHS_FORM = "paths-form";
     String PATHS_TABLE = "paths-table";
+    String PROFILE_COLUMN = "profile";
     String RESOURCE_ADAPTER_COLUMN = "resource-adapter";
     String ROOT_CONTAINER = "hal-root-container";
     String SOCKET_BINDING_COLUMN = "socket-binding";

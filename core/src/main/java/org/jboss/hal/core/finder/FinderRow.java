@@ -33,7 +33,7 @@ import org.jboss.hal.resources.UIConstants;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.core.finder.Finder.DATA_BREADCRUMB;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.Names.*;
+import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
 
 /**
  * UI class for a single row in in a finder column. Only used internally in the finder.

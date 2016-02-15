@@ -31,7 +31,6 @@ public interface Names {
     String ATTRIBUTES = "Attributes";
     String CONFIGURATION = "Configuration";
     String DATASOURCE = "Datasource";
-    String DATASOURCES = "Datasources";
     String DEPLOYMENTS = "Deployments";
     String HAL = "HAL";
     String HIDDEN = "hidden";
@@ -43,6 +42,7 @@ public interface Names {
     String NOT_SUPPORTED = "not supported";
     String NYI = "not yet implemented";
     String PATHS = "Paths";
+    String PROFILES = "Profiles";
     String RUNTIME = "Runtime";
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDINGS = "Socket Bindings";

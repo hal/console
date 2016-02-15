@@ -19,47 +19,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.resources;
-
-import com.google.gwt.resources.client.ExternalTextResource;
-
-import javax.inject.Inject;
+package org.jboss.hal.core.finder;
 
 /**
  * @author Harald Pehl
  */
-public class Resources implements Ids, Names, UIConstants, CSS {
+@FunctionalInterface
+public interface ItemSelectionHandler<T> {
 
-    private final Constants constants;
-    private final Messages messages;
-    private final Previews previews;
-    private final Images images;
-
-    @Inject
-    public Resources(final Constants constants, final Messages messages, final Previews previews, final Images images) {
-        this.constants = constants;
-        this.messages = messages;
-        this.previews = previews;
-        this.images = images;
-    }
-
-    public Constants constants() {
-        return constants;
-    }
-
-    public Messages messages() {
-        return messages;
-    }
-
-    public Previews previews() {
-        return previews;
-    }
-
-    public ExternalTextResource preview(String name) {
-        return (ExternalTextResource) previews.getResource(name);
-    }
-
-    public Images images() {
-        return images;
-    }
+    void onSelect(T item);
 }
