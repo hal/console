@@ -23,6 +23,7 @@ package org.jboss.hal.client.configuration.subsystem.jca;
 
 import com.google.gwt.user.client.Window;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderPath;
@@ -63,11 +64,12 @@ public class DataSourceColumn extends FinderColumn<Property> {
             final Dispatcher dispatcher,
             final StatementContext statementContext,
             final Resources resources,
+            final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory) {
 
         super(new Builder<Property>(finder, Ids.DATA_SOURCE_COLUMN, Names.DATASOURCE)
-                .withColumnAdd(column -> Window.alert(Names.NYI))
-                .withColumnRefresh(column -> Window.alert(Names.NYI))
+                .columnAction(columnActionFactory.add(column -> Window.alert(Names.NYI)))
+                .columnAction(columnActionFactory.refresh(FinderColumn::refresh))
                 .onPreview(item -> new PreviewContent(item.getName())));
 
         this.statementContext = statementContext;

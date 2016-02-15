@@ -163,14 +163,14 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
     }
 
     void click() {
-        column.selectItem(id);
+        column.markSelected(id);
         // <keep> this in order!
         finder.reduceTo(column);
         finder.updateContext();
         finder.publishContext();
         appendNextColumn();
         // </keep>
-        preview();
+        showPreview();
     }
 
     void markSelected(boolean select) {
@@ -194,9 +194,9 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         }
     }
 
-    void preview() {
+    void showPreview() {
         if (previewContent != null) {
-            finder.preview(previewContent);
+            finder.showPreview(previewContent);
         }
     }
 
@@ -209,6 +209,9 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
     public void onSecurityContextChange(final SecurityContext securityContext) {
 
     }
+
+
+    // ------------------------------------------------------ getter
 
     public String getId() {
         return id;

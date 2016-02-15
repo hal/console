@@ -106,8 +106,8 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         }
 
         private void selectItem(FinderColumn finderColumn, Control<FunctionContext> control) {
-            if (finderColumn.containsItem(segment.getValue())) {
-                finderColumn.selectItem(segment.getValue());
+            if (finderColumn.contains(segment.getValue())) {
+                finderColumn.markSelected(segment.getValue());
                 updateContext();
                 control.getContext().push(finderColumn);
                 control.proceed();
@@ -291,8 +291,8 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         eventBus.fireEvent(new FinderContextEvent(context));
     }
 
-    void selectColumn(final String column) {
-        FinderColumn finderColumn = columns.get(column);
+    void selectColumn(String columnId) {
+        FinderColumn finderColumn = columns.get(columnId);
         finderColumn.asElement().focus();
     }
 
@@ -300,7 +300,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         return columns.get(columnId);
     }
 
-    void preview(PreviewContent preview) {
+    void showPreview(PreviewContent preview) {
         Elements.removeChildrenFrom(previewColumn);
         for (Element element : preview.elements()) {
             previewColumn.appendChild(element);
@@ -319,7 +319,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         context.reset(token);
         appendColumn(initialColumn, null);
         selectColumn(initialColumn);
-        preview(initialPreview);
+        showPreview(initialPreview);
         publishContext();
     }
 
@@ -380,10 +380,10 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
                 private void processLastColumnSelection(FinderColumn column) {
                     selectColumn(column.getId());
-                    FinderRow row = column.getSelectedRow();
+                    FinderRow row = column.selectedRow();
                     if (row != null) {
                         row.appendNextColumn();
-                        row.preview();
+                        row.showPreview();
                     }
                 }
             }, functions);

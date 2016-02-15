@@ -56,6 +56,8 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
 /**
  * Describes and renders a column in a finder. A column has a unique id, a title, a number of optional column actions
  * and an {@link ItemRenderer} which defines how the items of this column are rendered.
+ * <p>
+ * TODO Keep selected row when adding / removing columns to simplify keyboard navigation
  *
  * @param <T> The columns type.
  *
@@ -87,24 +89,17 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             this.items = new ArrayList<>();
         }
 
-        public Builder<T> columnAction(String title, ColumnActionHandler<T> action) {
-            columnActions.add(new ColumnAction<>(title, action));
+        public Builder<T> columnAction(String title, ColumnActionHandler<T> handler) {
+            return columnAction(new ColumnAction<>(title, handler));
+        }
+
+        public Builder<T> columnAction(Element element, ColumnActionHandler<T> handler) {
+            return columnAction(new ColumnAction<>(element, handler));
+        }
+
+        public Builder<T> columnAction(ColumnAction<T> action) {
+            columnActions.add(action);
             return this;
-        }
-
-        public Builder<T> columnAction(Element element, ColumnActionHandler<T> action) {
-            columnActions.add(new ColumnAction<>(element, action));
-            return this;
-        }
-
-        public Builder<T> withColumnAdd(ColumnActionHandler<T> action) {
-            Element element = new Elements.Builder().span().css(CSS.pfIcon("add-circle-o")).end().build();
-            return columnAction(element, action);
-        }
-
-        public Builder<T> withColumnRefresh(ColumnActionHandler<T> action) {
-            Element element = new Elements.Builder().span().css(CSS.fontAwesome("refresh")).end().build();
-            return columnAction(element, action);
         }
 
         public Builder<T> showCount() {
@@ -170,6 +165,8 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     private boolean asElement;
 
 
+    // ------------------------------------------------------ ui
+
     protected FinderColumn(final Builder<T> builder) {
         this.finder = builder.finder;
         this.id = builder.id;
@@ -180,6 +177,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         this.itemRenderer = builder.itemRenderer;
         this.rows = new HashMap<>();
         this.previewCallback = builder.previewCallback;
+        this.asElement = false;
 
         // header
         Elements.Builder eb = new Elements.Builder()
@@ -236,7 +234,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         headerElement = eb.referenceFor(HEADER_ELEMENT);
         filterElement = builder.withFilter ? eb.referenceFor(FILTER_ELEMENT) : null;
         ulElement = eb.referenceFor(UL_ELEMENT);
-        asElement = false;
     }
 
     private void addColumnButton(final Elements.Builder builder, final ColumnAction<T> action) {
@@ -267,6 +264,9 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             headerElement.setTitle(titleWithSize);
         }
     }
+
+
+    // ------------------------------------------------------ event handler
 
     private void onFilter(final Event event) {
         KeyboardEvent keyboardEvent = (KeyboardEvent) event;
@@ -303,26 +303,26 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     }
 
     private void onNavigation(Event event) {
-        if (hasVisibleItems()) {
+        if (hasVisibleElements()) {
             KeyboardEvent keyboardEvent = (KeyboardEvent) event;
             int keyCode = keyboardEvent.getKeyCode();
             switch (keyCode) {
 
                 case KeyCode.UP:
                 case KeyCode.DOWN: {
-                    Element activeItem = ulElement.querySelector("li." + CSS.active); //NON-NLS
-                    if (!Elements.isVisible(activeItem)) {
-                        activeItem = null;
+                    Element activeElement = activeElement();
+                    if (!Elements.isVisible(activeElement)) {
+                        activeElement = null;
                     }
                     Element select = keyCode == KeyCode.UP
-                            ? previousVisibleItem(activeItem)
-                            : nextVisibleItem(activeItem);
+                            ? previousVisibleElement(activeElement)
+                            : nextVisibleElement(activeElement);
                     if (select != null && select != noItems) {
                         event.preventDefault();
                         event.stopPropagation();
 
-                        selectItem(select.getId());
-                        row(select).preview();
+                        markSelected(select.getId());
+                        row(select).showPreview();
                         select.scrollIntoView(false);
                     }
                     break;
@@ -338,9 +338,9 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
                             finder.reduceTo(previousColumn);
                             finder.selectColumn(previousColumn.getId());
-                            FinderRow selectedRow = previousColumn.getSelectedRow();
+                            FinderRow selectedRow = previousColumn.selectedRow();
                             if (selectedRow != null) {
-                                selectedRow.preview();
+                                selectedRow.showPreview();
                             }
                             finder.updateContext();
                             finder.publishContext();
@@ -350,9 +350,9 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                 }
 
                 case KeyCode.RIGHT: {
-                    Element activeItem = ulElement.querySelector("li." + CSS.active); //NON-NLS
-                    String nextColumn = row(activeItem).getNextColumn();
-                    if (Elements.isVisible(activeItem) && nextColumn != null) {
+                    Element activeElement = activeElement();
+                    String nextColumn = row(activeElement).getNextColumn();
+                    if (Elements.isVisible(activeElement) && nextColumn != null) {
                         event.preventDefault();
                         event.stopPropagation();
 
@@ -368,6 +368,11 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
                                     @Override
                                     public void onSuccess(final FinderColumn column) {
+                                        if (column.activeElement() == null && column.hasVisibleElements()) {
+                                            Element firstElement = column.nextVisibleElement(null);
+                                            column.markSelected(firstElement.getId());
+                                            column.row(firstElement).showPreview();
+                                        }
                                         finder.updateContext();
                                         finder.publishContext();
                                         finder.selectColumn(nextColumn);
@@ -378,7 +383,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                 }
 
                 case KeyCode.ENTER: {
-                    Element activeItem = ulElement.querySelector("li." + CSS.active); //NON-NLS
+                    Element activeItem = activeElement();
                     T item = row(activeItem).getItem();
                     ItemActionHandler<T> primaryAction = row(activeItem).getPrimaryAction();
                     if (Elements.isVisible(activeItem) && item != null && primaryAction != null) {
@@ -394,7 +399,12 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
     }
 
-    private boolean hasVisibleItems() {
+
+    // ------------------------------------------------------ internal API
+
+    private Element activeElement() {return ulElement.querySelector("li." + CSS.active);} //NON-NLS
+
+    private boolean hasVisibleElements() {
         for (Element element : Elements.children(ulElement)) {
             if (Elements.isVisible(element) && element != noItems) {
                 return true;
@@ -403,7 +413,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         return false;
     }
 
-    private Element previousVisibleItem(Element start) {
+    private Element previousVisibleElement(Element start) {
         Element element = start == null ? ulElement.getLastElementChild() : start.getPreviousElementSibling();
         while (element != null && !Elements.isVisible(element)) {
             element = element.getPreviousElementSibling();
@@ -411,7 +421,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         return element;
     }
 
-    private Element nextVisibleItem(Element start) {
+    Element nextVisibleElement(Element start) {
         Element element = start == null ? ulElement.getFirstElementChild() : start.getNextElementSibling();
         while (element != null && !Elements.isVisible(element)) {
             element = element.getNextElementSibling();
@@ -423,17 +433,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         return rows.get(element.getId());
     }
 
-    boolean containsItem(String itemId) {
-        return rows.containsKey(itemId);
-    }
-
-    void selectItem(String itemId) {
-        for (Map.Entry<String, FinderRow<T>> entry : rows.entrySet()) {
-            entry.getValue().markSelected(itemId.equals(entry.getKey()));
-        }
-    }
-
-    FinderRow<T> getSelectedRow() {
+    FinderRow<T> selectedRow() {
         Element activeItem = ulElement.querySelector("li." + active); //NON-NLS
         if (activeItem != null && rows.containsKey(activeItem.getId())) {
             return rows.get(activeItem.getId());
@@ -441,9 +441,22 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         return null;
     }
 
+    boolean contains(String itemId) {
+        return rows.containsKey(itemId);
+    }
+
+    void markSelected(String itemId) {
+        for (Map.Entry<String, FinderRow<T>> entry : rows.entrySet()) {
+            entry.getValue().markSelected(itemId.equals(entry.getKey()));
+        }
+    }
+
     void setItems(AsyncCallback<FinderColumn> callback) {
+        Element activeElement = activeElement();
+        String selectedItem = activeElement != null ? activeElement.getId() : null;
+
         if (!initialItems.isEmpty()) {
-            setItems(initialItems, callback);
+            setItems(initialItems, selectedItem, callback);
 
         } else if (itemsProvider != null) {
             itemsProvider.get(finder.getContext(), new AsyncCallback<List<T>>() {
@@ -454,16 +467,16 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
                 @Override
                 public void onSuccess(final List<T> items) {
-                    setItems(items, callback);
+                    setItems(items, selectedItem, callback);
                 }
             });
 
         } else {
-            setItems(Collections.emptyList(), callback);
+            setItems(Collections.emptyList(), selectedItem, callback);
         }
     }
 
-    private void setItems(List<T> items, AsyncCallback<FinderColumn> callback) {
+    private void setItems(List<T> items, String selectedItem, AsyncCallback<FinderColumn> callback) {
         rows.clear();
         Elements.removeChildrenFrom(ulElement);
         if (filterElement != null) {
@@ -481,6 +494,11 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
         if (items.isEmpty()) {
             ulElement.appendChild(noItems);
+        } else {
+            if (contains(selectedItem)) {
+                markSelected(selectedItem);
+                rows.get(selectedItem).showPreview();
+            }
         }
 
         if (callback != null) {
@@ -492,6 +510,9 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
      * Sometimes you need to reference {@code this} in the actions created by {@link ItemDisplay#actions()}. This is
      * not possible if they're part of the builder which is passed to {@code super()}. In this case the item renderer
      * can be specified <strong>after</strong> the call to {@code super()} using this setter.
+     * <p>
+     * However make sure to call the setter <strong>before</strong> the column is used {@link #asElement()} and gets
+     * attached to the DOM!
      */
     protected void setItemRenderer(final ItemRenderer<T> itemRenderer) {
         assertNotAsElement("setItemRenderer()");
@@ -502,6 +523,9 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
      * Sometimes you need to reference {@code this} in the items provider. This is not possible if the items provider
      * is part of the builder which is passed to {@code super()}. In this case the items provider can be specified
      * <strong>after</strong> the call to {@code super()} using this setter.
+     * <p>
+     * However make sure to call the setter <strong>before</strong> the column is used {@link #asElement()} and gets
+     * attached to the DOM!
      */
     protected void setItemsProvider(final ItemsProvider<T> itemsProvider) {
         assertNotAsElement("setItemsProvider()");
@@ -514,6 +538,9 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                     " after FinderColumn.asElement(). Make sure to setup the column before it's used as an element.");
         }
     }
+
+
+    // ------------------------------------------------------ public API
 
     @Override
     public Element asElement() {
@@ -540,9 +567,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             public void onSuccess(final FinderColumn column) {
                 finder.updateContext();
                 finder.publishContext();
-                if (getSelectedRow() == null) {
-                    // TODO remove current preview
-                }
             }
         });
     }
