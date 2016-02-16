@@ -49,9 +49,6 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
  */
 public class Dialog implements IsElement {
 
-    // ------------------------------------------------------ inner classes
-
-
     public enum Size {
         SMALL(modelSmall), MEDIUM(modalMedium), LARGE(modalLarge), MAX(modalMax);
 

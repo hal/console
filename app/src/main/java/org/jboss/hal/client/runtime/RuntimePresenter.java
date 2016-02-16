@@ -31,13 +31,12 @@ import org.jboss.hal.core.finder.HasFinder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.FinderPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import javax.inject.Inject;
-
-import static org.jboss.hal.meta.token.NameTokens.RUNTIME;
 
 /**
  * @author Harald Pehl
@@ -46,7 +45,7 @@ public class RuntimePresenter extends FinderPresenter<RuntimePresenter.MyView, R
 
     // @formatter:off
     @ProxyStandard
-    @NameToken(RUNTIME)
+    @NameToken(NameTokens.RUNTIME)
     public interface MyProxy extends ProxyPlace<RuntimePresenter> {}
 
     public interface MyView extends PatternFlyView, HasFinder {}
