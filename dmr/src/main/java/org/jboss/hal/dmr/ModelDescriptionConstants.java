@@ -69,6 +69,7 @@ public interface ModelDescriptionConstants {
     String INCLUDES = "includes";
     String INCLUDE_ALIASES = "include-aliases";
     String INCLUDE_RUNTIME = "include-runtime";
+    String INCLUDE_SINGLETONS = "include-singletons";
     String INHERITED = "inherited";
     String INPUT_STREAM_INDEX = "input-stream-index";
     String INTERFACE = "interface";

@@ -19,41 +19,38 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.patching;
+package org.jboss.hal.core.modelbrowser;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.layout.LayoutBuilder;
-import org.jboss.hal.core.modelbrowser.ModelBrowser;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.resources.Resources;
 
-import javax.inject.Inject;
+import java.util.Set;
 
 /**
  * @author Harald Pehl
  */
-public class PatchingView extends PatternFlyViewImpl implements PatchingPresenter.MyView {
+public class Context {
 
-    @Inject
-    public PatchingView(Dispatcher dispatcher,
-            Resources resources) {
+    private final Set<String> singletons;
+    private final ResourceAddress address;
 
-        ModelBrowser modelBrowser = new ModelBrowser(dispatcher, SecurityContext.RWX, ResourceAddress.ROOT);
+    public Context(final ResourceAddress address, final Set<String> singletons) {
+        this.singletons = singletons;
+        this.address = address;
+    }
 
-        // @formatter:off
-        Element layout = new LayoutBuilder()
-            .startRow()
-                .header(resources.constants().modelBrowser())
-                .add(modelBrowser.asElement())
-            .endRow()
-        .build();
-        // @formatter:on
+    public ResourceAddress getAddress() {
+        return address;
+    }
 
-        registerAttachable(modelBrowser);
-        initWidget(Elements.asWidget(layout));
+    public Set<String> getSingletons() {
+        return singletons;
+    }
+
+    public boolean hasSingletons() {
+        return !singletons.isEmpty();
+    }
+
+    public boolean isFullyQualified() {
+        return !"*".equals(address.lastValue());
     }
 }

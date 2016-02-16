@@ -21,14 +21,12 @@
  */
 package org.jboss.hal.ballroom.tree;
 
-import elemental.js.util.JsArrayOf;
-import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsType;
 
 /**
  * @author Harald Pehl
  */
 @JsType(isNative = true)
-public class Api {
+public class Api<T> {
 
 }

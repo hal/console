@@ -22,38 +22,21 @@
 package org.jboss.hal.ballroom.tree;
 
 import elemental.js.util.JsArrayOf;
-import jsinterop.annotations.JsType;
-
-import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.resources.UIConstants.OBJECT;
+import jsinterop.annotations.JsFunction;
 
 /**
  * @author Harald Pehl
  */
-@JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-public class Options<T> {
+@JsFunction
+@FunctionalInterface
+public interface DataFunction<T> {
 
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    public static class Themes {
-        public String name;
-        public boolean url;
-        public boolean dots;
-        public boolean icons;
-        public boolean striped;
-        public boolean responsive;
+    @JsFunction
+    @FunctionalInterface
+    interface ResultCallback<T> {
+
+        void result(JsArrayOf<Node<T>> nodes);
     }
 
-
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    public static class Core<T> {
-
-        public boolean multiple;
-        public boolean animation;
-        public Themes themes;
-        public DataFunction<T> data;
-    }
-
-
-    public JsArrayOf<String> plugins;
-    public Core<T> core;
+    void load(Node<T> node, ResultCallback<T> callback);
 }

@@ -36,7 +36,7 @@ import static org.jboss.hal.resources.CSS.tree;
 /**
  * @author Harald Pehl
  */
-public class Tree implements IsElement, Attachable {
+public class Tree<T> implements IsElement, Attachable {
 
     @JsType(isNative = true)
     public static class Bridge {
@@ -46,7 +46,7 @@ public class Tree implements IsElement, Attachable {
 
         public native void jstree(Options options);
 
-        public native Api jstree(boolean _true);
+        public native <T> Api<T> jstree(boolean _true);
     }
 
 
@@ -56,11 +56,11 @@ public class Tree implements IsElement, Attachable {
     private final SecurityContext securityContext;
     private final Options options;
     private final Element div;
-    private Api api;
+    private Api<T> api;
 
 
     public Tree(final String id, final SecurityContext securityContext,
-            final Node root, final Options.DataFunction data) {
+            final Node<T> root, final DataFunction<T> data) {
         this.id = id;
         this.securityContext = securityContext;
         this.options = initOptions(root, data);
@@ -69,14 +69,14 @@ public class Tree implements IsElement, Attachable {
         this.div.getClassList().add(tree);
     }
 
-    private Options initOptions(final Node root, final Options.DataFunction data) {
-        Options options = new Options();
-        options.core = new Options.Core();
+    private Options<T> initOptions(final Node<T> root, final DataFunction<T> data) {
+        Options<T> options = new Options<>();
+        options.core = new Options.Core<>();
         options.core.animation = false;
         options.core.multiple = false;
         options.core.data = (node, callback) -> {
             if (ROOT_NODE.equals(node.id)) {
-                JsArrayOf<Node> rootNodes = JsArrayOf.create();
+                JsArrayOf<Node<T>> rootNodes = JsArrayOf.create();
                 rootNodes.push(root);
                 callback.result(rootNodes);
             } else {

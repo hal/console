@@ -33,26 +33,40 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
  * @author Harald Pehl
  */
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-public class Node {
+public class Node<T> {
 
-    public static class Builder {
+    public static class Builder<T> {
 
-        private final Node node;
+        private final Node<T> node;
 
-        public Builder(final String id, final String text) {
-            node = new Node();
+        public Builder(final String id, final String text, T data) {
+            node = new Node<>();
             node.id = id;
             node.text = text;
+            node.data = data;
             node.icon = fontAwesome("file-o");
         }
 
-        public Builder folder() {
+        public Builder<T> folder() {
             node.children = true;
             node.icon = fontAwesome("folder");
             return this;
         }
 
-        public Node build() {
+        public Builder<T> icon(String icon) {
+            node.icon = icon;
+            return this;
+        }
+
+        public Builder<T> disabled() {
+            if (node.state == null) {
+                node.state = new State();
+            }
+            node.state.disabled = true;
+            return this;
+        }
+
+        public Node<T> build() {
             return node;
         }
     }
@@ -72,4 +86,5 @@ public class Node {
     public String icon;
     public State state;
     public boolean children;
+    public T data;
 }

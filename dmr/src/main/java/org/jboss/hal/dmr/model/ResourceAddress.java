@@ -22,6 +22,10 @@
 package org.jboss.hal.dmr.model;
 
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a fully qualified DMR address ready to be put into a DMR operation.
@@ -43,6 +47,23 @@ public class ResourceAddress extends ModelNode {
     public ResourceAddress add(final String propertyName, final String propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
+    }
+
+    public String lastValue() {
+        List<Property> properties = asPropertyList();
+        if (!properties.isEmpty()) {
+            return properties.get(properties.size() - 1).getValue().asString();
+        }
+        return null;
+    }
+
+    public ResourceAddress getParent() {
+        if (this == ROOT || asList().isEmpty()) {
+            return this;
+        }
+        List<ModelNode> parent = new ArrayList<>(asList());
+        parent.remove(parent.size() - 1);
+        return new ResourceAddress(new ModelNode().set(parent));
     }
 
     @Override
