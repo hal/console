@@ -22,6 +22,7 @@
 package org.jboss.hal.ballroom.tree;
 
 import elemental.js.util.JsArrayOf;
+import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -33,11 +34,42 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
 public class Options {
 
+    @JsFunction
+    @FunctionalInterface
+    public interface ResultCallback {
+
+        void result(JsArrayOf<Node> nodes);
+    }
+
+
+    @JsFunction
+    @FunctionalInterface
+    public interface DataFunction {
+
+        void load(Node node, ResultCallback callback);
+    }
+
+
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    public static class Themes {
+        public String name;
+        public boolean url;
+        public boolean dots;
+        public boolean icons;
+        public boolean striped;
+        public boolean responsive;
+    }
+
+
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     public static class Core {
+
         public boolean multiple;
         public boolean animation;
+        public Themes themes;
+        public DataFunction data;
     }
+
 
     public JsArrayOf<String> plugins;
     public Core core;

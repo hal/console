@@ -19,16 +19,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.utb;
+package org.jboss.hal.client.patching;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.core.mvp.TopLevelPresenter;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.token.NameTokens;
 
 import javax.inject.Inject;
@@ -36,43 +34,20 @@ import javax.inject.Inject;
 /**
  * @author Harald Pehl
  */
-public class UnderTheBridgePresenter
-        extends TopLevelPresenter<UnderTheBridgePresenter.MyView, UnderTheBridgePresenter.MyProxy> {
+public class PatchingPresenter extends TopLevelPresenter<PatchingPresenter.MyView, PatchingPresenter.MyProxy> {
 
     // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.UNDER_THE_BRIDGE)
-    public interface MyProxy extends ProxyPlace<UnderTheBridgePresenter> {}
+    @ProxyStandard
+    @NameToken(NameTokens.PATCHING)
+    public interface MyProxy extends ProxyPlace<PatchingPresenter> {}
 
-    public interface MyView extends PatternFlyView, HasPresenter<UnderTheBridgePresenter> {
-        void show(ModelNode model);
-    }
+    public interface MyView extends PatternFlyView {}
     // @formatter:on
 
-    private ModelNode model;
 
     @Inject
-    public UnderTheBridgePresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy) {
+    public PatchingPresenter(final EventBus eventBus,
+            final MyView view, final MyProxy proxy) {
         super(eventBus, view, proxy);
-        model = new ModelNode();
-    }
-
-    @Override
-    protected void onBind() {
-        super.onBind();
-        getView().setPresenter(this);
-    }
-
-    @Override
-    protected void onReset() {
-        super.onReset();
-        getView().show(model);
-    }
-
-    public void saveModel(final ModelNode model) {
-        this.model = model;
-        getView().show(model);
     }
 }

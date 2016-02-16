@@ -61,6 +61,7 @@ public interface Ids {
     String INTERFACE_COLUMN = "interface";
     String MAIL_SESSION_COLUMN = "mail-session";
     String MESSAGING_SERVER_COLUMN = "messaging-server";
+    String MODEL_BROWSER = "model-browser";
     String PATHS_FORM = "paths-form";
     String PATHS_TABLE = "paths-table";
     String PROFILE_COLUMN = "profile";

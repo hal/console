@@ -21,10 +21,10 @@
  */
 package org.jboss.hal.ballroom.tree;
 
-import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /**
@@ -34,6 +34,29 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
  */
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
 public class Node {
+
+    public static class Builder {
+
+        private final Node node;
+
+        public Builder(final String id, final String text) {
+            node = new Node();
+            node.id = id;
+            node.text = text;
+            node.icon = fontAwesome("file-o");
+        }
+
+        public Builder folder() {
+            node.children = true;
+            node.icon = fontAwesome("folder");
+            return this;
+        }
+
+        public Node build() {
+            return node;
+        }
+    }
+
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     public static class State {
@@ -48,5 +71,5 @@ public class Node {
     public String text;
     public String icon;
     public State state;
-    public JsArrayOf<Node> children;
+    public boolean children;
 }

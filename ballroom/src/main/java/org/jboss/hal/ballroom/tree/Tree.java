@@ -23,6 +23,7 @@ package org.jboss.hal.ballroom.tree;
 
 import elemental.client.Browser;
 import elemental.dom.Element;
+import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.IsElement;
@@ -37,7 +38,6 @@ import static org.jboss.hal.resources.CSS.tree;
  */
 public class Tree implements IsElement, Attachable {
 
-
     @JsType(isNative = true)
     public static class Bridge {
 
@@ -50,6 +50,8 @@ public class Tree implements IsElement, Attachable {
     }
 
 
+    public static final String ROOT_NODE = "#";
+
     private final String id;
     private final SecurityContext securityContext;
     private final Options options;
@@ -57,13 +59,40 @@ public class Tree implements IsElement, Attachable {
     private Api api;
 
 
-    public Tree(final String id, final SecurityContext securityContext, final Options options) {
+    public Tree(final String id, final SecurityContext securityContext,
+            final Node root, final Options.DataFunction data) {
         this.id = id;
         this.securityContext = securityContext;
-        this.options = options;
-
+        this.options = initOptions(root, data);
         this.div = Browser.getDocument().createDivElement();
+        this.div.setId(id);
         this.div.getClassList().add(tree);
+    }
+
+    private Options initOptions(final Node root, final Options.DataFunction data) {
+        Options options = new Options();
+        options.core = new Options.Core();
+        options.core.animation = false;
+        options.core.multiple = false;
+        options.core.data = (node, callback) -> {
+            if (ROOT_NODE.equals(node.id)) {
+                JsArrayOf<Node> rootNodes = JsArrayOf.create();
+                rootNodes.push(root);
+                callback.result(rootNodes);
+            } else {
+                data.load(node, callback);
+            }
+        };
+        options.core.themes = new Options.Themes();
+        options.core.themes.name = "hal"; //NON-NLS
+        options.core.themes.dots= false;
+        options.core.themes.icons = true;
+        options.core.themes.responsive = true;
+        options.core.themes.striped = false;
+        options.core.themes.url = false;
+        options.plugins = JsArrayOf.create();
+        options.plugins.push("wholerow"); //NON-NLS
+        return options;
     }
 
     @Override
@@ -82,6 +111,7 @@ public class Tree implements IsElement, Attachable {
         if (api == null) {
             // TODO check security context and adjust options if necessary
             Bridge bridge = Bridge.select("#" + id);
+            bridge.jstree(options);
             api = bridge.jstree(true);
         }
     }

@@ -161,41 +161,13 @@
 /*
  * Bootstrap and PatternFly variable overrides
  */
-// Paths are relative to generated CSS file in 'org/jboss/hal/public/css'
+// Paths are relative to the generated CSS file in 'org/jboss/hal/public/css'
 @fa-font-path:          "../fonts";
 @icon-font-path:        "../fonts/";
 @font-path:             "../fonts";
 @img-path:              "../img";
 //noinspection CssUnknownTarget
 @navbar-pf-alt-bg-img:  url("../img/bg-navbar-pf-alt.svg");
-
-
-
-/**
- * jsTree
- * Override default theme at "../../..//bower_components/jstree/src/themes/default/style.less"
- */
-@theme-name:				hal;
-@hovered-bg-color:			#e7f4f9;
-@hovered-shadow-color:		#cccccc;
-@disabled-color:			#666666;
-@disabled-bg-color:			#efefef;
-@clicked-bg-color:			#beebff;
-@clicked-shadow-color:		#999999;
-@clicked-gradient-color-1:	#beebff;
-@clicked-gradient-color-2:	#a8e4ff;
-@search-result-color:		#8b0000;
-@mobile-wholerow-bg-color:	#ebebeb;
-@mobile-wholerow-shadow:	#666666;
-@mobile-wholerow-bordert:	rgba(255,255,255,0.7);
-@mobile-wholerow-borderb:	rgba(64,64,64,0.2);
-@responsive:				true;
-@image-path:				"../img/";
-@base-height:				40px;
-
-@import "../../../bower_components/jstree/src/themes/mixins.less";
-@import "../../../bower_components/jstree/src/themes/base.less";
-@import "../../../bower_components/jstree/src/themes/main.less";
 
 
 
@@ -211,6 +183,7 @@
 @import "form";
 @import "tabs";
 @import "table";
+@import "tree";
 @import "dialog";
 
 @import "bootstrap";

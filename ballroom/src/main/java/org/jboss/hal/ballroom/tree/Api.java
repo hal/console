@@ -21,6 +21,8 @@
  */
 package org.jboss.hal.ballroom.tree;
 
+import elemental.js.util.JsArrayOf;
+import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsType;
 
 /**

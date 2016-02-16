@@ -30,10 +30,10 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.core.mvp.TopLevelPresenter;
+import org.jboss.hal.meta.token.NameTokens;
 
 import javax.inject.Inject;
 
-import static org.jboss.hal.meta.token.NameTokens.HOMEPAGE;
 import static org.jboss.hal.resources.Names.NYI;
 
 /**
@@ -44,7 +44,7 @@ public class HomepagePresenter extends TopLevelPresenter<HomepagePresenter.MyVie
     // @formatter:off
     @NoGatekeeper
     @ProxyStandard
-    @NameToken(HOMEPAGE)
+    @NameToken(NameTokens.HOMEPAGE)
     public interface MyProxy extends ProxyPlace<HomepagePresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<HomepagePresenter> {}
