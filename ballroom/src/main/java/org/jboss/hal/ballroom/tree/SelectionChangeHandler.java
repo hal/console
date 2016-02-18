@@ -19,31 +19,33 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.patching;
+package org.jboss.hal.ballroom.tree;
 
-import org.jboss.hal.core.modelbrowser.ModelBrowser;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import elemental.js.events.JsEvent;
+import elemental.js.util.JsArrayOf;
+import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsType;
 
-import javax.inject.Inject;
+import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /**
- * @author Harald Pehl
+ * Handler when the selection changes.
  */
-public class PatchingView extends PatternFlyViewImpl implements PatchingPresenter.MyView {
+@JsFunction
+@FunctionalInterface
+public interface SelectionChangeHandler<T> {
 
-    private final ModelBrowser modelBrowser;
-
-    @Inject
-    public PatchingView(ModelBrowser modelBrowser) {
-        this.modelBrowser = modelBrowser;
-        initElements(modelBrowser);
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    class SelectionContext<T> {
+        public String action;
+        public Api<T> api;
+        public Node<T> node;
+        public JsArrayOf<String> selected;
     }
 
-
-    @Override
-    public void attach() {
-        super.attach();
-        modelBrowser.setRoot(ResourceAddress.ROOT);
-    }
+    /**
+     * Called when a selection changed. That is when an item is selected <em>or</em> deselected.
+     */
+    void onSelectionChanged(JsEvent event, SelectionContext<T> context);
 }

@@ -28,7 +28,6 @@ import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.meta.security.SecurityContext;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 
@@ -38,30 +37,34 @@ import static jsinterop.annotations.JsPackage.GLOBAL;
 public class Tree<T> implements IsElement, Attachable {
 
     @JsType(isNative = true)
-    public static class Bridge {
+    public static class Bridge<T> {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static Bridge select(String selector);
+        public native static <T> Bridge<T> select(String selector);
 
         public native void jstree(Options options);
 
-        public native <T> Api<T> jstree(boolean _true);
+        /**
+         * Adds a selection change callback.
+         */
+        public native void on(String event, SelectionChangeHandler<T> handler);
+
+        public native Api<T> jstree(boolean _true);
     }
 
 
-    public static final String ROOT_NODE = "#";
+    private static final String ROOT_NODE = "#";
+    private static final String CHANGED_EVENT = "changed.jstree";
 
     private final String id;
-    private final SecurityContext securityContext;
     private final Options options;
     private final Element div;
+    private Bridge<T> bridge;
     private Api<T> api;
 
 
-    public Tree(final String id, final SecurityContext securityContext,
-            final Node<T> root, final DataFunction<T> data) {
+    public Tree(final String id, final Node<T> root, final DataFunction<T> data) {
         this.id = id;
-        this.securityContext = securityContext;
         this.options = initOptions(root, data);
         this.div = Browser.getDocument().createDivElement();
         this.div.setId(id);
@@ -108,7 +111,7 @@ public class Tree<T> implements IsElement, Attachable {
     public void attach() {
         if (api == null) {
             // TODO check security context and adjust options if necessary
-            Bridge bridge = Bridge.select("#" + id);
+            bridge = Bridge.select("#" + id);
             bridge.jstree(options);
             api = bridge.jstree(true);
         }
@@ -121,11 +124,19 @@ public class Tree<T> implements IsElement, Attachable {
      * Getter for the {@link org.jboss.hal.ballroom.tree.Api} instance.
      * @throws IllegalStateException if the API wasn't initialized using {@link #attach()}
      */
-    public Api api() {
+    public Api<T> api() {
         if (api == null) {
             throw new IllegalStateException(
                     "Tree('" + id + "') is not attached. Call Tree.attach() before using any of the API methods!");
         }
         return api;
+    }
+
+    public final void onSelectionChange(SelectionChangeHandler<T> handler) {
+        if (bridge == null) {
+            throw new IllegalStateException(
+                    "Tree('" + id + "') is not attached. Call Tree.attach() before you register callbacks!");
+        }
+        bridge.on(CHANGED_EVENT, handler);
     }
 }

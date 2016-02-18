@@ -78,18 +78,17 @@ public class MetadataProcessor {
         this.rrdOps = new CreateRrdOperations(statementContext);
     }
 
-    @SuppressWarnings("HardCodedStringLiteral")
     public void process(final String token, final Provider<Progress> progress, final AsyncCallback<Void> callback) {
         Set<String> resources = requiredResources.getResources(token);
-        logger.debug("Token {}: Process required resources on {}", token, resources);
+        logger.debug("Token {}: Process required resources on {}", token, resources); //NON-NLS
         if (resources.isEmpty()) {
-            logger.debug("Token {}: No required resources found -> callback.onSuccess(null)", token);
+            logger.debug("Token {}: No required resources found -> callback.onSuccess(null)", token); //NON-NLS
             callback.onSuccess(null);
 
         } else {
             // The following lambda makes problems in SuperDevMode!?
             // Set<AddressTemplate> templates = FluentIterable.from(resources).transform(AddressTemplate::of).toSet();
-            //noinspection Convert2Lambda,Anonymous2MethodRef
+            //noinspection Convert2Lambda,Anonymous2MethodRef,Guava
             Set<AddressTemplate> templates = FluentIterable.from(resources).transform(
                     new Function<String, AddressTemplate>() {
                         @Override
@@ -97,41 +96,48 @@ public class MetadataProcessor {
                             return AddressTemplate.of(template);
                         }
                     }).toSet();
+            process(token, templates, progress, callback);
+        }
+    }
 
-            LookupResult lookupResult = lookup.check(token, templates, requiredResources.isRecursive(token));
-            if (lookupResult.allPresent()) {
-                logger.debug("Token {}: All required resources have been already processed -> callback.onSuccess(null)", token);
-                callback.onSuccess(null);
-            } else {
-                logger.debug("Token {}: {}", token, lookupResult);
-                List<Operation> operations = rrdOps.create(lookupResult);
-                List<List<Operation>> piles = Lists.partition(operations, BATCH_SIZE);
-                List<Composite> composites = Lists.transform(piles, Composite::new);
+    @SuppressWarnings("HardCodedStringLiteral")
+    public void process(final String token, final Set<AddressTemplate> templates,
+            final Provider<Progress> progress, final AsyncCallback<Void> callback) {
+        LookupResult lookupResult = lookup.check(token, templates, requiredResources.isRecursive(token));
+        if (lookupResult.allPresent()) {
+            logger.debug("Token {}: All required resources have been already processed -> callback.onSuccess(null)",
+                    token);
+            callback.onSuccess(null);
+        } else {
+            logger.debug("Token {}: {}", token, lookupResult);
+            List<Operation> operations = rrdOps.create(lookupResult);
+            List<List<Operation>> piles = Lists.partition(operations, BATCH_SIZE);
+            List<Composite> composites = Lists.transform(piles, Composite::new);
 
-                logger.debug("Token {}: About to execute {} composite operations", token, composites.size());
-                List<RrdFunction> functions = Lists.transform(composites,
-                        composite -> new RrdFunction(resourceDescriptions, securityFramework, dispatcher, composite));
-                //noinspection Duplicates
-                Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
-                    @Override
-                    public void onFailure(final FunctionContext context) {
-                        logger.debug("Token {}: Failed to process required resources: {}", token,
-                                context.getErrorMessage());
-                        callback.onFailure(context.getError());
-                    }
-
-                    @Override
-                    public void onSuccess(final FunctionContext context) {
-                        logger.debug("Token {}: Successfully processed required resources", token);
-                        callback.onSuccess(null);
-                    }
-                };
-                if (functions.size() == 1) {
-                    new Async<FunctionContext>(progress.get()).single(new FunctionContext(), outcome, functions.get(0));
-                } else {
-                    new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
-                            functions.toArray(new RrdFunction[functions.size()]));
+            logger.debug("Token {}: About to execute {} composite operations", token, composites.size());
+            List<RrdFunction> functions = Lists.transform(composites,
+                    composite -> new RrdFunction(resourceDescriptions, securityFramework, dispatcher, composite));
+            //noinspection Duplicates
+            Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
+                @Override
+                public void onFailure(final FunctionContext context) {
+                    logger.debug("Token {}: Failed to process required resources: {}", token,
+                            context.getErrorMessage());
+                    callback.onFailure(context.getError());
                 }
+
+                @Override
+                public void onSuccess(final FunctionContext context) {
+                    logger.debug("Token {}: Successfully processed required resources", token);
+                    callback.onSuccess(null);
+                }
+            };
+            if (functions.size() == 1) {
+                new Async<FunctionContext>(progress.get()).single(new FunctionContext(), outcome, functions.get(0));
+            } else {
+                //noinspection SuspiciousToArrayCall
+                new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
+                        (org.jboss.gwt.flow.Function[]) functions.toArray(new RrdFunction[functions.size()]));
             }
         }
     }

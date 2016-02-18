@@ -119,6 +119,7 @@ public interface ModelDescriptionConstants {
     String RESPONSE = "response";
     String RESULT = "result";
     String ROLES = "HEADER_ROLES";
+    String RUNTIME = "runtime";
     String RUNTIME_NAME = "runtime-name";
     String SCHEME = "scheme";
     String SERVER = "server";
