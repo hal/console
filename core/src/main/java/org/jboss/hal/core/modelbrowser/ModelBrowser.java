@@ -119,7 +119,7 @@ public class ModelBrowser implements HasElements, Attachable, SecurityContextAwa
                 .build();
         treeContainer = new Elements.Builder().div().css(modelBrowserTree).end().build();
         content = new Elements.Builder().div().css(modelBrowserContent).end().build();
-        resourceView = new ResourceView(dispatcher);
+        resourceView = new ResourceView(dispatcher, resources);
 
         // @formatter:off
         rows =  new LayoutBuilder()
@@ -227,7 +227,9 @@ public class ModelBrowser implements HasElements, Attachable, SecurityContextAwa
                         ResourceDescription description = resourceDescriptions.lookup(template);
                         if (description != null) {
                             resourceView.update(node.data.getAddress(), description);
-                            content.appendChild(resourceView.asElement());
+                            for (Element element : resourceView.asElements()) {
+                                content.appendChild(element);
+                            }
                         }
                     }
                 });

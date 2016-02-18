@@ -32,7 +32,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String close();
     String connectToServer();
 
+    String data();
     String defaultValue();
+    String description();
     String disable();
     String disabled();
     String dispatcherException();

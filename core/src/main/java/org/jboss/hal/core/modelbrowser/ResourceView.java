@@ -23,11 +23,13 @@ package org.jboss.hal.core.modelbrowser;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.PatternFly;
+import org.jboss.hal.ballroom.tab.Tabs;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -36,6 +38,7 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
@@ -44,42 +47,46 @@ import static org.jboss.hal.resources.CSS.lead;
 /**
  * @author Harald Pehl
  */
-class ResourceView implements IsElement {
+class ResourceView implements HasElements {
 
     private static final String DESCRIPTION_ELEMENT = "descriptionElement";
-    private static final String FORM_ELEMENT = "formElement";
+    private static final Element PLACE_HOLDER = Browser.getDocument().createDivElement();
 
     private final Dispatcher dispatcher;
+    private final Elements.Builder builder;
+    private final Tabs tabs;
+    private final String dataId;
+    private final String descriptionId;
     private final Element description;
-    private final Element formContainer;
-    private final Element root;
 
-    ResourceView(final Dispatcher dispatcher) {
+    ResourceView(final Dispatcher dispatcher, final Resources resources) {
         this.dispatcher = dispatcher;
 
+        tabs = new Tabs();
+        dataId = IdBuilder.build(Ids.MODEL_BROWSER, "data");
+        tabs.add(dataId, resources.constants().data(), PLACE_HOLDER);
+        descriptionId = IdBuilder.build(Ids.MODEL_BROWSER, "description");
+        tabs.add(descriptionId, resources.constants().description(), PLACE_HOLDER);
+
         // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .div()
-                .p().css(lead).rememberAs(DESCRIPTION_ELEMENT).end()
-                .div().rememberAs(FORM_ELEMENT).end()
-            .end();
+        builder = new Elements.Builder()
+            .p().css(lead).rememberAs(DESCRIPTION_ELEMENT).end()
+            .add(tabs.asElement());
         // @formatter:on
 
         description = builder.referenceFor(DESCRIPTION_ELEMENT);
-        formContainer = builder.referenceFor(FORM_ELEMENT);
-        root = builder.build();
     }
 
     @Override
-    public Element asElement() {
-        return root;
+    public Iterable<Element> asElements() {
+        return builder.elements();
     }
 
     void update(ResourceAddress address, ResourceDescription description) {
         SafeHtml safeHtml = SafeHtmlUtils.fromSafeConstant(description.getDescription());
         this.description.setInnerHTML(safeHtml.asString());
 
-        Elements.removeChildrenFrom(formContainer);
+        tabs.setContent(dataId, PLACE_HOLDER);
         if (description.hasAttributes()) {
             Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
                     .param(INCLUDE_RUNTIME, true)
@@ -90,7 +97,7 @@ class ResourceView implements IsElement {
                         SecurityContext.RWX, description)
                         .includeRuntime()
                         .build();
-                formContainer.appendChild(form.asElement());
+                tabs.setContent(dataId, form.asElement());
                 PatternFly.initComponents();
                 form.attach();
                 form.view(result);

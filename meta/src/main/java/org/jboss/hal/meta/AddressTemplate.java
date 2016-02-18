@@ -358,6 +358,8 @@ public final class AddressTemplate {
     }
 
 
+    // TODO tokenizer does not work for addresses like
+    // "subsystem=undertow/server=default-server/host=default-host/location=/"
     private static class StringTokenizer {
 
         private final String delim;

@@ -61,6 +61,7 @@ public class Tabs implements IsElement {
     private final Element tabs;
     private final Element panes;
     private final Map<Integer, String> indexToId;
+    private final Map<String, Element> paneElements;
 
     public Tabs() {
         // @formatter:off
@@ -75,6 +76,7 @@ public class Tabs implements IsElement {
         tabs = builder.referenceFor(TABS);
         panes = builder.referenceFor(PANES);
         indexToId = new HashMap<>();
+        paneElements = new HashMap<>();
     }
 
     @Override
@@ -114,13 +116,19 @@ public class Tabs implements IsElement {
 
         tabs.appendChild(tab);
         panes.appendChild(pane);
+        paneElements.put(id, pane);
         if (tabs.getChildren().getLength() == 1) {
             tab.getClassList().add(active);
         }
         if (panes.getChildren().getLength() == 1) {
             pane.getClassList().add(active);
         }
+        fillPane(pane, first, rest);
 
+        return this;
+    }
+
+    private void fillPane(Element pane, Element first, Element... rest) {
         List<Element> elements = new ArrayList<>();
         elements.add(first);
         if (rest != null) {
@@ -129,8 +137,6 @@ public class Tabs implements IsElement {
         for (Element element : elements) {
             pane.appendChild(element);
         }
-
-        return this;
     }
 
     public void showTab(final int index) {
@@ -140,6 +146,20 @@ public class Tabs implements IsElement {
     public void showTab(final String id) {
         if (id != null) {
             Bridge.select("#" + id).tab("show"); //NON-NLS
+        }
+    }
+
+    public void setContent(final int index, Element first, Element... rest) {
+        setContent(indexToId.get(index), first, rest);
+    }
+
+    public void setContent(final String id, Element first, Element... rest) {
+        if (id != null) {
+            Element pane = paneElements.get(id);
+            if (pane != null) {
+                Elements.removeChildrenFrom(pane);
+                fillPane(pane, first, rest);
+            }
         }
     }
 }
