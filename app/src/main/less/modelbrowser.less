@@ -1,0 +1,50 @@
+.model-browser-header, .model-browser-buttons, .model-browser-content {
+  margin-top: 20px;
+}
+
+.model-browser-tree {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.model-browser-header {
+
+  .breadcrumb {
+    background-color: #ededed;
+    margin-bottom: 0;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .lead {
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+
+  li {
+    font-size: 16px;
+
+    .key:after {
+      content: "\21d2";
+      color: #666;
+      font-size: 16px;
+      padding: 0 5px;
+    }
+  }
+
+  li + li:before {
+    content: '/';
+    font-size: 16px;
+    padding: 0 10px;
+  }
+}
+
+.model-browser-tree {
+  overflow: scroll;
+}
+
+.model-browser-content {
+  overflow-y: scroll;
+}

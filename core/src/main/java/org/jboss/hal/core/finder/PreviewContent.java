@@ -54,13 +54,12 @@ public class PreviewContent implements SecurityContextAware {
         builder = header(header);
     }
 
-    public PreviewContent(final String header, SafeHtml html) {
+    public PreviewContent(final String header, final SafeHtml html) {
         builder = header(header).section().innerHtml(html).end();
     }
 
     public PreviewContent(final String header, final Element first, final Element... rest) {
-        builder = header(header);
-        builder.section().add(first);
+        builder = header(header).section().rememberAs(CONTENT_ELEMENT).add(first);
         if (rest != null) {
             for (Element element : rest) {
                 builder.add(element);
@@ -93,7 +92,7 @@ public class PreviewContent implements SecurityContextAware {
         }
     }
 
-    private Elements.Builder header(String header) {
+    private Elements.Builder header(final String header) {
         return new Elements.Builder().h(1).innerText(header).end();
     }
 

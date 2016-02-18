@@ -19,25 +19,11 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.patching;
-
-import org.jboss.hal.core.modelbrowser.ModelBrowser;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.security.SecurityContext;
-
-import javax.inject.Inject;
+package org.jboss.hal.core.mvp;
 
 /**
+ * A presenter
  * @author Harald Pehl
  */
-public class PatchingView extends PatternFlyViewImpl implements PatchingPresenter.MyView {
-
-    @Inject
-    public PatchingView(Dispatcher dispatcher) {
-        ModelBrowser modelBrowser = new ModelBrowser(dispatcher, SecurityContext.RWX, ResourceAddress.ROOT);
-        registerAttachable(modelBrowser);
-        initElements(modelBrowser);
-    }
+public interface ElementsPresenter {
 }

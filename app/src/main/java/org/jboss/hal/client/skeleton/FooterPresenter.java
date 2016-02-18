@@ -25,6 +25,8 @@ import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
+import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
@@ -37,10 +39,10 @@ import static org.jboss.hal.resources.Names.NYI;
 /**
  * @author Harald Pehl
  */
-public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView> {
+public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView> implements IsElement {
 
     // @formatter:off
-    public interface MyView extends View, HasPresenter<FooterPresenter> {
+    public interface MyView extends View, IsElement, HasPresenter<FooterPresenter> {
         void updateEnvironment(Environment environment);
         void updateVersion(Version version);
     }
@@ -57,6 +59,11 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView> {
         super(eventBus, view);
         this.environment = environment;
         this.checkForUpdate = new CheckForUpdate(environment);
+    }
+
+    @Override
+    public Element asElement() {
+        return getView().asElement();
     }
 
     @Override

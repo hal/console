@@ -31,7 +31,6 @@ import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.meta.security.SecurityContext;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.resources.CSS.tree;
 
 /**
  * @author Harald Pehl
@@ -66,7 +65,6 @@ public class Tree<T> implements IsElement, Attachable {
         this.options = initOptions(root, data);
         this.div = Browser.getDocument().createDivElement();
         this.div.setId(id);
-        this.div.getClassList().add(tree);
     }
 
     private Options<T> initOptions(final Node<T> root, final DataFunction<T> data) {

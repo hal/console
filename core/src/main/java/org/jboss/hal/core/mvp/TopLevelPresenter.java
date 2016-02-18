@@ -23,7 +23,6 @@ package org.jboss.hal.core.mvp;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import org.jboss.hal.core.TopLevelCategory;
 
 /**
  * @author Harald Pehl

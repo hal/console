@@ -39,6 +39,7 @@ public interface CSS {
     String alertDanger = "alert-danger";
     String alertSuccess = "alert-success";
     String bootstrapSwitch = "bootstrap-switch";
+    String breadcrumb = "breadcrumb";
     String btn = "btn";
     String btnDefault = "btn-default";
     String btnFinder = "btn-finder";
@@ -90,6 +91,7 @@ public interface CSS {
     String inputGroupBtn = "input-group-btn";
     String itemText = "item-text";
     String key = "key";
+    String lead = "lead";
     String loading = "loading";
     String loadingContainer = "loading-container";
     String modal = "modal";
@@ -103,6 +105,11 @@ public interface CSS {
     String modalMedium = "modal-md";
     String modelSmall = "modal-sm";
     String modalTitle = "modal-title";
+    String modelBrowserBreadcrumb = "model-browser-breadcrumb";
+    String modelBrowserButtons = "model-browser-buttons";
+    String modelBrowserContent = "model-browser-content";
+    String modelBrowserHeader = "model-browser-header";
+    String modelBrowserTree = "model-browser-tree";
     String nav = "nav";
     String navbar = "navbar";
     String navTabs = "nav-tabs";
@@ -131,7 +138,6 @@ public interface CSS {
     String tagManagerContainer = "tag-manager-container";
     String tagManagerTag = "tag-manager-tag";
     String tags = "tags";
-    String tree = "tree";
     String value = "value";
 
 

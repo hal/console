@@ -259,7 +259,7 @@ public class HomepageView extends PatternFlyViewImpl implements HomepagePresente
                     .end();
         }
         Element root = rootBuilder.end().build();
-        initWidget(Elements.asWidget(root));
+        initElement(root);
     }
 
     @Override

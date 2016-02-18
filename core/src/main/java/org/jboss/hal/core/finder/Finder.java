@@ -40,6 +40,7 @@ import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.core.finder.ColumnRegistry.LookupCallback;
+import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
@@ -187,15 +188,8 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     private void adjustHeight() {
         int window = Browser.getWindow().getInnerHeight();
-        int navigation = 0, footer = 0;
-        Element element = Browser.getDocument().querySelector("nav." + navbar); //NON-NLS
-        if (element != null) {
-            navigation = element.getOffsetHeight();
-        }
-        element = Browser.getDocument().querySelector("footer > nav." + navbar); //NON-NLS
-        if (element != null) {
-            footer = element.getOffsetHeight();
-        }
+        int navigation = Skeleton.navigationHeight();
+        int footer = Skeleton.footerHeight();
         if (navigation > 0 && footer > 0) {
             int finder = window - navigation - footer;
             root.getStyle().setHeight(finder, PX);

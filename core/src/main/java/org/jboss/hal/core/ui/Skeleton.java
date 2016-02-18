@@ -19,10 +19,35 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core;
+package org.jboss.hal.core.ui;
+
+import elemental.client.Browser;
+import elemental.dom.Element;
+
+import static org.jboss.hal.resources.CSS.navbar;
 
 /**
  * @author Harald Pehl
  */
-public interface TopLevelCategory {
+public final class Skeleton {
+
+    private Skeleton() {}
+
+    public static int navigationHeight() {
+        int navigation = 0;
+        Element element = Browser.getDocument().querySelector("nav." + navbar); //NON-NLS
+        if (element != null) {
+            navigation = element.getOffsetHeight();
+        }
+        return navigation;
+    }
+
+    public static int footerHeight() {
+        int footer = 0;
+        Element element = Browser.getDocument().querySelector("footer > nav." + navbar); //NON-NLS
+        if (element != null) {
+            footer = element.getOffsetHeight();
+        }
+        return footer;
+    }
 }

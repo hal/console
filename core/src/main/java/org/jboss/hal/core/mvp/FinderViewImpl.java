@@ -21,7 +21,6 @@
  */
 package org.jboss.hal.core.mvp;
 
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.HasFinder;
 
@@ -33,6 +32,6 @@ public class FinderViewImpl extends PatternFlyViewImpl implements HasFinder {
     @Override
     public void setFinder(final Finder finder) {
         registerAttachable(finder);
-        initWidget(Elements.asWidget(finder.asElement()));
+        initElement(finder.asElement());
     }
 }
