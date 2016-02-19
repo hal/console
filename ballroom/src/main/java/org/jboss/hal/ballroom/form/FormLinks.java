@@ -46,7 +46,9 @@ import static org.jboss.hal.resources.CSS.*;
  */
 class FormLinks<T> implements IsElement {
 
-    private final static Constants CONSTANTS = GWT.create(Constants.class);
+    private static final String LINKS = "links";
+    private static final String HELP_CONTENT = "helpContent";
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
 
     private final StateMachine stateMachine;
     private final LinkedHashMap<String, String> helpTexts;
@@ -65,21 +67,21 @@ class FormLinks<T> implements IsElement {
         this.stateMachine = stateMachine;
         this.helpTexts = helpTexts;
 
-        String linksId = IdBuilder.build(formId, "links");
+        String linksId = IdBuilder.build(formId, LINKS);
         String helpId = IdBuilder.build(formId, "help");
 
         // @formatter:off
         Elements.Builder rootBuilder = new Elements.Builder()
             .div().css(form, formHorizontal)
-                .ul().id(linksId).css(formLinks, clearfix).rememberAs("links").end()
+                .ul().id(linksId).css(formLinks, clearfix).rememberAs(LINKS).end()
                 .div().id(helpId).css(formHelpContent, collapse)
-                    .div().rememberAs("helpContent").end()
+                    .div().rememberAs(HELP_CONTENT).end()
                 .end()
             .end();
         // @formatter:on
 
-        Element links = rootBuilder.referenceFor("links");
-        Element helpContent = rootBuilder.referenceFor("helpContent");
+        Element links = rootBuilder.referenceFor(LINKS);
+        Element helpContent = rootBuilder.referenceFor(HELP_CONTENT);
 
         if (stateMachine.supports(EDIT)) {
             editLink = link(CONSTANTS.edit(), pfIcon("edit"), onEdit);
@@ -98,7 +100,7 @@ class FormLinks<T> implements IsElement {
             helpLink = new Elements.Builder()
                 .li()
                     .a().attr("href", "#" + helpId + "")
-                            .data(UIConstants.TOGGLE, "collapse") //NON-NLS
+                            .data(UIConstants.TOGGLE,  UIConstants.COLLAPSE) //NON-NLS
                             .aria(UIConstants.EXPANDED, String.valueOf(false))
                             .aria(UIConstants.CONTROLS, helpId)
                         .start("i").css(pfIcon("help")).end()

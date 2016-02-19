@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.ballroom.table;
 
+import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.TableElement;
 import jsinterop.annotations.JsMethod;
@@ -134,5 +135,15 @@ public class DataTable<T> implements IsElement, Attachable {
                     "DataTable('" + id + "') is not attached. Call DataTable.attach() before using any of the API methods!");
         }
         return api;
+    }
+
+    public void show() {
+        Element wrapper = Browser.getDocument().getElementById(id + "_wrapper");
+        Elements.setVisible(wrapper, true);
+    }
+
+    public void hide() {
+        Element wrapper = Browser.getDocument().getElementById(id + "_wrapper");
+        Elements.setVisible(wrapper, false);
     }
 }

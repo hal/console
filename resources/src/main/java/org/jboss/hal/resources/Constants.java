@@ -22,6 +22,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     //@formatter:off
     String add();
+    String attributes();
 
     String back();
     String bootstrapFailed();
@@ -34,7 +35,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String data();
     String defaultValue();
-    String description();
     String disable();
     String disabled();
     String dispatcherException();
@@ -145,9 +145,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String modelBrowser();
     String metadataError();
     String no();
+    String noAttributes();
     String noItems();
     String notANumber();
     String nothingSelected();
+    String operations();
     String ping();
     String required();
     String reset();

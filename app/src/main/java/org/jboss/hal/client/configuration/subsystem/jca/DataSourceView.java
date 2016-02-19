@@ -25,7 +25,7 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
-import org.jboss.hal.ballroom.tab.Tabs;
+import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelDescriptionConstants;

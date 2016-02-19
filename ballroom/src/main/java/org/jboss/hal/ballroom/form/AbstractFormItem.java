@@ -85,13 +85,13 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     // Form.State#EDITING elements
     private final LabelElement inputLabelElement;
-    private final DivElement inputGroupContainer;
     private final SpanElement inputButtonContainer;
     private SpanElement inputAddonContainer;
     private final ButtonElement expressionButton;
     private final ButtonElement showAllButton;
     private final DivElement editingRestricted;
     private final InputElement<T> inputElement;
+    final DivElement inputGroupContainer;
     final DivElement editingRoot;
     final DivElement inputContainer;
     final SpanElement errorText;
@@ -663,6 +663,11 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public void setEnabled(final boolean enabled) {
+        if (enabled) {
+            inputContainer.getClassList().remove(disabled);
+        } else  {
+            inputContainer.getClassList().add(disabled);
+        }
         inputElement.setEnabled(enabled);
     }
 

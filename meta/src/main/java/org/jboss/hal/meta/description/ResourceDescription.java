@@ -56,7 +56,7 @@ public class ResourceDescription extends ModelNode {
     }
 
     public List<Property> getAttributes() {
-        return get(ATTRIBUTES).asPropertyList();
+        return hasAttributes() ?  get(ATTRIBUTES).asPropertyList() : Collections.emptyList();
     }
 
     public List<Property> getRequiredAttributes() {
@@ -94,6 +94,14 @@ public class ResourceDescription extends ModelNode {
         } else {
             return Collections.emptyList();
         }
+    }
+
+    public boolean hasOperations() {
+        return hasDefined(OPERATIONS) && !get(OPERATIONS).asList().isEmpty();
+    }
+
+    public List<Property> getOperations() {
+        return hasOperations() ? get(OPERATIONS).asPropertyList() : Collections.emptyList();
     }
 
     public ModelNode find(String name) {

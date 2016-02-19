@@ -194,9 +194,22 @@ abbr.key {
 }
 
 .disabled {
+  input[type=text].form-control.tags {
+    display: none;
+  }
+
+  .input-group.tags {
+    display: none;
+  }
+
+  .help-block.hint {
+    display: none;
+  }
+
   .tm-tag {
     color: #999;
     cursor: not-allowed;
+    margin-top: 0;
   }
   .tm-tag-remove {
     pointer-events: none;
@@ -210,3 +223,11 @@ abbr.key {
   }
 }
 
+/*
+ * PropertiesItem
+ */
+.disabled {
+  input[type=text].form-control.properties {
+    display: none;
+  }
+}

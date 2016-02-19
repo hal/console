@@ -46,6 +46,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 /**
+ * Function which gets invoked when the user opens a node in the model browser tree.
+ *
  * @author Harald Pehl
  */
 public class ReadChildren implements DataFunction<Context> {

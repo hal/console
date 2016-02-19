@@ -24,7 +24,7 @@ package org.jboss.hal.ballroom.layout;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.ballroom.tab.Tabs;
+import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.resources.CSS;
 
 import java.util.ArrayList;

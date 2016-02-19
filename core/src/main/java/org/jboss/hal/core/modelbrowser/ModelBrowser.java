@@ -27,10 +27,10 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
 import org.jboss.hal.ballroom.tree.Node;
+import org.jboss.hal.ballroom.tree.SelectionChangeHandler.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.dmr.Property;
@@ -63,11 +63,12 @@ import static org.jboss.hal.resources.CSS.*;
 /**
  * @author Harald Pehl
  */
-public class ModelBrowser implements HasElements, Attachable, SecurityContextAware {
+public class ModelBrowser implements HasElements, SecurityContextAware {
 
     private static final int MARGIN_BIG = 20; // keep this in sync with the
     private static final int MARGIN_SMALL = 10; // margins in modelbrowser.less
     private static final String BREADCRUMB_ELEMENT = "breadcrumbElement";
+    static final Element PLACE_HOLDER_ELEMENT = Browser.getDocument().createDivElement();
 
     private static final Logger logger = LoggerFactory.getLogger(ModelBrowser.class);
 
@@ -83,7 +84,8 @@ public class ModelBrowser implements HasElements, Attachable, SecurityContextAwa
     private final Element buttonGroup;
     private final Element treeContainer;
     private final Element content;
-    private final ResourceView resourceView;
+    private final ResourcePanel resourcePanel;
+    private final ChildrenPanel childrenPanel;
     private Tree<Context> tree;
     private ResourceAddress root;
 
@@ -119,7 +121,18 @@ public class ModelBrowser implements HasElements, Attachable, SecurityContextAwa
                 .build();
         treeContainer = new Elements.Builder().div().css(modelBrowserTree).end().build();
         content = new Elements.Builder().div().css(modelBrowserContent).end().build();
-        resourceView = new ResourceView(dispatcher, resources);
+
+        resourcePanel = new ResourcePanel(dispatcher, resources);
+        for (Element element : resourcePanel.asElements()) {
+            content.appendChild(element);
+        }
+        resourcePanel.hide();
+
+        childrenPanel = new ChildrenPanel(dispatcher, resources);
+        for (Element element : childrenPanel.asElements()) {
+            content.appendChild(element);
+        }
+        childrenPanel.hide();
 
         // @formatter:off
         rows =  new LayoutBuilder()
@@ -157,34 +170,27 @@ public class ModelBrowser implements HasElements, Attachable, SecurityContextAwa
         }
     }
 
-    @Override
-    public Iterable<Element> asElements() {
-        return rows;
-    }
-
-    @Override
-    public void attach() {
-        if (tree != null) {
-            tree.attach();
-            tree.onSelectionChange((event, context) -> update(context.node));
+    private void onTreeSelection(SelectionContext<Context> context) {
+        if ("ready".equals(context.action)) { //NON-NLS
+            // only (de)selection events please
+            return;
         }
-        updateBreadcrumb(root);
-        adjustHeight();
-    }
 
-    private void update(Node<Context> node) {
-        Elements.removeChildrenFrom(content);
-
-        if (node == null) {
+        resourcePanel.hide();
+        childrenPanel.hide();
+        if (context.selected.isEmpty()) {
             updateBreadcrumb(null);
+
         } else {
-            ResourceAddress address = node.data.getAddress();
+            ResourceAddress address = context.node.data.getAddress();
             updateBreadcrumb(address);
 
-            if (node.data.isFullyQualified()) {
-                updateDescription(node, asGenericTemplate(address));
+            if (context.node.data.isFullyQualified()) {
+                showResourceView(context.node, address);
+
             } else {
-                // TODO Show children
+                childrenPanel.update(context.node, address);
+                childrenPanel.show();
             }
         }
     }
@@ -213,23 +219,24 @@ public class ModelBrowser implements HasElements, Attachable, SecurityContextAwa
         }
     }
 
-    private void updateDescription(Node<Context> node, AddressTemplate template) {
+    private void showResourceView(Node<Context> node, ResourceAddress address) {
+        AddressTemplate template = asGenericTemplate(address);
         metadataProcessor.process(Ids.MODEL_BROWSER, singleton(template), progress,
                 new AsyncCallback<Void>() {
                     @Override
                     public void onFailure(final Throwable throwable) {
-                        logger.error("Unable to process metadata for {} on node {}({}): {}", //NON-NLS
-                                template, node.id, node.text, throwable.getMessage());
+                        //noinspection HardCodedStringLiteral
+                        logger.error(
+                                "Unable to show resource for node {}({}). Error while processing metadata for {}: {}",
+                                node.id, node.text, template, throwable.getMessage());
                     }
 
                     @Override
                     public void onSuccess(final Void aVoid) {
                         ResourceDescription description = resourceDescriptions.lookup(template);
                         if (description != null) {
-                            resourceView.update(node.data.getAddress(), description);
-                            for (Element element : resourceView.asElements()) {
-                                content.appendChild(element);
-                            }
+                            resourcePanel.update(node, node.data.getAddress(), description);
+                            resourcePanel.show();
                         }
                     }
                 });
@@ -263,16 +270,28 @@ public class ModelBrowser implements HasElements, Attachable, SecurityContextAwa
         String resource = root == ResourceAddress.ROOT ? Names.MANAGEMENT_MODEL : root.lastValue();
         if ("*".equals(resource)) {
             throw new IllegalArgumentException("Invalid root address: " + root +
-                    ". ModelBrowser must be created with a concrete address.");
+                    ". ModelBrowser.setRoot() must be called with a concrete address.");
         }
         Context context = new Context(root, Collections.emptySet());
-        Node<Context> rootNode = new Node.Builder<>(IdBuilder.uniqueId(), resource, context)
+        String rootId = IdBuilder.uniqueId();
+        Node<Context> rootNode = new Node.Builder<>(rootId, resource, context)
                 .folder()
                 .build();
         tree = new Tree<>(Ids.MODEL_BROWSER, rootNode, new ReadChildren(dispatcher));
         Elements.removeChildrenFrom(treeContainer);
         treeContainer.appendChild(tree.asElement());
-        attach();
+
+        childrenPanel.attach();
+        tree.attach();
+        tree.onSelectionChange((event, selectionContext) -> onTreeSelection(selectionContext));
+        tree.api().openNode(rootId);
+        tree.api().selectNode(rootId, false, false);
+        adjustHeight();
+    }
+
+    @Override
+    public Iterable<Element> asElements() {
+        return rows;
     }
 
     @Override

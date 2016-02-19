@@ -30,7 +30,7 @@ import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
-import org.jboss.hal.ballroom.tab.Tabs;
+import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;

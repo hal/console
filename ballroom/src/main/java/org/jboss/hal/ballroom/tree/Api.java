@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.ballroom.tree;
 
+import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 
 /**
@@ -28,4 +29,10 @@ import jsinterop.annotations.JsType;
  */
 @JsType(isNative = true)
 public class Api<T> {
+
+    @JsMethod(name = "open_node")
+    public native void openNode(String id);
+
+    @JsMethod(name = "select_node")
+    public native void selectNode(String id, boolean suppressEvent, boolean preventOpen);
 }

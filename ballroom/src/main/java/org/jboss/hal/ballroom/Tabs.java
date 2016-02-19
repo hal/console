@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.ballroom.tab;
+package org.jboss.hal.ballroom;
 
 import elemental.dom.Element;
 import jsinterop.annotations.JsMethod;
@@ -28,10 +28,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.UIConstants;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -67,7 +64,9 @@ public class Tabs implements IsElement {
         // @formatter:off
         Elements.Builder builder = new Elements.Builder()
             .div()
-                .ul().css(nav, navTabs, navTabsPf, navTabsHal).attr(UIConstants.ROLE, "tablist").rememberAs(TABS).end() //NON-NLS
+                .ul().css(nav, navTabs, navTabsPf, navTabsHal)
+                    .attr(UIConstants.ROLE, UIConstants.TABLIST)
+                    .rememberAs(TABS).end()
                 .div().css(tabContent).rememberAs(PANES).end()
             .end();
         // @formatter:on
@@ -129,13 +128,11 @@ public class Tabs implements IsElement {
     }
 
     private void fillPane(Element pane, Element first, Element... rest) {
-        List<Element> elements = new ArrayList<>();
-        elements.add(first);
+        pane.appendChild(first);
         if (rest != null) {
-            Collections.addAll(elements, rest);
-        }
-        for (Element element : elements) {
-            pane.appendChild(element);
+            for (Element element : rest) {
+                pane.appendChild(element);
+            }
         }
     }
 
