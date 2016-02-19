@@ -38,6 +38,7 @@ public interface CSS {
     String alert = "alert";
     String alertDanger = "alert-danger";
     String alertSuccess = "alert-success";
+    String attributes = "attributes";
     String bootstrapSwitch = "bootstrap-switch";
     String breadcrumb = "breadcrumb";
     String btn = "btn";
@@ -96,6 +97,7 @@ public interface CSS {
     String lead = "lead";
     String loading = "loading";
     String loadingContainer = "loading-container";
+    String main = "main";
     String modal = "modal";
     String modalBody = "modal-body";
     String modalContent = "modal-content";
@@ -107,7 +109,6 @@ public interface CSS {
     String modalMedium = "modal-md";
     String modelSmall = "modal-sm";
     String modalTitle = "modal-title";
-    String modelBrowserBreadcrumb = "model-browser-breadcrumb";
     String modelBrowserButtons = "model-browser-buttons";
     String modelBrowserContent = "model-browser-content";
     String modelBrowserHeader = "model-browser-header";
@@ -118,6 +119,7 @@ public interface CSS {
     String navTabsHal = "nav-tabs-hal";
     String navTabsPf = "nav-tabs-pf";
     String offset = "offset";
+    String operations = "operations";
     String panel = "panel";
     String panelBody = "panel-default";
     String panelCollapse = "panel-collapse";
@@ -148,7 +150,6 @@ public interface CSS {
     String tags = "tags";
     String value = "value";
 
-
     static String column(int columns) {
         return column + "-" + columnMedium + "-" + String.valueOf(columns);
     }
@@ -164,4 +165,5 @@ public interface CSS {
     static String pfIcon(@NonNls String name) {
         return "pficon pficon-" + name; //NON-NLS
     }
+
 }
