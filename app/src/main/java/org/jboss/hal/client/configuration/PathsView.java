@@ -97,16 +97,17 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
 
         // @formatter:off
         Element element = new LayoutBuilder()
-            .startRow()
-                .header(PATHS)
-                .add(info)
-                .add(table.asElement(), form.asElement())
-            .endRow()
+            .row()
+                .column()
+                    .header(PATHS)
+                    .add(info, table.asElement(), form.asElement())
+                .end()
+            .end()
         .build();
         // @formatter:on
 
         registerAttachable(table, form);
-        initWidget(Elements.asWidget(element));
+        initElement(element);
 
     }
 

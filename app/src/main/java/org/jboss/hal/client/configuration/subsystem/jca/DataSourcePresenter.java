@@ -39,6 +39,7 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.Requires;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,6 @@ import javax.inject.Inject;
 import java.util.Map;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.token.NameTokens.DATA_SOURCE;
 
 /**
  * @author Harald Pehl
@@ -57,8 +57,8 @@ public class DataSourcePresenter extends
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(DATA_SOURCE)
     @Requires(ROOT_ADDRESS)
+    @NameToken(NameTokens.DATA_SOURCE)
     public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<DataSourcePresenter> {

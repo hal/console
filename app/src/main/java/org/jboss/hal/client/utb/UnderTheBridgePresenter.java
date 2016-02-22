@@ -29,6 +29,7 @@ import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.core.mvp.TopLevelPresenter;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.meta.token.NameTokens;
 
 import javax.inject.Inject;
 
@@ -40,7 +41,7 @@ public class UnderTheBridgePresenter
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(org.jboss.hal.meta.token.NameTokens.UNDER_THE_BRIDGE)
+    @NameToken(NameTokens.UNDER_THE_BRIDGE)
     public interface MyProxy extends ProxyPlace<UnderTheBridgePresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<UnderTheBridgePresenter> {

@@ -29,7 +29,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-dependencies</artifactId>
-        <version>0.0.6</version>
+        <version>0.0.7</version>
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
@@ -37,6 +37,10 @@
     <name>HAL :: Application</name>
     <description>The HAL application containing the GWT entry point and the UI.</description>
     <packaging>gwt-app</packaging>
+
+    <properties>
+        <gulp-task>prod</gulp-task>
+    </properties>
 
     <dependencies>
         <!-- HAL -->
@@ -154,6 +158,9 @@
                         <goals>
                             <goal>gulp</goal>
                         </goals>
+                        <configuration>
+                            <arguments>${gulp-task}</arguments>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -241,7 +248,7 @@
                     <compilerArgs>
                         <compilerArg>-gen</compilerArg>
                         <compilerArg>${project.build.directory}/generated-sources/gwt</compilerArg>
-                    </compilerArgs>
+                   </compilerArgs>
                     <devmodeArgs>
                         <devmodeArg>-startupUrl</devmodeArg>
                         <devmodeArg>hal/dev.html</devmodeArg>
@@ -265,6 +272,9 @@
                 to enable browser refresh after changing sources
             -->
             <id>devmode</id>
+            <properties>
+                <gulp-task>dev</gulp-task>
+            </properties>
             <build>
                 <plugins>
                     <plugin>

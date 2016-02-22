@@ -77,16 +77,13 @@ public class TagsManager {
     // since native JS types can neither hold static references nor initializer
     public static class Defaults {
 
-        private static final Options DEFAULT_OPTIONS = new Options();
-
-        static {
-            DEFAULT_OPTIONS.delimiters = (JsInt16Array) Browser.getWindow().newInt16Array(1);
-            DEFAULT_OPTIONS.delimiters.setAt(0, ENTER);
-            DEFAULT_OPTIONS.tagClass = tagManagerTag;
-        }
-
         public static Options get() {
-            return DEFAULT_OPTIONS;
+            Options options = new Options();
+            options.delimiters = (JsInt16Array) Browser.getWindow().newInt16Array(1);
+            options.delimiters.setAt(0, ENTER);
+            options.tagClass = tagManagerTag;
+            options.validator = null;
+            return options;
         }
     }
 

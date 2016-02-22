@@ -19,10 +19,37 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core;
+package org.jboss.hal.ballroom.tree;
+
+import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
 
 /**
  * @author Harald Pehl
  */
-public interface TopLevelCategory {
+@JsType(isNative = true)
+public class Api<T> {
+
+    @JsFunction
+    @FunctionalInterface
+    public interface OpenCallback {
+
+        void opened();
+    }
+
+    @JsMethod(name = "get_node")
+    public native Node<T> getNode(String id);
+
+    @JsMethod(name = "open_node")
+    public native void openNode(String id);
+
+    @JsMethod(name = "open_node")
+    public native void openNode(String id, OpenCallback callback);
+
+    @JsMethod(name = "select_node")
+    public native void selectNode(String id, boolean suppressEvent, boolean preventOpen);
+
+    @JsMethod(name = "deselect_node")
+    public native void deselectNode(String id, boolean suppressEvent);
 }

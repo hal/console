@@ -38,7 +38,9 @@ public interface CSS {
     String alert = "alert";
     String alertDanger = "alert-danger";
     String alertSuccess = "alert-success";
+    String attributes = "attributes";
     String bootstrapSwitch = "bootstrap-switch";
+    String breadcrumb = "breadcrumb";
     String btn = "btn";
     String btnDefault = "btn-default";
     String btnFinder = "btn-finder";
@@ -56,11 +58,13 @@ public interface CSS {
     String controlLabel = "control-label";
     String dataTable = "datatable";
     String defaultValue = "default-value";
+    String disabled = "disabled";
     String dropdownMenu = "dropdown-menu";
     String dropdownToggle = "dropdown-toggle";
     String eapHomeRow = "eap-home-row";
     String eapHomeTitle = "eap-home-title";
     String editing = "editing";
+    String errorCircleO = "error-circle-o";
     String equals = "equals";
     String empty = "empty";
     String fade = "fade";
@@ -90,6 +94,7 @@ public interface CSS {
     String inputGroupBtn = "input-group-btn";
     String itemText = "item-text";
     String key = "key";
+    String lead = "lead";
     String loading = "loading";
     String loadingContainer = "loading-container";
     String modal = "modal";
@@ -103,13 +108,25 @@ public interface CSS {
     String modalMedium = "modal-md";
     String modelSmall = "modal-sm";
     String modalTitle = "modal-title";
+    String modelBrowserButtons = "model-browser-buttons";
+    String modelBrowserContent = "model-browser-content";
+    String modelBrowserHeader = "model-browser-header";
+    String modelBrowserTree = "model-browser-tree";
     String nav = "nav";
     String navbar = "navbar";
     String navTabs = "nav-tabs";
     String navTabsHal = "nav-tabs-hal";
     String navTabsPf = "nav-tabs-pf";
     String offset = "offset";
-    String errorCircleO = "error-circle-o";
+    String operationParameter = "operation-parameter";
+    String operations = "operations";
+    String panel = "panel";
+    String panelBody = "panel-default";
+    String panelCollapse = "panel-collapse";
+    String panelDefault = "panel-default";
+    String panelGroup = "panel-group";
+    String panelHeading = "panel-heading";
+    String panelTitle = "panel-title";
     String progress = "progress";
     String progressBar = "progress-bar";
     String progressBarStriped = "progress-bar-striped";
@@ -133,7 +150,6 @@ public interface CSS {
     String tags = "tags";
     String value = "value";
 
-
     static String column(int columns) {
         return column + "-" + columnMedium + "-" + String.valueOf(columns);
     }
@@ -149,4 +165,5 @@ public interface CSS {
     static String pfIcon(@NonNls String name) {
         return "pficon pficon-" + name; //NON-NLS
     }
+
 }

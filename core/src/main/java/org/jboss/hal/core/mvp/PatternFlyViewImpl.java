@@ -22,6 +22,9 @@
 package org.jboss.hal.core.mvp;
 
 import com.gwtplatform.mvp.client.ViewImpl;
+import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.HasElements;
+import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.PatternFly;
 
@@ -34,11 +37,39 @@ import java.util.List;
 public abstract class PatternFlyViewImpl extends ViewImpl implements PatternFlyView {
 
     private final List<Attachable> attachables;
+    private Element element;
+    private Iterable<Element> elements;
     private boolean attached;
 
     protected PatternFlyViewImpl() {
         attachables = new ArrayList<>();
         attached = false;
+    }
+
+    protected void initElement(IsElement element) {
+        initElement(element.asElement());
+    }
+
+    protected void initElement(Element element) {
+        this.element = element;
+    }
+
+    protected void initElements(HasElements elements) {
+        initElements(elements.asElements());
+    }
+
+    protected void initElements(Iterable<Element> elements) {
+        this.elements = elements;
+    }
+
+    @Override
+    public Element asElement() {
+        return element;
+    }
+
+    @Override
+    public Iterable<Element> asElements() {
+        return elements;
     }
 
     protected void registerAttachable(Attachable first, Attachable... rest) {

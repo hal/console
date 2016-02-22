@@ -39,6 +39,7 @@ public interface Names {
     String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";
     String MANAGEMENT_CONSOLE = "Management Console";
+    String MANAGEMENT_MODEL = "Management Model";
     String NAME = "Name";
     String NOT_AVAILABLE = "n/a";
     String NOT_SUPPORTED = "not supported";

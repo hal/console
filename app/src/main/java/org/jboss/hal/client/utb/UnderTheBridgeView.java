@@ -26,15 +26,15 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
-import org.jboss.hal.ballroom.tab.Tabs;
+import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
-import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -150,29 +150,32 @@ public class UnderTheBridgeView extends PatternFlyViewImpl implements UnderTheBr
         }
 
         // @formatter:off
-        Elements.Builder main = new Elements.Builder()
-                .p()
-                    .innerText(description.getDescription())
-                .end()
-                .p()
-                    .innerHtml(new SafeHtmlBuilder().appendEscaped("If you're wondering about the name of this page, " +
-                            "I came up with the idea for this demo while I was listening to ")
-                            .appendHtmlConstant("<a href=\"" + VIDEO + "\" target=\"_blank\">")
-                            .appendEscaped("Under The Bridge")
-                            .appendHtmlConstant("</a> by Red Hot Chili Peppers.")
-                            .toSafeHtml())
-                .end()
-                .add(tabs.asElement());
-
         Element layout = new LayoutBuilder()
-            .startRow()
-                .header("Under The Bridge")
-                .add(main.elements())
-            .endRow()
+            .row()
+                .column()
+                    .header("Under The Bridge")
+                    .add(
+                        new Elements.Builder()
+                            .p()
+                                .innerText(description.getDescription())
+                            .end()
+                            .p()
+                                .innerHtml(new SafeHtmlBuilder().appendEscaped("If you're wondering about the name of " +
+                                        "this page, I came up with the idea for this demo while I was listening to ")
+                                        .appendHtmlConstant("<a href=\"" + VIDEO + "\" target=\"_blank\">")
+                                        .appendEscaped("Under The Bridge")
+                                        .appendHtmlConstant("</a> by Red Hot Chili Peppers.")
+                                        .toSafeHtml())
+                            .end()
+                            .add(tabs.asElement())
+                        .elements()
+                    )
+                .end()
+            .end()
         .build();
         // @formatter:on
 
-        initWidget(Elements.asWidget(layout));
+        initElement(layout);
     }
 
     @Override

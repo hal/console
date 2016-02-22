@@ -23,22 +23,25 @@ package org.jboss.hal.meta.processing;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.STEPS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
  */
 class CompositeRrdParser {
+
+    private static final Logger logger = LoggerFactory.getLogger(CompositeRrdParser.class);
 
     private final Composite composite;
 
@@ -53,6 +56,7 @@ class CompositeRrdParser {
                 throw new ParserException("Failed step 'step-" + (index + 1) + "' in composite rrd result: " + step
                         .getFailureDescription());
             }
+
             ModelNode stepResult = step.get(RESULT);
 
             if (stepResult.getType() == ModelType.LIST) {
@@ -60,8 +64,11 @@ class CompositeRrdParser {
                 for (ModelNode modelNode : stepResult.asList()) {
                     ModelNode result = modelNode.get(RESULT);
                     if (result.isDefined()) {
-                        ResourceAddress address = new ResourceAddress(modelNode.get(ADDRESS));
-                        Set<RrdResult> results = new SingleRrdParser().parse(address, result);
+                        ResourceAddress operationAddress = operationAddress(index);
+                        ResourceAddress resultAddress = new ResourceAddress(modelNode.get(ADDRESS));
+                        ResourceAddress resolvedAddress = adjustAddress(operationAddress, resultAddress);
+
+                        Set<RrdResult> results = new SingleRrdParser().parse(resolvedAddress, result);
                         overallResults.addAll(results);
                     }
                 }
@@ -86,5 +93,26 @@ class CompositeRrdParser {
         }
         ModelNode operation = steps.get(index);
         return new ResourceAddress(operation.get(ADDRESS));
+    }
+
+    private ResourceAddress adjustAddress(ResourceAddress operationAddress, ResourceAddress resultAddress) {
+        // For wildcard rrd operations against running servers like /host=master/server=server-one/interfaces=*
+        // the result does *not* contain fully qualified addresses. But since we need fq addresses in the
+        // registries this method fixes this special case.
+
+        ResourceAddress resolved = resultAddress;
+        List<Property> operationSegments = operationAddress.asPropertyList();
+        List<Property> resultSegments = resultAddress.asPropertyList();
+        if (operationSegments.size() > 2 &&
+                operationSegments.size() == resultSegments.size() + 2 &&
+                HOST.equals(operationSegments.get(0).getName()) &&
+                SERVER.equals(operationSegments.get(1).getName())) {
+            resolved = new ResourceAddress()
+                    .add(HOST, operationSegments.get(0).getValue().asString())
+                    .add(SERVER, operationSegments.get(1).getValue().asString())
+                    .add(resultAddress);
+            logger.debug("Adjust result address '{}' -> '{}'", resultAddress, resolved);
+        }
+        return resolved;
     }
 }

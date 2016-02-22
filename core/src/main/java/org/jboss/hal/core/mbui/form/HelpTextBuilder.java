@@ -89,7 +89,7 @@ class HelpTextBuilder {
 
         List<String> textModules = new ArrayList<>();
         if (formItem.isRequired()) {
-            textModules.add(CONSTANTS.required());
+            textModules.add(CONSTANTS.requiredField());
         }
         if (formItem.supportsExpressions()) {
             textModules.add(CONSTANTS.supportsExpressions());

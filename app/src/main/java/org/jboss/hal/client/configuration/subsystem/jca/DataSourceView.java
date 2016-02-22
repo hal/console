@@ -25,7 +25,7 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
-import org.jboss.hal.ballroom.tab.Tabs;
+import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
@@ -83,16 +83,17 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
 
         // @formatter:off
         LayoutBuilder layoutBuilder = new LayoutBuilder()
-            .startRow()
-                .header(Names.DATASOURCE)
-                .add(info)
-                .add(tabs.asElement())
-            .endRow();
+            .row()
+                .column()
+                    .header(Names.DATASOURCE)
+                    .add(info, tabs.asElement())
+                .end()
+            .end();
         // @formatter:on
 
         header = layoutBuilder.headerElement();
         registerAttachables(forms);
-        initWidget(Elements.asWidget(layoutBuilder.build()));
+        initElement(layoutBuilder.build());
     }
 
     @Override

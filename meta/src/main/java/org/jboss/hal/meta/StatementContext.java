@@ -8,6 +8,7 @@ public interface StatementContext {
     enum Key {
 
         ANY_PROFILE("any.profile", PROFILE),
+        ANY_GROUP("any.group", SERVER_GROUP),
         SELECTED_PROFILE("selected.profile", PROFILE),
         SELECTED_GROUP("selected.group", SERVER_GROUP),
         SELECTED_HOST("selected.host", HOST),
@@ -27,6 +28,10 @@ public interface StatementContext {
 
         public String resource() {
             return resource;
+        }
+
+        public String variable() {
+            return "{" + key + "}";
         }
 
         public static Key fromKey(String key) {

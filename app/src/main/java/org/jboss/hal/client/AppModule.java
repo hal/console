@@ -38,6 +38,8 @@ import org.jboss.hal.client.deployment.DeploymentPresenter;
 import org.jboss.hal.client.deployment.DeploymentView;
 import org.jboss.hal.client.homepage.HomepagePresenter;
 import org.jboss.hal.client.homepage.HomepageView;
+import org.jboss.hal.client.patching.PatchingPresenter;
+import org.jboss.hal.client.patching.PatchingView;
 import org.jboss.hal.client.runtime.RuntimePresenter;
 import org.jboss.hal.client.runtime.RuntimeView;
 import org.jboss.hal.client.skeleton.FooterPresenter;
@@ -113,6 +115,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 PathsPresenter.MyView.class,
                 PathsView.class,
                 PathsPresenter.MyProxy.class);
+
+        bindPresenter(PatchingPresenter.class,
+                PatchingPresenter.MyView.class,
+                PatchingView.class,
+                PatchingPresenter.MyProxy.class);
 
         bindPresenter(RuntimePresenter.class,
                 RuntimePresenter.MyView.class,

@@ -25,8 +25,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import org.jboss.hal.dmr.Property;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.STORAGE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
@@ -40,6 +39,7 @@ class PropertyFilter implements Predicate<Property> {
     }
 
     @Override
+    @SuppressWarnings("Guava")
     public boolean apply(final Property property) {
         Predicate<Property> filter;
 
@@ -58,8 +58,8 @@ class PropertyFilter implements Predicate<Property> {
             } else {
                 filter = p -> builder.includes.contains(p.getName());
             }
-            if (builder.includeRuntime) {
-                filter = Predicates.and(filter, p -> "runtime".equals(p.getValue().get(STORAGE).asString())); //NON-NLS
+            if (!builder.includeRuntime) {
+                filter = Predicates.and(filter, p -> !RUNTIME.equals(p.getValue().get(STORAGE).asString()));
             }
         }
 

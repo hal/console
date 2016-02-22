@@ -70,6 +70,8 @@ public class ListItem extends AbstractFormItem<List<String>> {
     void assembleUI() {
         super.assembleUI();
 
+        inputGroupContainer.getClassList().add(tags);
+
         errorText.setInnerHTML(MESSAGES.listHint().asString());
         errorText.getClassList().add(CSS.hint);
         Elements.setVisible(errorText, true);

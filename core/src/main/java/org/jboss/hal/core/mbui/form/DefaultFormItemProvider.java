@@ -64,6 +64,8 @@ public class DefaultFormItemProvider implements FormItemProvider {
         ModelNode modelNode = attributeDescription.getValue();
         boolean required = !modelNode.get(NILLABLE).asBoolean(true);
         boolean expressionAllowed = modelNode.get(EXPRESSION_ALLOWED).asBoolean(false);
+        boolean runtime = modelNode.hasDefined(STORAGE) && RUNTIME.equals(modelNode.get(STORAGE).asString());
+        boolean readOnly = modelNode.hasDefined(ACCESS_TYPE) && READ_ONLY.equals(modelNode.get(ACCESS_TYPE).asString());
         String unit = modelNode.hasDefined(UNIT) ? modelNode.get(UNIT).asString() : null;
 
         if (modelNode.hasDefined(TYPE)) {
@@ -130,8 +132,8 @@ public class DefaultFormItemProvider implements FormItemProvider {
                 case OBJECT: {
                     if (valueType != null && ModelType.STRING == valueType) {
                         PropertiesItem propertiesItem = new PropertiesItem(name, label);
-                        List<Property> properties = ModelNodeHelper
-                                .getOrDefault(modelNode, () -> modelNode.get(DEFAULT).asPropertyList(), emptyList());
+                        List<Property> properties = ModelNodeHelper.getOrDefault(modelNode, DEFAULT,
+                                () -> modelNode.get(DEFAULT).asPropertyList(), emptyList());
                         if (!properties.isEmpty()) {
                             Map<String, String> defaultValues = new HashMap<>();
                             for (Property property : properties) {
@@ -179,6 +181,9 @@ public class DefaultFormItemProvider implements FormItemProvider {
                 if (formItem.supportsExpressions()) {
                     formItem.setExpressionAllowed(expressionAllowed);
                 }
+                if (readOnly || runtime) {
+                    formItem.setEnabled(false);
+                }
             }
         }
 
@@ -187,8 +192,11 @@ public class DefaultFormItemProvider implements FormItemProvider {
 
 
     private List<String> stringValues(ModelNode modelNode, String property) {
-        List<ModelNode> nodes = ModelNodeHelper
-                .getOrDefault(modelNode, () -> modelNode.get(property).asList(), emptyList());
-        return Lists.transform(nodes, ModelNode::asString);
+        if (modelNode.hasDefined(property)) {
+            List<ModelNode> nodes = ModelNodeHelper.getOrDefault(modelNode, property,
+                    () -> modelNode.get(property).asList(), emptyList());
+            return Lists.transform(nodes, ModelNode::asString);
+        }
+        return emptyList();
     }
 }

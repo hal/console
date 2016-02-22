@@ -234,6 +234,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         String path = builder.createResource ? Joiner.on('.').join(OPERATIONS, ADD, REQUEST_PROPERTIES) : ATTRIBUTES;
         Iterable<Property> allProperties = ModelNodeHelper.failSafeGet(builder.resourceDescription, path)
                 .asPropertyList();
+        //noinspection Guava
         FluentIterable<Property> fi = FluentIterable.from(allProperties).filter(new PropertyFilter(builder));
         Iterable<Property> filtered = builder.unsorted ? fi.toList() :
                 fi.toSortedList((p1, p2) -> p1.getName().compareTo(p2.getName()));

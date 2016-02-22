@@ -27,6 +27,8 @@ import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
@@ -46,10 +48,10 @@ import static org.jboss.hal.resources.Names.NYI;
  * @author Harald Pehl
  */
 public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
-        implements MessageHandler, FinderContextHandler {
+        implements IsElement, MessageHandler, FinderContextHandler {
 
     // @formatter:off
-    public interface MyView extends View, HasPresenter<HeaderPresenter> {
+    public interface MyView extends View, IsElement, HasPresenter<HeaderPresenter> {
         void update(Environment environment, Endpoints endpoints, User user);
         void selectTlc(String nameToken);
         void showMessage(Message message);
@@ -78,6 +80,11 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         this.environment = environment;
         this.endpoints = endpoints;
         this.user = user;
+    }
+
+    @Override
+    public Element asElement() {
+        return getView().asElement();
     }
 
     @Override

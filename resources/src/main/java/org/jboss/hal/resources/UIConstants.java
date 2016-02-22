@@ -28,13 +28,16 @@ package org.jboss.hal.resources;
  */
 public interface UIConstants {
 
+    String COLLAPSE = "collapse";
     String CONTROLS = "controls";
     String EXPANDED = "expanded";
     String HAS_POPUP = "haspopup";
+    String NBSP = "&nbsp;";
     String OBJECT = "Object";
     String PLACEMENT = "placement";
     String ROLE = "role";
     String TABINDEX = "tabindex";
+    String TABLIST = "tablist";
     String TOGGLE = "toggle";
     String TOOLTIP = "tooltip";
 }

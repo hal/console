@@ -1,0 +1,74 @@
+.model-browser-header, .model-browser-buttons, .model-browser-content {
+  margin-top: 20px;
+}
+
+.model-browser-tree {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.model-browser-header {
+
+  .breadcrumb {
+    background-color: #ededed;
+    margin-bottom: 0;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  li {
+    font-size: 16px;
+
+    .key:after {
+      content: "\21d2";
+      color: #666;
+      font-size: 16px;
+      padding: 0 5px;
+    }
+  }
+
+  li + li:before {
+    content: '/';
+    font-size: 16px;
+    padding: 0 10px;
+  }
+}
+
+.model-browser-tree {
+  overflow: scroll;
+}
+
+.model-browser-content {
+  overflow-x: hidden;
+  overflow-y: scroll;
+
+  .lead {
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 16px;
+    margin-top: 0;
+  }
+
+  .table.attributes, .table.operations {
+    margin-top: 20px;
+    > tbody > tr > td {
+      padding-top: 5px;
+      padding-bottom: 5px;
+    }
+  }
+
+  ul.operation-parameter {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      margin-bottom: 5px;
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}

@@ -33,7 +33,7 @@ public class RequiredValidation<T> implements FormItemValidation<T> {
 
     public RequiredValidation(final FormItem<T> formItem) {
         this.formItem = formItem;
-        errorMessage = CONSTANTS.required();
+        errorMessage = CONSTANTS.requiredField();
     }
 
     @Override

@@ -108,8 +108,6 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         Elements.setVisible(accessControl, su);
         Elements.setVisible(patching, su);
         Elements.setVisible(breadcrumbs, false);
-
-        initWidget(Elements.asWidget(root));
     }
 
     String historyToken(String token) {

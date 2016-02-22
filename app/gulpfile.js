@@ -5,16 +5,20 @@
 
 var gulp = require('gulp'),
     less = require('gulp-less'),
-    autoprefixer = require('gulp-autoprefixer'),
     cssnano = require('gulp-cssnano'),
     rename = require('gulp-rename'),
     copy = require('gulp-copy'),
     del = require('del');
 
-gulp.task('less', function () {
+gulp.task('less-dev', function () {
     return gulp.src('src/main/less/hal.less')
         .pipe(less())
-        .pipe(autoprefixer({browsers: ['last 2 versions'], cascade: false}))
+        .pipe(gulp.dest('src/main/resources/org/jboss/hal/public/css'));
+});
+
+gulp.task('less-prod', function () {
+    return gulp.src('src/main/less/hal.less')
+        .pipe(less())
         .pipe(cssnano())
         .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest('src/main/resources/org/jboss/hal/public/css'));
@@ -27,6 +31,10 @@ gulp.task('copy', function () {
     gulp.src('bower_components/patternfly/dist/img/*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/img', {prefix: 4}));
 
+    // jQuery
+    gulp.src('bower_components/jquery/dist/jquery.*')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
+
     // DataTables
     gulp.src('bower_components/datatables.net/js/jquery.dataTables.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
@@ -35,9 +43,13 @@ gulp.task('copy', function () {
     gulp.src('bower_components/datatables.net-select/js/dataTables.select.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
 
-    // jQuery
-    gulp.src('bower_components/jquery/dist/jquery.*')
+    // jsTree
+    gulp.src('bower_components/jstree/dist/jstree.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
+    gulp.src('bower_components/jstree/dist/themes/default/*.png')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/img', {prefix: 5}));
+    gulp.src('bower_components/jstree/dist/themes/default/*.gif')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/img', {prefix: 5}));
 
     // Typeahead
     gulp.src('bower_components/typeahead.js/dist/typeahead.bundle.*')
@@ -66,11 +78,14 @@ gulp.task('clean', function (cb) {
         'src/main/resources/org/jboss/hal/public/js/**'], cb)
 });
 
-// Default task
-gulp.task('default', ['copy', 'less']);
+// Development task
+gulp.task('dev', ['clean', 'copy', 'less-dev']);
+
+// Production task
+gulp.task('prod', ['clean', 'copy', 'less-prod']);
 
 // Watch
 gulp.task('watch', function () {
     // Watch .less files
-    gulp.watch('src/main/less/**/*.less', ['less']);
+    gulp.watch('src/main/less/**/*.less', ['less-dev']);
 });

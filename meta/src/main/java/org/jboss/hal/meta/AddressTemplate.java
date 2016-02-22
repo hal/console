@@ -26,8 +26,6 @@ import com.google.common.collect.Lists;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jetbrains.annotations.NonNls;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,7 +78,6 @@ public final class AddressTemplate {
 
     private static final String BLANK = "_blank";
     private static final String OPT = "opt:/"; //NON-NLS
-    private static final Logger logger = LoggerFactory.getLogger(AddressTemplate.class);
 
     private final String template;
     private final LinkedList<Token> tokens;
@@ -358,6 +355,8 @@ public final class AddressTemplate {
     }
 
 
+    // TODO tokenizer does not work for addresses like
+    // "subsystem=undertow/server=default-server/host=default-host/location=/"
     private static class StringTokenizer {
 
         private final String delim;

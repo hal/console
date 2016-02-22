@@ -26,7 +26,6 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.DataElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventHandler;
-import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.ballroom.ProgressElement;
 import org.jboss.hal.config.Environment;
@@ -45,7 +44,7 @@ import static org.jboss.gwt.elemento.core.EventType.click;
  * @author Harald Pehl
  */
 @Templated("MainLayout.html#footer")
-public abstract class FooterView extends ViewImpl implements FooterPresenter.MyView, IsElement {
+public abstract class FooterView extends ViewImpl implements FooterPresenter.MyView {
 
     // @formatter:off
     public static FooterView create(final UIRegistry uiRegistry, final Resources resources) {
@@ -70,7 +69,6 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
     void init() {
         uiRegistry().register(progress);
         Elements.setVisible(updateAvailable, false);
-        initWidget(Elements.asWidget(asElement()));
     }
 
     @Override

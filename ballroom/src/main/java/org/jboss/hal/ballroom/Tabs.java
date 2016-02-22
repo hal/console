@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.ballroom.tab;
+package org.jboss.hal.ballroom;
 
 import elemental.dom.Element;
 import jsinterop.annotations.JsMethod;
@@ -28,10 +28,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.UIConstants;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -61,12 +58,15 @@ public class Tabs implements IsElement {
     private final Element tabs;
     private final Element panes;
     private final Map<Integer, String> indexToId;
+    private final Map<String, Element> paneElements;
 
     public Tabs() {
         // @formatter:off
         Elements.Builder builder = new Elements.Builder()
             .div()
-                .ul().css(nav, navTabs, navTabsPf, navTabsHal).attr(UIConstants.ROLE, "tablist").rememberAs(TABS).end() //NON-NLS
+                .ul().css(nav, navTabs, navTabsPf, navTabsHal)
+                    .attr(UIConstants.ROLE, UIConstants.TABLIST)
+                    .rememberAs(TABS).end()
                 .div().css(tabContent).rememberAs(PANES).end()
             .end();
         // @formatter:on
@@ -75,6 +75,7 @@ public class Tabs implements IsElement {
         tabs = builder.referenceFor(TABS);
         panes = builder.referenceFor(PANES);
         indexToId = new HashMap<>();
+        paneElements = new HashMap<>();
     }
 
     @Override
@@ -114,23 +115,25 @@ public class Tabs implements IsElement {
 
         tabs.appendChild(tab);
         panes.appendChild(pane);
+        paneElements.put(id, pane);
         if (tabs.getChildren().getLength() == 1) {
             tab.getClassList().add(active);
         }
         if (panes.getChildren().getLength() == 1) {
             pane.getClassList().add(active);
         }
-
-        List<Element> elements = new ArrayList<>();
-        elements.add(first);
-        if (rest != null) {
-            Collections.addAll(elements, rest);
-        }
-        for (Element element : elements) {
-            pane.appendChild(element);
-        }
+        fillPane(pane, first, rest);
 
         return this;
+    }
+
+    private void fillPane(Element pane, Element first, Element... rest) {
+        pane.appendChild(first);
+        if (rest != null) {
+            for (Element element : rest) {
+                pane.appendChild(element);
+            }
+        }
     }
 
     public void showTab(final int index) {
@@ -140,6 +143,20 @@ public class Tabs implements IsElement {
     public void showTab(final String id) {
         if (id != null) {
             Bridge.select("#" + id).tab("show"); //NON-NLS
+        }
+    }
+
+    public void setContent(final int index, Element first, Element... rest) {
+        setContent(indexToId.get(index), first, rest);
+    }
+
+    public void setContent(final String id, Element first, Element... rest) {
+        if (id != null) {
+            Element pane = paneElements.get(id);
+            if (pane != null) {
+                Elements.removeChildrenFrom(pane);
+                fillPane(pane, first, rest);
+            }
         }
     }
 }

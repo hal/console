@@ -27,8 +27,10 @@ import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.DivElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.HasElements;
+import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.core.mvp.Slots;
-import org.jboss.hal.core.TopLevelCategory;
+import org.jboss.hal.core.mvp.TopLevelCategory;
 import org.jboss.hal.resources.Ids;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,9 +67,12 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
 
     @Override
     public void setInSlot(Object slot, IsWidget content) {
-        Element element = Elements.asElement(content);
 
         if (slot == SLOT_HEADER_CONTENT || slot == SLOT_FOOTER_CONTENT) {
+            // single elements only!
+            Element element = content instanceof IsElement ?
+                    ((IsElement) content).asElement() :
+                    Elements.asElement(content);
             slots.put(slot, element);
             if (!initialized && slots.containsKey(SLOT_HEADER_CONTENT) && slots.containsKey(SLOT_FOOTER_CONTENT)) {
                 // append all three building blocks to the document body
@@ -77,19 +82,34 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
                 body.appendChild(slots.get(SLOT_FOOTER_CONTENT));
                 initialized = true;
             }
-        }
-
-        else if (slot == Slots.MAIN) {
+        } else if (slot == Slots.MAIN) {
+            // single or multiple elements with precedence for multiple elements
+            boolean finished = false;
             Elements.removeChildrenFrom(rootContainer);
-            rootContainer.appendChild(element);
+
+            if (content instanceof HasElements) {
+                Iterable<Element> elements = ((HasElements) content).asElements();
+                if (elements != null) {
+                    for (Element element : elements) {
+                        rootContainer.appendChild(element);
+                    }
+                    finished = true;
+                }
+            }
+
+            if (!finished) {
+                Element element = content instanceof IsElement ?
+                        ((IsElement) content).asElement() :
+                        Elements.asElement(content);
+                rootContainer.appendChild(element);
+            }
+
             if (content instanceof TopLevelCategory) {
                 presenter.tlcMode();
             } else {
                 presenter.applicationMode();
             }
-        }
-
-        else {
+        } else {
             logger.warn("Unknown slot {}. Delegate to super.setInSlot()", slot); //NON-NLS
             super.setInSlot(slot, content);
         }

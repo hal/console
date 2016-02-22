@@ -26,6 +26,9 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
+import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.HasElements;
+import org.jboss.gwt.elemento.core.IsElement;
 
 /**
  * A presenter which calls {@link PatternFlyView#attach()} when it's {@linkplain #onReveal() revealed}. Extend from
@@ -34,7 +37,9 @@ import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
  *
  * @author Harald Pehl
  */
-public abstract class PatternFlyPresenter<V extends PatternFlyView, Proxy_ extends Proxy<?>> extends Presenter<V, Proxy_> {
+public abstract class PatternFlyPresenter<V extends PatternFlyView, Proxy_ extends Proxy<?>>
+        extends Presenter<V, Proxy_>
+        implements IsElement, HasElements {
 
     public PatternFlyPresenter(final EventBus eventBus, final V view, final Proxy_ proxy,
             final GwtEvent.Type<RevealContentHandler<?>> slot) {
@@ -45,5 +50,15 @@ public abstract class PatternFlyPresenter<V extends PatternFlyView, Proxy_ exten
     protected void onReveal() {
         super.onReveal();
         getView().attach();
+    }
+
+    @Override
+    public Element asElement() {
+        return getView().asElement();
+    }
+
+    @Override
+    public Iterable<Element> asElements() {
+        return getView().asElements();
     }
 }
