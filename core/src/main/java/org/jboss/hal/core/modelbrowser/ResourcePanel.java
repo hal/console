@@ -21,9 +21,7 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
-import com.google.common.base.Predicate;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
@@ -34,22 +32,18 @@ import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import java.util.List;
-
 import static org.jboss.hal.core.modelbrowser.ModelBrowser.PLACE_HOLDER_ELEMENT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.resources.CSS.lead;
 
 /**
  * Panel which holds the resource description, the model node form and a detailed description of the attributes and
@@ -63,6 +57,7 @@ class ResourcePanel implements HasElements {
     private static final String EMPTY_ELEMENT = "emptyElement";
 
     private final Dispatcher dispatcher;
+    private final Resources resources;
     private final Elements.Builder builder;
     private final Element description;
     private final Element empty;
@@ -73,6 +68,7 @@ class ResourcePanel implements HasElements {
 
     ResourcePanel(final Dispatcher dispatcher, final Resources resources) {
         this.dispatcher = dispatcher;
+        this.resources = resources;
 
         dataId = IdBuilder.build(Ids.MODEL_BROWSER, "resource", "data", "tab");
         attributesId = IdBuilder.build(Ids.MODEL_BROWSER, "resource", "attributes", "tab");
@@ -125,86 +121,11 @@ class ResourcePanel implements HasElements {
                 form.view(result);
             });
 
-            if (description.hasAttributes()) {
-                tabs.setContent(attributesId, createAttributesTable(description.getAttributes()));
-            }
+            tabs.setContent(attributesId, new AttributesTable(description.getAttributes(), resources).asElement());
             if (description.hasOperations()) {
-                tabs.setContent(operationsId, createOperationsTable(description.getOperations()));
+                tabs.setContent(operationsId, new OperationsTable(description.getOperations(), resources).asElement());
             }
         }
-    }
-
-    private Element createAttributesTable(final List<Property> attributes) {
-        Elements.Builder builder = new Elements.Builder().table()
-                .css(table, tableBordered, tableStriped, CSS.attributes)
-                .thead()
-                .tr()
-                .th().innerText("Attribute").end()
-                .th().innerText("Type").end()
-                .th().innerText("Required").end()
-                .th().innerText("Storage").end()
-                .th().innerText("Read-Only").end()
-                .end()
-                .end();
-
-        builder.tbody();
-        for (Property attribute : attributes) {
-            ModelNode node = attribute.getValue();
-
-            builder.tr();
-            builder.td()
-                    .p().css(main).innerText(attribute.getName()).end()
-                    .p().innerText(node.get(DESCRIPTION).asString()).end()
-                    .end();
-
-            builder.td().p().innerText(node.get(TYPE).asString()).end().end();
-            builder.td().innerHtml(flag(node, n -> !n.get(NILLABLE).asBoolean())).end();
-            builder.td().p().innerText(node.get(STORAGE).asString()).end().end();
-            builder.td().innerHtml(flag(node, n -> "read-only".equals(n.get(ACCESS_TYPE).asString()))).end();
-            builder.end();
-        }
-        return builder.end().end().build();
-    }
-
-    private Element createOperationsTable(final List<Property> operations) {
-        Elements.Builder builder = new Elements.Builder().table()
-                .css(table, tableBordered, tableStriped, CSS.operations)
-                .thead()
-                .tr()
-                .th().css(main).innerText("Name").end()
-                .th().innerText("Input").end()
-                .th().innerText("Output").end()
-                .end()
-                .end();
-
-        builder.tbody();
-        for (Property operation : operations) {
-            ModelNode node = operation.getValue();
-
-            builder.tr();
-            builder.td()
-                    .p().css(main).innerText(operation.getName()).end()
-                    .p().innerText(node.get(DESCRIPTION).asString()).end()
-                    .end();
-            builder.td().p().innerText(Names.NOT_AVAILABLE).end().end();
-            builder.td().p().innerText(Names.NOT_AVAILABLE).end().end();
-            builder.end();
-        }
-        return builder.end().end().build();
-    }
-
-    private SafeHtml flag(ModelNode node, String name) {
-        return flag(node, n -> n.hasDefined(name) && n.get(name).asBoolean());
-    }
-
-    private SafeHtml flag(ModelNode node, Predicate<ModelNode> predicate) {
-        SafeHtmlBuilder builder = new SafeHtmlBuilder();
-        if (predicate.apply(node)) {
-            builder.appendHtmlConstant("<i class=\""+ fontAwesome("check") + "\"></i>"); //NON-NLS
-        } else {
-            builder.appendHtmlConstant("&nbsp;"); //NON-NLS
-        }
-        return builder.toSafeHtml();
     }
 
     void show() {

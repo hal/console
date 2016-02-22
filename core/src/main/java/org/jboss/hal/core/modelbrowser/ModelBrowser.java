@@ -58,6 +58,9 @@ import java.util.Iterator;
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.util.Collections.singleton;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.meta.StatementContext.Key.ANY_GROUP;
+import static org.jboss.hal.meta.StatementContext.Key.ANY_PROFILE;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -86,8 +89,8 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
     private final Element content;
     private final ResourcePanel resourcePanel;
     private final ChildrenPanel childrenPanel;
-    private Tree<Context> tree;
     private ResourceAddress root;
+    Tree<Context> tree;
 
 
     @Inject
@@ -128,7 +131,7 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
         }
         resourcePanel.hide();
 
-        childrenPanel = new ChildrenPanel(dispatcher, resources);
+        childrenPanel = new ChildrenPanel(this, dispatcher, resources);
         for (Element element : childrenPanel.asElements()) {
             content.appendChild(element);
         }
@@ -220,7 +223,8 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
     }
 
     private void showResourceView(Node<Context> node, ResourceAddress address) {
-        AddressTemplate template = asGenericTemplate(address);
+        Node<Context> parent = tree.api().getNode(node.parent);
+        AddressTemplate template = asGenericTemplate(parent, address);
         metadataProcessor.process(Ids.MODEL_BROWSER, singleton(template), progress,
                 new AsyncCallback<Void>() {
                     @Override
@@ -234,26 +238,29 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
                     @Override
                     public void onSuccess(final Void aVoid) {
                         ResourceDescription description = resourceDescriptions.lookup(template);
-                        if (description != null) {
-                            resourcePanel.update(node, node.data.getAddress(), description);
-                            resourcePanel.show();
-                        }
+                        resourcePanel.update(node, node.data.getAddress(), description);
+                        resourcePanel.show();
                     }
                 });
     }
 
-    private AddressTemplate asGenericTemplate(ResourceAddress address) {
+    private AddressTemplate asGenericTemplate(Node<Context> parent, ResourceAddress address) {
         StringBuilder builder = new StringBuilder();
         for (Iterator<Property> iterator = address.asPropertyList().iterator(); iterator.hasNext(); ) {
             Property property = iterator.next();
             String name = property.getName();
 
             if (PROFILE.equals(name)) {
-                builder.append("{any.profile}"); //NON-NLS
-
+                builder.append(ANY_PROFILE.variable());
+            } else if (SERVER_GROUP.equals(name)) {
+                builder.append(ANY_GROUP.variable());
             } else {
                 builder.append(name).append("=");
-                builder.append(property.getValue().asString());
+                if (!iterator.hasNext() && parent != null && parent.data != null && !parent.data.hasSingletons()) {
+                    builder.append("*");
+                } else {
+                    builder.append(property.getValue().asString());
+                }
             }
             if (iterator.hasNext()) {
                 builder.append("/");
@@ -273,7 +280,7 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
                     ". ModelBrowser.setRoot() must be called with a concrete address.");
         }
         Context context = new Context(root, Collections.emptySet());
-        String rootId = IdBuilder.uniqueId();
+        String rootId = IdBuilder.build(Ids.MODEL_BROWSER, "root");
         Node<Context> rootNode = new Node.Builder<>(rootId, resource, context)
                 .folder()
                 .build();

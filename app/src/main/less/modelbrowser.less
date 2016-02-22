@@ -51,11 +51,24 @@
     margin-top: 0;
   }
 
-  .table {
+  .table.attributes, .table.operations {
     margin-top: 20px;
+    > tbody > tr > td {
+      padding-top: 5px;
+      padding-bottom: 5px;
+    }
+  }
 
-    .main {
-      font-weight: 700;
+  ul.operation-parameter {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      margin-bottom: 5px;
+      &:last-child {
+        margin-bottom: 0;
+      }
     }
   }
 }

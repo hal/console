@@ -85,6 +85,7 @@ public class Node<T> {
     public String text;
     public String icon;
     public State state;
+    public String parent;
     public boolean children;
     public T data;
 }

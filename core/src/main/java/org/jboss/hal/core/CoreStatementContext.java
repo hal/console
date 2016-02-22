@@ -46,6 +46,7 @@ public class CoreStatementContext implements StatementContext, ProfileSelectionH
 
         context = new EnumMap<>(Key.class);
         context.put(ANY_PROFILE, "*");
+        context.put(ANY_GROUP, "*");
         context.put(SELECTED_PROFILE, null);
         context.put(SELECTED_GROUP, null);
         context.put(SELECTED_HOST, null);

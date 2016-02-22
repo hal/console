@@ -21,7 +21,9 @@ package org.jboss.hal.resources;
 public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     //@formatter:off
+    String accessType();
     String add();
+    String attribute();
     String attributes();
 
     String back();
@@ -57,7 +59,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String formResetDesc();
 
     String help();
-    String invalidProperty();
+    String input();
 
     String homepageNewToEap();
     String homepageTakeATour();
@@ -144,14 +146,17 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String logout();
     String modelBrowser();
     String metadataError();
+    String name();
     String no();
     String noAttributes();
     String noItems();
     String notANumber();
     String nothingSelected();
     String operations();
+    String output();
     String ping();
     String required();
+    String requiredField();
     String reset();
 
     String restartAllServices();
@@ -166,6 +171,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String settings();
     String showAll();
     String start();
+    String storage();
     String supportsExpressions();
 
     String testConnection();

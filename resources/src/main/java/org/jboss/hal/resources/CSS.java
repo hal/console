@@ -97,7 +97,6 @@ public interface CSS {
     String lead = "lead";
     String loading = "loading";
     String loadingContainer = "loading-container";
-    String main = "main";
     String modal = "modal";
     String modalBody = "modal-body";
     String modalContent = "modal-content";
@@ -119,6 +118,7 @@ public interface CSS {
     String navTabsHal = "nav-tabs-hal";
     String navTabsPf = "nav-tabs-pf";
     String offset = "offset";
+    String operationParameter = "operation-parameter";
     String operations = "operations";
     String panel = "panel";
     String panelBody = "panel-default";

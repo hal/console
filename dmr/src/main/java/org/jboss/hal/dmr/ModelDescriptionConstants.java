@@ -43,6 +43,7 @@ public interface ModelDescriptionConstants {
     String CHILDREN = "children";
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
     String COMPOSITE = "composite";
+    String CONFIGURATION = "configuration";
     String CRITERIA = "criteria";
     String DATA_SOURCE = "data-source";
     String DEFAULT = "default";
@@ -81,6 +82,7 @@ public interface ModelDescriptionConstants {
     String MAX_LENGTH = "max-length";
     String MAX_OCCURS = "max-occurs";
     String MAX_THREADS = "max-threads";
+    String METRIC = "metric";
     String MIN = "min";
     String MIN_LENGTH = "min-length";
     String MIN_OCCURS = "min-occurs";
@@ -106,14 +108,17 @@ public interface ModelDescriptionConstants {
     String READ_CHILDREN_RESOURCES_OPERATION = "read-children-resources";
     String READ_OPERATION_DESCRIPTION_OPERATION = "read-operation-description";
     String READ_OPERATION_NAMES_OPERATION = "read-operation-names";
+    String READ_ONLY = "read-only";
     String READ_RESOURCE_DESCRIPTION_OPERATION = "read-resource-description";
     String READ_RESOURCE_METRICS = "read-resource-metrics";
     String READ_RESOURCE_OPERATION = "read-resource";
+    String READ_WRITE = "read-write";
     String RELATIVE_TO = "relative-to";
     String REMOVE = "remove";
     String REQUEST_PROPERTIES = "request-properties";
     String RECURSIVE = "recursive";
     String RECURSIVE_DEPTH = "recursive-depth";
+    String REPLY_PROPERTIES = "reply-properties";
     String REQUIRED = "required";
     String REQUIRES = "requires";
     String RESPONSE = "response";

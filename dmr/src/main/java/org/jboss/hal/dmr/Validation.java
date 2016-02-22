@@ -47,15 +47,15 @@ public final class Validation {
         typeSpec.get("property", "description", "recommended").set(true);
         typeSpec.get("property", "description", "description").set("The description of the model element type.");
         typeSpec.get("property", "type", "type").set(ModelType.TYPE);
-        typeSpec.get("property", "type", "required").set(true);
+        typeSpec.get("property", "type", "requiredField").set(true);
         typeSpec.get("property", "type", "description").set("The type of the model element type.");
         typeSpec.get("property", "property", "type").set("typeSpecification");
-        typeSpec.get("property", "property", "required").set(true);
+        typeSpec.get("property", "property", "requiredField").set(true);
         typeSpec.get("property", "property", "description")
                 .set("The parameters allowed within this model element type, if it is an OBJECT.");
-        typeSpec.get("property", "required", "type").set(ModelType.BOOLEAN);
-        typeSpec.get("property", "required", "default").set(false);
-        typeSpec.get("property", "required", "description")
+        typeSpec.get("property", "requiredField", "type").set(ModelType.BOOLEAN);
+        typeSpec.get("property", "requiredField", "default").set(false);
+        typeSpec.get("property", "requiredField", "description")
                 .set("Specifies whether a parameter is required to be given.");
         typeSpec.get("property", "recommended", "type").set(ModelType.BOOLEAN);
         typeSpec.get("property", "recommended", "default").set(false);

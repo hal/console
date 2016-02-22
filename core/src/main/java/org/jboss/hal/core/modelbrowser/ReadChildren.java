@@ -25,7 +25,6 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import elemental.js.util.JsArrayOf;
-import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.tree.DataFunction;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.dmr.ModelNode;
@@ -88,7 +87,7 @@ public class ReadChildren implements DataFunction<Context> {
                     }
                     ResourceAddress address = new ResourceAddress(node.data.getAddress()).add(name, "*");
                     Context context = new Context(address, singletons);
-                    Node.Builder<Context> builder = new Node.Builder<>(IdBuilder.uniqueId(), name, context)
+                    Node.Builder<Context> builder = new Node.Builder<>(name, name, context)
                             .folder();
                     if (!singletons.isEmpty()) {
                         builder.icon(fontAwesome("list-ul"));
@@ -114,7 +113,7 @@ public class ReadChildren implements DataFunction<Context> {
                     singletons.remove(name);
                     ResourceAddress address = new ResourceAddress(parentAddress).add(node.text, name);
                     Context context = new Context(address, Collections.emptySet());
-                    Node<Context> child = new Node.Builder<>(IdBuilder.uniqueId(), name, context)
+                    Node<Context> child = new Node.Builder<>(name, name, context)
                             .folder()
                             .icon(fontAwesome("file-text-o"))
                             .build();
@@ -125,7 +124,7 @@ public class ReadChildren implements DataFunction<Context> {
                 for (String singleton : singletons) {
                     ResourceAddress address = new ResourceAddress(parentAddress).add(node.text, singleton);
                     Context context = new Context(address, Collections.emptySet());
-                    Node<Context> child = new Node.Builder<>(IdBuilder.uniqueId(), singleton, context)
+                    Node<Context> child = new Node.Builder<>(singleton, singleton, context)
                             .icon(fontAwesome("file-o"))
                             .disabled()
                             .build();

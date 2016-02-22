@@ -65,6 +65,7 @@ public class DefaultFormItemProvider implements FormItemProvider {
         boolean required = !modelNode.get(NILLABLE).asBoolean(true);
         boolean expressionAllowed = modelNode.get(EXPRESSION_ALLOWED).asBoolean(false);
         boolean runtime = modelNode.hasDefined(STORAGE) && RUNTIME.equals(modelNode.get(STORAGE).asString());
+        boolean readOnly = modelNode.hasDefined(ACCESS_TYPE) && READ_ONLY.equals(modelNode.get(ACCESS_TYPE).asString());
         String unit = modelNode.hasDefined(UNIT) ? modelNode.get(UNIT).asString() : null;
 
         if (modelNode.hasDefined(TYPE)) {
@@ -180,7 +181,7 @@ public class DefaultFormItemProvider implements FormItemProvider {
                 if (formItem.supportsExpressions()) {
                     formItem.setExpressionAllowed(expressionAllowed);
                 }
-                if (runtime) {
+                if (readOnly || runtime) {
                     formItem.setEnabled(false);
                 }
             }

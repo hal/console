@@ -55,14 +55,10 @@ public class SelectBoxBridge {
     // since native JS types can neither hold static references nor initializer
     public static class Defaults {
 
-        private static final Options DEFAULT_OPTIONS = new Options();
-
-        static {
-            DEFAULT_OPTIONS.noneSelectedText = UNDEFINED;
-        }
-
         public static Options get() {
-            return DEFAULT_OPTIONS;
+            Options options = new Options();
+            options.noneSelectedText = UNDEFINED;
+            return options;
         }
     }
 

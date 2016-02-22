@@ -248,7 +248,7 @@
                     <compilerArgs>
                         <compilerArg>-gen</compilerArg>
                         <compilerArg>${project.build.directory}/generated-sources/gwt</compilerArg>
-                    </compilerArgs>
+                   </compilerArgs>
                     <devmodeArgs>
                         <devmodeArg>-startupUrl</devmodeArg>
                         <devmodeArg>hal/dev.html</devmodeArg>
