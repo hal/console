@@ -232,7 +232,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         });
     }
 
-    private void appendColumn(FinderColumn column, AsyncCallback<FinderColumn> callback) {
+    private void appendColumn(FinderColumn<?> column, AsyncCallback<FinderColumn> callback) {
         column.resetSelection();
         columns.put(column.getId(), column);
         root.insertBefore(column.asElement(), previewColumn);
@@ -251,7 +251,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         }
     }
 
-    void reduceTo(FinderColumn column) {
+    void reduceTo(FinderColumn<?> column) {
         boolean removeFromHere = false;
         for (Iterator<Element> iterator = Elements.children(root).iterator(); iterator.hasNext(); ) {
             Element element = iterator.next();

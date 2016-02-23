@@ -22,6 +22,7 @@
 package org.jboss.hal.core.modelbrowser;
 
 import com.google.common.collect.Ordering;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
@@ -64,7 +65,7 @@ class AttributesTable implements IsElement {
         for (Property property : Ordering.natural().onResultOf(Property::getName).sortedCopy(attributes)) {
             ModelNode attribute = property.getValue();
             boolean required = attribute.hasDefined(NILLABLE) && !attribute.get(NILLABLE).asBoolean();
-            String description = helpTextBuilder.helpText(property);
+            SafeHtml description = helpTextBuilder.helpText(property);
 
             builder.tr();
 
@@ -77,7 +78,7 @@ class AttributesTable implements IsElement {
                 html.appendHtmlConstant(NBSP).append(resources.messages().requiredMarker());
             }
             if (description != null) {
-                html.appendHtmlConstant("<br/>").appendEscaped(description); //NON-NLS
+                html.appendHtmlConstant("<br/>").append(description); //NON-NLS
             }
             builder.td().innerHtml(html.toSafeHtml()).end();
 
