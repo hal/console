@@ -22,6 +22,7 @@
 package org.jboss.hal.ballroom.form;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental.dom.Element;
 import elemental.events.EventListener;
 import org.jboss.gwt.elemento.core.Elements;
@@ -35,7 +36,6 @@ import org.jboss.hal.resources.UIConstants;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.google.gwt.safehtml.shared.SafeHtmlUtils.fromSafeConstant;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Form.Operation.EDIT;
 import static org.jboss.hal.ballroom.form.Form.Operation.RESET;
@@ -51,7 +51,7 @@ class FormLinks<T> implements IsElement {
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
     private final StateMachine stateMachine;
-    private final LinkedHashMap<String, String> helpTexts;
+    private final LinkedHashMap<String, SafeHtml> helpTexts;
 
     private final Element root;
     private Element editLink;
@@ -60,7 +60,7 @@ class FormLinks<T> implements IsElement {
 
     FormLinks(final String formId,
             final StateMachine stateMachine,
-            final LinkedHashMap<String, String> helpTexts,
+            final LinkedHashMap<String, SafeHtml> helpTexts,
             final EventListener onEdit,
             final EventListener onReset) {
 
@@ -108,7 +108,7 @@ class FormLinks<T> implements IsElement {
                     .end()
                 .end().build();
             // @formatter:on
-            for (Map.Entry<String, String> entry : helpTexts.entrySet()) {
+            for (Map.Entry<String, SafeHtml> entry : helpTexts.entrySet()) {
                 helpContent.appendChild(help(entry.getKey(), entry.getValue()));
             }
             links.appendChild(helpLink);
@@ -129,7 +129,7 @@ class FormLinks<T> implements IsElement {
         // @formatter:on
     }
 
-    private Element help(String label, String description) {
+    private Element help(String label, SafeHtml description) {
         // @formatter:off
         return new Elements.Builder()
             .div().css(formGroup)
@@ -138,7 +138,7 @@ class FormLinks<T> implements IsElement {
                 .end()
                 .div().css(column(inputColumns))
                     .p().css(formControlStatic)
-                        .innerHtml(fromSafeConstant(description))
+                        .innerHtml(description)
                     .end()
                 .end()
             .end().build();

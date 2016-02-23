@@ -22,6 +22,7 @@
 package org.jboss.hal.core.modelbrowser;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
@@ -60,6 +61,7 @@ import java.util.Map;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.util.Collections.singleton;
+import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 import static org.jboss.hal.meta.StatementContext.Key.ANY_GROUP;
@@ -82,6 +84,7 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
     private final SecurityFramework securityFramework;
     private final ResourceDescriptions resourceDescriptions;
     private final Dispatcher dispatcher;
+    private final EventBus eventBus;
     private final Provider<Progress> progress;
 
     private final Iterable<Element> rows;
@@ -90,6 +93,7 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
     private final Element content;
     private final ResourcePanel resourcePanel;
     private final ChildrenPanel childrenPanel;
+    private boolean breadcrumb;
     Tree<Context> tree;
 
 
@@ -98,6 +102,7 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
             final SecurityFramework securityFramework,
             final ResourceDescriptions resourceDescriptions,
             final Dispatcher dispatcher,
+            final EventBus eventBus,
             @Footer final Provider<Progress> progress,
             final Resources resources) {
 
@@ -105,12 +110,13 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
         this.securityFramework = securityFramework;
         this.resourceDescriptions = resourceDescriptions;
         this.dispatcher = dispatcher;
+        this.eventBus = eventBus;
         this.progress = progress;
 
         buttonGroup = new Elements.Builder()
                 .div().css(btnGroup, modelBrowserButtons)
-                .button().css(btn, btnDefault).add("i").css(fontAwesome("filter")).end()
-                .button().css(btn, btnDefault).add("i").css(fontAwesome("refresh")).end()
+                .button().on(click, event -> onFilter()).css(btn, btnDefault).add("i").css(fontAwesome("filter")).end()
+                .button().on(click, event -> onRefresh()).css(btn, btnDefault).add("i").css(fontAwesome("refresh")).end()
                 .end()
                 .build();
         treeContainer = new Elements.Builder().div().css(modelBrowserTree).end().build();
@@ -184,6 +190,9 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
     }
 
     private void updateBreadcrumb(ResourceAddress address) {
+        if (breadcrumb) {
+            eventBus.fireEvent(new ModelBrowserAddressEvent(address));
+        }
     }
 
     private void showResourceView(Node<Context> node, ResourceAddress address) {
@@ -237,6 +246,14 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
 
     // ------------------------------------------------------ event handler
 
+    private void onFilter() {
+        Browser.getWindow().alert(NYI);
+    }
+
+    private void onRefresh() {
+        Browser.getWindow().alert(NYI);
+    }
+
     void onAdd() {
         Browser.getWindow().alert(NYI);
     }
@@ -257,6 +274,7 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
     // ------------------------------------------------------ public API
 
     public void setRoot(ResourceAddress root, boolean breadcrumb) {
+        this.breadcrumb = breadcrumb;
         String resource = root == ResourceAddress.ROOT ? Names.MANAGEMENT_MODEL : root.lastValue();
         if ("*".equals(resource)) {
             throw new IllegalArgumentException("Invalid root address: " + root +

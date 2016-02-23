@@ -24,6 +24,9 @@ package org.jboss.hal.core.mbui.form;
 import com.google.common.base.Joiner;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import org.jboss.hal.ballroom.HelpTextBuilder;
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
 import org.jboss.hal.ballroom.form.DataMapping;
 import org.jboss.hal.ballroom.form.DefaultForm;
@@ -32,7 +35,6 @@ import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.StateMachine;
 import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
-import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
@@ -254,7 +256,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             if (formItem != null) {
                 addFormItem(formItem);
                 if (attribute.hasDefined(DESCRIPTION)) {
-                    String helpText = helpTextBuilder.helpText(formItem, attribute);
+                    SafeHtml helpText = helpTextBuilder.helpText(property);
                     addHelp(labelBuilder.label(property), helpText);
                 }
             } else {

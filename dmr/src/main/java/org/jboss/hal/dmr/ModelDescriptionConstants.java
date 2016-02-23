@@ -54,7 +54,7 @@ public interface ModelDescriptionConstants {
     String ENABLED = "enabled";
     String EXCEPTIONS = "exceptions";
     String EXECUTE = "execute";
-    String EXPRESSION_ALLOWED = "expression-allowed";
+    String EXPRESSIONS_ALLOWED = "expressions-allowed";
     String EXTENSION = "extension";
     String FAILED = "failed";
     String FAILURE_DESCRIPTION = "failure-description";

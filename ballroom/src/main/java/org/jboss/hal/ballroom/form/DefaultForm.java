@@ -25,6 +25,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.events.EventListener;
@@ -35,7 +36,6 @@ import elemental.html.SpanElement;
 import elemental.html.UListElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.LazyElement;
-import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
@@ -74,7 +74,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     private final DataMapping<T> dataMapping;
     private final LinkedHashMap<State, Element> panels;
     private final LinkedHashMap<String, FormItem> formItems;
-    private final LinkedHashMap<String, String> helpTexts;
+    private final LinkedHashMap<String, SafeHtml> helpTexts;
     private final List<FormValidation> formValidations;
 
     private T model;
@@ -120,7 +120,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         }
     }
 
-    protected void addHelp(String label, String description) {
+    protected void addHelp(String label, SafeHtml description) {
         helpTexts.put(label, description);
     }
 

@@ -35,7 +35,10 @@ import org.jboss.hal.config.User;
 import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderContextEvent;
 import org.jboss.hal.core.finder.FinderContextEvent.FinderContextHandler;
+import org.jboss.hal.core.modelbrowser.ModelBrowserAddressEvent;
+import org.jboss.hal.core.modelbrowser.ModelBrowserAddressEvent.ModelBrowserAddressHandler;
 import org.jboss.hal.core.mvp.HasPresenter;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.MessageEvent.MessageHandler;
@@ -48,7 +51,7 @@ import static org.jboss.hal.resources.Names.NYI;
  * @author Harald Pehl
  */
 public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
-        implements IsElement, MessageHandler, FinderContextHandler {
+        implements IsElement, MessageHandler, FinderContextHandler, ModelBrowserAddressHandler {
 
     // @formatter:off
     public interface MyView extends View, IsElement, HasPresenter<HeaderPresenter> {
@@ -57,8 +60,9 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         void showMessage(Message message);
         void tlcMode();
         void applicationMode();
-        void updatePath(FinderContext finderContext);
+        void updateBack(FinderContext finderContext);
         void updateBreadcrumb(FinderContext finderContext);
+        void updateBreadcrumb(ResourceAddress address);
     }
     // @formatter:on
 
@@ -92,6 +96,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         super.onBind();
         registerHandler(getEventBus().addHandler(MessageEvent.getType(), this));
         registerHandler(getEventBus().addHandler(FinderContextEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(ModelBrowserAddressEvent.getType(), this));
         getView().setPresenter(this);
         getView().update(environment, endpoints, user);
     }
@@ -131,8 +136,13 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
 
     @Override
     public void onFinderContext(final FinderContextEvent event) {
-        getView().updatePath(event.getFinderContext());
+        getView().updateBack(event.getFinderContext());
         getView().updateBreadcrumb(event.getFinderContext());
+    }
+
+    @Override
+    public void onModelBrowserAddress(final ModelBrowserAddressEvent event) {
+        getView().updateBreadcrumb(event.getAddress());
     }
 
     public void tlcMode() {

@@ -49,11 +49,11 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-public class DefaultFormItemProvider implements FormItemProvider {
+class DefaultFormItemProvider implements FormItemProvider {
 
     private final LabelBuilder labelBuilder;
 
-    public DefaultFormItemProvider() {labelBuilder = new LabelBuilder();}
+    DefaultFormItemProvider() {labelBuilder = new LabelBuilder();}
 
     @Override
     public FormItem<?> createFrom(final Property attributeDescription) {
@@ -62,8 +62,9 @@ public class DefaultFormItemProvider implements FormItemProvider {
         String name = attributeDescription.getName();
         String label = labelBuilder.label(attributeDescription);
         ModelNode modelNode = attributeDescription.getValue();
-        boolean required = !modelNode.get(NILLABLE).asBoolean(true);
-        boolean expressionAllowed = modelNode.get(EXPRESSION_ALLOWED).asBoolean(false);
+        boolean required = modelNode.hasDefined(NILLABLE) && !modelNode.get(NILLABLE).asBoolean();
+        boolean expressionAllowed = modelNode.hasDefined(EXPRESSIONS_ALLOWED) && modelNode.get(EXPRESSIONS_ALLOWED)
+                .asBoolean();
         boolean runtime = modelNode.hasDefined(STORAGE) && RUNTIME.equals(modelNode.get(STORAGE).asString());
         boolean readOnly = modelNode.hasDefined(ACCESS_TYPE) && READ_ONLY.equals(modelNode.get(ACCESS_TYPE).asString());
         String unit = modelNode.hasDefined(UNIT) ? modelNode.get(UNIT).asString() : null;

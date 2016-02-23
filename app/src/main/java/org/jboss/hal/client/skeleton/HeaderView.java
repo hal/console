@@ -39,8 +39,11 @@ import org.jboss.hal.config.User;
 import org.jboss.hal.core.finder.Breadcrumb;
 import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.slf4j.Logger;
@@ -204,7 +207,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     }
 
     @Override
-    public void updatePath(final FinderContext finderContext) {
+    public void updateBack(final FinderContext finderContext) {
         String token = finderContext.getToken();
         if (token != null) {
             String historyToken = historyToken(token, finderContext.getPath());
@@ -246,6 +249,33 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
             }
             builder.end(); // </li>
             breadcrumbs.appendChild(builder.build());
+        }
+    }
+
+    @Override
+    public void updateBreadcrumb(final ResourceAddress address) {
+        while (breadcrumbs.getLastChild() != null && breadcrumbs.getChildren().getLength() > 1) {
+            breadcrumbs.removeChild(breadcrumbs.getLastChild());
+        }
+
+        if (address == null) {
+            // deselection
+            breadcrumbs.appendChild(
+                    new Elements.Builder().li().innerText(resources().constants().nothingSelected()).build());
+
+        } else {
+            if (address == ResourceAddress.ROOT) {
+                breadcrumbs.appendChild(new Elements.Builder().li().innerText(Names.MANAGEMENT_MODEL).build());
+
+            } else {
+                for (Property property : address.asPropertyList()) {
+                    Element li = new Elements.Builder().li()
+                            .span().css(key).innerText(property.getName()).end()
+                            .span().css(value).innerText(property.getValue().asString()).end()
+                            .end().build();
+                    breadcrumbs.appendChild(li);
+                }
+            }
         }
     }
 

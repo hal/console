@@ -27,6 +27,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.HelpTextBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.CSS;
@@ -47,6 +48,7 @@ class AttributesTable implements IsElement {
 
     AttributesTable(final List<Property> attributes, final Resources resources) {
 
+        HelpTextBuilder helpTextBuilder = new HelpTextBuilder();
         Elements.Builder builder = new Elements.Builder().table()
                 .css(table, tableBordered, tableStriped, CSS.attributes)
                 .thead()
@@ -62,7 +64,7 @@ class AttributesTable implements IsElement {
         for (Property property : Ordering.natural().onResultOf(Property::getName).sortedCopy(attributes)) {
             ModelNode attribute = property.getValue();
             boolean required = attribute.hasDefined(NILLABLE) && !attribute.get(NILLABLE).asBoolean();
-            String description = attribute.hasDefined(DESCRIPTION) ? attribute.get(DESCRIPTION).asString() : null;
+            String description = helpTextBuilder.helpText(property);
 
             builder.tr();
 

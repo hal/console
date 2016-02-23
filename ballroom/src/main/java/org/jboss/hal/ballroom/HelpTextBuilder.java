@@ -19,12 +19,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.core.mbui.form;
+package org.jboss.hal.ballroom;
 
 import com.google.common.base.Joiner;
 import com.google.gwt.core.client.GWT;
-import org.jboss.hal.ballroom.form.FormItem;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Names;
@@ -34,9 +36,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jboss.hal.core.mbui.form.HelpTextBuilder.RestartMode.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.UNIT;
+import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.dispatch.ProcessStateProcessor.RESTART_REQUIRED;
 
 /**
@@ -47,7 +48,7 @@ import static org.jboss.hal.dmr.dispatch.ProcessStateProcessor.RESTART_REQUIRED;
  * TODO Add info about capabilities & requirements
  * TODO Add info about "requires"
  */
-class HelpTextBuilder {
+public class HelpTextBuilder {
 
     enum RestartMode {
         ALL_SERVICES(CONSTANTS.restartAllServices()),
@@ -72,39 +73,43 @@ class HelpTextBuilder {
     private static final Messages MESSAGES = GWT.create(Messages.class);
     private static final Logger logger = LoggerFactory.getLogger(HelpTextBuilder.class);
 
-    String helpText(FormItem formItem, ModelNode description) {
-        StringBuilder help = new StringBuilder();
-        String desc = description.get(DESCRIPTION).asString();
+    public SafeHtml helpText(Property property) {
+        SafeHtmlBuilder help = new SafeHtmlBuilder();
+        ModelNode attribute = property.getValue();
+        String desc = attribute.get(DESCRIPTION).asString();
+        boolean required = attribute.hasDefined(NILLABLE) && !attribute.get(NILLABLE).asBoolean();
+        boolean supportsExpression = attribute.hasDefined(EXPRESSIONS_ALLOWED) && attribute.get(EXPRESSIONS_ALLOWED)
+                .asBoolean();
         if (!desc.endsWith(".")) {
             desc = desc + ".";
         }
-        help.append(desc);
+        help.appendEscaped(desc);
 
-        RestartMode restartMode = restartRequired(description);
+        RestartMode restartMode = restartRequired(attribute);
         if (restartMode == UNKNOWN) {
-            logger.warn("Unknown restart mode in attribute description for '{}': '{}'", formItem.getName(), //NON-NLS
-                    description.get(RESTART_REQUIRED).asString());
+            logger.warn("Unknown restart mode in attribute description for '{}': '{}'", property.getName(), //NON-NLS
+                    attribute.get(RESTART_REQUIRED).asString());
         }
         boolean showRestartHelp = (restartMode == ALL_SERVICES || restartMode == JVM || restartMode == RESOURCE_SERVICES);
 
         List<String> textModules = new ArrayList<>();
-        if (formItem.isRequired()) {
+        if (required) {
             textModules.add(CONSTANTS.requiredField());
         }
-        if (formItem.supportsExpressions()) {
+        if (supportsExpression) {
             textModules.add(CONSTANTS.supportsExpressions());
         }
-        if (description.hasDefined(UNIT)) {
-            textModules.add(MESSAGES.unit(description.get(UNIT).asString().toLowerCase()));
+        if (attribute.hasDefined(UNIT)) {
+            textModules.add(MESSAGES.unit(attribute.get(UNIT).asString().toLowerCase()));
         }
         if (showRestartHelp) {
             textModules.add(restartMode.description());
         }
         if (!textModules.isEmpty()) {
-            help.append(" ").append(Joiner.on(". ").join(textModules)).append(".");
+            help.appendHtmlConstant("<br/>").appendEscaped(Joiner.on(". ").join(textModules)).append('.');
         }
 
-        return help.toString();
+        return help.toSafeHtml();
     }
 
     @SuppressWarnings("HardCodedStringLiteral")

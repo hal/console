@@ -52,14 +52,14 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
  */
 class ReadChildren implements DataFunction<Context> {
 
-    private static final String ID_SEPARATOR = "|";
+    private static final String ID_SEPARATOR = "_o_";
     private static final String NO_SINGLETON = "no_singleton";
 
     static String uniqueId(Node<Context> parent, String name) {
         String parentId = parent.id;
         int index = parent.id.indexOf(ID_SEPARATOR);
         if (index != -1) {
-            parentId = parent.id.substring(index + 1, parent.id.length());
+            parentId = parent.id.substring(index + ID_SEPARATOR.length(), parent.id.length());
         }
         return parentId + ID_SEPARATOR + name;
     }
