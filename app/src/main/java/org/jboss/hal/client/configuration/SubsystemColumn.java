@@ -29,6 +29,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.client.tools.ModelBrowserPresenter;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
@@ -131,8 +132,10 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                                     item -> placeManager.revealPlace(placeRequest)));
 
                         } else if (!item.isBuiltIn()) {
-                            placeRequest = new PlaceRequest.Builder().nameToken(NameTokens.MODEL_BROWSER)
-                                    .with("path", item.getName())
+                            placeRequest = new PlaceRequest.Builder()
+                                    .nameToken(NameTokens.MODEL_BROWSER)
+                                    .with(ModelBrowserPresenter.ADDRESS_PARAM,
+                                            "{selected.profile}/subsystem=" + item.getName()) //NON-NLS
                                     .build();
                             return Collections.singletonList(new ItemAction<>(resources.constants().view(),
                                     item -> placeManager.revealPlace(placeRequest)));

@@ -19,30 +19,29 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.patching;
+package org.jboss.hal.client.tools;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.layout.LayoutBuilder;
+import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
-import org.jboss.hal.resources.Names;
+import org.jboss.hal.dmr.model.ResourceAddress;
 
-import static org.jboss.hal.resources.Names.NYI;
+import javax.inject.Inject;
 
 /**
  * @author Harald Pehl
  */
-public class PatchingView extends PatternFlyViewImpl implements PatchingPresenter.MyView {
+public class ModelBrowserView extends PatternFlyViewImpl implements ModelBrowserPresenter.MyView {
 
-    public PatchingView() {
-        Element p = new Elements.Builder().p().innerText(NYI).end().build();
-        initElement(new LayoutBuilder()
-                .row()
-                .column()
-                .header(Names.PATCHING)
-                .add(p)
-                .end()
-                .end()
-                .build());
+    private final ModelBrowser modelBrowser;
+
+    @Inject
+    public ModelBrowserView(ModelBrowser modelBrowser) {
+        this.modelBrowser = modelBrowser;
+        initElements(modelBrowser);
+    }
+
+    @Override
+    public void setRoot(final ResourceAddress root) {
+        modelBrowser.setRoot(root, root == ResourceAddress.ROOT);
     }
 }

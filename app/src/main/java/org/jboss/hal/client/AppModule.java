@@ -26,6 +26,8 @@ import com.gwtplatform.mvp.client.annotations.ErrorPlace;
 import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
 import com.gwtplatform.mvp.shared.proxy.RouteTokenFormatter;
+import org.jboss.hal.client.accesscontrol.AccessControlPresenter;
+import org.jboss.hal.client.accesscontrol.AccessControlView;
 import org.jboss.hal.client.configuration.ConfigurationPresenter;
 import org.jboss.hal.client.configuration.ConfigurationView;
 import org.jboss.hal.client.configuration.InterfacePresenter;
@@ -46,6 +48,8 @@ import org.jboss.hal.client.skeleton.FooterPresenter;
 import org.jboss.hal.client.skeleton.HeaderPresenter;
 import org.jboss.hal.client.skeleton.Templated_FooterView_Provider;
 import org.jboss.hal.client.skeleton.Templated_HeaderView_Provider;
+import org.jboss.hal.client.tools.ModelBrowserPresenter;
+import org.jboss.hal.client.tools.ModelBrowserView;
 import org.jboss.hal.client.utb.UnderTheBridgePresenter;
 import org.jboss.hal.client.utb.UnderTheBridgeView;
 import org.jboss.hal.core.gin.AbstractTemplatedPresenterModule;
@@ -86,6 +90,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
 
         // ------------------------------------------------------ remaining presenter (A-Z)
 
+        bindPresenter(AccessControlPresenter.class,
+                AccessControlPresenter.MyView.class,
+                AccessControlView.class,
+                AccessControlPresenter.MyProxy.class);
+
         bindPresenter(ConfigurationPresenter.class,
                 ConfigurationPresenter.MyView.class,
                 ConfigurationView.class,
@@ -110,6 +119,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 InterfacePresenter.MyView.class,
                 InterfaceView.class,
                 InterfacePresenter.MyProxy.class);
+
+        bindPresenter(ModelBrowserPresenter.class,
+                ModelBrowserPresenter.MyView.class,
+                ModelBrowserView.class,
+                ModelBrowserPresenter.MyProxy.class);
 
         bindPresenter(PathsPresenter.class,
                 PathsPresenter.MyView.class,

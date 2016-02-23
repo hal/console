@@ -21,9 +21,13 @@
  */
 package org.jboss.hal.ballroom;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import org.jboss.hal.dmr.Property;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,8 +60,8 @@ public class LabelBuilder {
 
     public String label(String name) {
         String label = name;
-        label = replaceSpecial(label);
         label = label.replace('-', ' ');
+        label = replaceSpecial(label);
         label = capitalize(label);
         return label;
     }
@@ -78,10 +82,16 @@ public class LabelBuilder {
     }
 
     private String replaceSpecial(final String label) {
-        String replaced = label;
-        for (Map.Entry<String, String> entry : SPECIALS.entrySet()) {
-            replaced = replaced.replace(entry.getKey(), entry.getValue());
+        List<String> replacedParts = new ArrayList<>();
+        for (String part : Splitter.on(' ').split(label)) {
+            String replaced = part;
+            for (Map.Entry<String, String> entry : SPECIALS.entrySet()) {
+                if (replaced.length() == entry.getKey().length()) {
+                    replaced = replaced.replace(entry.getKey(), entry.getValue());
+                }
+            }
+            replacedParts.add(replaced);
         }
-        return replaced;
+        return Joiner.on(" ").join(replacedParts);
     }
 }

@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.ballroom.dialog;
 
+import com.google.common.collect.Iterables;
 import com.google.gwt.core.client.GWT;
 import elemental.client.Browser;
 import elemental.dom.Element;
@@ -179,6 +180,13 @@ public class Dialog implements IsElement {
         public Builder add(Element... elements) {
             if (elements != null) {
                 this.elements.addAll(Arrays.asList(elements));
+            }
+            return this;
+        }
+
+        public Builder add(Iterable<Element> elements) {
+            if (elements != null) {
+                Iterables.addAll(this.elements, elements);
             }
             return this;
         }

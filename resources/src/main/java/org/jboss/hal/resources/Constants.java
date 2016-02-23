@@ -22,6 +22,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     //@formatter:off
     String accessType();
+    String action();
     String add();
     String attribute();
     String attributes();
@@ -155,6 +156,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String operations();
     String output();
     String ping();
+    String removeResource();
     String required();
     String requiredField();
     String reset();

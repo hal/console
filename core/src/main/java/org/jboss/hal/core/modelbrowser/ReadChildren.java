@@ -46,16 +46,27 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 
 /**
  * Function which gets invoked when the user opens a node in the model browser tree.
+ * TODO Error handling
  *
  * @author Harald Pehl
  */
-public class ReadChildren implements DataFunction<Context> {
+class ReadChildren implements DataFunction<Context> {
 
+    private static final String ID_SEPARATOR = "|";
     private static final String NO_SINGLETON = "no_singleton";
+
+    static String uniqueId(Node<Context> parent, String name) {
+        String parentId = parent.id;
+        int index = parent.id.indexOf(ID_SEPARATOR);
+        if (index != -1) {
+            parentId = parent.id.substring(index + 1, parent.id.length());
+        }
+        return parentId + ID_SEPARATOR + name;
+    }
 
     private final Dispatcher dispatcher;
 
-    public ReadChildren(final Dispatcher dispatcher) {
+    ReadChildren(final Dispatcher dispatcher) {
         this.dispatcher = dispatcher;
     }
 
@@ -87,7 +98,8 @@ public class ReadChildren implements DataFunction<Context> {
                     }
                     ResourceAddress address = new ResourceAddress(node.data.getAddress()).add(name, "*");
                     Context context = new Context(address, singletons);
-                    Node.Builder<Context> builder = new Node.Builder<>(name, name, context)
+                    // ids need to be unique!
+                    Node.Builder<Context> builder = new Node.Builder<>(uniqueId(node, name), name, context)
                             .folder();
                     if (!singletons.isEmpty()) {
                         builder.icon(fontAwesome("list-ul"));
@@ -113,7 +125,7 @@ public class ReadChildren implements DataFunction<Context> {
                     singletons.remove(name);
                     ResourceAddress address = new ResourceAddress(parentAddress).add(node.text, name);
                     Context context = new Context(address, Collections.emptySet());
-                    Node<Context> child = new Node.Builder<>(name, name, context)
+                    Node<Context> child = new Node.Builder<>(uniqueId(node, name), name, context)
                             .folder()
                             .icon(fontAwesome("file-text-o"))
                             .build();
@@ -124,7 +136,7 @@ public class ReadChildren implements DataFunction<Context> {
                 for (String singleton : singletons) {
                     ResourceAddress address = new ResourceAddress(parentAddress).add(node.text, singleton);
                     Context context = new Context(address, Collections.emptySet());
-                    Node<Context> child = new Node.Builder<>(singleton, singleton, context)
+                    Node<Context> child = new Node.Builder<>(uniqueId(node, singleton), singleton, context)
                             .icon(fontAwesome("file-o"))
                             .disabled()
                             .build();

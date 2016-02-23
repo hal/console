@@ -28,6 +28,7 @@ package org.jboss.hal.resources;
  */
 public interface Names {
 
+    String ACCESS_CONTROL = "Access Control";
     String ATTRIBUTES = "Attributes";
     String CONFIGURATION = "Configuration";
     String CONTENT_REPOSITORY = "Content Repository";
@@ -44,8 +45,10 @@ public interface Names {
     String NOT_AVAILABLE = "n/a";
     String NOT_SUPPORTED = "not supported";
     String NYI = "not yet implemented";
+    String PATCHING = "Patching";
     String PATHS = "Paths";
     String PROFILES = "Profiles";
+    String RESOURCE = "Resource";
     String RUNTIME = "Runtime";
     String SERVER = "Server";
     String SERVER_GROUPS = "Server Groups";

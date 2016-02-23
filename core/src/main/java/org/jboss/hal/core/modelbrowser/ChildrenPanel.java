@@ -23,13 +23,13 @@ package org.jboss.hal.core.modelbrowser;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.Button.Scope;
 import org.jboss.hal.ballroom.table.DataTable;
@@ -47,6 +47,7 @@ import org.jboss.hal.resources.Resources;
 
 import java.util.List;
 
+import static org.jboss.hal.core.modelbrowser.ReadChildren.uniqueId;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 import static org.jboss.hal.resources.CSS.clickable;
@@ -66,7 +67,7 @@ class ChildrenPanel implements HasElements, Attachable {
     private final Elements.Builder builder;
     private final Element header;
     private final DataTable<String> table;
-    private Node<Context> currentNode;
+    private Node<Context> parent;
 
     ChildrenPanel(final ModelBrowser modelBrowser, final Dispatcher dispatcher, final Resources resources) {
         this.modelBrowser = modelBrowser;
@@ -74,13 +75,18 @@ class ChildrenPanel implements HasElements, Attachable {
 
         //noinspection HardCodedStringLiteral
         Options<String> options = new OptionsBuilder<String>()
-                .column("resource", "Resource", (cell, type, row, meta) -> row)
-                .column("action", "Action", (cell, type, row, meta) ->
+                .column("resource", Names.RESOURCE, (cell, type, row, meta) -> row)
+                .column("action", resources.constants().action(), (cell, type, row, meta) ->
                         "<a data-" + VIEW_RESOURCE_DATA + "=\"" + row +
                                 "\" class=\"" + clickable + "\">" + resources.constants().view() + "</a>")
-                .button(resources.constants().add(), (event, api) -> Browser.getWindow().alert(Names.NYI))
+                .button(resources.constants().add(), (event, api) -> modelBrowser.onAdd())
                 .button(resources.constants().remove(), Scope.SELECTED,
-                        (event, api) -> Browser.getWindow().alert(Names.NYI))
+                        (event, api) -> DialogFactory.confirmation(resources.constants().removeResource(),
+                                resources.messages().removeConfirmationQuestion(api.selectedRow()),
+                                () -> {
+                                    modelBrowser.onRemove(api.selectedRow());
+                                    return false;
+                                }).show())
                 .paging(false)
                 .build();
 
@@ -109,10 +115,10 @@ class ChildrenPanel implements HasElements, Attachable {
         for (int i = 0; i < links.getLength(); i++) {
             Element link = (Element) links.item(i);
             String name = String.valueOf(link.getDataset().at(VIEW_RESOURCE_DATA));
-            link.setOnclick(event -> modelBrowser.tree.api().openNode(currentNode.id,
+            link.setOnclick(event -> modelBrowser.tree.api().openNode(parent.id,
                     () -> {
-                        modelBrowser.tree.api().deselectNode(currentNode.id, true);
-                        modelBrowser.tree.api().selectNode(name, false, true);
+                        modelBrowser.tree.api().deselectNode(parent.id, true);
+                        modelBrowser.tree.api().selectNode(uniqueId(parent, name), false, true);
                         modelBrowser.tree.asElement().focus();
                     }));
         }
@@ -120,7 +126,7 @@ class ChildrenPanel implements HasElements, Attachable {
 
     @SuppressWarnings("HardCodedStringLiteral")
     void update(final Node<Context> node, final ResourceAddress address) {
-        this.currentNode = node;
+        this.parent = node;
 
         SafeHtmlBuilder safeHtml = new SafeHtmlBuilder();
         if (node.data.hasSingletons()) {

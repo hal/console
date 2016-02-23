@@ -19,30 +19,35 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.patching;
+package org.jboss.hal.client.accesscontrol;
 
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.layout.LayoutBuilder;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
-import org.jboss.hal.resources.Names;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyStandard;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.TopLevelPresenter;
+import org.jboss.hal.meta.token.NameTokens;
 
-import static org.jboss.hal.resources.Names.NYI;
+import javax.inject.Inject;
 
 /**
  * @author Harald Pehl
  */
-public class PatchingView extends PatternFlyViewImpl implements PatchingPresenter.MyView {
+public class AccessControlPresenter extends TopLevelPresenter<AccessControlPresenter.MyView, AccessControlPresenter.MyProxy> {
 
-    public PatchingView() {
-        Element p = new Elements.Builder().p().innerText(NYI).end().build();
-        initElement(new LayoutBuilder()
-                .row()
-                .column()
-                .header(Names.PATCHING)
-                .add(p)
-                .end()
-                .end()
-                .build());
+    // @formatter:off
+    @ProxyStandard
+    @NameToken(NameTokens.ACCESS_CONTROL)
+    public interface MyProxy extends ProxyPlace<AccessControlPresenter> {}
+
+    public interface MyView extends PatternFlyView {}
+    // @formatter:on
+
+
+    @Inject
+    public AccessControlPresenter(final EventBus eventBus,
+            final MyView view, final MyProxy proxy) {
+        super(eventBus, view, proxy);
     }
 }

@@ -56,6 +56,7 @@ class ResourcePanel implements HasElements {
     private static final String DESCRIPTION_ELEMENT = "descriptionElement";
     private static final String EMPTY_ELEMENT = "emptyElement";
 
+    private final ModelBrowser modelBrowser;
     private final Dispatcher dispatcher;
     private final Resources resources;
     private final Elements.Builder builder;
@@ -66,7 +67,8 @@ class ResourcePanel implements HasElements {
     private final String attributesId;
     private final String operationsId;
 
-    ResourcePanel(final Dispatcher dispatcher, final Resources resources) {
+    ResourcePanel(final ModelBrowser modelBrowser, final Dispatcher dispatcher, final Resources resources) {
+        this.modelBrowser = modelBrowser;
         this.dispatcher = dispatcher;
         this.resources = resources;
 
@@ -96,7 +98,8 @@ class ResourcePanel implements HasElements {
         return builder.elements();
     }
 
-    void update(Node<Context> node, ResourceAddress address, ResourceDescription description) {
+    void update(Node<Context> node, ResourceAddress address,
+            SecurityContext securityContext, ResourceDescription description) {
         SafeHtml safeHtml = SafeHtmlUtils.fromSafeConstant(description.getDescription());
         Elements.innerHtml(this.description, safeHtml);
 
@@ -112,8 +115,10 @@ class ResourcePanel implements HasElements {
                     .build();
             dispatcher.execute(operation, result -> {
                 ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(
-                        IdBuilder.build(Ids.MODEL_BROWSER, node.id, "form"), SecurityContext.RWX, description)
+                        IdBuilder.build(Ids.MODEL_BROWSER, node.id, "form"), securityContext, description)
                         .includeRuntime()
+                        .onReset(modelBrowser::onReset)
+                        .onSave(modelBrowser::onSave)
                         .build();
                 tabs.setContent(dataId, form.asElement());
                 PatternFly.initComponents();

@@ -404,6 +404,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                     selectColumn(column.getId());
                     FinderRow row = column.selectedRow();
                     if (row != null) {
+                        row.asElement().scrollIntoView(false);
                         row.appendNextColumn();
                         row.showPreview();
                     }

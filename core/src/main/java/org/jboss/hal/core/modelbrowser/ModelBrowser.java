@@ -28,11 +28,13 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.tree.SelectionChangeHandler.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
 import org.jboss.hal.core.ui.Skeleton;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -42,7 +44,7 @@ import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
-import org.jboss.hal.resources.CSS;
+import org.jboss.hal.meta.security.SecurityFramework;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -54,6 +56,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.util.Collections.singleton;
@@ -62,6 +65,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 import static org.jboss.hal.meta.StatementContext.Key.ANY_GROUP;
 import static org.jboss.hal.meta.StatementContext.Key.ANY_PROFILE;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.Names.NYI;
 
 /**
  * @author Harald Pehl
@@ -70,51 +74,38 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
 
     private static final int MARGIN_BIG = 20; // keep this in sync with the
     private static final int MARGIN_SMALL = 10; // margins in modelbrowser.less
-    private static final String BREADCRUMB_ELEMENT = "breadcrumbElement";
     static final Element PLACE_HOLDER_ELEMENT = Browser.getDocument().createDivElement();
 
     private static final Logger logger = LoggerFactory.getLogger(ModelBrowser.class);
 
     private final MetadataProcessor metadataProcessor;
+    private final SecurityFramework securityFramework;
     private final ResourceDescriptions resourceDescriptions;
     private final Dispatcher dispatcher;
     private final Provider<Progress> progress;
-    private final Resources resources;
 
     private final Iterable<Element> rows;
-    private final Element header;
-    private final Element breadcrumb;
     private final Element buttonGroup;
     private final Element treeContainer;
     private final Element content;
     private final ResourcePanel resourcePanel;
     private final ChildrenPanel childrenPanel;
-    private ResourceAddress root;
     Tree<Context> tree;
 
 
     @Inject
     public ModelBrowser(final MetadataProcessor metadataProcessor,
+            final SecurityFramework securityFramework,
             final ResourceDescriptions resourceDescriptions,
             final Dispatcher dispatcher,
             @Footer final Provider<Progress> progress,
             final Resources resources) {
 
         this.metadataProcessor = metadataProcessor;
+        this.securityFramework = securityFramework;
         this.resourceDescriptions = resourceDescriptions;
         this.dispatcher = dispatcher;
         this.progress = progress;
-        this.resources = resources;
-
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .header().css(modelBrowserHeader)
-                .ul().css(CSS.breadcrumb).rememberAs(BREADCRUMB_ELEMENT).end()
-            .end();
-        // @formatter:on
-
-        header = builder.build();
-        breadcrumb = builder.referenceFor(BREADCRUMB_ELEMENT);
 
         buttonGroup = new Elements.Builder()
                 .div().css(btnGroup, modelBrowserButtons)
@@ -125,7 +116,7 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
         treeContainer = new Elements.Builder().div().css(modelBrowserTree).end().build();
         content = new Elements.Builder().div().css(modelBrowserContent).end().build();
 
-        resourcePanel = new ResourcePanel(dispatcher, resources);
+        resourcePanel = new ResourcePanel(this, dispatcher, resources);
         for (Element element : resourcePanel.asElements()) {
             content.appendChild(element);
         }
@@ -139,11 +130,6 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
 
         // @formatter:off
         rows =  new LayoutBuilder()
-            .row()
-                .column()
-                    .add(header)
-                .end()
-            .end()
             .row()
                 .column(0, 4)
                     .add(buttonGroup)
@@ -163,13 +149,12 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
         int window = Browser.getWindow().getInnerHeight();
         int navigation = Skeleton.navigationHeight();
         int footer = Skeleton.footerHeight();
-        int header = this.header.getOffsetHeight();
         int buttonGroup = this.buttonGroup.getOffsetHeight();
         if (navigation > 0 && footer > 0) {
             int height = window - navigation - footer;
             // keep this in sync with the margins in modelbrowser.less
-            treeContainer.getStyle().setHeight(height - 2 * MARGIN_BIG - header - buttonGroup - 2 * MARGIN_SMALL, PX);
-            content.getStyle().setHeight(height - 2 * MARGIN_BIG - header - 2 * MARGIN_SMALL, PX);
+            treeContainer.getStyle().setHeight(height - 2 * MARGIN_BIG - buttonGroup - 2 * MARGIN_SMALL, PX);
+            content.getStyle().setHeight(height - 2 * MARGIN_BIG - 2 * MARGIN_SMALL, PX);
         }
     }
 
@@ -199,27 +184,6 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
     }
 
     private void updateBreadcrumb(ResourceAddress address) {
-        Elements.removeChildrenFrom(breadcrumb);
-        if (address == null) {
-            // deselection
-            breadcrumb.appendChild(
-                    new Elements.Builder().li().innerText(resources.constants().nothingSelected()).build());
-
-        } else {
-            if (address == ResourceAddress.ROOT) {
-                Element li = new Elements.Builder().li().innerText(Names.MANAGEMENT_MODEL).build();
-                breadcrumb.appendChild(li);
-
-            } else {
-                for (Property property : address.asPropertyList()) {
-                    Element li = new Elements.Builder().li()
-                            .span().css(key).innerText(property.getName()).end()
-                            .span().css(value).innerText(property.getValue().asString()).end()
-                            .end().build();
-                    breadcrumb.appendChild(li);
-                }
-            }
-        }
     }
 
     private void showResourceView(Node<Context> node, ResourceAddress address) {
@@ -237,8 +201,9 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
 
                     @Override
                     public void onSuccess(final Void aVoid) {
+                        SecurityContext securityContext = securityFramework.lookup(template);
                         ResourceDescription description = resourceDescriptions.lookup(template);
-                        resourcePanel.update(node, node.data.getAddress(), description);
+                        resourcePanel.update(node, node.data.getAddress(), securityContext, description);
                         resourcePanel.show();
                     }
                 });
@@ -270,10 +235,28 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
     }
 
 
+    // ------------------------------------------------------ event handler
+
+    void onAdd() {
+        Browser.getWindow().alert(NYI);
+    }
+
+    void onRemove(final String name) {
+        Browser.getWindow().alert(NYI);
+    }
+
+    void onReset(Form<ModelNode> form) {
+        Browser.getWindow().alert(NYI);
+    }
+
+    void onSave(Form<ModelNode> form, Map<String, Object> changedValues) {
+        Browser.getWindow().alert(NYI);
+    }
+
+
     // ------------------------------------------------------ public API
 
-    public void setRoot(ResourceAddress root) {
-        this.root = root;
+    public void setRoot(ResourceAddress root, boolean breadcrumb) {
         String resource = root == ResourceAddress.ROOT ? Names.MANAGEMENT_MODEL : root.lastValue();
         if ("*".equals(resource)) {
             throw new IllegalArgumentException("Invalid root address: " + root +

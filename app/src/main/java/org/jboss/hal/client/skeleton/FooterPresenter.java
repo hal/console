@@ -25,12 +25,15 @@ import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.mvp.HasPresenter;
+import org.jboss.hal.meta.token.NameTokens;
 
 import javax.inject.Inject;
 
@@ -50,14 +53,17 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView> imp
 
 
     private final Environment environment;
+    private final PlaceManager placeManager;
     private final CheckForUpdate checkForUpdate;
 
     @Inject
     public FooterPresenter(final EventBus eventBus,
             final MyView view,
-            final Environment environment) {
+            final Environment environment,
+            final PlaceManager placeManager) {
         super(eventBus, view);
         this.environment = environment;
+        this.placeManager = placeManager;
         this.checkForUpdate = new CheckForUpdate(environment);
     }
 
@@ -85,7 +91,7 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView> imp
     }
 
     public void onModelBrowser() {
-        Window.alert(NYI);
+        placeManager.revealPlace(new PlaceRequest.Builder().nameToken(NameTokens.MODEL_BROWSER).build());
     }
 
     public void onExpressionResolver() {

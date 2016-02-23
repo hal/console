@@ -40,27 +40,28 @@ public class Subsystems {
         subsystems = new HashMap<>();
 
         // built-in subsystems
-        add(new SubsystemMetadata("batch-jberet", "Batch", "JBeret", NameTokens.BATCH, null, true));
+        // TODO set builtin flag to true once the subsystem implementations are in place
+        add(new SubsystemMetadata("batch-jberet", "Batch", "JBeret", NameTokens.BATCH, null, false));
         add(new SubsystemMetadata("datasources", Names.DATASOURCE, null, null, Ids.DATA_SOURCE_TYPE_COLUMN, true));
-        add(new SubsystemMetadata("deployment-scanner", "Deployment Scanners", null, NameTokens.DEPLOYMENT_SCANNERS, null, true));
-        add(new SubsystemMetadata("ee", "EE", null, NameTokens.EE, null, true));
-        add(new SubsystemMetadata("ejb3", "EJB3", null, NameTokens.EJB3, null, true));
-        add(new SubsystemMetadata("iiop-openjdk", "IIOP", "OpenJDK", NameTokens.IIOP, null, true));
+        add(new SubsystemMetadata("deployment-scanner", "Deployment Scanners", null, NameTokens.DEPLOYMENT_SCANNERS, null, false));
+        add(new SubsystemMetadata("ee", "EE", null, NameTokens.EE, null, false));
+        add(new SubsystemMetadata("ejb3", "EJB3", null, NameTokens.EJB3, null, false));
+        add(new SubsystemMetadata("iiop-openjdk", "IIOP", "OpenJDK", NameTokens.IIOP, null, false));
         add(new SubsystemMetadata("infinispan", "Infinispan", null, null, Ids.CACHE_CONTAINER_COLUMN, true));
-        add(new SubsystemMetadata("io", "IO", null, NameTokens.IO, null, true));
-        add(new SubsystemMetadata("jca", "JCA", null, NameTokens.JCA, null, true));
-        add(new SubsystemMetadata("jmx", "JMX", null, NameTokens.JMX, null, true));
-        add(new SubsystemMetadata("jpa", "JPA", null, NameTokens.JPA, null, true));
-        add(new SubsystemMetadata("logging", "Logging", null, NameTokens.LOGGING, null, true));
+        add(new SubsystemMetadata("io", "IO", null, NameTokens.IO, null, false));
+        add(new SubsystemMetadata("jca", "JCA", null, NameTokens.JCA, null, false));
+        add(new SubsystemMetadata("jmx", "JMX", null, NameTokens.JMX, null, false));
+        add(new SubsystemMetadata("jpa", "JPA", null, NameTokens.JPA, null, false));
+        add(new SubsystemMetadata("logging", "Logging", null, NameTokens.LOGGING, null, false));
         add(new SubsystemMetadata("mail", "Mail", null, null, Ids.MAIL_SESSION_COLUMN, true));
         add(new SubsystemMetadata("messaging-activemq", "Messaging", "ActiveMQ", null, Ids.MESSAGING_SERVER_COLUMN, true));
-        add(new SubsystemMetadata("remoting", "Remoting", null, NameTokens.REMOTING, null, true));
-        add(new SubsystemMetadata("request-controller", "Request Controller", null, NameTokens.REQUEST_CONTROLLER, null, true));
+        add(new SubsystemMetadata("remoting", "Remoting", null, NameTokens.REMOTING, null, false));
+        add(new SubsystemMetadata("request-controller", "Request Controller", null, NameTokens.REQUEST_CONTROLLER, null, false));
         add(new SubsystemMetadata("resource-adapters", "Resource Adapters", null, null, Ids.RESOURCE_ADAPTER_COLUMN, true));
         add(new SubsystemMetadata("security", "Security", null, null, Ids.SECURITY_DOMAIN_COLUMN, true));
-        add(new SubsystemMetadata("transactions", "Transactions", null, NameTokens.TRANSACTIONS, null, true));
+        add(new SubsystemMetadata("transactions", "Transactions", null, NameTokens.TRANSACTIONS, null, false));
         add(new SubsystemMetadata("undertow", "Web", "Undertow", null, Ids.WEB_SETTINGS_COLUMN, true));
-        add(new SubsystemMetadata("webservices", "Web Services", null, NameTokens.WEBSERVICES, null, true));
+        add(new SubsystemMetadata("webservices", "Web Services", null, NameTokens.WEBSERVICES, null, false));
     }
 
     private void add(SubsystemMetadata subsystem) {

@@ -40,7 +40,6 @@ public interface CSS {
     String alertSuccess = "alert-success";
     String attributes = "attributes";
     String bootstrapSwitch = "bootstrap-switch";
-    String breadcrumb = "breadcrumb";
     String btn = "btn";
     String btnDefault = "btn-default";
     String btnFinder = "btn-finder";
@@ -110,7 +109,6 @@ public interface CSS {
     String modalTitle = "modal-title";
     String modelBrowserButtons = "model-browser-buttons";
     String modelBrowserContent = "model-browser-content";
-    String modelBrowserHeader = "model-browser-header";
     String modelBrowserTree = "model-browser-tree";
     String nav = "nav";
     String navbar = "navbar";

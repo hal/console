@@ -82,6 +82,7 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
                 body.appendChild(slots.get(SLOT_FOOTER_CONTENT));
                 initialized = true;
             }
+
         } else if (slot == Slots.MAIN) {
             // single or multiple elements with precedence for multiple elements
             boolean finished = false;
@@ -109,6 +110,7 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
             } else {
                 presenter.applicationMode();
             }
+
         } else {
             logger.warn("Unknown slot {}. Delegate to super.setInSlot()", slot); //NON-NLS
             super.setInSlot(slot, content);
