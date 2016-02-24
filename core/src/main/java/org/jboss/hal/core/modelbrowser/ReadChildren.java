@@ -52,7 +52,7 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
  */
 class ReadChildren implements DataFunction<Context> {
 
-    private static final String ID_SEPARATOR = "_o_";
+    private static final String ID_SEPARATOR = "___";
     private static final String NO_SINGLETON = "no_singleton";
 
     static String uniqueId(Node<Context> parent, String name) {

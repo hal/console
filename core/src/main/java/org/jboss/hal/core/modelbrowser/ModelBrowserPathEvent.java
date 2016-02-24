@@ -23,40 +23,39 @@ package org.jboss.hal.core.modelbrowser;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
-import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
  * @author Harald Pehl
  */
-public class ModelBrowserAddressEvent extends GwtEvent<ModelBrowserAddressEvent.ModelBrowserAddressHandler> {
+public class ModelBrowserPathEvent extends GwtEvent<ModelBrowserPathEvent.ModelBrowserPathHandler> {
 
-    public interface ModelBrowserAddressHandler extends EventHandler {
+    public interface ModelBrowserPathHandler extends EventHandler {
 
-        void onModelBrowserAddress(ModelBrowserAddressEvent event);
+        void onModelBrowserAddress(ModelBrowserPathEvent event);
     }
 
 
-    private static final Type<ModelBrowserAddressHandler> TYPE = new Type<>();
+    private static final Type<ModelBrowserPathHandler> TYPE = new Type<>();
 
-    public static Type<ModelBrowserAddressHandler> getType() {
+    public static Type<ModelBrowserPathHandler> getType() {
         return TYPE;
     }
 
-    private final ResourceAddress address;
+    private final ModelBrowserPath path;
 
-    public ModelBrowserAddressEvent(final ResourceAddress address) {this.address = address;}
+    public ModelBrowserPathEvent(final ModelBrowserPath path) {this.path = path;}
 
-    public ResourceAddress getAddress() {
-        return address;
+    public ModelBrowserPath getPath() {
+        return path;
     }
 
     @Override
-    protected void dispatch(ModelBrowserAddressHandler handler) {
+    protected void dispatch(ModelBrowserPathHandler handler) {
         handler.onModelBrowserAddress(this);
     }
 
     @Override
-    public Type<ModelBrowserAddressHandler> getAssociatedType() {
+    public Type<ModelBrowserPathHandler> getAssociatedType() {
         return TYPE;
     }
 }

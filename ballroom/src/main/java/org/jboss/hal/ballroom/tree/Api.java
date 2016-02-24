@@ -47,9 +47,12 @@ public class Api<T> {
     @JsMethod(name = "open_node")
     public native void openNode(String id, OpenCallback callback);
 
+    @JsMethod(name = "close_node")
+    public native void closeNode(String id);
+
     @JsMethod(name = "select_node")
     public native void selectNode(String id, boolean suppressEvent, boolean preventOpen);
 
-    @JsMethod(name = "deselect_node")
-    public native void deselectNode(String id, boolean suppressEvent);
+    @JsMethod(name = "deselect_all")
+    public native void deselectAll(boolean suppressEvent);
 }

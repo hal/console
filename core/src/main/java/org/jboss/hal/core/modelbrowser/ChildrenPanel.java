@@ -23,6 +23,7 @@ package org.jboss.hal.core.modelbrowser;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
@@ -32,6 +33,7 @@ import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.Button.Scope;
+import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.OptionsBuilder;
@@ -76,9 +78,13 @@ class ChildrenPanel implements HasElements, Attachable {
         //noinspection HardCodedStringLiteral
         Options<String> options = new OptionsBuilder<String>()
                 .column("resource", Names.RESOURCE, (cell, type, row, meta) -> row)
-                .column("action", resources.constants().action(), (cell, type, row, meta) ->
-                        "<a data-" + VIEW_RESOURCE_DATA + "=\"" + row +
+                .column(new ColumnBuilder<String>("action", resources.constants().action(),
+                        (cell, type, row, meta) -> "<a data-" + VIEW_RESOURCE_DATA + "=\"" + row +
                                 "\" class=\"" + clickable + "\">" + resources.constants().view() + "</a>")
+                        .orderable(false)
+                        .searchable(false)
+                        .width("10em")
+                        .build())
                 .button(resources.constants().add(), (event, api) -> modelBrowser.onAdd())
                 .button(resources.constants().remove(), Scope.SELECTED,
                         (event, api) -> DialogFactory.confirmation(resources.constants().removeResource(),
@@ -116,11 +122,7 @@ class ChildrenPanel implements HasElements, Attachable {
             Element link = (Element) links.item(i);
             String name = String.valueOf(link.getDataset().at(VIEW_RESOURCE_DATA));
             link.setOnclick(event -> modelBrowser.tree.api().openNode(parent.id,
-                    () -> {
-                        modelBrowser.tree.api().deselectNode(parent.id, true);
-                        modelBrowser.tree.api().selectNode(uniqueId(parent, name), false, true);
-                        modelBrowser.tree.asElement().focus();
-                    }));
+                    () -> modelBrowser.select(uniqueId(parent, name), false)));
         }
     }
 
@@ -145,6 +147,10 @@ class ChildrenPanel implements HasElements, Attachable {
             List<String> names = Lists.transform(result.asList(), ModelNode::asString);
             table.api().clear().add(names).refresh(RefreshMode.RESET);
             registerLinkClickHandler();
+            if (node.data.hasSingletons()) {
+                Browser.getWindow().getConsole()
+                        .log("Read " + names.size() + " / " + node.data.getSingletons().size() + " singletons");
+            }
         });
     }
 

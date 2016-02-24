@@ -84,6 +84,9 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
         }
     }
 
+
+    private static final AddressTemplate SUBSYSTEM_TEMPLATE = AddressTemplate.of("{selected.profile}/subsystem=*");
+
     @Inject
     public SubsystemColumn(final Finder finder,
             final Dispatcher dispatcher,
@@ -132,10 +135,10 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                                     item -> placeManager.revealPlace(placeRequest)));
 
                         } else if (!item.isBuiltIn()) {
+                            ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, item.getName());
                             placeRequest = new PlaceRequest.Builder()
                                     .nameToken(NameTokens.MODEL_BROWSER)
-                                    .with(ModelBrowserPresenter.ADDRESS_PARAM,
-                                            "{selected.profile}/subsystem=" + item.getName()) //NON-NLS
+                                    .with(ModelBrowserPresenter.ADDRESS_PARAM, address.toString())
                                     .build();
                             return Collections.singletonList(new ItemAction<>(resources.constants().view(),
                                     item -> placeManager.revealPlace(placeRequest)));
@@ -178,8 +181,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                         return new PreviewContent(item.getTitle(), resource);
 
                     } else {
-                        ResourceAddress address = AddressTemplate.of("{selected.profile}/subsystem=*")
-                                .resolve(statementContext, item.getName());
+                        ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, item.getName());
                         Operation operation = new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION, address)
                                 .build();
                         return new ResourceDescriptionPreview(item.getTitle(), dispatcher, operation);

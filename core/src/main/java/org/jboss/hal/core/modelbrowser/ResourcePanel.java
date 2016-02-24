@@ -62,10 +62,10 @@ class ResourcePanel implements HasElements {
     private final Elements.Builder builder;
     private final Element description;
     private final Element empty;
-    private final Tabs tabs;
     private final String dataId;
     private final String attributesId;
     private final String operationsId;
+    final Tabs tabs;
 
     ResourcePanel(final ModelBrowser modelBrowser, final Dispatcher dispatcher, final Resources resources) {
         this.modelBrowser = modelBrowser;

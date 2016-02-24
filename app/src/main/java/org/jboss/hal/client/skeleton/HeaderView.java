@@ -39,9 +39,11 @@ import org.jboss.hal.config.User;
 import org.jboss.hal.core.finder.Breadcrumb;
 import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderPath;
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.core.modelbrowser.ModelBrowser;
+import org.jboss.hal.core.modelbrowser.ModelBrowserPath;
+import org.jboss.hal.core.modelbrowser.ModelBrowserPath.Segment;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -253,27 +255,41 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     }
 
     @Override
-    public void updateBreadcrumb(final ResourceAddress address) {
+    public void updateBreadcrumb(final ModelBrowserPath path) {
         while (breadcrumbs.getLastChild() != null && breadcrumbs.getChildren().getLength() > 1) {
             breadcrumbs.removeChild(breadcrumbs.getLastChild());
         }
 
-        if (address == null) {
+        if (path == null) {
             // deselection
             breadcrumbs.appendChild(
                     new Elements.Builder().li().innerText(resources().constants().nothingSelected()).build());
 
         } else {
-            if (address == ResourceAddress.ROOT) {
+            if (path.isEmpty()) {
                 breadcrumbs.appendChild(new Elements.Builder().li().innerText(Names.MANAGEMENT_MODEL).build());
 
             } else {
-                for (Property property : address.asPropertyList()) {
-                    Element li = new Elements.Builder().li()
-                            .span().css(key).innerText(property.getName()).end()
-                            .span().css(value).innerText(property.getValue().asString()).end()
-                            .end().build();
-                    breadcrumbs.appendChild(li);
+                ModelBrowser modelBrowser = path.getModelBrowser();
+                for (Iterator<Segment[]> iterator = path.iterator(); iterator.hasNext(); ) {
+                    Segment[] segments = iterator.next();
+                    Segment key = segments[0];
+                    Segment value = segments[1];
+                    boolean link = value != ModelBrowserPath.WILDCARD && iterator.hasNext();
+
+                    Elements.Builder builder = new Elements.Builder().li();
+                    builder.a().css(clickable).on(click, event -> modelBrowser.select(key.id, true))
+                            .span().css(CSS.key).innerText(key.text).end()
+                            .end();
+                    if (link) {
+                        builder.a().css(clickable).on(click, event -> modelBrowser.select(value.id, true));
+                    }
+                    builder.span().css(CSS.value).innerText(value.text).end();
+                    if (link) {
+                        builder.end();
+                    }
+                    builder.end();
+                    breadcrumbs.appendChild(builder.build());
                 }
             }
         }

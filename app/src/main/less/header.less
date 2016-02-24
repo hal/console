@@ -65,9 +65,13 @@
 }
 
 .hal-breadcrumb {
+  display: flex;
+  flex-wrap: nowrap;
   margin-bottom: 0;
   padding-top: 10px;
   padding-bottom: 9px;
+  overflow-y: auto;
+
   @media (max-width: 767px) {
     padding-top: 5px;
     padding-bottom: 5px;
@@ -83,7 +87,10 @@
 
   li {
     color: #fff;
+    display: flex;
+    flex-wrap: nowrap;
     font-size: 14px;
+
     @media (max-width: 767px) {
       font-size: 12px;
     }
@@ -99,10 +106,14 @@
       content: "\21d2";
       color: #999;
       font-size: 14px;
+      padding: 0 5px;
       @media (max-width: 767px) {
         font-size: 12px;
       }
-      padding: 0 5px;
+    }
+
+    .back, .key, .value {
+      white-space: nowrap;
     }
   }
 

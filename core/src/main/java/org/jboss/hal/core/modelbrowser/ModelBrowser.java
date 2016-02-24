@@ -76,6 +76,7 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
 
     private static final int MARGIN_BIG = 20; // keep this in sync with the
     private static final int MARGIN_SMALL = 10; // margins in modelbrowser.less
+    static final String ROOT_ID = IdBuilder.build(Ids.MODEL_BROWSER, "root");
     static final Element PLACE_HOLDER_ELEMENT = Browser.getDocument().createDivElement();
 
     private static final Logger logger = LoggerFactory.getLogger(ModelBrowser.class);
@@ -176,9 +177,9 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
             updateBreadcrumb(null);
 
         } else {
-            ResourceAddress address = context.node.data.getAddress();
-            updateBreadcrumb(address);
+            updateBreadcrumb(context.node);
 
+            ResourceAddress address = context.node.data.getAddress();
             if (context.node.data.isFullyQualified()) {
                 showResourceView(context.node, address);
 
@@ -189,9 +190,10 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
         }
     }
 
-    private void updateBreadcrumb(ResourceAddress address) {
+    private void updateBreadcrumb(Node<Context> node) {
         if (breadcrumb) {
-            eventBus.fireEvent(new ModelBrowserAddressEvent(address));
+            ModelBrowserPath path = new ModelBrowserPath(this, node);
+            eventBus.fireEvent(new ModelBrowserPathEvent(path));
         }
     }
 
@@ -281,20 +283,29 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
                     ". ModelBrowser.setRoot() must be called with a concrete address.");
         }
         Context context = new Context(root, Collections.emptySet());
-        String rootId = IdBuilder.build(Ids.MODEL_BROWSER, "root");
-        Node<Context> rootNode = new Node.Builder<>(rootId, resource, context)
+        Node<Context> rootNode = new Node.Builder<>(ROOT_ID, resource, context)
                 .folder()
                 .build();
         tree = new Tree<>(Ids.MODEL_BROWSER, rootNode, new ReadChildren(dispatcher));
         Elements.removeChildrenFrom(treeContainer);
         treeContainer.appendChild(tree.asElement());
 
-        childrenPanel.attach();
         tree.attach();
         tree.onSelectionChange((event, selectionContext) -> onTreeSelection(selectionContext));
-        tree.api().openNode(rootId);
-        tree.api().selectNode(rootId, false, false);
+        tree.api().openNode(ROOT_ID, () -> resourcePanel.tabs.showTab(0));
+        childrenPanel.attach();
+
+        select(ROOT_ID, false);
         adjustHeight();
+    }
+
+    public void select(final String id, final boolean closeSelected) {
+        tree.api().deselectAll(true);
+        tree.api().selectNode(id, false, false);
+        if (closeSelected) {
+            tree.api().closeNode(id);
+        }
+        tree.asElement().focus();
     }
 
     @Override

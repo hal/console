@@ -26,11 +26,14 @@ import org.jboss.hal.ballroom.form.SwitchBridge.Bridge;
 
 import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.bootstrapSwitch;
+import static org.jboss.hal.resources.CSS.disabled;
 
 /**
  * @author Harald Pehl
  */
 public class SwitchItem extends AbstractFormItem<Boolean> {
+
+    private SwitchElement switchElement;
 
     public SwitchItem(final String name, final String label) {
         super(name, label, null, EMPTY_CONTEXT);
@@ -38,7 +41,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
 
     @Override
     protected InputElement<Boolean> newInputElement(Context<?> context) {
-        SwitchElement switchElement = new SwitchElement();
+        switchElement = new SwitchElement();
         switchElement.setClassName(bootstrapSwitch);
         Bridge.element(switchElement.asElement()).onChange((event, state) -> {
             setModified(true);
@@ -53,6 +56,21 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         super.markDefaultValue(on, defaultValue);
         if (on && defaultValue) {
             inputElement().setValue(true);
+        }
+    }
+
+    @Override
+    public void setEnabled(final boolean enabled) {
+        if (enabled) {
+            inputContainer.getClassList().remove(disabled);
+        } else  {
+            inputContainer.getClassList().add(disabled);
+        }
+        if (isAttached()) {
+            switchElement.setEnabled(enabled);
+        } else {
+            // if the switch item is not yet attached we must modify the input element directly
+            switchElement.element.setDisabled(!enabled);
         }
     }
 

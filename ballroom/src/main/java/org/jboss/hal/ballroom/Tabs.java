@@ -142,7 +142,7 @@ public class Tabs implements IsElement {
 
     public void showTab(final String id) {
         if (id != null) {
-            Bridge.select("#" + id).tab("show"); //NON-NLS
+            Bridge.select("a[href='#" + id + "']").tab("show"); //NON-NLS
         }
     }
 

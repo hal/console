@@ -80,6 +80,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     private boolean undefined;
     private boolean restricted;
     private boolean expressionAllowed;
+    private boolean attached;
     private SuggestHandler suggestHandler;
     T defaultValue;
 
@@ -313,9 +314,14 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
      */
     @Override
     public void attach() {
+        this.attached = true;
         if (suggestHandler instanceof Attachable) {
             ((Attachable) suggestHandler).attach();
         }
+    }
+
+    protected boolean isAttached() {
+        return attached;
     }
 
 

@@ -25,6 +25,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -78,7 +79,16 @@ public class ResourceAddress extends ModelNode {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        format(builder, 0, false);
+        if (isDefined()) {
+            builder.append("/");
+            for (Iterator<Property> iterator = asPropertyList().iterator(); iterator.hasNext(); ) {
+                Property segment = iterator.next();
+                builder.append(segment.getName()).append("=").append(segment.getValue().asString());
+                if (iterator.hasNext()) {
+                    builder.append("/");
+                }
+            }
+        }
         return builder.toString();
     }
 }
