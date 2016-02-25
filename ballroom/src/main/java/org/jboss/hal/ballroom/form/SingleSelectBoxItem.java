@@ -100,7 +100,7 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
     }
 
 
-    static class SingleSelectBoxElement extends SelectBoxElement<String> {
+    private static class SingleSelectBoxElement extends SelectBoxElement<String> {
 
         SingleSelectBoxElement(final boolean allowEmpty) {
             super(allowEmpty, false);
@@ -108,18 +108,26 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
 
         @Override
         public String getValue() {
-            return Single.element(asElement()).getValue();
+            return isAttached() ? Single.element(asElement()).getValue() : element.getValue();
         }
 
         @Override
         public void setValue(final String value) {
-            Single.element(asElement()).setValue(value);
+            if (isAttached()) {
+                Single.element(asElement()).setValue(value);
+            } else {
+                element.setValue(value);
+            }
         }
 
         @Override
         public void clearValue() {
             if (allowEmpty) {
-                Single.element(asElement()).setValue("");
+                if (isAttached()) {
+                    Single.element(asElement()).setValue("");
+                } else {
+                    element.setValue("");
+                }
             }
         }
 

@@ -85,7 +85,7 @@ class ChildrenPanel implements HasElements, Attachable {
                         .searchable(false)
                         .width("10em")
                         .build())
-                .button(resources.constants().add(), (event, api) -> modelBrowser.onAdd())
+                .button(resources.constants().add(), (event, api) -> modelBrowser.onAdd(parent))
                 .button(resources.constants().remove(), Scope.SELECTED,
                         (event, api) -> DialogFactory.confirmation(resources.constants().removeResource(),
                                 resources.messages().removeConfirmationQuestion(api.selectedRow()),

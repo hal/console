@@ -50,6 +50,16 @@ public abstract class InputElement<T>
 
     static final Context<Void> EMPTY_CONTEXT = new Context<>(null);
 
+    private boolean attached;
+
+    void attach() {
+        attached = true;
+    }
+
+    boolean isAttached() {
+        return attached;
+    }
+
     public void setId(final String id) {
         asElement().setId(id);
     }

@@ -38,13 +38,10 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
 abstract class SelectBoxElement<T> extends InputElement<T> {
 
     final boolean allowEmpty;
-    final boolean multi;
     final SelectElement element;
 
     SelectBoxElement(final boolean allowEmpty, final boolean multi) {
         this.allowEmpty = allowEmpty;
-        this.multi = multi;
-
         element = Browser.getDocument().createSelectElement();
         element.setMultiple(multi);
         element.setSize(1);

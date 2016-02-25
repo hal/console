@@ -26,6 +26,7 @@ import elemental.dom.Element;
 import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.form.SelectBoxBridge.Multi;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
@@ -83,7 +84,7 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
     }
 
 
-    static class MultiSelectBoxElement extends SelectBoxElement<List<String>> {
+    private static class MultiSelectBoxElement extends SelectBoxElement<List<String>> {
 
         MultiSelectBoxElement() {
             super(true, true);
@@ -91,17 +92,21 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
 
         @Override
         public List<String> getValue() {
-            return Multi.element(asElement()).getValue();
+            return isAttached() ? Multi.element(asElement()).getValue() : Collections.emptyList();
         }
 
         @Override
         public void setValue(final List<String> value) {
-            Multi.element(asElement()).setValue(value);
+            if (isAttached()) {
+                Multi.element(asElement()).setValue(value);
+            }
         }
 
         @Override
         public void clearValue() {
-            Multi.element(asElement()).clear();
+            if (isAttached()) {
+                Multi.element(asElement()).clear();
+            }
         }
 
         @Override

@@ -61,6 +61,7 @@ public class Dialog implements IsElement {
     }
 
 
+    @FunctionalInterface
     public interface Callback {
 
         boolean execute();

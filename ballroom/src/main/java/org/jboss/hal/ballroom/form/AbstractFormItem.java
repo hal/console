@@ -80,7 +80,6 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     private boolean undefined;
     private boolean restricted;
     private boolean expressionAllowed;
-    private boolean attached;
     private SuggestHandler suggestHandler;
     T defaultValue;
 
@@ -217,7 +216,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         readonlyRoot.appendChild(valueContainer);
     }
 
-    void showInputButton(ButtonElement button) {
+    private void showInputButton(ButtonElement button) {
         inputElement.asElement().removeAttribute(ARIA_DESCRIBEDBY);
 
         if (hasInputButton()) {
@@ -239,30 +238,29 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         }
     }
 
-    void showInputAddon(String addon) {
+    private void showInputAddon(String addon) {
         inputAddonContainer.setTextContent(addon);
         inputElement.asElement().setAttribute(ARIA_DESCRIBEDBY, inputAddonContainer.getId());
 
         if (hasInputButton()) {
             inputGroupContainer.removeChild(inputButtonContainer);
             inputGroupContainer.appendChild(inputAddonContainer);
-        }
 
-        //noinspection StatementWithEmptyBody
-        else if (hasInputAddon()) {
-            // nothing to do
+        } else //noinspection StatementWithEmptyBody
+            if (hasInputAddon()) {
+                // nothing to do
 
-        } else {
-            if (inputContainer.contains(inputElement().asElement())) {
-                inputContainer.removeChild(inputElement().asElement());
+            } else {
+                if (inputContainer.contains(inputElement().asElement())) {
+                    inputContainer.removeChild(inputElement().asElement());
+                }
+                inputGroupContainer.appendChild(inputElement.asElement());
+                inputGroupContainer.appendChild(inputAddonContainer);
+                inputContainer.appendChild(inputGroupContainer);
             }
-            inputGroupContainer.appendChild(inputElement.asElement());
-            inputGroupContainer.appendChild(inputAddonContainer);
-            inputContainer.appendChild(inputGroupContainer);
-        }
     }
 
-    void removeInputGroup() {
+    private void removeInputGroup() {
         Elements.removeChildrenFrom(inputGroupContainer);
         Elements.removeChildrenFrom(inputButtonContainer);
         inputContainer.removeChild(inputGroupContainer);
@@ -270,19 +268,19 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     }
 
-    boolean hasInputButton() {
+    private boolean hasInputButton() {
         return inputContainer.contains(inputGroupContainer) &&
                 inputGroupContainer.contains(inputButtonContainer) &&
                 inputButtonContainer.getChildren().length() > 0;
     }
 
-    boolean hasInputButton(ButtonElement button) {
+    private boolean hasInputButton(ButtonElement button) {
         return inputContainer.contains(inputGroupContainer) &&
                 inputGroupContainer.contains(inputButtonContainer) &&
                 inputButtonContainer.contains(button);
     }
 
-    boolean hasInputAddon() {
+    private boolean hasInputAddon() {
         return inputContainer.contains(inputGroupContainer) &&
                 inputGroupContainer.contains(inputAddonContainer) &&
                 !isNullOrEmpty(inputAddonContainer.getTextContent());
@@ -314,14 +312,10 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
      */
     @Override
     public void attach() {
-        this.attached = true;
+        inputElement().attach();
         if (suggestHandler instanceof Attachable) {
             ((Attachable) suggestHandler).attach();
         }
-    }
-
-    protected boolean isAttached() {
-        return attached;
     }
 
 
@@ -671,7 +665,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     public void setEnabled(final boolean enabled) {
         if (enabled) {
             inputContainer.getClassList().remove(disabled);
-        } else  {
+        } else {
             inputContainer.getClassList().add(disabled);
         }
         inputElement.setEnabled(enabled);

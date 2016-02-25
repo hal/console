@@ -30,6 +30,7 @@ import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.resources.CSS;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.jboss.hal.ballroom.IdBuilder.build;
@@ -84,6 +85,7 @@ public class ListItem extends AbstractFormItem<List<String>> {
                 .build();
         inputContainer.insertBefore(tagsContainer, errorText);
     }
+
 
     @Override
     public void clearError() {
@@ -140,7 +142,7 @@ public class ListItem extends AbstractFormItem<List<String>> {
     }
 
 
-    static class ListElement extends InputElement<List<String>> {
+    private static class ListElement extends InputElement<List<String>> {
 
         final elemental.html.InputElement element;
 
@@ -151,17 +153,21 @@ public class ListItem extends AbstractFormItem<List<String>> {
 
         @Override
         public List<String> getValue() {
-            return TagsManager.Bridge.element(asElement()).getTags();
+            return isAttached() ? TagsManager.Bridge.element(asElement()).getTags() : Collections.emptyList();
         }
 
         @Override
         public void setValue(final List<String> value) {
-            TagsManager.Bridge.element(asElement()).setTags(value);
+            if (isAttached()) {
+                TagsManager.Bridge.element(asElement()).setTags(value);
+            }
         }
 
         @Override
         public void clearValue() {
-            TagsManager.Bridge.element(asElement()).removeAll();
+            if (isAttached()) {
+                TagsManager.Bridge.element(asElement()).removeAll();
+            }
         }
 
         @Override

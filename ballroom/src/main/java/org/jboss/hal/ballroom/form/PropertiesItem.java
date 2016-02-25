@@ -171,7 +171,7 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
     }
 
 
-    static class PropertiesElement extends InputElement<Map<String, String>> {
+    private static class PropertiesElement extends InputElement<Map<String, String>> {
 
         final elemental.html.InputElement element;
 
@@ -182,17 +182,21 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
 
         @Override
         public Map<String, String> getValue() {
-            return asProperties(Bridge.element(asElement()).getTags());
+            return isAttached() ? asProperties(Bridge.element(asElement()).getTags()) : Collections.emptyMap();
         }
 
         @Override
         public void setValue(final Map<String, String> value) {
-            Bridge.element(asElement()).setTags(asTags(value));
+            if (isAttached()) {
+                Bridge.element(asElement()).setTags(asTags(value));
+            }
         }
 
         @Override
         public void clearValue() {
-            Bridge.element(asElement()).removeAll();
+            if (isAttached()) {
+                Bridge.element(asElement()).removeAll();
+            }
         }
 
         @Override

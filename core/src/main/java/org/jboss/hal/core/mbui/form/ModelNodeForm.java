@@ -23,6 +23,7 @@ package org.jboss.hal.core.mbui.form;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import org.jboss.hal.ballroom.HelpTextBuilder;
@@ -48,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,6 +61,16 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
+    private static class UnboundFormItem {
+        final FormItem formItem;
+        final int position;
+
+        private UnboundFormItem(final FormItem formItem, final int position) {
+            this.formItem = formItem;
+            this.position = position;
+        }
+    }
+
     public static class Builder<T extends ModelNode> {
 
         private static final String ILLEGAL_COMBINATION = "Illegal combination in ";
@@ -69,7 +81,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         final Set<String> includes;
         final Set<String> excludes;
         final Map<String, FormItemProvider> providers;
-        final List<FormItem> unboundFormItems;
+        final List<UnboundFormItem> unboundFormItems;
         boolean createResource;
         boolean viewOnly;
         boolean addOnly;
@@ -102,6 +114,11 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
         public Builder<T> include(final String[] attributes) {
             includes.addAll(Arrays.asList(attributes));
+            return this;
+        }
+
+        public Builder<T> include(final Iterable<String> attributes) {
+            Iterables.addAll(includes, attributes);
             return this;
         }
 
@@ -146,7 +163,11 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         }
 
         public Builder<T> unboundFormItem(final FormItem formItem) {
-            this.unboundFormItems.add(formItem);
+            return unboundFormItem(formItem, -1);
+        }
+
+        public Builder<T> unboundFormItem(final FormItem formItem, final int position) {
+            this.unboundFormItems.add(new UnboundFormItem(formItem, position));
             return this;
         }
 
@@ -241,9 +262,20 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         Iterable<Property> filtered = builder.unsorted ? fi.toList() :
                 fi.toSortedList((p1, p2) -> p1.getName().compareTo(p2.getName()));
 
+        int index = 0;
         LabelBuilder labelBuilder = new LabelBuilder();
         HelpTextBuilder helpTextBuilder = new HelpTextBuilder();
         for (Property property : filtered) {
+
+            // any unbound form items for the current index?
+            for (Iterator<UnboundFormItem> iterator = builder.unboundFormItems.iterator(); iterator.hasNext(); ) {
+                UnboundFormItem unboundFormItem = iterator.next();
+                if (unboundFormItem.position == index) {
+                    addFormItem(unboundFormItem.formItem);
+                    iterator.remove();
+                }
+            }
+
             String name = property.getName();
             ModelNode attribute = property.getValue();
 
@@ -259,12 +291,15 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                     SafeHtml helpText = helpTextBuilder.helpText(property);
                     addHelp(labelBuilder.label(property), helpText);
                 }
+                index++;
             } else {
                 logger.warn("Unable to create form item for '{}' in form '{}'", name, builder.id); //NON-NLS
             }
         }
-        for (FormItem unboundFormItem : builder.unboundFormItems) {
-            addFormItem(unboundFormItem);
+
+        // add remaining unbound form items
+        for (UnboundFormItem unboundFormItem : builder.unboundFormItems) {
+            addFormItem(unboundFormItem.formItem);
         }
     }
 }

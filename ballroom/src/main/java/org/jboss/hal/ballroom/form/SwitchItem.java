@@ -26,7 +26,6 @@ import org.jboss.hal.ballroom.form.SwitchBridge.Bridge;
 
 import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.bootstrapSwitch;
-import static org.jboss.hal.resources.CSS.disabled;
 
 /**
  * @author Harald Pehl
@@ -60,18 +59,8 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
     }
 
     @Override
-    public void setEnabled(final boolean enabled) {
-        if (enabled) {
-            inputContainer.getClassList().remove(disabled);
-        } else  {
-            inputContainer.getClassList().add(disabled);
-        }
-        if (isAttached()) {
-            switchElement.setEnabled(enabled);
-        } else {
-            // if the switch item is not yet attached we must modify the input element directly
-            switchElement.element.setDisabled(!enabled);
-        }
+    public void setValue(final Boolean value) {
+        super.setValue(value);
     }
 
     @Override
@@ -80,31 +69,43 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
     }
 
 
-    static class SwitchElement extends AbstractCheckBoxElement {
+    private static class SwitchElement extends AbstractCheckBoxElement {
 
         @Override
         public boolean isEnabled() {
-            return Bridge.element(asElement()).isEnable();
+            return isAttached() ? Bridge.element(asElement()).isEnable() : !element.isDisabled();
         }
 
         @Override
         public void setEnabled(final boolean b) {
-            Bridge.element(asElement()).setEnable(b);
+            if (isAttached()) {
+                Bridge.element(asElement()).setEnable(b);
+            } else {
+                element.setDisabled(!b);
+            }
         }
 
         @Override
         public Boolean getValue() {
-            return Bridge.element(asElement()).getValue();
+            return isAttached() ? Bridge.element(asElement()).getValue() : element.isChecked();
         }
 
         @Override
         public void setValue(final Boolean value) {
-            Bridge.element(asElement()).setValue(value);
+            if (isAttached()) {
+                Bridge.element(asElement()).setValue(value);
+            } else {
+                element.setChecked(value);
+            }
         }
 
         @Override
         public void clearValue() {
-            Bridge.element(asElement()).setValue(false);
+            if (isAttached()) {
+                Bridge.element(asElement()).setValue(false);
+            } else {
+                element.setChecked(false);
+            }
         }
     }
 }

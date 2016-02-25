@@ -34,6 +34,7 @@ import org.jboss.hal.ballroom.layout.LayoutBuilder;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.tree.SelectionChangeHandler.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
@@ -87,6 +88,7 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
     private final Provider<Progress> progress;
+    private final Resources resources;
 
     private final Iterable<Element> rows;
     private final Element buttonGroup;
@@ -94,9 +96,9 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
     private final Element content;
     private final ResourcePanel resourcePanel;
     private final ChildrenPanel childrenPanel;
-    private boolean breadcrumb;
     Tree<Context> tree;
 
+    private boolean breadcrumb;
 
     @Inject
     public ModelBrowser(final MetadataProcessor metadataProcessor,
@@ -113,11 +115,13 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
         this.dispatcher = dispatcher;
         this.eventBus = eventBus;
         this.progress = progress;
+        this.resources = resources;
 
         buttonGroup = new Elements.Builder()
                 .div().css(btnGroup, modelBrowserButtons)
                 .button().on(click, event -> onFilter()).css(btn, btnDefault).add("i").css(fontAwesome("filter")).end()
-                .button().on(click, event -> onRefresh()).css(btn, btnDefault).add("i").css(fontAwesome("refresh")).end()
+                .button().on(click, event -> onRefresh()).css(btn, btnDefault).add("i").css(fontAwesome("refresh"))
+                .end()
                 .end()
                 .build();
         treeContainer = new Elements.Builder().div().css(modelBrowserTree).end().build();
@@ -256,8 +260,35 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
         Browser.getWindow().alert(NYI);
     }
 
-    void onAdd() {
-        Browser.getWindow().alert(NYI);
+    void onAdd(final Node<Context> parent) {
+        if (parent.data.hasSingletons()) {
+            Browser.getWindow().alert(NYI);
+        } else {
+            AddressTemplate template = asGenericTemplate(parent, parent.data.getAddress());
+            metadataProcessor.process(Ids.MODEL_BROWSER, singleton(template), progress,
+                    new AsyncCallback<Void>() {
+                        @Override
+                        public void onFailure(final Throwable throwable) {
+                            //noinspection HardCodedStringLiteral
+                            logger.error(
+                                    "Unable to add resource for node {}({}). Error while processing metadata for {}: {}",
+                                    parent.id, parent.text, template, throwable.getMessage());
+                        }
+
+                        @Override
+                        public void onSuccess(final Void aVoid) {
+                            SecurityContext securityContext = securityFramework.lookup(template);
+                            ResourceDescription description = resourceDescriptions.lookup(template);
+                            AddResourceDialog<ModelNode> dialog = new AddResourceDialog<>(
+                                    IdBuilder.build(parent.id, "add"),
+                                    resources.messages().addResourceTitle(parent.text),
+                                    securityContext, description,
+                                    (name, values) -> Browser.getWindow()
+                                            .alert("About to add resource '" + name + "' with values " + values));
+                            dialog.show();
+                        }
+                    });
+        }
     }
 
     void onRemove(final String name) {

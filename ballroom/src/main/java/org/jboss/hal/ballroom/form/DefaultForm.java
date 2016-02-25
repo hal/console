@@ -456,11 +456,13 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
                 break;
         }
 
-        formLinks.switchTo(state, model, securityContext);
-        for (Element panel : panels.values()) {
-            Elements.setVisible(panel, false);
+        if (state != stateMachine.current()) {
+            formLinks.switchTo(state, model, securityContext);
+            for (Element panel : panels.values()) {
+                Elements.setVisible(panel, false);
+            }
+            Elements.setVisible(panels.get(state), true);
         }
-        Elements.setVisible(panels.get(state), true);
     }
 
 
