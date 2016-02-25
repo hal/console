@@ -54,7 +54,7 @@ import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.Names.HIDDEN;
+import static org.jboss.hal.resources.UIConstants.HIDDEN;
 
 /**
  * TODO Implement org.jboss.hal.ballroom.form.Form.State#READONLY

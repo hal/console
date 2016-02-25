@@ -22,7 +22,6 @@
 package org.jboss.hal.dmr.model;
 
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jetbrains.annotations.NonNls;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -36,7 +35,7 @@ public class Operation extends ModelNode {
 
         private final String name;
         private final ResourceAddress address;
-        private final ModelNode parameter;
+        private ModelNode parameter;
         private String role;
 
         public Builder(final String name, final ResourceAddress address) {
@@ -70,6 +69,11 @@ public class Operation extends ModelNode {
             return this;
         }
 
+        public Builder payload(ModelNode payload) {
+            parameter = payload;
+            return this;
+        }
+
         public Builder runAs(String role) {
             this.role = role;
             return this;
@@ -87,13 +91,9 @@ public class Operation extends ModelNode {
 
     Operation(final String name, final ResourceAddress address, final ModelNode parameter,
             final String role) {
+        this(parameter);
         get(OP).set(name);
         get(ADDRESS).set(address);
-        if (parameter.isDefined()) {
-            for (Property property : parameter.asPropertyList()) {
-                get(property.getName()).set(property.getValue());
-            }
-        }
         if (role != null && !name.equals(WHOAMI)) {
             // otherwise we get the replacement role
             get(OPERATION_HEADERS).get(ROLES).set(role);

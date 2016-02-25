@@ -62,6 +62,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
     private static class UnboundFormItem {
+
         final FormItem formItem;
         final int position;
 
@@ -70,6 +71,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             this.position = position;
         }
     }
+
 
     public static class Builder<T extends ModelNode> {
 
@@ -272,6 +274,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                 UnboundFormItem unboundFormItem = iterator.next();
                 if (unboundFormItem.position == index) {
                     addFormItem(unboundFormItem.formItem);
+                    markAsUnbound(unboundFormItem.formItem.getName());
                     iterator.remove();
                 }
             }
@@ -300,6 +303,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         // add remaining unbound form items
         for (UnboundFormItem unboundFormItem : builder.unboundFormItems) {
             addFormItem(unboundFormItem.formItem);
+            markAsUnbound(unboundFormItem.formItem.getName());
         }
     }
 }

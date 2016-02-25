@@ -87,8 +87,8 @@ public class ItemActionFactory {
      * resource is removed and {@link FinderColumn#refresh()} is called.
      */
     public <T> ItemAction<T> remove(String name, String type, AddressTemplate addressTemplate, FinderColumn<T> column) {
-        Dialog dialog = DialogFactory.confirmation(resources.messages().removeConfirmationTitle(type),
-                resources.messages().removeConfirmationQuestion(name),
+        Dialog dialog = DialogFactory.confirmation(resources.messages().removeResourceConfirmationTitle(type),
+                resources.messages().removeResourceConfirmationQuestion(name),
                 () -> {
                     ResourceAddress address = addressTemplate.resolve(statementContext, name);
                     Operation operation = new Operation.Builder(REMOVE, address).build();

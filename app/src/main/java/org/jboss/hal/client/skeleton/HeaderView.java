@@ -22,11 +22,12 @@
 package org.jboss.hal.client.skeleton;
 
 import com.google.common.base.Joiner;
-import com.google.gwt.user.client.Window;
 import com.gwtplatform.mvp.client.ViewImpl;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
+import elemental.client.Browser;
 import elemental.dom.Element;
+import elemental.html.Window;
 import org.jboss.gwt.elemento.core.DataElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventHandler;
@@ -58,6 +59,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.client.skeleton.HeaderPresenter.MESSAGE_TIMEOUT;
 import static org.jboss.hal.config.InstanceInfo.WILDFLY;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.*;
@@ -183,6 +185,8 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     @Override
     public void showMessage(final Message message) {
+        // TODO Prevent showing two messages at once -> queue multiple messages
+        // TODO Hovering over the message stops the timer
         switch (message.getLevel()) {
             case ERROR:
                 logger.error(message.getMessage());
@@ -193,6 +197,13 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
             case INFO:
                 logger.info(message.getMessage());
                 break;
+        }
+        Window window = Browser.getWindow();
+        Element body = Browser.getDocument().getBody();
+        Element messageElement = new MessageElement(message).asElement();
+        body.insertBefore(messageElement, body.getFirstChild());
+        if (!message.isSticky()) {
+            window.setTimeout(() -> body.removeChild(messageElement), MESSAGE_TIMEOUT);
         }
     }
 
@@ -302,16 +313,16 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     @EventHandler(element = "messages", on = click)
     void onMessages() {
-        Window.alert(NYI);
+        Browser.getWindow().alert(NYI);
     }
 
     @EventHandler(element = "logout", on = click)
     void onLogout() {
-        Window.alert(NYI);
+        Browser.getWindow().alert(NYI);
     }
 
     @EventHandler(element = "reconnect", on = click)
     void onReconnect() {
-        Window.alert(NYI);
+        Browser.getWindow().alert(NYI);
     }
 }

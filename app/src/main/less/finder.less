@@ -95,7 +95,7 @@
         padding: @finder-padding-tb @finder-padding-lr;
 
         &.active {
-          background-color: #d1d1d1;
+          background-color: @active-item-color;
         }
 
         &.error-marker, &.info-marker, &.success-marker, &.warning-marker {
@@ -129,7 +129,7 @@
       }
 
       > li:hover, li.active:hover {
-        background-color: #bee1f4;
+        background-color: @hover-color;
       }
 
       > li.empty {

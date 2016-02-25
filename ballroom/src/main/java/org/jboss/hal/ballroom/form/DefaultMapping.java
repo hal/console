@@ -28,7 +28,7 @@ public class DefaultMapping<T> implements DataMapping<T> {
 
     @Override
     public void newModel(final T model, final Form<T> form) {
-        for (FormItem formItem : form.getFormItems()) {
+        for (FormItem formItem : form.getBoundFormItems()) {
             formItem.clearError();
             formItem.clearValue();
             formItem.setUndefined(true);
@@ -43,7 +43,7 @@ public class DefaultMapping<T> implements DataMapping<T> {
 
     @Override
     public void clearFormItems(final Form<T> form) {
-        for (FormItem formItem : form.getFormItems()) {
+        for (FormItem formItem : form.getBoundFormItems()) {
             formItem.clearValue();
         }
     }

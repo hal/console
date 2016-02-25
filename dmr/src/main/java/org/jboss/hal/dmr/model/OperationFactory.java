@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.dmr.model;
 
+import com.google.common.base.Strings;
 import org.jboss.hal.dmr.ModelNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,26 +34,30 @@ import java.util.Map;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * Turns a changeset into a composite operation containing {@link org.jboss.hal.dmr.ModelDescriptionConstants#WRITE_ATTRIBUTE_OPERATION}
- * and {@link org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION} operations.
- *
  * @author Harald Pehl
  */
-public class ChangeSetAdapter {
+public class OperationFactory {
 
-    private static final Logger logger = LoggerFactory.getLogger(ChangeSetAdapter.class);
+    private static final Logger logger = LoggerFactory.getLogger(OperationFactory.class);
 
-    public Composite fromChangeSet(final ResourceAddress resourceAddress, final Map<String, Object> changeSet) {
+    /**
+     * Turns a changeset into a composite operation containing {@link org.jboss.hal.dmr.ModelDescriptionConstants#WRITE_ATTRIBUTE_OPERATION}
+     * and {@link org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION} operations.
+     */
+    public Composite fromChangeSet(final ResourceAddress address, final Map<String, Object> changeSet) {
 
-        Operation writeAttribute = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, resourceAddress).build();
-        Operation undefineAttribute = new Operation.Builder(UNDEFINE_ATTRIBUTE_OPERATION, resourceAddress).build();
+        Operation writeAttribute = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address).build();
+        Operation undefineAttribute = new Operation.Builder(UNDEFINE_ATTRIBUTE_OPERATION, address).build();
 
         List<Operation> operations = new ArrayList<>();
         for (String name : changeSet.keySet()) {
             Operation step;
 
             Object value = changeSet.get(name);
-            if (value == null) {
+            if (value == null
+                    || (value instanceof String && (Strings.isNullOrEmpty((String) value)))
+                    || (value instanceof List && ((List) value).isEmpty())
+                    || (value instanceof Map && ((Map) value).isEmpty())) {
                 step = undefineAttribute.clone();
                 step.get(NAME).set(name);
                 operations.add(step);
@@ -67,7 +72,7 @@ public class ChangeSetAdapter {
                 } else {
                     //noinspection HardCodedStringLiteral
                     logger.error("Unsupported type {} when building composite operation for {} from changeset {}",
-                            value.getClass(), resourceAddress, changeSet);
+                            value.getClass(), address, changeSet);
                 }
             }
         }
@@ -99,13 +104,11 @@ public class ChangeSetAdapter {
         } else if (ArrayList.class == type) {
             valueNode.clear();
             List l = (List) value;
-            for (Object o : l)
-                valueNode.add(String.valueOf(o));
+            for (Object o : l) { valueNode.add(String.valueOf(o)); }
         } else if (HashMap.class == type) {
             valueNode.clear();
             Map map = (Map) value;
-            for (Object k : map.keySet())
-                valueNode.add(String.valueOf(k), String.valueOf(map.get(k)));
+            for (Object k : map.keySet()) { valueNode.add(String.valueOf(k), String.valueOf(map.get(k))); }
         } else {
             valueNode = null;
         }

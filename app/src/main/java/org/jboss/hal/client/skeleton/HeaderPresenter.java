@@ -67,6 +67,8 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
     // @formatter:on
 
 
+    static final int MESSAGE_TIMEOUT = 8000; // ms
+
     private final PlaceManager placeManager;
     private final Environment environment;
     private final Endpoints endpoints;

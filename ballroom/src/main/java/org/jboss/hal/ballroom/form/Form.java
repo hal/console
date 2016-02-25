@@ -133,4 +133,6 @@ public interface Form<T> extends IsElement, Attachable {
     <F> FormItem<F> getFormItem(String name);
 
     Iterable<FormItem> getFormItems();
+
+    Iterable<FormItem> getBoundFormItems();
 }

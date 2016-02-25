@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
@@ -44,10 +45,12 @@ import org.jboss.hal.resources.Messages;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Form.Operation.*;
@@ -74,6 +77,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     private final DataMapping<T> dataMapping;
     private final LinkedHashMap<State, Element> panels;
     private final LinkedHashMap<String, FormItem> formItems;
+    private final Set<String> unboundItems;
     private final LinkedHashMap<String, SafeHtml> helpTexts;
     private final List<FormValidation> formValidations;
 
@@ -109,6 +113,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         this.securityContext = securityContext;
         this.panels = new LinkedHashMap<>();
         this.formItems = new LinkedHashMap<>();
+        this.unboundItems = new HashSet<>();
         this.helpTexts = new LinkedHashMap<>();
         this.formValidations = new ArrayList<>();
     }
@@ -118,6 +123,10 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             this.formItems.put(item.getName(), item);
             item.setId(IdBuilder.build(id, item.getName()));
         }
+    }
+
+    protected void markAsUnbound(String name) {
+        unboundItems.add(name);
     }
 
     protected void addHelp(String label, SafeHtml description) {
@@ -456,13 +465,12 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
                 break;
         }
 
-        if (state != stateMachine.current()) {
-            formLinks.switchTo(state, model, securityContext);
-            for (Element panel : panels.values()) {
-                Elements.setVisible(panel, false);
-            }
-            Elements.setVisible(panels.get(state), true);
+        formLinks.switchTo(state, model, securityContext);
+        // TODO Prevent hiding and showing the very same panel
+        for (Element panel : panels.values()) {
+            Elements.setVisible(panel, false);
         }
+        Elements.setVisible(panels.get(state), true);
     }
 
 
@@ -506,6 +514,14 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     @SuppressWarnings("unchecked")
     public <I> FormItem<I> getFormItem(String name) {
         return formItems.get(name);
+    }
+
+    @Override
+    public Iterable<FormItem> getBoundFormItems() {
+        //noinspection Guava
+        return FluentIterable.from(formItems.values())
+                .filter(formItem -> !unboundItems.contains(formItem.getName()))
+                .toList();
     }
 
     @Override

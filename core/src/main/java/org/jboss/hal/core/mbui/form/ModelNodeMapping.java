@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.core.mbui.form;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.form.DefaultMapping;
 import org.jboss.hal.ballroom.form.Form;
@@ -57,7 +58,7 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
     @Override
     @SuppressWarnings("unchecked")
     public void populateFormItems(final T model, final Form<T> form) {
-        for (FormItem formItem : form.getFormItems()) {
+        for (FormItem formItem : form.getBoundFormItems()) {
             formItem.clearError();
 
             String name = formItem.getName();
@@ -129,7 +130,7 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
     @Override
     @SuppressWarnings("unchecked")
     public void persistModel(final T model, final Form<T> form) {
-        for (FormItem formItem : form.getFormItems()) {
+        for (FormItem formItem : form.getBoundFormItems()) {
             String name = formItem.getName();
 
             if (model.hasDefined(name) && formItem.isUndefined()) {
@@ -166,24 +167,37 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
 
                     case LIST:
                         List<String> list = (List<String>) value;
-                        ModelNode listNode = new ModelNode();
-                        for (String s : list) {
-                            listNode.add(s);
+                        if (list.isEmpty()) {
+                            model.remove(name);
+                        } else {
+                            ModelNode listNode = new ModelNode();
+                            for (String s : list) {
+                                listNode.add(s);
+                            }
+                            model.get(name).set(listNode);
                         }
-                        model.get(name).set(listNode);
                         break;
 
                     case OBJECT:
                         Map<String, String> map = (Map<String, String>) value;
-                        ModelNode mapNode = new ModelNode();
-                        for (Map.Entry<String, String> entry : map.entrySet()) {
-                            mapNode.get(entry.getKey()).set(entry.getValue());
+                        if (map.isEmpty()) {
+                            model.remove(name);
+                        } else {
+                            ModelNode mapNode = new ModelNode();
+                            for (Map.Entry<String, String> entry : map.entrySet()) {
+                                mapNode.get(entry.getKey()).set(entry.getValue());
+                            }
+                            model.get(name).set(mapNode);
                         }
-                        model.get(name).set(mapNode);
                         break;
 
                     case STRING:
-                        model.get(name).set(String.valueOf(value));
+                        String stringValue = String.valueOf(value);
+                        if (Strings.isNullOrEmpty(stringValue)) {
+                            model.remove(name);
+                        } else {
+                            model.get(name).set(stringValue);
+                        }
                         break;
 
                     // unsupported types

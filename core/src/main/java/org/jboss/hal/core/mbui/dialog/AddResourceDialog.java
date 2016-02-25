@@ -36,7 +36,6 @@ import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.Constants;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
@@ -47,9 +46,9 @@ public class AddResourceDialog<T extends ModelNode> {
 
     @FunctionalInterface
     @SuppressWarnings("WeakerAccess")
-    public interface Callback {
+    public interface Callback<T> {
 
-        void onAdd(final String name, final Map<String, Object> values);
+        void onAdd(final String name, final T model);
     }
 
 
@@ -58,10 +57,14 @@ public class AddResourceDialog<T extends ModelNode> {
     private Form<T> form;
     private Dialog dialog;
 
+    /**
+     * Creates an add resource dialog with a form which contains an unbound name item plus all request properties from
+     * the add operation. Clicking on the add button will call the specified callback.
+     */
     public AddResourceDialog(final String id, final String title,
             final SecurityContext securityContext,
             final ResourceDescription resourceDescription,
-            final Callback callback) {
+            final Callback<T> callback) {
 
         TextBoxItem nameItem = new TextBoxItem(NAME, CONSTANTS.name());
         nameItem.setRequired(true);
@@ -76,14 +79,29 @@ public class AddResourceDialog<T extends ModelNode> {
                 .unboundFormItem(nameItem, 0)
                 .onSave((f, changedValues) -> {
                     String name = String.valueOf(changedValues.remove(NAME));
-                    callback.onAdd(name, changedValues);
+                    callback.onAdd(name, form.getModel());
                 });
-
         formBuilder.include(properties);
 
-        form = formBuilder.build();
+        init(title, formBuilder.build());
+    }
 
-        dialog = new Dialog.Builder(title)
+    /**
+     * Uses an existing form for the dialog, please make sure the form has an item called {@link
+     * org.jboss.hal.dmr.ModelDescriptionConstants#NAME}. If the form has a save callback it's overridden by this
+     * constructor.
+     */
+    public AddResourceDialog(final String title, final Form<T> form, final Callback<T> callback) {
+        form.setSaveCallback((f, changedValues) -> {
+            String name = String.valueOf(changedValues.remove(NAME));
+            callback.onAdd(name, form.getModel());
+        });
+        init(title, form);
+    }
+
+    private void init(final String title, final Form<T> form) {
+        this.form = form;
+        this.dialog = new Dialog.Builder(title)
                 .add(form.asElement())
                 .primary(CONSTANTS.add(), () -> {
                     form.save();
@@ -93,7 +111,7 @@ public class AddResourceDialog<T extends ModelNode> {
                 .size(Size.MEDIUM)
                 .closeOnEsc(true)
                 .build();
-        dialog.registerAttachable(form);
+        this.dialog.registerAttachable(form);
     }
 
     public void show() {

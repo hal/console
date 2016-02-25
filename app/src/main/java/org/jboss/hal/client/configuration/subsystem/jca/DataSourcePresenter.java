@@ -32,7 +32,7 @@ import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.ChangeSetAdapter;
+import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
@@ -76,7 +76,7 @@ public class DataSourcePresenter extends
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
-    private final ChangeSetAdapter changeSetAdapter;
+    private final OperationFactory operationFactory;
     private String datasource;
 
     @Inject
@@ -88,7 +88,7 @@ public class DataSourcePresenter extends
         super(eventBus, view, proxy);
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
-        this.changeSetAdapter = new ChangeSetAdapter();
+        this.operationFactory = new OperationFactory();
     }
 
     @Override
@@ -124,7 +124,7 @@ public class DataSourcePresenter extends
         logger.debug("About to save changes for {}: {}", datasource, changedValues); //NON-NLS
 
         ResourceAddress resourceAddress = DATA_SOURCE_RESOURCE.resolve(statementContext, datasource);
-        Composite composite = changeSetAdapter.fromChangeSet(resourceAddress, changedValues);
+        Composite composite = operationFactory.fromChangeSet(resourceAddress, changedValues);
 
         dispatcher.execute(composite, (CompositeResult result) -> {
             logger.debug("Datasource {} successfully modified", datasource); //NON-NLS

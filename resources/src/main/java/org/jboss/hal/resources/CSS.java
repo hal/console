@@ -37,7 +37,10 @@ public interface CSS {
     String active = "active";
     String alert = "alert";
     String alertDanger = "alert-danger";
+    String alertDismissable = "alert-dismissable";
+    String alertInfo = "alert-info";
     String alertSuccess = "alert-success";
+    String alertWarning = "alert-warning";
     String attributes = "attributes";
     String bootstrapSwitch = "bootstrap-switch";
     String btn = "btn";
@@ -88,6 +91,7 @@ public interface CSS {
     String hint = "hint";
     String hover = "hover";
     String in = "in";
+    String info = "info";
     String inputGroup = "input-group";
     String inputGroupAddon = "input-group-addon";
     String inputGroupBtn = "input-group-btn";
@@ -116,6 +120,7 @@ public interface CSS {
     String navTabsHal = "nav-tabs-hal";
     String navTabsPf = "nav-tabs-pf";
     String offset = "offset";
+    String ok = "ok";
     String operationParameter = "operation-parameter";
     String operations = "operations";
     String panel = "panel";
@@ -146,7 +151,12 @@ public interface CSS {
     String tagManagerContainer = "tag-manager-container";
     String tagManagerTag = "tag-manager-tag";
     String tags = "tags";
+    String toastPf = "toast-pf";
+    String toastPfAction = "toast-pf-action";
+    String toastPfMaxWidth = "toast-pf-max-width";
+    String toastPfTopRight = "toast-pf-top-right";
     String value = "value";
+    String warningTriangleO = "warning-triangle-o";
 
     static String column(int columns) {
         return column + "-" + columnMedium + "-" + String.valueOf(columns);

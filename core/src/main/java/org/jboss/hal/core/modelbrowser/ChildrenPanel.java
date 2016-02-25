@@ -88,10 +88,12 @@ class ChildrenPanel implements HasElements, Attachable {
                 .button(resources.constants().add(), (event, api) -> modelBrowser.onAdd(parent))
                 .button(resources.constants().remove(), Scope.SELECTED,
                         (event, api) -> DialogFactory.confirmation(resources.constants().removeResource(),
-                                resources.messages().removeConfirmationQuestion(api.selectedRow()),
+                                resources.messages().removeResourceConfirmationQuestion(api.selectedRow()),
                                 () -> {
-                                    modelBrowser.onRemove(api.selectedRow());
-                                    return false;
+                                    ResourceAddress fq = parent.data.getAddress().getParent()
+                                            .add(parent.text, api.selectedRow());
+                                    modelBrowser.onRemove(fq);
+                                    return true;
                                 }).show())
                 .paging(false)
                 .build();

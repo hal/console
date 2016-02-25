@@ -23,6 +23,7 @@ package org.jboss.hal.spi;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
+import com.google.web.bindery.event.shared.EventBus;
 
 /**
  * @author Harald Pehl
@@ -39,6 +40,10 @@ public class MessageEvent extends GwtEvent<MessageEvent.MessageHandler> {
 
     public static Type<MessageHandler> getType() {
         return TYPE;
+    }
+
+    public static void fire(EventBus eventBus, Message message) {
+        eventBus.fireEvent(new MessageEvent(message));
     }
 
     private final Message message;

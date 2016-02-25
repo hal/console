@@ -38,6 +38,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String data();
     String defaultValue();
+    String details();
     String disable();
     String disabled();
     String dispatcherException();

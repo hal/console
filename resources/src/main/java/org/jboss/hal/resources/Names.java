@@ -36,7 +36,6 @@ public interface Names {
     String DEPLOYMENTS = "Deployments";
     String HAL = "HAL";
     String HOSTS = "Hosts";
-    String HIDDEN = "hidden";
     String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";
     String MANAGEMENT_CONSOLE = "Management Console";

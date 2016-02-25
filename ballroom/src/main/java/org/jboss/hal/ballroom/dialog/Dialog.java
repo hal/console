@@ -41,7 +41,7 @@ import java.util.List;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.dialog.Modal.$;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.Names.HIDDEN;
+import static org.jboss.hal.resources.UIConstants.HIDDEN;
 import static org.jboss.hal.resources.UIConstants.ROLE;
 import static org.jboss.hal.resources.UIConstants.TABINDEX;
 

@@ -39,6 +39,10 @@ import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.CompositeResult;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.description.ResourceDescription;
@@ -51,6 +55,8 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,8 +69,7 @@ import java.util.Map;
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.util.Collections.singleton;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Key.ANY_GROUP;
 import static org.jboss.hal.meta.StatementContext.Key.ANY_PROFILE;
 import static org.jboss.hal.resources.CSS.*;
@@ -89,6 +94,7 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
     private final EventBus eventBus;
     private final Provider<Progress> progress;
     private final Resources resources;
+    private final OperationFactory operationFactory;
 
     private final Iterable<Element> rows;
     private final Element buttonGroup;
@@ -116,6 +122,7 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
         this.eventBus = eventBus;
         this.progress = progress;
         this.resources = resources;
+        this.operationFactory = new OperationFactory();
 
         buttonGroup = new Elements.Builder()
                 .div().css(btnGroup, modelBrowserButtons)
@@ -257,7 +264,7 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
     }
 
     private void onRefresh() {
-        Browser.getWindow().alert(NYI);
+        Browser.getWindow().alert("Refresh " + NYI);
     }
 
     void onAdd(final Node<Context> parent) {
@@ -271,7 +278,7 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
                         public void onFailure(final Throwable throwable) {
                             //noinspection HardCodedStringLiteral
                             logger.error(
-                                    "Unable to add resource for node {}({}). Error while processing metadata for {}: {}",
+                                    "Unable to open add resource dialog for node {}({}). Error while processing metadata for {}: {}",
                                     parent.id, parent.text, template, throwable.getMessage());
                         }
 
@@ -283,24 +290,43 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
                                     IdBuilder.build(parent.id, "add"),
                                     resources.messages().addResourceTitle(parent.text),
                                     securityContext, description,
-                                    (name, values) -> Browser.getWindow()
-                                            .alert("About to add resource '" + name + "' with values " + values));
+                                    (name, modelNode) -> {
+                                        ResourceAddress fq = parent.data.getAddress().getParent()
+                                                .add(parent.text, name);
+                                        Operation operation = new Operation.Builder(ADD, fq).payload(modelNode)
+                                                .build();
+                                        dispatcher.execute(operation, result -> {
+                                            MessageEvent.fire(eventBus,
+                                                    Message.success(resources.messages().addResourceSuccess(name)));
+                                            onRefresh();
+                                        });
+                                    });
                             dialog.show();
                         }
                     });
         }
     }
 
-    void onRemove(final String name) {
-        Browser.getWindow().alert(NYI);
+    void onRemove(ResourceAddress address) {
+        Operation operation = new Operation.Builder(REMOVE, address).build();
+        dispatcher.execute(operation, result -> {
+            MessageEvent.fire(eventBus,
+                    Message.success(resources.messages().removeResourceSuccess(address.lastValue())));
+            onRefresh();
+        });
     }
 
     void onReset(Form<ModelNode> form) {
         Browser.getWindow().alert(NYI);
     }
 
-    void onSave(Form<ModelNode> form, Map<String, Object> changedValues) {
-        Browser.getWindow().alert(NYI);
+    void onSave(ResourceAddress address, Map<String, Object> changedValues) {
+        Composite composite = operationFactory.fromChangeSet(address, changedValues);
+        dispatcher.execute(composite, (CompositeResult result) -> {
+            MessageEvent.fire(eventBus,
+                    Message.success(resources.messages().modifyResourceSuccess(address.lastValue())));
+            onRefresh();
+        });
     }
 
 

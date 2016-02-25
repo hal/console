@@ -32,6 +32,7 @@ public interface UIConstants {
     String CONTROLS = "controls";
     String EXPANDED = "expanded";
     String HAS_POPUP = "haspopup";
+    String HIDDEN = "hidden";
     String NBSP = "&nbsp;";
     String OBJECT = "Object";
     String PLACEMENT = "placement";

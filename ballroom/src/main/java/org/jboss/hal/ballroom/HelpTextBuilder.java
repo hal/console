@@ -25,6 +25,7 @@ import com.google.common.base.Joiner;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.Constants;
@@ -76,14 +77,11 @@ public class HelpTextBuilder {
     public SafeHtml helpText(Property property) {
         SafeHtmlBuilder help = new SafeHtmlBuilder();
         ModelNode attribute = property.getValue();
-        String desc = attribute.get(DESCRIPTION).asString();
+        SafeHtml desc = SafeHtmlUtils.fromSafeConstant(attribute.get(DESCRIPTION).asString());
         boolean required = attribute.hasDefined(NILLABLE) && !attribute.get(NILLABLE).asBoolean();
         boolean supportsExpression = attribute.hasDefined(EXPRESSIONS_ALLOWED) && attribute.get(EXPRESSIONS_ALLOWED)
                 .asBoolean();
-        if (!desc.endsWith(".")) {
-            desc = desc + ".";
-        }
-        help.appendEscaped(desc);
+        help.append(desc);
 
         RestartMode restartMode = restartRequired(attribute);
         if (restartMode == UNKNOWN) {
@@ -106,7 +104,7 @@ public class HelpTextBuilder {
             textModules.add(restartMode.description());
         }
         if (!textModules.isEmpty()) {
-            help.appendHtmlConstant("<br/>").appendEscaped(Joiner.on(". ").join(textModules)).append('.');
+            help.appendHtmlConstant("<br/>").appendEscaped(Joiner.on(". ").join(textModules)).append('.'); //NON-NLS
         }
 
         return help.toSafeHtml();
