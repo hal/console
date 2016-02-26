@@ -1,10 +1,13 @@
+@margin-big: 20px;
+@margin-small: 10px;
+
 .model-browser-header, .model-browser-buttons, .model-browser-content {
-  margin-top: 20px;
+  margin-top: @margin-big;
 }
 
 .model-browser-tree {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: @margin-small;
+  margin-bottom: @margin-small;
 }
 
 .model-browser-tree {
@@ -25,7 +28,7 @@
   }
 
   .table.attributes, .table.operations {
-    margin-top: 20px;
+    margin-top: @margin-big;
     > tbody > tr > td {
       padding-top: 5px;
       padding-bottom: 5px;

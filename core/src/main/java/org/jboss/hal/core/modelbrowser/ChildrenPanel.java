@@ -31,12 +31,15 @@ import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
+import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.Button.Scope;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.OptionsBuilder;
+import org.jboss.hal.ballroom.table.Selector;
+import org.jboss.hal.ballroom.table.SelectorBuilder;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -49,6 +52,7 @@ import org.jboss.hal.resources.Resources;
 
 import java.util.List;
 
+import static org.jboss.hal.ballroom.table.Selector.Page.all;
 import static org.jboss.hal.core.modelbrowser.ReadChildren.uniqueId;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
@@ -85,7 +89,11 @@ class ChildrenPanel implements HasElements, Attachable {
                         .searchable(false)
                         .width("10em")
                         .build())
-                .button(resources.constants().add(), (event, api) -> modelBrowser.onAdd(parent))
+                .button(resources.constants().add(), (event, api) -> {
+                    Selector selector = new SelectorBuilder().page(all).build();
+                    modelBrowser.onAdd(parent, JsHelper.asList(api.rows(selector).data().toArray()));
+                })
+
                 .button(resources.constants().remove(), Scope.SELECTED,
                         (event, api) -> DialogFactory.confirmation(resources.constants().removeResource(),
                                 resources.messages().removeResourceConfirmationQuestion(api.selectedRow()),

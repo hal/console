@@ -78,16 +78,22 @@ public class Message {
     }
 
 
+    private final long id;
     private final Level level;
     private final String message;
     private final String details;
     private final boolean sticky;
 
     private Message(final Level level, final String message, final String details, final boolean sticky) {
+        this.id = System.currentTimeMillis();
         this.level = level;
         this.message = message;
         this.details = details;
         this.sticky = sticky;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public Level getLevel() {
@@ -104,5 +110,26 @@ public class Message {
 
     public boolean isSticky() {
         return sticky;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) { return true; }
+        if (!(o instanceof Message)) { return false; }
+
+        Message message = (Message) o;
+
+        return id == message.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
+    }
+
+    @Override
+    public String toString() {
+        return "Message(" + level + ": " + message + (sticky ? ", sticky)" : ")");
     }
 }

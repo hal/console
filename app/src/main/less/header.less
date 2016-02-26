@@ -64,6 +64,24 @@
   outline: none;
 }
 
+.navbar-nav .dropdown.open .dropdown-menu.messages {
+  margin-top: 0;
+}
+
+.messages {
+  .list-group-item {
+    cursor: pointer;
+
+    &.visited {
+      opacity: .66;
+    }
+
+    .message:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
 .hal-breadcrumb {
   display: flex;
   flex-wrap: nowrap;

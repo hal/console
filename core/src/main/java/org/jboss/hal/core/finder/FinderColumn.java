@@ -286,7 +286,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             if (li == noItems) {
                 continue;
             }
-            Object filterData = li.getDataset().at(CSS.filter); //NON-NLS
+            Object filterData = li.getDataset().at(CSS.filter);
             boolean match = filter == null
                     || filter.trim().length() == 0
                     || filterData == null

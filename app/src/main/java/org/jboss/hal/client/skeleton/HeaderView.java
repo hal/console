@@ -313,7 +313,6 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     @EventHandler(element = "messages", on = click)
     void onMessages() {
-        Browser.getWindow().alert(NYI);
     }
 
     @EventHandler(element = "logout", on = click)

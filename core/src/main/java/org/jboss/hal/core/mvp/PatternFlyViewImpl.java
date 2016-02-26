@@ -29,6 +29,7 @@ import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.PatternFly;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -75,9 +76,7 @@ public abstract class PatternFlyViewImpl extends ViewImpl implements PatternFlyV
     protected void registerAttachable(Attachable first, Attachable... rest) {
         attachables.add(first);
         if (rest != null) {
-            for (Attachable attachable : rest) {
-                attachables.add(attachable);
-            }
+            Collections.addAll(attachables, rest);
         }
     }
 

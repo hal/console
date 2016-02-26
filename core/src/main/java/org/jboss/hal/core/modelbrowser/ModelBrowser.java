@@ -25,6 +25,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.dom.Element;
+import elemental.html.ButtonElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.flow.Progress;
@@ -49,8 +50,8 @@ import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.meta.security.SecurityFramework;
+import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -64,6 +65,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
@@ -78,18 +80,20 @@ import static org.jboss.hal.resources.Names.NYI;
 /**
  * @author Harald Pehl
  */
-public class ModelBrowser implements HasElements, SecurityContextAware {
+public class ModelBrowser implements HasElements {
 
     private static final int MARGIN_BIG = 20; // keep this in sync with the
     private static final int MARGIN_SMALL = 10; // margins in modelbrowser.less
+    private static final String FILTER_ELEMENT = "filterElement";
+    private static final String REFRESH_ELEMENT = "refreshElement";
     static final String ROOT_ID = IdBuilder.build(Ids.MODEL_BROWSER, "root");
     static final Element PLACE_HOLDER_ELEMENT = Browser.getDocument().createDivElement();
 
     private static final Logger logger = LoggerFactory.getLogger(ModelBrowser.class);
 
-    private final MetadataProcessor metadataProcessor;
-    private final SecurityFramework securityFramework;
-    private final ResourceDescriptions resourceDescriptions;
+    final MetadataProcessor metadataProcessor;
+    final SecurityFramework securityFramework;
+    final ResourceDescriptions resourceDescriptions;
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
     private final Provider<Progress> progress;
@@ -98,6 +102,8 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
 
     private final Iterable<Element> rows;
     private final Element buttonGroup;
+    private final ButtonElement filter;
+    private final ButtonElement refresh;
     private final Element treeContainer;
     private final Element content;
     private final ResourcePanel resourcePanel;
@@ -105,6 +111,9 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
     Tree<Context> tree;
 
     private boolean breadcrumb;
+
+
+    // ------------------------------------------------------ ui setup
 
     @Inject
     public ModelBrowser(final MetadataProcessor metadataProcessor,
@@ -124,13 +133,17 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
         this.resources = resources;
         this.operationFactory = new OperationFactory();
 
-        buttonGroup = new Elements.Builder()
+        Elements.Builder buttonsBuilder = new Elements.Builder()
                 .div().css(btnGroup, modelBrowserButtons)
-                .button().on(click, event -> onFilter()).css(btn, btnDefault).add("i").css(fontAwesome("filter")).end()
-                .button().on(click, event -> onRefresh()).css(btn, btnDefault).add("i").css(fontAwesome("refresh"))
+                .button().rememberAs(FILTER_ELEMENT).on(click, event -> onFilter()).css(btn, btnDefault).add("i")
+                .css(fontAwesome(CSS.filter)).end()
+                .button().rememberAs(REFRESH_ELEMENT).on(click, event -> onRefresh()).css(btn, btnDefault).add("i")
+                .css(fontAwesome(CSS.refresh))
                 .end()
-                .end()
-                .build();
+                .end();
+        filter = buttonsBuilder.referenceFor(FILTER_ELEMENT);
+        refresh = buttonsBuilder.referenceFor(REFRESH_ELEMENT);
+        buttonGroup = buttonsBuilder.build();
         treeContainer = new Elements.Builder().div().css(modelBrowserTree).end().build();
         content = new Elements.Builder().div().css(modelBrowserContent).end().build();
 
@@ -173,31 +186,6 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
             // keep this in sync with the margins in modelbrowser.less
             treeContainer.getStyle().setHeight(height - 2 * MARGIN_BIG - buttonGroup - 2 * MARGIN_SMALL, PX);
             content.getStyle().setHeight(height - 2 * MARGIN_BIG - 2 * MARGIN_SMALL, PX);
-        }
-    }
-
-    private void onTreeSelection(SelectionContext<Context> context) {
-        if ("ready".equals(context.action)) { //NON-NLS
-            // only (de)selection events please
-            return;
-        }
-
-        resourcePanel.hide();
-        childrenPanel.hide();
-        if (context.selected.isEmpty()) {
-            updateBreadcrumb(null);
-
-        } else {
-            updateBreadcrumb(context.node);
-
-            ResourceAddress address = context.node.data.getAddress();
-            if (context.node.data.isFullyQualified()) {
-                showResourceView(context.node, address);
-
-            } else {
-                childrenPanel.update(context.node, address);
-                childrenPanel.show();
-            }
         }
     }
 
@@ -259,6 +247,34 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
 
     // ------------------------------------------------------ event handler
 
+    private void onTreeSelection(SelectionContext<Context> context) {
+        if ("ready".equals(context.action)) { //NON-NLS
+            // only (de)selection events please
+            return;
+        }
+
+        filter.setDisabled(context.selected.isEmpty() || !context.node.data.isFullyQualified());
+        refresh.setDisabled(context.selected.isEmpty());
+
+        resourcePanel.hide();
+        childrenPanel.hide();
+        if (context.selected.isEmpty()) {
+            updateBreadcrumb(null);
+
+        } else {
+            updateBreadcrumb(context.node);
+
+            ResourceAddress address = context.node.data.getAddress();
+            if (context.node.data.isFullyQualified()) {
+                showResourceView(context.node, address);
+
+            } else {
+                childrenPanel.update(context.node, address);
+                childrenPanel.show();
+            }
+        }
+    }
+
     private void onFilter() {
         Browser.getWindow().alert(NYI);
     }
@@ -267,9 +283,24 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
         Browser.getWindow().alert("Refresh " + NYI);
     }
 
-    void onAdd(final Node<Context> parent) {
+    void onAdd(final Node<Context> parent, final List<String> children) {
         if (parent.data.hasSingletons()) {
-            Browser.getWindow().alert(NYI);
+            if (parent.data.getSingletons().size() == children.size()) {
+                MessageEvent.fire(eventBus, Message.warning(resources.constants().allSingletonsExist()));
+            } else {
+                AddressTemplate template = asGenericTemplate(parent, parent.data.getAddress());
+                NewSingletonWizard wizard = new NewSingletonWizard(this, template, parent, children, context -> {
+                    ResourceAddress fq = parent.data.getAddress().getParent().add(parent.text, context.singleton);
+                    Operation operation = new Operation.Builder(ADD, fq).payload(context.modelNode).build();
+                    dispatcher.execute(operation, result -> {
+                        MessageEvent.fire(eventBus,
+                                Message.success(resources.messages().addResourceSuccess(context.singleton)));
+                        onRefresh();
+                    });
+                });
+                wizard.show();
+            }
+
         } else {
             AddressTemplate template = asGenericTemplate(parent, parent.data.getAddress());
             metadataProcessor.process(Ids.MODEL_BROWSER, singleton(template), progress,
@@ -369,7 +400,4 @@ public class ModelBrowser implements HasElements, SecurityContextAware {
     public Iterable<Element> asElements() {
         return rows;
     }
-
-    @Override
-    public void onSecurityContextChange(final SecurityContext securityContext) {}
 }

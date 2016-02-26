@@ -91,6 +91,7 @@ public interface CSS {
     String hint = "hint";
     String hover = "hover";
     String in = "in";
+    String indicator = "indicator";
     String info = "info";
     String inputGroup = "input-group";
     String inputGroupAddon = "input-group-addon";
@@ -135,8 +136,11 @@ public interface CSS {
     String progressBarStriped = "progress-bar-striped";
     String progressXs = "progress-xs";
     String properties = "properties";
+    String pullLeft = "pull-left";
     String pullRight = "pull-right";
+    String radio = "radio";
     String readonly = "readonly";
+    String refresh = "refresh";
     String restricted = "restricted";
     String row = "row";
     String selectpicker = "selectpicker";
@@ -157,6 +161,9 @@ public interface CSS {
     String toastPfTopRight = "toast-pf-top-right";
     String value = "value";
     String warningTriangleO = "warning-triangle-o";
+    String wizardHeader = "wizard-header";
+    String wizardProgress = "wizard-progress";
+    String wizardStep = "wizard-step";
 
     static String column(int columns) {
         return column + "-" + columnMedium + "-" + String.valueOf(columns);
@@ -173,5 +180,4 @@ public interface CSS {
     static String pfIcon(@NonNls String name) {
         return "pficon pficon-" + name; //NON-NLS
     }
-
 }

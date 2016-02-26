@@ -36,16 +36,28 @@ import org.jboss.hal.resources.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.dialog.Modal.$;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.UIConstants.HIDDEN;
-import static org.jboss.hal.resources.UIConstants.ROLE;
-import static org.jboss.hal.resources.UIConstants.TABINDEX;
+import static org.jboss.hal.resources.UIConstants.*;
 
 /**
+ * A modal dialog with optional secondary and primary buttons. Only one dialog can be open at a time. The buttons can
+ * be placed on the left or the right side. Each button has a callback which either returns {@code true} to indicate
+ * that the dialog should be closed or {@code false} if it should stay open. You can add as many buttons as you like,
+ * but only one of them should be a primary button.
+ * <p>
+ * There are convenience methods to add primary and secondary buttons which come with pre-defined placements. If
+ * you want to define the placement by yourself use negative numbers to place the buttons on the left side and positive
+ * numbers for the right side. On each side the buttons are ordered according to the placement.
+ *
  * @author Harald Pehl
  */
 public class Dialog implements IsElement {
@@ -64,6 +76,11 @@ public class Dialog implements IsElement {
     @FunctionalInterface
     public interface Callback {
 
+        /**
+         * A button callback
+         *
+         * @return {@code true} if the dialog should be closed and {@code false} if the dialog should stay open.
+         */
         boolean execute();
     }
 
@@ -90,10 +107,9 @@ public class Dialog implements IsElement {
         // mandatory attributes
         private final String title;
         private final List<Element> elements;
+        private final SortedMap<Integer, Button> buttons;
 
         // optional attributes
-        private Button primaryButton;
-        private Button secondaryButton;
         private Size size;
         private boolean closeIcon;
         private boolean closeOnEsc;
@@ -102,9 +118,8 @@ public class Dialog implements IsElement {
         public Builder(final String title) {
             this.title = title;
             this.elements = new ArrayList<>();
+            this.buttons = new TreeMap<>();
 
-            this.primaryButton = null;
-            this.secondaryButton = null;
             this.size = Size.MEDIUM;
             this.closeIcon = true;
             this.fadeIn = false;
@@ -114,8 +129,8 @@ public class Dialog implements IsElement {
          * Shortcut for a dialog with one 'Close' button.
          */
         public Builder closeOnly() {
-            primaryButton = null;
-            secondaryButton = new Button(CONSTANTS.close(), () -> true, false);
+            buttons.clear();
+            buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.close(), () -> true, false));
             closeIcon = true;
             return this;
         }
@@ -125,8 +140,9 @@ public class Dialog implements IsElement {
          * callback.
          */
         public Builder cancelSave(Callback saveCallback) {
-            primaryButton = new Button(CONSTANTS.save(), saveCallback, true);
-            secondaryButton = new Button(CONSTANTS.close(), () -> true, false);
+            buttons.clear();
+            buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.save(), saveCallback, true));
+            buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.close(), () -> true, false));
             return this;
         }
 
@@ -135,26 +151,41 @@ public class Dialog implements IsElement {
          * callback.
          */
         public Builder noYes(Callback yesCallback) {
-            primaryButton = new Button(CONSTANTS.yes(), yesCallback, true);
-            secondaryButton = new Button(CONSTANTS.no(), () -> true, false);
+            buttons.clear();
+            buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.yes(), yesCallback, true));
+            buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.no(), () -> true, false));
             return this;
         }
 
+        /**
+         * Adds a primary with label 'Save' and position {@value #PRIMARY_POSITION}.
+         */
         public Builder primary(Callback callback) {
             return primary(CONSTANTS.save(), callback);
         }
 
         public Builder primary(String label, Callback callback) {
-            primaryButton = new Button(label, callback, true);
+            return primary(PRIMARY_POSITION, label, callback);
+        }
+
+        public Builder primary(int position, String label, Callback callback) {
+            buttons.put(position, new Button(label, callback, true));
             return this;
         }
 
+        /**
+         * Adds a secondary button with label 'Cancel' and position {@value #SECONDARY_POSITION}
+         */
         public Builder secondary(Callback callback) {
             return secondary(CONSTANTS.cancel(), callback);
         }
 
         public Builder secondary(String label, Callback callback) {
-            secondaryButton = new Button(label, callback, false);
+            return secondary(SECONDARY_POSITION, label, callback);
+        }
+
+        public Builder secondary(int position, String label, Callback callback) {
+            buttons.put(position, new Button(label, callback, false));
             return this;
         }
 
@@ -200,7 +231,10 @@ public class Dialog implements IsElement {
 
     // ------------------------------------------------------ dialog singleton
 
-    static final Constants CONSTANTS = GWT.create(Constants.class);
+    public static final int SECONDARY_POSITION = 100;
+    public static final int PRIMARY_POSITION = 200;
+
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String BODY_ELEMENT = "body";
     private static final String CLOSE_ICON_ELEMENT = "closeIcon";
     private static final String DIALOG_ELEMENT = "dialog";
@@ -271,13 +305,13 @@ public class Dialog implements IsElement {
     // ------------------------------------------------------ dialog instance
 
     private final boolean closeOnEsc;
-    private ButtonElement primaryButton;
-    private ButtonElement secondaryButton;
+    private final Map<Integer, ButtonElement> buttons;
     private final List<Attachable> attachables;
 
     private Dialog(final Builder builder) {
         reset();
         this.closeOnEsc = builder.closeOnEsc;
+        this.buttons = new HashMap<>();
         this.attachables = new ArrayList<>();
 
         if (builder.fadeIn) {
@@ -285,50 +319,36 @@ public class Dialog implements IsElement {
         }
         Dialog.dialog.getClassList().add(builder.size.css);
         Elements.setVisible(Dialog.closeIcon, builder.closeIcon);
-        closeIcon.setOnclick(event -> {
-            if (builder.secondaryButton == null) {
-                close();
-            } else {
-                if (builder.secondaryButton.callback.execute()) {
-                    close();
-                }
-            }
-        });
+        closeIcon.setOnclick(event -> close());
         setTitle(builder.title);
         for (Element element : builder.elements) {
             Dialog.body.appendChild(element);
         }
 
-        boolean buttons = builder.primaryButton != null || builder.secondaryButton != null;
-        if (buttons) {
-            if (builder.secondaryButton != null) {
-                secondaryButton = new Elements.Builder()
+        if (!builder.buttons.isEmpty()) {
+            for (Map.Entry<Integer, Button> entry : builder.buttons.entrySet()) {
+                int position = entry.getKey();
+                Button button = entry.getValue();
+                String css = btn + " " + btnHal + " " + (button.primary ? btnPrimary : btnDefault);
+                if (position < 0) {
+                    css = css + " " + pullLeft;
+                }
+
+                ButtonElement buttonElement = new Elements.Builder()
                         .button()
-                        .css(btn, btnHal, btnDefault)
+                        .css(css)
                         .on(click, event -> {
-                            if (builder.secondaryButton.callback.execute()) {
+                            if (button.callback.execute()) {
                                 close();
                             }
                         })
-                        .innerText(builder.secondaryButton.label)
+                        .innerText(button.label)
                         .end().build();
-                Dialog.footer.appendChild(secondaryButton);
-            }
-            if (builder.primaryButton != null) {
-                primaryButton = new Elements.Builder()
-                        .button()
-                        .css(btn, btnHal, btnPrimary)
-                        .on(click, event -> {
-                            if (builder.primaryButton.callback.execute()) {
-                                close();
-                            }
-                        })
-                        .innerText(builder.primaryButton.label)
-                        .end().build();
-                Dialog.footer.appendChild(primaryButton);
+                Dialog.footer.appendChild(buttonElement);
+                buttons.put(position, buttonElement);
             }
         }
-        Elements.setVisible(Dialog.footer, buttons);
+        Elements.setVisible(Dialog.footer, !buttons.isEmpty());
     }
 
     @Override
@@ -339,9 +359,7 @@ public class Dialog implements IsElement {
     public void registerAttachable(Attachable first, Attachable... rest) {
         attachables.add(first);
         if (rest != null) {
-            for (Attachable attachable : rest) {
-                attachables.add(attachable);
-            }
+            Collections.addAll(attachables, rest);
         }
     }
 
@@ -369,27 +387,7 @@ public class Dialog implements IsElement {
         Dialog.title.setInnerHTML(title);
     }
 
-    public void setPrimaryButtonLabel(String label) {
-        if (primaryButton != null) {
-            primaryButton.setInnerHTML(label);
-        }
-    }
-
-    public void setPrimaryButtonDisabled(boolean disabled) {
-        if (primaryButton != null) {
-            primaryButton.setDisabled(disabled);
-        }
-    }
-
-    public void setSecondaryButtonLabel(String label) {
-        if (secondaryButton != null) {
-            secondaryButton.setInnerHTML(label);
-        }
-    }
-
-    public void setSecondaryButtonDisabled(boolean disabled) {
-        if (secondaryButton != null) {
-            secondaryButton.setDisabled(disabled);
-        }
+    public ButtonElement getButton(int position) {
+        return buttons.get(position);
     }
 }

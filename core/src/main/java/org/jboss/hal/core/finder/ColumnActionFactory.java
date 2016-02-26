@@ -23,6 +23,7 @@ package org.jboss.hal.core.finder;
 
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.resources.CSS;
 
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -38,7 +39,7 @@ public class ColumnActionFactory {
     }
 
     public <T> ColumnAction<T> refresh(ColumnActionHandler<T> action) {
-        Element element = new Elements.Builder().span().css(fontAwesome("refresh")).end().build();
+        Element element = new Elements.Builder().span().css(fontAwesome(CSS.refresh)).end().build();
         return new ColumnAction<>(element, action);
     }
 }

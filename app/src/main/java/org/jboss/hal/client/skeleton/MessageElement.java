@@ -72,7 +72,9 @@ class MessageElement implements IsElement {
                 .div().css(toastPf, toastPfMaxWidth, toastPfTopRight, alert, css);
         if (message.isSticky()) {
             //noinspection HardCodedStringLiteral
-            builder.button().css(close).data("dismiss", "alert").aria(UIConstants.HIDDEN, String.valueOf(true)).end();
+            builder.button().css(close).data("dismiss", "alert").aria(UIConstants.HIDDEN, String.valueOf(true))
+                    .span().css(pfIcon(close)).end()
+                    .end();
         }
         if (message.getDetails() != null) {
             builder.div().css(pullRight, toastPfAction)
@@ -81,7 +83,7 @@ class MessageElement implements IsElement {
                     .end();
         }
         builder.span().css(pfIcon(icon)).end();
-        builder.p().innerText(message.getMessage()).end();
+        builder.span().innerText(message.getMessage()).end();
         builder.end(); // </div>
 
         root = builder.build();

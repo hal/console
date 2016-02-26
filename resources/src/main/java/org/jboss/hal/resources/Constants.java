@@ -24,6 +24,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String accessType();
     String action();
     String add();
+    String allSingletonsExist();
     String attribute();
     String attributes();
 
@@ -33,6 +34,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String browseBy();
 
     String cancel();
+    String chooseSingleton();
+    String clearMessages();
     String close();
     String connectToServer();
 
@@ -57,6 +60,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String expressionResolver();
 
     String filter();
+    String finish();
     String formErrors();
     String formResetDesc();
 
@@ -149,6 +153,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String modelBrowser();
     String metadataError();
     String name();
+    String next();
     String no();
     String noAttributes();
     String noItems();

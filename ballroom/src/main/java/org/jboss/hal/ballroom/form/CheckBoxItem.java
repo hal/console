@@ -60,7 +60,7 @@ public class CheckBoxItem extends AbstractFormItem<Boolean> {
     }
 
 
-    static class CheckBoxElement extends AbstractCheckBoxElement {
+    private static class CheckBoxElement extends AbstractCheckBoxElement {
 
         @Override
         public boolean isEnabled() {
