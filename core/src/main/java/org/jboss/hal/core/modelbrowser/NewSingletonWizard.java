@@ -22,14 +22,12 @@
 package org.jboss.hal.core.modelbrowser;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.DivElement;
 import elemental.html.InputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.InputType;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.form.Form;
@@ -38,20 +36,17 @@ import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 
-import javax.inject.Provider;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import static java.util.Collections.singleton;
 import static org.jboss.gwt.elemento.core.EventType.click;
 
 /**
@@ -64,16 +59,13 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
 
     static class SingletonContext {
 
-        final AddressTemplate parentTemplate;
-        final Node<Context> parentNode;
+        final Node<Context> parent;
         final List<String> children;
         String singleton;
         ModelNode modelNode;
 
-        SingletonContext(final AddressTemplate parentTemplate, final Node<Context> parentNode,
-                final List<String> children) {
-            this.parentTemplate = parentTemplate;
-            this.parentNode = parentNode;
+        SingletonContext(final Node<Context> parent, final List<String> children) {
+            this.parent = parent;
             this.children = children;
         }
     }
@@ -83,11 +75,11 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
 
         private final Element root;
 
-        ChooseSingletonStep(final Wizard<SingletonContext, SingletonState> wizard) {
+        ChooseSingletonStep(final NewSingletonWizard wizard) {
             super(wizard, CONSTANTS.chooseSingleton());
 
             Elements.Builder builder = new Elements.Builder().div();
-            SortedSet<String> singletons = new TreeSet<>(wizard.getContext().parentNode.data.getSingletons());
+            SortedSet<String> singletons = new TreeSet<>(wizard.getContext().parent.data.getSingletons());
             SortedSet<String> existing = new TreeSet<>(wizard.getContext().children);
             singletons.removeAll(existing);
 
@@ -96,8 +88,8 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
                 builder.div().css(CSS.radio)
                     .label()
                         .input(InputType.radio)
-                            .attr("name", "singleton")
-                            .attr("value", singleton) //NON-NLS
+                            .attr("name", "singleton") //NON-NLS
+                            .attr("value", singleton)
                             .on(click, event ->
                                     wizard.getContext().singleton = ((InputElement) event.getTarget()).getValue())
                         .span().innerText(singleton).end()
@@ -115,7 +107,7 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
 
         @Override
         protected void onShow(final SingletonContext context) {
-            InputElement firstRadio = (InputElement) asElement().querySelector("input[type=radio]");
+            InputElement firstRadio = (InputElement) asElement().querySelector("input[type=radio]"); //NON-NLS
             firstRadio.setChecked(true);
             context.singleton = firstRadio.getValue();
         }
@@ -124,12 +116,12 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
 
     private static class CreateSingletonStep extends WizardStep<SingletonContext, SingletonState> {
 
-        private final NewSingletonWizard wizard;
+        private final MetadataProvider metadataProvider;
         private final DivElement root;
 
         CreateSingletonStep(final NewSingletonWizard wizard) {
-            super(wizard, MESSAGES.addResourceTitle(wizard.getContext().parentNode.text));
-            this.wizard = wizard;
+            super(wizard, MESSAGES.addResourceTitle(wizard.getContext().parent.text));
+            this.metadataProvider = wizard.metadataProvider;
             this.root = Browser.getDocument().createDivElement();
         }
 
@@ -141,22 +133,21 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
         @Override
         protected void onShow(final SingletonContext context) {
             Elements.removeChildrenFrom(root);
-            Provider<Progress> progressProvider = () -> Progress.NOOP;
-            AddressTemplate template = wizard.getContext().parentTemplate.replaceWildcards(context.singleton);
-            wizard.modelBrowser.metadataProcessor.process(Ids.MODEL_BROWSER, singleton(template), progressProvider,
-                    new AsyncCallback<Void>() {
+            ResourceAddress singletonAddress = wizard.getContext().parent.data.getAddress().getParent()
+                    .add(wizard.getContext().parent.text, wizard.getContext().singleton);
+            metadataProvider.getMetadata(wizard.getContext().parent, singletonAddress,
+                    new MetadataProvider.MetadataCallback() {
                         @Override
-                        public void onFailure(final Throwable throwable) {
-                            // TODO Error handling
+                        public void onError(final Throwable error) {
+                            // TODO error handling
                         }
 
                         @Override
-                        public void onSuccess(final Void aVoid) {
+                        public void onMetadata(final SecurityContext securityContext,
+                                final ResourceDescription description) {
+
                             String id = IdBuilder.build(id(), "form");
-                            SecurityContext securityContext = wizard.modelBrowser.securityFramework.lookup(template);
-                            ResourceDescription description = wizard.modelBrowser.resourceDescriptions.lookup(template);
-                            Form<ModelNode> form = new ModelNodeForm.Builder<>(id,
-                                    securityContext, description)
+                            Form<ModelNode> form = new ModelNodeForm.Builder<>(id, securityContext, description)
                                     .createResource()
                                     .onSave((f, changedValues) -> wizard.getContext().modelNode = f.getModel())
                                     .build();
@@ -173,13 +164,15 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
 
-    private final ModelBrowser modelBrowser;
+    private final MetadataProvider metadataProvider;
 
-    NewSingletonWizard(final ModelBrowser modelBrowser, final AddressTemplate parentTemplate,
-            final Node<Context> parentNode, List<String> children, FinishCallback<SingletonContext> finishCallback) {
-        super(IdBuilder.build(parentNode.id, "add", "singleton"), MESSAGES.addResourceTitle(parentNode.text),
-                new SingletonContext(parentTemplate, parentNode, children), finishCallback);
-        this.modelBrowser = modelBrowser;
+    NewSingletonWizard(final MetadataProvider metadataProvider, final Node<Context> parent, List<String> children,
+            FinishCallback<SingletonContext> finishCallback) {
+        super(IdBuilder.build(parent.id, "add", "singleton"),
+                MESSAGES.addResourceTitle(parent.text),
+                new SingletonContext(parent, children),
+                finishCallback);
+        this.metadataProvider = metadataProvider;
         addStep(SingletonState.CHOOSE, new ChooseSingletonStep(this));
         addStep(SingletonState.CREATE, new CreateSingletonStep(this));
     }

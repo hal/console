@@ -21,7 +21,6 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.dom.Element;
@@ -36,16 +35,15 @@ import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.tree.SelectionChangeHandler.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.processing.MetadataProcessor;
@@ -64,16 +62,13 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
-import static java.util.Collections.singleton;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.StatementContext.Key.ANY_GROUP;
-import static org.jboss.hal.meta.StatementContext.Key.ANY_PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NYI;
 
@@ -91,12 +86,9 @@ public class ModelBrowser implements HasElements {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelBrowser.class);
 
-    final MetadataProcessor metadataProcessor;
-    final SecurityFramework securityFramework;
-    final ResourceDescriptions resourceDescriptions;
+    private final MetadataProvider metadataProvider;
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
-    private final Provider<Progress> progress;
     private final Resources resources;
     private final OperationFactory operationFactory;
 
@@ -124,23 +116,27 @@ public class ModelBrowser implements HasElements {
             @Footer final Provider<Progress> progress,
             final Resources resources) {
 
-        this.metadataProcessor = metadataProcessor;
-        this.securityFramework = securityFramework;
-        this.resourceDescriptions = resourceDescriptions;
         this.dispatcher = dispatcher;
         this.eventBus = eventBus;
-        this.progress = progress;
         this.resources = resources;
+        this.metadataProvider = new MetadataProvider(metadataProcessor, securityFramework, resourceDescriptions,
+                progress);
         this.operationFactory = new OperationFactory();
 
+        // @formatter:off
         Elements.Builder buttonsBuilder = new Elements.Builder()
-                .div().css(btnGroup, modelBrowserButtons)
-                .button().rememberAs(FILTER_ELEMENT).on(click, event -> onFilter()).css(btn, btnDefault).add("i")
-                .css(fontAwesome(CSS.filter)).end()
-                .button().rememberAs(REFRESH_ELEMENT).on(click, event -> onRefresh()).css(btn, btnDefault).add("i")
-                .css(fontAwesome(CSS.refresh))
+            .div().css(btnGroup, modelBrowserButtons)
+                .button().rememberAs(FILTER_ELEMENT).on(click, event -> onFilter()).css(btn, btnDefault)
+                    .add("i").css(fontAwesome(CSS.filter))
                 .end()
-                .end();
+                .button().rememberAs(REFRESH_ELEMENT).on(click, event -> onRefresh()).css(btn, btnDefault)
+                    .add("i").css(fontAwesome(CSS.refresh))
+                .end()
+                .button().on(click, event -> onCollapse()).css(btn, btnDefault)
+                    .add("i").css(fontAwesome("minus"))
+                .end()
+            .end();
+        // @formatter:on
         filter = buttonsBuilder.referenceFor(FILTER_ELEMENT);
         refresh = buttonsBuilder.referenceFor(REFRESH_ELEMENT);
         buttonGroup = buttonsBuilder.build();
@@ -198,50 +194,18 @@ public class ModelBrowser implements HasElements {
 
     private void showResourceView(Node<Context> node, ResourceAddress address) {
         Node<Context> parent = tree.api().getNode(node.parent);
-        AddressTemplate template = asGenericTemplate(parent, address);
-        metadataProcessor.process(Ids.MODEL_BROWSER, singleton(template), progress,
-                new AsyncCallback<Void>() {
-                    @Override
-                    public void onFailure(final Throwable throwable) {
-                        //noinspection HardCodedStringLiteral
-                        logger.error(
-                                "Unable to show resource for node {}({}). Error while processing metadata for {}: {}",
-                                node.id, node.text, template, throwable.getMessage());
-                    }
-
-                    @Override
-                    public void onSuccess(final Void aVoid) {
-                        SecurityContext securityContext = securityFramework.lookup(template);
-                        ResourceDescription description = resourceDescriptions.lookup(template);
-                        resourcePanel.update(node, node.data.getAddress(), securityContext, description);
-                        resourcePanel.show();
-                    }
-                });
-    }
-
-    private AddressTemplate asGenericTemplate(Node<Context> parent, ResourceAddress address) {
-        StringBuilder builder = new StringBuilder();
-        for (Iterator<Property> iterator = address.asPropertyList().iterator(); iterator.hasNext(); ) {
-            Property property = iterator.next();
-            String name = property.getName();
-
-            if (PROFILE.equals(name)) {
-                builder.append(ANY_PROFILE.variable());
-            } else if (SERVER_GROUP.equals(name)) {
-                builder.append(ANY_GROUP.variable());
-            } else {
-                builder.append(name).append("=");
-                if (!iterator.hasNext() && parent != null && parent.data != null && !parent.data.hasSingletons()) {
-                    builder.append("*");
-                } else {
-                    builder.append(property.getValue().asString());
-                }
+        metadataProvider.getMetadata(parent, address, new MetadataProvider.MetadataCallback() {
+            @Override
+            public void onError(final Throwable error) {
+                metadataError(address, error);
             }
-            if (iterator.hasNext()) {
-                builder.append("/");
+
+            @Override
+            public void onMetadata(final SecurityContext securityContext, final ResourceDescription description) {
+                resourcePanel.update(node, node.data.getAddress(), securityContext, description);
+                resourcePanel.show();
             }
-        }
-        return AddressTemplate.of(builder.toString());
+        });
     }
 
 
@@ -287,62 +251,110 @@ public class ModelBrowser implements HasElements {
         if (parent.data.hasSingletons()) {
             if (parent.data.getSingletons().size() == children.size()) {
                 MessageEvent.fire(eventBus, Message.warning(resources.constants().allSingletonsExist()));
-            } else {
-                AddressTemplate template = asGenericTemplate(parent, parent.data.getAddress());
-                NewSingletonWizard wizard = new NewSingletonWizard(this, template, parent, children, context -> {
-                    ResourceAddress fq = parent.data.getAddress().getParent().add(parent.text, context.singleton);
-                    Operation operation = new Operation.Builder(ADD, fq).payload(context.modelNode).build();
-                    dispatcher.execute(operation, result -> {
-                        MessageEvent.fire(eventBus,
-                                Message.success(resources.messages().addResourceSuccess(context.singleton)));
-                        onRefresh();
-                    });
+
+            } else if (parent.data.getSingletons().size() == 1) {
+                // no need to show a wizard
+                String singleton = parent.data.getSingletons().iterator().next();
+                ResourceAddress singletonAddress = parent.data.getAddress().getParent().add(parent.text, singleton);
+                metadataProvider.getMetadata(parent, singletonAddress, new MetadataProvider.MetadataCallback() {
+                    @Override
+                    public void onError(final Throwable error) {
+                        metadataError(singletonAddress, error);
+                    }
+
+                    @Override
+                    public void onMetadata(SecurityContext securityContext, ResourceDescription description) {
+                        String id = IdBuilder.build(parent.id, "singleton", "add");
+                        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, securityContext, description)
+                                .createResource().build();
+                        AddResourceDialog<ModelNode> dialog = new AddResourceDialog<>(
+                                resources.messages().addResourceTitle(singleton), form,
+                                (nameIsNull, modelNodeMightBeNull) -> {
+                                    Operation.Builder builder = new Operation.Builder(ADD,
+                                            fqAddress(parent, singleton));
+                                    if (modelNodeMightBeNull != null) {
+                                        builder.payload(modelNodeMightBeNull);
+                                    }
+                                    dispatcher.execute(builder.build(),
+                                            result -> {
+                                                MessageEvent.fire(eventBus,
+                                                        Message.success(resources.messages()
+                                                                .addResourceSuccess(parent.text, singleton)));
+                                                onRefresh();
+                                            });
+                                });
+                        dialog.show();
+                    }
                 });
+
+            } else {
+                // open wizard to choose the singleton
+                NewSingletonWizard wizard = new NewSingletonWizard(metadataProvider, parent, children,
+                        context -> {
+                            Operation.Builder builder = new Operation.Builder(ADD,
+                                    fqAddress(parent, context.singleton));
+                            if (context.modelNode != null) {
+                                builder.payload(context.modelNode);
+                            }
+                            dispatcher.execute(builder.build(),
+                                    result -> {
+                                        MessageEvent.fire(eventBus, Message.success(
+                                                resources.messages()
+                                                        .addResourceSuccess(parent.text, context.singleton)));
+                                        onRefresh();
+                                    });
+                        });
                 wizard.show();
             }
 
         } else {
-            AddressTemplate template = asGenericTemplate(parent, parent.data.getAddress());
-            metadataProcessor.process(Ids.MODEL_BROWSER, singleton(template), progress,
-                    new AsyncCallback<Void>() {
-                        @Override
-                        public void onFailure(final Throwable throwable) {
-                            //noinspection HardCodedStringLiteral
-                            logger.error(
-                                    "Unable to open add resource dialog for node {}({}). Error while processing metadata for {}: {}",
-                                    parent.id, parent.text, template, throwable.getMessage());
-                        }
+            metadataProvider.getMetadata(parent, parent.data.getAddress(), new MetadataProvider.MetadataCallback() {
+                @Override
+                public void onError(final Throwable error) {
+                    metadataError(parent.data.getAddress(), error);
+                }
 
-                        @Override
-                        public void onSuccess(final Void aVoid) {
-                            SecurityContext securityContext = securityFramework.lookup(template);
-                            ResourceDescription description = resourceDescriptions.lookup(template);
-                            AddResourceDialog<ModelNode> dialog = new AddResourceDialog<>(
-                                    IdBuilder.build(parent.id, "add"),
-                                    resources.messages().addResourceTitle(parent.text),
-                                    securityContext, description,
-                                    (name, modelNode) -> {
-                                        ResourceAddress fq = parent.data.getAddress().getParent()
-                                                .add(parent.text, name);
-                                        Operation operation = new Operation.Builder(ADD, fq).payload(modelNode)
-                                                .build();
-                                        dispatcher.execute(operation, result -> {
+                @Override
+                public void onMetadata(SecurityContext securityContext, ResourceDescription description) {
+                    AddResourceDialog<ModelNode> dialog = new AddResourceDialog<>(
+                            IdBuilder.build(parent.id, "add"),
+                            resources.messages().addResourceTitle(parent.text),
+                            securityContext, description,
+                            (name, modelNode) -> {
+                                Operation operation = new Operation.Builder(ADD, fqAddress(parent, name))
+                                        .payload(modelNode)
+                                        .build();
+                                dispatcher.execute(operation,
+                                        result -> {
                                             MessageEvent.fire(eventBus,
-                                                    Message.success(resources.messages().addResourceSuccess(name)));
+                                                    Message.success(resources.messages()
+                                                            .addResourceSuccess(parent.text, name)));
                                             onRefresh();
                                         });
-                                    });
-                            dialog.show();
-                        }
-                    });
+                            });
+                    dialog.show();
+                }
+            });
         }
+    }
+
+    private void metadataError(ResourceAddress address, Throwable error) {
+        //noinspection HardCodedStringLiteral
+        logger.error("Error while processing metadata for {}: {}", address, error.getMessage());
+        MessageEvent.fire(eventBus,
+                Message.error(resources.constants().metadataError(), error.getMessage()));
+    }
+
+    private ResourceAddress fqAddress(Node<Context> parent, String child) {
+        return parent.data.getAddress().getParent().add(parent.text, child);
     }
 
     void onRemove(ResourceAddress address) {
         Operation operation = new Operation.Builder(REMOVE, address).build();
         dispatcher.execute(operation, result -> {
             MessageEvent.fire(eventBus,
-                    Message.success(resources.messages().removeResourceSuccess(address.lastValue())));
+                    Message.success(
+                            resources.messages().removeResourceSuccess(address.lastName(), address.lastValue())));
             onRefresh();
         });
     }
@@ -355,9 +367,14 @@ public class ModelBrowser implements HasElements {
         Composite composite = operationFactory.fromChangeSet(address, changedValues);
         dispatcher.execute(composite, (CompositeResult result) -> {
             MessageEvent.fire(eventBus,
-                    Message.success(resources.messages().modifyResourceSuccess(address.lastValue())));
+                    Message.success(
+                            resources.messages().modifyResourceSuccess(address.lastName(), address.lastValue())));
             onRefresh();
         });
+    }
+
+    private void onCollapse() {
+
     }
 
 

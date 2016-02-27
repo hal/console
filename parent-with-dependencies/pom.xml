@@ -49,7 +49,7 @@
         <gin.version>2.1.2</gin.version>
         <guava.version>19.0-gwt28</guava.version>
         <gwt.version>2.8.0-SNAPSHOT</gwt.version>
-        <gwtp.version>1.6-SNAPSHOT</gwtp.version>
+        <gwtp.version>1.5.1</gwtp.version>
         <jboss.dmr.version>1.3.0.Final</jboss.dmr.version>
         <junit.version>4.12</junit.version>
         <mockito.version>2.0.31-beta</mockito.version>

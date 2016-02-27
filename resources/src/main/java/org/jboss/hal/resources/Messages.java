@@ -25,9 +25,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     //@formatter:off
     String activeRoles(String roles);
-    String addResourceSuccess(String name);
+    String addResourceSuccess(String type, String name);
     String addResourceTitle(String text);
     String connectedTo(String url);
+    SafeHtml emptyModelNodeForm();
 
     SafeHtml endpointError(String url);
     SafeHtml endpointOk(String url);
@@ -39,12 +40,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String invalidRange(long value, long min, long max);
     SafeHtml listHint();
     String messages(@PluralCount int count);
-    String modifyResourceSuccess(String name);
+    String modifyResourceSuccess(String type, String name);
     String patternMismatch(String pattern);
     SafeHtml propertiesHint();
     String removeResourceConfirmationTitle(String name);
     SafeHtml removeResourceConfirmationQuestion(String name);
-    String removeResourceSuccess(String name);
+    String removeResourceSuccess(String type, String name);
     SafeHtml requiredHelp();
     SafeHtml requiredMarker();
     String updateAvailable(String current, String update);

@@ -87,9 +87,8 @@ public class AddResourceDialog<T extends ModelNode> {
     }
 
     /**
-     * Uses an existing form for the dialog, please make sure the form has an item called {@link
-     * org.jboss.hal.dmr.ModelDescriptionConstants#NAME}. If the form has a save callback it's overridden by this
-     * constructor.
+     * Uses an existing form for the dialog. If the form has a save callback it's overridden with
+     * {@link Callback#onAdd(String, Object)}.
      */
     public AddResourceDialog(final String title, final Form<T> form, final Callback<T> callback) {
         form.setSaveCallback((f, changedValues) -> {

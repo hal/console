@@ -25,7 +25,10 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.HelpTextBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
@@ -41,6 +44,7 @@ import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
+import org.jboss.hal.resources.Messages;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +59,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.resources.CSS.*;
 
 /**
  * @author Harald Pehl
@@ -244,6 +249,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
     }
 
 
+    private static final Messages MESSAGES = GWT.create(Messages.class);
     private static final Logger logger = LoggerFactory.getLogger(ModelNodeForm.class);
 
     private final FormItemProvider formItemProvider;
@@ -304,6 +310,22 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         for (UnboundFormItem unboundFormItem : builder.unboundFormItems) {
             addFormItem(unboundFormItem.formItem);
             markAsUnbound(unboundFormItem.formItem.getName());
+        }
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
+        if (Iterables.isEmpty(getFormItems())) {
+            // if there's really nothing at all show an info
+            Element empty = new Elements.Builder()
+                    .div().css(alert, alertInfo)
+                    .span().css(pfIcon("info")).end()
+                    .span().innerHtml(MESSAGES.emptyModelNodeForm()).end()
+                    .end()
+                    .build();
+            Elements.removeChildrenFrom(asElement());
+            asElement().appendChild(empty);
         }
     }
 }

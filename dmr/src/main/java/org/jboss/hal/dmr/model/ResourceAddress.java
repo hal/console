@@ -59,6 +59,14 @@ public class ResourceAddress extends ModelNode {
         return this;
     }
 
+    public String lastName() {
+        List<Property> properties = asPropertyList();
+        if (!properties.isEmpty()) {
+            return properties.get(properties.size() - 1).getName();
+        }
+        return null;
+    }
+
     public String lastValue() {
         List<Property> properties = asPropertyList();
         if (!properties.isEmpty()) {
