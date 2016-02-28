@@ -91,7 +91,7 @@ class ChildrenPanel implements HasElements, Attachable {
                         .build())
                 .button(resources.constants().add(), (event, api) -> {
                     Selector selector = new SelectorBuilder().page(all).build();
-                    modelBrowser.onAdd(parent, JsHelper.asList(api.rows(selector).data().toArray()));
+                    modelBrowser.add(parent, JsHelper.asList(api.rows(selector).data().toArray()));
                 })
 
                 .button(resources.constants().remove(), Scope.SELECTED,
@@ -100,7 +100,7 @@ class ChildrenPanel implements HasElements, Attachable {
                                 () -> {
                                     ResourceAddress fq = parent.data.getAddress().getParent()
                                             .add(parent.text, api.selectedRow());
-                                    modelBrowser.onRemove(fq);
+                                    modelBrowser.remove(fq);
                                     return true;
                                 }).show())
                 .paging(false)

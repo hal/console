@@ -46,7 +46,6 @@ import org.jboss.hal.core.modelbrowser.ModelBrowserPath.Segment;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.slf4j.Logger;
@@ -278,7 +277,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
         } else {
             if (path.isEmpty()) {
-                breadcrumbs.appendChild(new Elements.Builder().li().innerText(Names.MANAGEMENT_MODEL).build());
+                breadcrumbs.appendChild(new Elements.Builder().li().innerText("").build());
 
             } else {
                 ModelBrowser modelBrowser = path.getModelBrowser();

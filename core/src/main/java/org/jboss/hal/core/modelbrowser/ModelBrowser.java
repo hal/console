@@ -24,6 +24,7 @@ package org.jboss.hal.core.modelbrowser;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.dom.Element;
+import elemental.dom.NodeList;
 import elemental.html.ButtonElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
@@ -64,6 +65,7 @@ import javax.inject.Provider;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -91,6 +93,7 @@ public class ModelBrowser implements HasElements {
     private final EventBus eventBus;
     private final Resources resources;
     private final OperationFactory operationFactory;
+    private final Stack<Node<Context>> filterStack;
 
     private final Iterable<Element> rows;
     private final Element buttonGroup;
@@ -102,7 +105,7 @@ public class ModelBrowser implements HasElements {
     private final ChildrenPanel childrenPanel;
     Tree<Context> tree;
 
-    private boolean breadcrumb;
+    private boolean updateBreadcrumb;
 
 
     // ------------------------------------------------------ ui setup
@@ -122,17 +125,18 @@ public class ModelBrowser implements HasElements {
         this.metadataProvider = new MetadataProvider(metadataProcessor, securityFramework, resourceDescriptions,
                 progress);
         this.operationFactory = new OperationFactory();
+        this.filterStack = new Stack<>();
 
         // @formatter:off
         Elements.Builder buttonsBuilder = new Elements.Builder()
             .div().css(btnGroup, modelBrowserButtons)
-                .button().rememberAs(FILTER_ELEMENT).on(click, event -> onFilter()).css(btn, btnDefault)
+                .button().rememberAs(FILTER_ELEMENT).on(click, event -> filter()).css(btn, btnDefault)
                     .add("i").css(fontAwesome(CSS.filter))
                 .end()
-                .button().rememberAs(REFRESH_ELEMENT).on(click, event -> onRefresh()).css(btn, btnDefault)
+                .button().rememberAs(REFRESH_ELEMENT).on(click, event -> refresh()).css(btn, btnDefault)
                     .add("i").css(fontAwesome(CSS.refresh))
                 .end()
-                .button().on(click, event -> onCollapse()).css(btn, btnDefault)
+                .button().on(click, event -> collapse()).css(btn, btnDefault)
                     .add("i").css(fontAwesome("minus"))
                 .end()
             .end();
@@ -185,8 +189,85 @@ public class ModelBrowser implements HasElements {
         }
     }
 
+    // ------------------------------------------------------ event handler & co
+
+    private void filter() {
+        Node<Context> selected = tree.api().getSelected();
+        if (selected != null && selected.parent != null) {
+            Node<Context> parent = tree.api().getNode(selected.parent);
+            // @formatter:off
+            Element filter = new Elements.Builder()
+                .div().css(tagManagerContainer)
+                    .span().css(tmTag, tagManagerTag)
+                        .span().innerText(parent.text + "=" + selected.text).end()
+                        .a().css(clickable, tmTagRemove).on(click, event -> clearFilter()).innerText("x").end() //NON-NLS
+                    .end()
+                .end().build();
+            // @formatter:on
+
+            buttonGroup.appendChild(filter);
+            filterStack.add(selected);
+            setRoot(selected.data.getAddress(), true, false);
+        }
+    }
+
+    private void clearFilter() {
+        Element element = buttonGroup.querySelector("." + tagManagerContainer);
+        if (element != null) {
+            buttonGroup.removeChild(element);
+        }
+    }
+
+    private void refresh() {
+        Node<Context> selected = tree.api().getSelected();
+        if (selected != null) {
+            updateNode(selected);
+            tree.api().refreshNode(selected.id);
+        }
+    }
+
+    private void collapse() {
+        Node<Context> selected = tree.api().getSelected();
+        if (selected != null) {
+            tree.api().closeNode(selected.id);
+        }
+    }
+
+    private void onTreeSelection(SelectionContext<Context> context) {
+        if ("ready".equals(context.action)) { //NON-NLS
+            // only (de)selection events please
+            return;
+        }
+
+        filter.setDisabled(context.selected.isEmpty() ||
+                !context.node.data.isFullyQualified() ||
+                context.node.id.equals(ROOT_ID));
+        refresh.setDisabled(context.selected.isEmpty());
+
+        resourcePanel.hide();
+        childrenPanel.hide();
+        if (context.selected.isEmpty()) {
+            updateBreadcrumb(null);
+        } else {
+            updateNode(context.node);
+        }
+    }
+
+    private void updateNode(Node<Context> node) {
+        updateBreadcrumb(node);
+
+        ResourceAddress address = node.data.getAddress();
+        if (node.data.isFullyQualified()) {
+            showResourceView(node, address);
+
+        } else {
+            childrenPanel.update(node, address);
+            childrenPanel.show();
+        }
+    }
+
     private void updateBreadcrumb(Node<Context> node) {
-        if (breadcrumb) {
+        if (updateBreadcrumb) {
             ModelBrowserPath path = new ModelBrowserPath(this, node);
             eventBus.fireEvent(new ModelBrowserPathEvent(path));
         }
@@ -208,46 +289,7 @@ public class ModelBrowser implements HasElements {
         });
     }
 
-
-    // ------------------------------------------------------ event handler
-
-    private void onTreeSelection(SelectionContext<Context> context) {
-        if ("ready".equals(context.action)) { //NON-NLS
-            // only (de)selection events please
-            return;
-        }
-
-        filter.setDisabled(context.selected.isEmpty() || !context.node.data.isFullyQualified());
-        refresh.setDisabled(context.selected.isEmpty());
-
-        resourcePanel.hide();
-        childrenPanel.hide();
-        if (context.selected.isEmpty()) {
-            updateBreadcrumb(null);
-
-        } else {
-            updateBreadcrumb(context.node);
-
-            ResourceAddress address = context.node.data.getAddress();
-            if (context.node.data.isFullyQualified()) {
-                showResourceView(context.node, address);
-
-            } else {
-                childrenPanel.update(context.node, address);
-                childrenPanel.show();
-            }
-        }
-    }
-
-    private void onFilter() {
-        Browser.getWindow().alert(NYI);
-    }
-
-    private void onRefresh() {
-        Browser.getWindow().alert("Refresh " + NYI);
-    }
-
-    void onAdd(final Node<Context> parent, final List<String> children) {
+    void add(final Node<Context> parent, final List<String> children) {
         if (parent.data.hasSingletons()) {
             if (parent.data.getSingletons().size() == children.size()) {
                 MessageEvent.fire(eventBus, Message.warning(resources.constants().allSingletonsExist()));
@@ -269,18 +311,18 @@ public class ModelBrowser implements HasElements {
                                 .createResource().build();
                         AddResourceDialog<ModelNode> dialog = new AddResourceDialog<>(
                                 resources.messages().addResourceTitle(singleton), form,
-                                (nameIsNull, modelNodeMightBeNull) -> {
+                                (n, modelNode) -> {
                                     Operation.Builder builder = new Operation.Builder(ADD,
                                             fqAddress(parent, singleton));
-                                    if (modelNodeMightBeNull != null) {
-                                        builder.payload(modelNodeMightBeNull);
+                                    if (modelNode != null) {
+                                        builder.payload(modelNode);
                                     }
                                     dispatcher.execute(builder.build(),
                                             result -> {
                                                 MessageEvent.fire(eventBus,
                                                         Message.success(resources.messages()
                                                                 .addResourceSuccess(parent.text, singleton)));
-                                                onRefresh();
+                                                refresh();
                                             });
                                 });
                         dialog.show();
@@ -301,7 +343,7 @@ public class ModelBrowser implements HasElements {
                                         MessageEvent.fire(eventBus, Message.success(
                                                 resources.messages()
                                                         .addResourceSuccess(parent.text, context.singleton)));
-                                        onRefresh();
+                                        refresh();
                                     });
                         });
                 wizard.show();
@@ -329,7 +371,7 @@ public class ModelBrowser implements HasElements {
                                             MessageEvent.fire(eventBus,
                                                     Message.success(resources.messages()
                                                             .addResourceSuccess(parent.text, name)));
-                                            onRefresh();
+                                            refresh();
                                         });
                             });
                     dialog.show();
@@ -349,39 +391,43 @@ public class ModelBrowser implements HasElements {
         return parent.data.getAddress().getParent().add(parent.text, child);
     }
 
-    void onRemove(ResourceAddress address) {
+    void remove(ResourceAddress address) {
         Operation operation = new Operation.Builder(REMOVE, address).build();
         dispatcher.execute(operation, result -> {
             MessageEvent.fire(eventBus,
                     Message.success(
                             resources.messages().removeResourceSuccess(address.lastName(), address.lastValue())));
-            onRefresh();
+            refresh();
         });
     }
 
-    void onReset(Form<ModelNode> form) {
+    void reset(Form<ModelNode> form) {
         Browser.getWindow().alert(NYI);
     }
 
-    void onSave(ResourceAddress address, Map<String, Object> changedValues) {
+    void save(ResourceAddress address, Map<String, Object> changedValues) {
         Composite composite = operationFactory.fromChangeSet(address, changedValues);
         dispatcher.execute(composite, (CompositeResult result) -> {
             MessageEvent.fire(eventBus,
                     Message.success(
                             resources.messages().modifyResourceSuccess(address.lastName(), address.lastValue())));
-            onRefresh();
+            refresh();
         });
-    }
-
-    private void onCollapse() {
-
     }
 
 
     // ------------------------------------------------------ public API
 
-    public void setRoot(ResourceAddress root, boolean breadcrumb) {
-        this.breadcrumb = breadcrumb;
+    public void setRoot(ResourceAddress root, boolean updateBreadcrumb, boolean clearFilter) {
+        this.updateBreadcrumb = updateBreadcrumb;
+        if (clearFilter) {
+            filterStack.clear();
+            NodeList nodes = buttonGroup.querySelectorAll("." + tagManagerContainer);
+            for (int i = 0; i < nodes.getLength(); i++) {
+                buttonGroup.removeChild(nodes.item(i));
+            }
+        }
+
         String resource = root == ResourceAddress.ROOT ? Names.MANAGEMENT_MODEL : root.lastValue();
         if ("*".equals(resource)) {
             throw new IllegalArgumentException("Invalid root address: " + root +

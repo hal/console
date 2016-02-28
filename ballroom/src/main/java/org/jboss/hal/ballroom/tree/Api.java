@@ -21,8 +21,10 @@
  */
 package org.jboss.hal.ballroom.tree;
 
+import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
 
 /**
@@ -41,6 +43,9 @@ public class Api<T> {
     @JsMethod(name = "get_node")
     public native Node<T> getNode(String id);
 
+    @JsMethod
+    public native JsArrayOf<Node<T>> get_selected(boolean full);
+
     @JsMethod(name = "open_node")
     public native void openNode(String id);
 
@@ -50,9 +55,21 @@ public class Api<T> {
     @JsMethod(name = "close_node")
     public native void closeNode(String id);
 
+    @JsMethod(name = "refresh_node")
+    public native void refreshNode(String id);
+
+    @JsOverlay
+    public final Node<T> getSelected() {
+        JsArrayOf<Node<T>> selected = get_selected(true);
+        return selected.isEmpty() ? null : selected.get(0);
+    }
+
     @JsMethod(name = "select_node")
     public native void selectNode(String id, boolean suppressEvent, boolean preventOpen);
 
     @JsMethod(name = "deselect_all")
     public native void deselectAll(boolean suppressEvent);
+
+    @JsMethod
+    public native void destroy(boolean keepHtml);
 }

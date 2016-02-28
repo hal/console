@@ -117,8 +117,8 @@ class ResourcePanel implements HasElements {
                 ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(
                         IdBuilder.build(Ids.MODEL_BROWSER, node.id, "form"), securityContext, description)
                         .includeRuntime()
-                        .onReset(modelBrowser::onReset)
-                        .onSave((f, changedValues) -> modelBrowser.onSave(address, changedValues))
+                        .onReset(modelBrowser::reset)
+                        .onSave((f, changedValues) -> modelBrowser.save(address, changedValues))
                         .build();
                 tabs.setContent(dataId, form.asElement());
                 PatternFly.initComponents();

@@ -34,6 +34,7 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.Constants;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -48,7 +49,15 @@ public class AddResourceDialog<T extends ModelNode> {
     @SuppressWarnings("WeakerAccess")
     public interface Callback<T> {
 
-        void onAdd(final String name, final T model);
+        /**
+         * Called after the dialog was closed using the primary button.
+         *
+         * @param name  The name of the resource to add. {@code null} if the dialog's form does not contains a
+         *              name item (i.e. when adding a singleton resource)
+         * @param model The model of the related form. {@code null} if the related resource description and thus
+         *              the form does not contain attributes / form items.
+         */
+        void onAdd(@Nullable final String name, @Nullable final T model);
     }
 
 

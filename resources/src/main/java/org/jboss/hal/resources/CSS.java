@@ -155,6 +155,8 @@ public interface CSS {
     String tagManagerContainer = "tag-manager-container";
     String tagManagerTag = "tag-manager-tag";
     String tags = "tags";
+    String tmTag = "tm-tag";
+    String tmTagRemove = "tm-tag-remove";
     String toastPf = "toast-pf";
     String toastPfAction = "toast-pf-action";
     String toastPfMaxWidth = "toast-pf-max-width";
