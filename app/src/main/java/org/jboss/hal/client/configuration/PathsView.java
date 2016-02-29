@@ -32,6 +32,7 @@ import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.security.SecurityContext;
@@ -61,6 +62,7 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
     @Inject
     public PathsView(ResourceDescriptions descriptions,
             SecurityFramework securityFramework,
+            Capabilities capabilities,
             Resources resources) {
 
         ResourceDescription description = descriptions.lookup(PathsPresenter.ROOT_TEMPLATE);
@@ -84,7 +86,7 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
                 .build();
         table = new ModelNodeTable<>(PATHS_TABLE, securityContext, options);
 
-        form = new ModelNodeForm.Builder<NamedNode>(PATHS_FORM, securityContext, description)
+        form = new ModelNodeForm.Builder<NamedNode>(PATHS_FORM, securityContext, description, capabilities)
                 .include("path", "read-only", "relative-to")
                 .unsorted()
                 .onSave((form, changedValues) -> {

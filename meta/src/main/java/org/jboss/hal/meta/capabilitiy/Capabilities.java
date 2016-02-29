@@ -21,24 +21,56 @@
  */
 package org.jboss.hal.meta.capabilitiy;
 
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.StatementContext;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.inject.Inject;
+import java.util.Collections;
+import java.util.function.Function;
 
 /**
  * @author Harald Pehl
  */
+@SuppressWarnings("Guava")
 public class Capabilities {
 
-    private final Map<String, AddressTemplate> registry;
+    private final StatementContext statementContext;
+    private final Multimap<String, AddressTemplate> registry;
 
-    public Capabilities() {
-        registry = new HashMap<>();
+    @Inject
+    public Capabilities(StatementContext statementContext) {
+        this.statementContext = statementContext;
+        this.registry = HashMultimap.create();
     }
 
-    public AddressTemplate lookup(final String name) {
-        return registry.get(name);
+    public Iterable<ResourceAddress> lookup(final String name) {
+        if (contains(name)) {
+            return FluentIterable.from(registry.get(name))
+                    .transform(template -> template.resolve(statementContext));
+        }
+        return Collections.emptyList();
+    }
+
+    public Iterable<ResourceAddress> lookup(final String name, final String... wildcards) {
+        if (contains(name)) {
+            return FluentIterable.from(registry.get(name))
+                    .transform(template -> template.resolve(statementContext, wildcards));
+        }
+        return Collections.emptyList();
+    }
+
+    public Iterable<ResourceAddress> lookup(final String name,
+            Function<AddressTemplate, AddressTemplate> adjustTemplate) {
+        if (contains(name)) {
+            return FluentIterable.from(registry.get(name))
+                    .transform(adjustTemplate::apply)
+                    .transform(template -> template.resolve(statementContext));
+        }
+        return Collections.emptyList();
     }
 
     public boolean contains(final String name) {

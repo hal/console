@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 import elemental.client.Browser;
 import elemental.xml.XMLHttpRequest;
 import org.jboss.hal.config.Endpoints;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,13 +31,15 @@ public class EndpointManager {
 
     private final Endpoints endpoints;
     private final EndpointStorage storage;
+    private final Capabilities capabilities;
 
     private ScheduledCommand next;
 
     @Inject
-    public EndpointManager(Endpoints endpoints, EndpointStorage storage) {
+    public EndpointManager(Endpoints endpoints, EndpointStorage storage, Capabilities capabilities) {
         this.endpoints = endpoints;
         this.storage = storage;
+        this.capabilities = capabilities;
     }
 
     @SuppressWarnings("HardCodedStringLiteral")
@@ -97,7 +100,7 @@ public class EndpointManager {
     }
 
     private void openDialog() {
-        new EndpointDialog(this, storage).show();
+        new EndpointDialog(this, storage, capabilities).show();
     }
 
     void pingServer(final Endpoint endpoint, final AsyncCallback<Void> callback) {

@@ -21,6 +21,8 @@
  */
 package org.jboss.hal.meta.capabilitiy;
 
+import org.jboss.hal.meta.AddressTemplate;
+
 import javax.inject.Inject;
 
 /**
@@ -31,7 +33,29 @@ import javax.inject.Inject;
 public class RegisterCoreCapabilities {
 
     @Inject
+    @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
     public RegisterCoreCapabilities(Capabilities capabilities) {
-        
+        // Keep the capabilities of each section in alphabetical order
+
+        // Selected capabilities from https://github.com/wildfly/wildfly-capabilities
+        // @formatter:off
+        capabilities.add("org.wildfly.data-source", AddressTemplate.of("/{selected.profile}/subsystem=datasources/data-source=*"));
+        capabilities.add("org.wildfly.io.buffer-pool", AddressTemplate.of("/{selected.profile}/subsystem=io/buffer-pool=*"));
+        capabilities.add("org.wildfly.io.worker", AddressTemplate.of("/{selected.profile}/subsystem=io/worker=*"));
+        capabilities.add("org.wildfly.network.outbound-socket-binding", AddressTemplate.of("/socket-binding-group=*/local-destination-outbound-socket-binding=*"));
+        capabilities.add("org.wildfly.network.outbound-socket-binding", AddressTemplate.of("/socket-binding-group=*/remote-destination-outbound-socket-binding=*"));
+        capabilities.add("org.wildfly.network.socket-binding", AddressTemplate.of("/socket-binding-group=*/socket-binding=*"));
+        capabilities.add("org.wildfly.remoting.connector", AddressTemplate.of("/{selected.profile}/subsystem=remoting/connector=*"));
+        capabilities.add("org.wildfly.remoting.outbound-connection", AddressTemplate.of("/{selected.profile}/subsystem=remoting/local-outbound-connection=*"));
+        capabilities.add("org.wildfly.remoting.outbound-connection", AddressTemplate.of("/{selected.profile}/subsystem=remoting/remote-outbound-connection=*"));
+        // @formatter:on
+
+        // Well-known capabilities not (yet) on https://github.com/wildfly/wildfly-capabilities
+        // @formatter:off
+        capabilities.add("org.wildfly.network.interface", AddressTemplate.of("/interface=*"));
+        capabilities.add("org.wildfly.domain.profile", AddressTemplate.of("/profile=*"));
+        capabilities.add("org.wildfly.domain.server-group", AddressTemplate.of("/server-group=*"));
+        capabilities.add("org.wildfly.domain.socket-binding-group", AddressTemplate.of("/socket-binding-group=*"));
+        // @formatter:on
     }
 }

@@ -45,6 +45,7 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.processing.MetadataProcessor;
@@ -117,6 +118,7 @@ public class ModelBrowser implements HasElements {
     private static final Logger logger = LoggerFactory.getLogger(ModelBrowser.class);
 
     private final MetadataProvider metadataProvider;
+    private final Capabilities capabilities;
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
     private final Resources resources;
@@ -142,17 +144,19 @@ public class ModelBrowser implements HasElements {
     @Inject
     public ModelBrowser(final MetadataProcessor metadataProcessor,
             final SecurityFramework securityFramework,
+            final Capabilities capabilities,
             final ResourceDescriptions resourceDescriptions,
             final Dispatcher dispatcher,
             final EventBus eventBus,
             @Footer final Provider<Progress> progress,
             final Resources resources) {
+        this.capabilities = capabilities;
 
         this.dispatcher = dispatcher;
         this.eventBus = eventBus;
         this.resources = resources;
         this.metadataProvider = new MetadataProvider(metadataProcessor, securityFramework, resourceDescriptions,
-                progress);
+                capabilities, progress);
         this.operationFactory = new OperationFactory();
         this.filterStack = new Stack<>();
 
@@ -177,7 +181,7 @@ public class ModelBrowser implements HasElements {
         treeContainer = new Elements.Builder().div().css(modelBrowserTree).end().build();
         content = new Elements.Builder().div().css(modelBrowserContent).end().build();
 
-        resourcePanel = new ResourcePanel(this, dispatcher, resources);
+        resourcePanel = new ResourcePanel(this, dispatcher, capabilities, resources);
         for (Element element : resourcePanel.asElements()) {
             content.appendChild(element);
         }
@@ -342,8 +346,8 @@ public class ModelBrowser implements HasElements {
                     @Override
                     public void onMetadata(SecurityContext securityContext, ResourceDescription description) {
                         String id = IdBuilder.build(parent.id, "singleton", "add");
-                        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, securityContext, description)
-                                .createResource().build();
+                        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, securityContext, description,
+                                capabilities).createResource().build();
                         AddResourceDialog<ModelNode> dialog = new AddResourceDialog<>(
                                 resources.messages().addResourceTitle(singleton), form,
                                 (n, modelNode) -> {
@@ -392,7 +396,7 @@ public class ModelBrowser implements HasElements {
                             AddResourceDialog<ModelNode> dialog = new AddResourceDialog<>(
                                     IdBuilder.build(parent.id, "add"),
                                     resources.messages().addResourceTitle(parent.text),
-                                    securityContext, description,
+                                    securityContext, description, capabilities,
                                     (name, modelNode) -> {
                                         Operation operation = new Operation.Builder(ADD, fqAddress(parent, name))
                                                 .payload(modelNode)

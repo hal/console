@@ -26,6 +26,7 @@ import org.jboss.hal.ballroom.layout.LayoutBuilder;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.security.SecurityContext;
@@ -47,14 +48,15 @@ public class InterfaceView extends PatternFlyViewImpl implements InterfacePresen
 
     @Inject
     public InterfaceView(ResourceDescriptions descriptions,
-            SecurityFramework securityFramework) {
+            SecurityFramework securityFramework,
+            Capabilities capabilities) {
 
         ResourceDescription description = descriptions.lookup(InterfacePresenter.ROOT_TEMPLATE);
         SecurityContext securityContext = securityFramework.lookup(InterfacePresenter.ROOT_TEMPLATE);
 
 //        new Dialog.Builder(resources.messages())
 
-        form = new ModelNodeForm.Builder<>(PATHS_FORM, securityContext, description)
+        form = new ModelNodeForm.Builder<>(PATHS_FORM, securityContext, description, capabilities)
                 .exclude("resolved-address")
                 .onSave((form, changedValues) -> presenter.saveInterface(changedValues))
                 .build();

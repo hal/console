@@ -316,6 +316,14 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         if (suggestHandler instanceof Attachable) {
             ((Attachable) suggestHandler).attach();
         }
+        if (suggestHandler instanceof Typeahead) {
+            Typeahead typeahead = (Typeahead) suggestHandler;
+            Typeahead.Bridge.select("#" + getId(EDITING)).onChange(event -> {
+                String value = ((elemental.html.InputElement) event.getTarget()).getValue();
+                onSuggest(value);
+            });
+            typeahead.clearRemoteCache();
+        }
     }
 
 
@@ -573,11 +581,6 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     public void registerSuggestHandler(final SuggestHandler suggestHandler) {
         this.suggestHandler = suggestHandler;
         this.suggestHandler.setFormItem(this);
-        if (suggestHandler instanceof Typeahead) {
-            Typeahead typeahead = (Typeahead) suggestHandler;
-            Typeahead.Bridge.select(getId(EDITING)).onSelect((event, data) ->
-                    onSuggest(typeahead.getDataset().display.render(data)));
-        }
         toggleShowAll(true);
     }
 

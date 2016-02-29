@@ -39,6 +39,7 @@ public interface ModelDescriptionConstants {
     String ANY = "any";
     String ATTRIBUTES = "attributes";
     String BYTES = "bytes";
+    String CAPABILITY_REFERENCE = "capability-reference";
     String CHILD_TYPE = "child-type";
     String CHILDREN = "children";
     String COMBINED_DESCRIPTIONS = "combined-descriptions";

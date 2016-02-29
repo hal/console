@@ -126,9 +126,9 @@ public class Typeahead implements SuggestHandler, Attachable {
 
     @JsFunction
     @FunctionalInterface
-    public interface SelectListener {
+    public interface ChangeListener {
 
-        void onSelect(JsEvent event, JsJsonObject data);
+        void onSelect(JsEvent event);
     }
 
 
@@ -140,7 +140,7 @@ public class Typeahead implements SuggestHandler, Attachable {
 
         public native void focus();
 
-        public native void on(String event, SelectListener listener);
+        public native void bind(String event, ChangeListener listener);
 
         public native void typeahead(Options options, Dataset dataset);
 
@@ -152,8 +152,8 @@ public class Typeahead implements SuggestHandler, Attachable {
         public native void typeaheadClose(String method);
 
         @JsOverlay
-        public final void onSelect(SelectListener listener) {
-            on(SELECTED_EVENT, listener);
+        public final void onChange(ChangeListener listener) {
+            bind(CHANGE_EVENT, listener);
         }
 
         @JsOverlay
@@ -175,13 +175,14 @@ public class Typeahead implements SuggestHandler, Attachable {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String CLOSE = "close";
-    private static final String SELECTED_EVENT = "typeahead:selected";
+    private static final String CHANGE_EVENT = "typeahead:change";
     private static final String VAL = "val";
     private static final String VALUE = "value";
 
     private final Options options;
     private final Dataset dataset;
     private FormItem formItem;
+    private final Bloodhound bloodhound;
 
     Typeahead(final Builder builder) {
         options = new Options();
@@ -224,8 +225,9 @@ public class Typeahead implements SuggestHandler, Attachable {
                 : builder.dataTokenizer;
         bloodhoundOptions.queryTokenizer = query -> query.split("\\s+"); //NON-NLS
         bloodhoundOptions.identify = builder.identifier;
+        bloodhoundOptions.sufficient = Integer.MAX_VALUE; // we'd like to always have fresh results from the backend
         bloodhoundOptions.remote = remoteOptions;
-        Bloodhound bloodhound = new Bloodhound(bloodhoundOptions);
+        bloodhound = new Bloodhound(bloodhoundOptions);
 
         Dataset.Templates templates = new Dataset.Templates();
         //noinspection HardCodedStringLiteral
@@ -267,6 +269,12 @@ public class Typeahead implements SuggestHandler, Attachable {
 
     public Dataset getDataset() {
         return dataset;
+    }
+
+    public void clearRemoteCache() {
+        if (bloodhound != null) {
+            bloodhound.clearRemoteCache();
+        }
     }
 
     private FormItem formItem() {

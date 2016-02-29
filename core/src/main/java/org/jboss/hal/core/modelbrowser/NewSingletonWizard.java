@@ -38,6 +38,7 @@ import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.CSS;
@@ -125,12 +126,15 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
         private static final Logger logger = LoggerFactory.getLogger(CreateSingletonStep.class);
 
         private final MetadataProvider metadataProvider;
+        private final Capabilities capabilities;
         private final DivElement root;
         private final EventBus eventBus;
         private final Resources resources;
 
-        CreateSingletonStep(final NewSingletonWizard wizard, final EventBus eventBus, final Resources resources) {
+        CreateSingletonStep(final NewSingletonWizard wizard, final Capabilities capabilities, final EventBus eventBus,
+                final Resources resources) {
             super(wizard, MESSAGES.addResourceTitle(wizard.getContext().parent.text));
+            this.capabilities = capabilities;
             this.eventBus = eventBus;
             this.resources = resources;
             this.metadataProvider = wizard.metadataProvider;
@@ -153,8 +157,10 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
                         @Override
                         public void onError(final Throwable error) {
                             //noinspection HardCodedStringLiteral
-                            logger.error("Error while processing metadata for {}: {}", singletonAddress, error.getMessage());
-                            MessageEvent.fire(eventBus, Message.error(resources.constants().metadataError(), error.getMessage()));
+                            logger.error("Error while processing metadata for {}: {}", singletonAddress,
+                                    error.getMessage());
+                            MessageEvent.fire(eventBus,
+                                    Message.error(resources.constants().metadataError(), error.getMessage()));
                         }
 
                         @Override
@@ -162,7 +168,8 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
                                 final ResourceDescription description) {
 
                             String id = IdBuilder.build(id(), "form");
-                            Form<ModelNode> form = new ModelNodeForm.Builder<>(id, securityContext, description)
+                            Form<ModelNode> form = new ModelNodeForm.Builder<>(id, securityContext, description,
+                                    capabilities)
                                     .createResource()
                                     .onSave((f, changedValues) -> wizard.getContext().modelNode = f.getModel())
                                     .build();
@@ -189,7 +196,8 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
                 finishCallback);
         this.metadataProvider = metadataProvider;
         addStep(SingletonState.CHOOSE, new ChooseSingletonStep(this));
-        addStep(SingletonState.CREATE, new CreateSingletonStep(this, eventBus, resources));
+        addStep(SingletonState.CREATE,
+                new CreateSingletonStep(this, metadataProvider.capabilities, eventBus, resources));
     }
 
     @Override

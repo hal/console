@@ -42,6 +42,7 @@ public class Bloodhound {
         public DataTokenizer datumTokenizer;
         public QueryTokenizer queryTokenizer;
         public Identifier identify;
+        public int sufficient;
         public Comparator sorter;
         public RemoteOptions remote;
     }
@@ -51,4 +52,6 @@ public class Bloodhound {
     public Bloodhound(Options options) {}
 
     public native void search(String query, SyncCallback syncCallback, AsyncCallback asyncCallback);
+
+    public native void clearRemoteCache();
 }

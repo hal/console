@@ -21,7 +21,6 @@
  */
 package org.jboss.hal.meta.processing;
 
-import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -86,16 +85,8 @@ public class MetadataProcessor {
             callback.onSuccess(null);
 
         } else {
-            // The following lambda makes problems in SuperDevMode!?
-            // Set<AddressTemplate> templates = FluentIterable.from(resources).transform(AddressTemplate::of).toSet();
-            //noinspection Convert2Lambda,Anonymous2MethodRef,Guava
-            Set<AddressTemplate> templates = FluentIterable.from(resources).transform(
-                    new Function<String, AddressTemplate>() {
-                        @Override
-                        public AddressTemplate apply(final String template) {
-                            return AddressTemplate.of(template);
-                        }
-                    }).toSet();
+            //noinspection Guava
+            Set<AddressTemplate> templates = FluentIterable.from(resources).transform(AddressTemplate::of).toSet();
             process(token, templates, progress, callback);
         }
     }

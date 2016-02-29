@@ -42,6 +42,7 @@ import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.Messages;
@@ -85,6 +86,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         final String id;
         final SecurityContext securityContext;
         final ResourceDescription resourceDescription;
+        final Capabilities capabilities;
         final Set<String> includes;
         final Set<String> excludes;
         final Map<String, FormItemProvider> providers;
@@ -103,10 +105,11 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         // ------------------------------------------------------ configure required and optional settings
 
         public Builder(@NonNls final String id, final SecurityContext securityContext,
-                final ResourceDescription resourceDescription) {
+                final ResourceDescription resourceDescription, final Capabilities capabilities) {
             this.id = id;
             this.securityContext = securityContext;
             this.resourceDescription = resourceDescription;
+            this.capabilities = capabilities;
             this.includes = new HashSet<>();
             this.excludes = new HashSet<>();
             this.providers = new HashMap<>();
@@ -257,7 +260,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
     private ModelNodeForm(final Builder<T> builder) {
         super(builder.id, builder.stateMachine(), builder.dataMapping, builder.securityContext);
 
-        this.formItemProvider = new DefaultFormItemProvider();
+        this.formItemProvider = new DefaultFormItemProvider(builder.capabilities);
         this.saveCallback = builder.saveCallback;
         this.cancelCallback = builder.cancelCallback;
         this.resetCallback = builder.resetCallback;

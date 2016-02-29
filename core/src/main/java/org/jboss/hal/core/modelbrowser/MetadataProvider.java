@@ -27,6 +27,7 @@ import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.processing.MetadataProcessor;
@@ -60,14 +61,17 @@ class MetadataProvider {
     private final SecurityFramework securityFramework;
     private final ResourceDescriptions resourceDescriptions;
     private final Provider<Progress> progress;
+    final Capabilities capabilities;
 
     MetadataProvider(final MetadataProcessor metadataProcessor,
             final SecurityFramework securityFramework,
             final ResourceDescriptions resourceDescriptions,
+            final Capabilities capabilities,
             final Provider<Progress> progress) {
         this.metadataProcessor = metadataProcessor;
         this.securityFramework = securityFramework;
         this.resourceDescriptions = resourceDescriptions;
+        this.capabilities = capabilities;
         this.progress = progress;
     }
 

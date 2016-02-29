@@ -541,8 +541,9 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
 
     // ------------------------------------------------------ validation
 
+    @Override
     @SuppressWarnings("unchecked")
-    private boolean validate() {
+    public boolean validate() {
         boolean valid = true;
 
         // validate form items

@@ -156,12 +156,16 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                     case INT:
                     case LONG:
                         Long longValue = (Long) value;
-                        if (type == BIG_INTEGER) {
-                            model.get(name).set(BigInteger.valueOf(longValue));
-                        } else if (type == INT) {
-                            model.get(name).set(longValue.intValue());
+                        if (longValue == null) {
+                            model.remove(name);
                         } else {
-                            model.get(name).set(longValue);
+                            if (type == BIG_INTEGER) {
+                                model.get(name).set(BigInteger.valueOf(longValue));
+                            } else if (type == INT) {
+                                model.get(name).set(longValue.intValue());
+                            } else {
+                                model.get(name).set(longValue);
+                            }
                         }
                         break;
 

@@ -116,6 +116,7 @@ public class ListItem extends AbstractFormItem<List<String>> {
     void onSuggest(final String suggestion) {
         TagsManager.Bridge.element(listElement.asElement()).addTag(suggestion);
         setModified(true);
+        setUndefined(false);
     }
 
     @Override

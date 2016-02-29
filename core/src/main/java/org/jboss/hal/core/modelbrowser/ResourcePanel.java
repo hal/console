@@ -35,6 +35,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.Ids;
@@ -58,6 +59,7 @@ class ResourcePanel implements HasElements {
 
     private final ModelBrowser modelBrowser;
     private final Dispatcher dispatcher;
+    private final Capabilities capabilities;
     private final Resources resources;
     private final Elements.Builder builder;
     private final Element description;
@@ -67,9 +69,13 @@ class ResourcePanel implements HasElements {
     private final String operationsId;
     final Tabs tabs;
 
-    ResourcePanel(final ModelBrowser modelBrowser, final Dispatcher dispatcher, final Resources resources) {
+    ResourcePanel(final ModelBrowser modelBrowser,
+            final Dispatcher dispatcher,
+            final Capabilities capabilities,
+            final Resources resources) {
         this.modelBrowser = modelBrowser;
         this.dispatcher = dispatcher;
+        this.capabilities = capabilities;
         this.resources = resources;
 
         dataId = IdBuilder.build(Ids.MODEL_BROWSER, "resource", "data", "tab");
@@ -115,7 +121,7 @@ class ResourcePanel implements HasElements {
                     .build();
             dispatcher.execute(operation, result -> {
                 ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(
-                        IdBuilder.build(Ids.MODEL_BROWSER, node.id, "form"), securityContext, description)
+                        IdBuilder.build(Ids.MODEL_BROWSER, node.id, "form"), securityContext, description, capabilities)
                         .includeRuntime()
                         .onReset(modelBrowser::reset)
                         .onSave((f, changedValues) -> modelBrowser.save(address, changedValues))

@@ -23,13 +23,14 @@ package org.jboss.hal.client.configuration.subsystem.jca;
 
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
-import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.security.SecurityContext;
@@ -55,7 +56,8 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
 
     @Inject
     public DataSourceView(ResourceDescriptions descriptions,
-            SecurityFramework securityFramework) {
+            SecurityFramework securityFramework,
+            Capabilities capabilities) {
 
         ResourceDescription description = descriptions.lookup(DataSourcePresenter.ROOT_TEMPLATE);
         SecurityContext securityContext = securityFramework.lookup(DataSourcePresenter.ROOT_TEMPLATE);
@@ -67,14 +69,16 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
         ModelNodeForm<ModelNode> currentForm;
         Form.SaveCallback<ModelNode> saveCallback = (form, changedValues) -> presenter.saveDataSource(changedValues);
 
-        currentForm = new ModelNodeForm.Builder<>(DATA_SOURCE_ATTRIBUTES_FORM, securityContext, description)
+        currentForm = new ModelNodeForm.Builder<>(DATA_SOURCE_ATTRIBUTES_FORM, securityContext, description,
+                capabilities)
                 .include(ModelDescriptionConstants.JNDI_NAME, ENABLED, "statistics-enabled", "driver-name")
                 .onSave(saveCallback)
                 .build();
         forms.add(currentForm);
         tabs.add(DATA_SOURCE_ATTRIBUTES_TAB, ATTRIBUTES, currentForm.asElement());
 
-        currentForm = new ModelNodeForm.Builder<>(DATA_SOURCE_CONNECTION_FORM, securityContext, description)
+        currentForm = new ModelNodeForm.Builder<>(DATA_SOURCE_CONNECTION_FORM, securityContext, description,
+                capabilities)
                 .include("connection-url", "new-connection-sql", "transaction-isolation", "jta", "use-ccm")
                 .onSave(saveCallback)
                 .build();

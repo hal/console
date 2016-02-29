@@ -40,6 +40,7 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
@@ -120,7 +121,8 @@ public class UnderTheBridgeView extends PatternFlyViewImpl implements UnderTheBr
     @Inject
     public UnderTheBridgeView(final Environment environment,
             final StatementContext statementContext,
-            final UnderTheBridgeResources resources) {
+            final UnderTheBridgeResources resources,
+            final Capabilities capabilities) {
         this.forms = new ArrayList<>();
 
         ResourceAddress address = AddressTemplate.of(environment.isStandalone() ? "" : "/profile=full-ha")
@@ -135,7 +137,8 @@ public class UnderTheBridgeView extends PatternFlyViewImpl implements UnderTheBr
 
         for (Map.Entry<String, String[]> entry : ATTRIBUTES.entrySet()) {
             forms.add(new ModelNodeForm.Builder<>(IdBuilder.build("form", entry.getKey()),
-                    SecurityContext.RWX, description).include(entry.getValue()).onSave(saveCallback).build());
+                    SecurityContext.RWX, description, capabilities)
+                    .include(entry.getValue()).onSave(saveCallback).build());
             tabs.add(IdBuilder.build("tab", entry.getKey()), new LabelBuilder().label(entry.getKey()),
                     forms.get(forms.size() - 1).asElement());
         }

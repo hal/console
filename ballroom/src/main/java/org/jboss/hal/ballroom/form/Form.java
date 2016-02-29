@@ -100,6 +100,12 @@ public interface Form<T> extends IsElement, Attachable {
     void edit(T model);
 
     /**
+     * Validates the form
+     * @return {@code true} if the form is valid, {@code false} otherwise
+     */
+    boolean validate();
+
+    /**
      * Validates the form and its fields and upon successful validation persists the changes to the model and
      * calls the save callback.
      */

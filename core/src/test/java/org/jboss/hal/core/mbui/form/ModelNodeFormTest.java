@@ -10,6 +10,8 @@ import org.jboss.hal.ballroom.form.StateMachine;
 import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.core.mbui.ResourceDescriptionBuilder;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.junit.Assert;
 import org.junit.Before;
@@ -42,7 +44,8 @@ public class ModelNodeFormTest {
 
     @Test(expected = IllegalStateException.class)
     public void viewAndEdit() {
-        new ModelNodeForm.Builder("viewAndEdit", RWX, new ResourceDescriptionBuilder().empty())
+        new ModelNodeForm.Builder("viewAndEdit", RWX, new ResourceDescriptionBuilder().empty(),
+                new Capabilities(StatementContext.NOOP))
                 .viewOnly()
                 .addOnly()
                 .build();
@@ -50,13 +53,15 @@ public class ModelNodeFormTest {
 
     @Test(expected = IllegalStateException.class)
     public void noAttributes() {
-        new ModelNodeForm.Builder("noAttributes", RWX, new ResourceDescriptionBuilder().empty())
+        new ModelNodeForm.Builder("noAttributes", RWX, new ResourceDescriptionBuilder().empty(),
+                new Capabilities(StatementContext.NOOP))
                 .build();
     }
 
     @Test(expected = IllegalStateException.class)
     public void noRequestProperties() {
-        new ModelNodeForm.Builder("noRequestProperties", RWX, new ResourceDescriptionBuilder().empty())
+        new ModelNodeForm.Builder("noRequestProperties", RWX, new ResourceDescriptionBuilder().empty(),
+                new Capabilities(StatementContext.NOOP))
                 .createResource()
                 .build();
     }
@@ -64,7 +69,7 @@ public class ModelNodeFormTest {
     @Test(expected = IllegalStateException.class)
     public void viewAndCreateResource() {
         new ModelNodeForm.Builder("viewAndCreateResource", RWX,
-                new ResourceDescriptionBuilder().empty())
+                new ResourceDescriptionBuilder().empty(), new Capabilities(StatementContext.NOOP))
                 .viewOnly()
                 .createResource()
                 .build();
@@ -73,7 +78,8 @@ public class ModelNodeFormTest {
     @Test(expected = IllegalStateException.class)
     public void excludeRequiredRequestProperty() {
         new ModelNodeForm.Builder("viewAndCreateResource", RWX,
-                new ResourceDescriptionBuilder().requestProperties(ImmutableMap.of("foo", true)))
+                new ResourceDescriptionBuilder().requestProperties(ImmutableMap.of("foo", true)),
+                new Capabilities(StatementContext.NOOP))
                 .createResource()
                 .exclude("foo")
                 .build();
@@ -85,7 +91,8 @@ public class ModelNodeFormTest {
     @Test
     public void createResourceStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("createResourceStateMachine", RWX,
-                new ResourceDescriptionBuilder().requestProperties(Collections.emptyMap()))
+                new ResourceDescriptionBuilder().requestProperties(Collections.emptyMap()),
+                new Capabilities(StatementContext.NOOP))
                 .createResource()
                 .stateMachine();
         Assert.assertTrue(stateMachine instanceof AddOnlyStateMachine);
@@ -95,7 +102,9 @@ public class ModelNodeFormTest {
     public void editOnlyStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("editOnlyStateMachine",
                 RWX,
-                new ResourceDescriptionBuilder().attributes()).addOnly().stateMachine();
+                new ResourceDescriptionBuilder().attributes(),
+                new Capabilities(StatementContext.NOOP))
+                .addOnly().stateMachine();
         Assert.assertTrue(stateMachine instanceof AddOnlyStateMachine);
     }
 
@@ -103,7 +112,9 @@ public class ModelNodeFormTest {
     public void viewOnlyStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("viewOnlyStateMachine",
                 RWX,
-                new ResourceDescriptionBuilder().attributes()).viewOnly().stateMachine();
+                new ResourceDescriptionBuilder().attributes(),
+                new Capabilities(StatementContext.NOOP))
+                .viewOnly().stateMachine();
         Assert.assertTrue(stateMachine instanceof ViewOnlyStateMachine);
     }
 
@@ -111,7 +122,9 @@ public class ModelNodeFormTest {
     public void defaultStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("defaultStateMachine",
                 RWX,
-                new ResourceDescriptionBuilder().attributes()).stateMachine();
+                new ResourceDescriptionBuilder().attributes(),
+                new Capabilities(StatementContext.NOOP))
+                .stateMachine();
         Assert.assertTrue(stateMachine instanceof ExistingModelStateMachine);
     }
 
@@ -221,7 +234,7 @@ public class ModelNodeFormTest {
     // ------------------------------------------------------ helper methods
 
     private ModelNodeForm.Builder<ModelNode> builder(final String id, final ResourceDescription resourceDescription) {
-        return new ModelNodeForm.Builder<>(id, RWX, resourceDescription)
+        return new ModelNodeForm.Builder<>(id, RWX, resourceDescription, new Capabilities(StatementContext.NOOP))
                 .customFormItem("foo", (property) -> new TestableFormItem("foo"))
                 .customFormItem("bar", (property) -> new TestableFormItem("bar"))
                 .customFormItem("baz", (property) -> new TestableFormItem("baz"))

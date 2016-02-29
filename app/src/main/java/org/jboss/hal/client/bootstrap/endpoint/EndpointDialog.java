@@ -13,6 +13,7 @@ import org.jboss.hal.ballroom.table.Button.Scope;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
@@ -58,7 +59,7 @@ class EndpointDialog {
     private ModelNodeTable<Endpoint> table;
     private Dialog dialog;
 
-    EndpointDialog(final EndpointManager manager, final EndpointStorage storage) {
+    EndpointDialog(final EndpointManager manager, final EndpointStorage storage, final Capabilities capabilities) {
         this.manager = manager;
         this.storage = storage;
 
@@ -99,7 +100,7 @@ class EndpointDialog {
         });
         ping.setEnabled(false);
 
-        form = new ModelNodeForm.Builder<Endpoint>(ENDPOINT_ADD, SecurityContext.RWX, description)
+        form = new ModelNodeForm.Builder<Endpoint>(ENDPOINT_ADD, SecurityContext.RWX, description, capabilities)
                 .addOnly()
                 .include(NAME, SCHEME, HOST, PORT)
                 .unboundFormItem(ping)
