@@ -22,6 +22,7 @@
 package org.jboss.hal.core.modelbrowser;
 
 import com.google.gwt.core.client.GWT;
+import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.DivElement;
@@ -42,6 +43,11 @@ import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
+import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.SortedSet;
@@ -116,11 +122,17 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
 
     private static class CreateSingletonStep extends WizardStep<SingletonContext, SingletonState> {
 
+        private static final Logger logger = LoggerFactory.getLogger(CreateSingletonStep.class);
+
         private final MetadataProvider metadataProvider;
         private final DivElement root;
+        private final EventBus eventBus;
+        private final Resources resources;
 
-        CreateSingletonStep(final NewSingletonWizard wizard) {
+        CreateSingletonStep(final NewSingletonWizard wizard, final EventBus eventBus, final Resources resources) {
             super(wizard, MESSAGES.addResourceTitle(wizard.getContext().parent.text));
+            this.eventBus = eventBus;
+            this.resources = resources;
             this.metadataProvider = wizard.metadataProvider;
             this.root = Browser.getDocument().createDivElement();
         }
@@ -133,13 +145,16 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
         @Override
         protected void onShow(final SingletonContext context) {
             Elements.removeChildrenFrom(root);
+            setTitle(wizard.getContext().parent.text + "=" + wizard.getContext().singleton);
             ResourceAddress singletonAddress = wizard.getContext().parent.data.getAddress().getParent()
                     .add(wizard.getContext().parent.text, wizard.getContext().singleton);
             metadataProvider.getMetadata(wizard.getContext().parent, singletonAddress,
                     new MetadataProvider.MetadataCallback() {
                         @Override
                         public void onError(final Throwable error) {
-                            // TODO error handling
+                            //noinspection HardCodedStringLiteral
+                            logger.error("Error while processing metadata for {}: {}", singletonAddress, error.getMessage());
+                            MessageEvent.fire(eventBus, Message.error(resources.constants().metadataError(), error.getMessage()));
                         }
 
                         @Override
@@ -166,15 +181,15 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
 
     private final MetadataProvider metadataProvider;
 
-    NewSingletonWizard(final MetadataProvider metadataProvider, final Node<Context> parent, List<String> children,
-            FinishCallback<SingletonContext> finishCallback) {
+    NewSingletonWizard(final EventBus eventBus, final MetadataProvider metadataProvider, final Resources resources,
+            final Node<Context> parent, List<String> children, FinishCallback<SingletonContext> finishCallback) {
         super(IdBuilder.build(parent.id, "add", "singleton"),
                 MESSAGES.addResourceTitle(parent.text),
                 new SingletonContext(parent, children),
                 finishCallback);
         this.metadataProvider = metadataProvider;
         addStep(SingletonState.CHOOSE, new ChooseSingletonStep(this));
-        addStep(SingletonState.CREATE, new CreateSingletonStep(this));
+        addStep(SingletonState.CREATE, new CreateSingletonStep(this, eventBus, resources));
     }
 
     @Override

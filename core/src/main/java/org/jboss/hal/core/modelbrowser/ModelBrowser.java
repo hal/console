@@ -79,10 +79,38 @@ import static org.jboss.hal.resources.Names.NYI;
  */
 public class ModelBrowser implements HasElements {
 
+    private static class FilterInfo {
+
+        final String title;
+        final ResourceAddress address;
+
+        private FilterInfo(final String title, final ResourceAddress address) {
+            this.title = title;
+            this.address = address;
+        }
+    }
+
+
+    private abstract class DefaultMetadataCallback implements MetadataProvider.MetadataCallback {
+
+        private final ResourceAddress address;
+
+        DefaultMetadataCallback(final ResourceAddress address) {this.address = address;}
+
+        @Override
+        public void onError(final Throwable error) {
+            //noinspection HardCodedStringLiteral
+            logger.error("Error while processing metadata for {}: {}", address, error.getMessage());
+            MessageEvent.fire(eventBus, Message.error(resources.constants().metadataError(), error.getMessage()));
+        }
+    }
+
+
     private static final int MARGIN_BIG = 20; // keep this in sync with the
     private static final int MARGIN_SMALL = 10; // margins in modelbrowser.less
     private static final String FILTER_ELEMENT = "filterElement";
     private static final String REFRESH_ELEMENT = "refreshElement";
+    private static final String COLLAPSE_ELEMENT = "collapseElement";
     static final String ROOT_ID = IdBuilder.build(Ids.MODEL_BROWSER, "root");
     static final Element PLACE_HOLDER_ELEMENT = Browser.getDocument().createDivElement();
 
@@ -93,12 +121,13 @@ public class ModelBrowser implements HasElements {
     private final EventBus eventBus;
     private final Resources resources;
     private final OperationFactory operationFactory;
-    private final Stack<Node<Context>> filterStack;
+    private final Stack<FilterInfo> filterStack;
 
     private final Iterable<Element> rows;
     private final Element buttonGroup;
     private final ButtonElement filter;
     private final ButtonElement refresh;
+    private final ButtonElement collapse;
     private final Element treeContainer;
     private final Element content;
     private final ResourcePanel resourcePanel;
@@ -130,19 +159,20 @@ public class ModelBrowser implements HasElements {
         // @formatter:off
         Elements.Builder buttonsBuilder = new Elements.Builder()
             .div().css(btnGroup, modelBrowserButtons)
-                .button().rememberAs(FILTER_ELEMENT).on(click, event -> filter()).css(btn, btnDefault)
+                .button().rememberAs(FILTER_ELEMENT).on(click, event -> filter(tree.api().getSelected())).css(btn, btnDefault)
                     .add("i").css(fontAwesome(CSS.filter))
                 .end()
-                .button().rememberAs(REFRESH_ELEMENT).on(click, event -> refresh()).css(btn, btnDefault)
+                .button().rememberAs(REFRESH_ELEMENT).on(click, event -> refresh(tree.api().getSelected())).css(btn, btnDefault)
                     .add("i").css(fontAwesome(CSS.refresh))
                 .end()
-                .button().on(click, event -> collapse()).css(btn, btnDefault)
+                .button().rememberAs(COLLAPSE_ELEMENT).on(click, event -> collapse(tree.api().getSelected())).css(btn, btnDefault)
                     .add("i").css(fontAwesome("minus"))
                 .end()
             .end();
         // @formatter:on
         filter = buttonsBuilder.referenceFor(FILTER_ELEMENT);
         refresh = buttonsBuilder.referenceFor(REFRESH_ELEMENT);
+        collapse = buttonsBuilder.referenceFor(COLLAPSE_ELEMENT);
         buttonGroup = buttonsBuilder.build();
         treeContainer = new Elements.Builder().div().css(modelBrowserTree).end().build();
         content = new Elements.Builder().div().css(modelBrowserContent).end().build();
@@ -189,47 +219,61 @@ public class ModelBrowser implements HasElements {
         }
     }
 
+
     // ------------------------------------------------------ event handler & co
 
-    private void filter() {
-        Node<Context> selected = tree.api().getSelected();
-        if (selected != null && selected.parent != null) {
-            Node<Context> parent = tree.api().getNode(selected.parent);
-            // @formatter:off
-            Element filter = new Elements.Builder()
-                .div().css(tagManagerContainer)
-                    .span().css(tmTag, tagManagerTag)
-                        .span().innerText(parent.text + "=" + selected.text).end()
-                        .a().css(clickable, tmTagRemove).on(click, event -> clearFilter()).innerText("x").end() //NON-NLS
-                    .end()
-                .end().build();
-            // @formatter:on
-
-            buttonGroup.appendChild(filter);
-            filterStack.add(selected);
-            setRoot(selected.data.getAddress(), true, false);
+    private void filter(Node<Context> node) {
+        if (node != null && node.parent != null) {
+            Node<Context> parent = tree.api().getNode(node.parent);
+            FilterInfo filterInfo = new FilterInfo(parent.text + "=" + node.text, node.data.getAddress());
+            filterStack.add(filterInfo);
+            filter(filterInfo);
         }
+    }
+
+    private void filter(FilterInfo filterInfo) {
+        // @formatter:off
+        Element filter = new Elements.Builder()
+            .div().css(tagManagerContainer)
+                .span().css(tmTag, tagManagerTag)
+                    .span().innerText(filterInfo.title).end()
+                    .a().css(clickable, tmTagRemove).on(click, event -> clearFilter()).innerText("x").end() //NON-NLS
+                .end()
+            .end().build();
+        // @formatter:on
+
+        Element oldFilter = buttonGroup.querySelector("." + tagManagerContainer);
+        if (oldFilter != null) {
+            buttonGroup.replaceChild(filter, oldFilter);
+        } else {
+            buttonGroup.appendChild(filter);
+        }
+        tree.api().destroy(false);
+        setRoot(filterInfo.address, true, false);
     }
 
     private void clearFilter() {
-        Element element = buttonGroup.querySelector("." + tagManagerContainer);
-        if (element != null) {
-            buttonGroup.removeChild(element);
+        Element filterElement = buttonGroup.querySelector("." + tagManagerContainer);
+        if (filterElement != null) {
+            buttonGroup.removeChild(filterElement);
+            if (!filterStack.isEmpty()) {
+                filter(filterStack.pop());
+            } else {
+                setRoot(ResourceAddress.ROOT, true, true);
+            }
         }
     }
 
-    private void refresh() {
-        Node<Context> selected = tree.api().getSelected();
-        if (selected != null) {
-            updateNode(selected);
-            tree.api().refreshNode(selected.id);
+    private void refresh(final Node<Context> node) {
+        if (node != null) {
+            updateNode(node);
+            tree.api().refreshNode(node.id);
         }
     }
 
-    private void collapse() {
-        Node<Context> selected = tree.api().getSelected();
-        if (selected != null) {
-            tree.api().closeNode(selected.id);
+    private void collapse(Node<Context> node) {
+        if (node != null) {
+            select(node.id, true);
         }
     }
 
@@ -243,6 +287,7 @@ public class ModelBrowser implements HasElements {
                 !context.node.data.isFullyQualified() ||
                 context.node.id.equals(ROOT_ID));
         refresh.setDisabled(context.selected.isEmpty());
+        collapse.setDisabled(context.selected.isEmpty());
 
         resourcePanel.hide();
         childrenPanel.hide();
@@ -275,12 +320,7 @@ public class ModelBrowser implements HasElements {
 
     private void showResourceView(Node<Context> node, ResourceAddress address) {
         Node<Context> parent = tree.api().getNode(node.parent);
-        metadataProvider.getMetadata(parent, address, new MetadataProvider.MetadataCallback() {
-            @Override
-            public void onError(final Throwable error) {
-                metadataError(address, error);
-            }
-
+        metadataProvider.getMetadata(parent, address, new DefaultMetadataCallback(address) {
             @Override
             public void onMetadata(final SecurityContext securityContext, final ResourceDescription description) {
                 resourcePanel.update(node, node.data.getAddress(), securityContext, description);
@@ -298,12 +338,7 @@ public class ModelBrowser implements HasElements {
                 // no need to show a wizard
                 String singleton = parent.data.getSingletons().iterator().next();
                 ResourceAddress singletonAddress = parent.data.getAddress().getParent().add(parent.text, singleton);
-                metadataProvider.getMetadata(parent, singletonAddress, new MetadataProvider.MetadataCallback() {
-                    @Override
-                    public void onError(final Throwable error) {
-                        metadataError(singletonAddress, error);
-                    }
-
+                metadataProvider.getMetadata(parent, singletonAddress, new DefaultMetadataCallback(singletonAddress) {
                     @Override
                     public void onMetadata(SecurityContext securityContext, ResourceDescription description) {
                         String id = IdBuilder.build(parent.id, "singleton", "add");
@@ -322,7 +357,7 @@ public class ModelBrowser implements HasElements {
                                                 MessageEvent.fire(eventBus,
                                                         Message.success(resources.messages()
                                                                 .addResourceSuccess(parent.text, singleton)));
-                                                refresh();
+                                                refresh(parent);
                                             });
                                 });
                         dialog.show();
@@ -331,60 +366,49 @@ public class ModelBrowser implements HasElements {
 
             } else {
                 // open wizard to choose the singleton
-                NewSingletonWizard wizard = new NewSingletonWizard(metadataProvider, parent, children,
-                        context -> {
-                            Operation.Builder builder = new Operation.Builder(ADD,
-                                    fqAddress(parent, context.singleton));
-                            if (context.modelNode != null) {
-                                builder.payload(context.modelNode);
-                            }
-                            dispatcher.execute(builder.build(),
-                                    result -> {
-                                        MessageEvent.fire(eventBus, Message.success(
-                                                resources.messages()
-                                                        .addResourceSuccess(parent.text, context.singleton)));
-                                        refresh();
-                                    });
-                        });
+                NewSingletonWizard wizard = new NewSingletonWizard(eventBus, metadataProvider, resources,
+                        parent, children, context -> {
+                    Operation.Builder builder = new Operation.Builder(ADD,
+                            fqAddress(parent, context.singleton));
+                    if (context.modelNode != null) {
+                        builder.payload(context.modelNode);
+                    }
+                    dispatcher.execute(builder.build(),
+                            result -> {
+                                MessageEvent.fire(eventBus, Message.success(
+                                        resources.messages()
+                                                .addResourceSuccess(parent.text, context.singleton)));
+                                refresh(parent);
+                            });
+                });
                 wizard.show();
             }
 
         } else {
-            metadataProvider.getMetadata(parent, parent.data.getAddress(), new MetadataProvider.MetadataCallback() {
-                @Override
-                public void onError(final Throwable error) {
-                    metadataError(parent.data.getAddress(), error);
-                }
-
-                @Override
-                public void onMetadata(SecurityContext securityContext, ResourceDescription description) {
-                    AddResourceDialog<ModelNode> dialog = new AddResourceDialog<>(
-                            IdBuilder.build(parent.id, "add"),
-                            resources.messages().addResourceTitle(parent.text),
-                            securityContext, description,
-                            (name, modelNode) -> {
-                                Operation operation = new Operation.Builder(ADD, fqAddress(parent, name))
-                                        .payload(modelNode)
-                                        .build();
-                                dispatcher.execute(operation,
-                                        result -> {
-                                            MessageEvent.fire(eventBus,
-                                                    Message.success(resources.messages()
-                                                            .addResourceSuccess(parent.text, name)));
-                                            refresh();
-                                        });
-                            });
-                    dialog.show();
-                }
-            });
+            metadataProvider.getMetadata(parent, parent.data.getAddress(),
+                    new DefaultMetadataCallback(parent.data.getAddress()) {
+                        @Override
+                        public void onMetadata(SecurityContext securityContext, ResourceDescription description) {
+                            AddResourceDialog<ModelNode> dialog = new AddResourceDialog<>(
+                                    IdBuilder.build(parent.id, "add"),
+                                    resources.messages().addResourceTitle(parent.text),
+                                    securityContext, description,
+                                    (name, modelNode) -> {
+                                        Operation operation = new Operation.Builder(ADD, fqAddress(parent, name))
+                                                .payload(modelNode)
+                                                .build();
+                                        dispatcher.execute(operation,
+                                                result -> {
+                                                    MessageEvent.fire(eventBus,
+                                                            Message.success(resources.messages()
+                                                                    .addResourceSuccess(parent.text, name)));
+                                                    refresh(parent);
+                                                });
+                                    });
+                            dialog.show();
+                        }
+                    });
         }
-    }
-
-    private void metadataError(ResourceAddress address, Throwable error) {
-        //noinspection HardCodedStringLiteral
-        logger.error("Error while processing metadata for {}: {}", address, error.getMessage());
-        MessageEvent.fire(eventBus,
-                Message.error(resources.constants().metadataError(), error.getMessage()));
     }
 
     private ResourceAddress fqAddress(Node<Context> parent, String child) {
@@ -397,7 +421,7 @@ public class ModelBrowser implements HasElements {
             MessageEvent.fire(eventBus,
                     Message.success(
                             resources.messages().removeResourceSuccess(address.lastName(), address.lastValue())));
-            refresh();
+            refresh(tree.api().getSelected());
         });
     }
 
@@ -411,7 +435,7 @@ public class ModelBrowser implements HasElements {
             MessageEvent.fire(eventBus,
                     Message.success(
                             resources.messages().modifyResourceSuccess(address.lastName(), address.lastValue())));
-            refresh();
+            refresh(tree.api().getSelected());
         });
     }
 

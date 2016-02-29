@@ -106,4 +106,8 @@ public abstract class WizardStep<C, S extends Enum<S>> implements IsElement {
             Collections.addAll(attachables, rest);
         }
     }
+
+    protected void setTitle(String title) {
+        wizard.setTitle(title);
+    }
 }

@@ -244,7 +244,7 @@ public abstract class Wizard<C, S extends Enum<S>> {
         }
         current++;
         double width = min(round(((double) current / (double) steps.size()) * 100.0), 100.0);
-        header.setInnerText(currentStep().title);
+        setTitle(currentStep().title);
         indicator.getStyle().setWidth(width, PCT);
         currentStep().onShow(context);
         for (Attachable attachable : currentStep().attachables) {
@@ -254,6 +254,10 @@ public abstract class Wizard<C, S extends Enum<S>> {
         back.setDisabled(state == initialState());
         ButtonElement next = dialog.getButton(Dialog.PRIMARY_POSITION);
         next.setInnerHTML(lastStates().contains(state) ? CONSTANTS.finish() : CONSTANTS.next());
+    }
+
+    void setTitle(String title) {
+        header.setInnerText(title);
     }
 
     /**
