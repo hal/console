@@ -22,12 +22,10 @@
 package org.jboss.hal.client.skeleton;
 
 import com.google.gwt.core.client.GWT;
-import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
 
@@ -44,9 +42,45 @@ class MessageElement implements IsElement {
     private final Element root;
 
     MessageElement(final Message message) {
+        String[] cssIcon = cssIcon(message.getLevel());
+        if (message.isSticky()) {
+            cssIcon[0] = cssIcon[0] + " " + alertDismissable;
+        }
+
+        Elements.Builder builder = new Elements.Builder()
+                .div().css(toastPf, toastPfMaxWidth, toastPfTopRight, alert, cssIcon[0]);
+        if (message.isSticky()) {
+            //noinspection HardCodedStringLiteral
+            builder.button().css(close).data("dismiss", "alert").aria(UIConstants.HIDDEN, String.valueOf(true))
+                    .span().css(pfIcon(close)).end()
+                    .end();
+        }
+        if (message.getDetails() != null) {
+            builder.div().css(pullRight, toastPfAction)
+                    .a().css(clickable).on(click, event -> showMessage(message))
+                    .innerText(CONSTANTS.details()).end()
+                    .end();
+        }
+        builder.span().css(pfIcon(cssIcon[1])).end();
+        builder.span().innerText(message.getMessage()).end();
+        builder.end(); // </div>
+
+        root = builder.build();
+    }
+
+    private void showMessage(final Message message) {
+        new MessageDialog(message).show();
+    }
+
+    @Override
+    public Element asElement() {
+        return root;
+    }
+
+    static String[] cssIcon(Message.Level level) {
         String css = "";
         String icon = "";
-        switch (message.getLevel()) {
+        switch (level) {
             case ERROR:
                 css = alertDanger;
                 icon = errorCircleO;
@@ -64,33 +98,6 @@ class MessageElement implements IsElement {
                 icon = ok;
                 break;
         }
-        if (message.isSticky()) {
-            css = css + " " + alertDismissable;
-        }
-
-        Elements.Builder builder = new Elements.Builder()
-                .div().css(toastPf, toastPfMaxWidth, toastPfTopRight, alert, css);
-        if (message.isSticky()) {
-            //noinspection HardCodedStringLiteral
-            builder.button().css(close).data("dismiss", "alert").aria(UIConstants.HIDDEN, String.valueOf(true))
-                    .span().css(pfIcon(close)).end()
-                    .end();
-        }
-        if (message.getDetails() != null) {
-            builder.div().css(pullRight, toastPfAction)
-                    .a().css(clickable).on(click, event -> Browser.getWindow().alert(Names.NYI))
-                    .innerText(CONSTANTS.details()).end()
-                    .end();
-        }
-        builder.span().css(pfIcon(icon)).end();
-        builder.span().innerText(message.getMessage()).end();
-        builder.end(); // </div>
-
-        root = builder.build();
-    }
-
-    @Override
-    public Element asElement() {
-        return root;
+        return new String[]{css, icon};
     }
 }

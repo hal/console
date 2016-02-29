@@ -21,6 +21,12 @@
  */
 package org.jboss.hal.spi;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
+
+import java.util.Date;
+
+import static com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat.DATE_TIME_LONG;
+
 public class Message {
 
     public enum Level {
@@ -79,6 +85,7 @@ public class Message {
 
 
     private final long id;
+    private final String timestamp;
     private final Level level;
     private final String message;
     private final String details;
@@ -86,6 +93,7 @@ public class Message {
 
     private Message(final Level level, final String message, final String details, final boolean sticky) {
         this.id = System.currentTimeMillis();
+        this.timestamp = DateTimeFormat.getFormat(DATE_TIME_LONG).format(new Date());
         this.level = level;
         this.message = message;
         this.details = details;
@@ -94,6 +102,10 @@ public class Message {
 
     public long getId() {
         return id;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
     }
 
     public Level getLevel() {

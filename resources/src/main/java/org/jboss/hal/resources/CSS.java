@@ -101,6 +101,7 @@ public interface CSS {
     String lead = "lead";
     String loading = "loading";
     String loadingContainer = "loading-container";
+    String messageDetails = "message-details";
     String modal = "modal";
     String modalBody = "modal-body";
     String modalContent = "modal-content";
@@ -155,6 +156,7 @@ public interface CSS {
     String tagManagerContainer = "tag-manager-container";
     String tagManagerTag = "tag-manager-tag";
     String tags = "tags";
+    String timestamp = "timestamp";
     String tmTag = "tm-tag";
     String tmTagRemove = "tm-tag-remove";
     String toastPf = "toast-pf";
