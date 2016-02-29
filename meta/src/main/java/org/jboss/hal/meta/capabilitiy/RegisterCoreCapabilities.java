@@ -19,32 +19,19 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.meta;
+package org.jboss.hal.meta.capabilitiy;
 
-import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.inject.Singleton;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.capabilitiy.RegisterCoreCapabilities;
-import org.jboss.hal.meta.description.ResourceDescriptions;
-import org.jboss.hal.meta.processing.MetadataProcessor;
-import org.jboss.hal.meta.security.SecurityFramework;
-import org.jboss.hal.meta.subsystem.Subsystems;
-import org.jboss.hal.spi.GinModule;
+import javax.inject.Inject;
 
 /**
+ * Registers core capabilities from https://github.com/wildfly/wildfly-capabilities and other well-known capabilities.
+ *
  * @author Harald Pehl
  */
-@GinModule
-public class MetaModule extends AbstractGinModule {
+public class RegisterCoreCapabilities {
 
-    @Override
-    protected void configure() {
-        bind(Capabilities.class).in(Singleton.class);
-        bind(MetadataProcessor.class).in(Singleton.class);
-        bind(ResourceDescriptions.class).in(Singleton.class);
-        bind(SecurityFramework.class).in(Singleton.class);
-        bind(Subsystems.class).in(Singleton.class);
-
-        bind(RegisterCoreCapabilities.class).asEagerSingleton();
+    @Inject
+    public RegisterCoreCapabilities(Capabilities capabilities) {
+        
     }
 }

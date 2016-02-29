@@ -19,32 +19,33 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.meta;
+package org.jboss.hal.meta.capabilitiy;
 
-import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.inject.Singleton;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.capabilitiy.RegisterCoreCapabilities;
-import org.jboss.hal.meta.description.ResourceDescriptions;
-import org.jboss.hal.meta.processing.MetadataProcessor;
-import org.jboss.hal.meta.security.SecurityFramework;
-import org.jboss.hal.meta.subsystem.Subsystems;
-import org.jboss.hal.spi.GinModule;
+import org.jboss.hal.meta.AddressTemplate;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Harald Pehl
  */
-@GinModule
-public class MetaModule extends AbstractGinModule {
+public class Capabilities {
 
-    @Override
-    protected void configure() {
-        bind(Capabilities.class).in(Singleton.class);
-        bind(MetadataProcessor.class).in(Singleton.class);
-        bind(ResourceDescriptions.class).in(Singleton.class);
-        bind(SecurityFramework.class).in(Singleton.class);
-        bind(Subsystems.class).in(Singleton.class);
+    private final Map<String, AddressTemplate> registry;
 
-        bind(RegisterCoreCapabilities.class).asEagerSingleton();
+    public Capabilities() {
+        registry = new HashMap<>();
+    }
+
+    public AddressTemplate lookup(final String name) {
+        return registry.get(name);
+    }
+
+    public boolean contains(final String name) {
+        return registry.containsKey(name);
+    }
+
+    public void add(final String name, final AddressTemplate template) {
+        registry.put(name, template);
     }
 }
