@@ -99,7 +99,7 @@ public class Tabs implements IsElement {
                         event.preventDefault();
                         showTab(id);
                     })
-                    .innerText(title)
+                    .textContent(title)
                 .end()
             .end()
         .build();

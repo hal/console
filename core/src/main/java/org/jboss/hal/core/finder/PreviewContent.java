@@ -93,7 +93,7 @@ public class PreviewContent implements SecurityContextAware {
     }
 
     private Elements.Builder header(final String header) {
-        return new Elements.Builder().h(1).innerText(header).end();
+        return new Elements.Builder().h(1).textContent(header).end();
     }
 
     public Iterable<Element> elements() {

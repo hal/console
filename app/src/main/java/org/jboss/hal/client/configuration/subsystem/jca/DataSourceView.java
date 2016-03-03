@@ -62,7 +62,7 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
         ResourceDescription description = descriptions.lookup(DataSourcePresenter.ROOT_TEMPLATE);
         SecurityContext securityContext = securityFramework.lookup(DataSourcePresenter.ROOT_TEMPLATE);
 
-        Element info = new Elements.Builder().p().innerText(description.getDescription()).end().build();
+        Element info = new Elements.Builder().p().textContent(description.getDescription()).end().build();
 
         forms = new ArrayList<>();
         Tabs tabs = new Tabs();

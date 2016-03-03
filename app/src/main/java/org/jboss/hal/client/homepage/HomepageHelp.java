@@ -99,6 +99,6 @@ abstract class HomepageHelp implements IsElement {
     }
 
     private Element helpLink(final String href, final String text) {
-        return new Elements.Builder().li().a().attr("href", href).innerText(text).end().end().build();
+        return new Elements.Builder().li().a().attr("href", href).textContent(text).end().end().build();
     }
 }

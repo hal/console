@@ -53,9 +53,9 @@ class OperationsTable implements IsElement {
                 .css(table, tableBordered, tableStriped, CSS.operations)
                 .thead()
                 .tr()
-                .th().innerText(resources.constants().name()).end()
-                .th().innerText(resources.constants().input()).end()
-                .th().innerText(resources.constants().output()).end()
+                .th().textContent(resources.constants().name()).end()
+                .th().textContent(resources.constants().input()).end()
+                .th().textContent(resources.constants().output()).end()
                 .end()
                 .end();
 

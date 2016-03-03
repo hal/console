@@ -160,7 +160,7 @@ public class UnderTheBridgeView extends PatternFlyViewImpl implements UnderTheBr
                     .add(
                         new Elements.Builder()
                             .p()
-                                .innerText(description.getDescription())
+                                .textContent(description.getDescription())
                             .end()
                             .p()
                                 .innerHtml(new SafeHtmlBuilder().appendEscaped("If you're wondering about the name of " +

@@ -254,8 +254,8 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
             } else {
                 builder.a(historyToken(finderContext.getToken(), currentPath));
             }
-            builder.span().css(key).innerText(breadcrumbSegment.key).end()
-                    .span().css(value).innerText(breadcrumbSegment.value).end();
+            builder.span().css(key).textContent(breadcrumbSegment.key).end()
+                    .span().css(value).textContent(breadcrumbSegment.value).end();
             if (!last) {
                 builder.end(); // </a>
             }
@@ -273,11 +273,11 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         if (path == null) {
             // deselection
             breadcrumbs.appendChild(
-                    new Elements.Builder().li().innerText(resources().constants().nothingSelected()).build());
+                    new Elements.Builder().li().textContent(resources().constants().nothingSelected()).build());
 
         } else {
             if (path.isEmpty()) {
-                breadcrumbs.appendChild(new Elements.Builder().li().innerText("").build());
+                breadcrumbs.appendChild(new Elements.Builder().li().textContent("").build());
 
             } else {
                 ModelBrowser modelBrowser = path.getModelBrowser();
@@ -289,12 +289,12 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
                     Elements.Builder builder = new Elements.Builder().li();
                     builder.a().css(clickable).on(click, event -> modelBrowser.select(key.id, true))
-                            .span().css(CSS.key).innerText(key.text).end()
+                            .span().css(CSS.key).textContent(key.text).end()
                             .end();
                     if (link) {
                         builder.a().css(clickable).on(click, event -> modelBrowser.select(value.id, true));
                     }
-                    builder.span().css(CSS.value).innerText(value.text).end();
+                    builder.span().css(CSS.value).textContent(value.text).end();
                     if (link) {
                         builder.end();
                     }

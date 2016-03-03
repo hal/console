@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.meta.capabilitiy;
 
+import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -30,7 +31,6 @@ import org.jboss.hal.meta.StatementContext;
 
 import javax.inject.Inject;
 import java.util.Collections;
-import java.util.function.Function;
 
 /**
  * @author Harald Pehl
@@ -67,7 +67,7 @@ public class Capabilities {
             Function<AddressTemplate, AddressTemplate> adjustTemplate) {
         if (contains(name)) {
             return FluentIterable.from(registry.get(name))
-                    .transform(adjustTemplate::apply)
+                    .transform(adjustTemplate)
                     .transform(template -> template.resolve(statementContext));
         }
         return Collections.emptyList();

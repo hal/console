@@ -99,7 +99,7 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
                             .attr("value", singleton)
                             .on(click, event ->
                                     wizard.getContext().singleton = ((InputElement) event.getTarget()).getValue())
-                        .span().innerText(singleton).end()
+                        .span().textContent(singleton).end()
                     .end()
                 .end();
                 // @formatter:on

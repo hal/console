@@ -46,14 +46,14 @@ public class MessageDialog {
         // header
         elementBuilder.div().css(alert, cssIcon[0])
                 .span().css(pfIcon(cssIcon[1])).end()
-                .span().innerText(message.getMessage()).end()
+                .span().textContent(message.getMessage()).end()
                 .end();
 
         // details
         String header = message.getDetails() != null ? CONSTANTS.details() : CONSTANTS.noDetails();
         elementBuilder.p().css(messageDetails)
-                .span().innerText(header).end()
-                .span().css(pullRight, timestamp).innerText(message.getTimestamp()).end()
+                .span().textContent(header).end()
+                .span().css(pullRight, timestamp).textContent(message.getTimestamp()).end()
                 .end();
         if (message.getDetails() != null) {
             elementBuilder.start("pre").innerHtml(SafeHtmlUtils.fromString(message.getDetails())).end();

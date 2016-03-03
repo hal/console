@@ -29,7 +29,7 @@
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
-        <version>19</version>
+        <version>20</version>
     </parent>
 
     <groupId>org.jboss.hal</groupId>
@@ -80,8 +80,8 @@
         <maven.compiler.source>1.8</maven.compiler.source>
 
         <plugin.version.frontend>0.0.26</plugin.version.frontend>
-        <plugin.version.gwt.maven>1.0-SNAPSHOT</plugin.version.gwt.maven>
-        <plugin.version.processor.plugin>3.1.0-beta1</plugin.version.processor.plugin>
+        <plugin.version.gwt.maven>1.0-rc-6</plugin.version.gwt.maven>
+        <plugin.version.processor.plugin>3.1.0</plugin.version.processor.plugin>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

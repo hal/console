@@ -144,9 +144,9 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
     private Iterable<Element> keyValueElements(Map<String, String> value) {
         Elements.Builder builder = new Elements.Builder();
         for (Map.Entry<String, String> entry : value.entrySet()) {
-            builder.span().css(CSS.key).innerText(entry.getKey()).end();
+            builder.span().css(CSS.key).textContent(entry.getKey()).end();
             builder.span().css(CSS.equals).innerHtml(SafeHtmlUtils.fromSafeConstant("&rArr;")).end(); //NON-NLS
-            builder.span().css(CSS.value).innerText(entry.getValue()).end();
+            builder.span().css(CSS.value).textContent(entry.getValue()).end();
         }
         return builder.elements();
     }

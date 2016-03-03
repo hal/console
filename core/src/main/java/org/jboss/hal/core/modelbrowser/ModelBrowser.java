@@ -240,8 +240,8 @@ public class ModelBrowser implements HasElements {
         Element filter = new Elements.Builder()
             .div().css(tagManagerContainer)
                 .span().css(tmTag, tagManagerTag)
-                    .span().innerText(filterInfo.title).end()
-                    .a().css(clickable, tmTagRemove).on(click, event -> clearFilter()).innerText("x").end() //NON-NLS
+                    .span().textContent(filterInfo.title).end()
+                    .a().css(clickable, tmTagRemove).on(click, event -> clearFilter()).textContent("x").end() //NON-NLS
                 .end()
             .end().build();
         // @formatter:on

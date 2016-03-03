@@ -58,11 +58,11 @@ class MessageElement implements IsElement {
         if (message.getDetails() != null) {
             builder.div().css(pullRight, toastPfAction)
                     .a().css(clickable).on(click, event -> showMessage(message))
-                    .innerText(CONSTANTS.details()).end()
+                    .textContent(CONSTANTS.details()).end()
                     .end();
         }
         builder.span().css(pfIcon(cssIcon[1])).end();
-        builder.span().innerText(message.getMessage()).end();
+        builder.span().textContent(message.getMessage()).end();
         builder.end(); // </div>
 
         root = builder.build();

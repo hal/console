@@ -103,8 +103,8 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                         return item.getSubtitle() != null
                                 ? new Elements.Builder()
                                 .span().css(itemText)
-                                .span().innerText(item.getTitle()).end()
-                                .start("small").css(subtitle).innerText(item.getSubtitle()).end()
+                                .span().textContent(item.getTitle()).end()
+                                .start("small").css(subtitle).textContent(item.getSubtitle()).end()
                                 .end().build()
                                 : null;
                     }

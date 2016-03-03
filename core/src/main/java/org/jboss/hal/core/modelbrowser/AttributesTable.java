@@ -54,10 +54,10 @@ class AttributesTable implements IsElement {
                 .css(table, tableBordered, tableStriped, CSS.attributes)
                 .thead()
                 .tr()
-                .th().innerText(resources.constants().attribute()).end()
-                .th().innerText(resources.constants().type()).end()
-                .th().innerText(resources.constants().storage()).end()
-                .th().innerText(resources.constants().accessType()).end()
+                .th().textContent(resources.constants().attribute()).end()
+                .th().textContent(resources.constants().type()).end()
+                .th().textContent(resources.constants().storage()).end()
+                .th().textContent(resources.constants().accessType()).end()
                 .end()
                 .end();
 
@@ -83,7 +83,7 @@ class AttributesTable implements IsElement {
             builder.td().innerHtml(html.toSafeHtml()).end();
 
             // type
-            builder.td().innerText(attribute.get(TYPE).asString()).end();
+            builder.td().textContent(attribute.get(TYPE).asString()).end();
 
             // storage
             builder.td();

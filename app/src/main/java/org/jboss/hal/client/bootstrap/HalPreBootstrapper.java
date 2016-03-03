@@ -40,6 +40,7 @@ public class HalPreBootstrapper implements PreBootstrapper {
     @Override
     public void onPreBootstrap() {
         GWT.setUncaughtExceptionHandler(e -> {
+            LoadingPanel.get().off();
             //noinspection HardCodedStringLiteral
             logger.error("Bootstrap error in {}: {}", HalPreBootstrapper.class.getSimpleName(), e.getMessage());
             Browser.getDocument().getBody().appendChild(

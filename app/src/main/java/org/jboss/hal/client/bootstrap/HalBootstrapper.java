@@ -25,6 +25,7 @@ import com.gwtplatform.mvp.client.Bootstrapper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import elemental.client.Browser;
 import org.jboss.gwt.flow.Async;
+import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
@@ -81,7 +82,7 @@ public class HalBootstrapper implements Bootstrapper {
         endpointManager.select(() -> {
             LoadingPanel.get().on();
             new Async<FunctionContext>(Progress.NOOP).waterfall(
-                    new FunctionContext(), outcome, bootstrapFunctions.functions());
+                    new FunctionContext(), outcome, (Function[]) bootstrapFunctions.functions());
         });
     }
 }

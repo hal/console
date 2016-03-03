@@ -51,6 +51,7 @@
             <groupId>org.jboss.hal</groupId>
             <artifactId>hal-dmr</artifactId>
             <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>

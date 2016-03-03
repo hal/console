@@ -24,7 +24,6 @@ package org.jboss.hal.ballroom.form;
 import elemental.dom.Element;
 import elemental.js.events.JsEvent;
 import elemental.js.util.JsArrayOf;
-import elemental.util.ArrayOf;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
@@ -117,7 +116,7 @@ public class SelectBoxBridge {
 
         public native void selectpicker(String method);
 
-        public native void selectpicker(String method, ArrayOf<String> param);
+        public native void selectpicker(String method, JsArrayOf<String> param);
 
         public native void on(@NonNls String event, ChangeListener listener);
 

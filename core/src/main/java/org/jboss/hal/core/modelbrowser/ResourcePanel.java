@@ -90,7 +90,7 @@ class ResourcePanel implements HasElements {
         // @formatter:off
         builder = new Elements.Builder()
             .p().css(lead).rememberAs(DESCRIPTION_ELEMENT).end()
-            .p().rememberAs(EMPTY_ELEMENT).innerText(resources.constants().noAttributes()).end()
+            .p().rememberAs(EMPTY_ELEMENT).textContent(resources.constants().noAttributes()).end()
             .add(tabs.asElement());
         // @formatter:on
 

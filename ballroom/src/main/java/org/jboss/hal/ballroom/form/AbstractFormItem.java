@@ -140,7 +140,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
                     .span()
                     .id(IdBuilder.build(name, "addon", "hint"))
                     .css(inputGroupAddon)
-                    .innerText(hint)
+                    .textContent(hint)
                     .end().build();
         }
 
@@ -180,7 +180,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         readonlyLabelElement = new Elements.Builder()
                 .label()
                 .css(column(labelColumns), controlLabel)
-                .innerText(label)
+                .textContent(label)
                 .end()
                 .build();
         valueContainer = new Elements.Builder().div().css(column(inputColumns)).end().build();

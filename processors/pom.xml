@@ -57,7 +57,7 @@
         </dependency>
         <dependency>
             <groupId>com.gwtplatform</groupId>
-            <artifactId>gwtp-mvp-client</artifactId>
+            <artifactId>gwtp-all</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.auto</groupId>

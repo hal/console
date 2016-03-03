@@ -72,21 +72,21 @@ public class HomepageView extends PatternFlyViewImpl implements HomepagePresente
         if (community) {
             header = new Elements.Builder()
                     .div().css(eapHomeTitle)
-                    .h(1).innerText(env.getInstanceInfo().description()).end()
+                    .h(1).textContent(env.getInstanceInfo().description()).end()
                     .end().build();
         } else {
             // @formatter:off
             header = new Elements.Builder()
                 .div().css(eapHomeTitle)
                     .p()
-                        .span().innerText(resources.constants().homepageNewToEap() + " ").end()
+                        .span().textContent(resources.constants().homepageNewToEap() + " ").end()
                         .a()
                             .css(clickable)
                             .on(click, event -> presenter.launchGuidedTour())
-                            .innerText(resources.constants().homepageTakeATour())
+                            .textContent(resources.constants().homepageTakeATour())
                         .end()
                     .end()
-                    .h(1).innerText(env.getInstanceInfo().description()).end()
+                    .h(1).textContent(env.getInstanceInfo().description()).end()
                 .end().build();
             // @formatter:on
         }

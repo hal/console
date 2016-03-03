@@ -35,7 +35,7 @@ import static org.jboss.hal.resources.Names.NYI;
 public class PatchingView extends PatternFlyViewImpl implements PatchingPresenter.MyView {
 
     public PatchingView() {
-        Element p = new Elements.Builder().p().innerText(NYI).end().build();
+        Element p = new Elements.Builder().p().textContent(NYI).end().build();
         initElement(new LayoutBuilder()
                 .row()
                 .column()

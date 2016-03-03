@@ -104,7 +104,7 @@ class FormLinks<T> implements IsElement {
                             .aria(UIConstants.EXPANDED, String.valueOf(false))
                             .aria(UIConstants.CONTROLS, helpId)
                         .start("i").css(pfIcon("help")).end()
-                        .span().css(formLinkLabel).innerText(CONSTANTS.help()).end()
+                        .span().css(formLinkLabel).textContent(CONSTANTS.help()).end()
                     .end()
                 .end().build();
             // @formatter:on
@@ -123,7 +123,7 @@ class FormLinks<T> implements IsElement {
             .li()
                 .a().css(clickable).on(click, onclick)
                     .start("i").css(css).end()
-                    .span().css(formLinkLabel).innerText(text).end()
+                    .span().css(formLinkLabel).textContent(text).end()
                 .end()
             .end().build();
         // @formatter:on
@@ -134,7 +134,7 @@ class FormLinks<T> implements IsElement {
         return new Elements.Builder()
             .div().css(formGroup)
                 .label().css(column(labelColumns), controlLabel)
-                    .innerText(label)
+                    .textContent(label)
                 .end()
                 .div().css(column(inputColumns))
                     .p().css(formControlStatic)

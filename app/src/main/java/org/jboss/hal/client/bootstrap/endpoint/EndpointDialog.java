@@ -78,7 +78,7 @@ class EndpointDialog {
 
         selectPage = new Elements.Builder()
                 .div()
-                .p().innerText(CONSTANTS.endpointSelectDescription()).end()
+                .p().textContent(CONSTANTS.endpointSelectDescription()).end()
                 .add(table.asElement())
                 .end().build();
 
@@ -114,7 +114,7 @@ class EndpointDialog {
 
         addPage = new Elements.Builder()
                 .div()
-                .p().innerText(CONSTANTS.endpointAddDescription()).end()
+                .p().textContent(CONSTANTS.endpointAddDescription()).end()
                 .add(feedback.asElement())
                 .add(form.asElement())
                 .end().build();

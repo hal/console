@@ -44,12 +44,12 @@
         <apt-tools.version>0.0.2</apt-tools.version>
         <auto-service.version>1.0-rc2</auto-service.version>
         <circuit.version>0.1.4</circuit.version>
-        <elemento.version>0.1.12</elemento.version>
+        <elemento.version>0.2</elemento.version>
         <flow.version>0.0.3</flow.version>
         <gin.version>2.1.2</gin.version>
-        <guava.version>19.0-gwt28</guava.version>
+        <guava.version>20.0-hal</guava.version>
         <gwt.version>2.8.0-SNAPSHOT</gwt.version>
-        <gwtp.version>1.5.1</gwtp.version>
+        <gwtp.version>1.5.2</gwtp.version>
         <jboss.dmr.version>1.3.0.Final</jboss.dmr.version>
         <junit.version>4.12</junit.version>
         <mockito.version>2.0.31-beta</mockito.version>
@@ -97,7 +97,7 @@
             </dependency>
             <dependency>
                 <groupId>com.gwtplatform</groupId>
-                <artifactId>gwtp-mvp-client</artifactId>
+                <artifactId>gwtp-all</artifactId>
                 <version>${gwtp.version}</version>
             </dependency>
             <dependency>

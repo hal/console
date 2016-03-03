@@ -92,7 +92,7 @@ public class LayoutBuilder {
      */
     public LayoutBuilder header(String title) {
         assertState(COLUMN);
-        eb.h(1).innerText(title).rememberAs(HEADER_ELEMENT).end();
+        eb.h(1).textContent(title).rememberAs(HEADER_ELEMENT).end();
         return this;
     }
 
@@ -108,7 +108,7 @@ public class LayoutBuilder {
      */
     public LayoutBuilder subheader(String title) {
         assertState(COLUMN);
-        eb.h(3).innerText(title).end();
+        eb.h(3).textContent(title).end();
         return this;
     }
 

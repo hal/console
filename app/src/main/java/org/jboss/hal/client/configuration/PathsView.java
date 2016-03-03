@@ -70,7 +70,7 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
 
 //        new Dialog.Builder(resources.messages())
 
-        Element info = new Elements.Builder().p().innerText(description.getDescription()).end().build();
+        Element info = new Elements.Builder().p().textContent(description.getDescription()).end().build();
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(description)
                 .column(ModelDescriptionConstants.NAME, NAME, (cell, type, row, meta) -> row.get(
                         ModelDescriptionConstants.NAME).asString())

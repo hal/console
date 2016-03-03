@@ -193,7 +193,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                 .attr(TABINDEX, "-1")
                 .on(keydown, this::onNavigation)
                 .header()
-                .h(1).innerText(builder.title).title(builder.title).rememberAs(HEADER_ELEMENT).end();
+                .h(1).textContent(builder.title).title(builder.title).rememberAs(HEADER_ELEMENT).end();
 
         // column actions
         if (!builder.columnActions.isEmpty()) {
@@ -233,7 +233,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
         // no items marker
         noItems = new Elements.Builder().li().css(empty)
-                .span().css(itemText).innerText(CONSTANTS.noItems()).end()
+                .span().css(itemText).textContent(CONSTANTS.noItems()).end()
                 .end().build();
 
         root = eb.build();
@@ -248,11 +248,11 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                 .on(click, event -> action.handler.execute(this));
 
         if (action.title != null) {
-            builder.innerText(action.title);
+            builder.textContent(action.title);
         } else if (action.element != null) {
             builder.add(action.element);
         } else {
-            builder.innerText(NOT_AVAILABLE);
+            builder.textContent(NOT_AVAILABLE);
         }
 
         builder.end(); // </button>

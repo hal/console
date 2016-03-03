@@ -342,7 +342,7 @@ public class Dialog implements IsElement {
                                 close();
                             }
                         })
-                        .innerText(button.label)
+                        .textContent(button.label)
                         .end().build();
                 Dialog.footer.appendChild(buttonElement);
                 buttons.put(position, buttonElement);

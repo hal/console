@@ -91,10 +91,10 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
             eb.add(display.asElement());
             tooltipTarget = display.asElement();
         } else if (display.getTitle() != null) {
-            eb.span().css(itemText).innerText(display.getTitle()).rememberAs(TOOLTIP_TARGET).end();
+            eb.span().css(itemText).textContent(display.getTitle()).rememberAs(TOOLTIP_TARGET).end();
             tooltipTarget = eb.referenceFor(TOOLTIP_TARGET);
         } else {
-            eb.span().css(itemText).innerText(NOT_AVAILABLE).rememberAs(TOOLTIP_TARGET).end();
+            eb.span().css(itemText).textContent(NOT_AVAILABLE).rememberAs(TOOLTIP_TARGET).end();
             tooltipTarget = eb.referenceFor(TOOLTIP_TARGET);
         }
 
@@ -113,7 +113,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                 ItemAction<T> action = display.actions().get(0);
                 eb.button()
                         .css(btn, btnFinder)
-                        .innerText(action.title)
+                        .textContent(action.title)
                         .on(click, event -> action.handler.execute(item))
                         .rememberAs(BUTTON_CONTAINER)
                         .end();
@@ -126,7 +126,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                         // @formatter:off
                         eb.button()
                                 .css(btn, btnFinder)
-                                .innerText(action.title)
+                                .textContent(action.title)
                                 .on(click, event -> action.handler.execute(item))
                         .end();
                         eb.button()
@@ -135,7 +135,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                                 .aria(UIConstants.HAS_POPUP, String.valueOf(true))
                                 .aria(UIConstants.EXPANDED, String.valueOf(false))
                             .span().css(caret).end()
-                            .span().css(srOnly).innerText(CONSTANTS.toggleDropdown()).end()
+                            .span().css(srOnly).textContent(CONSTANTS.toggleDropdown()).end()
                         .end();
                         // @formatter:on
                         firstAction = false;
@@ -146,7 +146,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                             ulCreated = true;
                         }
                         eb.li().a()
-                                .innerText(action.title)
+                                .textContent(action.title)
                                 .css(clickable)
                                 .on(click, event -> action.handler.execute(item))
                                 .end().end();

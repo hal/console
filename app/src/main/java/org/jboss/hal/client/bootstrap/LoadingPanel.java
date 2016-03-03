@@ -55,7 +55,7 @@ public class LoadingPanel implements IsElement {
         root = new Elements.Builder()
             .div().css(loadingContainer)
                 .div().css(loading)
-                    .h(3).innerText(CONSTANTS.loading()).end()
+                    .h(3).textContent(CONSTANTS.loading()).end()
                     .div().css(spinner).end()
                 .end()
             .end()

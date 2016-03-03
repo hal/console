@@ -243,10 +243,10 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
                 .div().css(offset(labelColumns), column(inputColumns))
                     .div().css(pullRight)
                         .button().css(btn, btnHal, btnDefault).on(click, event -> cancel())
-                            .innerText(CONSTANTS.cancel())
+                            .textContent(CONSTANTS.cancel())
                         .end()
                         .button().css(btn, btnHal, btnPrimary).on(click, event -> save())
-                            .innerText(CONSTANTS.save())
+                            .textContent(CONSTANTS.save())
                         .end()
                     .end()
                 .end()
@@ -589,7 +589,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             } else {
                 errorMessage.setInnerText(CONSTANTS.formErrors());
                 for (String message : messages) {
-                    errorMessages.appendChild(new Elements.Builder().li().innerText(message).end().build());
+                    errorMessages.appendChild(new Elements.Builder().li().textContent(message).end().build());
                 }
             }
             Elements.setVisible(errorPanel, true);
