@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.ballroom.tree;
 
+import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -86,6 +87,7 @@ public class Node<T> {
     public String icon;
     public State state;
     public String parent;
+    public JsArrayOf<String> parents;
     public boolean children;
     public T data;
 }

@@ -112,6 +112,7 @@ public class MetadataProcessor {
     }
 
     public void lookup(final AddressTemplate template, Progress progress, final MetadataCallback callback) {
+        logger.debug("Lookup metadata for {}", template); //NON-NLS
         processInternal(singleton(template), false, progress, new AsyncCallback<Void>() {
             @Override
             public void onFailure(final Throwable throwable) {
@@ -132,7 +133,7 @@ public class MetadataProcessor {
             final AsyncCallback<Void> callback) {
         LookupResult lookupResult = lookup.check(templates, recursive);
         if (lookupResult.allPresent()) {
-            logger.debug("All required resources have been already processed -> callback.onSuccess(null)");
+            logger.debug("All metadata have been already processed -> callback.onSuccess(null)");
             callback.onSuccess(null);
         } else {
             logger.debug("{}", lookupResult);
@@ -147,13 +148,13 @@ public class MetadataProcessor {
             Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
                 @Override
                 public void onFailure(final FunctionContext context) {
-                    logger.debug("Failed to processInternal required resources: {}", context.getErrorMessage());
+                    logger.debug("Failed to process metadata: {}", context.getErrorMessage());
                     callback.onFailure(context.getError());
                 }
 
                 @Override
                 public void onSuccess(final FunctionContext context) {
-                    logger.debug("Successfully processed required resources");
+                    logger.debug("Successfully processed metadata");
                     callback.onSuccess(null);
                 }
             };

@@ -129,9 +129,11 @@ public class ModelNodeFormTest {
         Iterable<FormItem> formItems = form.getFormItems();
         Iterator<FormItem> iterator = formItems.iterator();
 
-        assertEquals(2, Iterables.size(formItems));
+        assertEquals(4, Iterables.size(formItems));
+        assertEquals("bar", iterator.next().getName());
         assertEquals("baz", iterator.next().getName());
         assertEquals("foo", iterator.next().getName());
+        assertEquals("qux", iterator.next().getName());
     }
 
     @Test
@@ -143,9 +145,11 @@ public class ModelNodeFormTest {
         Iterable<FormItem> formItems = form.getFormItems();
         Iterator<FormItem> iterator = formItems.iterator();
 
-        assertEquals(2, Iterables.size(formItems));
+        assertEquals(4, Iterables.size(formItems));
         assertEquals("foo", iterator.next().getName());
+        assertEquals("bar", iterator.next().getName());
         assertEquals("baz", iterator.next().getName());
+        assertEquals("qux", iterator.next().getName());
     }
 
     @Test

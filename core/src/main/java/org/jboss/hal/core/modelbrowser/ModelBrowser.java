@@ -21,13 +21,18 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
+import com.google.common.collect.FluentIterable;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.dom.Element;
-import elemental.dom.NodeList;
 import elemental.html.ButtonElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
+import org.jboss.gwt.flow.Async;
+import org.jboss.gwt.flow.Control;
+import org.jboss.gwt.flow.Function;
+import org.jboss.gwt.flow.FunctionContext;
+import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.form.Form;
@@ -69,6 +74,7 @@ import java.util.Stack;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.ballroom.js.JsHelper.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Key.ANY_GROUP;
 import static org.jboss.hal.meta.StatementContext.Key.ANY_PROFILE;
@@ -82,12 +88,41 @@ public class ModelBrowser implements HasElements {
 
     private static class FilterInfo {
 
-        final String title;
-        final ResourceAddress address;
+        static final FilterInfo ROOT = new FilterInfo(null, null);
 
-        private FilterInfo(final String title, final ResourceAddress address) {
-            this.title = title;
-            this.address = address;
+        final ResourceAddress address;
+        final Node<Context> node;
+        final String text;
+        final String filterText;
+        final List<String> parents;
+
+        private FilterInfo(Node<Context> parent, Node<Context> child) {
+            this.address = child == null ? ResourceAddress.ROOT : child.data.getAddress();
+            this.node = child == null ? null : child;
+            this.text = child == null ? Names.MANAGEMENT_MODEL : child.text;
+            this.filterText = parent == null || child == null ? null : parent.text + "=" + child.text;
+            this.parents = child == null ? Collections.emptyList() : asList(child.parents);
+            if (!parents.isEmpty()) {
+                Collections.reverse(parents);
+                parents.remove(0); // get rif of the artificial root
+            }
+        }
+    }
+
+
+    private class OpenNodeFunction implements Function<FunctionContext> {
+
+        private final String id;
+
+        private OpenNodeFunction(final String id) {this.id = id;}
+
+        @Override
+        public void execute(final Control<FunctionContext> control) {
+            if (tree.api().getNode(id) != null) {
+                tree.api().openNode(id, control::proceed);
+            } else {
+                control.proceed();
+            }
         }
     }
 
@@ -218,48 +253,85 @@ public class ModelBrowser implements HasElements {
         }
     }
 
+    private void initTree(ResourceAddress address, String text) {
+        Context context = new Context(address, Collections.emptySet());
+        Node<Context> rootNode = new Node.Builder<>(ROOT_ID, text, context)
+                .folder()
+                .build();
+        tree = new Tree<>(Ids.MODEL_BROWSER, rootNode, new ReadChildren(dispatcher));
+        Elements.removeChildrenFrom(treeContainer);
+        treeContainer.appendChild(tree.asElement());
+
+        tree.attach();
+        tree.onSelectionChange((event, selectionContext) -> onTreeSelection(selectionContext));
+        childrenPanel.attach();
+    }
+
 
     // ------------------------------------------------------ event handler & co
 
     private void filter(Node<Context> node) {
         if (node != null && node.parent != null) {
             Node<Context> parent = tree.api().getNode(node.parent);
-            FilterInfo filterInfo = new FilterInfo(parent.text + "=" + node.text, node.data.getAddress());
+            FilterInfo filterInfo = new FilterInfo(parent, node);
             filterStack.add(filterInfo);
             filter(filterInfo);
+            tree.api().openNode(ROOT_ID, () -> select(ROOT_ID, false));
         }
     }
 
-    private void filter(FilterInfo filterInfo) {
-        // @formatter:off
-        Element filter = new Elements.Builder()
-            .div().css(tagManagerContainer)
-                .span().css(tmTag, tagManagerTag)
-                    .span().textContent(filterInfo.title).end()
-                    .a().css(clickable, tmTagRemove).on(click, event -> clearFilter()).textContent("x").end() //NON-NLS
-                .end()
-            .end().build();
-        // @formatter:on
+    private void filter(FilterInfo filter) {
+        Element oldFilterElement = buttonGroup.querySelector("." + tagManagerContainer);
+        if (filter.filterText != null) {
+            // @formatter:off
+            Element filterElement = new Elements.Builder()
+                .div().css(tagManagerContainer)
+                    .span().css(tmTag, tagManagerTag)
+                        .span().textContent(filter.filterText).end()
+                        .a().css(clickable, tmTagRemove).on(click, event -> clearFilter()).textContent("x").end() //NON-NLS
+                    .end()
+                .end().build();
+            // @formatter:on
 
-        Element oldFilter = buttonGroup.querySelector("." + tagManagerContainer);
-        if (oldFilter != null) {
-            buttonGroup.replaceChild(filter, oldFilter);
-        } else {
-            buttonGroup.appendChild(filter);
+            if (oldFilterElement != null) {
+                buttonGroup.replaceChild(filterElement, oldFilterElement);
+            } else {
+                buttonGroup.appendChild(filterElement);
+            }
+        } else if (oldFilterElement != null) {
+            buttonGroup.removeChild(oldFilterElement);
         }
+
+        // reset tree
         tree.api().destroy(false);
-        setRoot(filterInfo.address, true, false);
+        initTree(filter.address, filter.text);
     }
 
     private void clearFilter() {
         Element filterElement = buttonGroup.querySelector("." + tagManagerContainer);
         if (filterElement != null) {
             buttonGroup.removeChild(filterElement);
-            if (!filterStack.isEmpty()) {
-                filter(filterStack.pop());
-            } else {
-                setRoot(ResourceAddress.ROOT, true, true);
-            }
+        }
+        if (!filterStack.isEmpty()) {
+            FilterInfo previousFilter = filterStack.pop();
+            filter(filterStack.isEmpty() ? FilterInfo.ROOT : filterStack.peek());
+
+            List<OpenNodeFunction> functions = FluentIterable
+                    .from(previousFilter.parents)
+                    .transform(OpenNodeFunction::new).toList();
+            Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
+                @Override
+                public void onFailure(final FunctionContext context) {
+                    logger.debug("Failed to restore selection {}", previousFilter.parents); //NON-NLS
+                }
+
+                @Override
+                public void onSuccess(final FunctionContext context) {
+                    select(previousFilter.node.id, false);
+                }
+            };
+            new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
+                    functions.toArray(new OpenNodeFunction[functions.size()]));
         }
     }
 
@@ -466,34 +538,16 @@ public class ModelBrowser implements HasElements {
 
     // ------------------------------------------------------ public API
 
-    public void setRoot(ResourceAddress root, boolean updateBreadcrumb, boolean clearFilter) {
+    public void setRoot(ResourceAddress root, boolean updateBreadcrumb) {
         this.updateBreadcrumb = updateBreadcrumb;
-        if (clearFilter) {
-            filterStack.clear();
-            NodeList nodes = buttonGroup.querySelectorAll("." + tagManagerContainer);
-            for (int i = 0; i < nodes.getLength(); i++) {
-                buttonGroup.removeChild(nodes.item(i));
-            }
-        }
 
         String resource = root == ResourceAddress.ROOT ? Names.MANAGEMENT_MODEL : root.lastValue();
         if ("*".equals(resource)) {
             throw new IllegalArgumentException("Invalid root address: " + root +
                     ". ModelBrowser.setRoot() must be called with a concrete address.");
         }
-        Context context = new Context(root, Collections.emptySet());
-        Node<Context> rootNode = new Node.Builder<>(ROOT_ID, resource, context)
-                .folder()
-                .build();
-        tree = new Tree<>(Ids.MODEL_BROWSER, rootNode, new ReadChildren(dispatcher));
-        Elements.removeChildrenFrom(treeContainer);
-        treeContainer.appendChild(tree.asElement());
-
-        tree.attach();
-        tree.onSelectionChange((event, selectionContext) -> onTreeSelection(selectionContext));
+        initTree(root, resource);
         tree.api().openNode(ROOT_ID, () -> resourcePanel.tabs.showTab(0));
-        childrenPanel.attach();
-
         select(ROOT_ID, false);
         adjustHeight();
     }
@@ -505,6 +559,7 @@ public class ModelBrowser implements HasElements {
             tree.api().closeNode(id);
         }
         tree.asElement().focus();
+        Browser.getDocument().getElementById(id).scrollIntoView(false);
     }
 
     @Override

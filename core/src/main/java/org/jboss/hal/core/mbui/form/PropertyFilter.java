@@ -44,10 +44,15 @@ class PropertyFilter implements Predicate<Property> {
         Predicate<Property> filter;
 
         if (builder.createResource) {
-            // include *all* required properties plus the ones in builder.includes
-            filter = p -> p.getValue().hasDefined(REQUIRED) && p.getValue().get(REQUIRED).asBoolean();
-            if (!builder.includes.isEmpty()) {
-                filter = Predicates.or(filter, p -> builder.includes.contains(p.getName()));
+            // unless builder.includes isn't empty, include *all* properties, otherwise include the required properties
+            // plus the ones specified in builder.includes
+            if (builder.includes.isEmpty()) {
+                filter = Predicates.alwaysTrue();
+            } else {
+                Predicate<Property> required = p -> p.getValue().hasDefined(REQUIRED) && p.getValue().get(REQUIRED)
+                        .asBoolean();
+                Predicate<Property> included = p -> builder.includes.contains(p.getName());
+                filter = Predicates.or(required, included);
             }
 
         } else {

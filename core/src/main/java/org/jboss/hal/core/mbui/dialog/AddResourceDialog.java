@@ -21,8 +21,6 @@
  */
 package org.jboss.hal.core.mbui.dialog;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Ordering;
 import com.google.gwt.core.client.GWT;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.Dialog.Size;
@@ -30,12 +28,9 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Constants;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
@@ -75,18 +70,13 @@ public class AddResourceDialog<T extends ModelNode> {
         nameItem.setRequired(true);
         nameItem.setExpressionAllowed(false);
 
-        List<String> properties = Ordering.natural().sortedCopy(
-                Iterables.transform(metadata.getDescription().getRequestProperties(), Property::getName));
-
         ModelNodeForm.Builder<T> formBuilder = new ModelNodeForm.Builder<T>(id, metadata)
                 .createResource()
-                .unsorted()
                 .unboundFormItem(nameItem, 0)
                 .onSave((f, changedValues) -> {
                     String name = String.valueOf(changedValues.remove(NAME));
                     callback.onAdd(name, form.getModel());
                 });
-        formBuilder.include(properties);
 
         init(title, formBuilder.build());
     }

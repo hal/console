@@ -42,6 +42,6 @@ public class ModelBrowserView extends PatternFlyViewImpl implements ModelBrowser
 
     @Override
     public void setRoot(final ResourceAddress root) {
-        modelBrowser.setRoot(root, root == ResourceAddress.ROOT, true);
+        modelBrowser.setRoot(root, root == ResourceAddress.ROOT);
     }
 }

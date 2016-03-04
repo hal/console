@@ -109,18 +109,15 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
                 // @formatter:on
             }
             this.root = builder.end().build();
+
+            InputElement firstRadio = (InputElement) root.querySelector("input[type=radio]"); //NON-NLS
+            firstRadio.setChecked(true);
+            wizard.getContext().singleton = firstRadio.getValue();
         }
 
         @Override
         public Element asElement() {
             return root;
-        }
-
-        @Override
-        protected void onShow(final SingletonContext context) {
-            InputElement firstRadio = (InputElement) asElement().querySelector("input[type=radio]"); //NON-NLS
-            firstRadio.setChecked(true);
-            context.singleton = firstRadio.getValue();
         }
     }
 
