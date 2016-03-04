@@ -29,7 +29,6 @@ import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.meta.security.SecurityContext;
 import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -86,17 +85,15 @@ public class DataTable<T> implements IsElement, Attachable {
     static final String DESELECT = "deselect";
     static final String ROW = "row";
     static final String SELECT = "select";
+    private static final String WRAPPER_SUFFIX = "_wrapper";
 
     private final String id;
-    private final SecurityContext securityContext;
     private final Options<T> options;
     private final TableElement tableElement;
     private Api<T> api;
 
-    @SuppressWarnings("DuplicateStringLiteralInspection")
-    public DataTable(final String id, final SecurityContext securityContext, final Options<T> options) {
+    public DataTable(final String id, final Options<T> options) {
         this.id = id;
-        this.securityContext = securityContext;
         this.options = options;
         this.tableElement = new Elements.Builder()
                 .start("table").id(id).css(dataTable, table, tableStriped, tableBordered, hover).end().build();
@@ -138,12 +135,12 @@ public class DataTable<T> implements IsElement, Attachable {
     }
 
     public void show() {
-        Element wrapper = Browser.getDocument().getElementById(id + "_wrapper");
+        Element wrapper = Browser.getDocument().getElementById(id + WRAPPER_SUFFIX);
         Elements.setVisible(wrapper, true);
     }
 
     public void hide() {
-        Element wrapper = Browser.getDocument().getElementById(id + "_wrapper");
+        Element wrapper = Browser.getDocument().getElementById(id + WRAPPER_SUFFIX);
         Elements.setVisible(wrapper, false);
     }
 }

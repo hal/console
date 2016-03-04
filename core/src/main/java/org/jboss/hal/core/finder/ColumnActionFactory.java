@@ -33,13 +33,21 @@ import static org.jboss.hal.resources.CSS.pfIcon;
  */
 public class ColumnActionFactory {
 
-    public <T> ColumnAction<T> add(ColumnActionHandler<T> action) {
-        Element element = new Elements.Builder().span().css(pfIcon("add-circle-o")).end().build();
-        return new ColumnAction<>(element, action);
+    public <T> ColumnAction<T> add(String id) {
+        return add(id, null);
     }
 
-    public <T> ColumnAction<T> refresh(ColumnActionHandler<T> action) {
+    public <T> ColumnAction<T> add(String id, ColumnActionHandler<T> action) {
+        Element element = new Elements.Builder().span().css(pfIcon("add-circle-o")).end().build();
+        return new ColumnAction<>(id, element, action);
+    }
+
+    public <T> ColumnAction<T> refresh(String id) {
+        return refresh(id, null);
+    }
+
+    public <T> ColumnAction<T> refresh(String id, ColumnActionHandler<T> action) {
         Element element = new Elements.Builder().span().css(fontAwesome(CSS.refresh)).end().build();
-        return new ColumnAction<>(element, action);
+        return new ColumnAction<>(id, element, action);
     }
 }

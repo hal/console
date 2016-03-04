@@ -27,10 +27,10 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
-import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -39,11 +39,11 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
-import org.jboss.hal.meta.security.SecurityContext;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -52,6 +52,7 @@ import java.util.Map;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.meta.security.SecurityContext.RWX;
 
 /**
  * @author Harald Pehl
@@ -137,7 +138,7 @@ public class UnderTheBridgeView extends PatternFlyViewImpl implements UnderTheBr
 
         for (Map.Entry<String, String[]> entry : ATTRIBUTES.entrySet()) {
             forms.add(new ModelNodeForm.Builder<>(IdBuilder.build("form", entry.getKey()),
-                    SecurityContext.RWX, description, capabilities)
+                    new Metadata(RWX, description, capabilities))
                     .include(entry.getValue()).onSave(saveCallback).build());
             tabs.add(IdBuilder.build("tab", entry.getKey()), new LabelBuilder().label(entry.getKey()),
                     forms.get(forms.size() - 1).asElement());

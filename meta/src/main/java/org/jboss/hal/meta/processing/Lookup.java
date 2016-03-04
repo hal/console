@@ -38,13 +38,13 @@ class Lookup {
     private final ResourceDescriptions descriptionRegistry;
     private final SecurityFramework securityFramework;
 
-    public Lookup(ResourceDescriptions descriptionRegistry, SecurityFramework securityFramework) {
+    Lookup(ResourceDescriptions descriptionRegistry, SecurityFramework securityFramework) {
         this.descriptionRegistry = descriptionRegistry;
         this.securityFramework = securityFramework;
     }
 
-    public LookupResult check(String token, Set<AddressTemplate> templates, boolean recursive) {
-        LookupResult lookupResult = new LookupResult(token, templates, recursive);
+    public LookupResult check(Set<AddressTemplate> templates, boolean recursive) {
+        LookupResult lookupResult = new LookupResult(templates, recursive);
         for (AddressTemplate template : lookupResult.templates()) {
             if (descriptionRegistry.contains(template)) {
                 lookupResult.markMetadataPresent(template, RESOURCE_DESCRIPTION_PRESENT);

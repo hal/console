@@ -13,10 +13,9 @@ import org.jboss.hal.ballroom.table.Button.Scope;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
-import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
@@ -31,7 +30,6 @@ import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.SELECT
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.security.SecurityContext.RWX;
 import static org.jboss.hal.resources.Ids.ENDPOINT_ADD;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
  * Modal dialog to manage bootstrap servers. The dialog offers a page to connect to an existing server and a page to
@@ -62,9 +60,9 @@ class EndpointDialog {
     EndpointDialog(final EndpointManager manager, final EndpointStorage storage, final Capabilities capabilities) {
         this.manager = manager;
         this.storage = storage;
+        Metadata metadata = new Metadata(RWX, StaticResourceDescription.from(RESOURCES.endpoint()), capabilities);
 
-        ResourceDescription description = StaticResourceDescription.from(RESOURCES.endpoint());
-        Options<Endpoint> endpointOptions = new ModelNodeTable.Builder<Endpoint>(description)
+        Options<Endpoint> endpointOptions = new ModelNodeTable.Builder<Endpoint>(metadata)
                 .button(CONSTANTS.add(), (event, api) -> switchTo(ADD))
                 .button(CONSTANTS.remove(), Scope.SELECTED, (event, api) -> {
                     storage.remove(api.selectedRow());
@@ -74,7 +72,7 @@ class EndpointDialog {
                 .column(NAME)
                 .column("url", "URL", (cell, type, row, meta) -> row.getUrl()) //NON-NLS
                 .build();
-        table = new ModelNodeTable<>(Ids.ENDPOINT_SELECT, RWX, endpointOptions);
+        table = new ModelNodeTable<>(Ids.ENDPOINT_SELECT, endpointOptions);
 
         selectPage = new Elements.Builder()
                 .div()
@@ -100,7 +98,7 @@ class EndpointDialog {
         });
         ping.setEnabled(false);
 
-        form = new ModelNodeForm.Builder<Endpoint>(ENDPOINT_ADD, SecurityContext.RWX, description, capabilities)
+        form = new ModelNodeForm.Builder<Endpoint>(ENDPOINT_ADD, metadata)
                 .addOnly()
                 .include(NAME, SCHEME, HOST, PORT)
                 .unboundFormItem(ping)

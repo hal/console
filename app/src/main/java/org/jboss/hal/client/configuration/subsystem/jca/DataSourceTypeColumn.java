@@ -56,7 +56,7 @@ public class DataSourceTypeColumn extends StaticItemColumn {
                 new StaticItem.Builder("XA") //NON-NLS
                         .id(XA)
                         .nextColumn(Ids.DATA_SOURCE_COLUMN)
-                        .onPreview(new PreviewContent("XA Datasources", resources.previews().xa())) //NON-NLS
+                        .onPreview(new PreviewContent("XA Datasource", resources.previews().xa())) //NON-NLS
                         .build()));
     }
 }

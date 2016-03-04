@@ -64,7 +64,7 @@ public class HalPlaceManager extends DefaultPlaceManager {
 
     @Override
     protected void doRevealPlace(final PlaceRequest request, final boolean updateBrowserUrl) {
-        metadataProcessor.process(request.getNameToken(), progress, new AsyncCallback<Void>() {
+        metadataProcessor.process(request.getNameToken(), progress.get(), new AsyncCallback<Void>() {
             @Override
             public void onFailure(final Throwable throwable) {
                 unlock();

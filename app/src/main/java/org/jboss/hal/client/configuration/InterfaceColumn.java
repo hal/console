@@ -54,6 +54,7 @@ public class InterfaceColumn extends FinderColumn<Property> {
             final ItemActionFactory itemActionFactory) {
 
         super(new Builder<Property>(finder, Ids.INTERFACE_COLUMN, Names.INTERFACE)
+
                 .itemsProvider((context, callback) -> {
                     Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
                             .param(CHILD_TYPE, ModelDescriptionConstants.INTERFACE).build();

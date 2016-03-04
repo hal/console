@@ -31,9 +31,7 @@ import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.description.ResourceDescription;
-import org.jboss.hal.meta.security.SecurityContext;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Constants;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,21 +69,16 @@ public class AddResourceDialog<T extends ModelNode> {
      * Creates an add resource dialog with a form which contains an unbound name item plus all request properties from
      * the add operation. Clicking on the add button will call the specified callback.
      */
-    public AddResourceDialog(final String id, final String title,
-            final SecurityContext securityContext,
-            final ResourceDescription resourceDescription,
-            final Capabilities capabilities,
-            final Callback<T> callback) {
+    public AddResourceDialog(final String id, final String title, final Metadata metadata, final Callback<T> callback) {
 
         TextBoxItem nameItem = new TextBoxItem(NAME, CONSTANTS.name());
         nameItem.setRequired(true);
         nameItem.setExpressionAllowed(false);
 
         List<String> properties = Ordering.natural().sortedCopy(
-                Iterables.transform(resourceDescription.getRequestProperties(), Property::getName));
+                Iterables.transform(metadata.getDescription().getRequestProperties(), Property::getName));
 
-        ModelNodeForm.Builder<T> formBuilder = new ModelNodeForm.Builder<T>(id, securityContext, resourceDescription,
-                capabilities)
+        ModelNodeForm.Builder<T> formBuilder = new ModelNodeForm.Builder<T>(id, metadata)
                 .createResource()
                 .unsorted()
                 .unboundFormItem(nameItem, 0)

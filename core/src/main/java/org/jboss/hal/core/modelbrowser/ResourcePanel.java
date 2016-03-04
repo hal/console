@@ -35,9 +35,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.description.ResourceDescription;
-import org.jboss.hal.meta.security.SecurityContext;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
@@ -59,7 +57,6 @@ class ResourcePanel implements HasElements {
 
     private final ModelBrowser modelBrowser;
     private final Dispatcher dispatcher;
-    private final Capabilities capabilities;
     private final Resources resources;
     private final Elements.Builder builder;
     private final Element description;
@@ -71,11 +68,9 @@ class ResourcePanel implements HasElements {
 
     ResourcePanel(final ModelBrowser modelBrowser,
             final Dispatcher dispatcher,
-            final Capabilities capabilities,
             final Resources resources) {
         this.modelBrowser = modelBrowser;
         this.dispatcher = dispatcher;
-        this.capabilities = capabilities;
         this.resources = resources;
 
         dataId = IdBuilder.build(Ids.MODEL_BROWSER, "resource", "data", "tab");
@@ -104,9 +99,8 @@ class ResourcePanel implements HasElements {
         return builder.elements();
     }
 
-    void update(Node<Context> node, ResourceAddress address,
-            SecurityContext securityContext, ResourceDescription description) {
-        SafeHtml safeHtml = SafeHtmlUtils.fromSafeConstant(description.getDescription());
+    void update(Node<Context> node, ResourceAddress address, Metadata metadata) {
+        SafeHtml safeHtml = SafeHtmlUtils.fromSafeConstant(metadata.getDescription().getDescription());
         Elements.innerHtml(this.description, safeHtml);
 
         tabs.setContent(dataId, PLACE_HOLDER_ELEMENT);
@@ -121,7 +115,7 @@ class ResourcePanel implements HasElements {
                     .build();
             dispatcher.execute(operation, result -> {
                 ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(
-                        IdBuilder.build(Ids.MODEL_BROWSER, node.id, "form"), securityContext, description, capabilities)
+                        IdBuilder.build(Ids.MODEL_BROWSER, node.id, "form"), metadata)
                         .includeRuntime()
                         .onReset(modelBrowser::reset)
                         .onSave((f, changedValues) -> modelBrowser.save(address, changedValues))
@@ -132,9 +126,11 @@ class ResourcePanel implements HasElements {
                 form.view(result);
             });
 
-            tabs.setContent(attributesId, new AttributesTable(description.getAttributes(), resources).asElement());
-            if (description.hasOperations()) {
-                tabs.setContent(operationsId, new OperationsTable(description.getOperations(), resources).asElement());
+            tabs.setContent(attributesId,
+                    new AttributesTable(metadata.getDescription().getAttributes(), resources).asElement());
+            if (metadata.getDescription().hasOperations()) {
+                tabs.setContent(operationsId,
+                        new OperationsTable(metadata.getDescription().getOperations(), resources).asElement());
             }
         }
     }

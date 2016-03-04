@@ -26,6 +26,7 @@ import org.jboss.hal.ballroom.layout.LayoutBuilder;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptions;
@@ -47,8 +48,8 @@ public class InterfaceView extends PatternFlyViewImpl implements InterfacePresen
     private InterfacePresenter presenter;
 
     @Inject
-    public InterfaceView(ResourceDescriptions descriptions,
-            SecurityFramework securityFramework,
+    public InterfaceView(SecurityFramework securityFramework,
+            ResourceDescriptions descriptions,
             Capabilities capabilities) {
 
         ResourceDescription description = descriptions.lookup(InterfacePresenter.ROOT_TEMPLATE);
@@ -56,7 +57,7 @@ public class InterfaceView extends PatternFlyViewImpl implements InterfacePresen
 
 //        new Dialog.Builder(resources.messages())
 
-        form = new ModelNodeForm.Builder<>(PATHS_FORM, securityContext, description, capabilities)
+        form = new ModelNodeForm.Builder<>(PATHS_FORM, new Metadata(securityContext, description, capabilities))
                 .exclude("resolved-address")
                 .onSave((form, changedValues) -> presenter.saveInterface(changedValues))
                 .build();

@@ -25,6 +25,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental.dom.Element;
 import elemental.events.Event;
+import elemental.events.EventListener;
 import elemental.events.KeyboardEvent;
 import elemental.events.KeyboardEvent.KeyCode;
 import elemental.html.InputElement;
@@ -88,12 +89,20 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             this.items = new ArrayList<>();
         }
 
-        public Builder<T> columnAction(String title, ColumnActionHandler<T> handler) {
-            return columnAction(new ColumnAction<>(title, handler));
+        public Builder<T> columnAction(String id, String title) {
+            return columnAction(new ColumnAction<>(id, title));
         }
 
-        public Builder<T> columnAction(Element element, ColumnActionHandler<T> handler) {
-            return columnAction(new ColumnAction<>(element, handler));
+        public Builder<T> columnAction(String id, String title, ColumnActionHandler<T> handler) {
+            return columnAction(new ColumnAction<>(id, title, handler));
+        }
+
+        public Builder<T> columnAction(String id, Element element) {
+            return columnAction(new ColumnAction<>(id, element));
+        }
+
+        public Builder<T> columnAction(String id, Element element, ColumnActionHandler<T> handler) {
+            return columnAction(new ColumnAction<>(id, element, handler));
         }
 
         public Builder<T> columnAction(ColumnAction<T> action) {
@@ -154,6 +163,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     private final String id;
     private final String title;
     private final boolean showCount;
+    private final Map<String, Element> columnActions;
     private final List<T> initialItems;
     private ItemsProvider<T> itemsProvider;
     private ItemRenderer<T> itemRenderer;
@@ -177,6 +187,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         this.id = builder.id;
         this.title = builder.title;
         this.showCount = builder.showCount;
+        this.columnActions = new HashMap<>();
         this.initialItems = builder.items;
         this.itemsProvider = builder.itemsProvider;
         this.itemRenderer = builder.itemRenderer;
@@ -244,8 +255,13 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
     private void addColumnButton(final Elements.Builder builder, final ColumnAction<T> action) {
         builder.button()
+                .id(action.id)
                 .css(btn, btnFinder)
-                .on(click, event -> action.handler.execute(this));
+                .rememberAs(action.id);
+
+        if (action.handler != null) {
+            builder.on(click, event -> action.handler.execute(this));
+        }
 
         if (action.title != null) {
             builder.textContent(action.title);
@@ -255,6 +271,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             builder.textContent(NOT_AVAILABLE);
         }
 
+        columnActions.put(action.id, builder.referenceFor(action.id));
         builder.end(); // </button>
     }
 
@@ -511,6 +528,21 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
         if (callback != null) {
             callback.onSuccess(this);
+        }
+    }
+
+    /**
+     * Sometimes you need to reference {@code this} in the column action handler. This is not possible if they're
+     * part of the builder which is passed to {@code super()}. In this case you can use the column action's id to set
+     * the event handler <strong>after</strong> the call to {@code super()} using this setter.
+     * <p>
+     * However make sure to call the setter <strong>before</strong> the column is used {@link #asElement()} and gets
+     * attached to the DOM!
+     */
+    protected void setColumnActionHandler(String id, EventListener listener) {
+        assertNotAsElement("setColumnActionHandler()"); // is this really necessary?
+        if (columnActions.containsKey(id)) {
+            columnActions.get(id).setOnclick(listener);
         }
     }
 

@@ -39,7 +39,7 @@ class CreateRrdOperations {
 
     private final StatementContext statementContext;
 
-    public CreateRrdOperations(final StatementContext statementContext) {
+    CreateRrdOperations(final StatementContext statementContext) {
         this.statementContext = statementContext;
     }
 

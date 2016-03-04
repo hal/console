@@ -32,6 +32,7 @@ import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptions;
@@ -56,22 +57,20 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
 
     private final DataTable<NamedNode> table;
     private final ModelNodeForm<NamedNode> form;
-//    private final Dialog dialog;
     private PathsPresenter presenter;
 
     @Inject
-    public PathsView(ResourceDescriptions descriptions,
-            SecurityFramework securityFramework,
+    public PathsView(SecurityFramework securityFramework,
+            ResourceDescriptions descriptions,
             Capabilities capabilities,
             Resources resources) {
 
-        ResourceDescription description = descriptions.lookup(PathsPresenter.ROOT_TEMPLATE);
         SecurityContext securityContext = securityFramework.lookup(PathsPresenter.ROOT_TEMPLATE);
-
-//        new Dialog.Builder(resources.messages())
+        ResourceDescription description = descriptions.lookup(PathsPresenter.ROOT_TEMPLATE);
+        Metadata metadata = new Metadata(securityContext, description, capabilities);
 
         Element info = new Elements.Builder().p().textContent(description.getDescription()).end().build();
-        Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(description)
+        Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
                 .column(ModelDescriptionConstants.NAME, NAME, (cell, type, row, meta) -> row.get(
                         ModelDescriptionConstants.NAME).asString())
                 .button(resources.constants().add(), (event, api) -> {
@@ -84,9 +83,9 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
                     }
                 })
                 .build();
-        table = new ModelNodeTable<>(PATHS_TABLE, securityContext, options);
+        table = new ModelNodeTable<>(PATHS_TABLE, options);
 
-        form = new ModelNodeForm.Builder<NamedNode>(PATHS_FORM, securityContext, description, capabilities)
+        form = new ModelNodeForm.Builder<NamedNode>(PATHS_FORM, metadata)
                 .include("path", "read-only", "relative-to")
                 .unsorted()
                 .onSave((form, changedValues) -> {

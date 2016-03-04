@@ -71,7 +71,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
     private static class ResourceDescriptionPreview extends PreviewContent {
 
-        public ResourceDescriptionPreview(final String header, final Dispatcher dispatcher, final Operation operation) {
+        ResourceDescriptionPreview(final String header, final Dispatcher dispatcher, final Operation operation) {
             super(header);
             builder.section().rememberAs(CONTENT_ELEMENT).end();
             Element content = builder.referenceFor(CONTENT_ELEMENT);

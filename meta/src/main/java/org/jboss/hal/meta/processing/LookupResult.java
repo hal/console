@@ -32,23 +32,21 @@ import java.util.Set;
 /**
  * @author Harald Pehl
  */
-public class LookupResult {
+class LookupResult {
 
     /**
      * Bit mask for missing / present metadata. 0 means metadata missing, 1 means metadata present.
      * First bit stands for resource description second one for security context.
      */
-    public final static int NOTHING_PRESENT = 0b00;
-    public final static int RESOURCE_DESCRIPTION_PRESENT = 0b10;
-    public final static int SECURITY_CONTEXT_PRESENT = 0b01;
-    public final static int ALL_PRESENT = 0b11;
+    final static int NOTHING_PRESENT = 0b00;
+    final static int RESOURCE_DESCRIPTION_PRESENT = 0b10;
+    final static int SECURITY_CONTEXT_PRESENT = 0b01;
+    final static int ALL_PRESENT = 0b11;
 
-    private final String token;
     private final Map<AddressTemplate, Integer> templates;
     private final boolean recursive;
 
-    public LookupResult(final String token, final Set<AddressTemplate> templates, final boolean recursive) {
-        this.token = token;
+    LookupResult(final Set<AddressTemplate> templates, final boolean recursive) {
         this.templates = new HashMap<>();
         for (AddressTemplate template : templates) {
             this.templates.put(template, NOTHING_PRESENT);
@@ -56,24 +54,24 @@ public class LookupResult {
         this.recursive = recursive;
     }
 
-    public Set<AddressTemplate> templates() {
+    Set<AddressTemplate> templates() {
         return templates.keySet();
     }
 
-    public boolean recursive() {
+    boolean recursive() {
         return recursive;
     }
 
-    public void markMetadataPresent(AddressTemplate template, int flag) {
+    void markMetadataPresent(AddressTemplate template, int flag) {
         int combined = failFastGet(template) | flag;
         templates.put(template, combined);
     }
 
-    public int missingMetadata(AddressTemplate template) {
+    int missingMetadata(AddressTemplate template) {
         return failFastGet(template);
     }
 
-    public boolean allPresent() {
+    boolean allPresent() {
         for (Integer flags : templates.values()) {
             if (flags != ALL_PRESENT) {
                 return false;
@@ -92,7 +90,7 @@ public class LookupResult {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("LookupResult(").append(token).append(", ");
+        builder.append("LookupResult(");
         for (Iterator<Map.Entry<AddressTemplate, Integer>> iterator = templates.entrySet().iterator();
                 iterator.hasNext(); ) {
             Map.Entry<AddressTemplate, Integer> entry = iterator.next();

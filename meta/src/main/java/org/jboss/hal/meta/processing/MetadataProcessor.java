@@ -32,22 +32,39 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
+import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.resource.RequiredResources;
+import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import java.util.List;
 import java.util.Set;
 
+import static java.util.Collections.singleton;
+
 /**
+ * Metadata processor which processes the required resources attached to tokens and stores the retrieved metadata in
+ * the related registries. In addition you can call {@link #lookup(AddressTemplate, Progress, MetadataCallback)} to get
+ * and dynamically create the metadata attached to a specific address template.
+ *
  * @author Harald Pehl
  */
 public class MetadataProcessor {
+
+    public interface MetadataCallback {
+
+        void onMetadata(Metadata metadata);
+
+        void onError(Throwable error);
+    }
+
 
     /**
      * Number of r-r-d operations part of one composite operation.
@@ -60,6 +77,7 @@ public class MetadataProcessor {
     private final RequiredResources requiredResources;
     private final ResourceDescriptions resourceDescriptions;
     private final SecurityFramework securityFramework;
+    private final Capabilities capabilities;
     private final Lookup lookup;
     private final CreateRrdOperations rrdOps;
 
@@ -67,67 +85,83 @@ public class MetadataProcessor {
     public MetadataProcessor(final Dispatcher dispatcher,
             final StatementContext statementContext,
             final RequiredResources requiredResources,
+            final SecurityFramework securityFramework,
             final ResourceDescriptions resourceDescriptions,
-            final SecurityFramework securityFramework) {
+            final Capabilities capabilities) {
         this.dispatcher = dispatcher;
         this.requiredResources = requiredResources;
-        this.resourceDescriptions = resourceDescriptions;
         this.securityFramework = securityFramework;
+        this.resourceDescriptions = resourceDescriptions;
+        this.capabilities = capabilities;
         this.lookup = new Lookup(resourceDescriptions, securityFramework);
         this.rrdOps = new CreateRrdOperations(statementContext);
     }
 
-    public void process(final String token, final Provider<Progress> progress, final AsyncCallback<Void> callback) {
+    public void process(final String token, final Progress progress, final AsyncCallback<Void> callback) {
         Set<String> resources = requiredResources.getResources(token);
-        logger.debug("Token {}: Process required resources on {}", token, resources); //NON-NLS
+        logger.debug("Process required resources {} for token {}", resources, token); //NON-NLS
         if (resources.isEmpty()) {
-            logger.debug("Token {}: No required resources found -> callback.onSuccess(null)", token); //NON-NLS
+            logger.debug("No required resources found -> callback.onSuccess(null)"); //NON-NLS
             callback.onSuccess(null);
 
         } else {
             //noinspection Guava
             Set<AddressTemplate> templates = FluentIterable.from(resources).transform(AddressTemplate::of).toSet();
-            process(token, templates, progress, callback);
+            processInternal(templates, requiredResources.isRecursive(token), progress, callback);
         }
     }
 
+    public void lookup(final AddressTemplate template, Progress progress, final MetadataCallback callback) {
+        processInternal(singleton(template), false, progress, new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(final Throwable throwable) {
+                callback.onError(throwable);
+            }
+
+            @Override
+            public void onSuccess(final Void aVoid) {
+                SecurityContext securityContext = securityFramework.lookup(template);
+                ResourceDescription description = resourceDescriptions.lookup(template);
+                callback.onMetadata(new Metadata(securityContext, description, capabilities));
+            }
+        });
+    }
+
     @SuppressWarnings("HardCodedStringLiteral")
-    public void process(final String token, final Set<AddressTemplate> templates,
-            final Provider<Progress> progress, final AsyncCallback<Void> callback) {
-        LookupResult lookupResult = lookup.check(token, templates, requiredResources.isRecursive(token));
+    private void processInternal(final Set<AddressTemplate> templates, final boolean recursive, final Progress progress,
+            final AsyncCallback<Void> callback) {
+        LookupResult lookupResult = lookup.check(templates, recursive);
         if (lookupResult.allPresent()) {
-            logger.debug("Token {}: All required resources have been already processed -> callback.onSuccess(null)",
-                    token);
+            logger.debug("All required resources have been already processed -> callback.onSuccess(null)");
             callback.onSuccess(null);
         } else {
-            logger.debug("Token {}: {}", token, lookupResult);
+            logger.debug("{}", lookupResult);
             List<Operation> operations = rrdOps.create(lookupResult);
             List<List<Operation>> piles = Lists.partition(operations, BATCH_SIZE);
             List<Composite> composites = Lists.transform(piles, Composite::new);
 
-            logger.debug("Token {}: About to execute {} composite operations", token, composites.size());
+            logger.debug("About to execute {} composite operations", composites.size());
             List<RrdFunction> functions = Lists.transform(composites,
                     composite -> new RrdFunction(resourceDescriptions, securityFramework, dispatcher, composite));
             //noinspection Duplicates
             Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
                 @Override
                 public void onFailure(final FunctionContext context) {
-                    logger.debug("Token {}: Failed to process required resources: {}", token,
-                            context.getErrorMessage());
+                    logger.debug("Failed to processInternal required resources: {}", context.getErrorMessage());
                     callback.onFailure(context.getError());
                 }
 
                 @Override
                 public void onSuccess(final FunctionContext context) {
-                    logger.debug("Token {}: Successfully processed required resources", token);
+                    logger.debug("Successfully processed required resources");
                     callback.onSuccess(null);
                 }
             };
             if (functions.size() == 1) {
-                new Async<FunctionContext>(progress.get()).single(new FunctionContext(), outcome, functions.get(0));
+                new Async<FunctionContext>(progress).single(new FunctionContext(), outcome, functions.get(0));
             } else {
                 //noinspection SuspiciousToArrayCall
-                new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
+                new Async<FunctionContext>(progress).waterfall(new FunctionContext(), outcome,
                         (org.jboss.gwt.flow.Function[]) functions.toArray(new RrdFunction[functions.size()]));
             }
         }

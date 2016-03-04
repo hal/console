@@ -21,8 +21,8 @@
  */
 package org.jboss.hal.client.configuration;
 
-import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
+import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.core.ProfileSelectionEvent;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -47,14 +47,17 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 @Column(Ids.PROFILE_COLUMN)
 public class ProfileColumn extends FinderColumn<Property> {
 
+    private static final String ADD_ID = IdBuilder.build(Ids.PROFILE_COLUMN, "add");
+    private static final String REFRESH_ID = IdBuilder.build(Ids.PROFILE_COLUMN, "refresh");
+
     @Inject
     public ProfileColumn(final Finder finder,
             final Dispatcher dispatcher,
             final EventBus eventBus,
             final ColumnActionFactory columnActionFactory) {
         super(new Builder<Property>(finder, Ids.PROFILE_COLUMN, Names.PROFILES)
-                .columnAction(columnActionFactory.add(column -> Window.alert(Names.NYI)))
-                .columnAction(columnActionFactory.refresh(FinderColumn::refresh))
+                .columnAction(columnActionFactory.add(ADD_ID))
+                .columnAction(columnActionFactory.refresh(REFRESH_ID, FinderColumn::refresh))
 
                 .itemRenderer(property -> new ItemDisplay<Property>() {
                     @Override
@@ -79,5 +82,7 @@ public class ProfileColumn extends FinderColumn<Property> {
                 })
 
                 .onPreview(item -> new PreviewContent(item.getName())));
+
+//        setColumnActionHandler(ADD_ID, event -> );
     }
 }

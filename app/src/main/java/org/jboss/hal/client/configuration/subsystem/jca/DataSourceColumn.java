@@ -23,6 +23,7 @@ package org.jboss.hal.client.configuration.subsystem.jca;
 
 import com.google.gwt.user.client.Window;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -57,6 +58,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 @AsyncColumn(Ids.DATA_SOURCE_COLUMN)
 public class DataSourceColumn extends FinderColumn<Property> {
 
+    private static final String ADD_ID = IdBuilder.build(Ids.DATA_SOURCE_COLUMN, "add");
+    private static final String REFRESH_ID = IdBuilder.build(Ids.DATA_SOURCE_COLUMN, "refresh");
+
     private final StatementContext statementContext;
 
     @Inject
@@ -68,8 +72,8 @@ public class DataSourceColumn extends FinderColumn<Property> {
             final ItemActionFactory itemActionFactory) {
 
         super(new Builder<Property>(finder, Ids.DATA_SOURCE_COLUMN, Names.DATASOURCE)
-                .columnAction(columnActionFactory.add(column -> Window.alert(Names.NYI)))
-                .columnAction(columnActionFactory.refresh(FinderColumn::refresh))
+                .columnAction(columnActionFactory.add(ADD_ID))
+                .columnAction(columnActionFactory.refresh(REFRESH_ID, FinderColumn::refresh))
                 .onPreview(item -> new PreviewContent(item.getName())));
 
         this.statementContext = statementContext;

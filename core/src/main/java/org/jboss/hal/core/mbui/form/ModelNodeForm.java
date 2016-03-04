@@ -42,9 +42,7 @@ import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.description.ResourceDescription;
-import org.jboss.hal.meta.security.SecurityContext;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Messages;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
@@ -84,9 +82,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         private static final String ILLEGAL_COMBINATION = "Illegal combination in ";
 
         final String id;
-        final SecurityContext securityContext;
-        final ResourceDescription resourceDescription;
-        final Capabilities capabilities;
+        private Metadata metadata;
         final Set<String> includes;
         final Set<String> excludes;
         final Map<String, FormItemProvider> providers;
@@ -104,12 +100,9 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
         // ------------------------------------------------------ configure required and optional settings
 
-        public Builder(@NonNls final String id, final SecurityContext securityContext,
-                final ResourceDescription resourceDescription, final Capabilities capabilities) {
+        public Builder(@NonNls final String id, final Metadata metadata) {
             this.id = id;
-            this.securityContext = securityContext;
-            this.resourceDescription = resourceDescription;
-            this.capabilities = capabilities;
+            this.metadata = metadata;
             this.includes = new HashSet<>();
             this.excludes = new HashSet<>();
             this.providers = new HashMap<>();
@@ -119,7 +112,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             this.addOnly = false;
             this.unsorted = false;
             this.includeRuntime = false;
-            this.dataMapping = new ModelNodeMapping<>(resourceDescription);
+            this.dataMapping = new ModelNodeMapping<>(metadata.getDescription());
         }
 
         public Builder<T> include(final String[] attributes) {
@@ -219,12 +212,12 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                             ILLEGAL_COMBINATION + formId() + ": createResource && viewOnly");
                 }
                 String path = OPERATIONS + "." + ADD + "." + REQUEST_PROPERTIES;
-                if (!ModelNodeHelper.failSafeGet(resourceDescription, path).isDefined()) {
+                if (!ModelNodeHelper.failSafeGet(metadata.getDescription(), path).isDefined()) {
                     throw new IllegalStateException("No request properties found for " + formId() +
-                            " / operation add in resource description " + resourceDescription);
+                            " / operation add in resource description " + metadata.getDescription());
                 }
                 if (!excludes.isEmpty()) {
-                    List<Property> requiredRequestProperties = resourceDescription.getRequiredRequestProperties();
+                    List<Property> requiredRequestProperties = metadata.getDescription().getRequiredRequestProperties();
                     for (Property property : requiredRequestProperties) {
                         if (excludes.contains(property.getName())) {
                             throw new IllegalStateException("Required request property " + property.getName() +
@@ -233,9 +226,9 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                     }
                 }
             } else {
-                if (!resourceDescription.hasDefined(ATTRIBUTES)) {
+                if (!metadata.getDescription().hasDefined(ATTRIBUTES)) {
                     throw new IllegalStateException("No attributes found for " + formId() +
-                            " in resource description " + resourceDescription);
+                            " in resource description " + metadata.getDescription());
                 }
             }
         }
@@ -258,15 +251,15 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
     private final FormItemProvider formItemProvider;
 
     private ModelNodeForm(final Builder<T> builder) {
-        super(builder.id, builder.stateMachine(), builder.dataMapping, builder.securityContext);
+        super(builder.id, builder.stateMachine(), builder.dataMapping, builder.metadata.getSecurityContext());
 
-        this.formItemProvider = new DefaultFormItemProvider(builder.capabilities);
+        this.formItemProvider = new DefaultFormItemProvider(builder.metadata.getCapabilities());
         this.saveCallback = builder.saveCallback;
         this.cancelCallback = builder.cancelCallback;
         this.resetCallback = builder.resetCallback;
 
         String path = builder.createResource ? Joiner.on('.').join(OPERATIONS, ADD, REQUEST_PROPERTIES) : ATTRIBUTES;
-        Iterable<Property> allProperties = ModelNodeHelper.failSafeGet(builder.resourceDescription, path)
+        Iterable<Property> allProperties = ModelNodeHelper.failSafeGet(builder.metadata.getDescription(), path)
                 .asPropertyList();
         //noinspection Guava
         FluentIterable<Property> fi = FluentIterable.from(allProperties).filter(new PropertyFilter(builder));

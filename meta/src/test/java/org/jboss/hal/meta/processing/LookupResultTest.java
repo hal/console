@@ -20,7 +20,7 @@ public class LookupResultTest {
     @Before
     public void setUp() {
         foo = AddressTemplate.of("foo");
-        lookupResult = new LookupResult("#token", Sets.newHashSet(foo), false);
+        lookupResult = new LookupResult(Sets.newHashSet(foo), false);
     }
 
     @Test
@@ -55,11 +55,10 @@ public class LookupResultTest {
 
     @Test
     public void allPresent() {
-        final LookupResult localLookupResult = new LookupResult("#token",
-                Sets.newHashSet(
-                        AddressTemplate.of("one"),
-                        AddressTemplate.of("two"),
-                        AddressTemplate.of("three")),
+        final LookupResult localLookupResult = new LookupResult(Sets.newHashSet(
+                AddressTemplate.of("one"),
+                AddressTemplate.of("two"),
+                AddressTemplate.of("three")),
                 false);
 
         localLookupResult.markMetadataPresent(AddressTemplate.of("one"), ALL_PRESENT);
