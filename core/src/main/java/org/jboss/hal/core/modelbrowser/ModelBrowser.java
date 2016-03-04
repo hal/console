@@ -135,9 +135,7 @@ public class ModelBrowser implements HasElements {
 
         @Override
         public void onError(final Throwable error) {
-            //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
-            logger.error("Error while processing metadata for {}: {}", address, error.getMessage());
-            MessageEvent.fire(eventBus, Message.error(resources.constants().metadataError(), error.getMessage()));
+                MessageEvent.fire(eventBus, Message.error(resources.constants().metadataError(), error.getMessage()));
         }
     }
 

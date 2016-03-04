@@ -157,9 +157,6 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
             metadataProcessor.lookup(template, progress.get(), new MetadataProcessor.MetadataCallback() {
                         @Override
                         public void onError(final Throwable error) {
-                            //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
-                            logger.error("Error while processing metadata for {}: {}", singletonAddress,
-                                    error.getMessage());
                             MessageEvent.fire(eventBus,
                                     Message.error(resources.constants().metadataError(), error.getMessage()));
                         }

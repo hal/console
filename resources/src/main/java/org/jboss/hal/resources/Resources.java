@@ -26,6 +26,8 @@ import com.google.gwt.resources.client.ExternalTextResource;
 import javax.inject.Inject;
 
 /**
+ * Umbrella over all kind of resources in HAL.
+ *
  * @author Harald Pehl
  */
 public class Resources implements Ids, Names, UIConstants, CSS {
