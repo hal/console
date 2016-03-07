@@ -25,12 +25,13 @@ import com.google.gwt.core.client.GWT;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.Dialog.Size;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Constants;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
@@ -40,7 +41,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 public class AddResourceDialog<T extends ModelNode> {
 
     @FunctionalInterface
-    @SuppressWarnings("WeakerAccess")
     public interface Callback<T> {
 
         /**
@@ -66,30 +66,20 @@ public class AddResourceDialog<T extends ModelNode> {
      */
     public AddResourceDialog(final String id, final String title, final Metadata metadata, final Callback<T> callback) {
 
-        TextBoxItem nameItem = new TextBoxItem(NAME, CONSTANTS.name());
-        nameItem.setRequired(true);
-        nameItem.setExpressionAllowed(false);
-
         ModelNodeForm.Builder<T> formBuilder = new ModelNodeForm.Builder<T>(id, metadata)
                 .createResource()
-                .unboundFormItem(nameItem, 0)
-                .onSave((f, changedValues) -> {
-                    String name = String.valueOf(changedValues.remove(NAME));
-                    callback.onAdd(name, form.getModel());
-                });
+                .unboundFormItem(new NameItem(), 0)
+                .onSave((f, changedValues) -> saveForm(callback, changedValues, form.getModel()));
 
         init(title, formBuilder.build());
     }
 
     /**
-     * Uses an existing form for the dialog. If the form has a save callback it's overridden with
-     * {@link Callback#onAdd(String, Object)}.
+     * Uses an existing form for the dialog. If the form has a save callback it's overridden with {@link
+     * Callback#onAdd(String, Object)}.
      */
     public AddResourceDialog(final String title, final Form<T> form, final Callback<T> callback) {
-        form.setSaveCallback((f, changedValues) -> {
-            String name = String.valueOf(changedValues.remove(NAME));
-            callback.onAdd(name, form.getModel());
-        });
+        form.setSaveCallback((f, changedValues) -> saveForm(callback, changedValues, form.getModel()));
         init(title, form);
     }
 
@@ -111,8 +101,14 @@ public class AddResourceDialog<T extends ModelNode> {
         this.dialog.registerAttachable(form);
     }
 
+    private void saveForm(final Callback<T> callback, final Map<String, Object> changedValues,
+            final T model) {
+        String name = String.valueOf(changedValues.remove(NAME));
+        callback.onAdd(name, model);
+    }
+
     public void show() {
-        // show first (which attaches everything), then call form.add()
+        // First call dialog.show() (which attaches everything), then call form.add()
         dialog.show();
         //noinspection unchecked
         form.add((T) new ModelNode());

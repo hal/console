@@ -33,6 +33,7 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Column;
@@ -47,17 +48,20 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 @Column(Ids.PROFILE_COLUMN)
 public class ProfileColumn extends FinderColumn<Property> {
 
-    private static final String ADD_ID = IdBuilder.build(Ids.PROFILE_COLUMN, "add");
-    private static final String REFRESH_ID = IdBuilder.build(Ids.PROFILE_COLUMN, "refresh");
+    private static final AddressTemplate PROFILE_TEMPLATE = AddressTemplate.of("/profile=*");
 
     @Inject
     public ProfileColumn(final Finder finder,
             final Dispatcher dispatcher,
             final EventBus eventBus,
             final ColumnActionFactory columnActionFactory) {
+
         super(new Builder<Property>(finder, Ids.PROFILE_COLUMN, Names.PROFILES)
-                .columnAction(columnActionFactory.add(ADD_ID))
-                .columnAction(columnActionFactory.refresh(REFRESH_ID, FinderColumn::refresh))
+                .columnAction(columnActionFactory.add(
+                        IdBuilder.build(Ids.PROFILE_COLUMN, "add"),
+                        Names.PROFILE,
+                        PROFILE_TEMPLATE))
+                .columnAction(columnActionFactory.refresh(IdBuilder.build(Ids.PROFILE_COLUMN, "refresh")))
 
                 .itemRenderer(property -> new ItemDisplay<Property>() {
                     @Override
@@ -82,7 +86,5 @@ public class ProfileColumn extends FinderColumn<Property> {
                 })
 
                 .onPreview(item -> new PreviewContent(item.getName())));
-
-//        setColumnActionHandler(ADD_ID, event -> );
     }
 }

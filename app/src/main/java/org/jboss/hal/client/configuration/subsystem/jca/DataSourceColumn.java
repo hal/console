@@ -58,9 +58,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 @AsyncColumn(Ids.DATA_SOURCE_COLUMN)
 public class DataSourceColumn extends FinderColumn<Property> {
 
-    private static final String ADD_ID = IdBuilder.build(Ids.DATA_SOURCE_COLUMN, "add");
-    private static final String REFRESH_ID = IdBuilder.build(Ids.DATA_SOURCE_COLUMN, "refresh");
-
     private final StatementContext statementContext;
 
     @Inject
@@ -72,8 +69,7 @@ public class DataSourceColumn extends FinderColumn<Property> {
             final ItemActionFactory itemActionFactory) {
 
         super(new Builder<Property>(finder, Ids.DATA_SOURCE_COLUMN, Names.DATASOURCE)
-                .columnAction(columnActionFactory.add(ADD_ID))
-                .columnAction(columnActionFactory.refresh(REFRESH_ID, FinderColumn::refresh))
+                .columnAction(columnActionFactory.refresh(IdBuilder.build(Ids.DATA_SOURCE_COLUMN, "refresh")))
                 .onPreview(item -> new PreviewContent(item.getName())));
 
         this.statementContext = statementContext;
@@ -119,7 +115,7 @@ public class DataSourceColumn extends FinderColumn<Property> {
 
                 List<ItemAction<Property>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.view(viewRequest));
-                actions.add(itemActionFactory.remove(property.getName(), Names.DATASOURCE,
+                actions.add(itemActionFactory.remove(Names.DATASOURCE, property.getName(),
                         DataSourcePresenter.DATA_SOURCE_RESOURCE, DataSourceColumn.this));
                 if (isEnabled(property)) {
                     actions.add(new ItemAction<>(resources.constants().disable(), p -> disable(p, address)));

@@ -22,10 +22,10 @@
 package org.jboss.hal.core.finder;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental.dom.Element;
 import elemental.events.Event;
-import elemental.events.EventListener;
 import elemental.events.KeyboardEvent;
 import elemental.events.KeyboardEvent.KeyCode;
 import elemental.html.InputElement;
@@ -51,8 +51,7 @@ import static org.jboss.hal.ballroom.PatternFly.$;
 import static org.jboss.hal.core.finder.Finder.DATA_BREADCRUMB;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
-import static org.jboss.hal.resources.UIConstants.ROLE;
-import static org.jboss.hal.resources.UIConstants.TABINDEX;
+import static org.jboss.hal.resources.UIConstants.*;
 
 /**
  * Describes and renders a column in a finder. A column has a unique id, a title, a number of optional column actions
@@ -90,22 +89,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             this.showCount = false;
             this.withFilter = false;
             this.items = new ArrayList<>();
-        }
-
-        public Builder<T> columnAction(String id, String title) {
-            return columnAction(new ColumnAction<>(id, title));
-        }
-
-        public Builder<T> columnAction(String id, String title, ColumnActionHandler<T> handler) {
-            return columnAction(new ColumnAction<>(id, title, handler));
-        }
-
-        public Builder<T> columnAction(String id, Element element) {
-            return columnAction(new ColumnAction<>(id, element));
-        }
-
-        public Builder<T> columnAction(String id, Element element, ColumnActionHandler<T> handler) {
-            return columnAction(new ColumnAction<>(id, element, handler));
         }
 
         public Builder<T> columnAction(ColumnAction<T> action) {
@@ -156,8 +139,12 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     }
 
 
+    public enum RefreshMode {CLEAR_SELECTION, RESTORE_SELECTIION}
+
+
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String HEADER_ELEMENT = "headerElement";
+    private static final String COLUMN_ACTIONS_ELEMENT = "columnActionsElement";
     private static final String FILTER_ELEMENT = "filterElement";
     private static final String UL_ELEMENT = "ulElement";
     private static final Logger logger = LoggerFactory.getLogger(FinderColumn.class);
@@ -166,7 +153,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     private final String id;
     private final String title;
     private final boolean showCount;
-    private final Map<String, Element> columnActions;
+    private final Element columnActions;
     private final List<T> initialItems;
     private ItemsProvider<T> itemsProvider;
     private ItemRenderer<T> itemRenderer;
@@ -190,7 +177,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         this.id = builder.id;
         this.title = builder.title;
         this.showCount = builder.showCount;
-        this.columnActions = new HashMap<>();
         this.initialItems = builder.items;
         this.itemsProvider = builder.itemsProvider;
         this.itemRenderer = builder.itemRenderer;
@@ -210,19 +196,17 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                 .h(1).textContent(builder.title).title(builder.title).rememberAs(HEADER_ELEMENT).end();
 
         // column actions
-        if (!builder.columnActions.isEmpty()) {
-            if (builder.columnActions.size() == 1) {
-                addColumnButton(eb, builder.columnActions.get(0));
-            } else {
-                //noinspection DuplicateStringLiteralInspection
-                eb.div().css(btnGroup).attr(ROLE, "group"); //NON-NLS
-                for (ColumnAction<T> action : builder.columnActions) {
-                    addColumnButton(eb, action);
-                }
-                eb.end();
+        eb.div().rememberAs(COLUMN_ACTIONS_ELEMENT);
+        if (builder.columnActions.size() == 1) {
+            eb.add(newColumnButton(builder.columnActions.get(0)));
+        } else {
+            //noinspection DuplicateStringLiteralInspection
+            eb.css(btnGroup).attr(ROLE, GROUP);
+            for (ColumnAction<T> action : builder.columnActions) {
+                eb.add(newColumnButton(action));
             }
         }
-        eb.end(); // </updateHeader>
+        eb.end().end(); // </columnActions> && </updateHeader>
 
         // filter box
         if (builder.withFilter) {
@@ -252,19 +236,16 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
         root = eb.build();
         headerElement = eb.referenceFor(HEADER_ELEMENT);
+        columnActions = eb.referenceFor(COLUMN_ACTIONS_ELEMENT);
         filterElement = builder.withFilter ? eb.referenceFor(FILTER_ELEMENT) : null;
         ulElement = eb.referenceFor(UL_ELEMENT);
     }
 
-    private void addColumnButton(final Elements.Builder builder, final ColumnAction<T> action) {
-        builder.button()
+    private Element newColumnButton(final ColumnAction<T> action) {
+        Elements.Builder builder = new Elements.Builder().button()
                 .id(action.id)
                 .css(btn, btnFinder)
-                .rememberAs(action.id);
-
-        if (action.handler != null) {
-            builder.on(click, event -> action.handler.execute(this));
-        }
+                .on(click, event -> action.handler.execute(this));
 
         if (action.title != null) {
             builder.textContent(action.title);
@@ -274,8 +255,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             builder.textContent(NOT_AVAILABLE);
         }
 
-        columnActions.put(action.id, builder.referenceFor(action.id));
-        builder.end(); // </button>
+        return builder.end().build();
     }
 
     private void updateHeader(int matched) {
@@ -536,16 +516,18 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
     /**
      * Sometimes you need to reference {@code this} in the column action handler. This is not possible if they're
-     * part of the builder which is passed to {@code super()}. In this case you can use the column action's id to set
-     * the event handler <strong>after</strong> the call to {@code super()} using this setter.
+     * part of the builder which is passed to {@code super()}. In this case you can use this method to add your column
+     * actions <strong>after</strong> the call to {@code super()}.
      * <p>
      * However make sure to call the setter <strong>before</strong> the column is used {@link #asElement()} and gets
      * attached to the DOM!
      */
-    protected void setColumnActionHandler(String id, EventListener listener) {
-        assertNotAsElement("setColumnActionHandler()"); // is this really necessary?
-        if (columnActions.containsKey(id)) {
-            columnActions.get(id).setOnclick(listener);
+    protected void addColumnAction(ColumnAction<T> columnAction) {
+        assertNotAsElement("addColumnAction()");
+        columnActions.appendChild(newColumnButton(columnAction));
+        if (columnActions.getChildElementCount() > 1) {
+            columnActions.getClassList().add(btnGroup);
+            columnActions.setAttribute(ROLE, GROUP);
         }
     }
 
@@ -591,15 +573,36 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         return root;
     }
 
-    @Override
-    public void onSecurityContextChange(final SecurityContext securityContext) {
-        // TODO Check column actions
-        for (FinderRow<T> row : rows.values()) {
-            row.onSecurityContextChange(securityContext);
+    public void refresh(RefreshMode refreshMode) {
+        switch (refreshMode) {
+            case CLEAR_SELECTION:
+                refresh(() -> finder.selectPreviousColumn(id));
+                break;
+            case RESTORE_SELECTIION:
+                FinderRow<T> row = selectedRow();
+                refresh(() -> {
+                    if (row != null) {
+                        row.click();
+                    } else {
+                        finder.selectPreviousColumn(id);
+                    }
+                });
+                break;
         }
     }
 
-    public void refresh() {
+    public void refresh(String selectItemId) {
+        refresh(() -> {
+            FinderRow<T> row = rows.get(selectItemId);
+            if (row != null) {
+                row.click();
+            } else {
+                finder.selectPreviousColumn(id);
+            }
+        });
+    }
+
+    public void refresh(ScheduledCommand andThen) {
         setItems(new AsyncCallback<FinderColumn>() {
             @Override
             public void onFailure(final Throwable throwable) {
@@ -610,8 +613,19 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             public void onSuccess(final FinderColumn column) {
                 finder.updateContext();
                 finder.publishContext();
+                if (andThen != null) {
+                    andThen.execute();
+                }
             }
         });
+    }
+
+    @Override
+    public void onSecurityContextChange(final SecurityContext securityContext) {
+        // TODO Check column actions
+        for (FinderRow<T> row : rows.values()) {
+            row.onSecurityContextChange(securityContext);
+        }
     }
 
     public String getId() {

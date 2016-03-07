@@ -47,7 +47,6 @@ import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED_SINGLE;
 import static org.jboss.hal.resources.Ids.PATHS_FORM;
 import static org.jboss.hal.resources.Ids.PATHS_TABLE;
-import static org.jboss.hal.resources.Names.NAME;
 import static org.jboss.hal.resources.Names.PATHS;
 
 /**
@@ -71,8 +70,8 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
 
         Element info = new Elements.Builder().p().textContent(description.getDescription()).end().build();
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
-                .column(ModelDescriptionConstants.NAME, NAME, (cell, type, row, meta) -> row.get(
-                        ModelDescriptionConstants.NAME).asString())
+                .column(ModelDescriptionConstants.NAME, resources.constants().name(),
+                        (cell, type, row, meta) -> row.get(ModelDescriptionConstants.NAME).asString())
                 .button(resources.constants().add(), (event, api) -> {
                     // dialog.open();
                 })

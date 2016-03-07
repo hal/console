@@ -118,7 +118,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         this.formValidations = new ArrayList<>();
     }
 
-    protected void addFormItem(FormItem formItem, FormItem... formItems) {
+    public void addFormItem(FormItem formItem, FormItem... formItems) {
         for (FormItem item : Lists.asList(formItem, formItems)) {
             this.formItems.put(item.getName(), item);
             item.setId(IdBuilder.build(id, item.getName()));

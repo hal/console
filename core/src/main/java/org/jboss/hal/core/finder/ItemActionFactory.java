@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 
 /**
@@ -84,18 +85,19 @@ public class ItemActionFactory {
     /**
      * Creates a 'remove' action which removes the specified resource from the given address. The address can contain a
      * wildcard which is replace by the resource name. The action wil bring up a confirmation dialog. If confirmed the
-     * resource is removed and {@link FinderColumn#refresh()} is called.
+     * resource is removed and {@link FinderColumn#refresh(FinderColumn.RefreshMode)} is called.
      */
-    public <T> ItemAction<T> remove(String name, String type, AddressTemplate addressTemplate, FinderColumn<T> column) {
-        Dialog dialog = DialogFactory.confirmation(resources.messages().removeResourceConfirmationTitle(type),
-                resources.messages().removeResourceConfirmationQuestion(name),
-                () -> {
-                    ResourceAddress address = addressTemplate.resolve(statementContext, name);
-                    Operation operation = new Operation.Builder(REMOVE, address).build();
-                    dispatcher.execute(operation, result -> column.refresh());
-                    return true;
-                });
-
-        return new ItemAction<>(resources.constants().remove(), item -> { dialog.show(); });
+    public <T> ItemAction<T> remove(String type, String name, AddressTemplate addressTemplate, FinderColumn<T> column) {
+        return new ItemAction<>(resources.constants().remove(), item -> {
+            Dialog dialog = DialogFactory.confirmation(resources.messages().removeResourceConfirmationTitle(type),
+                    resources.messages().removeResourceConfirmationQuestion(name),
+                    () -> {
+                        ResourceAddress address = addressTemplate.resolve(statementContext, name);
+                        Operation operation = new Operation.Builder(REMOVE, address).build();
+                        dispatcher.execute(operation, result -> column.refresh(CLEAR_SELECTION));
+                        return true;
+                    });
+            dialog.show();
+        });
     }
 }

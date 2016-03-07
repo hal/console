@@ -22,7 +22,7 @@
 package org.jboss.hal.resources;
 
 /**
- * Common names and terms used multiple times and which are not meant to be translated.
+ * Common names and terms which are not meant to be translated.
  *
  * @author Harald Pehl
  */
@@ -40,12 +40,12 @@ public interface Names {
     String INTERFACES = "Interfaces";
     String MANAGEMENT_CONSOLE = "Management Console";
     String MANAGEMENT_MODEL = "Management Model";
-    String NAME = "Name";
     String NOT_AVAILABLE = "n/a";
     String NOT_SUPPORTED = "not supported";
     String NYI = "not yet implemented";
     String PATCHING = "Patching";
     String PATHS = "Paths";
+    String PROFILE = "Profile";
     String PROFILES = "Profiles";
     String RESOURCE = "Resource";
     String RUNTIME = "Runtime";

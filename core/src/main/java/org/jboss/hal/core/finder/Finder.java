@@ -21,7 +21,6 @@
  */
 package org.jboss.hal.core.finder;
 
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -50,8 +49,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
@@ -69,7 +71,7 @@ import static org.jboss.hal.resources.Ids.FINDER;
 public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     /**
-     * Function used in {@link #select(String, FinderPath, ScheduledCommand)} to select one segment in a finder path.
+     * Function used in {@link #select(String, FinderPath, Runnable)} to select one segment in a finder path.
      */
     private class SelectFunction implements Function<FunctionContext> {
 
@@ -137,7 +139,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     private final Provider<Progress> progress;
     private final String id;
     private final FinderContext context;
-    private final Map<String, FinderColumn> columns;
+    private final LinkedHashMap<String, FinderColumn> columns;
     private final Map<String, String> initialColumnsByToken;
     private final Element root;
     private final Element previewColumn;
@@ -157,7 +159,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
         this.id = FINDER;
         this.context = new FinderContext();
-        this.columns = new HashMap<>();
+        this.columns = new LinkedHashMap<>();
         this.initialColumnsByToken = new HashMap<>();
 
         // @formatter:off
@@ -312,6 +314,28 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         finderColumn.asElement().focus();
     }
 
+    void selectPreviousColumn(final String columnId) {
+        List<String> columnIds = new ArrayList<>(columns.keySet());
+        int index = 0;
+        for (String id : columnIds) {
+            if (id.equals(columnId)) {
+                break;
+            }
+            index++;
+        }
+        if (index > 0 && index < columnIds.size()) {
+            String previousId = columnIds.get(index - 1);
+            selectColumn(previousId);
+            FinderColumn previousColumn = columns.get(previousId);
+            if (previousColumn != null) {
+                FinderRow selectedRow = previousColumn.selectedRow();
+                if (selectedRow != null) {
+                    selectedRow.click();
+                }
+            }
+        }
+    }
+
     FinderColumn getColumn(String columnId) {
         return columns.get(columnId);
     }
@@ -341,9 +365,9 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         publishContext();
     }
 
-    public void select(final String token, final FinderPath path, final ScheduledCommand fallback) {
+    public void select(final String token, final FinderPath path, final Runnable fallback) {
         if (path.isEmpty()) {
-            fallback.execute();
+            fallback.run();
 
         } else {
             if (!token.equals(context.getToken())) {
@@ -384,7 +408,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 @Override
                 public void onFailure(final FunctionContext context) {
                     if (Finder.this.context.getPath().isEmpty()) {
-                        fallback.execute();
+                        fallback.run();
 
                     } else if (!context.emptyStack()) {
                         FinderColumn column = context.pop();

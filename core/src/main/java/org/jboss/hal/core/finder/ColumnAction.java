@@ -49,14 +49,11 @@ public class ColumnAction<T> {
         this(id, null, element, handler);
     }
 
-    private ColumnAction(final String id, final String title, final Element element, final ColumnActionHandler<T> handler) {
+    private ColumnAction(final String id, final String title, final Element element,
+            final ColumnActionHandler<T> handler) {
         this.id = id;
         this.title = title;
         this.element = element;
-        this.handler = handler;
-    }
-
-    public void setHandler(final ColumnActionHandler<T> handler) {
         this.handler = handler;
     }
 }

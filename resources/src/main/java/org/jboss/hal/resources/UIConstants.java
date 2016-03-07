@@ -31,6 +31,7 @@ public interface UIConstants {
     String COLLAPSE = "collapse";
     String CONTROLS = "controls";
     String EXPANDED = "expanded";
+    String GROUP = "group";
     String HAS_POPUP = "haspopup";
     String HIDDEN = "hidden";
     String NBSP = "&nbsp;";

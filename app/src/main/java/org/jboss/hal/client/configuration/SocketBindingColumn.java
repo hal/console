@@ -21,7 +21,8 @@
  */
 package org.jboss.hal.client.configuration;
 
-import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
@@ -31,7 +32,6 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -52,9 +52,15 @@ public class SocketBindingColumn extends FinderColumn<Property> {
     @Inject
     public SocketBindingColumn(final Finder finder,
             final Dispatcher dispatcher,
+            final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory) {
 
         super(new FinderColumn.Builder<Property>(finder, Ids.SOCKET_BINDING_COLUMN, Names.SOCKET_BINDING)
+                .columnAction(columnActionFactory.add(
+                        IdBuilder.build(Ids.SOCKET_BINDING_COLUMN, "add"),
+                        Names.SOCKET_BINDING,
+                        SocketBindingPresenter.ROOT_TEMPLATE))
+                .columnAction(columnActionFactory.refresh(IdBuilder.build(Ids.SOCKET_BINDING_COLUMN, "refresh")))
                 .itemsProvider((context, callback) -> {
                     Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
                             .param(CHILD_TYPE, "socket-binding-group").build();
@@ -64,15 +70,15 @@ public class SocketBindingColumn extends FinderColumn<Property> {
         setItemRenderer(property -> new ItemDisplay<Property>() {
             @Override
             public String getTitle() {
-                return new LabelBuilder().label(property);
+                return property.getName();
             }
 
             @Override
             public List<ItemAction<Property>> actions() {
                 return asList(
                         itemActionFactory.view(NameTokens.SOCKET_BINDING, NAME, property.getName()),
-                        itemActionFactory.remove(property.getName(), Names.SOCKET_BINDING,
-                                AddressTemplate.of("/socket-binding=*"), SocketBindingColumn.this));
+                        itemActionFactory.remove(Names.SOCKET_BINDING, property.getName(),
+                                SocketBindingPresenter.ROOT_TEMPLATE, SocketBindingColumn.this));
             }
         });
     }
