@@ -88,7 +88,7 @@ public class PathsPresenter extends
         loadPaths();
     }
 
-    private void loadPaths() {
+    void loadPaths() {
         Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
                 .param(CHILD_TYPE, "path")
                 .build();
@@ -96,10 +96,6 @@ public class PathsPresenter extends
     }
 
     public void savePath(final String name, final Map<String, Object> changedValues) {
-        loadPaths();
-    }
-
-    public void removePath(final String name) {
         loadPaths();
     }
 }

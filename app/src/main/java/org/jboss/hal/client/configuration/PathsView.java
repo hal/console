@@ -23,14 +23,15 @@ package org.jboss.hal.client.configuration;
 
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
@@ -38,15 +39,14 @@ import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityFramework;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import javax.inject.Inject;
 import java.util.List;
 
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
-import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED_SINGLE;
-import static org.jboss.hal.resources.Ids.PATHS_FORM;
-import static org.jboss.hal.resources.Ids.PATHS_TABLE;
 import static org.jboss.hal.resources.Names.PATHS;
 
 /**
@@ -54,14 +54,15 @@ import static org.jboss.hal.resources.Names.PATHS;
  */
 public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyView {
 
-    private final DataTable<NamedNode> table;
-    private final ModelNodeForm<NamedNode> form;
+    private DataTable<NamedNode> table;
+    private ModelNodeForm<NamedNode> form;
     private PathsPresenter presenter;
 
     @Inject
     public PathsView(SecurityFramework securityFramework,
             ResourceDescriptions descriptions,
             Capabilities capabilities,
+            TableButtonFactory tableButtonFactory,
             Resources resources) {
 
         SecurityContext securityContext = securityFramework.lookup(PathsPresenter.ROOT_TEMPLATE);
@@ -69,28 +70,35 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
         Metadata metadata = new Metadata(securityContext, description, capabilities);
 
         Element info = new Elements.Builder().p().textContent(description.getDescription()).end().build();
+
+        //noinspection ConstantConditions
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
+
                 .column(ModelDescriptionConstants.NAME, resources.constants().name(),
                         (cell, type, row, meta) -> row.get(ModelDescriptionConstants.NAME).asString())
-                .button(resources.constants().add(), (event, api) -> {
-                    // dialog.open();
-                })
-                .button(resources.constants().remove(), SELECTED_SINGLE, (event, api) -> {
-                    ModelNode selectedRow = api.selectedRow();
-                    if (selectedRow != null) {
-                        presenter.removePath(selectedRow.get(ModelDescriptionConstants.NAME).asString());
-                    }
-                })
-                .build();
-        table = new ModelNodeTable<>(PATHS_TABLE, options);
 
-        form = new ModelNodeForm.Builder<NamedNode>(PATHS_FORM, metadata)
+                .button(tableButtonFactory.add(
+                        IdBuilder.build(Ids.PATHS_TABLE, "add"),
+                        Names.PATH,
+                        PathsPresenter.ROOT_TEMPLATE,
+                        () -> presenter.loadPaths()))
+
+                .button(tableButtonFactory.remove(
+                        Names.PATH,
+                        () -> table.api().selectedRow().getName(),
+                        PathsPresenter.ROOT_TEMPLATE,
+                        () -> presenter.loadPaths()))
+
+                .build();
+        table = new ModelNodeTable<>(Ids.PATHS_TABLE, options);
+
+        form = new ModelNodeForm.Builder<NamedNode>(Ids.PATHS_FORM, metadata)
                 .include("path", "read-only", "relative-to")
                 .unsorted()
                 .onSave((form, changedValues) -> {
-                    ModelNode selectedRow = table.api().selectedRow();
+                    NamedNode selectedRow = table.api().selectedRow();
                     if (selectedRow != null) {
-                        presenter.savePath(selectedRow.get(ModelDescriptionConstants.NAME).asString(), changedValues);
+                        presenter.savePath(selectedRow.getName(), changedValues);
                     }
                 })
                 .build();
@@ -124,6 +132,7 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
 
     @Override
     public void update(final List<NamedNode> paths) {
-        table.api().add(paths).refresh(RESET);
+        table.api().clear().add(paths).refresh(RESET);
+        form.clear(); // TODO should be triggered automatically
     }
 }

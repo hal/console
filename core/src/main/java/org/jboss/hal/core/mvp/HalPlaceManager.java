@@ -33,6 +33,7 @@ import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -78,5 +79,10 @@ public class HalPlaceManager extends DefaultPlaceManager {
                 HalPlaceManager.super.doRevealPlace(request, updateBrowserUrl);
             }
         });
+    }
+
+    @Override
+    public void revealErrorPlace(final String invalidHistoryToken) {
+        MessageEvent.fire(getEventBus(), Message.error(Names.NYI));
     }
 }
