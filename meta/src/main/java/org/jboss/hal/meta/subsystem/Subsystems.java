@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.meta.subsystem;
 
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -53,12 +54,12 @@ public class Subsystems {
         add(new SubsystemMetadata("jmx", "JMX", null, NameTokens.JMX, null, false));
         add(new SubsystemMetadata("jpa", "JPA", null, NameTokens.JPA, null, false));
         add(new SubsystemMetadata("logging", "Logging", null, NameTokens.LOGGING, null, false));
-        add(new SubsystemMetadata("mail", "Mail", null, null, Ids.MAIL_SESSION_COLUMN, true));
-        add(new SubsystemMetadata("messaging-activemq", "Messaging", "ActiveMQ", null, Ids.MESSAGING_SERVER_COLUMN, true));
+        add(new SubsystemMetadata("mail", "Mail", null, null, ModelDescriptionConstants.MAIL_SESSION, true));
+        add(new SubsystemMetadata("messaging-activemq", "Messaging", "ActiveMQ", null, ModelDescriptionConstants.MESSAGING_SERVER, true));
         add(new SubsystemMetadata("remoting", "Remoting", null, NameTokens.REMOTING, null, false));
         add(new SubsystemMetadata("request-controller", "Request Controller", null, NameTokens.REQUEST_CONTROLLER, null, false));
-        add(new SubsystemMetadata("resource-adapters", "Resource Adapters", null, null, Ids.RESOURCE_ADAPTER_COLUMN, true));
-        add(new SubsystemMetadata("security", "Security", null, null, Ids.SECURITY_DOMAIN_COLUMN, true));
+        add(new SubsystemMetadata("resource-adapters", "Resource Adapters", null, null, ModelDescriptionConstants.RESOURCE_ADAPTER, true));
+        add(new SubsystemMetadata("security", "Security", null, null, ModelDescriptionConstants.SECURITY_DOMAIN, true));
         add(new SubsystemMetadata("transactions", "Transactions", null, NameTokens.TRANSACTIONS, null, false));
         add(new SubsystemMetadata("undertow", "Web", "Undertow", null, Ids.WEB_SETTINGS_COLUMN, true));
         add(new SubsystemMetadata("webservices", "Web Services", null, NameTokens.WEBSERVICES, null, false));

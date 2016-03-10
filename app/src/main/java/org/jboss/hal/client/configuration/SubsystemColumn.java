@@ -45,7 +45,6 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.subsystem.SubsystemMetadata;
 import org.jboss.hal.meta.subsystem.Subsystems;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
@@ -66,7 +65,7 @@ import static org.jboss.hal.resources.CSS.subtitle;
  *
  * @author Harald Pehl
  */
-@Column(Ids.SUBSYSTEM_COLUMN)
+@Column(ModelDescriptionConstants.SUBSYSTEM)
 public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
     private static class ResourceDescriptionPreview extends PreviewContent {
@@ -95,7 +94,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
             final Subsystems subsystems,
             final Resources resources) {
 
-        super(new Builder<SubsystemMetadata>(finder, Ids.SUBSYSTEM_COLUMN, Names.SUBSYSTEM)
+        super(new Builder<SubsystemMetadata>(finder, ModelDescriptionConstants.SUBSYSTEM, Names.SUBSYSTEM)
                 .itemRenderer(item -> new ItemDisplay<SubsystemMetadata>() {
 
                     @Override

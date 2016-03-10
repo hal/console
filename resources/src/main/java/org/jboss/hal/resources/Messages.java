@@ -41,6 +41,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml listHint();
     String messages(@PluralCount int count);
     String modifyResourceSuccess(String type, String name);
+    String pageNotFound(String invalidHistoryToken);
     String patternMismatch(String pattern);
     SafeHtml propertiesHint();
     String removeResourceConfirmationTitle(String name);

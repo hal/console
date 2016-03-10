@@ -19,24 +19,30 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.runtime;
+package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
-import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
-import org.jboss.hal.resources.Names;
-import org.jboss.hal.spi.Column;
-
-import javax.inject.Inject;
+import org.jboss.hal.client.configuration.subsystem.datasource.DataSource;
+import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplate;
+import org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver;
 
 /**
  * @author Harald Pehl
  */
-@Column(ModelDescriptionConstants.SERVER)
-public class ServerColumn extends FinderColumn<Server> {
+class Context {
 
-    @Inject
-    public ServerColumn(final Finder finder) {
-        super(new Builder<>(finder, ModelDescriptionConstants.SERVER, Names.SERVER));
+    final boolean standalone;
+    final boolean xa;
+    DataSourceTemplate template;
+    DataSource dataSource;
+    JdbcDriver driver;
+
+    Context(boolean standalone, boolean xa) {
+        this.standalone = standalone;
+        this.xa = xa;
+    }
+
+    void useTemplate(DataSourceTemplate template) {
+        dataSource = template.getDataSource();
+        driver = template.getDriver();
     }
 }

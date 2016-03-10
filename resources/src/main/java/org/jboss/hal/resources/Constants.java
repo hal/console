@@ -35,9 +35,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String cancel();
     String chooseSingleton();
+    String chooseTemplate();
     String clearMessages();
     String close();
+    String connection();
     String connectToServer();
+    String custom();
 
     String data();
     String defaultValue();
@@ -148,6 +151,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageHelpModelReferenceText();
     String homepageHelpLatestNews();
 
+    String jdbcDriver();
     String loading();
     String logout();
     String message();
@@ -182,6 +186,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String showAll();
     String start();
     String storage();
+    String summary();
     String supportsExpressions();
 
     String testConnection();
@@ -191,6 +196,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String type();
     String unknownError();
     String view();
+    String xaProperties();
     String yes();
     //@formatter:on
 }

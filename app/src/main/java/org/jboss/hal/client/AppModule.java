@@ -21,6 +21,7 @@
  */
 package org.jboss.hal.client;
 
+import com.google.inject.Singleton;
 import com.gwtplatform.mvp.client.annotations.DefaultPlace;
 import com.gwtplatform.mvp.client.annotations.ErrorPlace;
 import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
@@ -34,8 +35,9 @@ import org.jboss.hal.client.configuration.InterfacePresenter;
 import org.jboss.hal.client.configuration.InterfaceView;
 import org.jboss.hal.client.configuration.PathsPresenter;
 import org.jboss.hal.client.configuration.PathsView;
-import org.jboss.hal.client.configuration.subsystem.jca.DataSourcePresenter;
-import org.jboss.hal.client.configuration.subsystem.jca.DataSourceView;
+import org.jboss.hal.client.configuration.subsystem.datasource.DataSourcePresenter;
+import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
+import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceView;
 import org.jboss.hal.client.deployment.DeploymentPresenter;
 import org.jboss.hal.client.deployment.DeploymentView;
 import org.jboss.hal.client.homepage.HomepagePresenter;
@@ -54,6 +56,7 @@ import org.jboss.hal.client.utb.UnderTheBridgePresenter;
 import org.jboss.hal.client.utb.UnderTheBridgeView;
 import org.jboss.hal.core.gin.AbstractTemplatedPresenterModule;
 import org.jboss.hal.core.mvp.HalPlaceManager;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.GinModule;
 
 @GinModule
@@ -61,15 +64,23 @@ public class AppModule extends AbstractTemplatedPresenterModule {
 
     @Override
     protected void configure() {
+
+        // ------------------------------------------------------ GWTP
+
         DefaultModule defaultModule = new DefaultModule.Builder()
                 .placeManager(HalPlaceManager.class)
                 .tokenFormatter(RouteTokenFormatter.class)
                 .build();
         install(defaultModule);
 
-        bindConstant().annotatedWith(DefaultPlace.class).to(org.jboss.hal.meta.token.NameTokens.HOMEPAGE);
-        bindConstant().annotatedWith(ErrorPlace.class).to(org.jboss.hal.meta.token.NameTokens.HOMEPAGE);
-        bindConstant().annotatedWith(UnauthorizedPlace.class).to(org.jboss.hal.meta.token.NameTokens.HOMEPAGE);
+        bindConstant().annotatedWith(DefaultPlace.class).to(NameTokens.HOMEPAGE);
+        bindConstant().annotatedWith(ErrorPlace.class).to(NameTokens.HOMEPAGE);
+        bindConstant().annotatedWith(UnauthorizedPlace.class).to(NameTokens.HOMEPAGE);
+
+
+        // ------------------------------------------------------ misc
+
+        bind(DataSourceTemplates.class).in(Singleton.class);
 
 
         // ------------------------------------------------------ skeleton & root presenter

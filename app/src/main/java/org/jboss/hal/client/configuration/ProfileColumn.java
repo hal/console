@@ -29,6 +29,7 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -45,7 +46,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-@Column(Ids.PROFILE_COLUMN)
+@Column(ModelDescriptionConstants.PROFILE)
 public class ProfileColumn extends FinderColumn<Property> {
 
     private static final AddressTemplate PROFILE_TEMPLATE = AddressTemplate.of("/profile=*");
@@ -56,12 +57,12 @@ public class ProfileColumn extends FinderColumn<Property> {
             final EventBus eventBus,
             final ColumnActionFactory columnActionFactory) {
 
-        super(new Builder<Property>(finder, Ids.PROFILE_COLUMN, Names.PROFILES)
+        super(new Builder<Property>(finder, ModelDescriptionConstants.PROFILE, Names.PROFILES)
                 .columnAction(columnActionFactory.add(
-                        IdBuilder.build(Ids.PROFILE_COLUMN, "add"),
+                        IdBuilder.build(ModelDescriptionConstants.PROFILE, "add"),
                         Names.PROFILE,
                         PROFILE_TEMPLATE))
-                .columnAction(columnActionFactory.refresh(IdBuilder.build(Ids.PROFILE_COLUMN, "refresh")))
+                .columnAction(columnActionFactory.refresh(IdBuilder.build(ModelDescriptionConstants.PROFILE, "refresh")))
 
                 .itemRenderer(property -> new ItemDisplay<Property>() {
                     @Override
@@ -71,7 +72,7 @@ public class ProfileColumn extends FinderColumn<Property> {
 
                     @Override
                     public String nextColumn() {
-                        return Ids.SUBSYSTEM_COLUMN;
+                        return ModelDescriptionConstants.SUBSYSTEM;
                     }
                 })
 

@@ -34,7 +34,6 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
 
@@ -44,7 +43,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-@AsyncColumn(value = Ids.INTERFACE_COLUMN)
+@AsyncColumn(value = ModelDescriptionConstants.INTERFACE)
 public class InterfaceColumn extends FinderColumn<Property> {
 
     @Inject
@@ -53,13 +52,13 @@ public class InterfaceColumn extends FinderColumn<Property> {
             final ItemActionFactory itemActionFactory,
             final Dispatcher dispatcher) {
 
-        super(new Builder<Property>(finder, Ids.INTERFACE_COLUMN, Names.INTERFACE)
+        super(new Builder<Property>(finder, ModelDescriptionConstants.INTERFACE, Names.INTERFACE)
                 .columnAction(columnActionFactory.add(
-                        IdBuilder.build(Ids.INTERFACE_COLUMN, "add"),
+                        IdBuilder.build(ModelDescriptionConstants.INTERFACE, "add"),
                         Names.INTERFACE,
                         InterfacePresenter.ROOT_TEMPLATE,
                         "inet-address"))
-                .columnAction(columnActionFactory.refresh(IdBuilder.build(Ids.INTERFACE_COLUMN, "refresh")))
+                .columnAction(columnActionFactory.refresh(IdBuilder.build(ModelDescriptionConstants.INTERFACE, "refresh")))
                 .itemsProvider((context, callback) -> {
                     Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
                             .param(CHILD_TYPE, ModelDescriptionConstants.INTERFACE).build();

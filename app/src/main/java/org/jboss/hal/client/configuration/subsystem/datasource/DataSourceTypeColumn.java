@@ -19,12 +19,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.configuration.subsystem.jca;
+package org.jboss.hal.client.configuration.subsystem.datasource;
 
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
@@ -49,13 +50,13 @@ public class DataSourceTypeColumn extends StaticItemColumn {
 
                 new StaticItem.Builder("Non-XA") //NON-NLS
                         .id(NON_XA)
-                        .nextColumn(Ids.DATA_SOURCE_COLUMN)
+                        .nextColumn(ModelDescriptionConstants.DATA_SOURCE)
                         .onPreview(new PreviewContent("Non-XA Datasource", resources.previews().nonXa())) //NON-NLS
                         .build(),
 
                 new StaticItem.Builder("XA") //NON-NLS
                         .id(XA)
-                        .nextColumn(Ids.DATA_SOURCE_COLUMN)
+                        .nextColumn(ModelDescriptionConstants.DATA_SOURCE) // re-use the same column
                         .onPreview(new PreviewContent("XA Datasource", resources.previews().xa())) //NON-NLS
                         .build()));
     }

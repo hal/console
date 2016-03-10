@@ -163,13 +163,18 @@ public class ColumnActionFactory {
 
     public <T> ColumnAction<T> add(String id, String type, AddressTemplate template,
             @NonNls final String firstAttribute, @NonNls final String... otherAttributes) {
-        Element element = new Elements.Builder().span().css(pfIcon("add-circle-o")).end().build();
-        return new ColumnAction<>(id, element, (ColumnActionHandler<T>) column ->
+        return add(id, (ColumnActionHandler<T>) column ->
                 metadataProcessor.lookup(template, progress.get(),
                         new ColumnMetadataCallback<>(column, id, type, template, firstAttribute, otherAttributes)));
     }
 
+    public <T> ColumnAction<T> add(String id, ColumnActionHandler<T> handler) {
+        Element element = new Elements.Builder().span().css(pfIcon("add-circle-o")).end().build();
+        return new ColumnAction<>(id, element, handler);
+    }
+
     public <T> ColumnAction<T> refresh(String id) {
+
         Element element = new Elements.Builder().span().css(fontAwesome(CSS.refresh)).end().build();
         return new ColumnAction<>(id, element, (ColumnActionHandler<T>) column -> column.refresh(RESTORE_SELECTIION));
     }

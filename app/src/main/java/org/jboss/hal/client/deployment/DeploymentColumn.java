@@ -23,7 +23,7 @@ package org.jboss.hal.client.deployment;
 
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.resources.Ids;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Column;
 
@@ -32,11 +32,11 @@ import javax.inject.Inject;
 /**
  * @author Harald Pehl
  */
-@Column(Ids.DEPLOYMENT_COLUMN)
+@Column(ModelDescriptionConstants.DEPLOYMENT)
 public class DeploymentColumn extends FinderColumn<Deployment> {
 
     @Inject
     public DeploymentColumn(final Finder finder) {
-        super(new Builder<>(finder, Ids.DEPLOYMENT_COLUMN, Names.DEPLOYMENTS));
+        super(new Builder<>(finder, ModelDescriptionConstants.DEPLOYMENT, Names.DEPLOYMENTS));
     }
 }

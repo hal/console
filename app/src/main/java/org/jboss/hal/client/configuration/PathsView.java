@@ -133,6 +133,6 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
     @Override
     public void update(final List<NamedNode> paths) {
         table.api().clear().add(paths).refresh(RESET);
-        form.clear(); // TODO should be triggered automatically
+        form.clear(); // TODO restore selection, set selection to newly created item or clear selection after remove
     }
 }

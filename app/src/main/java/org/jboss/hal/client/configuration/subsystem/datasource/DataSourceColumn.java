@@ -19,11 +19,15 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.hal.client.configuration.subsystem.jca;
+package org.jboss.hal.client.configuration.subsystem.datasource;
 
 import com.google.gwt.user.client.Window;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.client.configuration.subsystem.datasource.wizard.NewDataSourceWizard;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -38,16 +42,22 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
+import org.jboss.hal.spi.Footer;
+import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.Message.Level;
+import org.jboss.hal.spi.MessageEvent;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -55,24 +65,44 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-@AsyncColumn(Ids.DATA_SOURCE_COLUMN)
+@AsyncColumn(ModelDescriptionConstants.DATA_SOURCE)
 public class DataSourceColumn extends FinderColumn<Property> {
 
+    private final MetadataProcessor metadataProcessor;
+    private final Provider<Progress> progress;
+    private final EventBus eventBus;
     private final StatementContext statementContext;
+    private final Environment environment;
+    private final Resources resources;
+    private final DataSourceTemplates templates;
 
     @Inject
-    public DataSourceColumn(final Finder finder,
+    public DataSourceColumn(final MetadataProcessor metadataProcessor,
+            @Footer final Provider<Progress> progress,
             final Dispatcher dispatcher,
+            final EventBus eventBus,
             final StatementContext statementContext,
+            final Environment environment,
             final Resources resources,
+            final DataSourceTemplates templates,
+            final Finder finder,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory) {
 
-        super(new Builder<Property>(finder, Ids.DATA_SOURCE_COLUMN, Names.DATASOURCE)
-                .columnAction(columnActionFactory.refresh(IdBuilder.build(Ids.DATA_SOURCE_COLUMN, "refresh")))
+        super(new Builder<Property>(finder, ModelDescriptionConstants.DATA_SOURCE, Names.DATASOURCE)
                 .onPreview(item -> new PreviewContent(item.getName())));
 
+        this.metadataProcessor = metadataProcessor;
+        this.progress = progress;
+        this.eventBus = eventBus;
         this.statementContext = statementContext;
+        this.environment = environment;
+        this.resources = resources;
+        this.templates = templates;
+
+        addColumnAction(columnActionFactory.add(IdBuilder.build(ModelDescriptionConstants.DATA_SOURCE, "add"),
+                column -> launchNewDataSourceWizard(xa(finder.getContext().getPath()))));
+        addColumnAction(columnActionFactory.refresh(IdBuilder.build(ModelDescriptionConstants.DATA_SOURCE, "refresh")));
 
         setItemsProvider((context, callback) -> {
             ResourceAddress address = AddressTemplate.of("/{selected.profile}/subsystem=datasources")
@@ -125,6 +155,24 @@ public class DataSourceColumn extends FinderColumn<Property> {
                     actions.add(new ItemAction<>(resources.constants().enable(), p -> enable(p, address)));
                 }
                 return actions;
+            }
+        });
+    }
+
+    private void launchNewDataSourceWizard(final boolean xa) {
+        AddressTemplate template = AddressTemplate.of("/{any.profile}/subsystem=datasources")
+                .append(xa ? "xa-data-source=*" : "data-source=*");
+        metadataProcessor.lookup(template, progress.get(), new MetadataProcessor.MetadataCallback() {
+            @Override
+            public void onError(final Throwable error) {
+                MessageEvent.fire(eventBus, Message.error(resources.constants().metadataError(), error.getMessage()));
+            }
+
+            @Override
+            public void onMetadata(final Metadata metadata) {
+                NewDataSourceWizard wizard = new NewDataSourceWizard(environment, resources,
+                        metadata, templates, Collections.emptyList(), Collections.emptyList(), xa);
+                wizard.show();
             }
         });
     }

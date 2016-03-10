@@ -11,6 +11,7 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.table.Button.Scope;
 import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.meta.Metadata;
@@ -87,7 +88,7 @@ class EndpointDialog {
             manager.pingServer(endpoint, new AsyncCallback<Void>() {
                 @Override
                 public void onFailure(final Throwable throwable) {
-                    feedback.error(MESSAGES.endpointError(endpoint.getUrl()));
+                    feedback.error(MESSAGES.endpointError(Endpoints.getBaseUrl()));
                 }
 
                 @Override

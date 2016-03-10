@@ -31,6 +31,7 @@ import org.jboss.hal.core.finder.HasFinder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.FinderPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -68,7 +69,7 @@ public class RuntimePresenter extends FinderPresenter<RuntimePresenter.MyView, R
 
     @Override
     protected String initialColumn() {
-        return environment.isStandalone() ? Ids.SERVER_COLUMN : Ids.DOMAIN_BROWSE_BY;
+        return environment.isStandalone() ? ModelDescriptionConstants.SERVER : Ids.DOMAIN_BROWSE_BY;
     }
 
     @Override

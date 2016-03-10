@@ -32,8 +32,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.meta.processing.MetadataProcessor;
-import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -45,7 +44,8 @@ public class HalPlaceManager extends DefaultPlaceManager {
 
     private final MetadataProcessor metadataProcessor;
     private final Provider<Progress> progress;
-    private final Constants constants;
+    private Resources resources;
+    private boolean firstRequest;
 
     @Inject
     public HalPlaceManager(final EventBus eventBus,
@@ -55,12 +55,13 @@ public class HalPlaceManager extends DefaultPlaceManager {
             @UnauthorizedPlace final String unauthorizedPlaceNameToken,
             final MetadataProcessor metadataProcessor,
             @Footer final Provider<Progress> progress,
-            final Constants constants) {
+            final Resources resources) {
         super(eventBus, tokenFormatter, defaultPlaceNameToken, errorPlaceNameToken, unauthorizedPlaceNameToken,
                 new PlaceHistoryHandler.DefaultHistorian());
         this.metadataProcessor = metadataProcessor;
         this.progress = progress;
-        this.constants = constants;
+        this.resources = resources;
+        this.firstRequest = true;
     }
 
     @Override
@@ -71,18 +72,23 @@ public class HalPlaceManager extends DefaultPlaceManager {
                 unlock();
                 revealDefaultPlace();
                 getEventBus().fireEvent(new MessageEvent(
-                        Message.error(constants.metadataError(), throwable.getMessage())));
+                        Message.error(resources.constants().metadataError(), throwable.getMessage())));
             }
 
             @Override
             public void onSuccess(final Void whatever) {
                 HalPlaceManager.super.doRevealPlace(request, updateBrowserUrl);
+                firstRequest = false;
             }
         });
     }
 
     @Override
     public void revealErrorPlace(final String invalidHistoryToken) {
-        MessageEvent.fire(getEventBus(), Message.error(Names.NYI));
+        MessageEvent.fire(getEventBus(), Message.error(resources.messages().pageNotFound(invalidHistoryToken)));
+        if (firstRequest) {
+            // TODO find a more elegant way to get hold of the very first request
+            super.revealErrorPlace(invalidHistoryToken);
+        }
     }
 }
