@@ -29,9 +29,9 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Column;
+import org.jboss.hal.spi.Requires;
 
 import javax.inject.Inject;
 
@@ -41,6 +41,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Harald Pehl
  */
 @Column(ModelDescriptionConstants.PROFILE)
+@Requires(value = "/profile=*", recursive = false)
 public class ProfileColumn extends FinderColumn<Property> {
 
     private static final AddressTemplate PROFILE_TEMPLATE = AddressTemplate.of("/profile=*");

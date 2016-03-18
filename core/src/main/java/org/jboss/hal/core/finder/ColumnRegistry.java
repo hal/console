@@ -17,7 +17,13 @@ package org.jboss.hal.core.finder;
 
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.meta.processing.MetadataProcessor;
+import org.jboss.hal.meta.resource.RequiredResources;
+import org.jboss.hal.spi.Footer;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +34,7 @@ import java.util.Map;
  */
 public class ColumnRegistry {
 
-    public interface LookupCallback {
+    interface LookupCallback {
 
         void found(FinderColumn column);
 
@@ -36,12 +42,22 @@ public class ColumnRegistry {
     }
 
 
+    private final MetadataProcessor metadataProcessor;
+    private final RequiredResources requiredResources;
+    private final Provider<Progress> progress;
     private final Map<String, FinderColumn> columns;
     private final Map<String, AsyncProvider> asyncColumns;
+    private final Map<String, FinderColumn> resolvedColumns;
 
-    public ColumnRegistry() {
-        columns = new HashMap<>();
-        asyncColumns = new HashMap<>();
+    @Inject
+    public ColumnRegistry(MetadataProcessor metadataProcessor, RequiredResources requiredResources,
+            @Footer Provider<Progress> progress) {
+        this.metadataProcessor = metadataProcessor;
+        this.requiredResources = requiredResources;
+        this.progress = progress;
+        this.columns = new HashMap<>();
+        this.asyncColumns = new HashMap<>();
+        this.resolvedColumns = new HashMap<>();
     }
 
     public void registerColumn(FinderColumn column) {
@@ -54,8 +70,32 @@ public class ColumnRegistry {
 
     @SuppressWarnings("unchecked")
     void lookup(String id, LookupCallback callback) {
-        if (columns.containsKey(id)) {
-            callback.found(columns.get(id));
+        if (resolvedColumns.containsKey(id)) {
+            callback.found(resolvedColumns.get(id));
+
+        } else if (columns.containsKey(id)) {
+            FinderColumn column = columns.get(id);
+            if (requiredResources.getResources(id).isEmpty()) {
+                resolve(id, column);
+                callback.found(column);
+
+            } else {
+                // process the required resource attached to this column
+                metadataProcessor.process(id, progress.get(), new AsyncCallback<Void>() {
+                    @Override
+                    public void onFailure(final Throwable throwable) {
+                        //noinspection HardCodedStringLiteral
+                        callback.error("Unable to load required resources for column '" + id + "': " + throwable
+                                .getMessage());
+                    }
+
+                    @Override
+                    public void onSuccess(final Void aVoid) {
+                        resolve(id, column);
+                        callback.found(column);
+                    }
+                });
+            }
 
         } else if (asyncColumns.containsKey(id)) {
             AsyncProvider<FinderColumn> asyncProvider = asyncColumns.get(id);
@@ -68,8 +108,8 @@ public class ColumnRegistry {
                 @Override
                 public void onSuccess(final FinderColumn column) {
                     asyncColumns.remove(id);
-                    registerColumn(column);
-                    callback.found(column);
+                    columns.put(id, column);
+                    lookup(id, callback);
                 }
             });
 
@@ -77,5 +117,10 @@ public class ColumnRegistry {
             //noinspection HardCodedStringLiteral
             callback.error("Unknown column '" + id + "'. Please make sure to register all columns, before using them.");
         }
+    }
+
+    private void resolve(String id, FinderColumn column) {
+        columns.remove(id);
+        resolvedColumns.put(id, column);
     }
 }

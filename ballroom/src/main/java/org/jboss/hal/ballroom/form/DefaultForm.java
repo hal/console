@@ -68,6 +68,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     private static final String NOT_INITIALIZED = "Form element not initialized. Please add this form to the DOM before calling any of the form operations";
 
     private final String id;
+    private final StateMachine stateMachine;
     private final DataMapping<T> dataMapping;
     private final LinkedHashMap<State, Element> panels;
     private final LinkedHashMap<String, FormItem> formItems;
@@ -85,17 +86,12 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     private EventListener exitEditWithEsc;
 
     // accessible in subclasses
-    protected final StateMachine stateMachine;
     protected SaveCallback<T> saveCallback;
     protected ResetCallback<T> resetCallback;
     protected CancelCallback<T> cancelCallback;
 
 
     // ------------------------------------------------------ initialization
-
-    public DefaultForm(final String id, final StateMachine stateMachine, final SecurityContext securityContext) {
-        this(id, stateMachine, new DefaultMapping<T>(), securityContext);
-    }
 
     public DefaultForm(final String id, final StateMachine stateMachine, final DataMapping<T> dataMapping,
             final SecurityContext securityContext) {
@@ -112,7 +108,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         this.formValidations = new ArrayList<>();
     }
 
-    public void addFormItem(FormItem formItem, FormItem... formItems) {
+    protected void addFormItem(FormItem formItem, FormItem... formItems) {
         for (FormItem item : Lists.asList(formItem, formItems)) {
             this.formItems.put(item.getName(), item);
             item.setId(IdBuilder.build(id, item.getName()));
@@ -187,7 +183,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             viewPanel.appendChild(formItem.asElement(READONLY));
             if (iterator.hasNext()) {
                 HRElement hr = Browser.getDocument().createHRElement();
-                hr.getClassList().add("separator");
+                hr.getClassList().add(separator);
                 viewPanel.appendChild(hr);
             }
         }
@@ -277,6 +273,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         }
         this.model = model;
         stateExec(ADD); // switch state before data mapping!
+        clearErrors();
         dataMapping.newModel(model, this);
     }
 
@@ -307,6 +304,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     public void clear() {
         this.model = null;
         stateExec(CLEAR);
+        clearErrors();
         dataMapping.clearFormItems(this);
     }
 
@@ -321,6 +319,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             throw new IllegalStateException(NOT_INITIALIZED);
         }
         stateExec(RESET); // switch state before data mapping!
+        clearErrors();
         dataMapping.resetModel(model, this);
         if (resetCallback != null) {
             resetCallback.onReset(this);
@@ -348,6 +347,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         }
         this.model = model;
         stateExec(EDIT); // switch state before data mapping!
+        clearErrors();
         dataMapping.populateFormItems(model, this);
     }
 
@@ -406,7 +406,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         this.cancelCallback = cancelCallback;
     }
 
-    protected String formId() {
+    private String formId() {
         return "form(" + id + ")"; //NON-NLS
     }
 

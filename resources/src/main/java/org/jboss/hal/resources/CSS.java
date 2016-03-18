@@ -139,6 +139,7 @@ public interface CSS {
     String restricted = "restricted";
     String row = "row";
     String selectpicker = "selectpicker";
+    String separator = "separator";
     String spinner = "spinner";
     String srOnly = "sr-only";
     String subtitle = "subtitle";

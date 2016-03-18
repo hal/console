@@ -26,7 +26,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
  */
 public class NamedNode extends ModelNode {
 
-    protected final String name;
     protected final ModelNode node;
 
     public NamedNode(final ModelNode node) {
@@ -38,13 +37,16 @@ public class NamedNode extends ModelNode {
     }
 
     public NamedNode(final String name, final ModelNode node) {
-        this.name = name;
         this.node = node;
         set(node);
-        get(NAME).set(name);
+        setName(name);
     }
 
     public String getName() {
         return get(NAME).asString();
+    }
+
+    public void setName(final String name) {
+        get(NAME).set(name);
     }
 }

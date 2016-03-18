@@ -35,24 +35,20 @@ public class Subsystem extends NamedNode {
 
         Subsystem subsystem = (Subsystem) o;
         //noinspection SimplifiableIfStatement
-        if (!name.equals(subsystem.name)) { return false; }
+        if (!getName().equals(subsystem.getName())) { return false; }
         return node.equals(subsystem.node);
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + name.hashCode();
+        result = 31 * result + getName().hashCode();
         result = 31 * result + node.hashCode();
         return result;
     }
 
-    public String getName() {
-        return name;
-    }
-
     @Override
     public String toString() {
-        return "Subsystem{" + name + "}";
+        return "Subsystem{" + getName() + "}";
     }
 }

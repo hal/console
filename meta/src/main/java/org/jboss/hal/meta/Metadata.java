@@ -20,7 +20,8 @@ import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 
 /**
- * Simple data struct for the various metadata. Only used to keep the method signatures small and tidy.
+ * Simple data struct for common metadata. Only used to keep the method signatures small and tidy.
+ *
  * @author Harald Pehl
  */
 public class Metadata {

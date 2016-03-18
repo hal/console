@@ -16,10 +16,9 @@
 package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
 import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import java.util.List;
@@ -29,15 +28,16 @@ import java.util.List;
  */
 class DriverStep extends WizardStep<Context, State> {
 
-    private final Element root;
+    private final Tabs tabs;
 
     DriverStep(final NewDataSourceWizard wizard, final List<JdbcDriver> drivers, final Resources resources) {
         super(wizard, resources.constants().jdbcDriver());
-        root = new Elements.Builder().p().textContent(Names.NYI).end().build();
+
+        tabs = new Tabs();
     }
 
     @Override
     public Element asElement() {
-        return root;
+        return tabs.asElement();
     }
 }

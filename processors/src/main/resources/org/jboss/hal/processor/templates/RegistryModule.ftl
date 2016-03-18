@@ -1,7 +1,7 @@
 <#-- @ftlvariable name="generatedWith" type="java.lang.String" -->
 <#-- @ftlvariable name="packageName" type="java.lang.String" -->
 <#-- @ftlvariable name="className" type="java.lang.String" -->
-<#-- @ftlvariable name="bindings" type="java.util.List<org.jboss.hal.processor.NameTokenProcessor.RegistryBinding>" -->
+<#-- @ftlvariable name="bindings" type="java.util.List<org.jboss.hal.processor.RegistryBinding>" -->
 package ${packageName};
 
 import javax.annotation.Generated;

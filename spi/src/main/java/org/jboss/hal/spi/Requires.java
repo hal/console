@@ -22,14 +22,15 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Specifies the required resources for a proxy and its enclosing presenter.
+ * Specifies the required resources attached to an UI element. Currently this is either a presenter-proxy or a finder
+ * column.
  */
 @Target(TYPE)
 @Retention(RUNTIME)
 public @interface Requires {
 
     /**
-     * Set of required resource to operate on (addressable privilege) within the presenter
+     * Set of required resource to operate on (addressable privilege)
      */
     String[] value();
 

@@ -30,6 +30,7 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
+import org.jboss.hal.spi.Requires;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -38,6 +39,7 @@ import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 @AsyncColumn(value = ModelDescriptionConstants.INTERFACE)
+@Requires(InterfacePresenter.ROOT_ADDRESS)
 public class InterfaceColumn extends FinderColumn<Property> {
 
     @Inject

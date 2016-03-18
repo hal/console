@@ -30,6 +30,7 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
+import org.jboss.hal.spi.Requires;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -41,6 +42,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Harald Pehl
  */
 @AsyncColumn(ModelDescriptionConstants.SOCKET_BINDING)
+@Requires(SocketBindingPresenter.ROOT_ADDRESS)
 public class SocketBindingColumn extends FinderColumn<Property> {
 
     @Inject

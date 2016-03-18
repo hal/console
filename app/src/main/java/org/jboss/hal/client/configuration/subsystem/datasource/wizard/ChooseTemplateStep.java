@@ -44,6 +44,7 @@ class ChooseTemplateStep extends WizardStep<Context, State> {
             builder.div().css(CSS.radio)
                 .label()
                     .input(InputType.radio)
+                        .attr("name", "template") //NON-NLS
                         .attr("value", "custom")
                         .on(click, event -> wizard.getContext().template  = null)
                     .span().textContent(resources.constants().custom()).end()
@@ -56,9 +57,12 @@ class ChooseTemplateStep extends WizardStep<Context, State> {
             builder.div().css(CSS.radio)
                 .label()
                     .input(InputType.radio)
+                        .attr("name", "template") //NON-NLS
                         .attr("value", template.getId())
-                        .on(click, event ->
-                                wizard.getContext().template = templates.getTemplate(((InputElement)event).getValue()))
+                    .on(click, event -> {
+                        String id = ((InputElement)event.getTarget()).getValue();
+                        wizard.getContext().template = templates.getTemplate(id);
+                    })
                     .span().textContent(template.toString()).end()
                 .end()
             .end();
@@ -73,5 +77,15 @@ class ChooseTemplateStep extends WizardStep<Context, State> {
     @Override
     public Element asElement() {
         return root;
+    }
+
+    @Override
+    protected boolean onNext(final Context context) {
+        if (context.template != null) {
+            context.useTemplate();
+        } else {
+            context.custom();
+        }
+        return true;
     }
 }

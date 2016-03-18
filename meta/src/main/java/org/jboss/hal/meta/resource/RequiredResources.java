@@ -19,6 +19,6 @@ import java.util.Set;
 
 public interface RequiredResources {
 
-    Set<String> getResources(String token);
-    boolean isRecursive(String token);
+    Set<String> getResources(String id);
+    boolean isRecursive(String id);
 }

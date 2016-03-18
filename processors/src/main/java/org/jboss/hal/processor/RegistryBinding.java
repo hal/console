@@ -13,22 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration.subsystem.datasource;
-
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.NamedNode;
+package org.jboss.hal.processor;
 
 /**
  * @author Harald Pehl
  */
-public class XADataSource extends NamedNode {
+public class RegistryBinding {
 
-    public XADataSource(final String name) {
-        super(name, new ModelNode());
+    private final String interface_;
+    private final String implementation;
+
+    RegistryBinding(final String interface_, final String implementation) {
+        this.interface_ = interface_;
+        this.implementation = implementation;
     }
 
-    public XADataSource(final Property property) {
-        super(property);
+    public String getImplementation() {
+        return implementation;
+    }
+
+    public String getInterface() {
+        return interface_;
     }
 }

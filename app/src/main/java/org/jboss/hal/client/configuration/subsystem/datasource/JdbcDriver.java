@@ -16,7 +16,6 @@
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
 
 /**
@@ -24,11 +23,11 @@ import org.jboss.hal.dmr.model.NamedNode;
  */
 public class JdbcDriver extends NamedNode {
 
-    public JdbcDriver(final String name) {
-        super(name, new ModelNode());
+    public JdbcDriver() {
+        this("");
     }
 
-    public JdbcDriver(final Property property) {
-        super(property);
+    JdbcDriver(final String name) {
+        super(name, new ModelNode());
     }
 }

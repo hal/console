@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSource;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplate;
 import org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver;
+import org.jboss.hal.meta.Metadata;
 
 /**
  * @author Harald Pehl
@@ -26,16 +27,23 @@ class Context {
 
     final boolean standalone;
     final boolean xa;
+    final Metadata metadata;
     DataSourceTemplate template;
     DataSource dataSource;
     JdbcDriver driver;
 
-    Context(boolean standalone, boolean xa) {
+    Context(boolean standalone, boolean xa, Metadata metadata) {
         this.standalone = standalone;
         this.xa = xa;
+        this.metadata = metadata;
     }
 
-    void useTemplate(DataSourceTemplate template) {
+    void custom() {
+        dataSource = new DataSource(xa);
+        driver = new JdbcDriver();
+    }
+
+    void useTemplate() {
         dataSource = template.getDataSource();
         driver = template.getDriver();
     }

@@ -26,12 +26,11 @@ import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.Requires;
@@ -51,8 +50,8 @@ public class DataSourcePresenter extends
 
     // @formatter:off
     @ProxyCodeSplit
-    @Requires(ROOT_ADDRESS)
     @NameToken(NameTokens.DATA_SOURCE)
+    @Requires(AddressTemplates.DATA_SOURCE_ADDRESS)
     public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<DataSourcePresenter> {
@@ -60,13 +59,6 @@ public class DataSourcePresenter extends
     }
     // @formatter:on
 
-
-    static final String ROOT_ADDRESS = "/{any.profile}/subsystem=datasources/data-source=*";
-    static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
-    static final AddressTemplate DATA_SOURCE_RESOURCE = AddressTemplate
-            .of("/{selected.profile}/subsystem=datasources/data-source=*");
-    static final AddressTemplate XA_DATA_SOURCE_RESOURCE = AddressTemplate
-            .of("/{selected.profile}/subsystem=datasources/xa-data-source=*");
 
     private static final Logger logger = LoggerFactory.getLogger(DataSourcePresenter.class);
 
@@ -112,14 +104,14 @@ public class DataSourcePresenter extends
 
     private void loadDataSource() {
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
-                DATA_SOURCE_RESOURCE.resolve(statementContext, datasource)).build();
+                AddressTemplates.DATA_SOURCE_TEMPLATE.resolve(statementContext, datasource)).build();
         dispatcher.execute(operation, result -> getView().update(datasource, result));
     }
 
     void saveDataSource(final Map<String, Object> changedValues) {
         logger.debug("About to save changes for {}: {}", datasource, changedValues); //NON-NLS
 
-        ResourceAddress resourceAddress = DATA_SOURCE_RESOURCE.resolve(statementContext, datasource);
+        ResourceAddress resourceAddress = AddressTemplates.DATA_SOURCE_TEMPLATE.resolve(statementContext, datasource);
         Composite composite = operationFactory.fromChangeSet(resourceAddress, changedValues);
 
         dispatcher.execute(composite, (CompositeResult result) -> {

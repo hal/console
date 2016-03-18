@@ -16,28 +16,56 @@
 package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
 import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSource;
-import org.jboss.hal.resources.Names;
+import org.jboss.hal.core.mbui.dialog.NameItem;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.resources.Resources;
 
 import java.util.List;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
  * @author Harald Pehl
  */
 class NamesStep extends WizardStep<Context, State> {
 
-    private final Element root;
+    private final ModelNodeForm<DataSource> form;
 
     NamesStep(final NewDataSourceWizard wizard, final List<DataSource> existingDataSources, final Resources resources) {
         super(wizard, resources.constants().attributes());
-        root = new Elements.Builder().p().textContent(Names.NYI).end().build();
+
+        form = new ModelNodeForm.Builder<DataSource>(IdBuilder.build(id(), "names", "step"),
+                wizard.getContext().metadata)
+                .unboundFormItem(new NameItem(), 0)
+                .include("jndi-name")
+                .onSave((form, changedValues) -> {
+                    wizard.getContext().dataSource = form.getModel();
+                    wizard.getContext().dataSource.setName(String.valueOf(changedValues.get(NAME)));
+                })
+                .build();
     }
 
     @Override
     public Element asElement() {
-        return root;
+        return form.asElement();
+    }
+
+    @Override
+    protected void onShow(final Context context) {
+        // name is unbound so we have to bind it manually
+        form.getFormItem(NAME).setValue(context.dataSource.getName());
+        form.edit(context.dataSource);
+    }
+
+    @Override
+    protected boolean onNext(final Context context) {
+        if (form.validate()) {
+            form.save();
+            return true;
+        }
+        return false;
     }
 }

@@ -91,9 +91,9 @@ public class MetadataProcessor {
         this.rrdOps = new CreateRrdOperations(statementContext);
     }
 
-    public void process(final String token, final Progress progress, final AsyncCallback<Void> callback) {
-        Set<String> resources = requiredResources.getResources(token);
-        logger.debug("Process required resources {} for token {}", resources, token); //NON-NLS
+    public void process(final String id, final Progress progress, final AsyncCallback<Void> callback) {
+        Set<String> resources = requiredResources.getResources(id);
+        logger.debug("Process required resources {} for id {}", resources, id); //NON-NLS
         if (resources.isEmpty()) {
             logger.debug("No required resources found -> callback.onSuccess(null)"); //NON-NLS
             callback.onSuccess(null);
@@ -101,7 +101,7 @@ public class MetadataProcessor {
         } else {
             //noinspection Guava
             Set<AddressTemplate> templates = FluentIterable.from(resources).transform(AddressTemplate::of).toSet();
-            processInternal(templates, requiredResources.isRecursive(token), progress, callback);
+            processInternal(templates, requiredResources.isRecursive(id), progress, callback);
         }
     }
 

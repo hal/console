@@ -55,8 +55,6 @@ import static org.jboss.hal.resources.CSS.itemText;
 import static org.jboss.hal.resources.CSS.subtitle;
 
 /**
- * TODO Implement domain mode
- *
  * @author Harald Pehl
  */
 @Column(ModelDescriptionConstants.SUBSYSTEM)

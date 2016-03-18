@@ -47,6 +47,7 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.Message.Level;
 import org.jboss.hal.spi.MessageEvent;
+import org.jboss.hal.spi.Requires;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -54,12 +55,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
  */
 @AsyncColumn(ModelDescriptionConstants.DATA_SOURCE)
+@Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS, JDBC_DRIVER_ADDRESS})
 public class DataSourceColumn extends FinderColumn<Property> {
 
     private final MetadataProcessor metadataProcessor;
@@ -99,8 +102,7 @@ public class DataSourceColumn extends FinderColumn<Property> {
         addColumnAction(columnActionFactory.refresh(IdBuilder.build(ModelDescriptionConstants.DATA_SOURCE, "refresh")));
 
         setItemsProvider((context, callback) -> {
-            ResourceAddress address = AddressTemplate.of("/{selected.profile}/subsystem=datasources")
-                    .resolve(statementContext);
+            ResourceAddress address = DATA_SOURCE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
             Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
                     .param(CHILD_TYPE, resourceType(context.getPath())).build();
             dispatcher.execute(operation, result -> {
@@ -139,7 +141,7 @@ public class DataSourceColumn extends FinderColumn<Property> {
                 List<ItemAction<Property>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.view(viewRequest));
                 actions.add(itemActionFactory.remove(Names.DATASOURCE, property.getName(),
-                        DataSourcePresenter.DATA_SOURCE_RESOURCE, DataSourceColumn.this));
+                        DATA_SOURCE_TEMPLATE, DataSourceColumn.this));
                 if (isEnabled(property)) {
                     actions.add(new ItemAction<>(resources.constants().disable(), p -> disable(p, dataSourceAddress)));
                     actions.add(new ItemAction<>(resources.constants().testConnection(),
@@ -157,8 +159,7 @@ public class DataSourceColumn extends FinderColumn<Property> {
     }
 
     private void launchNewDataSourceWizard(final boolean xa) {
-        AddressTemplate template = AddressTemplate.of("/{selected.profile}/subsystem=datasources")
-                .append(xa ? "xa-data-source=*" : "data-source=*");
+        AddressTemplate template = xa ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE;
         metadataProcessor.lookup(template, progress.get(), new MetadataProcessor.MetadataCallback() {
             @Override
             public void onError(final Throwable error) {
@@ -180,8 +181,8 @@ public class DataSourceColumn extends FinderColumn<Property> {
 
     private ResourceAddress dataSourceAddress(FinderPath path, Property property) {
         return xa(path)
-                ? DataSourcePresenter.XA_DATA_SOURCE_RESOURCE.resolve(statementContext, property.getName())
-                : DataSourcePresenter.DATA_SOURCE_RESOURCE.resolve(statementContext, property.getName());
+                ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, property.getName())
+                : DATA_SOURCE_TEMPLATE.resolve(statementContext, property.getName());
     }
 
     private boolean isEnabled(Property datasource) {

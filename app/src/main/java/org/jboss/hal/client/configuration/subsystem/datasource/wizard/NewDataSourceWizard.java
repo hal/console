@@ -44,7 +44,7 @@ public class NewDataSourceWizard extends Wizard<Context, State> {
 
         super(Ids.DATA_SOURCE_WIZARD,
                 resources.messages().addResourceTitle(xa ? Names.XA_DATASOURCE : Names.DATASOURCE),
-                new Context(environment.isStandalone(), xa));
+                new Context(environment.isStandalone(), xa, metadata));
 
         addStep(CHOOSE_TEMPLATE, new ChooseTemplateStep(this, templates, resources, xa));
         addStep(NAMES, new NamesStep(this, existingDataSources, resources));

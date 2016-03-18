@@ -54,8 +54,8 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
             ResourceDescriptions descriptions,
             Capabilities capabilities) {
 
-        SecurityContext securityContext = securityFramework.lookup(DataSourcePresenter.ROOT_TEMPLATE);
-        ResourceDescription description = descriptions.lookup(DataSourcePresenter.ROOT_TEMPLATE);
+        SecurityContext securityContext = securityFramework.lookup(AddressTemplates.DATA_SOURCE_TEMPLATE);
+        ResourceDescription description = descriptions.lookup(AddressTemplates.DATA_SOURCE_TEMPLATE);
         Metadata metadata = new Metadata(securityContext, description, capabilities);
 
         Element info = new Elements.Builder().p().textContent(description.getDescription()).end().build();

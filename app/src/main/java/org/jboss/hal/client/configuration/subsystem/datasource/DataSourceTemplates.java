@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
-import com.google.inject.Inject;
 import org.jboss.hal.dmr.ModelNode;
 
 import java.util.ArrayList;
@@ -33,7 +32,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
 
     private final List<DataSourceTemplate> pool;
 
-    @Inject
     public DataSourceTemplates() {
         DataSource dataSource;
         DataSource xaDataSource;

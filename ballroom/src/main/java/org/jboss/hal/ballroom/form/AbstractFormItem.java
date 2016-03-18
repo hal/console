@@ -52,6 +52,8 @@ import static org.jboss.hal.resources.UIConstants.HIDDEN;
 
 /**
  * TODO Implement org.jboss.hal.ballroom.form.Form.State#READONLY
+ * TODO Show resolved expressions using a dismissable inline notification
+ * https://www.patternfly.org/patterns/inline-notifications/
  *
  * @author Harald Pehl
  */
