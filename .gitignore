@@ -1,0 +1,12 @@
+*.iml
+*.bak
+.DS_Store
+.idea
+.settings
+.project
+.classpath
+.wakatime-project
+out
+target
+gwt-unitCache
+hs_err*
