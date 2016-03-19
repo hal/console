@@ -1,23 +1,17 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.client.configuration;
 
@@ -29,6 +23,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.client.tools.ModelBrowserPresenter;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
@@ -44,7 +39,6 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.subsystem.SubsystemMetadata;
 import org.jboss.hal.meta.subsystem.Subsystems;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
@@ -61,16 +55,14 @@ import static org.jboss.hal.resources.CSS.itemText;
 import static org.jboss.hal.resources.CSS.subtitle;
 
 /**
- * TODO Implement domain mode
- *
  * @author Harald Pehl
  */
-@Column(Ids.SUBSYSTEM_COLUMN)
+@Column(ModelDescriptionConstants.SUBSYSTEM)
 public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
     private static class ResourceDescriptionPreview extends PreviewContent {
 
-        public ResourceDescriptionPreview(final String header, final Dispatcher dispatcher, final Operation operation) {
+        ResourceDescriptionPreview(final String header, final Dispatcher dispatcher, final Operation operation) {
             super(header);
             builder.section().rememberAs(CONTENT_ELEMENT).end();
             Element content = builder.referenceFor(CONTENT_ELEMENT);
@@ -83,6 +75,9 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
         }
     }
 
+
+    private static final AddressTemplate SUBSYSTEM_TEMPLATE = AddressTemplate.of("{selected.profile}/subsystem=*");
+
     @Inject
     public SubsystemColumn(final Finder finder,
             final Dispatcher dispatcher,
@@ -91,7 +86,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
             final Subsystems subsystems,
             final Resources resources) {
 
-        super(new Builder<SubsystemMetadata>(finder, Ids.SUBSYSTEM_COLUMN, Names.SUBSYSTEM)
+        super(new Builder<SubsystemMetadata>(finder, ModelDescriptionConstants.SUBSYSTEM, Names.SUBSYSTEM)
                 .itemRenderer(item -> new ItemDisplay<SubsystemMetadata>() {
 
                     @Override
@@ -99,8 +94,8 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                         return item.getSubtitle() != null
                                 ? new Elements.Builder()
                                 .span().css(itemText)
-                                .span().innerText(item.getTitle()).end()
-                                .start("small").css(subtitle).innerText(item.getSubtitle()).end()
+                                .span().textContent(item.getTitle()).end()
+                                .start("small").css(subtitle).textContent(item.getSubtitle()).end()
                                 .end().build()
                                 : null;
                     }
@@ -131,8 +126,10 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                                     item -> placeManager.revealPlace(placeRequest)));
 
                         } else if (!item.isBuiltIn()) {
-                            placeRequest = new PlaceRequest.Builder().nameToken(NameTokens.MODEL_BROWSER)
-                                    .with("path", item.getName())
+                            ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, item.getName());
+                            placeRequest = new PlaceRequest.Builder()
+                                    .nameToken(NameTokens.MODEL_BROWSER)
+                                    .with(ModelBrowserPresenter.ADDRESS_PARAM, address.toString())
                                     .build();
                             return Collections.singletonList(new ItemAction<>(resources.constants().view(),
                                     item -> placeManager.revealPlace(placeRequest)));
@@ -175,8 +172,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                         return new PreviewContent(item.getTitle(), resource);
 
                     } else {
-                        ResourceAddress address = AddressTemplate.of("{selected.profile}/subsystem=*")
-                                .resolve(statementContext, item.getName());
+                        ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, item.getName());
                         Operation operation = new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION, address)
                                 .build();
                         return new ResourceDescriptionPreview(item.getTitle(), dispatcher, operation);

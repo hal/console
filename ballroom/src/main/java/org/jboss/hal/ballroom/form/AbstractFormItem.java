@@ -1,23 +1,17 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.ballroom.form;
 
@@ -54,10 +48,12 @@ import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.Names.HIDDEN;
+import static org.jboss.hal.resources.UIConstants.HIDDEN;
 
 /**
  * TODO Implement org.jboss.hal.ballroom.form.Form.State#READONLY
+ * TODO Show resolved expressions using a dismissable inline notification
+ * https://www.patternfly.org/patterns/inline-notifications/
  *
  * @author Harald Pehl
  */
@@ -140,7 +136,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
                     .span()
                     .id(IdBuilder.build(name, "addon", "hint"))
                     .css(inputGroupAddon)
-                    .innerText(hint)
+                    .textContent(hint)
                     .end().build();
         }
 
@@ -180,7 +176,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         readonlyLabelElement = new Elements.Builder()
                 .label()
                 .css(column(labelColumns), controlLabel)
-                .innerText(label)
+                .textContent(label)
                 .end()
                 .build();
         valueContainer = new Elements.Builder().div().css(column(inputColumns)).end().build();
@@ -216,7 +212,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         readonlyRoot.appendChild(valueContainer);
     }
 
-    void showInputButton(ButtonElement button) {
+    private void showInputButton(ButtonElement button) {
         inputElement.asElement().removeAttribute(ARIA_DESCRIBEDBY);
 
         if (hasInputButton()) {
@@ -238,30 +234,29 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         }
     }
 
-    void showInputAddon(String addon) {
+    private void showInputAddon(String addon) {
         inputAddonContainer.setTextContent(addon);
         inputElement.asElement().setAttribute(ARIA_DESCRIBEDBY, inputAddonContainer.getId());
 
         if (hasInputButton()) {
             inputGroupContainer.removeChild(inputButtonContainer);
             inputGroupContainer.appendChild(inputAddonContainer);
-        }
 
-        //noinspection StatementWithEmptyBody
-        else if (hasInputAddon()) {
-            // nothing to do
+        } else //noinspection StatementWithEmptyBody
+            if (hasInputAddon()) {
+                // nothing to do
 
-        } else {
-            if (inputContainer.contains(inputElement().asElement())) {
-                inputContainer.removeChild(inputElement().asElement());
+            } else {
+                if (inputContainer.contains(inputElement().asElement())) {
+                    inputContainer.removeChild(inputElement().asElement());
+                }
+                inputGroupContainer.appendChild(inputElement.asElement());
+                inputGroupContainer.appendChild(inputAddonContainer);
+                inputContainer.appendChild(inputGroupContainer);
             }
-            inputGroupContainer.appendChild(inputElement.asElement());
-            inputGroupContainer.appendChild(inputAddonContainer);
-            inputContainer.appendChild(inputGroupContainer);
-        }
     }
 
-    void removeInputGroup() {
+    private void removeInputGroup() {
         Elements.removeChildrenFrom(inputGroupContainer);
         Elements.removeChildrenFrom(inputButtonContainer);
         inputContainer.removeChild(inputGroupContainer);
@@ -269,19 +264,19 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     }
 
-    boolean hasInputButton() {
+    private boolean hasInputButton() {
         return inputContainer.contains(inputGroupContainer) &&
                 inputGroupContainer.contains(inputButtonContainer) &&
                 inputButtonContainer.getChildren().length() > 0;
     }
 
-    boolean hasInputButton(ButtonElement button) {
+    private boolean hasInputButton(ButtonElement button) {
         return inputContainer.contains(inputGroupContainer) &&
                 inputGroupContainer.contains(inputButtonContainer) &&
                 inputButtonContainer.contains(button);
     }
 
-    boolean hasInputAddon() {
+    private boolean hasInputAddon() {
         return inputContainer.contains(inputGroupContainer) &&
                 inputGroupContainer.contains(inputAddonContainer) &&
                 !isNullOrEmpty(inputAddonContainer.getTextContent());
@@ -313,8 +308,17 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
      */
     @Override
     public void attach() {
+        inputElement().attach();
         if (suggestHandler instanceof Attachable) {
             ((Attachable) suggestHandler).attach();
+        }
+        if (suggestHandler instanceof Typeahead) {
+            Typeahead typeahead = (Typeahead) suggestHandler;
+            Typeahead.Bridge.select("#" + getId(EDITING)).onChange(event -> {
+                String value = ((elemental.html.InputElement) event.getTarget()).getValue();
+                onSuggest(value);
+            });
+            typeahead.clearRemoteCache();
         }
     }
 
@@ -573,11 +577,6 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     public void registerSuggestHandler(final SuggestHandler suggestHandler) {
         this.suggestHandler = suggestHandler;
         this.suggestHandler.setFormItem(this);
-        if (suggestHandler instanceof Typeahead) {
-            Typeahead typeahead = (Typeahead) suggestHandler;
-            Typeahead.Bridge.select(getId(EDITING)).onSelect((event, data) ->
-                    onSuggest(typeahead.getDataset().display.render(data)));
-        }
         toggleShowAll(true);
     }
 
@@ -665,7 +664,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     public void setEnabled(final boolean enabled) {
         if (enabled) {
             inputContainer.getClassList().remove(disabled);
-        } else  {
+        } else {
             inputContainer.getClassList().add(disabled);
         }
         inputElement.setEnabled(enabled);

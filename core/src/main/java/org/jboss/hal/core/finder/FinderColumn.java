@@ -1,27 +1,22 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.core.finder;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental.dom.Element;
 import elemental.events.Event;
@@ -50,12 +45,14 @@ import static org.jboss.hal.ballroom.PatternFly.$;
 import static org.jboss.hal.core.finder.Finder.DATA_BREADCRUMB;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
-import static org.jboss.hal.resources.UIConstants.ROLE;
-import static org.jboss.hal.resources.UIConstants.TABINDEX;
+import static org.jboss.hal.resources.UIConstants.*;
 
 /**
  * Describes and renders a column in a finder. A column has a unique id, a title, a number of optional column actions
  * and an {@link ItemRenderer} which defines how the items of this column are rendered.
+ * <p>
+ * The idea is that columns are self-contained and don't need direct references to other columns. References are only
+ * provided by id. The {@link ColumnRegistry} will then try to resolve the id against an existing column.
  *
  * @param <T> The columns type.
  *
@@ -86,14 +83,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             this.showCount = false;
             this.withFilter = false;
             this.items = new ArrayList<>();
-        }
-
-        public Builder<T> columnAction(String title, ColumnActionHandler<T> handler) {
-            return columnAction(new ColumnAction<>(title, handler));
-        }
-
-        public Builder<T> columnAction(Element element, ColumnActionHandler<T> handler) {
-            return columnAction(new ColumnAction<>(element, handler));
         }
 
         public Builder<T> columnAction(ColumnAction<T> action) {
@@ -144,8 +133,12 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     }
 
 
+    public enum RefreshMode {CLEAR_SELECTION, RESTORE_SELECTIION}
+
+
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String HEADER_ELEMENT = "headerElement";
+    private static final String COLUMN_ACTIONS_ELEMENT = "columnActionsElement";
     private static final String FILTER_ELEMENT = "filterElement";
     private static final String UL_ELEMENT = "ulElement";
     private static final Logger logger = LoggerFactory.getLogger(FinderColumn.class);
@@ -154,6 +147,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     private final String id;
     private final String title;
     private final boolean showCount;
+    private final Element columnActions;
     private final List<T> initialItems;
     private ItemsProvider<T> itemsProvider;
     private ItemRenderer<T> itemRenderer;
@@ -193,22 +187,20 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                 .attr(TABINDEX, "-1")
                 .on(keydown, this::onNavigation)
                 .header()
-                .h(1).innerText(builder.title).title(builder.title).rememberAs(HEADER_ELEMENT).end();
+                .h(1).textContent(builder.title).title(builder.title).rememberAs(HEADER_ELEMENT).end();
 
         // column actions
-        if (!builder.columnActions.isEmpty()) {
-            if (builder.columnActions.size() == 1) {
-                addColumnButton(eb, builder.columnActions.get(0));
-            } else {
-                //noinspection DuplicateStringLiteralInspection
-                eb.div().css(btnGroup).attr(ROLE, "group"); //NON-NLS
-                for (ColumnAction<T> action : builder.columnActions) {
-                    addColumnButton(eb, action);
-                }
-                eb.end();
+        eb.div().rememberAs(COLUMN_ACTIONS_ELEMENT);
+        if (builder.columnActions.size() == 1) {
+            eb.add(newColumnButton(builder.columnActions.get(0)));
+        } else {
+            //noinspection DuplicateStringLiteralInspection
+            eb.css(btnGroup).attr(ROLE, GROUP);
+            for (ColumnAction<T> action : builder.columnActions) {
+                eb.add(newColumnButton(action));
             }
         }
-        eb.end(); // </updateHeader>
+        eb.end().end(); // </columnActions> && </updateHeader>
 
         // filter box
         if (builder.withFilter) {
@@ -233,29 +225,31 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
         // no items marker
         noItems = new Elements.Builder().li().css(empty)
-                .span().css(itemText).innerText(CONSTANTS.noItems()).end()
+                .span().css(itemText).textContent(CONSTANTS.noItems()).end()
                 .end().build();
 
         root = eb.build();
         headerElement = eb.referenceFor(HEADER_ELEMENT);
+        columnActions = eb.referenceFor(COLUMN_ACTIONS_ELEMENT);
         filterElement = builder.withFilter ? eb.referenceFor(FILTER_ELEMENT) : null;
         ulElement = eb.referenceFor(UL_ELEMENT);
     }
 
-    private void addColumnButton(final Elements.Builder builder, final ColumnAction<T> action) {
-        builder.button()
+    private Element newColumnButton(final ColumnAction<T> action) {
+        Elements.Builder builder = new Elements.Builder().button()
+                .id(action.id)
                 .css(btn, btnFinder)
                 .on(click, event -> action.handler.execute(this));
 
         if (action.title != null) {
-            builder.innerText(action.title);
+            builder.textContent(action.title);
         } else if (action.element != null) {
             builder.add(action.element);
         } else {
-            builder.innerText(NOT_AVAILABLE);
+            builder.textContent(NOT_AVAILABLE);
         }
 
-        builder.end(); // </button>
+        return builder.end().build();
     }
 
     private void updateHeader(int matched) {
@@ -286,7 +280,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             if (li == noItems) {
                 continue;
             }
-            Object filterData = li.getDataset().at(CSS.filter); //NON-NLS
+            Object filterData = li.getDataset().at(CSS.filter);
             boolean match = filter == null
                     || filter.trim().length() == 0
                     || filterData == null
@@ -515,6 +509,23 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     }
 
     /**
+     * Sometimes you need to reference {@code this} in the column action handler. This is not possible if they're
+     * part of the builder which is passed to {@code super()}. In this case you can use this method to add your column
+     * actions <strong>after</strong> the call to {@code super()}.
+     * <p>
+     * However make sure to call the setter <strong>before</strong> the column is used {@link #asElement()} and gets
+     * attached to the DOM!
+     */
+    protected void addColumnAction(ColumnAction<T> columnAction) {
+        assertNotAsElement("addColumnAction()");
+        columnActions.appendChild(newColumnButton(columnAction));
+        if (columnActions.getChildElementCount() > 1) {
+            columnActions.getClassList().add(btnGroup);
+            columnActions.setAttribute(ROLE, GROUP);
+        }
+    }
+
+    /**
      * Sometimes you need to reference {@code this} in the actions created by {@link ItemDisplay#actions()}. This is
      * not possible if they're part of the builder which is passed to {@code super()}. In this case the item renderer
      * can be specified <strong>after</strong> the call to {@code super()} using this setter.
@@ -556,15 +567,36 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         return root;
     }
 
-    @Override
-    public void onSecurityContextChange(final SecurityContext securityContext) {
-        // TODO Check column actions
-        for (FinderRow<T> row : rows.values()) {
-            row.onSecurityContextChange(securityContext);
+    public void refresh(RefreshMode refreshMode) {
+        switch (refreshMode) {
+            case CLEAR_SELECTION:
+                refresh(() -> finder.selectPreviousColumn(id));
+                break;
+            case RESTORE_SELECTIION:
+                FinderRow<T> row = selectedRow();
+                refresh(() -> {
+                    if (row != null) {
+                        row.click();
+                    } else {
+                        finder.selectPreviousColumn(id);
+                    }
+                });
+                break;
         }
     }
 
-    public void refresh() {
+    public void refresh(String selectItemId) {
+        refresh(() -> {
+            FinderRow<T> row = rows.get(selectItemId);
+            if (row != null) {
+                row.click();
+            } else {
+                finder.selectPreviousColumn(id);
+            }
+        });
+    }
+
+    public void refresh(ScheduledCommand andThen) {
         setItems(new AsyncCallback<FinderColumn>() {
             @Override
             public void onFailure(final Throwable throwable) {
@@ -575,8 +607,19 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             public void onSuccess(final FinderColumn column) {
                 finder.updateContext();
                 finder.publishContext();
+                if (andThen != null) {
+                    andThen.execute();
+                }
             }
         });
+    }
+
+    @Override
+    public void onSecurityContextChange(final SecurityContext securityContext) {
+        // TODO Check column actions
+        for (FinderRow<T> row : rows.values()) {
+            row.onSecurityContextChange(securityContext);
+        }
     }
 
     public String getId() {

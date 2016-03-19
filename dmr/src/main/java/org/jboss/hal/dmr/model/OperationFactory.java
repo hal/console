@@ -1,26 +1,21 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.dmr.model;
 
+import com.google.common.base.Strings;
 import org.jboss.hal.dmr.ModelNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,26 +28,30 @@ import java.util.Map;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * Turns a changeset into a composite operation containing {@link org.jboss.hal.dmr.ModelDescriptionConstants#WRITE_ATTRIBUTE_OPERATION}
- * and {@link org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION} operations.
- *
  * @author Harald Pehl
  */
-public class ChangeSetAdapter {
+public class OperationFactory {
 
-    private static final Logger logger = LoggerFactory.getLogger(ChangeSetAdapter.class);
+    private static final Logger logger = LoggerFactory.getLogger(OperationFactory.class);
 
-    public Composite fromChangeSet(final ResourceAddress resourceAddress, final Map<String, Object> changeSet) {
+    /**
+     * Turns a changeset into a composite operation containing {@link org.jboss.hal.dmr.ModelDescriptionConstants#WRITE_ATTRIBUTE_OPERATION}
+     * and {@link org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION} operations.
+     */
+    public Composite fromChangeSet(final ResourceAddress address, final Map<String, Object> changeSet) {
 
-        Operation writeAttribute = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, resourceAddress).build();
-        Operation undefineAttribute = new Operation.Builder(UNDEFINE_ATTRIBUTE_OPERATION, resourceAddress).build();
+        Operation writeAttribute = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address).build();
+        Operation undefineAttribute = new Operation.Builder(UNDEFINE_ATTRIBUTE_OPERATION, address).build();
 
         List<Operation> operations = new ArrayList<>();
         for (String name : changeSet.keySet()) {
             Operation step;
 
             Object value = changeSet.get(name);
-            if (value == null) {
+            if (value == null
+                    || (value instanceof String && (Strings.isNullOrEmpty((String) value)))
+                    || (value instanceof List && ((List) value).isEmpty())
+                    || (value instanceof Map && ((Map) value).isEmpty())) {
                 step = undefineAttribute.clone();
                 step.get(NAME).set(name);
                 operations.add(step);
@@ -67,7 +66,7 @@ public class ChangeSetAdapter {
                 } else {
                     //noinspection HardCodedStringLiteral
                     logger.error("Unsupported type {} when building composite operation for {} from changeset {}",
-                            value.getClass(), resourceAddress, changeSet);
+                            value.getClass(), address, changeSet);
                 }
             }
         }
@@ -99,13 +98,11 @@ public class ChangeSetAdapter {
         } else if (ArrayList.class == type) {
             valueNode.clear();
             List l = (List) value;
-            for (Object o : l)
-                valueNode.add(String.valueOf(o));
+            for (Object o : l) { valueNode.add(String.valueOf(o)); }
         } else if (HashMap.class == type) {
             valueNode.clear();
             Map map = (Map) value;
-            for (Object k : map.keySet())
-                valueNode.add(String.valueOf(k), String.valueOf(map.get(k)));
+            for (Object k : map.keySet()) { valueNode.add(String.valueOf(k), String.valueOf(map.get(k))); }
         } else {
             valueNode = null;
         }

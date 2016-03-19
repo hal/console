@@ -1,41 +1,37 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.client.configuration;
 
-import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
+import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.core.ProfileSelectionEvent;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.resources.Ids;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Column;
+import org.jboss.hal.spi.Requires;
 
 import javax.inject.Inject;
 
@@ -44,17 +40,24 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-@Column(Ids.PROFILE_COLUMN)
+@Column(ModelDescriptionConstants.PROFILE)
+@Requires(value = "/profile=*", recursive = false)
 public class ProfileColumn extends FinderColumn<Property> {
+
+    private static final AddressTemplate PROFILE_TEMPLATE = AddressTemplate.of("/profile=*");
 
     @Inject
     public ProfileColumn(final Finder finder,
             final Dispatcher dispatcher,
             final EventBus eventBus,
             final ColumnActionFactory columnActionFactory) {
-        super(new Builder<Property>(finder, Ids.PROFILE_COLUMN, Names.PROFILES)
-                .columnAction(columnActionFactory.add(column -> Window.alert(Names.NYI)))
-                .columnAction(columnActionFactory.refresh(FinderColumn::refresh))
+
+        super(new Builder<Property>(finder, ModelDescriptionConstants.PROFILE, Names.PROFILES)
+                .columnAction(columnActionFactory.add(
+                        IdBuilder.build(ModelDescriptionConstants.PROFILE, "add"),
+                        Names.PROFILE,
+                        PROFILE_TEMPLATE))
+                .columnAction(columnActionFactory.refresh(IdBuilder.build(ModelDescriptionConstants.PROFILE, "refresh")))
 
                 .itemRenderer(property -> new ItemDisplay<Property>() {
                     @Override
@@ -64,7 +67,7 @@ public class ProfileColumn extends FinderColumn<Property> {
 
                     @Override
                     public String nextColumn() {
-                        return Ids.SUBSYSTEM_COLUMN;
+                        return ModelDescriptionConstants.SUBSYSTEM;
                     }
                 })
 

@@ -1,23 +1,17 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.processor;
 
@@ -46,7 +40,7 @@ import static java.util.Arrays.asList;
 import static org.jboss.hal.processor.TemplateNames.*;
 
 /**
- * Processor which scans all {@code @NameToken}s annotations and generates several registry and helper classes based
+ * Processor which scans all {@code @NameToken} annotations and generates several registry and helper classes based
  * on the additional annotations bound to each place.
  *
  * @author Harald Pehl
@@ -60,17 +54,13 @@ public class NameTokenProcessor extends AbstractProcessor {
     private static final String NAME_TOKEN_PACKAGE = "org.jboss.hal.meta.token";
     private static final String NAME_TOKEN_CLASS = "NameTokensImpl";
 
-    private static final String REQUIRED_RESOURCES_TEMPLATE = "RequiredResources.ftl";
-    private static final String REQUIRED_RESOURCES_PACKAGE = "org.jboss.hal.meta.resource";
-    private static final String REQUIRED_RESOURCES_CLASS = "RequiredResourcesImpl";
-
     private static final String SEARCH_INDEX_TEMPLATE = "SearchIndex.ftl";
     private static final String SEARCH_INDEX_PACKAGE = "org.jboss.hal.meta.search";
     private static final String SEARCH_INDEX_CLASS = "SearchIndexImpl";
 
     private static final String REGISTRY_MODULE_TEMPLATE = "RegistryModule.ftl";
     private static final String REGISTRY_MODULE_PACKAGE = "org.jboss.hal.meta";
-    private static final String REGISTRY_MODULE_CLASS = "GeneratedRegistryModule";
+    private static final String REGISTRY_MODULE_CLASS = "NameTokenRegistriesModule";
 
     private final Set<TokenInfo> tokenInfos;
 
@@ -89,10 +79,7 @@ public class NameTokenProcessor extends AbstractProcessor {
 
             Requires requires = tokenElement.getAnnotation(Requires.class);
             NoGatekeeper noGatekeeper = tokenElement.getAnnotation(NoGatekeeper.class);
-            if (requires != null) {
-                tokenInfo.addResources(requires.value());
-                tokenInfo.setRecursive(requires.recursive());
-            } else if (noGatekeeper == null) {
+            if (requires == null && noGatekeeper == null) {
                 warning(e, "Proxy with token \"#%s\" is missing @%s annotation.",
                         tokenInfo.getToken(), Requires.class.getSimpleName());
             }
@@ -114,10 +101,6 @@ public class NameTokenProcessor extends AbstractProcessor {
             code(NAME_TOKEN_TEMPLATE, NAME_TOKEN_PACKAGE, NAME_TOKEN_CLASS,
                     context(NAME_TOKEN_PACKAGE, NAME_TOKEN_CLASS));
 
-            debug("Generating code for required resources registry");
-            code(REQUIRED_RESOURCES_TEMPLATE, REQUIRED_RESOURCES_PACKAGE, REQUIRED_RESOURCES_CLASS,
-                    context(REQUIRED_RESOURCES_PACKAGE, REQUIRED_RESOURCES_CLASS));
-
             debug("Generating code for search index registry");
             code(SEARCH_INDEX_TEMPLATE, SEARCH_INDEX_PACKAGE, SEARCH_INDEX_CLASS,
                     context(SEARCH_INDEX_PACKAGE, SEARCH_INDEX_CLASS));
@@ -125,8 +108,6 @@ public class NameTokenProcessor extends AbstractProcessor {
             List<RegistryBinding> bindings = ImmutableList.of(
                     new RegistryBinding(NAME_TOKEN_PACKAGE + ".NameTokens",
                             NAME_TOKEN_PACKAGE + "." + NAME_TOKEN_CLASS),
-                    new RegistryBinding(REQUIRED_RESOURCES_PACKAGE + ".RequiredResources",
-                            REQUIRED_RESOURCES_PACKAGE + "." + REQUIRED_RESOURCES_CLASS),
                     new RegistryBinding(SEARCH_INDEX_PACKAGE + ".SearchIndex",
                             SEARCH_INDEX_PACKAGE + "." + SEARCH_INDEX_CLASS));
             debug("Generating code for registry module");
@@ -140,8 +121,8 @@ public class NameTokenProcessor extends AbstractProcessor {
                         return context;
                     });
 
-            info("Successfully generated name token registries [%s], [%s] and [%s] and related module [%s].",
-                    NAME_TOKEN_CLASS, REQUIRED_RESOURCES_CLASS, SEARCH_INDEX_CLASS, REGISTRY_MODULE_CLASS);
+            info("Successfully generated name token registries [%s], [%s] and related module [%s].",
+                    NAME_TOKEN_CLASS, SEARCH_INDEX_CLASS, REGISTRY_MODULE_CLASS);
             tokenInfos.clear();
         }
         return false;
@@ -173,7 +154,7 @@ public class NameTokenProcessor extends AbstractProcessor {
         private boolean domainOnly;
         private boolean standaloneOnly;
 
-        public TokenInfo(String token) {
+        TokenInfo(String token) {
             this.token = token;
             this.resources = new HashSet<>();
             this.recursive = false;
@@ -207,7 +188,7 @@ public class NameTokenProcessor extends AbstractProcessor {
             return exclude;
         }
 
-        public void setExclude(boolean exclude) {
+        void setExclude(boolean exclude) {
             this.exclude = exclude;
         }
 
@@ -215,7 +196,7 @@ public class NameTokenProcessor extends AbstractProcessor {
             return keywords;
         }
 
-        public void addKeywords(String[] keywords) {
+        void addKeywords(String[] keywords) {
             this.keywords.addAll(asList(keywords));
         }
 
@@ -243,7 +224,7 @@ public class NameTokenProcessor extends AbstractProcessor {
             return domainOnly;
         }
 
-        public void setDomainOnly(boolean domainOnly) {
+        void setDomainOnly(boolean domainOnly) {
             this.domainOnly = domainOnly;
         }
 
@@ -251,28 +232,8 @@ public class NameTokenProcessor extends AbstractProcessor {
             return standaloneOnly;
         }
 
-        public void setStandaloneOnly(boolean standaloneOnly) {
+        void setStandaloneOnly(boolean standaloneOnly) {
             this.standaloneOnly = standaloneOnly;
-        }
-    }
-
-
-    public static class RegistryBinding {
-
-        private final String interface_;
-        private final String implementation;
-
-        public RegistryBinding(final String interface_, final String implementation) {
-            this.interface_ = interface_;
-            this.implementation = implementation;
-        }
-
-        public String getImplementation() {
-            return implementation;
-        }
-
-        public String getInterface() {
-            return interface_;
         }
     }
 }

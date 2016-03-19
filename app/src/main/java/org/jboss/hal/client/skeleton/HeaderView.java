@@ -1,32 +1,27 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.client.skeleton;
 
 import com.google.common.base.Joiner;
-import com.google.gwt.user.client.Window;
 import com.gwtplatform.mvp.client.ViewImpl;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
+import elemental.client.Browser;
 import elemental.dom.Element;
+import elemental.html.Window;
 import org.jboss.gwt.elemento.core.DataElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventHandler;
@@ -39,7 +34,11 @@ import org.jboss.hal.config.User;
 import org.jboss.hal.core.finder.Breadcrumb;
 import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.modelbrowser.ModelBrowser;
+import org.jboss.hal.core.modelbrowser.ModelBrowserPath;
+import org.jboss.hal.core.modelbrowser.ModelBrowserPath.Segment;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
@@ -53,6 +52,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.client.skeleton.HeaderPresenter.MESSAGE_TIMEOUT;
 import static org.jboss.hal.config.InstanceInfo.WILDFLY;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.*;
@@ -178,6 +178,8 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     @Override
     public void showMessage(final Message message) {
+        // TODO Prevent showing two messages at once -> queue multiple messages
+        // TODO Hovering over the message stops the timer
         switch (message.getLevel()) {
             case ERROR:
                 logger.error(message.getMessage());
@@ -188,6 +190,13 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
             case INFO:
                 logger.info(message.getMessage());
                 break;
+        }
+        Window window = Browser.getWindow();
+        Element body = Browser.getDocument().getBody();
+        Element messageElement = new MessageElement(message).asElement();
+        body.insertBefore(messageElement, body.getFirstChild());
+        if (!message.isSticky()) {
+            window.setTimeout(() -> body.removeChild(messageElement), MESSAGE_TIMEOUT);
         }
     }
 
@@ -204,7 +213,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     }
 
     @Override
-    public void updatePath(final FinderContext finderContext) {
+    public void updateBack(final FinderContext finderContext) {
         String token = finderContext.getToken();
         if (token != null) {
             String historyToken = historyToken(token, finderContext.getPath());
@@ -239,13 +248,54 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
             } else {
                 builder.a(historyToken(finderContext.getToken(), currentPath));
             }
-            builder.span().css(key).innerText(breadcrumbSegment.key).end()
-                    .span().css(value).innerText(breadcrumbSegment.value).end();
+            builder.span().css(key).textContent(breadcrumbSegment.key).end()
+                    .span().css(value).textContent(breadcrumbSegment.value).end();
             if (!last) {
                 builder.end(); // </a>
             }
             builder.end(); // </li>
             breadcrumbs.appendChild(builder.build());
+        }
+    }
+
+    @Override
+    public void updateBreadcrumb(final ModelBrowserPath path) {
+        while (breadcrumbs.getLastChild() != null && breadcrumbs.getChildren().getLength() > 1) {
+            breadcrumbs.removeChild(breadcrumbs.getLastChild());
+        }
+
+        if (path == null) {
+            // deselection
+            breadcrumbs.appendChild(
+                    new Elements.Builder().li().textContent(resources().constants().nothingSelected()).build());
+
+        } else {
+            if (path.isEmpty()) {
+                breadcrumbs.appendChild(new Elements.Builder().li().textContent("").build());
+
+            } else {
+                ModelBrowser modelBrowser = path.getModelBrowser();
+                for (Iterator<Segment[]> iterator = path.iterator(); iterator.hasNext(); ) {
+                    Segment[] segments = iterator.next();
+                    Segment key = segments[0];
+                    Segment value = segments[1];
+                    boolean link = value != ModelBrowserPath.WILDCARD && iterator.hasNext();
+
+                    Elements.Builder builder = new Elements.Builder().li();
+                    builder.a().css(clickable).on(click, event -> modelBrowser.select(key.id, true))
+                            .span().css(CSS.key).textContent(key.text).end()
+                            .end();
+                    if (link) {
+                        builder.a().css(clickable).on(click, event -> modelBrowser.select(value.id, true));
+                    }
+                    builder.span().css(CSS.value).textContent(value.text).end();
+                    if (link) {
+                        builder.end();
+                    }
+                    builder.end();
+                    breadcrumbs.appendChild(builder.build());
+                }
+            }
         }
     }
 
@@ -256,16 +306,15 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     @EventHandler(element = "messages", on = click)
     void onMessages() {
-        Window.alert(NYI);
     }
 
     @EventHandler(element = "logout", on = click)
     void onLogout() {
-        Window.alert(NYI);
+        Browser.getWindow().alert(NYI);
     }
 
     @EventHandler(element = "reconnect", on = click)
     void onReconnect() {
-        Window.alert(NYI);
+        Browser.getWindow().alert(NYI);
     }
 }

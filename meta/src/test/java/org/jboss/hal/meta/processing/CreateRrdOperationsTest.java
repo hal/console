@@ -34,7 +34,7 @@ public class CreateRrdOperationsTest {
     @Test
     public void noTemplates() {
         List<Operation> operations = rrdOps
-                .create(new LookupResult("#token", Collections.<AddressTemplate>emptySet(), false));
+                .create(new LookupResult(Collections.<AddressTemplate>emptySet(), false));
         assertTrue(operations.isEmpty());
     }
 
@@ -45,7 +45,7 @@ public class CreateRrdOperationsTest {
         AddressTemplate securityContextPresent = AddressTemplate.of("securityContext=present");
         AddressTemplate allPresent = AddressTemplate.of("all=present");
 
-        LookupResult lookupResult = new LookupResult("#token",
+        LookupResult lookupResult = new LookupResult(
                 Sets.newHashSet(nothingPresent, descriptionPresent, securityContextPresent, allPresent), false);
 
         lookupResult.markMetadataPresent(descriptionPresent, RESOURCE_DESCRIPTION_PRESENT);
@@ -82,7 +82,7 @@ public class CreateRrdOperationsTest {
     @Test
     public void recursive() {
         List<Operation> operations = rrdOps
-                .create(new LookupResult("#token", Sets.newHashSet(AddressTemplate.of("foo=bar")), true));
+                .create(new LookupResult(Sets.newHashSet(AddressTemplate.of("foo=bar")), true));
         Operation operation = operations.get(0);
         assertTrue(operation.get(RECURSIVE).asBoolean());
     }

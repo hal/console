@@ -1,23 +1,17 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.core.finder;
 
@@ -91,10 +85,10 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
             eb.add(display.asElement());
             tooltipTarget = display.asElement();
         } else if (display.getTitle() != null) {
-            eb.span().css(itemText).innerText(display.getTitle()).rememberAs(TOOLTIP_TARGET).end();
+            eb.span().css(itemText).textContent(display.getTitle()).rememberAs(TOOLTIP_TARGET).end();
             tooltipTarget = eb.referenceFor(TOOLTIP_TARGET);
         } else {
-            eb.span().css(itemText).innerText(NOT_AVAILABLE).rememberAs(TOOLTIP_TARGET).end();
+            eb.span().css(itemText).textContent(NOT_AVAILABLE).rememberAs(TOOLTIP_TARGET).end();
             tooltipTarget = eb.referenceFor(TOOLTIP_TARGET);
         }
 
@@ -113,7 +107,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                 ItemAction<T> action = display.actions().get(0);
                 eb.button()
                         .css(btn, btnFinder)
-                        .innerText(action.title)
+                        .textContent(action.title)
                         .on(click, event -> action.handler.execute(item))
                         .rememberAs(BUTTON_CONTAINER)
                         .end();
@@ -126,7 +120,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                         // @formatter:off
                         eb.button()
                                 .css(btn, btnFinder)
-                                .innerText(action.title)
+                                .textContent(action.title)
                                 .on(click, event -> action.handler.execute(item))
                         .end();
                         eb.button()
@@ -135,7 +129,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                                 .aria(UIConstants.HAS_POPUP, String.valueOf(true))
                                 .aria(UIConstants.EXPANDED, String.valueOf(false))
                             .span().css(caret).end()
-                            .span().css(srOnly).innerText(CONSTANTS.toggleDropdown()).end()
+                            .span().css(srOnly).textContent(CONSTANTS.toggleDropdown()).end()
                         .end();
                         // @formatter:on
                         firstAction = false;
@@ -146,7 +140,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                             ulCreated = true;
                         }
                         eb.li().a()
-                                .innerText(action.title)
+                                .textContent(action.title)
                                 .css(clickable)
                                 .on(click, event -> action.handler.execute(item))
                                 .end().end();

@@ -1,39 +1,37 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.client;
 
+import com.google.inject.Singleton;
 import com.gwtplatform.mvp.client.annotations.DefaultPlace;
 import com.gwtplatform.mvp.client.annotations.ErrorPlace;
 import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
 import com.gwtplatform.mvp.shared.proxy.RouteTokenFormatter;
+import org.jboss.hal.client.accesscontrol.AccessControlPresenter;
+import org.jboss.hal.client.accesscontrol.AccessControlView;
 import org.jboss.hal.client.configuration.ConfigurationPresenter;
 import org.jboss.hal.client.configuration.ConfigurationView;
 import org.jboss.hal.client.configuration.InterfacePresenter;
 import org.jboss.hal.client.configuration.InterfaceView;
 import org.jboss.hal.client.configuration.PathsPresenter;
 import org.jboss.hal.client.configuration.PathsView;
-import org.jboss.hal.client.configuration.subsystem.jca.DataSourcePresenter;
-import org.jboss.hal.client.configuration.subsystem.jca.DataSourceView;
+import org.jboss.hal.client.configuration.subsystem.datasource.DataSourcePresenter;
+import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
+import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceView;
 import org.jboss.hal.client.deployment.DeploymentPresenter;
 import org.jboss.hal.client.deployment.DeploymentView;
 import org.jboss.hal.client.homepage.HomepagePresenter;
@@ -46,10 +44,13 @@ import org.jboss.hal.client.skeleton.FooterPresenter;
 import org.jboss.hal.client.skeleton.HeaderPresenter;
 import org.jboss.hal.client.skeleton.Templated_FooterView_Provider;
 import org.jboss.hal.client.skeleton.Templated_HeaderView_Provider;
+import org.jboss.hal.client.tools.ModelBrowserPresenter;
+import org.jboss.hal.client.tools.ModelBrowserView;
 import org.jboss.hal.client.utb.UnderTheBridgePresenter;
 import org.jboss.hal.client.utb.UnderTheBridgeView;
 import org.jboss.hal.core.gin.AbstractTemplatedPresenterModule;
 import org.jboss.hal.core.mvp.HalPlaceManager;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.GinModule;
 
 @GinModule
@@ -57,15 +58,23 @@ public class AppModule extends AbstractTemplatedPresenterModule {
 
     @Override
     protected void configure() {
+
+        // ------------------------------------------------------ GWTP
+
         DefaultModule defaultModule = new DefaultModule.Builder()
                 .placeManager(HalPlaceManager.class)
                 .tokenFormatter(RouteTokenFormatter.class)
                 .build();
         install(defaultModule);
 
-        bindConstant().annotatedWith(DefaultPlace.class).to(org.jboss.hal.meta.token.NameTokens.HOMEPAGE);
-        bindConstant().annotatedWith(ErrorPlace.class).to(org.jboss.hal.meta.token.NameTokens.HOMEPAGE);
-        bindConstant().annotatedWith(UnauthorizedPlace.class).to(org.jboss.hal.meta.token.NameTokens.HOMEPAGE);
+        bindConstant().annotatedWith(DefaultPlace.class).to(NameTokens.HOMEPAGE);
+        bindConstant().annotatedWith(ErrorPlace.class).to(NameTokens.HOMEPAGE);
+        bindConstant().annotatedWith(UnauthorizedPlace.class).to(NameTokens.HOMEPAGE);
+
+
+        // ------------------------------------------------------ misc
+
+        bind(DataSourceTemplates.class).in(Singleton.class);
 
 
         // ------------------------------------------------------ skeleton & root presenter
@@ -85,6 +94,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
 
 
         // ------------------------------------------------------ remaining presenter (A-Z)
+
+        bindPresenter(AccessControlPresenter.class,
+                AccessControlPresenter.MyView.class,
+                AccessControlView.class,
+                AccessControlPresenter.MyProxy.class);
 
         bindPresenter(ConfigurationPresenter.class,
                 ConfigurationPresenter.MyView.class,
@@ -110,6 +124,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 InterfacePresenter.MyView.class,
                 InterfaceView.class,
                 InterfacePresenter.MyProxy.class);
+
+        bindPresenter(ModelBrowserPresenter.class,
+                ModelBrowserPresenter.MyView.class,
+                ModelBrowserView.class,
+                ModelBrowserPresenter.MyProxy.class);
 
         bindPresenter(PathsPresenter.class,
                 PathsPresenter.MyView.class,

@@ -1,26 +1,21 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.core.mbui.form;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.FormItem;
@@ -32,10 +27,14 @@ import org.jboss.hal.ballroom.form.PropertiesItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.SwitchItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
+import org.jboss.hal.ballroom.typeahead.Typeahead.ReadChildrenNamesBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
 
 import java.util.HashMap;
 import java.util.List;
@@ -49,11 +48,15 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-public class DefaultFormItemProvider implements FormItemProvider {
+class DefaultFormItemProvider implements FormItemProvider {
 
+    private final Capabilities capabilities;
     private final LabelBuilder labelBuilder;
 
-    public DefaultFormItemProvider() {labelBuilder = new LabelBuilder();}
+    DefaultFormItemProvider(final Capabilities capabilities) {
+        this.capabilities = capabilities;
+        this.labelBuilder = new LabelBuilder();
+    }
 
     @Override
     public FormItem<?> createFrom(final Property attributeDescription) {
@@ -62,8 +65,9 @@ public class DefaultFormItemProvider implements FormItemProvider {
         String name = attributeDescription.getName();
         String label = labelBuilder.label(attributeDescription);
         ModelNode modelNode = attributeDescription.getValue();
-        boolean required = !modelNode.get(NILLABLE).asBoolean(true);
-        boolean expressionAllowed = modelNode.get(EXPRESSION_ALLOWED).asBoolean(false);
+        boolean required = modelNode.hasDefined(NILLABLE) && !modelNode.get(NILLABLE).asBoolean();
+        boolean expressionAllowed = modelNode.hasDefined(EXPRESSIONS_ALLOWED) && modelNode.get(EXPRESSIONS_ALLOWED)
+                .asBoolean();
         boolean runtime = modelNode.hasDefined(STORAGE) && RUNTIME.equals(modelNode.get(STORAGE).asString());
         boolean readOnly = modelNode.hasDefined(ACCESS_TYPE) && READ_ONLY.equals(modelNode.get(ACCESS_TYPE).asString());
         String unit = modelNode.hasDefined(UNIT) ? modelNode.get(UNIT).asString() : null;
@@ -124,6 +128,7 @@ public class DefaultFormItemProvider implements FormItemProvider {
                                 }
                             }
                             formItem = listItem;
+                            checkCapabilityReference(modelNode, formItem);
                         }
                     }
                     break;
@@ -154,6 +159,7 @@ public class DefaultFormItemProvider implements FormItemProvider {
                             textBoxItem.setDefaultValue(modelNode.get(DEFAULT).asString());
                         }
                         formItem = textBoxItem;
+                        checkCapabilityReference(modelNode, formItem);
                     } else {
                         SingleSelectBoxItem singleSelectBoxItem = new SingleSelectBoxItem(name, label,
                                 allowedValues, !required);
@@ -188,6 +194,26 @@ public class DefaultFormItemProvider implements FormItemProvider {
         }
 
         return formItem;
+    }
+
+    private void checkCapabilityReference(final ModelNode modelNode, final FormItem<?> formItem) {
+        if (modelNode.hasDefined(CAPABILITY_REFERENCE)) {
+            String reference = modelNode.get(CAPABILITY_REFERENCE).asString();
+            Iterable<ResourceAddress> addresses = capabilities.lookup(reference);
+            if (!Iterables.isEmpty(addresses)) {
+                if (Iterables.size(addresses) == 1) {
+                    ResourceAddress address = addresses.iterator().next();
+                    ResourceAddress parent = address.getParent();
+                    String childName = address.lastName();
+                    if (parent != null && childName != null) {
+                        Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, parent)
+                                .param(CHILD_TYPE, childName).build();
+                        ReadChildrenNamesBuilder builder = new ReadChildrenNamesBuilder(operation);
+                        formItem.registerSuggestHandler(builder.build());
+                    }
+                }
+            }
+        }
     }
 
 

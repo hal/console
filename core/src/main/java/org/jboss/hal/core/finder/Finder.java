@@ -1,27 +1,20 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.core.finder;
 
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -50,8 +43,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
@@ -69,7 +65,7 @@ import static org.jboss.hal.resources.Ids.FINDER;
 public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     /**
-     * Function used in {@link #select(String, FinderPath, ScheduledCommand)} to select one segment in a finder path.
+     * Function used in {@link #select(String, FinderPath, Runnable)} to select one segment in a finder path.
      */
     private class SelectFunction implements Function<FunctionContext> {
 
@@ -137,7 +133,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     private final Provider<Progress> progress;
     private final String id;
     private final FinderContext context;
-    private final Map<String, FinderColumn> columns;
+    private final LinkedHashMap<String, FinderColumn> columns;
     private final Map<String, String> initialColumnsByToken;
     private final Element root;
     private final Element previewColumn;
@@ -157,7 +153,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
         this.id = FINDER;
         this.context = new FinderContext();
-        this.columns = new HashMap<>();
+        this.columns = new LinkedHashMap<>();
         this.initialColumnsByToken = new HashMap<>();
 
         // @formatter:off
@@ -232,7 +228,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         });
     }
 
-    private void appendColumn(FinderColumn column, AsyncCallback<FinderColumn> callback) {
+    private void appendColumn(FinderColumn<?> column, AsyncCallback<FinderColumn> callback) {
         column.resetSelection();
         columns.put(column.getId(), column);
         root.insertBefore(column.asElement(), previewColumn);
@@ -251,7 +247,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         }
     }
 
-    void reduceTo(FinderColumn column) {
+    void reduceTo(FinderColumn<?> column) {
         boolean removeFromHere = false;
         for (Iterator<Element> iterator = Elements.children(root).iterator(); iterator.hasNext(); ) {
             Element element = iterator.next();
@@ -312,6 +308,28 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         finderColumn.asElement().focus();
     }
 
+    void selectPreviousColumn(final String columnId) {
+        List<String> columnIds = new ArrayList<>(columns.keySet());
+        int index = 0;
+        for (String id : columnIds) {
+            if (id.equals(columnId)) {
+                break;
+            }
+            index++;
+        }
+        if (index > 0 && index < columnIds.size()) {
+            String previousId = columnIds.get(index - 1);
+            selectColumn(previousId);
+            FinderColumn previousColumn = columns.get(previousId);
+            if (previousColumn != null) {
+                FinderRow selectedRow = previousColumn.selectedRow();
+                if (selectedRow != null) {
+                    selectedRow.click();
+                }
+            }
+        }
+    }
+
     FinderColumn getColumn(String columnId) {
         return columns.get(columnId);
     }
@@ -341,9 +359,9 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         publishContext();
     }
 
-    public void select(final String token, final FinderPath path, final ScheduledCommand fallback) {
+    public void select(final String token, final FinderPath path, final Runnable fallback) {
         if (path.isEmpty()) {
-            fallback.execute();
+            fallback.run();
 
         } else {
             if (!token.equals(context.getToken())) {
@@ -384,7 +402,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 @Override
                 public void onFailure(final FunctionContext context) {
                     if (Finder.this.context.getPath().isEmpty()) {
-                        fallback.execute();
+                        fallback.run();
 
                     } else if (!context.emptyStack()) {
                         FinderColumn column = context.pop();
@@ -404,6 +422,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                     selectColumn(column.getId());
                     FinderRow row = column.selectedRow();
                     if (row != null) {
+                        row.asElement().scrollIntoView(false);
                         row.appendNextColumn();
                         row.showPreview();
                     }

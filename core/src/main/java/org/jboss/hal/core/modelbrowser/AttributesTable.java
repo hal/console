@@ -1,32 +1,28 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.core.modelbrowser;
 
 import com.google.common.collect.Ordering;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.HelpTextBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.CSS;
@@ -47,14 +43,15 @@ class AttributesTable implements IsElement {
 
     AttributesTable(final List<Property> attributes, final Resources resources) {
 
+        HelpTextBuilder helpTextBuilder = new HelpTextBuilder();
         Elements.Builder builder = new Elements.Builder().table()
                 .css(table, tableBordered, tableStriped, CSS.attributes)
                 .thead()
                 .tr()
-                .th().innerText(resources.constants().attribute()).end()
-                .th().innerText(resources.constants().type()).end()
-                .th().innerText(resources.constants().storage()).end()
-                .th().innerText(resources.constants().accessType()).end()
+                .th().textContent(resources.constants().attribute()).end()
+                .th().textContent(resources.constants().type()).end()
+                .th().textContent(resources.constants().storage()).end()
+                .th().textContent(resources.constants().accessType()).end()
                 .end()
                 .end();
 
@@ -62,7 +59,7 @@ class AttributesTable implements IsElement {
         for (Property property : Ordering.natural().onResultOf(Property::getName).sortedCopy(attributes)) {
             ModelNode attribute = property.getValue();
             boolean required = attribute.hasDefined(NILLABLE) && !attribute.get(NILLABLE).asBoolean();
-            String description = attribute.hasDefined(DESCRIPTION) ? attribute.get(DESCRIPTION).asString() : null;
+            SafeHtml description = helpTextBuilder.helpText(property);
 
             builder.tr();
 
@@ -75,12 +72,12 @@ class AttributesTable implements IsElement {
                 html.appendHtmlConstant(NBSP).append(resources.messages().requiredMarker());
             }
             if (description != null) {
-                html.appendHtmlConstant("<br/>").appendEscaped(description); //NON-NLS
+                html.appendHtmlConstant("<br/>").append(description); //NON-NLS
             }
             builder.td().innerHtml(html.toSafeHtml()).end();
 
             // type
-            builder.td().innerText(attribute.get(TYPE).asString()).end();
+            builder.td().textContent(attribute.get(TYPE).asString()).end();
 
             // storage
             builder.td();

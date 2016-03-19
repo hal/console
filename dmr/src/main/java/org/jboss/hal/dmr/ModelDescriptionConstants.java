@@ -1,4 +1,20 @@
 /*
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
  * JBoss, Home of Professional Open Source
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved.
@@ -38,33 +54,43 @@ public interface ModelDescriptionConstants {
     String ALLOWED = "allowed";
     String ANY = "any";
     String ATTRIBUTES = "attributes";
+
     String BYTES = "bytes";
+
+    String CAPABILITY_REFERENCE = "capability-reference";
     String CHILD_TYPE = "child-type";
     String CHILDREN = "children";
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
     String COMPOSITE = "composite";
     String CONFIGURATION = "configuration";
     String CRITERIA = "criteria";
+
     String DATA_SOURCE = "data-source";
     String DEFAULT = "default";
+    String DEPLOYMENT = "deployment";
     String DESCRIBE = "describe";
     String DESCRIPTION = "description";
     @SuppressWarnings("DuplicateStringLiteralInspection")
     String DISABLED = "disabled";
+
     String ENABLED = "enabled";
     String EXCEPTIONS = "exceptions";
     String EXECUTE = "execute";
-    String EXPRESSION_ALLOWED = "expression-allowed";
+    String EXPRESSIONS_ALLOWED = "expressions-allowed";
     String EXTENSION = "extension";
+
     String FAILED = "failed";
     String FAILURE_DESCRIPTION = "failure-description";
+
     String GRACEFUL_SHUTDOWN_TIMEOUT = "graceful-shutdown-timeout";
     String GROUP = "group";
+
     String HASH = "hash";
     String HEAD_COMMENT_ALLOWED = "head-comment-allowed";
     String HOST = "host";
     String HOST_FAILURE_DESCRIPTION = "host-failure-description";
     String HOST_FAILURE_DESCRIPTIONS = "host-failure-descriptions";
+
     String IGNORED = "ignored";
     String INCLUDE = "include";
     String INCLUDES = "includes";
@@ -74,33 +100,42 @@ public interface ModelDescriptionConstants {
     String INHERITED = "inherited";
     String INPUT_STREAM_INDEX = "input-stream-index";
     String INTERFACE = "interface";
+
     String JNDI_NAME = "jndi-name";
+
     String LOCAL = "local";
     String LOCALE = "locale";
+
+    String MAIL_SESSION = "mail-session";
     String MASK = "mask";
     String MAX = "max";
     String MAX_LENGTH = "max-length";
     String MAX_OCCURS = "max-occurs";
     String MAX_THREADS = "max-threads";
+    String MESSAGING_SERVER = "messaging-server";
     String METRIC = "metric";
     String MIN = "min";
     String MIN_LENGTH = "min-length";
     String MIN_OCCURS = "min-occurs";
     String MIN_VALUE = "min-value";
     String MODEL_DESCRIPTION = "model-description";
+
     String NAME = "name";
     String NAMESPACE = "namespace";
     String NAMESPACES = "namespaces";
     String NILLABLE = "nillable";
     String NOT = "not";
     String NOT_SET = "not-set";
+
     String OP = "operation";
     String OPERATIONS = "operations";
     String OPERATION_HEADERS = "operation-headers";
     String OUTCOME = "outcome";
+
     String PORT = "port";
     String PROFILE = "profile";
     String PROXIES = "proxies";
+
     String READ = "read";
     String READ_ATTRIBUTE_OPERATION = "read-attribute";
     String READ_CHILDREN_NAMES_OPERATION = "read-children-names";
@@ -122,11 +157,14 @@ public interface ModelDescriptionConstants {
     String REQUIRED = "required";
     String REQUIRES = "requires";
     String RESPONSE = "response";
+    String RESOURCE_ADAPTER = "resource-adapter";
     String RESULT = "result";
     String ROLES = "HEADER_ROLES";
     String RUNTIME = "runtime";
     String RUNTIME_NAME = "runtime-name";
+
     String SCHEME = "scheme";
+    String SECURITY_DOMAIN = "security-domain";
     String SERVER = "server";
     String SERVERS = "servers";
     String SERVER_CONFIG = "server-config";
@@ -142,18 +180,24 @@ public interface ModelDescriptionConstants {
     String SUBDEPLOYMENT = "subdeployment";
     String SUBSYSTEM = "subsystem";
     String SUCCESS = "success";
+
     String TRIM_DESCRIPTIONS = "trim-descriptions";
     String TYPE = "type";
+
     String UNIT = "unit";
     String URL = "url";
+
     String VALUE = "value";
     String VALUE_TYPE = "value-type";
+
     String WHOAMI = "whoami";
     String WRITE = "write";
     String WRITE_ATTRIBUTE_OPERATION = "write-attribute";
+
     String UNDEFINE_ATTRIBUTE_OPERATION = "undefine-attribute";
     @SuppressWarnings("DuplicateStringLiteralInspection")
     String UNDEFINED = "undefined";
+
     String XA_DATA_SOURCE = "xa-data-source";
 }
 

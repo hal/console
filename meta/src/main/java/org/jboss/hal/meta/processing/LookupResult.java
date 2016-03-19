@@ -1,23 +1,17 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.meta.processing;
 
@@ -32,23 +26,21 @@ import java.util.Set;
 /**
  * @author Harald Pehl
  */
-public class LookupResult {
+class LookupResult {
 
     /**
      * Bit mask for missing / present metadata. 0 means metadata missing, 1 means metadata present.
      * First bit stands for resource description second one for security context.
      */
-    public final static int NOTHING_PRESENT = 0b00;
-    public final static int RESOURCE_DESCRIPTION_PRESENT = 0b10;
-    public final static int SECURITY_CONTEXT_PRESENT = 0b01;
-    public final static int ALL_PRESENT = 0b11;
+    final static int NOTHING_PRESENT = 0b00;
+    final static int RESOURCE_DESCRIPTION_PRESENT = 0b10;
+    final static int SECURITY_CONTEXT_PRESENT = 0b01;
+    final static int ALL_PRESENT = 0b11;
 
-    private final String token;
     private final Map<AddressTemplate, Integer> templates;
     private final boolean recursive;
 
-    public LookupResult(final String token, final Set<AddressTemplate> templates, final boolean recursive) {
-        this.token = token;
+    LookupResult(final Set<AddressTemplate> templates, final boolean recursive) {
         this.templates = new HashMap<>();
         for (AddressTemplate template : templates) {
             this.templates.put(template, NOTHING_PRESENT);
@@ -56,24 +48,24 @@ public class LookupResult {
         this.recursive = recursive;
     }
 
-    public Set<AddressTemplate> templates() {
+    Set<AddressTemplate> templates() {
         return templates.keySet();
     }
 
-    public boolean recursive() {
+    boolean recursive() {
         return recursive;
     }
 
-    public void markMetadataPresent(AddressTemplate template, int flag) {
+    void markMetadataPresent(AddressTemplate template, int flag) {
         int combined = failFastGet(template) | flag;
         templates.put(template, combined);
     }
 
-    public int missingMetadata(AddressTemplate template) {
+    int missingMetadata(AddressTemplate template) {
         return failFastGet(template);
     }
 
-    public boolean allPresent() {
+    boolean allPresent() {
         for (Integer flags : templates.values()) {
             if (flags != ALL_PRESENT) {
                 return false;
@@ -92,7 +84,7 @@ public class LookupResult {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("LookupResult(").append(token).append(", ");
+        builder.append("LookupResult(");
         for (Iterator<Map.Entry<AddressTemplate, Integer>> iterator = templates.entrySet().iterator();
                 iterator.hasNext(); ) {
             Map.Entry<AddressTemplate, Integer> entry = iterator.next();

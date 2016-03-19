@@ -1,23 +1,17 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.core.mvp;
 
@@ -32,7 +26,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.meta.processing.MetadataProcessor;
-import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -44,7 +38,8 @@ public class HalPlaceManager extends DefaultPlaceManager {
 
     private final MetadataProcessor metadataProcessor;
     private final Provider<Progress> progress;
-    private final Constants constants;
+    private Resources resources;
+    private boolean firstRequest;
 
     @Inject
     public HalPlaceManager(final EventBus eventBus,
@@ -54,29 +49,40 @@ public class HalPlaceManager extends DefaultPlaceManager {
             @UnauthorizedPlace final String unauthorizedPlaceNameToken,
             final MetadataProcessor metadataProcessor,
             @Footer final Provider<Progress> progress,
-            final Constants constants) {
+            final Resources resources) {
         super(eventBus, tokenFormatter, defaultPlaceNameToken, errorPlaceNameToken, unauthorizedPlaceNameToken,
                 new PlaceHistoryHandler.DefaultHistorian());
         this.metadataProcessor = metadataProcessor;
         this.progress = progress;
-        this.constants = constants;
+        this.resources = resources;
+        this.firstRequest = true;
     }
 
     @Override
     protected void doRevealPlace(final PlaceRequest request, final boolean updateBrowserUrl) {
-        metadataProcessor.process(request.getNameToken(), progress, new AsyncCallback<Void>() {
+        metadataProcessor.process(request.getNameToken(), progress.get(), new AsyncCallback<Void>() {
             @Override
             public void onFailure(final Throwable throwable) {
                 unlock();
                 revealDefaultPlace();
                 getEventBus().fireEvent(new MessageEvent(
-                        Message.error(constants.metadataError(), throwable.getMessage())));
+                        Message.error(resources.constants().metadataError(), throwable.getMessage())));
             }
 
             @Override
             public void onSuccess(final Void whatever) {
                 HalPlaceManager.super.doRevealPlace(request, updateBrowserUrl);
+                firstRequest = false;
             }
         });
+    }
+
+    @Override
+    public void revealErrorPlace(final String invalidHistoryToken) {
+        MessageEvent.fire(getEventBus(), Message.error(resources.messages().pageNotFound(invalidHistoryToken)));
+        if (firstRequest) {
+            // TODO find a more elegant way to get hold of the very first request
+            super.revealErrorPlace(invalidHistoryToken);
+        }
     }
 }

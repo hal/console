@@ -1,27 +1,22 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.client.configuration;
 
-import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
@@ -33,27 +28,33 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
+import org.jboss.hal.spi.Requires;
 
 import javax.inject.Inject;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-@AsyncColumn(value = Ids.INTERFACE_COLUMN)
+@AsyncColumn(value = ModelDescriptionConstants.INTERFACE)
+@Requires(InterfacePresenter.ROOT_ADDRESS)
 public class InterfaceColumn extends FinderColumn<Property> {
 
     @Inject
     public InterfaceColumn(final Finder finder,
-            final Dispatcher dispatcher,
-            final ItemActionFactory itemActionFactory) {
+            final ColumnActionFactory columnActionFactory,
+            final ItemActionFactory itemActionFactory,
+            final Dispatcher dispatcher) {
 
-        super(new Builder<Property>(finder, Ids.INTERFACE_COLUMN, Names.INTERFACE)
+        super(new Builder<Property>(finder, ModelDescriptionConstants.INTERFACE, Names.INTERFACE)
+                .columnAction(columnActionFactory.add(
+                        IdBuilder.build(ModelDescriptionConstants.INTERFACE, "add"),
+                        Names.INTERFACE,
+                        InterfacePresenter.ROOT_TEMPLATE,
+                        "inet-address"))
+                .columnAction(columnActionFactory.refresh(IdBuilder.build(ModelDescriptionConstants.INTERFACE, "refresh")))
                 .itemsProvider((context, callback) -> {
                     Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
                             .param(CHILD_TYPE, ModelDescriptionConstants.INTERFACE).build();
@@ -63,14 +64,14 @@ public class InterfaceColumn extends FinderColumn<Property> {
         setItemRenderer(property -> new ItemDisplay<Property>() {
             @Override
             public String getTitle() {
-                return new LabelBuilder().label(property);
+                return property.getName();
             }
 
             @Override
             public List<ItemAction<Property>> actions() {
                 return asList(
                         itemActionFactory.view(NameTokens.INTERFACE, NAME, property.getName()),
-                        itemActionFactory.remove(property.getName(), Names.INTERFACE, InterfacePresenter.ROOT_TEMPLATE,
+                        itemActionFactory.remove(Names.INTERFACE, property.getName(), InterfacePresenter.ROOT_TEMPLATE,
                                 InterfaceColumn.this));
             }
         });

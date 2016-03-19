@@ -1,23 +1,17 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.client.skeleton;
 
@@ -35,6 +29,9 @@ import org.jboss.hal.config.User;
 import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderContextEvent;
 import org.jboss.hal.core.finder.FinderContextEvent.FinderContextHandler;
+import org.jboss.hal.core.modelbrowser.ModelBrowserPath;
+import org.jboss.hal.core.modelbrowser.ModelBrowserPathEvent;
+import org.jboss.hal.core.modelbrowser.ModelBrowserPathEvent.ModelBrowserPathHandler;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -48,7 +45,7 @@ import static org.jboss.hal.resources.Names.NYI;
  * @author Harald Pehl
  */
 public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
-        implements IsElement, MessageHandler, FinderContextHandler {
+        implements IsElement, MessageHandler, FinderContextHandler, ModelBrowserPathHandler {
 
     // @formatter:off
     public interface MyView extends View, IsElement, HasPresenter<HeaderPresenter> {
@@ -57,11 +54,14 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         void showMessage(Message message);
         void tlcMode();
         void applicationMode();
-        void updatePath(FinderContext finderContext);
+        void updateBack(FinderContext finderContext);
         void updateBreadcrumb(FinderContext finderContext);
+        void updateBreadcrumb(ModelBrowserPath path);
     }
     // @formatter:on
 
+
+    static final int MESSAGE_TIMEOUT = 8000; // ms
 
     private final PlaceManager placeManager;
     private final Environment environment;
@@ -92,6 +92,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         super.onBind();
         registerHandler(getEventBus().addHandler(MessageEvent.getType(), this));
         registerHandler(getEventBus().addHandler(FinderContextEvent.getType(), this));
+        registerHandler(getEventBus().addHandler(ModelBrowserPathEvent.getType(), this));
         getView().setPresenter(this);
         getView().update(environment, endpoints, user);
     }
@@ -131,8 +132,13 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
 
     @Override
     public void onFinderContext(final FinderContextEvent event) {
-        getView().updatePath(event.getFinderContext());
+        getView().updateBack(event.getFinderContext());
         getView().updateBreadcrumb(event.getFinderContext());
+    }
+
+    @Override
+    public void onModelBrowserAddress(final ModelBrowserPathEvent event) {
+        getView().updateBreadcrumb(event.getPath());
     }
 
     public void tlcMode() {

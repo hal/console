@@ -63,7 +63,7 @@
 @import "../../../bower_components/patternfly/less/lib/bootstrap/alerts";
 @import "../../../bower_components/patternfly/less/lib/bootstrap/progress-bars";
 //@import "../../../bower_components/patternfly/less/lib/bootstrap/media";
-//@import "../../../bower_components/patternfly/less/lib/bootstrap/list-group";
+@import "../../../bower_components/patternfly/less/lib/bootstrap/list-group";
 @import "../../../bower_components/patternfly/less/lib/bootstrap/panels";
 //@import "../../../bower_components/patternfly/less/lib/bootstrap/responsive-embed";
 //@import "../../../bower_components/patternfly/less/lib/bootstrap/wells";
@@ -82,21 +82,6 @@
 
 
 /*
- * Bootstrap Select
- */
-@import "../../../bower_components/patternfly/less/lib/bootstrap-select/variables";
-@import "../../../bower_components/patternfly/less/lib/bootstrap-select/bootstrap-select";
-
-
-
-/*
- * Bootstrap Switch
- */
-@import "../../../bower_components/patternfly/less/lib/bootstrap-switch/bootstrap-switch";
-
-
-
-/*
  * Tag Manager
  */
 @import "../../../bower_components/tagmanager/tagmanager";
@@ -106,55 +91,74 @@
 /*
  * PatternFly
  */
-// Bootstrap overrides
-@import "../../../bower_components/patternfly/less/variables";
-@import "../../../bower_components/patternfly/less/mixins";
-@import "../../../bower_components/patternfly/less/alerts";
-@import "../../../bower_components/patternfly/less/badges";
-@import "../../../bower_components/patternfly/less/breadcrumbs";
-@import "../../../bower_components/patternfly/less/buttons";
-@import "../../../bower_components/patternfly/less/dropdowns";
-@import "../../../bower_components/patternfly/less/forms";
-@import "../../../bower_components/patternfly/less/labels";
-//@import "../../../bower_components/patternfly/less/list-group";
-@import "../../../bower_components/patternfly/less/modals";
-//@import "../../../bower_components/patternfly/less/pager";
-@import "../../../bower_components/patternfly/less/pagination";
-@import "../../../bower_components/patternfly/less/panels";
-//@import "../../../bower_components/patternfly/less/popovers";
-@import "../../../bower_components/patternfly/less/progress-bars";
-@import "../../../bower_components/patternfly/less/tables";
-@import "../../../bower_components/patternfly/less/tabs";
-@import "../../../bower_components/patternfly/less/tooltip";
-@import "../../../bower_components/patternfly/less/type";
+// Bootstrap variables and mixins
+@import "../../../bower_components/patternfly/less/lib/bootstrap/variables.less";
+@import "../../../bower_components/patternfly/less/lib/bootstrap/mixins.less";
+// Font Awesome variables
+@import "../../../bower_components/patternfly/less/lib/font-awesome/variables.less";
 
-// PatternFly Additions
-@import "../../../bower_components/patternfly/less/variables";
-//@import "../../../bower_components/patternfly/less/mixins";
-@import "../../../bower_components/patternfly/less/blank-slate";
-//@import "../../../bower_components/patternfly/less/bootstrap-combobox";
-//@import "../../../bower_components/patternfly/less/bootstrap-datepicker";
-@import "../../../bower_components/patternfly/less/bootstrap-select";
-@import "../../../bower_components/patternfly/less/bootstrap-switch";
-//@import "../../../bower_components/patternfly/less/bootstrap-treeview";
-@import "../../../bower_components/patternfly/less/cards";
-//@import "../../../bower_components/patternfly/less/charts";
-@import "../../../bower_components/patternfly/less/close";
-@import "../../../bower_components/patternfly/less/datatables";
-@import "../../../bower_components/patternfly/less/footer";
-@import "../../../bower_components/patternfly/less/icons";
-@import "../../../bower_components/patternfly/less/infotip";
-@import "../../../bower_components/patternfly/less/layouts";
-//@import "../../../bower_components/patternfly/less/login";
-@import "../../../bower_components/patternfly/less/navbar";
-@import "../../../bower_components/patternfly/less/navbar-alt";
-@import "../../../bower_components/patternfly/less/nav-vertical-alt";
-//@import "../../../bower_components/patternfly/less/search";
-@import "../../../bower_components/patternfly/less/sidebar";
-@import "../../../bower_components/patternfly/less/spinner";
-@import "../../../bower_components/patternfly/less/syntax-highlighting";
-@import "../../../bower_components/patternfly/less/toast";
-@import "../../../bower_components/patternfly/less/toolbar";
+// Bootstrap-Combobox
+@import "../../../bower_components/patternfly/less/lib/bootstrap-combobox/combobox.less";
+// Bootstrap-Datepicker
+//@import "../../../bower_components/patternfly/less/lib/bootstrap-datepicker/datepicker3.less";
+// Bootstrap-Select
+@import "../../../bower_components/patternfly/less/lib/bootstrap-select/bootstrap-select.less";
+// Bootstrap Switch
+@import "../../../bower_components/patternfly/less/lib/bootstrap-switch/bootstrap-switch.less";
+// Bootstrap Touchspin
+//@import (less) "../../../bower_components/patternfly/less/lib/bootstrap-touchspin/jquery.bootstrap-touchspin.css";
+// C3 charts
+@import (less) "../../../bower_components/patternfly/less/lib/c3/c3.css";
+
+@import "../../../bower_components/patternfly/less/alerts.less";
+@import "../../../bower_components/patternfly/less/badges.less";
+@import "../../../bower_components/patternfly/less/breadcrumbs.less";
+@import "../../../bower_components/patternfly/less/buttons.less";
+@import "../../../bower_components/patternfly/less/dropdowns.less";
+@import "../../../bower_components/patternfly/less/forms.less";
+@import "../../../bower_components/patternfly/less/labels.less";
+@import "../../../bower_components/patternfly/less/list-group.less";
+@import "../../../bower_components/patternfly/less/modals.less";
+@import "../../../bower_components/patternfly/less/pager.less";
+@import "../../../bower_components/patternfly/less/pagination.less";
+@import "../../../bower_components/patternfly/less/panels.less";
+@import "../../../bower_components/patternfly/less/popovers.less";
+@import "../../../bower_components/patternfly/less/progress-bars.less";
+@import "../../../bower_components/patternfly/less/tables.less";
+@import "../../../bower_components/patternfly/less/tabs.less";
+@import "../../../bower_components/patternfly/less/tooltip.less";
+@import "../../../bower_components/patternfly/less/type.less";
+
+@import "../../../bower_components/patternfly/less/variables.less";
+@import "../../../bower_components/patternfly/less/mixins.less";
+@import "../../../bower_components/patternfly/less/blank-slate.less";
+@import "../../../bower_components/patternfly/less/bootstrap-combobox.less";
+//@import "../../../bower_components/patternfly/less/bootstrap-datepicker.less";
+@import "../../../bower_components/patternfly/less/bootstrap-select.less";
+@import "../../../bower_components/patternfly/less/bootstrap-switch.less";
+//@import "../../../bower_components/patternfly/less/bootstrap-touchspin.less";
+//@import "../../../bower_components/patternfly/less/bootstrap-treeview.less";
+@import "../../../bower_components/patternfly/less/cards.less";
+@import "../../../bower_components/patternfly/less/charts.less";
+@import "../../../bower_components/patternfly/less/close.less";
+@import "../../../bower_components/patternfly/less/datatables.less";
+@import "../../../bower_components/patternfly/less/footer.less";
+@import "../../../bower_components/patternfly/less/icons.less";
+@import "../../../bower_components/patternfly/less/infotip.less";
+@import "../../../bower_components/patternfly/less/layouts.less";
+@import "../../../bower_components/patternfly/less/list-view.less";
+//@import "../../../bower_components/patternfly/less/login.less";
+@import "../../../bower_components/patternfly/less/navbar.less";
+@import "../../../bower_components/patternfly/less/navbar-alt.less";
+@import "../../../bower_components/patternfly/less/navbar-vertical.less";
+@import "../../../bower_components/patternfly/less/nav-vertical-alt.less";
+@import "../../../bower_components/patternfly/less/search.less";
+@import "../../../bower_components/patternfly/less/sidebar.less";
+@import "../../../bower_components/patternfly/less/spinner.less";
+@import "../../../bower_components/patternfly/less/syntax-highlighting.less";
+@import "../../../bower_components/patternfly/less/toast.less";
+@import "../../../bower_components/patternfly/less/toolbar.less";
+@import "../../../bower_components/patternfly/less/vertical-nav.less";
 
 
 
@@ -172,7 +176,7 @@
 
 
 /*
- * HAL (please keep the order)
+ * HAL
  */
 @import "variables";
 @import "mixins";

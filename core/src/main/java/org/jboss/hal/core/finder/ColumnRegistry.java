@@ -1,29 +1,29 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.core.finder;
 
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.meta.processing.MetadataProcessor;
+import org.jboss.hal.meta.resource.RequiredResources;
+import org.jboss.hal.spi.Footer;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +34,7 @@ import java.util.Map;
  */
 public class ColumnRegistry {
 
-    public interface LookupCallback {
+    interface LookupCallback {
 
         void found(FinderColumn column);
 
@@ -42,12 +42,22 @@ public class ColumnRegistry {
     }
 
 
+    private final MetadataProcessor metadataProcessor;
+    private final RequiredResources requiredResources;
+    private final Provider<Progress> progress;
     private final Map<String, FinderColumn> columns;
     private final Map<String, AsyncProvider> asyncColumns;
+    private final Map<String, FinderColumn> resolvedColumns;
 
-    public ColumnRegistry() {
-        columns = new HashMap<>();
-        asyncColumns = new HashMap<>();
+    @Inject
+    public ColumnRegistry(MetadataProcessor metadataProcessor, RequiredResources requiredResources,
+            @Footer Provider<Progress> progress) {
+        this.metadataProcessor = metadataProcessor;
+        this.requiredResources = requiredResources;
+        this.progress = progress;
+        this.columns = new HashMap<>();
+        this.asyncColumns = new HashMap<>();
+        this.resolvedColumns = new HashMap<>();
     }
 
     public void registerColumn(FinderColumn column) {
@@ -60,8 +70,32 @@ public class ColumnRegistry {
 
     @SuppressWarnings("unchecked")
     void lookup(String id, LookupCallback callback) {
-        if (columns.containsKey(id)) {
-            callback.found(columns.get(id));
+        if (resolvedColumns.containsKey(id)) {
+            callback.found(resolvedColumns.get(id));
+
+        } else if (columns.containsKey(id)) {
+            FinderColumn column = columns.get(id);
+            if (requiredResources.getResources(id).isEmpty()) {
+                resolve(id, column);
+                callback.found(column);
+
+            } else {
+                // process the required resource attached to this column
+                metadataProcessor.process(id, progress.get(), new AsyncCallback<Void>() {
+                    @Override
+                    public void onFailure(final Throwable throwable) {
+                        //noinspection HardCodedStringLiteral
+                        callback.error("Unable to load required resources for column '" + id + "': " + throwable
+                                .getMessage());
+                    }
+
+                    @Override
+                    public void onSuccess(final Void aVoid) {
+                        resolve(id, column);
+                        callback.found(column);
+                    }
+                });
+            }
 
         } else if (asyncColumns.containsKey(id)) {
             AsyncProvider<FinderColumn> asyncProvider = asyncColumns.get(id);
@@ -74,8 +108,8 @@ public class ColumnRegistry {
                 @Override
                 public void onSuccess(final FinderColumn column) {
                     asyncColumns.remove(id);
-                    registerColumn(column);
-                    callback.found(column);
+                    columns.put(id, column);
+                    lookup(id, callback);
                 }
             });
 
@@ -83,5 +117,10 @@ public class ColumnRegistry {
             //noinspection HardCodedStringLiteral
             callback.error("Unknown column '" + id + "'. Please make sure to register all columns, before using them.");
         }
+    }
+
+    private void resolve(String id, FinderColumn column) {
+        columns.remove(id);
+        resolvedColumns.put(id, column);
     }
 }

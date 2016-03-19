@@ -1,23 +1,17 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.meta.processing;
 
@@ -27,6 +21,9 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.security.SecurityFramework;
 import org.slf4j.Logger;
@@ -41,15 +38,20 @@ class RrdFunction implements Function<FunctionContext> {
 
     private static final Logger logger = LoggerFactory.getLogger(RrdFunction.class);
 
-    private final ResourceDescriptions resourceDescriptions;
+    private final MetadataRegistry metadataRegistry;
     private final SecurityFramework securityFramework;
+    private final ResourceDescriptions resourceDescriptions;
+    private final Capabilities capabilities;
     private final Dispatcher dispatcher;
     private final Composite composite;
 
-    public RrdFunction(final ResourceDescriptions resourceDescriptions, final SecurityFramework securityFramework,
+    RrdFunction(final MetadataRegistry metadataRegistry, final SecurityFramework securityFramework,
+            final ResourceDescriptions resourceDescriptions, final Capabilities capabilities,
             final Dispatcher dispatcher, final Composite composite) {
-        this.resourceDescriptions = resourceDescriptions;
+        this.metadataRegistry = metadataRegistry;
         this.securityFramework = securityFramework;
+        this.resourceDescriptions = resourceDescriptions;
+        this.capabilities = capabilities;
         this.dispatcher = dispatcher;
         this.composite = composite;
     }
@@ -62,13 +64,18 @@ class RrdFunction implements Function<FunctionContext> {
                     try {
                         Set<RrdResult> results = new CompositeRrdParser(composite).parse(compositeResult);
                         for (RrdResult rr : results) {
+                            if (rr.securityContext != null) {
+                                logger.debug("Add security context for {}", rr.address);
+                                securityFramework.add(rr.address, rr.securityContext);
+                            }
                             if (rr.resourceDescription != null) {
                                 logger.debug("Add resource description for {}", rr.address);
                                 resourceDescriptions.add(rr.address, rr.resourceDescription);
                             }
-                            if (rr.securityContext != null) {
-                                logger.debug("Add security context for {}", rr.address);
-                                securityFramework.add(rr.address, rr.securityContext);
+                            if (rr.resourceDescription != null && rr.securityContext != null) {
+                                logger.debug("Add metadata for {}", rr.address);
+                                metadataRegistry.add(rr.address,
+                                        new Metadata(rr.securityContext, rr.resourceDescription, capabilities));
                             }
                         }
                         control.proceed();

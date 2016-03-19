@@ -1,23 +1,17 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.ballroom.typeahead;
 
@@ -126,9 +120,9 @@ public class Typeahead implements SuggestHandler, Attachable {
 
     @JsFunction
     @FunctionalInterface
-    public interface SelectListener {
+    public interface ChangeListener {
 
-        void onSelect(JsEvent event, JsJsonObject data);
+        void onSelect(JsEvent event);
     }
 
 
@@ -140,7 +134,7 @@ public class Typeahead implements SuggestHandler, Attachable {
 
         public native void focus();
 
-        public native void on(String event, SelectListener listener);
+        public native void bind(String event, ChangeListener listener);
 
         public native void typeahead(Options options, Dataset dataset);
 
@@ -152,8 +146,8 @@ public class Typeahead implements SuggestHandler, Attachable {
         public native void typeaheadClose(String method);
 
         @JsOverlay
-        public final void onSelect(SelectListener listener) {
-            on(SELECTED_EVENT, listener);
+        public final void onChange(ChangeListener listener) {
+            bind(CHANGE_EVENT, listener);
         }
 
         @JsOverlay
@@ -175,13 +169,14 @@ public class Typeahead implements SuggestHandler, Attachable {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String CLOSE = "close";
-    private static final String SELECTED_EVENT = "typeahead:selected";
+    private static final String CHANGE_EVENT = "typeahead:change";
     private static final String VAL = "val";
     private static final String VALUE = "value";
 
     private final Options options;
     private final Dataset dataset;
     private FormItem formItem;
+    private final Bloodhound bloodhound;
 
     Typeahead(final Builder builder) {
         options = new Options();
@@ -224,8 +219,9 @@ public class Typeahead implements SuggestHandler, Attachable {
                 : builder.dataTokenizer;
         bloodhoundOptions.queryTokenizer = query -> query.split("\\s+"); //NON-NLS
         bloodhoundOptions.identify = builder.identifier;
+        bloodhoundOptions.sufficient = Integer.MAX_VALUE; // we'd like to always have fresh results from the backend
         bloodhoundOptions.remote = remoteOptions;
-        Bloodhound bloodhound = new Bloodhound(bloodhoundOptions);
+        bloodhound = new Bloodhound(bloodhoundOptions);
 
         Dataset.Templates templates = new Dataset.Templates();
         //noinspection HardCodedStringLiteral
@@ -267,6 +263,12 @@ public class Typeahead implements SuggestHandler, Attachable {
 
     public Dataset getDataset() {
         return dataset;
+    }
+
+    public void clearRemoteCache() {
+        if (bloodhound != null) {
+            bloodhound.clearRemoteCache();
+        }
     }
 
     private FormItem formItem() {

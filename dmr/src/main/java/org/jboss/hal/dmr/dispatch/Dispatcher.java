@@ -1,23 +1,17 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.dmr.dispatch;
 
@@ -31,6 +25,11 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.macro.Macro;
+import org.jboss.hal.dmr.macro.MacroFinishedEvent;
+import org.jboss.hal.dmr.macro.MacroOperationEvent;
+import org.jboss.hal.dmr.macro.RecordingEvent;
+import org.jboss.hal.dmr.macro.RecordingEvent.RecordingHandler;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
@@ -56,7 +55,7 @@ import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
  * @author Harald Pehl
  */
 @SuppressWarnings("HardCodedStringLiteral")
-public class Dispatcher {
+public class Dispatcher implements RecordingHandler {
 
     @FunctionalInterface
     public interface SuccessCallback<T> {
@@ -115,12 +114,14 @@ public class Dispatcher {
     private final Provider<ProcessStateProcessor> processStateProcessor;
     private final FailedCallback failedCallback;
     private final ExceptionCallback exceptionCallback;
+    private Macro macro;
 
     @Inject
     public Dispatcher(final Endpoints endpoints, final EventBus eventBus, final Resources resources,
             Provider<ProcessStateProcessor> processStateProcessor) {
         this.endpoints = endpoints;
         this.eventBus = eventBus;
+        this.eventBus.addHandler(RecordingEvent.getType(), this);
         this.processStateProcessor = processStateProcessor;
 
         this.failedCallback = (operation, failure) -> {
@@ -208,6 +209,7 @@ public class Dispatcher {
         } else {
             xhr.send(operation.toBase64String());
         }
+        recordOperation(operation);
     }
 
     private String descriptionOperationToUrl(final ModelNode operation) {
@@ -244,6 +246,8 @@ public class Dispatcher {
         XMLHttpRequest xhr = newXhr(endpoints.upload(), POST, operation, new UploadPayloadProcessor(), callback,
                 failedCallback, exceptionCallback);
         xhr.send(formData);
+        // TODO Support uploads in macros?
+        // recordOperation(operation);
     }
 
     private native FormData createFormData(InputElement fileInput, String operation) /*-{
@@ -320,5 +324,27 @@ public class Dispatcher {
         xhr.setWithCredentials(true);
 
         return xhr;
+    }
+
+
+    // ------------------------------------------------------ macro recording
+
+    @Override
+    public void onRecording(final RecordingEvent event) {
+        if (event.getAction() == RecordingEvent.Action.START && macro == null) {
+            macro = new Macro();
+        } else if (event.getAction() == RecordingEvent.Action.STOP && macro != null) {
+            Macro finished = macro;
+            finished.seal();
+            macro = null;
+            eventBus.fireEvent(new MacroFinishedEvent(finished));
+        }
+    }
+
+    private void recordOperation(Operation operation) {
+        if (macro != null && !macro.isSealed()) {
+            macro.addOperation(operation);
+            eventBus.fireEvent(new MacroOperationEvent(macro, operation));
+        }
     }
 }

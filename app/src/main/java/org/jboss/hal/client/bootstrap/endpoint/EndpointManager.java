@@ -1,3 +1,18 @@
+/*
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.hal.client.bootstrap.endpoint;
 
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -7,6 +22,7 @@ import com.google.inject.Inject;
 import elemental.client.Browser;
 import elemental.xml.XMLHttpRequest;
 import org.jboss.hal.config.Endpoints;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,13 +46,15 @@ public class EndpointManager {
 
     private final Endpoints endpoints;
     private final EndpointStorage storage;
+    private final Capabilities capabilities;
 
     private ScheduledCommand next;
 
     @Inject
-    public EndpointManager(Endpoints endpoints, EndpointStorage storage) {
+    public EndpointManager(Endpoints endpoints, EndpointStorage storage, Capabilities capabilities) {
         this.endpoints = endpoints;
         this.storage = storage;
+        this.capabilities = capabilities;
     }
 
     @SuppressWarnings("HardCodedStringLiteral")
@@ -97,7 +115,7 @@ public class EndpointManager {
     }
 
     private void openDialog() {
-        new EndpointDialog(this, storage).show();
+        new EndpointDialog(this, storage, capabilities).show();
     }
 
     void pingServer(final Endpoint endpoint, final AsyncCallback<Void> callback) {

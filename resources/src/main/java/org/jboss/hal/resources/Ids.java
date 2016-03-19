@@ -1,4 +1,20 @@
 /*
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
  * JBoss, Home of Professional Open Source
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved.
@@ -24,17 +40,15 @@ package org.jboss.hal.resources;
 public interface Ids {
 
     String CACHE_CONTAINER_COLUMN = "cache-container";
-    String CONFIGURATION_COLUMN = "configuration";
 
     String DATA_SOURCE_ATTRIBUTES_FORM = "data-source-attributes-form";
     String DATA_SOURCE_ATTRIBUTES_TAB = "data-source-attributes-tab";
-    String DATA_SOURCE_COLUMN = "datasource";
     String DATA_SOURCE_CONNECTION_FORM = "data-source-connection-form";
     String DATA_SOURCE_CONNECTION_TAB = "data-source-connection-tab";
     String DATA_SOURCE_TYPE_COLUMN = "type";
+    String DATA_SOURCE_WIZARD = "data-source-wizard";
 
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
-    String DEPLOYMENT_COLUMN = "deployment";
 
     String DOMAIN_BROWSE_BY = "domain-browse-by";
 
@@ -58,19 +72,10 @@ public interface Ids {
     String HOMEPAGE_RUNTIME_SERVER_SECTION = "homepage-runtime-server-section";
     String HOMEPAGE_RUNTIME_SERVER_GROUP_SECTION = "homepage-runtime-server-group-section";
 
-    String INTERFACE_COLUMN = "interface";
-    String MAIL_SESSION_COLUMN = "mail-session";
-    String MESSAGING_SERVER_COLUMN = "messaging-server";
     String MODEL_BROWSER = "model-browser";
     String PATHS_FORM = "paths-form";
     String PATHS_TABLE = "paths-table";
-    String PROFILE_COLUMN = "profile";
-    String RESOURCE_ADAPTER_COLUMN = "resource-adapter";
     String ROOT_CONTAINER = "hal-root-container";
-    String SOCKET_BINDING_COLUMN = "socket-binding";
-    String SECURITY_DOMAIN_COLUMN = "security-domain";
-    String SERVER_COLUMN = "server";
-    String SUBSYSTEM_COLUMN = "subsystem";
 
     String TLC_ACCESS_CONTROL = "tlc-access-control";
     String TLC_CONFIGURATION = "tlc-configuration";

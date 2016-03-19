@@ -1,8 +1,24 @@
+/*
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.hal.client.bootstrap.endpoint;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental.dom.Element;
+import elemental.html.ButtonElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.ButtonItem;
@@ -10,16 +26,18 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.table.Button.Scope;
 import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.meta.description.ResourceDescription;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.StaticResourceDescription;
-import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 
 import static com.google.common.base.Strings.emptyToNull;
+import static org.jboss.hal.ballroom.dialog.Dialog.PRIMARY_POSITION;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.HOLD;
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
@@ -28,7 +46,6 @@ import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.SELECT
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.security.SecurityContext.RWX;
 import static org.jboss.hal.resources.Ids.ENDPOINT_ADD;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
  * Modal dialog to manage bootstrap servers. The dialog offers a page to connect to an existing server and a page to
@@ -56,26 +73,26 @@ class EndpointDialog {
     private ModelNodeTable<Endpoint> table;
     private Dialog dialog;
 
-    EndpointDialog(final EndpointManager manager, final EndpointStorage storage) {
+    EndpointDialog(final EndpointManager manager, final EndpointStorage storage, final Capabilities capabilities) {
         this.manager = manager;
         this.storage = storage;
+        Metadata metadata = new Metadata(RWX, StaticResourceDescription.from(RESOURCES.endpoint()), capabilities);
 
-        ResourceDescription description = StaticResourceDescription.from(RESOURCES.endpoint());
-        Options<Endpoint> endpointOptions = new ModelNodeTable.Builder<Endpoint>(description)
+        Options<Endpoint> endpointOptions = new ModelNodeTable.Builder<Endpoint>(metadata)
                 .button(CONSTANTS.add(), (event, api) -> switchTo(ADD))
                 .button(CONSTANTS.remove(), Scope.SELECTED, (event, api) -> {
                     storage.remove(api.selectedRow());
                     api.clear().add(storage.list()).refresh(HOLD);
-                    dialog.setPrimaryButtonDisabled(!table.api().hasSelection());
+                    dialog.getButton(PRIMARY_POSITION).setDisabled(!table.api().hasSelection());
                 })
                 .column(NAME)
                 .column("url", "URL", (cell, type, row, meta) -> row.getUrl()) //NON-NLS
                 .build();
-        table = new ModelNodeTable<>(Ids.ENDPOINT_SELECT, RWX, endpointOptions);
+        table = new ModelNodeTable<>(Ids.ENDPOINT_SELECT, endpointOptions);
 
         selectPage = new Elements.Builder()
                 .div()
-                .p().innerText(CONSTANTS.endpointSelectDescription()).end()
+                .p().textContent(CONSTANTS.endpointSelectDescription()).end()
                 .add(table.asElement())
                 .end().build();
 
@@ -86,7 +103,7 @@ class EndpointDialog {
             manager.pingServer(endpoint, new AsyncCallback<Void>() {
                 @Override
                 public void onFailure(final Throwable throwable) {
-                    feedback.error(MESSAGES.endpointError(endpoint.getUrl()));
+                    feedback.error(MESSAGES.endpointError(Endpoints.getBaseUrl()));
                 }
 
                 @Override
@@ -97,7 +114,7 @@ class EndpointDialog {
         });
         ping.setEnabled(false);
 
-        form = new ModelNodeForm.Builder<Endpoint>(ENDPOINT_ADD, SecurityContext.RWX, description)
+        form = new ModelNodeForm.Builder<Endpoint>(ENDPOINT_ADD, metadata)
                 .addOnly()
                 .include(NAME, SCHEME, HOST, PORT)
                 .unboundFormItem(ping)
@@ -111,7 +128,7 @@ class EndpointDialog {
 
         addPage = new Elements.Builder()
                 .div()
-                .p().innerText(CONSTANTS.endpointAddDescription()).end()
+                .p().textContent(CONSTANTS.endpointAddDescription()).end()
                 .add(feedback.asElement())
                 .add(form.asElement())
                 .end().build();
@@ -141,11 +158,12 @@ class EndpointDialog {
     }
 
     private void switchTo(final Mode mode) {
+        ButtonElement primaryButton = dialog.getButton(PRIMARY_POSITION);
         if (mode == SELECT) {
             dialog.setTitle(CONSTANTS.endpointSelectTitle());
             table.api().clear().add(storage.list()).refresh(HOLD);
-            dialog.setPrimaryButtonLabel(CONSTANTS.endpointConnect());
-            dialog.setPrimaryButtonDisabled(!table.api().hasSelection());
+            primaryButton.setInnerText(CONSTANTS.endpointConnect());
+            primaryButton.setDisabled(!table.api().hasSelection());
             Elements.setVisible(addPage, false);
             Elements.setVisible(selectPage, true);
 
@@ -153,8 +171,8 @@ class EndpointDialog {
             dialog.setTitle(CONSTANTS.endpointAddTitle());
             feedback.reset();
             form.add(new Endpoint());
-            dialog.setPrimaryButtonLabel(CONSTANTS.add());
-            dialog.setPrimaryButtonDisabled(false);
+            primaryButton.setInnerText(CONSTANTS.add());
+            primaryButton.setDisabled(false);
             Elements.setVisible(selectPage, false);
             Elements.setVisible(addPage, true);
         }
@@ -189,7 +207,7 @@ class EndpointDialog {
         host.asElement(EDITING).setOnkeyup(event -> ping.setEnabled(emptyToNull(host.getValue()) != null));
         host.addValueChangeHandler(event -> ping.setEnabled(emptyToNull(host.getValue()) != null));
 
-        table.api().onSelectionChange(api -> dialog.setPrimaryButtonDisabled(!api.hasSelection()));
+        table.api().onSelectionChange(api -> dialog.getButton(PRIMARY_POSITION).setDisabled(!api.hasSelection()));
         table.api().add(storage.list()).refresh(RESET);
 
         switchTo(SELECT);

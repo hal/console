@@ -1,27 +1,22 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.ballroom.form;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental.dom.Element;
 import elemental.events.EventListener;
 import org.jboss.gwt.elemento.core.Elements;
@@ -35,7 +30,6 @@ import org.jboss.hal.resources.UIConstants;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.google.gwt.safehtml.shared.SafeHtmlUtils.fromSafeConstant;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Form.Operation.EDIT;
 import static org.jboss.hal.ballroom.form.Form.Operation.RESET;
@@ -51,7 +45,7 @@ class FormLinks<T> implements IsElement {
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
     private final StateMachine stateMachine;
-    private final LinkedHashMap<String, String> helpTexts;
+    private final LinkedHashMap<String, SafeHtml> helpTexts;
 
     private final Element root;
     private Element editLink;
@@ -60,7 +54,7 @@ class FormLinks<T> implements IsElement {
 
     FormLinks(final String formId,
             final StateMachine stateMachine,
-            final LinkedHashMap<String, String> helpTexts,
+            final LinkedHashMap<String, SafeHtml> helpTexts,
             final EventListener onEdit,
             final EventListener onReset) {
 
@@ -104,11 +98,11 @@ class FormLinks<T> implements IsElement {
                             .aria(UIConstants.EXPANDED, String.valueOf(false))
                             .aria(UIConstants.CONTROLS, helpId)
                         .start("i").css(pfIcon("help")).end()
-                        .span().css(formLinkLabel).innerText(CONSTANTS.help()).end()
+                        .span().css(formLinkLabel).textContent(CONSTANTS.help()).end()
                     .end()
                 .end().build();
             // @formatter:on
-            for (Map.Entry<String, String> entry : helpTexts.entrySet()) {
+            for (Map.Entry<String, SafeHtml> entry : helpTexts.entrySet()) {
                 helpContent.appendChild(help(entry.getKey(), entry.getValue()));
             }
             links.appendChild(helpLink);
@@ -123,22 +117,22 @@ class FormLinks<T> implements IsElement {
             .li()
                 .a().css(clickable).on(click, onclick)
                     .start("i").css(css).end()
-                    .span().css(formLinkLabel).innerText(text).end()
+                    .span().css(formLinkLabel).textContent(text).end()
                 .end()
             .end().build();
         // @formatter:on
     }
 
-    private Element help(String label, String description) {
+    private Element help(String label, SafeHtml description) {
         // @formatter:off
         return new Elements.Builder()
             .div().css(formGroup)
                 .label().css(column(labelColumns), controlLabel)
-                    .innerText(label)
+                    .textContent(label)
                 .end()
                 .div().css(column(inputColumns))
                     .p().css(formControlStatic)
-                        .innerHtml(fromSafeConstant(description))
+                        .innerHtml(description)
                     .end()
                 .end()
             .end().build();

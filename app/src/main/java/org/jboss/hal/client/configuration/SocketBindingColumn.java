@@ -1,41 +1,36 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.client.configuration;
 
-import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
+import org.jboss.hal.spi.Requires;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -46,15 +41,23 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-@AsyncColumn(Ids.SOCKET_BINDING_COLUMN)
+@AsyncColumn(ModelDescriptionConstants.SOCKET_BINDING)
+@Requires(SocketBindingPresenter.ROOT_ADDRESS)
 public class SocketBindingColumn extends FinderColumn<Property> {
 
     @Inject
     public SocketBindingColumn(final Finder finder,
             final Dispatcher dispatcher,
+            final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory) {
 
-        super(new FinderColumn.Builder<Property>(finder, Ids.SOCKET_BINDING_COLUMN, Names.SOCKET_BINDING)
+        super(new FinderColumn.Builder<Property>(finder, ModelDescriptionConstants.SOCKET_BINDING, Names.SOCKET_BINDING)
+                .columnAction(columnActionFactory.add(
+                        IdBuilder.build(ModelDescriptionConstants.SOCKET_BINDING, "add"),
+                        Names.SOCKET_BINDING,
+                        SocketBindingPresenter.ROOT_TEMPLATE))
+                .columnAction(columnActionFactory
+                        .refresh(IdBuilder.build(ModelDescriptionConstants.SOCKET_BINDING, "refresh")))
                 .itemsProvider((context, callback) -> {
                     Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
                             .param(CHILD_TYPE, "socket-binding-group").build();
@@ -64,15 +67,15 @@ public class SocketBindingColumn extends FinderColumn<Property> {
         setItemRenderer(property -> new ItemDisplay<Property>() {
             @Override
             public String getTitle() {
-                return new LabelBuilder().label(property);
+                return property.getName();
             }
 
             @Override
             public List<ItemAction<Property>> actions() {
                 return asList(
                         itemActionFactory.view(NameTokens.SOCKET_BINDING, NAME, property.getName()),
-                        itemActionFactory.remove(property.getName(), Names.SOCKET_BINDING,
-                                AddressTemplate.of("/socket-binding=*"), SocketBindingColumn.this));
+                        itemActionFactory.remove(Names.SOCKET_BINDING, property.getName(),
+                                SocketBindingPresenter.ROOT_TEMPLATE, SocketBindingColumn.this));
             }
         });
     }

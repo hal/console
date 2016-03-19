@@ -1,35 +1,28 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.core.mbui.table;
 
 import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.table.Column;
-import org.jboss.hal.ballroom.table.GenericOptionsBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
+import org.jboss.hal.ballroom.table.GenericOptionsBuilder;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.meta.description.ResourceDescription;
-import org.jboss.hal.meta.security.SecurityContext;
+import org.jboss.hal.meta.Metadata;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,11 +38,11 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
     public static class Builder<T extends ModelNode> extends GenericOptionsBuilder<Builder<T>, T> {
 
-        private final ResourceDescription resourceDescription;
+        private final Metadata metadata;
         private final ColumnFactory columnFactory;
 
-        public Builder(final ResourceDescription resourceDescription) {
-            this.resourceDescription = resourceDescription;
+        public Builder(final Metadata metadata) {
+            this.metadata = metadata;
             this.columnFactory = new ColumnFactory();
         }
 
@@ -62,13 +55,13 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         }
 
         public Builder<T> column(@NonNls String attribute) {
-            Property attributeDescription = findDescription(resourceDescription.getAttributes(), attribute);
+            Property attributeDescription = findDescription(metadata.getDescription().getAttributes(), attribute);
             if (attributeDescription != null) {
                 Column<T> column = columnFactory.createColumn(attributeDescription);
                 return column(column);
             } else {
                 logger.error("No attribute description for column '{}' found in resource description\n{}", //NON-NLS
-                        attribute, resourceDescription);
+                        attribute, metadata.getDescription());
                 return that();
             }
         }
@@ -90,8 +83,9 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         @Override
         protected void validate() {
             super.validate();
-            if (!resourceDescription.hasDefined(ATTRIBUTES)) {
-                throw new IllegalStateException("No attributes found in resource description\n" + resourceDescription);
+            if (!metadata.getDescription().hasDefined(ATTRIBUTES)) {
+                throw new IllegalStateException(
+                        "No attributes found in resource description\n" + metadata.getDescription());
             }
         }
     }
@@ -99,7 +93,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelNodeTable.class);
 
-    public ModelNodeTable(@NonNls final String id, final SecurityContext securityContext, final Options<T> options) {
-        super(id, securityContext, options);
+    public ModelNodeTable(@NonNls final String id, final Options<T> options) {
+        super(id, options);
     }
 }

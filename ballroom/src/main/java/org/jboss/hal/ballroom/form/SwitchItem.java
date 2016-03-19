@@ -1,23 +1,17 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.ballroom.form;
 
@@ -32,13 +26,15 @@ import static org.jboss.hal.resources.CSS.bootstrapSwitch;
  */
 public class SwitchItem extends AbstractFormItem<Boolean> {
 
+    private SwitchElement switchElement;
+
     public SwitchItem(final String name, final String label) {
         super(name, label, null, EMPTY_CONTEXT);
     }
 
     @Override
     protected InputElement<Boolean> newInputElement(Context<?> context) {
-        SwitchElement switchElement = new SwitchElement();
+        switchElement = new SwitchElement();
         switchElement.setClassName(bootstrapSwitch);
         Bridge.element(switchElement.asElement()).onChange((event, state) -> {
             setModified(true);
@@ -57,36 +53,53 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
     }
 
     @Override
+    public void setValue(final Boolean value) {
+        super.setValue(value);
+    }
+
+    @Override
     public boolean supportsExpressions() {
         return false;
     }
 
 
-    static class SwitchElement extends AbstractCheckBoxElement {
+    private static class SwitchElement extends AbstractCheckBoxElement {
 
         @Override
         public boolean isEnabled() {
-            return Bridge.element(asElement()).isEnable();
+            return isAttached() ? Bridge.element(asElement()).isEnable() : !element.isDisabled();
         }
 
         @Override
         public void setEnabled(final boolean b) {
-            Bridge.element(asElement()).setEnable(b);
+            if (isAttached()) {
+                Bridge.element(asElement()).setEnable(b);
+            } else {
+                element.setDisabled(!b);
+            }
         }
 
         @Override
         public Boolean getValue() {
-            return Bridge.element(asElement()).getValue();
+            return isAttached() ? Bridge.element(asElement()).getValue() : element.isChecked();
         }
 
         @Override
         public void setValue(final Boolean value) {
-            Bridge.element(asElement()).setValue(value);
+            if (isAttached()) {
+                Bridge.element(asElement()).setValue(value);
+            } else {
+                element.setChecked(value);
+            }
         }
 
         @Override
         public void clearValue() {
-            Bridge.element(asElement()).setValue(false);
+            if (isAttached()) {
+                Bridge.element(asElement()).setValue(false);
+            } else {
+                element.setChecked(false);
+            }
         }
     }
 }

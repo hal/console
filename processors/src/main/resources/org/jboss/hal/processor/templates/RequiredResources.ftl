@@ -1,7 +1,7 @@
 <#-- @ftlvariable name="generatedWith" type="java.lang.String" -->
 <#-- @ftlvariable name="packageName" type="java.lang.String" -->
 <#-- @ftlvariable name="className" type="java.lang.String" -->
-<#-- @ftlvariable name="tokenInfos" type="java.util.Set<org.jboss.hal.processor.NameTokenProcessor.TokenInfo>" -->
+<#-- @ftlvariable name="requiredInfos" type="java.util.Set<org.jboss.hal.processor.RequiredResourcesProcessor.RequiredInfo>" -->
 package ${packageName};
 
 import com.google.common.collect.HashMultimap;
@@ -27,27 +27,27 @@ public class ${className} implements org.jboss.hal.meta.resource.RequiredResourc
         resources = HashMultimap.create();
         recursive = new HashMap<>();
 
-        <#list tokenInfos as tokenInfo>
-        <#if (tokenInfo.resources?size > 0)>
-        resources.putAll("${tokenInfo.token}", asList(<#list tokenInfo.resources as resource>"${resource}"<#if resource_has_next>, </#if></#list>));
+        <#list requiredInfos as requiredInfo>
+        <#if (requiredInfo.resources?size > 0)>
+        resources.putAll("${requiredInfo.id}", asList(<#list requiredInfo.resources as resource>"${resource}"<#if resource_has_next>, </#if></#list>));
         </#if>
-        recursive.put("${tokenInfo.token}", ${tokenInfo.recursive?c});
+        recursive.put("${requiredInfo.id}", ${requiredInfo.recursive?c});
         </#list>
     }
 
     @Override
-    public Set<String> getResources(String token) {
-        if (resources.containsKey(token)) {
-            return resources.get(token);
+    public Set<String> getResources(String id) {
+        if (resources.containsKey(id)) {
+            return resources.get(id);
         } else {
             return Collections.<String>emptySet();
         }
     }
 
     @Override
-    public boolean isRecursive(String token) {
-        if (recursive.containsKey(token)) {
-            return recursive.get(token);
+    public boolean isRecursive(String id) {
+        if (recursive.containsKey(id)) {
+            return recursive.get(id);
         } else {
             return false;
         }

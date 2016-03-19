@@ -3,13 +3,16 @@ package org.jboss.hal.core.mbui.form;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.gwt.junit.GWTMockUtilities;
-import org.jboss.hal.ballroom.form.ExistingModelStateMachine;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
+import org.jboss.hal.ballroom.form.ExistingModelStateMachine;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.StateMachine;
 import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.core.mbui.ResourceDescriptionBuilder;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,10 +27,11 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Harald Pehl
  */
+@SuppressWarnings("HardCodedStringLiteral")
 public class ModelNodeFormTest {
 
-    ResourceDescription attributes;
-    ResourceDescription requestProperties;
+    private ResourceDescription attributes;
+    private ResourceDescription requestProperties;
 
     @Before
     public void setUp() {
@@ -42,7 +46,7 @@ public class ModelNodeFormTest {
 
     @Test(expected = IllegalStateException.class)
     public void viewAndEdit() {
-        new ModelNodeForm.Builder("viewAndEdit", RWX, new ResourceDescriptionBuilder().empty())
+        new ModelNodeForm.Builder("viewAndEdit", metadata())
                 .viewOnly()
                 .addOnly()
                 .build();
@@ -50,21 +54,20 @@ public class ModelNodeFormTest {
 
     @Test(expected = IllegalStateException.class)
     public void noAttributes() {
-        new ModelNodeForm.Builder("noAttributes", RWX, new ResourceDescriptionBuilder().empty())
+        new ModelNodeForm.Builder("noAttributes", metadata())
                 .build();
     }
 
     @Test(expected = IllegalStateException.class)
     public void noRequestProperties() {
-        new ModelNodeForm.Builder("noRequestProperties", RWX, new ResourceDescriptionBuilder().empty())
+        new ModelNodeForm.Builder("noRequestProperties", metadata())
                 .createResource()
                 .build();
     }
 
     @Test(expected = IllegalStateException.class)
     public void viewAndCreateResource() {
-        new ModelNodeForm.Builder("viewAndCreateResource", RWX,
-                new ResourceDescriptionBuilder().empty())
+        new ModelNodeForm.Builder("viewAndCreateResource", metadata())
                 .viewOnly()
                 .createResource()
                 .build();
@@ -72,8 +75,8 @@ public class ModelNodeFormTest {
 
     @Test(expected = IllegalStateException.class)
     public void excludeRequiredRequestProperty() {
-        new ModelNodeForm.Builder("viewAndCreateResource", RWX,
-                new ResourceDescriptionBuilder().requestProperties(ImmutableMap.of("foo", true)))
+        new ModelNodeForm.Builder("viewAndCreateResource",
+                metadata(new ResourceDescriptionBuilder().requestProperties(ImmutableMap.of("foo", true))))
                 .createResource()
                 .exclude("foo")
                 .build();
@@ -84,8 +87,8 @@ public class ModelNodeFormTest {
 
     @Test
     public void createResourceStateMachine() {
-        StateMachine stateMachine = new ModelNodeForm.Builder("createResourceStateMachine", RWX,
-                new ResourceDescriptionBuilder().requestProperties(Collections.emptyMap()))
+        StateMachine stateMachine = new ModelNodeForm.Builder("createResourceStateMachine",
+                metadata(new ResourceDescriptionBuilder().requestProperties(Collections.emptyMap())))
                 .createResource()
                 .stateMachine();
         Assert.assertTrue(stateMachine instanceof AddOnlyStateMachine);
@@ -94,24 +97,24 @@ public class ModelNodeFormTest {
     @Test
     public void editOnlyStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("editOnlyStateMachine",
-                RWX,
-                new ResourceDescriptionBuilder().attributes()).addOnly().stateMachine();
+                metadata(new ResourceDescriptionBuilder().attributes()))
+                .addOnly().stateMachine();
         Assert.assertTrue(stateMachine instanceof AddOnlyStateMachine);
     }
 
     @Test
     public void viewOnlyStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("viewOnlyStateMachine",
-                RWX,
-                new ResourceDescriptionBuilder().attributes()).viewOnly().stateMachine();
+                metadata(new ResourceDescriptionBuilder().attributes()))
+                .viewOnly().stateMachine();
         Assert.assertTrue(stateMachine instanceof ViewOnlyStateMachine);
     }
 
     @Test
     public void defaultStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("defaultStateMachine",
-                RWX,
-                new ResourceDescriptionBuilder().attributes()).stateMachine();
+                metadata(new ResourceDescriptionBuilder().attributes()))
+                .stateMachine();
         Assert.assertTrue(stateMachine instanceof ExistingModelStateMachine);
     }
 
@@ -126,9 +129,11 @@ public class ModelNodeFormTest {
         Iterable<FormItem> formItems = form.getFormItems();
         Iterator<FormItem> iterator = formItems.iterator();
 
-        assertEquals(2, Iterables.size(formItems));
+        assertEquals(4, Iterables.size(formItems));
+        assertEquals("bar", iterator.next().getName());
         assertEquals("baz", iterator.next().getName());
         assertEquals("foo", iterator.next().getName());
+        assertEquals("qux", iterator.next().getName());
     }
 
     @Test
@@ -140,9 +145,11 @@ public class ModelNodeFormTest {
         Iterable<FormItem> formItems = form.getFormItems();
         Iterator<FormItem> iterator = formItems.iterator();
 
-        assertEquals(2, Iterables.size(formItems));
+        assertEquals(4, Iterables.size(formItems));
         assertEquals("foo", iterator.next().getName());
+        assertEquals("bar", iterator.next().getName());
         assertEquals("baz", iterator.next().getName());
+        assertEquals("qux", iterator.next().getName());
     }
 
     @Test
@@ -220,11 +227,19 @@ public class ModelNodeFormTest {
 
     // ------------------------------------------------------ helper methods
 
-    private ModelNodeForm.Builder<ModelNode> builder(final String id, final ResourceDescription resourceDescription) {
-        return new ModelNodeForm.Builder<>(id, RWX, resourceDescription)
+    private ModelNodeForm.Builder<ModelNode> builder(final String id, final ResourceDescription description) {
+        return new ModelNodeForm.Builder<>(id, metadata(description))
                 .customFormItem("foo", (property) -> new TestableFormItem("foo"))
                 .customFormItem("bar", (property) -> new TestableFormItem("bar"))
                 .customFormItem("baz", (property) -> new TestableFormItem("baz"))
                 .customFormItem("qux", (property) -> new TestableFormItem("qux"));
+    }
+
+    private Metadata metadata() {
+        return metadata(new ResourceDescriptionBuilder().empty());
+    }
+
+    private Metadata metadata(ResourceDescription description) {
+        return new Metadata(RWX, description, new Capabilities(StatementContext.NOOP));
     }
 }

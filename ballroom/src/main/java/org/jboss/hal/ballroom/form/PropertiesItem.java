@@ -1,23 +1,17 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.ballroom.form;
 
@@ -144,9 +138,9 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
     private Iterable<Element> keyValueElements(Map<String, String> value) {
         Elements.Builder builder = new Elements.Builder();
         for (Map.Entry<String, String> entry : value.entrySet()) {
-            builder.span().css(CSS.key).innerText(entry.getKey()).end();
+            builder.span().css(CSS.key).textContent(entry.getKey()).end();
             builder.span().css(CSS.equals).innerHtml(SafeHtmlUtils.fromSafeConstant("&rArr;")).end(); //NON-NLS
-            builder.span().css(CSS.value).innerText(entry.getValue()).end();
+            builder.span().css(CSS.value).textContent(entry.getValue()).end();
         }
         return builder.elements();
     }
@@ -171,7 +165,7 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
     }
 
 
-    static class PropertiesElement extends InputElement<Map<String, String>> {
+    private static class PropertiesElement extends InputElement<Map<String, String>> {
 
         final elemental.html.InputElement element;
 
@@ -182,17 +176,21 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
 
         @Override
         public Map<String, String> getValue() {
-            return asProperties(Bridge.element(asElement()).getTags());
+            return isAttached() ? asProperties(Bridge.element(asElement()).getTags()) : Collections.emptyMap();
         }
 
         @Override
         public void setValue(final Map<String, String> value) {
-            Bridge.element(asElement()).setTags(asTags(value));
+            if (isAttached()) {
+                Bridge.element(asElement()).setTags(asTags(value));
+            }
         }
 
         @Override
         public void clearValue() {
-            Bridge.element(asElement()).removeAll();
+            if (isAttached()) {
+                Bridge.element(asElement()).removeAll();
+            }
         }
 
         @Override

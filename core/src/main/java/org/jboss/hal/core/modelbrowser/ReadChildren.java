@@ -1,23 +1,17 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.core.modelbrowser;
 
@@ -46,16 +40,27 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 
 /**
  * Function which gets invoked when the user opens a node in the model browser tree.
+ * TODO Error handling
  *
  * @author Harald Pehl
  */
-public class ReadChildren implements DataFunction<Context> {
+class ReadChildren implements DataFunction<Context> {
 
+    private static final String ID_SEPARATOR = "___";
     private static final String NO_SINGLETON = "no_singleton";
+
+    static String uniqueId(Node<Context> parent, String name) {
+        String parentId = parent.id;
+        int index = parent.id.indexOf(ID_SEPARATOR);
+        if (index != -1) {
+            parentId = parent.id.substring(index + ID_SEPARATOR.length(), parent.id.length());
+        }
+        return parentId + ID_SEPARATOR + name;
+    }
 
     private final Dispatcher dispatcher;
 
-    public ReadChildren(final Dispatcher dispatcher) {
+    ReadChildren(final Dispatcher dispatcher) {
         this.dispatcher = dispatcher;
     }
 
@@ -87,7 +92,8 @@ public class ReadChildren implements DataFunction<Context> {
                     }
                     ResourceAddress address = new ResourceAddress(node.data.getAddress()).add(name, "*");
                     Context context = new Context(address, singletons);
-                    Node.Builder<Context> builder = new Node.Builder<>(name, name, context)
+                    // ids need to be unique!
+                    Node.Builder<Context> builder = new Node.Builder<>(uniqueId(node, name), name, context)
                             .folder();
                     if (!singletons.isEmpty()) {
                         builder.icon(fontAwesome("list-ul"));
@@ -113,7 +119,7 @@ public class ReadChildren implements DataFunction<Context> {
                     singletons.remove(name);
                     ResourceAddress address = new ResourceAddress(parentAddress).add(node.text, name);
                     Context context = new Context(address, Collections.emptySet());
-                    Node<Context> child = new Node.Builder<>(name, name, context)
+                    Node<Context> child = new Node.Builder<>(uniqueId(node, name), name, context)
                             .folder()
                             .icon(fontAwesome("file-text-o"))
                             .build();
@@ -124,7 +130,7 @@ public class ReadChildren implements DataFunction<Context> {
                 for (String singleton : singletons) {
                     ResourceAddress address = new ResourceAddress(parentAddress).add(node.text, singleton);
                     Context context = new Context(address, Collections.emptySet());
-                    Node<Context> child = new Node.Builder<>(singleton, singleton, context)
+                    Node<Context> child = new Node.Builder<>(uniqueId(node, singleton), singleton, context)
                             .icon(fontAwesome("file-o"))
                             .disabled()
                             .build();

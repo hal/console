@@ -1,25 +1,19 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-package org.jboss.hal.client.configuration.subsystem.jca;
+package org.jboss.hal.client.configuration.subsystem.datasource;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
@@ -32,12 +26,11 @@ import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.ChangeSetAdapter;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.Requires;
@@ -57,8 +50,8 @@ public class DataSourcePresenter extends
 
     // @formatter:off
     @ProxyCodeSplit
-    @Requires(ROOT_ADDRESS)
     @NameToken(NameTokens.DATA_SOURCE)
+    @Requires(AddressTemplates.DATA_SOURCE_ADDRESS)
     public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<DataSourcePresenter> {
@@ -67,16 +60,11 @@ public class DataSourcePresenter extends
     // @formatter:on
 
 
-    static final String ROOT_ADDRESS = "/{any.profile}/subsystem=datasources/data-source=*";
-    static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
-    static final AddressTemplate DATA_SOURCE_RESOURCE = AddressTemplate
-            .of("/{selected.profile}/subsystem=datasources/data-source=*");
-
     private static final Logger logger = LoggerFactory.getLogger(DataSourcePresenter.class);
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
-    private final ChangeSetAdapter changeSetAdapter;
+    private final OperationFactory operationFactory;
     private String datasource;
 
     @Inject
@@ -88,7 +76,7 @@ public class DataSourcePresenter extends
         super(eventBus, view, proxy);
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
-        this.changeSetAdapter = new ChangeSetAdapter();
+        this.operationFactory = new OperationFactory();
     }
 
     @Override
@@ -116,15 +104,15 @@ public class DataSourcePresenter extends
 
     private void loadDataSource() {
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
-                DATA_SOURCE_RESOURCE.resolve(statementContext, datasource)).build();
+                AddressTemplates.DATA_SOURCE_TEMPLATE.resolve(statementContext, datasource)).build();
         dispatcher.execute(operation, result -> getView().update(datasource, result));
     }
 
     void saveDataSource(final Map<String, Object> changedValues) {
         logger.debug("About to save changes for {}: {}", datasource, changedValues); //NON-NLS
 
-        ResourceAddress resourceAddress = DATA_SOURCE_RESOURCE.resolve(statementContext, datasource);
-        Composite composite = changeSetAdapter.fromChangeSet(resourceAddress, changedValues);
+        ResourceAddress resourceAddress = AddressTemplates.DATA_SOURCE_TEMPLATE.resolve(statementContext, datasource);
+        Composite composite = operationFactory.fromChangeSet(resourceAddress, changedValues);
 
         dispatcher.execute(composite, (CompositeResult result) -> {
             logger.debug("Datasource {} successfully modified", datasource); //NON-NLS

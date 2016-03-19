@@ -1,30 +1,26 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.ballroom.form;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.events.EventListener;
@@ -35,7 +31,6 @@ import elemental.html.SpanElement;
 import elemental.html.UListElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.LazyElement;
-import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
@@ -44,10 +39,12 @@ import org.jboss.hal.resources.Messages;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Form.Operation.*;
@@ -71,10 +68,12 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     private static final String NOT_INITIALIZED = "Form element not initialized. Please add this form to the DOM before calling any of the form operations";
 
     private final String id;
+    private final StateMachine stateMachine;
     private final DataMapping<T> dataMapping;
     private final LinkedHashMap<State, Element> panels;
     private final LinkedHashMap<String, FormItem> formItems;
-    private final LinkedHashMap<String, String> helpTexts;
+    private final Set<String> unboundItems;
+    private final LinkedHashMap<String, SafeHtml> helpTexts;
     private final List<FormValidation> formValidations;
 
     private T model;
@@ -87,17 +86,12 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     private EventListener exitEditWithEsc;
 
     // accessible in subclasses
-    protected final StateMachine stateMachine;
     protected SaveCallback<T> saveCallback;
     protected ResetCallback<T> resetCallback;
     protected CancelCallback<T> cancelCallback;
 
 
     // ------------------------------------------------------ initialization
-
-    public DefaultForm(final String id, final StateMachine stateMachine, final SecurityContext securityContext) {
-        this(id, stateMachine, new DefaultMapping<T>(), securityContext);
-    }
 
     public DefaultForm(final String id, final StateMachine stateMachine, final DataMapping<T> dataMapping,
             final SecurityContext securityContext) {
@@ -109,6 +103,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         this.securityContext = securityContext;
         this.panels = new LinkedHashMap<>();
         this.formItems = new LinkedHashMap<>();
+        this.unboundItems = new HashSet<>();
         this.helpTexts = new LinkedHashMap<>();
         this.formValidations = new ArrayList<>();
     }
@@ -120,7 +115,11 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         }
     }
 
-    protected void addHelp(String label, String description) {
+    protected void markAsUnbound(String name) {
+        unboundItems.add(name);
+    }
+
+    protected void addHelp(String label, SafeHtml description) {
         helpTexts.put(label, description);
     }
 
@@ -184,7 +183,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             viewPanel.appendChild(formItem.asElement(READONLY));
             if (iterator.hasNext()) {
                 HRElement hr = Browser.getDocument().createHRElement();
-                hr.getClassList().add("separator");
+                hr.getClassList().add(separator);
                 viewPanel.appendChild(hr);
             }
         }
@@ -234,10 +233,10 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
                 .div().css(offset(labelColumns), column(inputColumns))
                     .div().css(pullRight)
                         .button().css(btn, btnHal, btnDefault).on(click, event -> cancel())
-                            .innerText(CONSTANTS.cancel())
+                            .textContent(CONSTANTS.cancel())
                         .end()
                         .button().css(btn, btnHal, btnPrimary).on(click, event -> save())
-                            .innerText(CONSTANTS.save())
+                            .textContent(CONSTANTS.save())
                         .end()
                     .end()
                 .end()
@@ -274,6 +273,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         }
         this.model = model;
         stateExec(ADD); // switch state before data mapping!
+        clearErrors();
         dataMapping.newModel(model, this);
     }
 
@@ -304,6 +304,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     public void clear() {
         this.model = null;
         stateExec(CLEAR);
+        clearErrors();
         dataMapping.clearFormItems(this);
     }
 
@@ -318,6 +319,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             throw new IllegalStateException(NOT_INITIALIZED);
         }
         stateExec(RESET); // switch state before data mapping!
+        clearErrors();
         dataMapping.resetModel(model, this);
         if (resetCallback != null) {
             resetCallback.onReset(this);
@@ -345,6 +347,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         }
         this.model = model;
         stateExec(EDIT); // switch state before data mapping!
+        clearErrors();
         dataMapping.populateFormItems(model, this);
     }
 
@@ -403,7 +406,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         this.cancelCallback = cancelCallback;
     }
 
-    protected String formId() {
+    private String formId() {
         return "form(" + id + ")"; //NON-NLS
     }
 
@@ -457,6 +460,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         }
 
         formLinks.switchTo(state, model, securityContext);
+        // TODO Prevent hiding and showing the very same panel
         for (Element panel : panels.values()) {
             Elements.setVisible(panel, false);
         }
@@ -507,6 +511,14 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     }
 
     @Override
+    public Iterable<FormItem> getBoundFormItems() {
+        //noinspection Guava
+        return FluentIterable.from(formItems.values())
+                .filter(formItem -> !unboundItems.contains(formItem.getName()))
+                .toList();
+    }
+
+    @Override
     public Iterable<FormItem> getFormItems() {
         return ImmutableList.copyOf(formItems.values());
     }
@@ -523,8 +535,9 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
 
     // ------------------------------------------------------ validation
 
+    @Override
     @SuppressWarnings("unchecked")
-    private boolean validate() {
+    public boolean validate() {
         boolean valid = true;
 
         // validate form items
@@ -570,7 +583,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             } else {
                 errorMessage.setInnerText(CONSTANTS.formErrors());
                 for (String message : messages) {
-                    errorMessages.appendChild(new Elements.Builder().li().innerText(message).end().build());
+                    errorMessages.appendChild(new Elements.Builder().li().textContent(message).end().build());
                 }
             }
             Elements.setVisible(errorPanel, true);

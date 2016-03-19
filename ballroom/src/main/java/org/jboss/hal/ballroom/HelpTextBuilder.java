@@ -1,30 +1,27 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-package org.jboss.hal.core.mbui.form;
+package org.jboss.hal.ballroom;
 
 import com.google.common.base.Joiner;
 import com.google.gwt.core.client.GWT;
-import org.jboss.hal.ballroom.form.FormItem;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Names;
@@ -34,9 +31,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jboss.hal.core.mbui.form.HelpTextBuilder.RestartMode.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.UNIT;
+import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.dispatch.ProcessStateProcessor.RESTART_REQUIRED;
 
 /**
@@ -47,7 +43,7 @@ import static org.jboss.hal.dmr.dispatch.ProcessStateProcessor.RESTART_REQUIRED;
  * TODO Add info about capabilities & requirements
  * TODO Add info about "requires"
  */
-class HelpTextBuilder {
+public class HelpTextBuilder {
 
     enum RestartMode {
         ALL_SERVICES(CONSTANTS.restartAllServices()),
@@ -72,39 +68,40 @@ class HelpTextBuilder {
     private static final Messages MESSAGES = GWT.create(Messages.class);
     private static final Logger logger = LoggerFactory.getLogger(HelpTextBuilder.class);
 
-    String helpText(FormItem formItem, ModelNode description) {
-        StringBuilder help = new StringBuilder();
-        String desc = description.get(DESCRIPTION).asString();
-        if (!desc.endsWith(".")) {
-            desc = desc + ".";
-        }
+    public SafeHtml helpText(Property property) {
+        SafeHtmlBuilder help = new SafeHtmlBuilder();
+        ModelNode attribute = property.getValue();
+        SafeHtml desc = SafeHtmlUtils.fromSafeConstant(attribute.get(DESCRIPTION).asString());
+        boolean required = attribute.hasDefined(NILLABLE) && !attribute.get(NILLABLE).asBoolean();
+        boolean supportsExpression = attribute.hasDefined(EXPRESSIONS_ALLOWED) && attribute.get(EXPRESSIONS_ALLOWED)
+                .asBoolean();
         help.append(desc);
 
-        RestartMode restartMode = restartRequired(description);
+        RestartMode restartMode = restartRequired(attribute);
         if (restartMode == UNKNOWN) {
-            logger.warn("Unknown restart mode in attribute description for '{}': '{}'", formItem.getName(), //NON-NLS
-                    description.get(RESTART_REQUIRED).asString());
+            logger.warn("Unknown restart mode in attribute description for '{}': '{}'", property.getName(), //NON-NLS
+                    attribute.get(RESTART_REQUIRED).asString());
         }
         boolean showRestartHelp = (restartMode == ALL_SERVICES || restartMode == JVM || restartMode == RESOURCE_SERVICES);
 
         List<String> textModules = new ArrayList<>();
-        if (formItem.isRequired()) {
+        if (required) {
             textModules.add(CONSTANTS.requiredField());
         }
-        if (formItem.supportsExpressions()) {
+        if (supportsExpression) {
             textModules.add(CONSTANTS.supportsExpressions());
         }
-        if (description.hasDefined(UNIT)) {
-            textModules.add(MESSAGES.unit(description.get(UNIT).asString().toLowerCase()));
+        if (attribute.hasDefined(UNIT)) {
+            textModules.add(MESSAGES.unit(attribute.get(UNIT).asString().toLowerCase()));
         }
         if (showRestartHelp) {
             textModules.add(restartMode.description());
         }
         if (!textModules.isEmpty()) {
-            help.append(" ").append(Joiner.on(". ").join(textModules)).append(".");
+            help.appendHtmlConstant("<br/>").appendEscaped(Joiner.on(". ").join(textModules)).append('.'); //NON-NLS
         }
 
-        return help.toString();
+        return help.toSafeHtml();
     }
 
     @SuppressWarnings("HardCodedStringLiteral")

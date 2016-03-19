@@ -1,23 +1,17 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.core.modelbrowser;
 
@@ -35,8 +29,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.description.ResourceDescription;
-import org.jboss.hal.meta.security.SecurityContext;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
@@ -56,17 +49,21 @@ class ResourcePanel implements HasElements {
     private static final String DESCRIPTION_ELEMENT = "descriptionElement";
     private static final String EMPTY_ELEMENT = "emptyElement";
 
+    private final ModelBrowser modelBrowser;
     private final Dispatcher dispatcher;
     private final Resources resources;
     private final Elements.Builder builder;
     private final Element description;
     private final Element empty;
-    private final Tabs tabs;
     private final String dataId;
     private final String attributesId;
     private final String operationsId;
+    final Tabs tabs;
 
-    ResourcePanel(final Dispatcher dispatcher, final Resources resources) {
+    ResourcePanel(final ModelBrowser modelBrowser,
+            final Dispatcher dispatcher,
+            final Resources resources) {
+        this.modelBrowser = modelBrowser;
         this.dispatcher = dispatcher;
         this.resources = resources;
 
@@ -82,7 +79,7 @@ class ResourcePanel implements HasElements {
         // @formatter:off
         builder = new Elements.Builder()
             .p().css(lead).rememberAs(DESCRIPTION_ELEMENT).end()
-            .p().rememberAs(EMPTY_ELEMENT).innerText(resources.constants().noAttributes()).end()
+            .p().rememberAs(EMPTY_ELEMENT).textContent(resources.constants().noAttributes()).end()
             .add(tabs.asElement());
         // @formatter:on
 
@@ -96,8 +93,8 @@ class ResourcePanel implements HasElements {
         return builder.elements();
     }
 
-    void update(Node<Context> node, ResourceAddress address, ResourceDescription description) {
-        SafeHtml safeHtml = SafeHtmlUtils.fromSafeConstant(description.getDescription());
+    void update(Node<Context> node, ResourceAddress address, Metadata metadata) {
+        SafeHtml safeHtml = SafeHtmlUtils.fromSafeConstant(metadata.getDescription().getDescription());
         Elements.innerHtml(this.description, safeHtml);
 
         tabs.setContent(dataId, PLACE_HOLDER_ELEMENT);
@@ -112,8 +109,10 @@ class ResourcePanel implements HasElements {
                     .build();
             dispatcher.execute(operation, result -> {
                 ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(
-                        IdBuilder.build(Ids.MODEL_BROWSER, node.id, "form"), SecurityContext.RWX, description)
+                        IdBuilder.build(Ids.MODEL_BROWSER, node.id, "form"), metadata)
                         .includeRuntime()
+                        .onReset(modelBrowser::reset)
+                        .onSave((f, changedValues) -> modelBrowser.save(address, changedValues))
                         .build();
                 tabs.setContent(dataId, form.asElement());
                 PatternFly.initComponents();
@@ -121,9 +120,11 @@ class ResourcePanel implements HasElements {
                 form.view(result);
             });
 
-            tabs.setContent(attributesId, new AttributesTable(description.getAttributes(), resources).asElement());
-            if (description.hasOperations()) {
-                tabs.setContent(operationsId, new OperationsTable(description.getOperations(), resources).asElement());
+            tabs.setContent(attributesId,
+                    new AttributesTable(metadata.getDescription().getAttributes(), resources).asElement());
+            if (metadata.getDescription().hasOperations()) {
+                tabs.setContent(operationsId,
+                        new OperationsTable(metadata.getDescription().getOperations(), resources).asElement());
             }
         }
     }

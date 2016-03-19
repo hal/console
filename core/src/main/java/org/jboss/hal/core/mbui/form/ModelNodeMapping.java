@@ -1,26 +1,21 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jboss.hal.core.mbui.form;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.form.DefaultMapping;
 import org.jboss.hal.ballroom.form.Form;
@@ -57,7 +52,7 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
     @Override
     @SuppressWarnings("unchecked")
     public void populateFormItems(final T model, final Form<T> form) {
-        for (FormItem formItem : form.getFormItems()) {
+        for (FormItem formItem : form.getBoundFormItems()) {
             formItem.clearError();
 
             String name = formItem.getName();
@@ -129,7 +124,7 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
     @Override
     @SuppressWarnings("unchecked")
     public void persistModel(final T model, final Form<T> form) {
-        for (FormItem formItem : form.getFormItems()) {
+        for (FormItem formItem : form.getBoundFormItems()) {
             String name = formItem.getName();
 
             if (model.hasDefined(name) && formItem.isUndefined()) {
@@ -155,35 +150,52 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                     case INT:
                     case LONG:
                         Long longValue = (Long) value;
-                        if (type == BIG_INTEGER) {
-                            model.get(name).set(BigInteger.valueOf(longValue));
-                        } else if (type == INT) {
-                            model.get(name).set(longValue.intValue());
+                        if (longValue == null) {
+                            model.remove(name);
                         } else {
-                            model.get(name).set(longValue);
+                            if (type == BIG_INTEGER) {
+                                model.get(name).set(BigInteger.valueOf(longValue));
+                            } else if (type == INT) {
+                                model.get(name).set(longValue.intValue());
+                            } else {
+                                model.get(name).set(longValue);
+                            }
                         }
                         break;
 
                     case LIST:
                         List<String> list = (List<String>) value;
-                        ModelNode listNode = new ModelNode();
-                        for (String s : list) {
-                            listNode.add(s);
+                        if (list.isEmpty()) {
+                            model.remove(name);
+                        } else {
+                            ModelNode listNode = new ModelNode();
+                            for (String s : list) {
+                                listNode.add(s);
+                            }
+                            model.get(name).set(listNode);
                         }
-                        model.get(name).set(listNode);
                         break;
 
                     case OBJECT:
                         Map<String, String> map = (Map<String, String>) value;
-                        ModelNode mapNode = new ModelNode();
-                        for (Map.Entry<String, String> entry : map.entrySet()) {
-                            mapNode.get(entry.getKey()).set(entry.getValue());
+                        if (map.isEmpty()) {
+                            model.remove(name);
+                        } else {
+                            ModelNode mapNode = new ModelNode();
+                            for (Map.Entry<String, String> entry : map.entrySet()) {
+                                mapNode.get(entry.getKey()).set(entry.getValue());
+                            }
+                            model.get(name).set(mapNode);
                         }
-                        model.get(name).set(mapNode);
                         break;
 
                     case STRING:
-                        model.get(name).set(String.valueOf(value));
+                        String stringValue = String.valueOf(value);
+                        if (Strings.isNullOrEmpty(stringValue)) {
+                            model.remove(name);
+                        } else {
+                            model.get(name).set(stringValue);
+                        }
                         break;
 
                     // unsupported types
