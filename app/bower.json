@@ -1,6 +1,6 @@
 {
   "name": "org.jboss.hal.bower",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Bower setup for HAL",
   "license": "LGPL",
   "private": true,
