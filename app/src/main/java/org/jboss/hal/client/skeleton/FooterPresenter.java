@@ -24,10 +24,12 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.PatternFly;
+import org.jboss.hal.dmr.macro.RecordingEvent;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Resources;
 
 import javax.inject.Inject;
 
@@ -42,22 +44,27 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView> imp
     public interface MyView extends View, IsElement, HasPresenter<FooterPresenter> {
         void updateEnvironment(Environment environment);
         void updateVersion(Version version);
+        void recordingLabel(String label);
     }
     // @formatter:on
 
 
     private final Environment environment;
     private final PlaceManager placeManager;
+    private final Resources resources;
     private final CheckForUpdate checkForUpdate;
+    private boolean recording;
 
     @Inject
     public FooterPresenter(final EventBus eventBus,
             final MyView view,
             final Environment environment,
-            final PlaceManager placeManager) {
+            final PlaceManager placeManager,
+            final Resources resources) {
         super(eventBus, view);
         this.environment = environment;
         this.placeManager = placeManager;
+        this.resources = resources;
         this.checkForUpdate = new CheckForUpdate(environment);
     }
 
@@ -80,19 +87,31 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView> imp
         checkForUpdate.execute(version -> getView().updateVersion(version));
     }
 
-    public void onShowVersion() {
+    void onShowVersion() {
         Window.alert(NYI);
     }
 
-    public void onModelBrowser() {
+    void onModelBrowser() {
         placeManager.revealPlace(new PlaceRequest.Builder().nameToken(NameTokens.MODEL_BROWSER).build());
     }
 
-    public void onExpressionResolver() {
+    void onExpressionResolver() {
         Window.alert(NYI);
     }
 
-    public void onSettings() {
+    void onMacroRecording() {
+        if (recording) {
+            recording = false;
+            getView().recordingLabel(resources.constants().startMacro());
+            getEventBus().fireEvent(new RecordingEvent(RecordingEvent.Action.STOP));
+        } else {
+            recording = true;
+            getView().recordingLabel(resources.constants().stopMacro());
+            getEventBus().fireEvent(new RecordingEvent(RecordingEvent.Action.START));
+        }
+    }
+
+    void onSettings() {
         Window.alert(NYI);
     }
 }

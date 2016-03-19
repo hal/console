@@ -27,12 +27,11 @@ import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.resource.RequiredResources;
-import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +68,7 @@ public class MetadataProcessor {
 
     private final Dispatcher dispatcher;
     private final RequiredResources requiredResources;
+    private final MetadataRegistry metadataRegistry;
     private final ResourceDescriptions resourceDescriptions;
     private final SecurityFramework securityFramework;
     private final Capabilities capabilities;
@@ -79,10 +79,12 @@ public class MetadataProcessor {
     public MetadataProcessor(final Dispatcher dispatcher,
             final StatementContext statementContext,
             final RequiredResources requiredResources,
+            final MetadataRegistry metadataRegistry,
             final SecurityFramework securityFramework,
             final ResourceDescriptions resourceDescriptions,
             final Capabilities capabilities) {
         this.dispatcher = dispatcher;
+        this.metadataRegistry = metadataRegistry;
         this.requiredResources = requiredResources;
         this.securityFramework = securityFramework;
         this.resourceDescriptions = resourceDescriptions;
@@ -115,9 +117,8 @@ public class MetadataProcessor {
 
             @Override
             public void onSuccess(final Void aVoid) {
-                SecurityContext securityContext = securityFramework.lookup(template);
-                ResourceDescription description = resourceDescriptions.lookup(template);
-                callback.onMetadata(new Metadata(securityContext, description, capabilities));
+                // if we're here all metadata must be in the registry
+                callback.onMetadata(metadataRegistry.lookup(template));
             }
         });
     }
@@ -137,7 +138,8 @@ public class MetadataProcessor {
 
             logger.debug("About to execute {} composite operations", composites.size());
             List<RrdFunction> functions = Lists.transform(composites,
-                    composite -> new RrdFunction(resourceDescriptions, securityFramework, dispatcher, composite));
+                    composite -> new RrdFunction(metadataRegistry, securityFramework, resourceDescriptions,
+                            capabilities, dispatcher, composite));
             //noinspection Duplicates
             Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
                 @Override

@@ -19,7 +19,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
 
 /**
  * @author Harald Pehl
@@ -29,7 +28,7 @@ public class NamedNode extends ModelNode {
     protected final ModelNode node;
 
     public NamedNode(final ModelNode node) {
-        this(UNDEFINED + "_" + NamedNode.class.getSimpleName() + "_" + System.currentTimeMillis(), node);
+        this(NamedNode.class.getSimpleName() + "_" + System.currentTimeMillis(), node);
     }
 
     public NamedNode(final Property property) {

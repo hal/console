@@ -58,6 +58,7 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
     @DataElement ProgressElement progress = new ProgressElement();
     @DataElement Element halVersion;
     @DataElement Element updateAvailable;
+    @DataElement Element macroRecorder;
 
     @PostConstruct
     void init() {
@@ -90,6 +91,11 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
         }
     }
 
+    @Override
+    public void recordingLabel(final String label) {
+        macroRecorder.setTextContent(label);
+    }
+
     @EventHandler(element = "showVersion", on = click)
     void onShowVersion() {
         presenter.onShowVersion();
@@ -103,6 +109,11 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
     @EventHandler(element = "expressionResolver", on = click)
     void onExpressionResolver() {
         presenter.onExpressionResolver();
+    }
+
+    @EventHandler(element = "macroRecorder", on = click)
+    void onMacroRecorder() {
+        presenter.onMacroRecording();
     }
 
     @EventHandler(element = "settings", on = click)

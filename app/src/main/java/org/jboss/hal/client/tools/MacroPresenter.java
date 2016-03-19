@@ -13,34 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration.subsystem.datasource;
-
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.NamedNode;
+package org.jboss.hal.client.tools;
 
 /**
  * @author Harald Pehl
  */
-public class DataSource extends NamedNode {
-
-    private final boolean xa;
-
-    public DataSource(final boolean xa) {
-        this("", xa);
-    }
-
-    DataSource(final String name, final boolean xa) {
-        super(name, new ModelNode());
-        this.xa = xa;
-    }
-
-    public DataSource(final Property property, final boolean xa) {
-        super(property);
-        this.xa = xa;
-    }
-
-    public boolean isXa() {
-        return xa;
-    }
+public class MacroPresenter {
 }

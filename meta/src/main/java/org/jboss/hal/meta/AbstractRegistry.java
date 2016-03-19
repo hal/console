@@ -15,20 +15,17 @@
  */
 package org.jboss.hal.meta;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
  * @author Harald Pehl
  */
-public abstract class AbstractMetadataRegistry<T> implements MetadataRegistry<T> {
-
-    protected static final String UNABLE_TO_BIND_SINGLE = "Unable to add a single ";
+public abstract class AbstractRegistry<T> implements Registry<T> {
 
     private final StatementContext statementContext;
     private final String type;
 
-    protected AbstractMetadataRegistry(final StatementContext statementContext, final String type) {
+    protected AbstractRegistry(final StatementContext statementContext, final String type) {
         this.statementContext = statementContext;
         this.type = type;
     }
@@ -44,17 +41,6 @@ public abstract class AbstractMetadataRegistry<T> implements MetadataRegistry<T>
     }
 
     @Override
-    public void lookupDeferred(final AddressTemplate template, final AsyncCallback<T> callback) {
-        ResourceAddress address = resolveTemplate(template);
-        T metadata = lookupAddress(address);
-        if (metadata == null) {
-            addDeferred(address, callback);
-        } else {
-            callback.onSuccess(metadata);
-        }
-    }
-
-    @Override
     public boolean contains(final AddressTemplate template) {
         ResourceAddress address = resolveTemplate(template);
         return lookupAddress(address) != null;
@@ -65,6 +51,4 @@ public abstract class AbstractMetadataRegistry<T> implements MetadataRegistry<T>
     }
 
     protected abstract T lookupAddress(final ResourceAddress address);
-
-    protected abstract void addDeferred(final ResourceAddress address, final AsyncCallback<T> callback);
 }

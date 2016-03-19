@@ -61,6 +61,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String data();
     String defaultValue();
     String details();
+    String detectedDriver();
     String disable();
     String disabled();
     String dispatcherException();
@@ -170,6 +171,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String jdbcDriver();
     String loading();
     String logout();
+    String macroEditor();
     String message();
     String metadataError();
     String modelBrowser();
@@ -200,7 +202,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String save();
     String settings();
     String showAll();
+    String specifyDriver();
     String start();
+    String startMacro();
+    String stopMacro();
     String storage();
     String summary();
     String supportsExpressions();

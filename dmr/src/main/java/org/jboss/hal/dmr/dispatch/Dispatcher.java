@@ -25,6 +25,11 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.macro.Macro;
+import org.jboss.hal.dmr.macro.MacroFinishedEvent;
+import org.jboss.hal.dmr.macro.MacroOperationEvent;
+import org.jboss.hal.dmr.macro.RecordingEvent;
+import org.jboss.hal.dmr.macro.RecordingEvent.RecordingHandler;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
@@ -50,7 +55,7 @@ import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
  * @author Harald Pehl
  */
 @SuppressWarnings("HardCodedStringLiteral")
-public class Dispatcher {
+public class Dispatcher implements RecordingHandler {
 
     @FunctionalInterface
     public interface SuccessCallback<T> {
@@ -109,12 +114,14 @@ public class Dispatcher {
     private final Provider<ProcessStateProcessor> processStateProcessor;
     private final FailedCallback failedCallback;
     private final ExceptionCallback exceptionCallback;
+    private Macro macro;
 
     @Inject
     public Dispatcher(final Endpoints endpoints, final EventBus eventBus, final Resources resources,
             Provider<ProcessStateProcessor> processStateProcessor) {
         this.endpoints = endpoints;
         this.eventBus = eventBus;
+        this.eventBus.addHandler(RecordingEvent.getType(), this);
         this.processStateProcessor = processStateProcessor;
 
         this.failedCallback = (operation, failure) -> {
@@ -202,6 +209,7 @@ public class Dispatcher {
         } else {
             xhr.send(operation.toBase64String());
         }
+        recordOperation(operation);
     }
 
     private String descriptionOperationToUrl(final ModelNode operation) {
@@ -238,6 +246,8 @@ public class Dispatcher {
         XMLHttpRequest xhr = newXhr(endpoints.upload(), POST, operation, new UploadPayloadProcessor(), callback,
                 failedCallback, exceptionCallback);
         xhr.send(formData);
+        // TODO Support uploads in macros?
+        // recordOperation(operation);
     }
 
     private native FormData createFormData(InputElement fileInput, String operation) /*-{
@@ -314,5 +324,27 @@ public class Dispatcher {
         xhr.setWithCredentials(true);
 
         return xhr;
+    }
+
+
+    // ------------------------------------------------------ macro recording
+
+    @Override
+    public void onRecording(final RecordingEvent event) {
+        if (event.getAction() == RecordingEvent.Action.START && macro == null) {
+            macro = new Macro();
+        } else if (event.getAction() == RecordingEvent.Action.STOP && macro != null) {
+            Macro finished = macro;
+            finished.seal();
+            macro = null;
+            eventBus.fireEvent(new MacroFinishedEvent(finished));
+        }
+    }
+
+    private void recordOperation(Operation operation) {
+        if (macro != null && !macro.isSealed()) {
+            macro.addOperation(operation);
+            eventBus.fireEvent(new MacroOperationEvent(macro, operation));
+        }
     }
 }

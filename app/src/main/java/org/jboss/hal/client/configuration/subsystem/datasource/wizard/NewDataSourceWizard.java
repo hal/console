@@ -20,13 +20,16 @@ import org.jboss.hal.client.configuration.subsystem.datasource.DataSource;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
 import org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import java.util.List;
 
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.*;
 import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.State.*;
 
 /**
@@ -34,21 +37,25 @@ import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.Sta
  */
 public class NewDataSourceWizard extends Wizard<Context, State> {
 
-    public NewDataSourceWizard(final Environment environment,
-            final Metadata metadata,
+    public NewDataSourceWizard(final MetadataRegistry metadataRegistry,
+            final Environment environment,
+            final Resources resources,
             final DataSourceTemplates templates,
             final List<DataSource> existingDataSources,
             final List<JdbcDriver> drivers,
-            final Resources resources,
             final boolean xa) {
 
         super(Ids.DATA_SOURCE_WIZARD,
                 resources.messages().addResourceTitle(xa ? Names.XA_DATASOURCE : Names.DATASOURCE),
-                new Context(environment.isStandalone(), xa, metadata));
+                new Context(environment.isStandalone(), xa));
+
+        AddressTemplate dataSourceTemplate = xa ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE;
+        Metadata dataSourceMetadata = metadataRegistry.lookup(dataSourceTemplate);
+        Metadata driverMetadata = metadataRegistry.lookup(JDBC_DRIVER_TEMPLATE);
 
         addStep(CHOOSE_TEMPLATE, new ChooseTemplateStep(this, templates, resources, xa));
-        addStep(NAMES, new NamesStep(this, existingDataSources, resources));
-        addStep(DRIVER, new DriverStep(this, drivers, resources));
+        addStep(NAMES, new NamesStep(this, existingDataSources, dataSourceMetadata, resources));
+        addStep(DRIVER, new DriverStep(this, drivers, driverMetadata, resources));
         addStep(PROPERTIES, new PropertiesStep(this, resources));
         addStep(CONNECTION, new ConnectionStep(this, resources));
         addStep(SUMMARY, new SummaryStep(this, resources.constants().summary()));

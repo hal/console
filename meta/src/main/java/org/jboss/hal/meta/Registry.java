@@ -13,34 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration.subsystem.datasource;
+package org.jboss.hal.meta;
 
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
  * @author Harald Pehl
  */
-public class DataSource extends NamedNode {
+public interface Registry<T> {
 
-    private final boolean xa;
+    T lookup(final AddressTemplate template) throws MissingMetadataException;
 
-    public DataSource(final boolean xa) {
-        this("", xa);
-    }
+    boolean contains(final AddressTemplate template);
 
-    DataSource(final String name, final boolean xa) {
-        super(name, new ModelNode());
-        this.xa = xa;
-    }
-
-    public DataSource(final Property property, final boolean xa) {
-        super(property);
-        this.xa = xa;
-    }
-
-    public boolean isXa() {
-        return xa;
-    }
+    void add(final ResourceAddress address, final T metadata);
 }

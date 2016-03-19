@@ -17,10 +17,12 @@ package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSource;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Resources;
 
 import java.util.List;
@@ -34,17 +36,14 @@ class NamesStep extends WizardStep<Context, State> {
 
     private final ModelNodeForm<DataSource> form;
 
-    NamesStep(final NewDataSourceWizard wizard, final List<DataSource> existingDataSources, final Resources resources) {
+    NamesStep(final NewDataSourceWizard wizard, final List<DataSource> existingDataSources,
+            final Metadata metadata, final Resources resources) {
         super(wizard, resources.constants().attributes());
 
-        form = new ModelNodeForm.Builder<DataSource>(IdBuilder.build(id(), "names", "step"),
-                wizard.getContext().metadata)
+        form = new ModelNodeForm.Builder<DataSource>(IdBuilder.build(id(), "names", "step"), metadata)
                 .unboundFormItem(new NameItem(), 0)
                 .include("jndi-name")
-                .onSave((form, changedValues) -> {
-                    wizard.getContext().dataSource = form.getModel();
-                    wizard.getContext().dataSource.setName(String.valueOf(changedValues.get(NAME)));
-                })
+                .onSave((form, changedValues) -> wizard.getContext().dataSource = form.getModel())
                 .build();
     }
 
@@ -56,7 +55,10 @@ class NamesStep extends WizardStep<Context, State> {
     @Override
     protected void onShow(final Context context) {
         // name is unbound so we have to bind it manually
-        form.getFormItem(NAME).setValue(context.dataSource.getName());
+        FormItem<Object> nameItem = form.getFormItem(NAME);
+        nameItem.setValue(context.dataSource.getName());
+        nameItem.setUndefined(false);
+
         form.edit(context.dataSource);
     }
 

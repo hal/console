@@ -15,19 +15,37 @@
  */
 package org.jboss.hal.meta;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.hal.dmr.model.ResourceAddress;
 
+import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
+ * Registry for {@link Metadata} which combines the information from {@link org.jboss.hal.meta.description.ResourceDescriptions},
+ * {@link org.jboss.hal.meta.security.SecurityFramework} and {@link org.jboss.hal.meta.capabilitiy.Capabilities}.
+ *
  * @author Harald Pehl
  */
-public interface MetadataRegistry<T> {
+public class MetadataRegistry extends AbstractRegistry<Metadata> {
 
-    T lookup(final AddressTemplate template) throws MissingMetadataException;
+    private static final String METADATA_TYPE = "meta data";
 
-    void lookupDeferred(final AddressTemplate template, final AsyncCallback<T> callback);
+    private final Map<ResourceAddress, Metadata> registry;
 
-    boolean contains(final AddressTemplate template);
+    @Inject
+    public MetadataRegistry(final StatementContext statementContext) {
+        super(statementContext, METADATA_TYPE);
+        this.registry = new HashMap<>();
+    }
 
-    void add(final ResourceAddress address, final T metadata);
+    @Override
+    protected Metadata lookupAddress(final ResourceAddress address) {
+        return registry.get(address);
+    }
+
+    @Override
+    public void add(final ResourceAddress address, final Metadata metadata) {
+        registry.put(address, metadata);
+    }
 }

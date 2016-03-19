@@ -21,6 +21,9 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.security.SecurityFramework;
 import org.slf4j.Logger;
@@ -35,15 +38,20 @@ class RrdFunction implements Function<FunctionContext> {
 
     private static final Logger logger = LoggerFactory.getLogger(RrdFunction.class);
 
-    private final ResourceDescriptions resourceDescriptions;
+    private final MetadataRegistry metadataRegistry;
     private final SecurityFramework securityFramework;
+    private final ResourceDescriptions resourceDescriptions;
+    private final Capabilities capabilities;
     private final Dispatcher dispatcher;
     private final Composite composite;
 
-    public RrdFunction(final ResourceDescriptions resourceDescriptions, final SecurityFramework securityFramework,
+    RrdFunction(final MetadataRegistry metadataRegistry, final SecurityFramework securityFramework,
+            final ResourceDescriptions resourceDescriptions, final Capabilities capabilities,
             final Dispatcher dispatcher, final Composite composite) {
-        this.resourceDescriptions = resourceDescriptions;
+        this.metadataRegistry = metadataRegistry;
         this.securityFramework = securityFramework;
+        this.resourceDescriptions = resourceDescriptions;
+        this.capabilities = capabilities;
         this.dispatcher = dispatcher;
         this.composite = composite;
     }
@@ -56,13 +64,18 @@ class RrdFunction implements Function<FunctionContext> {
                     try {
                         Set<RrdResult> results = new CompositeRrdParser(composite).parse(compositeResult);
                         for (RrdResult rr : results) {
+                            if (rr.securityContext != null) {
+                                logger.debug("Add security context for {}", rr.address);
+                                securityFramework.add(rr.address, rr.securityContext);
+                            }
                             if (rr.resourceDescription != null) {
                                 logger.debug("Add resource description for {}", rr.address);
                                 resourceDescriptions.add(rr.address, rr.resourceDescription);
                             }
-                            if (rr.securityContext != null) {
-                                logger.debug("Add security context for {}", rr.address);
-                                securityFramework.add(rr.address, rr.securityContext);
+                            if (rr.resourceDescription != null && rr.securityContext != null) {
+                                logger.debug("Add metadata for {}", rr.address);
+                                metadataRegistry.add(rr.address,
+                                        new Metadata(rr.securityContext, rr.resourceDescription, capabilities));
                             }
                         }
                         control.proceed();

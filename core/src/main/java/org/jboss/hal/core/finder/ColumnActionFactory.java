@@ -18,7 +18,6 @@ package org.jboss.hal.core.finder;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
@@ -29,17 +28,15 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTIION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
@@ -53,56 +50,13 @@ import static org.jboss.hal.resources.CSS.pfIcon;
  */
 public class ColumnActionFactory {
 
-    private class ColumnMetadataCallback<T> implements MetadataProcessor.MetadataCallback {
-
-        private final FinderColumn<T> column;
-        private final String id;
-        private final String type;
-        private final AddressTemplate template;
-        private final String firstAttribute;
-        private final String[] otherAttributes;
-
-        protected ColumnMetadataCallback(final FinderColumn<T> column, final String id, final String type,
-                final AddressTemplate template, @NonNls final String firstAttribute,
-                @NonNls final String... otherAttributes) {
-            this.column = column;
-            this.id = id;
-            this.type = type;
-            this.template = template;
-            this.firstAttribute = firstAttribute;
-            this.otherAttributes = otherAttributes;
-        }
-
-        @Override
-        public void onError(final Throwable error) {
-            MessageEvent.fire(eventBus,
-                    Message.error(resources.constants().metadataError(), error.getMessage()));
-        }
-
-        @Override
-        public void onMetadata(final Metadata metadata) {
-            ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(
-                    IdBuilder.build(id, "add", "form"), metadata)
-                    .createResource()
-                    .unboundFormItem(new NameItem(), 0);
-            if (firstAttribute != null) {
-                builder.include(firstAttribute, otherAttributes);
-            }
-            AddResourceDialog<ModelNode> dialog = new AddResourceDialog<>(
-                    resources.messages().addResourceTitle(type), builder.build(),
-                    new ColumnAddResourceCallback<>(column, type, template));
-            dialog.show();
-        }
-    }
-
-
     private class ColumnAddResourceCallback<T> implements AddResourceDialog.Callback<ModelNode> {
 
         private final FinderColumn<T> column;
         private final String type;
         private final AddressTemplate template;
 
-        protected ColumnAddResourceCallback(final FinderColumn<T> column, final String type,
+        ColumnAddResourceCallback(final FinderColumn<T> column, final String type,
                 final AddressTemplate template) {
             this.column = column;
             this.type = type;
@@ -124,22 +78,19 @@ public class ColumnActionFactory {
     }
 
 
-    private final MetadataProcessor metadataProcessor;
-    private final Provider<Progress> progress;
+    private final MetadataRegistry metadataRegistry;
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
     private final StatementContext statementContext;
     private final Resources resources;
 
     @Inject
-    public ColumnActionFactory(final MetadataProcessor metadataProcessor,
-            @Footer final Provider<Progress> progress,
+    public ColumnActionFactory(final MetadataRegistry metadataRegistry,
             final Dispatcher dispatcher,
             final EventBus eventBus,
             final StatementContext statementContext,
             final Resources resources) {
-        this.metadataProcessor = metadataProcessor;
-        this.progress = progress;
+        this.metadataRegistry = metadataRegistry;
         this.dispatcher = dispatcher;
         this.eventBus = eventBus;
         this.statementContext = statementContext;
@@ -157,9 +108,21 @@ public class ColumnActionFactory {
 
     public <T> ColumnAction<T> add(String id, String type, AddressTemplate template,
             @NonNls final String firstAttribute, @NonNls final String... otherAttributes) {
-        return add(id, column ->
-                metadataProcessor.lookup(template, progress.get(),
-                        new ColumnMetadataCallback<>(column, id, type, template, firstAttribute, otherAttributes)));
+
+        return add(id, column -> {
+            Metadata metadata = metadataRegistry.lookup(template);
+            ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(
+                    IdBuilder.build(id, "add", "form"), metadata)
+                    .createResource()
+                    .unboundFormItem(new NameItem(), 0);
+            if (firstAttribute != null) {
+                builder.include(firstAttribute, otherAttributes);
+            }
+            AddResourceDialog<ModelNode> dialog = new AddResourceDialog<>(
+                    resources.messages().addResourceTitle(type), builder.build(),
+                    new ColumnAddResourceCallback<>(column, type, template));
+            dialog.show();
+        });
     }
 
     public <T> ColumnAction<T> add(String id, ColumnActionHandler<T> handler) {

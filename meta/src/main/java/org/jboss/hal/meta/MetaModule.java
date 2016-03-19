@@ -35,6 +35,7 @@ public class MetaModule extends AbstractGinModule {
     protected void configure() {
         bind(Capabilities.class).in(Singleton.class);
         bind(MetadataProcessor.class).in(Singleton.class);
+        bind(MetadataRegistry.class).in(Singleton.class);
         bind(ResourceDescriptions.class).in(Singleton.class);
         bind(SecurityFramework.class).in(Singleton.class);
         bind(Subsystems.class).in(Singleton.class);

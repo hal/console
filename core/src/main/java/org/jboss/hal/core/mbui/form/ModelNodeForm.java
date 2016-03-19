@@ -85,6 +85,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         boolean viewOnly;
         boolean addOnly;
         boolean unsorted;
+        boolean requiredOnly;
         boolean includeRuntime;
         SaveCallback<T> saveCallback;
         CancelCallback<T> cancelCallback;
@@ -146,6 +147,11 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
         public Builder<T> unsorted() {
             this.unsorted = true;
+            return this;
+        }
+
+        public Builder<T> requiredOnly() {
+            this.requiredOnly = true;
             return this;
         }
 
