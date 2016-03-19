@@ -1,0 +1,41 @@
+{
+  "name": "tagmanager",
+  "main": [
+    "tagmanager.js",
+    "tagmanager.css",
+    "tagmanager.less"
+  ],
+  "authors": [
+    "Max Favilli"
+  ],
+  "description": "A jQuery plugin to create tag input fields, which works nicely with Twitter Typeahead.js and Twitter Bootstrap",
+  "keywords": [
+    "tag",
+    "autocomplete",
+    "jquery",
+    "bootstrap",
+    "typeahead"
+  ],
+  "dependencies": {
+    "jquery": ">= 1.0.0"
+  },
+  "license": "MPL",
+  "homepage": "http://welldonethings.com/tags/manager/v3",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "version": "3.0.2",
+  "_release": "3.0.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v3.0.2",
+    "commit": "df9eb9935c8585a392dfc00602f890caf233fa94"
+  },
+  "_source": "git://github.com/max-favilli/tagmanager.git",
+  "_target": "~3.0.2",
+  "_originalSource": "tagmanager"
+}
