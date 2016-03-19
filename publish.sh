@@ -18,14 +18,14 @@ start_spinner "Building hal.next..."
 mvn -q clean install -Dgwt.skipCompilation
 stop_spinner $?
 
-start_spinner "Compiling GWT modules"
+start_spinner "Compiling app..."
 cd app
 mvn -q clean install
 cd ${ROOT}
 stop_spinner $?
 
 start_spinner "Publishing to gh-pages..."
-rm -rf /tmp/hal-app
+rm -rf /tmp/hal
 mv app/target/hal-app-*/hal /tmp/
 git checkout gh-pages > /dev/null 2>&1
 git reset --hard origin/gh-pages > /dev/null 2>&1
