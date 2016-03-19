@@ -21,4 +21,4 @@ The latest version of HAL.Next can be found at https://hal.github.io/hal.next/. 
         /host=master/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=https://hal.github.io)
         reload --host=master
 
-Please note since the demo is served from **https** you need to secure the local management interface as well. 
+Please note since the demo is served from **https** you need to secure the management interface as well. 
