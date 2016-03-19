@@ -15,12 +15,12 @@ fi
 source "$ROOT/spinner.sh"
 
 start_spinner "Building hal.next..."
-mvn -q clean install -Dgwt.skipCompilation
+mvn -q clean install -Dgwt.skipCompilation -Pdev > /dev/null 2>&1
 stop_spinner $?
 
 start_spinner "Compiling app..."
 cd app
-mvn -q clean install
+mvn -q clean install > /dev/null 2>&1
 cd ${ROOT}
 stop_spinner $?
 
