@@ -7,10 +7,10 @@ BRANCH=$(git symbolic-ref -q HEAD)
 BRANCH=${BRANCH##refs/heads/}
 BRANCH=${BRANCH:-HEAD}
 
-if ! git diff --no-ext-diff --quiet --exit-code; then
-    echo "Cannot publish to gh-pages. You have uncommitted changes in the current branch."
-    exit -1
-fi
+#if ! git diff --no-ext-diff --quiet --exit-code; then
+#    echo "Cannot publish to gh-pages. You have uncommitted changes in the current branch."
+#    exit -1
+#fi
 
 source "$ROOT/spinner.sh"
 
@@ -39,4 +39,7 @@ git push -f origin gh-pages > /dev/null 2>&1
 git checkout ${BRANCH} > /dev/null 2>&1
 stop_spinner $?
 
-echo "\nHAL.Next successfully published to branch gh-pages."
+echo
+echo "HAL.Next successfully published to branch gh-pages."
+echo "Please visit https://hal.github.io/hal.next/"
+echo
