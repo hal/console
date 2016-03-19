@@ -31,7 +31,7 @@ git checkout gh-pages > /dev/null 2>&1
 git reset --hard origin/gh-pages > /dev/null 2>&1
 rm -rf *.png *.gif *.ico *.txt *.html *.js
 rm -rf css deferredjs fonts img js
-mv /tmp/hal/ .
+mv /tmp/hal/* .
 date > .build
 git add --all > /dev/null 2>&1
 git commit -am "Update hal.next" > /dev/null 2>&1
