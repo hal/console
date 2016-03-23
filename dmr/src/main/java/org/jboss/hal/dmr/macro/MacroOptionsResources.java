@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.deployment;
+package org.jboss.hal.dmr.macro;
 
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.NamedNode;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.TextResource;
 
 /**
  * @author Harald Pehl
  */
-public class Subsystem extends NamedNode {
+public interface MacroOptionsResources extends ClientBundle {
 
-    public Subsystem(Property property) {
-        super(property);
-    }
+    @Source("macroOptions.base64")
+    TextResource macroOptions();
 }

@@ -42,12 +42,10 @@ public class ModelBrowserPath implements Iterable<ModelBrowserPath.Segment[]> {
 
 
     private final ModelBrowser modelBrowser;
-    private final Node<Context> node;
     private final List<Segment[]> segments;
 
     ModelBrowserPath(final ModelBrowser modelBrowser, final Node<Context> node) {
         this.modelBrowser = modelBrowser;
-        this.node = node;
         this.segments = new ArrayList<>();
 
         Node<Context> current = node;

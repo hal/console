@@ -57,9 +57,11 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml listHint();
     String messages(@PluralCount int count);
     String modifyResourceSuccess(String type, String name);
+    SafeHtml noMacrosDescription(String startMacro);
     String pageNotFound(String invalidHistoryToken);
     String patternMismatch(String pattern);
     SafeHtml propertiesHint();
+    String recordedOperations(@PluralCount int count);
     String removeResourceConfirmationTitle(String name);
     SafeHtml removeResourceConfirmationQuestion(String name);
     String removeResourceSuccess(String type, String name);

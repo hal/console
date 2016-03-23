@@ -103,7 +103,7 @@ public interface Form<T> extends IsElement, Attachable {
      * Validates the form and its fields and upon successful validation persists the changes to the model and
      * calls the save callback.
      */
-    void save();
+    boolean save();
 
     void setSaveCallback(SaveCallback<T> saveCallback);
 

@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.deployment;
+package org.jboss.hal.ballroom.editor;
 
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.NamedNode;
+import jsinterop.annotations.JsType;
+
+import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /**
  * @author Harald Pehl
+ * @see <a href="https://github.com/ajaxorg/ace/wiki/Configuring-Ace">https://github.com/ajaxorg/ace/wiki/Configuring-Ace</a>
  */
-public class Subsystem extends NamedNode {
+@JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+public class Options<T> {
 
-    public Subsystem(Property property) {
-        super(property);
-    }
+    public boolean autoScrollEditorIntoView;
 }

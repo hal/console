@@ -41,11 +41,11 @@ import static org.jboss.hal.ballroom.dialog.Dialog.PRIMARY_POSITION;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.HOLD;
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
+import static org.jboss.hal.client.bootstrap.endpoint.Endpoint.SCHEME;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.ADD;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.SELECT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.security.SecurityContext.RWX;
-import static org.jboss.hal.resources.Ids.ENDPOINT_ADD;
 
 /**
  * Modal dialog to manage bootstrap servers. The dialog offers a page to connect to an existing server and a page to
@@ -114,7 +114,7 @@ class EndpointDialog {
         });
         ping.setEnabled(false);
 
-        form = new ModelNodeForm.Builder<Endpoint>(ENDPOINT_ADD, metadata)
+        form = new ModelNodeForm.Builder<Endpoint>(Ids.ENDPOINT_ADD, metadata)
                 .addOnly()
                 .include(NAME, SCHEME, HOST, PORT)
                 .unboundFormItem(ping)
@@ -145,7 +145,7 @@ class EndpointDialog {
 
     private Endpoint transientEndpoint() {
         Endpoint endpoint = new Endpoint();
-        endpoint.get(NAME).set("__transientEndpoint__"); //NON-NLS
+        endpoint.setName("__transientEndpoint__"); //NON-NLS
         FormItem<String> scheme = form.getFormItem(SCHEME);
         endpoint.get(SCHEME).set(scheme.getValue());
         FormItem<String> host = form.getFormItem(HOST);

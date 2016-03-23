@@ -44,6 +44,8 @@ import org.jboss.hal.client.skeleton.FooterPresenter;
 import org.jboss.hal.client.skeleton.HeaderPresenter;
 import org.jboss.hal.client.skeleton.Templated_FooterView_Provider;
 import org.jboss.hal.client.skeleton.Templated_HeaderView_Provider;
+import org.jboss.hal.client.tools.MacroEditorPresenter;
+import org.jboss.hal.client.tools.MacroEditorView;
 import org.jboss.hal.client.tools.ModelBrowserPresenter;
 import org.jboss.hal.client.tools.ModelBrowserView;
 import org.jboss.hal.client.utb.UnderTheBridgePresenter;
@@ -124,6 +126,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 InterfacePresenter.MyView.class,
                 InterfaceView.class,
                 InterfacePresenter.MyProxy.class);
+
+        bindPresenter(MacroEditorPresenter.class,
+                MacroEditorPresenter.MyView.class,
+                MacroEditorView.class,
+                MacroEditorPresenter.MyProxy.class);
 
         bindPresenter(ModelBrowserPresenter.class,
                 ModelBrowserPresenter.MyView.class,

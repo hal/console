@@ -13,10 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.tools;
+package org.jboss.hal.ballroom.editor;
+
+import jsinterop.annotations.JsType;
 
 /**
  * @author Harald Pehl
  */
-public class MacroPresenter {
+@JsType(isNative = true)
+public class Session {
+
+    public native void setValue(String value);
 }

@@ -69,4 +69,8 @@ public class RootPresenter extends Presenter<RootPresenter.MyView, RootPresenter
     void applicationMode() {
         headerPresenter.applicationMode();
     }
+
+    void applicationMode(String title) {
+        headerPresenter.applicationMode(title);
+    }
 }

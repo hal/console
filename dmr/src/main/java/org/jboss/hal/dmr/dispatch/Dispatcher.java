@@ -28,6 +28,8 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.macro.Macro;
 import org.jboss.hal.dmr.macro.MacroFinishedEvent;
 import org.jboss.hal.dmr.macro.MacroOperationEvent;
+import org.jboss.hal.dmr.macro.MacroOptions;
+import org.jboss.hal.dmr.macro.Macros;
 import org.jboss.hal.dmr.macro.RecordingEvent;
 import org.jboss.hal.dmr.macro.RecordingEvent.RecordingHandler;
 import org.jboss.hal.dmr.model.Composite;
@@ -114,15 +116,16 @@ public class Dispatcher implements RecordingHandler {
     private final Provider<ProcessStateProcessor> processStateProcessor;
     private final FailedCallback failedCallback;
     private final ExceptionCallback exceptionCallback;
-    private Macro macro;
+    private Macros macros;
 
     @Inject
     public Dispatcher(final Endpoints endpoints, final EventBus eventBus, final Resources resources,
-            Provider<ProcessStateProcessor> processStateProcessor) {
+            Provider<ProcessStateProcessor> processStateProcessor, final Macros macros) {
         this.endpoints = endpoints;
         this.eventBus = eventBus;
         this.eventBus.addHandler(RecordingEvent.getType(), this);
         this.processStateProcessor = processStateProcessor;
+        this.macros = macros;
 
         this.failedCallback = (operation, failure) -> {
             logger.error("Dispatcher failed: {}, operation: {}", failure, operation);
@@ -200,14 +203,16 @@ public class Dispatcher implements RecordingHandler {
             url = endpoints.dmr();
         }
 
-        XMLHttpRequest xhr = newXhr(url, method, operation, new DmrPayloadProcessor(), callback, failedCallback,
-                exceptionCallback);
-        xhr.setRequestHeader(HEADER_ACCEPT, APPLICATION_DMR_ENCODED);
-        xhr.setRequestHeader(HEADER_CONTENT_TYPE, APPLICATION_DMR_ENCODED);
-        if (method == GET) {
-            xhr.send();
-        } else {
-            xhr.send(operation.toBase64String());
+        if (macros.currentOptions() == null || macros.currentOptions().executeDuringRecording()) {
+            XMLHttpRequest xhr = newXhr(url, method, operation, new DmrPayloadProcessor(), callback, failedCallback,
+                    exceptionCallback);
+            xhr.setRequestHeader(HEADER_ACCEPT, APPLICATION_DMR_ENCODED);
+            xhr.setRequestHeader(HEADER_CONTENT_TYPE, APPLICATION_DMR_ENCODED);
+            if (method == GET) {
+                xhr.send();
+            } else {
+                xhr.send(operation.toBase64String());
+            }
         }
         recordOperation(operation);
     }
@@ -331,20 +336,44 @@ public class Dispatcher implements RecordingHandler {
 
     @Override
     public void onRecording(final RecordingEvent event) {
-        if (event.getAction() == RecordingEvent.Action.START && macro == null) {
-            macro = new Macro();
-        } else if (event.getAction() == RecordingEvent.Action.STOP && macro != null) {
-            Macro finished = macro;
-            finished.seal();
-            macro = null;
-            eventBus.fireEvent(new MacroFinishedEvent(finished));
+        if (event.getAction() == RecordingEvent.Action.START && macros.current() == null) {
+            MacroOptions options = event.getOptions();
+            macros.start(new Macro(options.getName(), options.get(DESCRIPTION).asString()), options);
+
+        } else if (event.getAction() == RecordingEvent.Action.STOP && macros.current() != null) {
+            Macro finished = macros.current();
+            MacroOptions options = macros.currentOptions();
+            macros.stop();
+            eventBus.fireEvent(new MacroFinishedEvent(finished, options));
         }
     }
 
     private void recordOperation(Operation operation) {
-        if (macro != null && !macro.isSealed()) {
-            macro.addOperation(operation);
-            eventBus.fireEvent(new MacroOperationEvent(macro, operation));
+        if (macros.current() != null && !macros.current().isSealed()) {
+            if (macros.currentOptions().omitReadOperations() && readOnlyOperation(operation)) {
+                return;
+            }
+            if (operation instanceof Composite && ((Composite) operation).size() == 1) {
+                // TODO Is it ok to record a composite with one step as a single op?
+                macros.current().addOperation(((Composite) operation).iterator().next());
+            } else {
+                macros.current().addOperation(operation);
+            }
+            eventBus.fireEvent(new MacroOperationEvent(macros.current(), operation));
+        }
+    }
+
+    private boolean readOnlyOperation(Operation operation) {
+        if (operation instanceof Composite) {
+            Composite composite = (Composite) operation;
+            for (Operation op : composite) {
+                if (!op.getName().startsWith("read")) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return operation.getName().startsWith("read");
         }
     }
 }

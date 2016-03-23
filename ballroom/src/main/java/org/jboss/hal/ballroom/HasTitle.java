@@ -13,17 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.deployment;
-
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.NamedNode;
+package org.jboss.hal.ballroom;
 
 /**
+ * Meant to be implemented by UI elements which have a title.
+ *
  * @author Harald Pehl
  */
-public class Subsystem extends NamedNode {
+public interface HasTitle {
 
-    public Subsystem(Property property) {
-        super(property);
-    }
+    String getTitle();
 }

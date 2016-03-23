@@ -13,17 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.deployment;
+package org.jboss.hal.ballroom.editor;
 
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.NamedNode;
+import jsinterop.annotations.JsType;
 
 /**
  * @author Harald Pehl
  */
-public class Subsystem extends NamedNode {
+@JsType(isNative = true)
+public class Editor {
 
-    public Subsystem(Property property) {
-        super(property);
-    }
+    public native void setOptions(Options options);
+
+    public native void setReadOnly(boolean readOnly);
+
+    public native void setTheme(String theme);
+
+    public native Session getSession();
 }

@@ -181,11 +181,15 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noAttributes();
     String noDetails();
     String noItems();
+    String noMacros();
     String notANumber();
     String nothingSelected();
+    String ok();
     String operations();
     String output();
     String ping();
+    String recordingStarted();
+    String recordingStopped();
     String removeResource();
     String required();
     String requiredField();

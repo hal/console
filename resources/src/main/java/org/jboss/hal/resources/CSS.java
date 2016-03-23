@@ -36,13 +36,18 @@ public interface CSS {
     String alertSuccess = "alert-success";
     String alertWarning = "alert-warning";
     String attributes = "attributes";
+    String blankSlatePf = "blank-slate-pf";
+    String blankSlatePfIcon = "blank-slate-pf-icon";
+    String blankSlatePfMainAction = "blank-slate-pf-main-action";
+    String blankSlatePfSecondaryAction = "blank-slate-pf-secondary-action";
     String bootstrapSwitch = "bootstrap-switch";
     String btn = "btn";
     String btnDefault = "btn-default";
     String btnFinder = "btn-finder";
     String btnGroup = "btn-group";
-    String btnPrimary = "btn-primary";
     String btnHal = "btn-hal";
+    String btnLg = "btn-lg";
+    String btnPrimary = "btn-primary";
     String caret = "caret";
     String clearfix = "clearfix";
     String clickable = "clickable";
@@ -60,6 +65,7 @@ public interface CSS {
     String eapHomeRow = "eap-home-row";
     String eapHomeTitle = "eap-home-title";
     String editing = "editing";
+    String editor = "editor";
     String errorCircleO = "error-circle-o";
     String equals = "equals";
     String empty = "empty";
@@ -133,6 +139,7 @@ public interface CSS {
     String properties = "properties";
     String pullLeft = "pull-left";
     String pullRight = "pull-right";
+    String pulse = "pulse";
     String radio = "radio";
     String readonly = "readonly";
     String refresh = "refresh";

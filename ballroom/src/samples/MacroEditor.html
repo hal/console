@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Macro Editor</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="../../../app/src/main/resources/org/jboss/hal/public/css/hal.css" rel="stylesheet">
+    <style>
+        #context-editor {
+            height: 150px;
+        }
+
+        #macro-editor {
+            height: 250px;
+        }
+    </style>
+
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.dataTables.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/typeahead.bundle.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/tagmanager.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/dataTables.buttons.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/dataTables.select.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jstree.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-select.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-switch.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/patternfly.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/ace.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="macro-list col-md-4">
+            <div class="list-group list-view-pf">
+                <div class="list-group-item list-view-pf-stacked">
+                    <div class="list-view-pf-actions">
+                        <div class="btn-group">
+                            <a class="btn btn-default" href="#"><i class="fa fa-play"></i></a>
+                            <a class="btn btn-default" href="#"><i class="fa fa-clipboard"></i></a>
+                            <a class="btn btn-default" href="#"><i class="fa fa-remove"></i></a>
+                        </div>
+                    </div>
+                    <div class="list-view-pf-main-info">
+                        <div class="list-view-pf-body">
+                            <div class="list-view-pf-description">
+                                <div class="list-group-item-heading">
+                                    Macro One
+                                </div>
+                                <div class="list-group-item-text">
+                                    This is a description for 'macro one'.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item list-view-pf-stacked active">
+                    <div class="list-view-pf-actions">
+                        <div class="btn-group">
+                            <a class="btn btn-default" href="#"><i class="fa fa-play"></i></a>
+                            <a class="btn btn-default" href="#"><i class="fa fa-clipboard"></i></a>
+                            <a class="btn btn-default" href="#"><i class="fa fa-remove"></i></a>
+                        </div>
+                    </div>
+                    <div class="list-view-pf-main-info">
+                        <div class="list-view-pf-body">
+                            <div class="list-view-pf-description">
+                                <div class="list-group-item-heading">
+                                    Macro Two
+                                </div>
+                                <!-- No description available -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item list-view-pf-stacked">
+                    <div class="list-view-pf-actions">
+                        <div class="btn-group">
+                            <a class="btn btn-default" href="#"><i class="fa fa-play"></i></a>
+                            <a class="btn btn-default" href="#"><i class="fa fa-clipboard"></i></a>
+                            <a class="btn btn-default" href="#"><i class="fa fa-remove"></i></a>
+                        </div>
+                    </div>
+                    <div class="list-view-pf-main-info">
+                        <div class="list-view-pf-body">
+                            <div class="list-view-pf-description">
+                                <div class="list-group-item-heading">
+                                    Macro Three
+                                </div>
+                                <div class="list-group-item-text">
+                                    This is a description for 'macro three'.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <pre id="macro-editor"></pre>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <pre>Step #1: Success
+Step #2: Success
+Step #3: Success
+Step #4: Error
+            </pre>
+        </div>
+    </div>
+</div>
+<script>
+    var macroEditor = ace.edit("macro-editor");
+    macroEditor.setTheme("ace/theme/tomorrow");
+    macroEditor.getSession().setValue("batch\n/socket-binding-group=*:read-resource-description(access-control=combined-descriptions,operations=true,recursive=true)\nrun-batch -v\n:read-children-resources(child-type=socket-binding-group)\nbatch\n/interface=*:read-resource-description(access-control=combined-descriptions,operations=true,recursive=true)\nrun-batch -v\n:read-children-resources(child-type=interface)\n/interface=private:read-resource\nbatch\n/path=*:read-resource-description(access-control=combined-descriptions,operations=true,recursive=true)\nrun-batch -v\n:read-children-resources(child-type=path)\n/path=test:add(path=test)\n:read-children-resources(child-type=path)")
+</script>
+</body>
+</html>

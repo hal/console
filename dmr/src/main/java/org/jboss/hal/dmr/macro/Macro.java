@@ -31,12 +31,28 @@ public class Macro {
     private List<Operation> operations;
     private boolean sealed;
 
-    public Macro() {
-        this.name = Macro.class.getSimpleName() + "_" + System.currentTimeMillis();
-        this.description = null;
+    public Macro(final String name, final String description) {
+        this.name = name;
+        this.description = description;
         this.context = null;
         this.operations = new ArrayList<>();
         this.sealed = false;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) { return true; }
+        if (!(o instanceof Macro)) { return false; }
+
+        Macro macro = (Macro) o;
+
+        return name.equals(macro.name);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
     }
 
     @Override
