@@ -15,10 +15,13 @@
  */
 package org.jboss.hal.dmr.model;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import org.jboss.hal.dmr.ModelNode;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.COMPOSITE;
@@ -27,37 +30,52 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.STEPS;
 /**
  * @author Harald Pehl
  */
-public class Composite extends Operation {
+public class Composite extends Operation implements Iterable<Operation> {
 
-    private int operations;
+    private List<Operation> operations;
 
     public Composite(Operation first, Operation... rest) {
         super(COMPOSITE, ResourceAddress.ROOT, new ModelNode(), null);
-        this.operations = 0;
-
-        List<Operation> operations = new ArrayList<>();
-        operations.add(first);
+        this.operations = new ArrayList<>();
+        this.operations.add(first);
         if (rest != null) {
             Collections.addAll(operations, rest);
         }
-        add(operations);
+        addSteps();
     }
 
     public Composite(List<Operation> operations) {
         super(COMPOSITE, ResourceAddress.ROOT, new ModelNode(), null);
-        this.operations = 0;
-        add(operations);
+        this.operations = new ArrayList<>();
+        this.operations.addAll(operations);
+        addSteps();
     }
 
-    private void add(final List<Operation> operations) {
+    private void addSteps() {
         for (Operation operation : operations) {
             get(STEPS).add(operation);
-            this.operations++;
         }
     }
 
     @Override
+    public Iterator<Operation> iterator() {
+        return operations.iterator();
+    }
+
+    public boolean isEmpty() {return operations.isEmpty();}
+
+    public int size() {return operations.size();}
+
+    @Override
     public String toString() {
-        return "Composite(" + operations + ")";
+        return "Composite(" + operations.size() + ")";
+    }
+
+    public String asCli() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("batch\n"); //NON-NLS
+        Joiner.on('\n').appendTo(builder, Lists.transform(operations, Operation::asCli));
+        builder.append("\nrun-batch -v"); //NON-NLS
+        return builder.toString();
     }
 }

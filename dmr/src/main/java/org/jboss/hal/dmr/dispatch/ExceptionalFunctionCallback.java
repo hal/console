@@ -22,11 +22,11 @@ import org.jboss.hal.dmr.model.Operation;
 /**
  * @author Harald Pehl
  */
-public class ExceptionalFunctionCallback implements Dispatcher.ExceptionCallback {
+public class ExceptionalFunctionCallback<T extends FunctionContext> implements Dispatcher.ExceptionCallback {
 
-    private final Control<FunctionContext> control;
+    private final Control<T> control;
 
-    public ExceptionalFunctionCallback(final Control<FunctionContext> control) {this.control = control;}
+    public ExceptionalFunctionCallback(final Control<T> control) {this.control = control;}
 
     @Override
     public void onException(final Operation operation, final Throwable exception) {

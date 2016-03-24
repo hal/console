@@ -1,0 +1,34 @@
+{
+    "comment" => "This file is not used! It's just here to generate the base64 encoded version using https://github.com/hal/dmr.cmd",
+    "description" => "Options for a new macro.",
+    "attributes" => {
+        "name" => {
+            "type" => STRING,
+            "description" => "The name of the macro.",
+            "nillable" => false
+        },
+        "description" => {
+            "type" => STRING,
+            "description" => "A description for the new macro.",
+            "nillable" => true
+        },
+        "execute-during-recording" => {
+            "type" => BOOLEAN,
+            "description" => "Whether DMR operations are executed during the recording of the macro.",
+            "nillable" => true,
+            "default" => true
+        },
+        "omit-read-operations" => {
+            "type" => BOOLEAN,
+            "description" => "Whether to omit read operations during recording",
+            "nillable" => true,
+            "default" => false
+        },
+        "open-in-editor" => {
+            "type" => BOOLEAN,
+            "description" => "Whether the macro should be opened in the macro editor after recording was stopped.",
+            "nillable" => true,
+            "default" => false
+        }
+    }
+}

@@ -13,10 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.tools;
+package org.jboss.hal.ballroom.listview;
 
 /**
  * @author Harald Pehl
  */
-public class MacroPresenter {
+public class ItemAction<T> {
+
+    final String title;
+    final ItemActionHandler<T> handler;
+
+    public ItemAction(final String title, final ItemActionHandler<T> handler) {
+        this.title = title;
+        this.handler = handler;
+    }
 }

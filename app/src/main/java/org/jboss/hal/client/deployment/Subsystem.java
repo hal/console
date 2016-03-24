@@ -26,29 +26,4 @@ public class Subsystem extends NamedNode {
     public Subsystem(Property property) {
         super(property);
     }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof Subsystem)) { return false; }
-        if (!super.equals(o)) { return false; }
-
-        Subsystem subsystem = (Subsystem) o;
-        //noinspection SimplifiableIfStatement
-        if (!getName().equals(subsystem.getName())) { return false; }
-        return node.equals(subsystem.node);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + getName().hashCode();
-        result = 31 * result + node.hashCode();
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Subsystem{" + getName() + "}";
-    }
 }

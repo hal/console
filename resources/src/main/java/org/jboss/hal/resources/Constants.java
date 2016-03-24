@@ -79,6 +79,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String expressionResolver();
 
+    String failed();
     String filter();
     String finish();
     String formErrors();
@@ -172,6 +173,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String loading();
     String logout();
     String macroEditor();
+    String macroPlaybackError();
+    String macroPlaybackSuccessful();
     String message();
     String metadataError();
     String modelBrowser();
@@ -181,12 +184,19 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noAttributes();
     String noDetails();
     String noItems();
+    String noMacros();
     String notANumber();
     String nothingSelected();
+    String ok();
     String operations();
     String output();
     String ping();
+    String play();
+    String recordingStarted();
+    String recordingStopped();
+    String remove();
     String removeResource();
+    String rename();
     String required();
     String requiredField();
     String reset();
@@ -197,7 +207,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String restartResourceServices();
 
     String restricted();
-    String remove();
     String sameOrigin();
     String save();
     String settings();

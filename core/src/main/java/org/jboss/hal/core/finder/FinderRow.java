@@ -125,7 +125,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                         .end();
                         eb.button()
                                 .css(btn, btnFinder, dropdownToggle)
-                                .data(UIConstants.TOGGLE,  "dropdown") //NON-NLS
+                                .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
                                 .aria(UIConstants.HAS_POPUP, String.valueOf(true))
                                 .aria(UIConstants.EXPANDED, String.valueOf(false))
                             .span().css(caret).end()

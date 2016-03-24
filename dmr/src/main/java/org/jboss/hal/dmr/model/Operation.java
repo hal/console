@@ -16,7 +16,10 @@
 package org.jboss.hal.dmr.model;
 
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
 import org.jetbrains.annotations.NonNls;
+
+import java.util.Iterator;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -79,13 +82,18 @@ public class Operation extends ModelNode {
     }
 
 
-    private Operation(final ModelNode modelNode) {
-        set(modelNode);
-    }
+    private final String name;
+    private final ResourceAddress address;
+    private final ModelNode parameter;
+    private final String role;
 
-    Operation(final String name, final ResourceAddress address, final ModelNode parameter,
-            final String role) {
-        this(parameter);
+    Operation(final String name, final ResourceAddress address, final ModelNode parameter, final String role) {
+        this.name = name;
+        this.address = address;
+        this.parameter = parameter;
+        this.role = role;
+
+        set(parameter);
         get(OP).set(name);
         get(ADDRESS).set(address);
         if (role != null && !name.equals(WHOAMI)) {
@@ -94,8 +102,37 @@ public class Operation extends ModelNode {
         }
     }
 
+    public String getName() {
+        return get(OP).asString();
+    }
+
     @Override
     public Operation clone() {
-        return new Operation(super.clone());
+        return new Operation(name, address, parameter, role);
+    }
+
+    @Override
+    public String toString() {
+        return asCli();
+    }
+
+    public String asCli() {
+        StringBuilder builder = new StringBuilder();
+        if (address.isDefined() && !address.asList().isEmpty()) {
+            builder.append(address);
+        }
+        builder.append(":").append(name);
+        if (parameter.isDefined() && !parameter.asPropertyList().isEmpty()) {
+            builder.append("(");
+            for (Iterator<Property> iterator = parameter.asPropertyList().iterator(); iterator.hasNext(); ) {
+                Property p = iterator.next();
+                builder.append(p.getName()).append("=").append(p.getValue().asString());
+                if (iterator.hasNext()) {
+                    builder.append(",");
+                }
+            }
+            builder.append(")");
+        }
+        return builder.toString();
     }
 }

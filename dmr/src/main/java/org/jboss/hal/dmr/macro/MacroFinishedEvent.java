@@ -19,7 +19,7 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
 /**
- * Event to signal that the recording for a macro has been finished.
+ * Event to signal that the recording for the active macro has been finished and the macro is now sealed.
  *
  * @author Harald Pehl
  */
@@ -27,7 +27,7 @@ public class MacroFinishedEvent extends GwtEvent<MacroFinishedEvent.MacroFinishe
 
     public interface MacroFinishedHandler extends EventHandler {
 
-        void onMacroStep(MacroFinishedEvent event);
+        void onMacroFinished(MacroFinishedEvent event);
     }
 
 
@@ -38,18 +38,24 @@ public class MacroFinishedEvent extends GwtEvent<MacroFinishedEvent.MacroFinishe
     }
 
     private final Macro macro;
+    private final MacroOptions options;
 
-    public MacroFinishedEvent(final Macro macro) {
+    public MacroFinishedEvent(final Macro macro, MacroOptions options) {
         this.macro = macro;
+        this.options = options;
     }
 
     public Macro getMacro() {
         return macro;
     }
 
+    public MacroOptions getOptions() {
+        return options;
+    }
+
     @Override
     protected void dispatch(MacroFinishedHandler handler) {
-        handler.onMacroStep(this);
+        handler.onMacroFinished(this);
     }
 
     @Override

@@ -16,6 +16,7 @@
 package org.jboss.hal.client.bootstrap.endpoint;
 
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.model.NamedNode;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
@@ -23,26 +24,17 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 /**
  * @author Harald Pehl
  */
-public class Endpoint extends ModelNode {
+public class Endpoint extends NamedNode {
 
+    public static final String SCHEME = "scheme";
     private static final String SELECTED = "selected";
 
-    public Endpoint() {
-        this(new ModelNode());
+    Endpoint() {
+        super("", new ModelNode());
     }
 
-    public Endpoint(ModelNode endpoint) {
-        set(endpoint);
-    }
-
-    @Override
-    public int hashCode() {
-        return getName().hashCode();
-    }
-
-    @Override
-    public boolean equals(final Object other) {
-        return other instanceof Endpoint && getName().equals(((Endpoint) other).getName());
+    Endpoint(ModelNode endpoint) {
+        super(endpoint);
     }
 
     public String getName() {

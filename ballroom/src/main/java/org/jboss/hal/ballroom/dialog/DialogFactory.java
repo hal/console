@@ -39,7 +39,7 @@ public final class DialogFactory {
         return new Dialog.Builder(title)
                 .closeIcon(true)
                 .closeOnEsc(true)
-                .noYes(confirm)
+                .yesNo(confirm)
                 .size(SMALL)
                 .primary(CONSTANTS.yes(), confirm)
                 .add(p)

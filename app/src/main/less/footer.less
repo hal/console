@@ -25,12 +25,18 @@
 
     > li {
       float: left;
-      > a {
-        padding: 7px 10px;
-        line-height: 1;
+      > .tool {
         border-left: 1px solid @hal-gray;
+        line-height: 1;
+        padding: 7px 10px;
+
         > .fa, .pficon {
           padding-right: 4px;
+        }
+
+        > .fa.recording {
+          color: #cc0000;
+          padding: 0;
         }
       }
     }
@@ -46,5 +52,5 @@
 }
 
 .progress-bar-striped {
-  background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+  background-image: linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
 }

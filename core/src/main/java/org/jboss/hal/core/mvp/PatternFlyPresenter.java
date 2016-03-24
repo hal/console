@@ -17,7 +17,6 @@ package org.jboss.hal.core.mvp;
 
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import elemental.dom.Element;
@@ -32,7 +31,7 @@ import org.jboss.gwt.elemento.core.IsElement;
  * @author Harald Pehl
  */
 public abstract class PatternFlyPresenter<V extends PatternFlyView, Proxy_ extends Proxy<?>>
-        extends Presenter<V, Proxy_>
+        extends HalPresenter<V, Proxy_>
         implements IsElement, HasElements {
 
     public PatternFlyPresenter(final EventBus eventBus, final V view, final Proxy_ proxy,

@@ -54,6 +54,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         void showMessage(Message message);
         void tlcMode();
         void applicationMode();
+        void applicationMode(String title);
         void updateBack(FinderContext finderContext);
         void updateBreadcrumb(FinderContext finderContext);
         void updateBreadcrumb(ModelBrowserPath path);
@@ -147,5 +148,9 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
 
     public void applicationMode() {
         getView().applicationMode();
+    }
+
+    public void applicationMode(String title) {
+        getView().applicationMode(title);
     }
 }

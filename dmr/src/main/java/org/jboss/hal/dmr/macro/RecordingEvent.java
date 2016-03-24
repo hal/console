@@ -40,12 +40,28 @@ public class RecordingEvent extends GwtEvent<RecordingEvent.RecordingHandler> {
         return TYPE;
     }
 
-    private final Action action;
+    public static RecordingEvent start(MacroOptions options) {
+        return new RecordingEvent(Action.START, options);
+    }
 
-    public RecordingEvent(final Action action) {this.action = action;}
+    public static RecordingEvent stop() {
+        return new RecordingEvent(Action.STOP, null);
+    }
+
+    private final Action action;
+    private final MacroOptions options;
+
+    private RecordingEvent(final Action action, final MacroOptions options) {
+        this.action = action;
+        this.options = options;
+    }
 
     public Action getAction() {
         return action;
+    }
+
+    public MacroOptions getOptions() {
+        return options;
     }
 
     @Override

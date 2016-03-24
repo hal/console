@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.dmr.model;
 
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 
@@ -25,10 +26,12 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
  */
 public class NamedNode extends ModelNode {
 
-    protected final ModelNode node;
+    private final String name;
+    private final ModelNode node;
 
     public NamedNode(final ModelNode node) {
-        this(NamedNode.class.getSimpleName() + "_" + System.currentTimeMillis(), node);
+        this(node.hasDefined(NAME) ? node.get(NAME).asString() : ModelDescriptionConstants.UNDEFINED + "_" + System
+                .currentTimeMillis(), node);
     }
 
     public NamedNode(final Property property) {
@@ -36,9 +39,36 @@ public class NamedNode extends ModelNode {
     }
 
     public NamedNode(final String name, final ModelNode node) {
+        this.name = name;
         this.node = node;
         set(node);
         setName(name);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) { return true; }
+        if (!(o instanceof NamedNode)) { return false; }
+        if (!super.equals(o)) { return false; }
+
+        NamedNode namedNode = (NamedNode) o;
+
+        if (!name.equals(namedNode.name)) { return false; }
+        return node.equals(namedNode.node);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + node.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" + name + ")";
     }
 
     public String getName() {

@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.resources.CSS.disabled;
+import static org.jboss.hal.resources.CSS.pulse;
 
 /**
  * @author Harald Pehl
@@ -59,10 +61,15 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
     @DataElement Element halVersion;
     @DataElement Element updateAvailable;
     @DataElement Element macroRecorder;
+    @DataElement Element macroEditor;
+    @DataElement Element recordingContainer;
+    @DataElement Element steps;
+    @DataElement Element recording;
 
     @PostConstruct
     void init() {
         uiRegistry().register(progress);
+        Elements.setVisible(recordingContainer, false);
         Elements.setVisible(updateAvailable, false);
     }
 
@@ -92,8 +99,24 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
     }
 
     @Override
-    public void recordingLabel(final String label) {
-        macroRecorder.setTextContent(label);
+    public void startRecording() {
+        macroRecorder.setTextContent(resources().constants().stopMacro());
+        macroEditor.getClassList().add(disabled);
+        Elements.setVisible(recordingContainer, true);
+        recording.getClassList().add(pulse);
+    }
+
+    @Override
+    public void steps(final int size) {
+        steps.setTextContent(resources().messages().recordedOperations(size));
+    }
+
+    @Override
+    public void stopRecording() {
+        recording.getClassList().remove(pulse);
+        Elements.setVisible(recordingContainer, false);
+        macroEditor.getClassList().remove(disabled);
+        macroRecorder.setTextContent(resources().constants().startMacro());
     }
 
     @EventHandler(element = "showVersion", on = click)
@@ -114,6 +137,11 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
     @EventHandler(element = "macroRecorder", on = click)
     void onMacroRecorder() {
         presenter.onMacroRecording();
+    }
+
+    @EventHandler(element = "macroEditor", on = click)
+    void onMacroEditor() {
+        presenter.onMacroEditor();
     }
 
     @EventHandler(element = "settings", on = click)

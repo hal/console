@@ -21,6 +21,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.FluentIterable;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.HasTitle;
 import org.jboss.hal.spi.Message;
 
 import java.util.ArrayList;
@@ -33,9 +34,7 @@ import java.util.List;
  * @author Harald Pehl
  */
 @FunctionalInterface
-public interface ItemDisplay<T> extends IsElement {
-
-    String getTitle();
+public interface ItemDisplay<T> extends IsElement, HasTitle {
 
     /**
      * An unique id for this item
@@ -66,7 +65,7 @@ public interface ItemDisplay<T> extends IsElement {
     }
 
     /**
-     * Whether a tooltip shoudl be shown for the item.
+     * Whether a tooltip should be shown for the item.
      *
      * @return {@code null} by default
      */

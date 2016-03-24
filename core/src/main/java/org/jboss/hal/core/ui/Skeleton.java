@@ -25,7 +25,8 @@ import static org.jboss.hal.resources.CSS.navbar;
  */
 public final class Skeleton {
 
-    private Skeleton() {}
+    public static final int MARGIN_BIG = 20; // keep this in sync with the
+    public static final int MARGIN_SMALL = 10; // margins in variables.less
 
     public static int navigationHeight() {
         int navigation = 0;
@@ -44,4 +45,10 @@ public final class Skeleton {
         }
         return footer;
     }
+
+    public static int applicationHeight() {
+        return Browser.getWindow().getInnerHeight() - navigationHeight() - footerHeight();
+    }
+
+    private Skeleton() {}
 }

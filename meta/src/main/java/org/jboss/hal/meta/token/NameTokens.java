@@ -35,6 +35,7 @@ public interface NameTokens {
     String JMX = "/configuration/{profile}/jmx";
     String JPA = "/configuration/{profile}/jpa";
     String LOGGING = "/configuration/{profile}/logging";
+    String MACRO_EDITOR = "/macro-editor";
     String MODEL_BROWSER = "/model-browser";
     String PATCHING = "/patching";
     String PATH = "/path";

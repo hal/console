@@ -23,6 +23,7 @@ import elemental.html.DivElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.HasTitle;
 import org.jboss.hal.core.mvp.Slots;
 import org.jboss.hal.core.mvp.TopLevelCategory;
 import org.jboss.hal.resources.Ids;
@@ -102,7 +103,11 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
             if (content instanceof TopLevelCategory) {
                 presenter.tlcMode();
             } else {
-                presenter.applicationMode();
+                if (content instanceof HasTitle) {
+                    presenter.applicationMode(((HasTitle) content).getTitle());
+                } else {
+                    presenter.applicationMode();
+                }
             }
 
         } else {

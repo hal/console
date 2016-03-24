@@ -28,7 +28,7 @@ public class MacroOperationEvent extends GwtEvent<MacroOperationEvent.MacroOpera
 
     public interface MacroOperationHandler extends EventHandler {
 
-        void onMacroStep(MacroOperationEvent event);
+        void onMacroOperation(MacroOperationEvent event);
     }
 
 
@@ -56,7 +56,7 @@ public class MacroOperationEvent extends GwtEvent<MacroOperationEvent.MacroOpera
 
     @Override
     protected void dispatch(MacroOperationHandler handler) {
-        handler.onMacroStep(this);
+        handler.onMacroOperation(this);
     }
 
     @Override

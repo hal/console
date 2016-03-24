@@ -208,8 +208,18 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     @Override
     public void applicationMode() {
+        applicationMode(null);
+    }
+
+    @Override
+    public void applicationMode(final String title) {
         Elements.setVisible(topLevelTabs, false);
         Elements.setVisible(breadcrumbs, true);
+        if (title != null) {
+            clearBreadcrump();
+            Element li = new Elements.Builder().li().textContent(title).end().build();
+            breadcrumbs.appendChild(li);
+        }
     }
 
     @Override
@@ -225,12 +235,15 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         }
     }
 
-    @Override
-    public void updateBreadcrumb(final FinderContext finderContext) {
+    private void clearBreadcrump() {
         while (breadcrumbs.getLastChild() != null && breadcrumbs.getChildren().getLength() > 1) {
             breadcrumbs.removeChild(breadcrumbs.getLastChild());
         }
+    }
 
+    @Override
+    public void updateBreadcrumb(final FinderContext finderContext) {
+        clearBreadcrump();
         FinderPath currentPath = FinderPath.empty();
         Iterator<FinderPath.Segment> pathIterator = finderContext.getPath().iterator();
         Iterator<Breadcrumb.Segment> breadcrumbIterator = finderContext.getBreadcrumb().iterator();

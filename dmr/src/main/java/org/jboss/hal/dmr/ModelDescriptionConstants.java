@@ -162,8 +162,6 @@ public interface ModelDescriptionConstants {
     String ROLES = "HEADER_ROLES";
     String RUNTIME = "runtime";
     String RUNTIME_NAME = "runtime-name";
-
-    String SCHEME = "scheme";
     String SECURITY_DOMAIN = "security-domain";
     String SERVER = "server";
     String SERVERS = "servers";

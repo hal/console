@@ -130,10 +130,10 @@ public class Dialog implements IsElement {
         }
 
         /**
-         * Shortcut for a dialog with a 'Cancel' and 'Save' button. Clicking on save will execute the specified
+         * Shortcut for a dialog with a 'Save' and 'Cancel' button. Clicking on save will execute the specified
          * callback.
          */
-        public Builder cancelSave(Callback saveCallback) {
+        public Builder saveCancel(Callback saveCallback) {
             buttons.clear();
             buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.save(), saveCallback, true));
             buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.close(), () -> true, false));
@@ -141,13 +141,24 @@ public class Dialog implements IsElement {
         }
 
         /**
-         * Shortcut for a dialog with a 'No' and 'Yes' button. Clicking on yes will execute the specified
+         * Shortcut for a dialog with a 'Yes' and 'No' button. Clicking on yes will execute the specified
          * callback.
          */
-        public Builder noYes(Callback yesCallback) {
+        public Builder yesNo(Callback yesCallback) {
             buttons.clear();
             buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.yes(), yesCallback, true));
             buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.no(), () -> true, false));
+            return this;
+        }
+
+        /**
+         * Shortcut for a dialog with a 'Ok' and 'Cancel' button. Clicking on yes will execute the specified
+         * callback.
+         */
+        public Builder okCancel(Callback okCallback) {
+            buttons.clear();
+            buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.ok(), okCallback, true));
+            buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.cancel(), () -> true, false));
             return this;
         }
 

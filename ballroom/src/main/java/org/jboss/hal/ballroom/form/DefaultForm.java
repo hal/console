@@ -357,7 +357,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
      * org.jboss.hal.ballroom.form.Form.SaveCallback save callback} (if any).
      */
     @Override
-    public final void save() {
+    public final boolean save() {
         if (!initialized()) {
             throw new IllegalStateException(NOT_INITIALIZED);
         }
@@ -369,6 +369,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
                 saveCallback.onSave(this, getChangedValues());
             }
         }
+        return valid;
     }
 
     @Override

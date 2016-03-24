@@ -24,10 +24,12 @@ public interface UIConstants {
 
     String COLLAPSE = "collapse";
     String CONTROLS = "controls";
+    String DROPDOWN = "dropdown";
     String EXPANDED = "expanded";
     String GROUP = "group";
     String HAS_POPUP = "haspopup";
     String HIDDEN = "hidden";
+    String LABELLED_BY = "labelledby";
     String NBSP = "&nbsp;";
     String OBJECT = "Object";
     String PLACEMENT = "placement";
