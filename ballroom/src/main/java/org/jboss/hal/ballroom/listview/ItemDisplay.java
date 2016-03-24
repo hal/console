@@ -34,6 +34,8 @@ import java.util.List;
  */
 public interface ItemDisplay<T> extends IsElement, HasTitle {
 
+    String getDescription();
+
     /**
      * An unique id for this item
      *
@@ -55,8 +57,6 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
     default HasElements getTitleElements() {
         return null;
     }
-
-    String getDescription();
 
     default HasElements getDescriptionElements() {
         return null;

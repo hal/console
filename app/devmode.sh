@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-mvn gwt:devmode -Pdevmode
+mvn gwt:devmode -Pdev

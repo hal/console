@@ -13,24 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.dispatch;
-
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.hal.dmr.model.Operation;
+package org.jboss.hal.core;
 
 /**
  * @author Harald Pehl
  */
-public class ExceptionalFunctionCallback<T extends FunctionContext> implements Dispatcher.ExceptionCallback {
+public final class Strings {
 
-    private final Control<T> control;
+    public static final String ELLIPSIS = "...";
 
-    public ExceptionalFunctionCallback(final Control<T> control) {this.control = control;}
+    public static String abbreviateMiddle(String string, int maxLength) {
+        if (string == null || maxLength >= string.length()) {
+            return string;
+        }
 
-    @Override
-    public void onException(final Operation operation, final Throwable exception) {
-        control.getContext().setError(exception);
-        control.abort();
+        final int targetSting = maxLength - ELLIPSIS.length();
+        final int startOffset = targetSting / 2 + targetSting % 2;
+        final int endOffset = string.length() - targetSting / 2;
+
+        return string.substring(0, startOffset) + ELLIPSIS + string.substring(endOffset);
+    }
+
+    private Strings() {
     }
 }

@@ -61,13 +61,44 @@ public class ListView<T> implements IsElement, SecurityContextAware {
         return root;
     }
 
-    public void setItems(List<T> items) {
+    public void setItems(Iterable<T> items) {
         this.items.clear();
         Elements.removeChildrenFrom(root);
         for (T item : items) {
             ListItem<T> listItem = new ListItem<>(this, item, multiselect, itemRenderer.render(item));
             this.items.put(listItem.id, listItem);
             root.appendChild(listItem.asElement());
+        }
+    }
+
+    /**
+     * Select the item and fires a selection event
+     */
+    public void selectItem(T item) {
+        String id = itemRenderer.render(item).getId();
+        ListItem<T> listItem = items.get(id);
+        if (listItem != null) {
+            select(listItem, true);
+        }
+    }
+
+    void select(ListItem<T> item, boolean select) {
+        if (select) {
+            item.root.getClassList().add(active);
+            if (selectHandler != null) {
+                selectHandler.onSelect(item.item);
+            }
+        } else {
+            item.root.getClassList().remove(active);
+        }
+        if (!multiselect) {
+            // deselect all other items
+            for (ListItem<T> otherItem : items.values()) {
+                if (otherItem == item) {
+                    continue;
+                }
+                otherItem.root.getClassList().remove(active);
+            }
         }
     }
 
@@ -99,23 +130,6 @@ public class ListView<T> implements IsElement, SecurityContextAware {
             }
         }
         return selected;
-    }
-
-    void select(ListItem<T> item, boolean select) {
-        if (select) {
-            item.root.getClassList().add(active);
-        } else {
-            item.root.getClassList().remove(active);
-        }
-        if (!multiselect) {
-            // deselect all other items
-            for (ListItem<T> otherItem : items.values()) {
-                if (otherItem == item) {
-                    continue;
-                }
-                otherItem.root.getClassList().remove(active);
-            }
-        }
     }
 
     @Override

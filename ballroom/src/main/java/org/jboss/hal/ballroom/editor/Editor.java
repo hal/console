@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.ballroom.editor;
 
+import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
 /**
@@ -23,11 +24,22 @@ import jsinterop.annotations.JsType;
 @JsType(isNative = true)
 public class Editor {
 
+    public native void focus();
+
+    public native void resize();
+
+    public native void gotoLine(int line, int column, boolean animate);
+
+    public native void selectAll();
+
+    public native Session getSession();
+
     public native void setOptions(Options options);
 
     public native void setReadOnly(boolean readOnly);
 
     public native void setTheme(String theme);
 
-    public native Session getSession();
+    @JsProperty
+    Object $blockScrolling;
 }

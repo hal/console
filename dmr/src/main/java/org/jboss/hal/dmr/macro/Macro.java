@@ -27,14 +27,12 @@ public class Macro {
 
     private String name;
     private String description;
-    private String context;
     private List<Operation> operations;
     private boolean sealed;
 
     public Macro(final String name, final String description) {
         this.name = name;
         this.description = description;
-        this.context = null;
         this.operations = new ArrayList<>();
         this.sealed = false;
     }
@@ -74,14 +72,6 @@ public class Macro {
 
     public void setDescription(final String description) {
         this.description = description;
-    }
-
-    public String getContext() {
-        return context;
-    }
-
-    public void setContext(final String context) {
-        this.context = context;
     }
 
     public void addOperation(Operation operation) {

@@ -118,7 +118,7 @@ public class Operation extends ModelNode {
 
     public String asCli() {
         StringBuilder builder = new StringBuilder();
-        if (!address.asList().isEmpty()) {
+        if (address.isDefined() && !address.asList().isEmpty()) {
             builder.append(address);
         }
         builder.append(":").append(name);

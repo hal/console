@@ -169,7 +169,6 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
         root = builder.build();
         previewColumn = builder.referenceFor(PREVIEW_COLUMN);
-        Browser.getWindow().setOnresize(event -> adjustHeight());
     }
 
     @Override
@@ -179,6 +178,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     @Override
     public void attach() {
+        Browser.getWindow().setOnresize(event -> adjustHeight());
         adjustHeight();
     }
 

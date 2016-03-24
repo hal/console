@@ -155,9 +155,9 @@ public class Dispatcher implements RecordingHandler {
         dmr(composite, callback, failedCallback, exceptionCallback);
     }
 
-    public void executeInFunction(final Control<FunctionContext> control, final Composite composite,
+    public <T extends FunctionContext> void executeInFunction(final Control<T> control, final Composite composite,
             final CompositeCallback callback) {
-        dmr(composite, callback, new FailedFunctionCallback(control), new ExceptionalFunctionCallback(control));
+        dmr(composite, callback, new FailedFunctionCallback<>(control), new ExceptionalFunctionCallback<>(control));
     }
 
 
@@ -177,9 +177,9 @@ public class Dispatcher implements RecordingHandler {
         dmr(operation, callback, failedCallback, exceptionCallback);
     }
 
-    public void executeInFunction(final Control<FunctionContext> control, Operation operation,
+    public <T extends FunctionContext> void executeInFunction(final Control<T> control, Operation operation,
             final OperationCallback callback) {
-        dmr(operation, callback, new FailedFunctionCallback(control), new ExceptionalFunctionCallback(control));
+        dmr(operation, callback, new FailedFunctionCallback<>(control), new ExceptionalFunctionCallback<>(control));
     }
 
 
@@ -338,7 +338,8 @@ public class Dispatcher implements RecordingHandler {
     public void onRecording(final RecordingEvent event) {
         if (event.getAction() == RecordingEvent.Action.START && macros.current() == null) {
             MacroOptions options = event.getOptions();
-            macros.start(new Macro(options.getName(), options.get(DESCRIPTION).asString()), options);
+            String description = options.hasDefined(DESCRIPTION) ? options.get(DESCRIPTION).asString() : null;
+            macros.start(new Macro(options.getName(), description), options);
 
         } else if (event.getAction() == RecordingEvent.Action.STOP && macros.current() != null) {
             Macro finished = macros.current();

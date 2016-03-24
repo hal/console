@@ -17,6 +17,7 @@ package org.jboss.hal.core.mvp;
 
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import elemental.dom.Element;
@@ -24,25 +25,17 @@ import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 
 /**
- * A presenter which calls {@link PatternFlyView#attach()} when it's {@linkplain #onReveal() revealed}. Extend from
- * this presenter if the view uses opt-in features from PatternFly / Bootstrap like data tables, tooltips or select
- * boxes.
+ * The base presenter for HAL. Each presenter must extend from this presenter or one of its subclasses.
  *
  * @author Harald Pehl
  */
-public abstract class PatternFlyPresenter<V extends PatternFlyView, Proxy_ extends Proxy<?>>
-        extends HalPresenter<V, Proxy_>
+public abstract class HalPresenter<V extends HalView, Proxy_ extends Proxy<?>>
+        extends Presenter<V, Proxy_>
         implements IsElement, HasElements {
 
-    public PatternFlyPresenter(final EventBus eventBus, final V view, final Proxy_ proxy,
+    public HalPresenter(final EventBus eventBus, final V view, final Proxy_ proxy,
             final GwtEvent.Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, slot);
-    }
-
-    @Override
-    protected void onReveal() {
-        super.onReveal();
-        getView().attach();
     }
 
     @Override

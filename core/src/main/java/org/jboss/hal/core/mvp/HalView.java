@@ -13,24 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.dispatch;
+package org.jboss.hal.core.mvp;
 
-import org.jboss.gwt.flow.Control;
-import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.hal.dmr.model.Operation;
+import com.gwtplatform.mvp.client.View;
+import org.jboss.gwt.elemento.core.HasElements;
+import org.jboss.gwt.elemento.core.IsElement;
 
 /**
+ * Bridge between GWTPs views which are based on widgets and elements.
+ *
  * @author Harald Pehl
  */
-public class ExceptionalFunctionCallback<T extends FunctionContext> implements Dispatcher.ExceptionCallback {
-
-    private final Control<T> control;
-
-    public ExceptionalFunctionCallback(final Control<T> control) {this.control = control;}
-
-    @Override
-    public void onException(final Operation operation, final Throwable exception) {
-        control.getContext().setError(exception);
-        control.abort();
-    }
+public interface HalView extends View, IsElement, HasElements {
 }

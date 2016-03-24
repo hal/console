@@ -58,6 +58,7 @@ public interface CSS {
     String collapse = "collapse";
     String containerFluid = "container-fluid";
     String controlLabel = "control-label";
+    String copy = "copy";
     String dataTable = "datatable";
     String defaultValue = "default-value";
     String disabled = "disabled";
@@ -119,6 +120,9 @@ public interface CSS {
     String listViewPfStacked = "list-view-pf-stacked";
     String loading = "loading";
     String loadingContainer = "loading-container";
+    String macroConsole = "macro-console";
+    String macroEditor = "macro-editor";
+    String macroList = "macro-list";
     String messageDetails = "message-details";
     String modal = "modal";
     String modalBody = "modal-body";
@@ -139,6 +143,7 @@ public interface CSS {
     String navTabs = "nav-tabs";
     String navTabsHal = "nav-tabs-hal";
     String navTabsPf = "nav-tabs-pf";
+    String noMacros = "no-macros";
     String offset = "offset";
     String ok = "ok";
     String operationParameter = "operation-parameter";

@@ -56,6 +56,7 @@ public class AceEditor implements IsElement, Attachable {
             editor = edit(id);
             if (options != null) {
                 editor.setOptions(options);
+                editor.$blockScrolling = null;
             }
         }
     }

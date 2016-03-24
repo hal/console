@@ -264,7 +264,7 @@
                 Activate this profile when running gwt:devmode from the command line
                 to enable browser refresh after changing sources
             -->
-            <id>devmode</id>
+            <id>dev</id>
             <properties>
                 <gulp-task>dev</gulp-task>
             </properties>

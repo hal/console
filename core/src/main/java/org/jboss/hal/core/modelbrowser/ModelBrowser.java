@@ -69,6 +69,8 @@ import java.util.Stack;
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.js.JsHelper.asList;
+import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
+import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Key.ANY_GROUP;
 import static org.jboss.hal.meta.StatementContext.Key.ANY_PROFILE;
@@ -129,13 +131,11 @@ public class ModelBrowser implements HasElements {
 
         @Override
         public void onError(final Throwable error) {
-                MessageEvent.fire(eventBus, Message.error(resources.constants().metadataError(), error.getMessage()));
+            MessageEvent.fire(eventBus, Message.error(resources.constants().metadataError(), error.getMessage()));
         }
     }
 
 
-    private static final int MARGIN_BIG = 20; // keep this in sync with the
-    private static final int MARGIN_SMALL = 10; // margins in modelbrowser.less
     private static final String FILTER_ELEMENT = "filterElement";
     private static final String REFRESH_ELEMENT = "refreshElement";
     private static final String COLLAPSE_ELEMENT = "collapseElement";
@@ -228,21 +228,13 @@ public class ModelBrowser implements HasElements {
             .end()
         .elements();
         // @formatter:on
-
-        Browser.getWindow().setOnresize(event -> adjustHeight());
     }
 
     private void adjustHeight() {
-        int window = Browser.getWindow().getInnerHeight();
-        int navigation = Skeleton.navigationHeight();
-        int footer = Skeleton.footerHeight();
+        int height = Skeleton.applicationHeight();
         int buttonGroup = this.buttonGroup.getOffsetHeight();
-        if (navigation > 0 && footer > 0) {
-            int height = window - navigation - footer;
-            // keep this in sync with the margins in modelbrowser.less
-            treeContainer.getStyle().setHeight(height - 2 * MARGIN_BIG - buttonGroup - 2 * MARGIN_SMALL, PX);
-            content.getStyle().setHeight(height - 2 * MARGIN_BIG - 2 * MARGIN_SMALL, PX);
-        }
+        treeContainer.getStyle().setHeight(height - 2 * MARGIN_BIG - buttonGroup - 2 * MARGIN_SMALL, PX);
+        content.getStyle().setHeight(height - 2 * MARGIN_BIG - 2 * MARGIN_SMALL, PX);
     }
 
     private void initTree(ResourceAddress address, String text) {
@@ -541,6 +533,8 @@ public class ModelBrowser implements HasElements {
         initTree(root, resource);
         tree.api().openNode(ROOT_ID, () -> resourcePanel.tabs.showTab(0));
         select(ROOT_ID, false);
+
+        Browser.getWindow().setOnresize(event -> adjustHeight());
         adjustHeight();
     }
 

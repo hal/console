@@ -25,7 +25,12 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
  * @see <a href="https://github.com/ajaxorg/ace/wiki/Configuring-Ace">https://github.com/ajaxorg/ace/wiki/Configuring-Ace</a>
  */
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-public class Options<T> {
+public class Options {
 
-    public boolean autoScrollEditorIntoView;
+    public boolean highlightActiveLine;
+    public boolean highlightGutterLine;
+    public boolean readOnly;
+    public boolean showGutter;
+    public boolean showLineNumbers;
+    public boolean showPrintMargin;
 }

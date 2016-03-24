@@ -15,17 +15,14 @@
  */
 package org.jboss.hal.core.mvp;
 
-import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.ViewImpl;
-import org.jboss.gwt.elemento.core.HasElements;
-import org.jboss.gwt.elemento.core.IsElement;
 
 /**
  * Interface for views which use JavaScript based PatternFly components like select picker, tooltips or data tables.
  *
  * @author Harald Pehl
  */
-public interface PatternFlyView extends View, IsElement, HasElements {
+public interface PatternFlyView extends HalView {
 
     /**
      * This method should be called <em>after</em> the view's elements are attached to the DOM. Typically this method

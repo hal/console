@@ -67,8 +67,9 @@ class ListItem<T> implements IsElement {
                     // first action is a button
                     builder.button()
                             .css(btn, btnDefault)
+                            .on(click, event -> action.handler.execute(item))
                             .textContent(action.title)
-                            .on(click, event -> action.handler.execute(item));
+                            .end();
                 } else {
                     // remaining actions are inside the kebab menu
                     if (index == 1) {
@@ -96,9 +97,6 @@ class ListItem<T> implements IsElement {
                     }
                 }
                 index++;
-            }
-            if (display.actions().size() > 1) {
-                builder.end(); // close the kebab menu
             }
             builder.end();
         }
@@ -144,7 +142,7 @@ class ListItem<T> implements IsElement {
             builder.end();
         }
 
-        builder.end().end(); // </div.listViewPfBody>
+        builder.end(); // </div.listViewPfBody>
         builder.end(); // </div.listViewPfMainInfo>
 
         root = builder.end().build();

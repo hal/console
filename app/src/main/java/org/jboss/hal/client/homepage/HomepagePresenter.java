@@ -58,7 +58,7 @@ public class HomepagePresenter extends TopLevelPresenter<HomepagePresenter.MyVie
         getView().setPresenter(this);
     }
 
-    public void launchGuidedTour() {
+    void launchGuidedTour() {
         Window.alert(NYI);
     }
 }

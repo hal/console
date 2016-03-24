@@ -24,4 +24,6 @@ import jsinterop.annotations.JsType;
 public class Session {
 
     public native void setValue(String value);
+
+    public native int getLength();
 }
