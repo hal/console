@@ -13,29 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.resources;
+package org.jboss.hal.ballroom.listview;
 
 /**
- * UI related constants used in more than one place.
- *
  * @author Harald Pehl
  */
-public interface UIConstants {
+public class ItemAction<T> {
 
-    String COLLAPSE = "collapse";
-    String CONTROLS = "controls";
-    String DROPDOWN = "dropdown";
-    String EXPANDED = "expanded";
-    String GROUP = "group";
-    String HAS_POPUP = "haspopup";
-    String HIDDEN = "hidden";
-    String LABELLED_BY = "labelledby";
-    String NBSP = "&nbsp;";
-    String OBJECT = "Object";
-    String PLACEMENT = "placement";
-    String ROLE = "role";
-    String TABINDEX = "tabindex";
-    String TABLIST = "tablist";
-    String TOGGLE = "toggle";
-    String TOOLTIP = "tooltip";
+    final String title;
+    final ItemActionHandler<T> handler;
+
+    public ItemAction(final String title, final ItemActionHandler<T> handler) {
+        this.title = title;
+        this.handler = handler;
+    }
 }

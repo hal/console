@@ -13,27 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.finder;
+package org.jboss.hal.ballroom.listview;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.FluentIterable;
 import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.HasTitle;
-import org.jboss.hal.spi.Message;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Controls the layout of a finder item. For simple items you only need to implement the {@link #getTitle()} method.
- * Override the default implementations if you need more control over the display and behaviour of the item.
+ * Controls the layout of a list view item.
  *
  * @author Harald Pehl
  */
-@FunctionalInterface
 public interface ItemDisplay<T> extends IsElement, HasTitle {
 
     /**
@@ -46,39 +44,25 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
         return FluentIterable.from(parts).transform(String::toLowerCase).join(Joiner.on('-'));
     }
 
-    /**
-     * The data which is used to filter items.
-     *
-     * @return {@link #getTitle()} by default
-     */
-    default String getFilterData() {
-        return getTitle();
+    default boolean stacked() {
+        return false;
     }
 
-    /**
-     * Whether the item should be decorated with a colorful marker as left border.
-     *
-     * @return {@code null} by default
-     */
-    default Message.Level getMarker() {
+    default Element status() {
         return null;
     }
 
-    /**
-     * Whether a tooltip should be shown for the item.
-     *
-     * @return {@code null} by default
-     */
-    default String getTooltip() {
+    default HasElements getTitleElements() {
         return null;
     }
 
-    /**
-     * Whether this item triggers a next column (hence is a folder not a leaf).
-     *
-     * @return {@code null} by default
-     */
-    default String nextColumn() {
+    String getDescription();
+
+    default HasElements getDescriptionElements() {
+        return null;
+    }
+
+    default HasElements getAdditionalInfo() {
         return null;
     }
 

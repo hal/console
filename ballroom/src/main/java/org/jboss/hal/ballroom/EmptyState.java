@@ -33,12 +33,17 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public class EmptyState implements IsElement {
 
-    private static class Button {
+    /**
+     * Simple data struct for a title which is bound to an event listener (typically onclick). Used in various builders.
+     *
+     * @author Harald Pehl
+     */
+    private static class Action {
 
-        final String title;
-        final EventListener listener;
+        public final String title;
+        public final EventListener listener;
 
-        private Button(final String title, final EventListener listener) {
+        public Action(final String title, final EventListener listener) {
             this.title = title;
             this.listener = listener;
         }
@@ -48,9 +53,9 @@ public class EmptyState implements IsElement {
 
         private final String title;
         private final List<Element> paragraphs;
-        private final List<Button> secondaryActions;
+        private final List<Action> secondaryActions;
         private String icon;
-        private Button primaryAction;
+        private Action primaryAction;
 
         public Builder(final String title) {
             this.title = title;
@@ -78,12 +83,12 @@ public class EmptyState implements IsElement {
         }
 
         public Builder primaryAction(String title, EventListener listener) {
-            this.primaryAction = new Button(title, listener);
+            this.primaryAction = new Action(title, listener);
             return this;
         }
 
         public Builder secondaryAction(String title, EventListener listener) {
-            this.secondaryActions.add(new Button(title, listener));
+            this.secondaryActions.add(new Action(title, listener));
             return this;
         }
 
@@ -113,7 +118,7 @@ public class EmptyState implements IsElement {
         }
         if (!builder.secondaryActions.isEmpty()) {
             eb.div().css(blankSlatePfSecondaryAction);
-            for (Button secondaryAction : builder.secondaryActions) {
+            for (Action secondaryAction : builder.secondaryActions) {
                 eb.button().css(btn, btnDefault).on(click, secondaryAction.listener)
                         .textContent(secondaryAction.title)
                         .end();
