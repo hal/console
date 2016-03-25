@@ -33,9 +33,11 @@ import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.Map;
@@ -60,8 +62,7 @@ public class DataSourcePresenter extends
     // @formatter:on
 
 
-    private static final Logger logger = LoggerFactory.getLogger(DataSourcePresenter.class);
-
+    private final Resources resources;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final OperationFactory operationFactory;
@@ -71,9 +72,11 @@ public class DataSourcePresenter extends
     public DataSourcePresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy proxy,
+            final Resources resources,
             final Dispatcher dispatcher,
             final StatementContext statementContext) {
         super(eventBus, view, proxy);
+        this.resources = resources;
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
         this.operationFactory = new OperationFactory();
@@ -109,13 +112,12 @@ public class DataSourcePresenter extends
     }
 
     void saveDataSource(final Map<String, Object> changedValues) {
-        logger.debug("About to save changes for {}: {}", datasource, changedValues); //NON-NLS
-
         ResourceAddress resourceAddress = AddressTemplates.DATA_SOURCE_TEMPLATE.resolve(statementContext, datasource);
         Composite composite = operationFactory.fromChangeSet(resourceAddress, changedValues);
 
         dispatcher.execute(composite, (CompositeResult result) -> {
-            logger.debug("Datasource {} successfully modified", datasource); //NON-NLS
+            MessageEvent.fire(getEventBus(),
+                    Message.success(resources.messages().modifyResourceSuccess(Names.DATASOURCE, datasource)));
             loadDataSource();
         });
     }

@@ -23,10 +23,18 @@ import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import javax.inject.Inject;
@@ -60,14 +68,23 @@ public class PathsPresenter extends
     static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
 
     private final Dispatcher dispatcher;
+    private final Resources resources;
+    private final StatementContext statementContext;
+    private final OperationFactory operationFactory;
 
     @Inject
     public PathsPresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy proxy,
-            final Dispatcher dispatcher) {
+            final Resources resources,
+            final Dispatcher dispatcher,
+            final StatementContext statementContext,
+            final OperationFactory operationFactory) {
         super(eventBus, view, proxy);
+        this.resources = resources;
         this.dispatcher = dispatcher;
+        this.statementContext = statementContext;
+        this.operationFactory = operationFactory;
     }
 
     @Override
@@ -89,7 +106,13 @@ public class PathsPresenter extends
         dispatcher.execute(operation, result -> getView().update(asNamedNodes(result.asPropertyList())));
     }
 
-    public void savePath(final String name, final Map<String, Object> changedValues) {
-        loadPaths();
+    void savePath(final String name, final Map<String, Object> changedValues) {
+        Composite composite = operationFactory
+                .fromChangeSet(ROOT_TEMPLATE.resolve(statementContext, name), changedValues);
+        dispatcher.execute(composite, (CompositeResult result) -> {
+            MessageEvent.fire(getEventBus(),
+                    Message.success(resources.messages().modifyResourceSuccess(Names.PATH, name)));
+            loadPaths();
+        });
     }
 }
