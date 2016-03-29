@@ -52,9 +52,9 @@ public class PatternFly {
 
     @JsOverlay
     private static void init() {
-        $("[data-toggle=tooltip]").tooltip();
         $("." + CSS.bootstrapSwitch).bootstrapSwitch();
         $("." + CSS.selectpicker).selectpicker(SelectBoxBridge.Defaults.get());
+        Tooltip.select("[data-toggle=tooltip]").init(); //NON-NLS
     }
 
     @JsMethod(namespace = GLOBAL)
@@ -63,6 +63,4 @@ public class PatternFly {
     public native void bootstrapSwitch();
 
     public native void selectpicker(SelectBoxBridge.Options options);
-
-    public native void tooltip();
 }

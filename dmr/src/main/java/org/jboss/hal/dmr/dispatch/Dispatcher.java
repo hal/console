@@ -203,16 +203,14 @@ public class Dispatcher implements RecordingHandler {
             url = endpoints.dmr();
         }
 
-        if (macros.currentOptions() == null || macros.currentOptions().executeDuringRecording()) {
-            XMLHttpRequest xhr = newXhr(url, method, operation, new DmrPayloadProcessor(), callback, failedCallback,
-                    exceptionCallback);
-            xhr.setRequestHeader(HEADER_ACCEPT, APPLICATION_DMR_ENCODED);
-            xhr.setRequestHeader(HEADER_CONTENT_TYPE, APPLICATION_DMR_ENCODED);
-            if (method == GET) {
-                xhr.send();
-            } else {
-                xhr.send(operation.toBase64String());
-            }
+        XMLHttpRequest xhr = newXhr(url, method, operation, new DmrPayloadProcessor(), callback, failedCallback,
+                exceptionCallback);
+        xhr.setRequestHeader(HEADER_ACCEPT, APPLICATION_DMR_ENCODED);
+        xhr.setRequestHeader(HEADER_CONTENT_TYPE, APPLICATION_DMR_ENCODED);
+        if (method == GET) {
+            xhr.send();
+        } else {
+            xhr.send(operation.toBase64String());
         }
         recordOperation(operation);
     }

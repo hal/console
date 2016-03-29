@@ -56,6 +56,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String close();
     String connection();
     String connectToServer();
+    String copied();
+    String copyToClipboard();
     String custom();
 
     String data();

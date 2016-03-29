@@ -26,6 +26,7 @@ import elemental.html.InputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
@@ -41,7 +42,6 @@ import java.util.Map;
 
 import static org.jboss.gwt.elemento.core.EventType.*;
 import static org.jboss.gwt.elemento.core.InputType.text;
-import static org.jboss.hal.ballroom.PatternFly.$;
 import static org.jboss.hal.core.finder.Finder.DATA_BREADCRUMB;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
@@ -497,7 +497,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             ulElement.appendChild(row.asElement());
         }
         updateHeader(items.size());
-        $("#" + id + " [data-toggle=tooltip]").tooltip();
+        Tooltip.select("#" + id + " [data-toggle=tooltip]").init(); //NON-NLS
 
         if (items.isEmpty()) {
             ulElement.appendChild(noItems);

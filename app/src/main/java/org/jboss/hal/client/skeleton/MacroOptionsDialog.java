@@ -33,6 +33,7 @@ import static org.jboss.hal.meta.security.SecurityContext.RWX;
 
 /**
  * Dialog to record a new macro.
+ * TODO Add a form validation to check for duplicate macro names.
  *
  * @author Harald Pehl
  */
@@ -52,7 +53,7 @@ class MacroOptionsDialog {
         Metadata metadata = new Metadata(RWX, StaticResourceDescription.from(RESOURCES.macroOptions()), capabilities);
         this.form = new ModelNodeForm.Builder<MacroOptions>(Ids.MACRO_OPTIONS, metadata)
                 .addOnly()
-                .include(NAME, DESCRIPTION, EXECUTE_DURING_RECORDING, OMIT_READ_OPERATIONS, OPEN_IN_EDITOR)
+                .include(NAME, DESCRIPTION, OMIT_READ_OPERATIONS, OPEN_IN_EDITOR)
                 .unsorted()
                 .onSave((form, changedValues) -> {
                     valid = true;

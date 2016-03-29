@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.dmr.macro;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import org.jboss.hal.dmr.model.Operation;
 
 import java.util.ArrayList;
@@ -83,6 +85,10 @@ public class Macro {
 
     public List<Operation> getOperations() {
         return operations;
+    }
+
+    public String asCli() {
+        return Joiner.on('\n').join(Lists.transform(getOperations(), Operation::asCli));
     }
 
     public boolean hasOperations() {

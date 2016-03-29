@@ -49,7 +49,7 @@ class ListItem<T> implements IsElement {
         if (display.stacked()) {
             css = css + " " + listViewPfStacked;
         }
-        Elements.Builder builder = new Elements.Builder().div().css(css);
+        Elements.Builder builder = new Elements.Builder().div().css(css).id(id);
 
         if (checkbox) {
             builder.div().css(listViewPfCheckbox).input(InputType.checkbox).on(click, event -> {

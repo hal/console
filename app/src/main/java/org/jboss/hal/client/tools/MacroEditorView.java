@@ -15,13 +15,13 @@
  */
 package org.jboss.hal.client.tools;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.Clipboard;
 import org.jboss.hal.ballroom.EmptyState;
+import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
 import org.jboss.hal.ballroom.layout.LayoutBuilder;
@@ -31,10 +31,10 @@ import org.jboss.hal.ballroom.listview.ListView;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.dmr.macro.Macro;
-import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
 
 import javax.inject.Inject;
 import java.util.Arrays;
@@ -43,7 +43,6 @@ import java.util.List;
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.lang.Math.max;
 import static java.util.Collections.singletonList;
-import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.resources.CSS.*;
 
@@ -52,12 +51,14 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public class MacroEditorView extends PatternFlyViewImpl implements MacroEditorPresenter.MyView {
 
+    private static final String COPY_TO_CLIPBOARD_ELEMENT = "copyToClipboardElement";
     private static final int MIN_HEIGHT = 70;
 
     private final Resources resources;
     private final EmptyState empty;
     private final ListView<Macro> macroList;
     private final AceEditor editor;
+    private final Element copyToClipboard;
     private final Iterable<Element> elements;
     private MacroEditorPresenter presenter;
 
@@ -102,16 +103,26 @@ public class MacroEditorView extends PatternFlyViewImpl implements MacroEditorPr
         editorOptions.readOnly = true;
         editorOptions.showPrintMargin = false;
         editor = new AceEditor(Ids.MACRO_EDITOR, editorOptions);
+
         // @formatter:off
-        Element editorContainer = new Elements.Builder()
+        Elements.Builder builder = new Elements.Builder()
             .div().css(macroEditor)
-                .button().css(btn, btnDefault, copy).on(click, event -> copyToClipboard())
-                    .span().css(fontAwesome("clipboard")).end()
+                .button()
+                    .css(btn, btnDefault, copy)
+                    .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
+                    .data(UIConstants.PLACEMENT, "left") //NON-NLS
+                    .title(resources.constants().copyToClipboard())
+                    .rememberAs(COPY_TO_CLIPBOARD_ELEMENT)
+                        .span().css(fontAwesome("clipboard")).end()
                 .end()
                 .add(editor.asElement())
-            .end()
-        .build();
+            .end();
         // @formatter:on
+
+        Element editorContainer = builder.build();
+        copyToClipboard = builder.referenceFor(COPY_TO_CLIPBOARD_ELEMENT);
+        Clipboard clipboard = new Clipboard(copyToClipboard);
+        clipboard.on("copy", event -> copyToClipboard(event.client));
 
         // @formatter:off
         elements = new LayoutBuilder()
@@ -168,12 +179,16 @@ public class MacroEditorView extends PatternFlyViewImpl implements MacroEditorPr
     }
 
     private void loadMacro(Macro macro) {
-        String operations = Joiner.on('\n').join(Lists.transform(macro.getOperations(), Operation::asCli));
-        editor.getEditor().getSession().setValue(operations);
+        editor.getEditor().getSession().setValue(macro.asCli());
     }
 
-    private void copyToClipboard() {
-        editor.getEditor().selectAll();
-        editor.getEditor().focus();
+    private void copyToClipboard(Clipboard clipboard) {
+        if (macroList.selectedItem() != null) {
+            clipboard.setText(macroList.selectedItem().asCli());
+            Tooltip tooltip = Tooltip.element(copyToClipboard);
+            tooltip.hide().setTitle(resources.constants().copied()).show();
+            Browser.getWindow().setTimeout(tooltip::hide, 1000);
+            tooltip.onHide(() -> tooltip.setTitle(resources.constants().copyToClipboard()));
+        }
     }
 }
