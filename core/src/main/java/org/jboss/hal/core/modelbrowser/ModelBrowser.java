@@ -78,6 +78,7 @@ import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NYI;
 
 /**
+ * TODO Removing a filter in a scoped model browser does not work
  * @author Harald Pehl
  */
 public class ModelBrowser implements HasElements {
