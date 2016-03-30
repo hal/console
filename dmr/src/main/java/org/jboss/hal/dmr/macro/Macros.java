@@ -15,11 +15,19 @@
  */
 package org.jboss.hal.dmr.macro;
 
+import com.google.gwt.storage.client.Storage;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.Operation;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * Repository for macros.
@@ -28,16 +36,77 @@ import java.util.Map;
  */
 public class Macros {
 
+    private static final String KEY_PREFIX = "org.jboss.hal.macros.";
+
     private final Map<String, Macro> macros;
+    private final Storage storage;
     private Macro current;
     private MacroOptions options;
 
     public Macros() {
-        macros = new HashMap<>();
-        current = null;
+        storage = Storage.getLocalStorageIfSupported();
+        macros = load();
     }
 
-    public void remove(final Macro macro) {macros.remove(macro.getName());}
+    private Map<String, Macro> load() {
+        Map<String, Macro> macros = new HashMap<>();
+        if (storage != null) {
+            for (int i = 0; i < storage.getLength(); i++) {
+                String key = storage.key(i);
+                if (key.startsWith(KEY_PREFIX)) {
+                    Macro macro = deserialize(storage.getItem(key));
+                    macros.put(macro.getName(), macro);
+                }
+            }
+        }
+        current = null;
+        options = null;
+        return macros;
+    }
+
+    private Macro deserialize(String base64) {
+        ModelNode modelNode = ModelNode.fromBase64(base64);
+        String name = modelNode.get(NAME).asString();
+        String description = modelNode.get(DESCRIPTION).asString();
+        Macro macro = new Macro(name, description);
+
+        List<ModelNode> operations = modelNode.get(ModelDescriptionConstants.OPERATIONS).asList();
+        for (ModelNode operation : operations) {
+
+            if (COMPOSITE.equals(operation.get(OP).asString())) {
+                List<ModelNode> steps = operation.get(STEPS).asList();
+                List<Operation> macroOperations = new ArrayList<>(steps.size());
+                for (ModelNode step : steps) {
+                    macroOperations.add(new Operation(step));
+                }
+                macro.addOperation(new Composite(macroOperations));
+
+            } else {
+                macro.addOperation(new Operation(operation));
+            }
+        }
+
+        macro.seal();
+        return macro;
+    }
+
+    private String serialize(Macro macro) {
+        ModelNode modelNode = new ModelNode();
+        modelNode.get(NAME).set(macro.getName());
+        modelNode.get(DESCRIPTION).set(macro.getName());
+        for (Operation operation : macro.getOperations()) {
+            modelNode.get(OPERATIONS).add(operation);
+        }
+        return modelNode.toBase64String();
+    }
+
+    public void remove(final Macro macro) {
+        macros.remove(macro.getName());
+        if (storage != null) {
+            storage.removeItem(KEY_PREFIX + macro.getName());
+        }
+
+    }
 
     public int size() {return macros.size();}
 
@@ -53,16 +122,22 @@ public class Macros {
         return Collections.unmodifiableList(new ArrayList<>(macros.values()));
     }
 
-    public void start(Macro macro, MacroOptions options) {
+    public void startRecording(Macro macro, MacroOptions options) {
         this.current = macro;
         this.options = options;
     }
 
-    public void stop() {
-        current.seal();
-        macros.put(current.getName(), current);
-        current = null;
-        options = null;
+    public void stopRecording() {
+        if (current != null) {
+            current.seal();
+            macros.put(current.getName(), current);
+            if (storage != null) {
+                storage.setItem(KEY_PREFIX + current.getName(), serialize(current));
+            }
+
+            current = null;
+            options = null;
+        }
     }
 
     public Macro current() {

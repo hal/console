@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class EndpointStorage {
 
-    private static final String KEY = "org.jboss.hal.bootstrap.endpoints";
+    private static final String KEY = "org.jboss.hal.endpoints";
     private static final Logger logger = LoggerFactory.getLogger(EndpointStorage.class);
 
     private final Storage storage;

@@ -49,6 +49,10 @@ public class LayoutBuilder extends Elements.CoreBuilder<LayoutBuilder> {
         return column(0, 12);
     }
 
+    public LayoutBuilder column(int columns) {
+        return column(0, columns);
+    }
+
     public LayoutBuilder column(int offset, int columns) {
         return div().css(rowCss(offset, columns));
     }

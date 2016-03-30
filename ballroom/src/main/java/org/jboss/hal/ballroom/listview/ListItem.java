@@ -25,7 +25,9 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.resources.UIConstants;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
@@ -37,13 +39,17 @@ import static org.jboss.hal.resources.CSS.*;
  */
 class ListItem<T> implements IsElement {
 
+    private final Element root;
+    private final Map<String, Element> actions;
+
     final String id;
     final T item;
-    final Element root;
+
 
     ListItem(final ListView<T> listView, final T item, final boolean checkbox, final ItemDisplay<T> display) {
         this.id = display.getId();
         this.item = item;
+        this.actions = new HashMap<>();
 
         String css = listGroupItem;
         if (display.stacked()) {
@@ -63,9 +69,13 @@ class ListItem<T> implements IsElement {
             int index = 0;
             for (Iterator<ItemAction<T>> iterator = display.actions().iterator(); iterator.hasNext(); ) {
                 ItemAction<T> action = iterator.next();
+                String actionId = IdBuilder.build(this.id, action.id);
+
                 if (index == 0) {
                     // first action is a button
                     builder.button()
+                            .id(actionId)
+                            .rememberAs(actionId)
                             .css(btn, btnDefault)
                             .on(click, event -> action.handler.execute(item))
                             .textContent(action.title)
@@ -87,15 +97,18 @@ class ListItem<T> implements IsElement {
                             .ul().css(dropdownMenu, dropdownMenuRight).aria(UIConstants.LABELLED_BY, id);
                         // @formatter:on
                     }
-                    builder.li().a()
+                    builder.li().rememberAs(actionId).a()
                             .css(clickable)
                             .on(click, (event -> action.handler.execute(item)))
                             .textContent(action.title)
                             .end().end();
+
                     if (!iterator.hasNext()) {
                         builder.end().end(); // </ul> && </div.dropdown>
                     }
                 }
+
+                actions.put(action.id, builder.referenceFor(actionId));
                 index++;
             }
             builder.end();
@@ -154,5 +167,19 @@ class ListItem<T> implements IsElement {
     @Override
     public Element asElement() {
         return root;
+    }
+
+    void enableAction(final String actionId) {
+        Element action = actions.get(actionId);
+        if (action != null) {
+            action.getClassList().remove(disabled);
+        }
+    }
+
+    void disableAction(final String actionId) {
+        Element action = actions.get(actionId);
+        if (action != null) {
+            action.getClassList().add(disabled);
+        }
     }
 }

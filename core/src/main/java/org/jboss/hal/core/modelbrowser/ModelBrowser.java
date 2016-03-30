@@ -16,6 +16,7 @@
 package org.jboss.hal.core.modelbrowser;
 
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Sets;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.dom.Element;
@@ -61,6 +62,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -219,13 +221,11 @@ public class ModelBrowser implements HasElements {
         // @formatter:off
         rows =  new LayoutBuilder()
             .row()
-                .column(0, 4)
+                .column(4)
                     .add(buttonGroup)
                     .add(treeContainer)
                 .end()
-                .column(4, 8)
-                    .add(content)
-                .end()
+                .column(8).add(content).end()
             .end()
         .elements();
         // @formatter:on
@@ -316,7 +316,7 @@ public class ModelBrowser implements HasElements {
                 }
             };
             new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
-                    functions.toArray(new OpenNodeFunction[functions.size()]));
+                    functions.toArray(new Function[functions.size()]));
         }
     }
 
@@ -391,9 +391,12 @@ public class ModelBrowser implements HasElements {
             if (parent.data.getSingletons().size() == children.size()) {
                 MessageEvent.fire(eventBus, Message.warning(resources.constants().allSingletonsExist()));
 
-            } else if (parent.data.getSingletons().size() == 1) {
-                // no need to show a wizard
-                String singleton = parent.data.getSingletons().iterator().next();
+            } else if (parent.data.getSingletons().size() - children.size() == 1) {
+                // no need to show a wizard - find the missing singleton
+                HashSet<String> singletons = Sets.newHashSet(parent.data.getSingletons());
+                singletons.removeAll(children);
+                String singleton = singletons.iterator().next();
+
                 ResourceAddress singletonAddress = parent.data.getAddress().getParent().add(parent.text, singleton);
                 AddressTemplate template = asGenericTemplate(parent, singletonAddress);
                 metadataProcessor.lookup(template, progress.get(), new DefaultMetadataCallback(singletonAddress) {

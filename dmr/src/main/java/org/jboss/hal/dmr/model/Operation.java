@@ -87,12 +87,25 @@ public class Operation extends ModelNode {
     private final ModelNode parameter;
     private final String role;
 
-    Operation(final String name, final ResourceAddress address, final ModelNode parameter, final String role) {
+    public Operation(ModelNode modelNode) {
+        this.name = modelNode.get(OP).asString();
+        this.address = new ResourceAddress(modelNode.get(ADDRESS));
+        this.parameter = modelNode.clone();
+        this.parameter.remove(OP);
+        this.parameter.remove(ADDRESS);
+        this.role = null;
+        init();
+    }
+
+    public Operation(final String name, final ResourceAddress address, final ModelNode parameter, final String role) {
         this.name = name;
         this.address = address;
         this.parameter = parameter;
         this.role = role;
+        init();
+    }
 
+    private void init() {
         set(parameter);
         get(OP).set(name);
         get(ADDRESS).set(address);

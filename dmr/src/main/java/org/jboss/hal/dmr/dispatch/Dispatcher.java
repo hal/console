@@ -337,12 +337,12 @@ public class Dispatcher implements RecordingHandler {
         if (event.getAction() == RecordingEvent.Action.START && macros.current() == null) {
             MacroOptions options = event.getOptions();
             String description = options.hasDefined(DESCRIPTION) ? options.get(DESCRIPTION).asString() : null;
-            macros.start(new Macro(options.getName(), description), options);
+            macros.startRecording(new Macro(options.getName(), description), options);
 
         } else if (event.getAction() == RecordingEvent.Action.STOP && macros.current() != null) {
             Macro finished = macros.current();
             MacroOptions options = macros.currentOptions();
-            macros.stop();
+            macros.stopRecording();
             eventBus.fireEvent(new MacroFinishedEvent(finished, options));
         }
     }

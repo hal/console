@@ -21,10 +21,11 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Clipboard;
 import org.jboss.hal.ballroom.EmptyState;
+import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.Tooltip;
+import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
-import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
 import org.jboss.hal.ballroom.listview.ListView;
@@ -52,6 +53,9 @@ import static org.jboss.hal.resources.CSS.*;
 public class MacroEditorView extends PatternFlyViewImpl implements MacroEditorPresenter.MyView {
 
     private static final String COPY_TO_CLIPBOARD_ELEMENT = "copyToClipboardElement";
+    private static final String PLAY_ACTION = "play";
+    private static final String RENAME_ACTION = "rename";
+    private static final String REMOVE_ACTION = "remove";
     private static final int MIN_HEIGHT = 70;
 
     private final Resources resources;
@@ -91,9 +95,18 @@ public class MacroEditorView extends PatternFlyViewImpl implements MacroEditorPr
             @Override
             public List<ItemAction<Macro>> actions() {
                 return Arrays.asList(
-                        new ItemAction<Macro>(resources.constants().play(), macro -> presenter.play(macro)),
-                        new ItemAction<Macro>(resources.constants().rename(), macro -> presenter.rename(macro)),
-                        new ItemAction<Macro>(resources.constants().remove(), macro -> presenter.remove(macro)));
+                        new ItemAction<Macro>(PLAY_ACTION, resources.constants().play(),
+                                macro -> presenter.play(macro)),
+                        new ItemAction<Macro>(RENAME_ACTION, resources.constants().rename(),
+                                macro -> presenter.rename(macro)),
+                        new ItemAction<Macro>(REMOVE_ACTION, resources.constants().remove(),
+                                macro -> DialogFactory.confirmation(
+                                        resources.messages().removeResourceConfirmationTitle(macro.getName()),
+                                        resources.messages().removeResourceConfirmationQuestion(macro.getName()),
+                                        () -> {
+                                            presenter.remove(macro);
+                                            return true;
+                                        }).show()));
             }
         });
         macroList.onSelect(this::loadMacro);
@@ -127,8 +140,8 @@ public class MacroEditorView extends PatternFlyViewImpl implements MacroEditorPr
         // @formatter:off
         elements = new LayoutBuilder()
             .row()
-                .column(0, 4).add(macroList.asElement()).end()
-                .column(4, 8).add(editorContainer).end()
+                .column(4).add(macroList.asElement()).end()
+                .column(8).add(editorContainer).end()
             .end()
         .elements();
         // @formatter:on
@@ -176,6 +189,20 @@ public class MacroEditorView extends PatternFlyViewImpl implements MacroEditorPr
     @Override
     public void selectMacro(final Macro macro) {
         macroList.selectItem(macro);
+    }
+
+    @Override
+    public void enableMacro(final Macro macro) {
+        macroList.enableAction(macro, PLAY_ACTION);
+        macroList.enableAction(macro, RENAME_ACTION);
+        macroList.enableAction(macro, REMOVE_ACTION);
+    }
+
+    @Override
+    public void disableMacro(final Macro macro) {
+        macroList.disableAction(macro, PLAY_ACTION);
+        macroList.disableAction(macro, RENAME_ACTION);
+        macroList.disableAction(macro, REMOVE_ACTION);
     }
 
     private void loadMacro(Macro macro) {
