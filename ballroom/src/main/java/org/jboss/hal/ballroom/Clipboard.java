@@ -18,13 +18,17 @@ package org.jboss.hal.ballroom;
 import elemental.dom.Element;
 import jsinterop.annotations.JsConstructor;
 import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /**
+ * Clipboard implementation based on <a href="http://zeroclipboard.org/">ZeroClipboard</a>.
+ *
  * @author Harald Pehl
+ * @see <a href="http://zeroclipboard.org/">http://zeroclipboard.org/</a>
  */
 @JsType(name = "ZeroClipboard", namespace = GLOBAL, isNative = true)
 public class Clipboard {
@@ -48,7 +52,12 @@ public class Clipboard {
     public Clipboard(Element element) {
     }
 
-    public native void on(String type, ClipboardHandler handler);
+    native void on(String event, ClipboardHandler handler);
+
+    @JsOverlay
+    public final void onCopy(ClipboardHandler handler) {
+        on("copy", handler);
+    }
 
     public native void setText(String text);
 }

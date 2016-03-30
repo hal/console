@@ -30,7 +30,7 @@ import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.layout.LayoutBuilder;
+import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.tree.SelectionChangeHandler.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
@@ -223,7 +223,7 @@ public class ModelBrowser implements HasElements {
                     .add(buttonGroup)
                     .add(treeContainer)
                 .end()
-                .column(0, 8)
+                .column(4, 8)
                     .add(content)
                 .end()
             .end()

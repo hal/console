@@ -75,10 +75,6 @@ class DriverStep extends WizardStep<Context, State> {
 
     @Override
     protected boolean onNext(final Context context) {
-        if (form.validate()) {
-            form.save();
-            return true;
-        }
-        return false;
+        return form.save();
     }
 }

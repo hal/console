@@ -16,8 +16,7 @@
 package org.jboss.hal.client.accesscontrol;
 
 import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.layout.LayoutBuilder;
+import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.resources.Names;
 
@@ -29,14 +28,16 @@ import static org.jboss.hal.resources.Names.NYI;
 public class AccessControlView extends PatternFlyViewImpl implements AccessControlPresenter.MyView {
 
     public AccessControlView() {
-        Element p = new Elements.Builder().p().textContent(NYI).end().build();
-        initElement(new LayoutBuilder()
-                .row()
+        // @formatter:off
+        Element root = new LayoutBuilder()
+            .row()
                 .column()
-                .header(Names.ACCESS_CONTROL)
-                .add(p)
+                    .header(Names.ACCESS_CONTROL).end()
+                    .p().textContent(NYI).end()
                 .end()
-                .end()
-                .build());
+            .end()
+        .build();
+        // @formatter:on
+        initElement(root);
     }
 }

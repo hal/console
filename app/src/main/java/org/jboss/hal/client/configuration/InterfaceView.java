@@ -16,7 +16,7 @@
 package org.jboss.hal.client.configuration;
 
 import elemental.dom.Element;
-import org.jboss.hal.ballroom.layout.LayoutBuilder;
+import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelNode;
@@ -60,7 +60,7 @@ public class InterfaceView extends PatternFlyViewImpl implements InterfacePresen
         Element element = new LayoutBuilder()
             .row()
                 .column()
-                    .header(INTERFACE)
+                    .header(INTERFACE).end()
                     .add(form.asElement())
                 .end()
             .end()

@@ -68,6 +68,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String disabled();
     String dispatcherException();
     String dispatcherFailed();
+    String duplicateMacro();
 
     String edit();
     String enable();

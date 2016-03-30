@@ -25,6 +25,7 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.client.tools.MacroEditorPresenter;
+import org.jboss.hal.client.tools.MacroOptionsDialog;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.mvp.HasPresenter;

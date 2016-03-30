@@ -19,7 +19,7 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.layout.LayoutBuilder;
+import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
@@ -44,6 +44,8 @@ import static org.jboss.hal.resources.Names.ATTRIBUTES;
  * @author Harald Pehl
  */
 public class DataSourceView extends PatternFlyViewImpl implements DataSourcePresenter.MyView {
+
+    private static final String HEADER_ELEMENT = "headerElement";
 
     private final List<Form<ModelNode>> forms;
     private Element header;
@@ -83,15 +85,17 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
         LayoutBuilder layoutBuilder = new LayoutBuilder()
             .row()
                 .column()
-                    .header(Names.DATASOURCE)
-                    .add(info, tabs.asElement())
+                    .header(Names.DATASOURCE).rememberAs(HEADER_ELEMENT).end()
+                    .add(info)
+                    .add(tabs.asElement())
                 .end()
             .end();
         // @formatter:on
 
-        header = layoutBuilder.headerElement();
+        Element root = layoutBuilder.build();
+        header = layoutBuilder.referenceFor(HEADER_ELEMENT);
         registerAttachables(forms);
-        initElement(layoutBuilder.build());
+        initElement(root);
     }
 
     @Override

@@ -18,13 +18,12 @@ package org.jboss.hal.client.utb;
 import com.google.common.collect.Maps;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
-import org.jboss.hal.ballroom.layout.LayoutBuilder;
+import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -151,23 +150,17 @@ public class UnderTheBridgeView extends PatternFlyViewImpl implements UnderTheBr
         Element layout = new LayoutBuilder()
             .row()
                 .column()
-                    .header("Under The Bridge")
-                    .add(
-                        new Elements.Builder()
-                            .p()
-                                .textContent(description.getDescription())
-                            .end()
-                            .p()
-                                .innerHtml(new SafeHtmlBuilder().appendEscaped("If you're wondering about the name of " +
-                                        "this page, I came up with the idea for this demo while I was listening to ")
-                                        .appendHtmlConstant("<a href=\"" + VIDEO + "\" target=\"_blank\">")
-                                        .appendEscaped("Under The Bridge")
-                                        .appendHtmlConstant("</a> by Red Hot Chili Peppers.")
-                                        .toSafeHtml())
-                            .end()
-                            .add(tabs.asElement())
-                        .elements()
-                    )
+                    .header("Under The Bridge").end()
+                    .p().textContent(description.getDescription()).end()
+                    .p()
+                        .innerHtml(new SafeHtmlBuilder().appendEscaped("If you're wondering about the name of " +
+                                "this page, I came up with the idea for this demo while I was listening to ")
+                                .appendHtmlConstant("<a href=\"" + VIDEO + "\" target=\"_blank\">")
+                                .appendEscaped("Under The Bridge")
+                                .appendHtmlConstant("</a> by Red Hot Chili Peppers.")
+                                .toSafeHtml())
+                    .end()
+                    .add(tabs.asElement())
                 .end()
             .end()
         .build();

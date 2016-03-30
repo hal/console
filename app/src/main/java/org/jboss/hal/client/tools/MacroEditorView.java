@@ -24,7 +24,7 @@ import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
-import org.jboss.hal.ballroom.layout.LayoutBuilder;
+import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
 import org.jboss.hal.ballroom.listview.ListView;
@@ -122,13 +122,13 @@ public class MacroEditorView extends PatternFlyViewImpl implements MacroEditorPr
         Element editorContainer = builder.build();
         copyToClipboard = builder.referenceFor(COPY_TO_CLIPBOARD_ELEMENT);
         Clipboard clipboard = new Clipboard(copyToClipboard);
-        clipboard.on("copy", event -> copyToClipboard(event.client));
+        clipboard.onCopy(event -> copyToClipboard(event.client));
 
         // @formatter:off
         elements = new LayoutBuilder()
             .row()
                 .column(0, 4).add(macroList.asElement()).end()
-                .column(0, 8).add(editorContainer).end()
+                .column(4, 8).add(editorContainer).end()
             .end()
         .elements();
         // @formatter:on
@@ -186,9 +186,11 @@ public class MacroEditorView extends PatternFlyViewImpl implements MacroEditorPr
         if (macroList.selectedItem() != null) {
             clipboard.setText(macroList.selectedItem().asCli());
             Tooltip tooltip = Tooltip.element(copyToClipboard);
-            tooltip.hide().setTitle(resources.constants().copied()).show();
+            tooltip.hide()
+                    .setTitle(resources.constants().copied())
+                    .show()
+                    .onHide(() -> tooltip.setTitle(resources.constants().copyToClipboard()));
             Browser.getWindow().setTimeout(tooltip::hide, 1000);
-            tooltip.onHide(() -> tooltip.setTitle(resources.constants().copyToClipboard()));
         }
     }
 }

@@ -81,13 +81,7 @@ public class AddResourceDialog<T extends ModelNode> {
         this.form = form;
         this.dialog = new Dialog.Builder(title)
                 .add(form.asElement())
-                .primary(CONSTANTS.add(), () -> {
-                    if (form.validate()) {
-                        form.save();
-                        return true;
-                    }
-                    return false;
-                })
+                .primary(CONSTANTS.add(), form::save)
                 .secondary(CONSTANTS.cancel(), () -> true)
                 .size(Size.MEDIUM)
                 .closeOnEsc(true)

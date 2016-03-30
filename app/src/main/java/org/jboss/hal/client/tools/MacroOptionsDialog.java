@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.skeleton;
+package org.jboss.hal.client.tools;
 
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.macro.MacroOptions;
 import org.jboss.hal.dmr.macro.Macros;
@@ -37,38 +39,41 @@ import static org.jboss.hal.meta.security.SecurityContext.RWX;
  *
  * @author Harald Pehl
  */
-class MacroOptionsDialog {
+public class MacroOptionsDialog {
 
-    interface MacroOptionsCallback {
+    public interface MacroOptionsCallback {
 
         void onOptions(MacroOptions options);
     }
 
     private final Dialog dialog;
     private final Form<MacroOptions> form;
-    private boolean valid;
 
-    MacroOptionsDialog(final Macros macros, final Capabilities capabilities, final Resources resources,
+    public MacroOptionsDialog(final Macros macros, final Capabilities capabilities, final Resources resources,
             final MacroOptionsCallback callback) {
         Metadata metadata = new Metadata(RWX, StaticResourceDescription.from(RESOURCES.macroOptions()), capabilities);
-        this.form = new ModelNodeForm.Builder<MacroOptions>(Ids.MACRO_OPTIONS, metadata)
+
+        form = new ModelNodeForm.Builder<MacroOptions>(Ids.MACRO_OPTIONS, metadata)
                 .addOnly()
                 .include(NAME, DESCRIPTION, OMIT_READ_OPERATIONS, OPEN_IN_EDITOR)
                 .unsorted()
                 .onSave((form, changedValues) -> {
-                    valid = true;
                     callback.onOptions(form.getModel());
                 })
                 .build();
-        this.dialog = new Dialog.Builder(resources.constants().startMacro())
+        FormItem<String> nameItem = form.getFormItem(NAME);
+        nameItem.addValidationHandler(value -> macros.get(value) != null
+                ? ValidationResult.invalid(resources.constants().duplicateMacro()) : ValidationResult.OK);
+
+        dialog = new Dialog.Builder(resources.constants().startMacro())
                 .add(form.asElement())
                 .okCancel(form::save)
                 .closeOnEsc(true)
                 .build();
-        this.dialog.registerAttachable(form);
+        dialog.registerAttachable(form);
     }
 
-    void show() {
+    public void show() {
         form.add(new MacroOptions());
         dialog.show();
     }
