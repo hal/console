@@ -71,8 +71,8 @@ public class ReadEnvironment implements BootstrapFunction {
 
     @Override
     public void execute(final Control<FunctionContext> control) {
-
         logStart();
+
         List<Operation> ops = new ArrayList<>();
         ops.add(new Operation.Builder(READ_RESOURCE_OPERATION, ROOT)
                 .param("attributes-only", true)

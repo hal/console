@@ -1,5 +1,10 @@
 package org.jboss.hal.meta.processing;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
+
 import org.jboss.hal.dmr.ExternalModelNode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.Composite;
@@ -9,20 +14,17 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
-
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
+import static org.jboss.hal.meta.processing.RrdParserTestHelper.assertCapability;
 import static org.jboss.hal.meta.processing.RrdParserTestHelper.assertDescriptionOnly;
 import static org.jboss.hal.meta.processing.RrdParserTestHelper.assertResults;
 
 /**
  * @author Harald Pehl
  */
+@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class CompositeRrdParserTest {
 
     private static final String[] FLAT_TEMPLATES = new String[]{
@@ -82,6 +84,7 @@ public class CompositeRrdParserTest {
 
         assertResults(results, 6, FLAT_TEMPLATES);
         assertDescriptionOnly(results);
+        assertCapability(results, "org.wildfly.undertow.listener");
     }
 
     @Test
@@ -99,5 +102,7 @@ public class CompositeRrdParserTest {
         // There must be no duplicates!
         assertResults(results, 36, RECURSIVE_TEMPLATES);
         assertDescriptionOnly(results);
+        assertCapability(results, "org.wildfly.extension.undertow.handler.file");
+        assertCapability(results, "org.wildfly.undertow.listener");
     }
 }

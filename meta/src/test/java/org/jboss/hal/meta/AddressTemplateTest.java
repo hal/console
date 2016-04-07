@@ -1,17 +1,21 @@
 package org.jboss.hal.meta;
 
 
+import java.util.List;
+
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.junit.Test;
 
-import java.util.List;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Harald Pehl
  */
+@SuppressWarnings("HardCodedStringLiteral")
 public class AddressTemplateTest {
 
     @Test
@@ -28,7 +32,7 @@ public class AddressTemplateTest {
 
     @Test(expected = AssertionError.class)
     public void nil() {
-        AddressTemplate.of(null);
+        AddressTemplate.of((String)null);
     }
 
     @Test

@@ -774,7 +774,7 @@
                                     "description" => "File handler",
                                     "model-description" => {"*" => {
                                         "description" => "File handler",
-                                        " capabilities" => [{
+                                        "capabilities" => [{
                                             "name" => "org.wildfly.extension.undertow.handler.file",
                                             "dynamic" => true
                                         }],
@@ -861,7 +861,7 @@
                                     "description" => "A reverse proxy handler",
                                     "model-description" => {"*" => {
                                         "description" => "A reverse proxy handler",
-                                        " capabilities" => [{
+                                        "capabilities" => [{
                                             "name" => "org.wildfly.extension.undertow.handler.file",
                                             "dynamic" => true
                                         }],
@@ -1919,7 +1919,7 @@
                                 "description" => "A HTTP listener",
                                 "model-description" => {"*" => {
                                     "description" => "http listener",
-                                    " capabilities" => [{
+                                    "capabilities" => [{
                                         "name" => "org.wildfly.undertow.listener",
                                         "dynamic" => true
                                     }],
@@ -2309,7 +2309,7 @@
                                 "description" => "A HTTPS listener",
                                 "model-description" => {"*" => {
                                     "description" => "http listener",
-                                    " capabilities" => [{
+                                    "capabilities" => [{
                                         "name" => "org.wildfly.undertow.listener",
                                         "dynamic" => true
                                     }],
@@ -2745,7 +2745,7 @@
                                 "description" => "An AJP listener",
                                 "model-description" => {"*" => {
                                     "description" => "http listener",
-                                    " capabilities" => [{
+                                    "capabilities" => [{
                                         "name" => "org.wildfly.undertow.listener",
                                         "dynamic" => true
                                     }],
@@ -3540,7 +3540,7 @@
                         "description" => "A HTTP listener",
                         "model-description" => {"*" => {
                             "description" => "http listener",
-                            " capabilities" => [{
+                            "capabilities" => [{
                                 "name" => "org.wildfly.undertow.listener",
                                 "dynamic" => true
                             }],
@@ -3930,7 +3930,7 @@
                         "description" => "A HTTPS listener",
                         "model-description" => {"*" => {
                             "description" => "http listener",
-                            " capabilities" => [{
+                            "capabilities" => [{
                                 "name" => "org.wildfly.undertow.listener",
                                 "dynamic" => true
                             }],
@@ -4366,7 +4366,7 @@
                         "description" => "An AJP listener",
                         "model-description" => {"*" => {
                             "description" => "http listener",
-                            " capabilities" => [{
+                            "capabilities" => [{
                                 "name" => "org.wildfly.undertow.listener",
                                 "dynamic" => true
                             }],
@@ -5088,7 +5088,7 @@
             "outcome" => "success",
             "result" => {
                 "description" => "http listener",
-                " capabilities" => [{
+                "capabilities" => [{
                     "name" => "org.wildfly.undertow.listener",
                     "dynamic" => true
                 }],
@@ -5486,7 +5486,7 @@
             "outcome" => "success",
             "result" => {
                 "description" => "http listener",
-                " capabilities" => [{
+                "capabilities" => [{
                     "name" => "org.wildfly.undertow.listener",
                     "dynamic" => true
                 }],
@@ -5930,7 +5930,7 @@
             "outcome" => "success",
             "result" => {
                 "description" => "http listener",
-                " capabilities" => [{
+                "capabilities" => [{
                     "name" => "org.wildfly.undertow.listener",
                     "dynamic" => true
                 }],

@@ -15,6 +15,9 @@
  */
 package org.jboss.hal.ballroom.table;
 
+import java.util.Collections;
+import java.util.List;
+
 import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsOverlay;
@@ -22,11 +25,10 @@ import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.form.Form;
 
-import java.util.Collections;
-import java.util.List;
-
 import static org.jboss.hal.ballroom.js.JsHelper.asList;
-import static org.jboss.hal.ballroom.table.DataTable.*;
+import static org.jboss.hal.ballroom.table.DataTable.DESELECT;
+import static org.jboss.hal.ballroom.table.DataTable.ROW;
+import static org.jboss.hal.ballroom.table.DataTable.SELECT;
 
 /**
  * Subset of the DataTables API.

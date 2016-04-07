@@ -15,11 +15,11 @@
  */
 package org.jboss.hal.dmr.model;
 
+import java.util.Iterator;
+
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jetbrains.annotations.NonNls;
-
-import java.util.Iterator;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -117,6 +117,10 @@ public class Operation extends ModelNode {
 
     public String getName() {
         return get(OP).asString();
+    }
+
+    public ResourceAddress getAddress() {
+        return address;
     }
 
     @Override

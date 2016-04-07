@@ -17,16 +17,40 @@ package org.jboss.hal.ballroom.typeahead;
 
 import elemental.js.json.JsJsonObject;
 import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsType;
+
+import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /**
- * For a given suggestion, determines the string representation of it. This will be used when setting the value of the
- * input control after a suggestion is selected.
- *
  * @author Harald Pehl
  */
-@JsFunction
-@FunctionalInterface
-public interface Display {
+@JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+public class Templates {
 
-    String render(JsJsonObject data);
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    public static class NotFoundContext {
+
+        public String query;
+    }
+
+
+    @JsFunction
+    @FunctionalInterface
+    public interface NotFoundTemplate {
+
+        String render(NotFoundContext context);
+    }
+
+
+    @JsFunction
+    @FunctionalInterface
+    public interface SuggestionTemplate {
+
+        String render(JsJsonObject data);
+    }
+
+
+    public SuggestionTemplate suggestion;
+    public NotFoundTemplate notFound;
 }

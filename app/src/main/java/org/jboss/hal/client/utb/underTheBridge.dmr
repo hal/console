@@ -22,7 +22,7 @@
         },
         "string-expression" => {
             "description" => "A string attribute w/ expression support",
-            "expression-allowed" => true,
+            "expressions-allowed" => true,
             "nillable" => true,
             "type" => STRING,
         },
@@ -39,7 +39,7 @@
         },
         "string-suggestion-expression" => {
             "description" => "A string attribute w/ a suggestion handler and expression support",
-            "expression-allowed" => true,
+            "expressions-allowed" => true,
             "nillable" => true,
             "type" => STRING,
         },
@@ -63,7 +63,7 @@
         },
         "int-expression" => {
             "description" => "An int attribute w/ expression support",
-            "expression-allowed" => true,
+            "expressions-allowed" => true,
             "nillable" => true,
             "type" => INT,
         },
@@ -75,7 +75,7 @@
         },
         "int-unit-expression" => {
             "description" => "An int attribute w/ an unit and expression support",
-            "expression-allowed" => true,
+            "expressions-allowed" => true,
             "nillable" => true,
             "type" => INT,
             "unit" => "SECONDS"
@@ -100,7 +100,7 @@
         },
         "long-expression" => {
             "description" => "A long attribute w/ expression support",
-            "expression-allowed" => true,
+            "expressions-allowed" => true,
             "nillable" => true,
             "type" => LONG,
         },
@@ -112,7 +112,7 @@
         },
         "long-unit-expression" => {
             "description" => "A long attribute w/ an unit and expression support",
-            "expression-allowed" => true,
+            "expressions-allowed" => true,
             "nillable" => true,
             "type" => LONG,
             "unit" => "MILLISECONDS"
@@ -266,7 +266,7 @@
         },
         "list-expression" => {
             "description" => "A list of strings w/ expression support",
-            "expression-allowed" => true,
+            "expressions-allowed" => true,
             "nillable" => true,
             "type" => LIST,
             "value-type" => STRING
@@ -279,7 +279,7 @@
         },
         "list-suggestion-expression" => {
             "description" => "A list of strings w/ a suggestion handler and expression support",
-            "expression-allowed" => true,
+            "expressions-allowed" => true,
             "nillable" => true,
             "type" => LIST,
             "value-type" => STRING
@@ -307,7 +307,7 @@
         },
         "properties-expression" => {
             "description" => "A set of properties w/ expression support",
-            "expression-allowed" => true,
+            "expressions-allowed" => true,
             "nillable" => true,
             "type" => OBJECT,
             "value-type" => STRING

@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.core.mbui.dialog;
 
+import java.util.Map;
+
 import com.google.gwt.core.client.GWT;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.Dialog.Size;
@@ -24,8 +26,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Constants;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
@@ -40,7 +40,7 @@ public class AddResourceDialog<T extends ModelNode> {
         /**
          * Called after the dialog was closed using the primary button.
          *
-         * @param name  The name of the resource to add. {@code null} if the dialog's form does not contains a
+         * @param name  The name of the resource to add. {@code null} if the dialog's form does not contain a
          *              name item (i.e. when adding a singleton resource)
          * @param model The model of the related form. {@code null} if the related resource description and thus
          *              the form does not contain attributes / form items.

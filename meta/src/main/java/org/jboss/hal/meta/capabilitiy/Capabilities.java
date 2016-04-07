@@ -15,63 +15,68 @@
  */
 package org.jboss.hal.meta.capabilitiy;
 
-import com.google.common.base.Function;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import javax.inject.Inject;
+
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 
-import javax.inject.Inject;
-import java.util.Collections;
-
 /**
  * @author Harald Pehl
  */
-@SuppressWarnings("Guava")
 public class Capabilities {
 
     private final StatementContext statementContext;
-    private final Multimap<String, AddressTemplate> registry;
+    private final Map<String, Capability> registry;
 
     @Inject
     public Capabilities(StatementContext statementContext) {
         this.statementContext = statementContext;
-        this.registry = HashMultimap.create();
+        this.registry = new HashMap<>();
     }
 
     public Iterable<ResourceAddress> lookup(final String name) {
         if (contains(name)) {
-            return FluentIterable.from(registry.get(name))
+            return FluentIterable.from(registry.get(name).getTemplates())
                     .transform(template -> template.resolve(statementContext));
         }
         return Collections.emptyList();
     }
 
-    public Iterable<ResourceAddress> lookup(final String name, final String... wildcards) {
-        if (contains(name)) {
-            return FluentIterable.from(registry.get(name))
-                    .transform(template -> template.resolve(statementContext, wildcards));
+    public boolean contains(final String name) {return registry.containsKey(name);}
+
+    public void register(final String name, final boolean dynamic,
+            final AddressTemplate first, AddressTemplate... rest) {
+        safeGet(name, dynamic).addTemplate(first);
+        if (rest != null) {
+            for (AddressTemplate template : rest) {
+                safeGet(name, dynamic).addTemplate(template);
+            }
         }
-        return Collections.emptyList();
     }
 
-    public Iterable<ResourceAddress> lookup(final String name,
-            Function<AddressTemplate, AddressTemplate> adjustTemplate) {
-        if (contains(name)) {
-            return FluentIterable.from(registry.get(name))
-                    .transform(adjustTemplate)
-                    .transform(template -> template.resolve(statementContext));
+    public void register(final Capability capability) {
+        if (contains(capability.getName())) {
+            Capability existing = registry.get(capability.getName());
+            for (AddressTemplate template : capability.getTemplates()) {
+                existing.addTemplate(template);
+            }
+        } else {
+            registry.put(capability.getName(), capability);
         }
-        return Collections.emptyList();
     }
 
-    public boolean contains(final String name) {
-        return registry.containsKey(name);
-    }
-
-    public void add(final String name, final AddressTemplate template) {
-        registry.put(name, template);
+    private Capability safeGet(String name, final boolean dynamic) {
+        if (registry.containsKey(name)) {
+            return registry.get(name);
+        } else {
+            Capability capability = new Capability(name, dynamic);
+            registry.put(name, capability);
+            return capability;
+        }
     }
 }

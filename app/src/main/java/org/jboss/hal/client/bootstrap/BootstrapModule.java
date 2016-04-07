@@ -22,6 +22,7 @@ import org.jboss.hal.client.bootstrap.endpoint.EndpointStorage;
 import org.jboss.hal.client.bootstrap.functions.BootstrapFunctions;
 import org.jboss.hal.client.bootstrap.functions.FinishBootstrap;
 import org.jboss.hal.client.bootstrap.functions.ReadEnvironment;
+import org.jboss.hal.client.bootstrap.functions.RegisterCoreCapabilities;
 import org.jboss.hal.spi.GinModule;
 
 /**
@@ -36,6 +37,7 @@ public class BootstrapModule extends AbstractGinModule {
         bind(EndpointStorage.class).in(Singleton.class);
 
         bind(ReadEnvironment.class).in(Singleton.class);
+        bind(RegisterCoreCapabilities.class).in(Singleton.class);
         bind(FinishBootstrap.class).in(Singleton.class);
         bind(BootstrapFunctions.class).in(Singleton.class);
     }

@@ -188,6 +188,7 @@ public interface CSS {
     String toastPfAction = "toast-pf-action";
     String toastPfMaxWidth = "toast-pf-max-width";
     String toastPfTopRight = "toast-pf-top-right";
+    String ttGrouped = "tt-grouped";
     String value = "value";
     String warningTriangleO = "warning-triangle-o";
     String wizardHeader = "wizard-header";

@@ -15,21 +15,26 @@
  */
 package org.jboss.hal.client.utb;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import javax.inject.Inject;
+
 import com.google.common.collect.Maps;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
-import org.jboss.hal.ballroom.LayoutBuilder;
-import org.jboss.hal.ballroom.typeahead.Typeahead;
+import org.jboss.hal.ballroom.form.SuggestHandler;
+import org.jboss.hal.ballroom.typeahead.TypeaheadProvider;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
@@ -38,13 +43,6 @@ import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 import static org.jboss.hal.meta.security.SecurityContext.RWX;
 
 /**
@@ -119,12 +117,6 @@ public class UnderTheBridgeView extends PatternFlyViewImpl implements UnderTheBr
             final Capabilities capabilities) {
         this.forms = new ArrayList<>();
 
-        ResourceAddress address = AddressTemplate.of(environment.isStandalone() ? "" : "/profile=full-ha")
-                .resolve(statementContext);
-        Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, address)
-                .param(CHILD_TYPE, "subsystem")
-                .build();
-
         Tabs tabs = new Tabs();
         ResourceDescription description = StaticResourceDescription.from(resources.underTheBridge());
         Form.SaveCallback<ModelNode> saveCallback = (form, changedValues) -> presenter.saveModel(form.getModel());
@@ -137,10 +129,12 @@ public class UnderTheBridgeView extends PatternFlyViewImpl implements UnderTheBr
                     forms.get(forms.size() - 1).asElement());
         }
 
+        ResourceAddress address = AddressTemplate.of("/profile=full-ha/subsystem=*").resolve(statementContext);
+        SuggestHandler suggestHandler = new TypeaheadProvider().from(address);
         for (ModelNodeForm<ModelNode> form : forms) {
             for (FormItem item : form.getFormItems()) {
                 if (item.getName().contains("-suggestion")) {
-                    item.registerSuggestHandler(new Typeahead.ReadChildrenNamesBuilder(operation).build());
+                    item.registerSuggestHandler(suggestHandler);
                 }
             }
             registerAttachable(form);

@@ -15,6 +15,10 @@
  */
 package org.jboss.hal.meta.processing;
 
+import java.util.List;
+import java.util.Set;
+import javax.inject.Inject;
+
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -35,10 +39,6 @@ import org.jboss.hal.meta.resource.RequiredResources;
 import org.jboss.hal.meta.security.SecurityFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Set;
 
 import static java.util.Collections.singleton;
 
@@ -140,7 +140,6 @@ public class MetadataProcessor {
             List<RrdFunction> functions = Lists.transform(composites,
                     composite -> new RrdFunction(metadataRegistry, securityFramework, resourceDescriptions,
                             capabilities, dispatcher, composite));
-            //noinspection Duplicates
             Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
                 @Override
                 public void onFailure(final FunctionContext context) {

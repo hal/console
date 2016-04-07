@@ -15,16 +15,25 @@
  */
 package org.jboss.hal.ballroom.typeahead;
 
-import java.util.List;
+import elemental.js.json.JsJsonObject;
+import elemental.json.JsonArray;
 
-import elemental.json.JsonObject;
-import org.jboss.hal.dmr.ModelNode;
+import static org.jboss.hal.ballroom.typeahead.GroupedResultProcessor.GROUPS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
  * @author Harald Pehl
  */
-@FunctionalInterface
-public interface ResultProcessor {
+class GroupedIdentifier implements Identifier {
 
-    List<? extends JsonObject> process(String query, ModelNode result);
+    @Override
+    public String identify(final JsJsonObject data) {
+        StringBuilder builder = new StringBuilder();
+        JsonArray groups = data.getArray(GROUPS);
+        for (int i = 0; i < groups.length(); i++) {
+            String segment = groups.getString(i).replace(" => ", "-");
+            builder.append("-").append(segment);
+        }
+        return data.getString(NAME) + builder.toString();
+    }
 }

@@ -231,7 +231,7 @@
             "outcome" => "success",
             "result" => {
                 "description" => "http listener",
-                " capabilities" => [{
+                "capabilities" => [{
                     "name" => "org.wildfly.undertow.listener",
                     "dynamic" => true
                 }],
@@ -629,7 +629,7 @@
             "outcome" => "success",
             "result" => {
                 "description" => "http listener",
-                " capabilities" => [{
+                "capabilities" => [{
                     "name" => "org.wildfly.undertow.listener",
                     "dynamic" => true
                 }],
@@ -1073,7 +1073,7 @@
             "outcome" => "success",
             "result" => {
                 "description" => "http listener",
-                " capabilities" => [{
+                "capabilities" => [{
                     "name" => "org.wildfly.undertow.listener",
                     "dynamic" => true
                 }],

@@ -15,18 +15,22 @@
  */
 package org.jboss.hal.meta.processing;
 
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.ModelType;
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.description.ResourceDescription;
-import org.jboss.hal.meta.security.SecurityContext;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelType;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.capabilitiy.Capability;
+import org.jboss.hal.meta.description.ResourceDescription;
+import org.jboss.hal.meta.security.SecurityContext;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.meta.StatementContext.Key.SELECTED_GROUP;
+import static org.jboss.hal.meta.StatementContext.Key.SELECTED_PROFILE;
 
 /**
  * @author Harald Pehl
@@ -72,6 +76,32 @@ public class SingleRrdParser {
                     exceptionRr.securityContext = new SecurityContext(exception);
                     results.add(exceptionRr);
                 }
+            }
+        }
+
+        // capabilities
+        if (modelNode.hasDefined(CAPABILITIES)) {
+            for (ModelNode capabilityNode : modelNode.get(CAPABILITIES).asList()) {
+                String capabilityName = capabilityNode.get(NAME).asString();
+                boolean dynamic = capabilityNode.get("dynamic").asBoolean(true); //NON-NLS
+                AddressTemplate template = AddressTemplate.of(address, (name, value, first, last, index) -> {
+                    String segment;
+                    switch (name) {
+                        case PROFILE:
+                            segment = SELECTED_PROFILE.variable();
+                            break;
+                        case SERVER_GROUP:
+                            segment = SELECTED_GROUP.variable();
+                            break;
+                        default:
+                            segment = name + "=" + (last ? "*" : value);
+                            break;
+                    }
+                    return segment;
+                });
+                Capability capability = new Capability(capabilityName, dynamic);
+                capability.addTemplate(template);
+                rr.capabilities.add(capability);
             }
         }
 

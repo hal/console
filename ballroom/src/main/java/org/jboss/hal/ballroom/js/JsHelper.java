@@ -15,10 +15,10 @@
  */
 package org.jboss.hal.ballroom.js;
 
-import elemental.js.util.JsArrayOf;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import elemental.js.util.JsArrayOf;
 
 /**
  * @author Harald Pehl

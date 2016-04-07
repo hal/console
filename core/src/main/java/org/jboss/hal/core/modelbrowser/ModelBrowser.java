@@ -15,6 +15,14 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Sets;
 import com.google.web.bindery.event.shared.EventBus;
@@ -30,8 +38,8 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.IdBuilder;
-import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.LayoutBuilder;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.tree.SelectionChangeHandler.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
@@ -39,7 +47,6 @@ import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -59,21 +66,15 @@ import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.js.JsHelper.asList;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 import static org.jboss.hal.meta.StatementContext.Key.ANY_GROUP;
 import static org.jboss.hal.meta.StatementContext.Key.ANY_PROFILE;
 import static org.jboss.hal.resources.CSS.*;
@@ -471,28 +472,21 @@ public class ModelBrowser implements HasElements {
     }
 
     static AddressTemplate asGenericTemplate(Node<Context> node, ResourceAddress address) {
-        StringBuilder builder = new StringBuilder();
-        for (Iterator<Property> iterator = address.asPropertyList().iterator(); iterator.hasNext(); ) {
-            Property property = iterator.next();
-            String name = property.getName();
-
+        return AddressTemplate.of(address, (name, value, first, last, index) -> {
+            String segment;
             if (PROFILE.equals(name)) {
-                builder.append(ANY_PROFILE.variable());
+                segment = ANY_PROFILE.variable();
             } else if (SERVER_GROUP.equals(name)) {
-                builder.append(ANY_GROUP.variable());
+                segment = ANY_GROUP.variable();
             } else {
-                builder.append(name).append("=");
-                if (!iterator.hasNext() && node != null && node.data != null && !node.data.hasSingletons()) {
-                    builder.append("*");
+                if (last && node != null && node.data != null && !node.data.hasSingletons()) {
+                    segment = name + "=*";
                 } else {
-                    builder.append(property.getValue().asString());
+                    segment = name + "=" + value;
                 }
             }
-            if (iterator.hasNext()) {
-                builder.append("/");
-            }
-        }
-        return AddressTemplate.of(builder.toString());
+            return segment;
+        });
     }
 
     private ResourceAddress fqAddress(Node<Context> parent, String child) {

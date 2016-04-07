@@ -203,12 +203,17 @@
  */
 package org.jboss.hal.meta.processing;
 
-import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.StatementContext;
-
+import java.util.Iterator;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.capabilitiy.Capability;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Harald Pehl
@@ -219,7 +224,7 @@ class RrdParserTestHelper {
         assertEquals(size, results.size());
 
         for (String address : addresses) {
-            assertTrue("RrdResults does not contain address " + address,
+            assertTrue("RrdResults does not contain address " + address, //NON-NLS
                     results.contains(new RrdResult(AddressTemplate.of(address).resolve(StatementContext.NOOP))));
         }
     }
@@ -243,5 +248,21 @@ class RrdParserTestHelper {
             assertNotNull(result.resourceDescription);
             assertNotNull(result.securityContext);
         }
+    }
+
+    static void assertCapability(Set<RrdResult> results, final String name) {
+        boolean found = false;
+
+        for (Iterator<RrdResult> i1 = results.iterator(); i1.hasNext() && !found; ) {
+            RrdResult result = i1.next();
+            for (Iterator<Capability> i2 = result.capabilities.iterator(); i2.hasNext() && !found; ) {
+                Capability capability = i2.next();
+                if (name.equals(capability.getName())) {
+                    found = true;
+                }
+            }
+        }
+
+        assertTrue("Capability '" + name + "' not found!", found); //NON-NLS
     }
 }

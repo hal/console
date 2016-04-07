@@ -15,6 +15,10 @@
  */
 package org.jboss.hal.meta.processing;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
@@ -23,10 +27,6 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -39,7 +39,9 @@ class CompositeRrdParser {
 
     private final Composite composite;
 
-    public CompositeRrdParser(final Composite composite) {this.composite = composite;}
+    public CompositeRrdParser(final Composite composite) {
+        this.composite = composite;
+    }
 
     public Set<RrdResult> parse(CompositeResult compositeResult) throws ParserException {
         int index = 0;
@@ -105,7 +107,7 @@ class CompositeRrdParser {
                     .add(HOST, operationSegments.get(0).getValue().asString())
                     .add(SERVER, operationSegments.get(1).getValue().asString())
                     .add(resultAddress);
-            logger.debug("Adjust result address '{}' -> '{}'", resultAddress, resolved);
+            logger.debug("Adjust result address '{}' -> '{}'", resultAddress, resolved); //NON-NLS
         }
         return resolved;
     }

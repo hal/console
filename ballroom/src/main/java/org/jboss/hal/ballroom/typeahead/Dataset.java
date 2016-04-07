@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.ballroom.typeahead;
 
+import elemental.js.json.JsJsonObject;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsType;
 
@@ -35,28 +36,6 @@ public class Dataset {
     public interface Source {
 
         void source(String query, SyncCallback syncCallback, AsyncCallback asyncCallback);
-    }
-
-
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    public static class NotFoundContext {
-
-        public String query;
-    }
-
-
-    @JsFunction
-    @FunctionalInterface
-    public interface NotFoundTemplate {
-
-        String render(NotFoundContext context);
-    }
-
-
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    public static class Templates {
-
-        public NotFoundTemplate notFound;
     }
 
 

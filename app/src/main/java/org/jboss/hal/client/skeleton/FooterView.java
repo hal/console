@@ -22,6 +22,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventHandler;
 import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.ballroom.ProgressElement;
+import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.ui.UIRegistry;
@@ -94,6 +95,7 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
             updateAvailable.getDataset().setAt(UIConstants.TOGGLE, UIConstants.TOOLTIP);
             updateAvailable.getDataset().setAt(UIConstants.PLACEMENT, "top");
             updateAvailable.getDataset().setAt("container", "body"); //NON-NLS
+            Tooltip.element(updateAvailable).init();
             Elements.setVisible(updateAvailable, true);
         }
     }
