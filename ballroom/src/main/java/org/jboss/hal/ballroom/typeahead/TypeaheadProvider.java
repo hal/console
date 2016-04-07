@@ -121,9 +121,11 @@ public class TypeaheadProvider {
 
     private int countWildcards(ResourceAddress address) {
         int wildcards = 0;
-        for (Property property : address.asPropertyList()) {
-            if ("*".equals(property.getName())) {
-                wildcards++;
+        if (address.isDefined()) {
+            for (Property property : address.asPropertyList()) {
+                if ("*".equals(property.getName())) {
+                    wildcards++;
+                }
             }
         }
         return wildcards;

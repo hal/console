@@ -15,13 +15,10 @@
  */
 package org.jboss.hal.ballroom.typeahead;
 
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.js.events.JsEvent;
-import elemental.js.json.JsJsonObject;
 import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
@@ -31,7 +28,6 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
-import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.DmrPayloadProcessor;
@@ -181,9 +177,7 @@ public class Typeahead implements SuggestHandler, Attachable {
             if (!payload.isFailure()) {
                 String query = Bridge.select(formItemSelector()).getValue();
                 ModelNode result = payload.get(RESULT);
-                //noinspection unchecked
-                List<JsJsonObject> objects = (List<JsJsonObject>) builder.resultProcessor.process(query, result);
-                return JsHelper.asJsArray(objects);
+                return builder.resultProcessor.process(query, result);
             }
             return JsArrayOf.create();
         };

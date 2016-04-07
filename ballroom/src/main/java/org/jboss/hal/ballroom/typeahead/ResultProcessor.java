@@ -15,9 +15,8 @@
  */
 package org.jboss.hal.ballroom.typeahead;
 
-import java.util.List;
-
-import elemental.json.JsonObject;
+import elemental.js.json.JsJsonObject;
+import elemental.js.util.JsArrayOf;
 import org.jboss.hal.dmr.ModelNode;
 
 /**
@@ -26,5 +25,5 @@ import org.jboss.hal.dmr.ModelNode;
 @FunctionalInterface
 public interface ResultProcessor {
 
-    List<? extends JsonObject> process(String query, ModelNode result);
+    JsArrayOf<JsJsonObject> process(String query, ModelNode result);
 }

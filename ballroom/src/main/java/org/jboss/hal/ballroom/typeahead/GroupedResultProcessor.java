@@ -16,19 +16,15 @@
 package org.jboss.hal.ballroom.typeahead;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.google.gwt.core.shared.GWT;
-import elemental.js.json.JsJsonFactory;
-import elemental.json.JsonArray;
-import elemental.json.JsonFactory;
-import elemental.json.JsonObject;
-import elemental.json.impl.JreJsonFactory;
+import elemental.js.json.JsJsonArray;
+import elemental.js.json.JsJsonObject;
+import elemental.js.util.JsArrayOf;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
@@ -67,7 +63,7 @@ class GroupedResultProcessor implements ResultProcessor {
     }
 
     @Override
-    public List<JsonObject> process(final String query, final ModelNode result) {
+    public JsArrayOf<JsJsonObject> process(final String query, final ModelNode result) {
         // first collect all addresses from the result
         List<ResourceAddress> addresses = new ArrayList<>();
         if (operation instanceof Composite) {
@@ -101,7 +97,7 @@ class GroupedResultProcessor implements ResultProcessor {
                 if (iterator.next().asList().size() != length) {
                     //noinspection HardCodedStringLiteral
                     logger.error("Different address types in result processor for operation {}", operation);
-                    return Collections.emptyList();
+                    return JsArrayOf.create();
                 }
             }
 
@@ -143,22 +139,22 @@ class GroupedResultProcessor implements ResultProcessor {
             });
 
             // finally build json object
-            List<JsonObject> objects = new ArrayList<>();
-            JsonFactory jsonFactory = GWT.isScript() ? new JsJsonFactory() : new JreJsonFactory();
+            JsArrayOf<JsJsonObject> objects = JsArrayOf.create();
             for (int i = 0; i < names.size(); i++) {
-                JsonObject object = jsonFactory.createObject();
+                //noinspection unchecked
+                JsJsonObject object = JsJsonObject.create();
                 object.put(NAME, names.get(i));
-                JsonArray jsonGroups = jsonFactory.createArray();
+                JsJsonArray jsonGroups = (JsJsonArray) JsJsonArray.create();
                 List<String> group = groups.get(i);
                 for (int j = 0; j < group.size(); j++) {
                     jsonGroups.set(j, group.get(j));
                 }
                 object.put(GROUPS, jsonGroups);
-                objects.add(object);
+                objects.push(object);
             }
             return objects;
         }
-        return Collections.emptyList();
+        return JsArrayOf.create();
     }
 
     private boolean match(String query, ResourceAddress address) {

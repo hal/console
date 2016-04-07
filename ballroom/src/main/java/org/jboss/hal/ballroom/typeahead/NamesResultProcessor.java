@@ -15,14 +15,8 @@
  */
 package org.jboss.hal.ballroom.typeahead;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.gwt.core.shared.GWT;
-import elemental.js.json.JsJsonFactory;
-import elemental.json.JsonFactory;
-import elemental.json.JsonObject;
-import elemental.json.impl.JreJsonFactory;
+import elemental.js.json.JsJsonObject;
+import elemental.js.util.JsArrayOf;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.dmr.ModelNode;
 
@@ -39,15 +33,15 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 class NamesResultProcessor implements ResultProcessor {
 
     @Override
-    public List<JsonObject> process(final String query, final ModelNode result) {
-        List<JsonObject> objects = new ArrayList<>();
-        JsonFactory jsonFactory = GWT.isScript() ? new JsJsonFactory() : new JreJsonFactory();
+    public JsArrayOf<JsJsonObject> process(final String query, final ModelNode result) {
+        JsArrayOf<JsJsonObject> objects = JsArrayOf.create();
         for (ModelNode child : result.asList()) {
             String value = child.asString();
             if (SuggestHandler.SHOW_ALL_VALUE.equals(query) || value.contains(query)) {
-                JsonObject object = jsonFactory.createObject();
+                //noinspection unchecked
+                JsJsonObject object = JsJsonObject.create();
                 object.put(NAME, value);
-                objects.add(object);
+                objects.push(object);
             }
         }
         return objects;

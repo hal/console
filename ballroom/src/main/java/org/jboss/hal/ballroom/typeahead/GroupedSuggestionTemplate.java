@@ -16,8 +16,8 @@
 package org.jboss.hal.ballroom.typeahead;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import elemental.js.json.JsJsonArray;
 import elemental.js.json.JsJsonObject;
-import elemental.json.JsonArray;
 
 import static org.jboss.hal.ballroom.typeahead.GroupedResultProcessor.GROUPS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
@@ -33,7 +33,7 @@ class GroupedSuggestionTemplate implements Templates.SuggestionTemplate {
     public String render(final JsJsonObject data) {
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
         builder.appendHtmlConstant("<div class=\"" + ttGrouped + "\">");
-        JsonArray groups = data.getArray(GROUPS);
+        JsJsonArray groups = (JsJsonArray) data.get(GROUPS);
         for (int i = 0; i < groups.length(); i++) {
             builder.appendHtmlConstant("<span>").appendEscaped(groups.getString(i)).appendHtmlConstant("</span>");
         }

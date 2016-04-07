@@ -84,21 +84,34 @@ public class SingleRrdParser {
             for (ModelNode capabilityNode : modelNode.get(CAPABILITIES).asList()) {
                 String capabilityName = capabilityNode.get(NAME).asString();
                 boolean dynamic = capabilityNode.get("dynamic").asBoolean(true); //NON-NLS
-                AddressTemplate template = AddressTemplate.of(address, (name, value, first, last, index) -> {
-                    String segment;
-                    switch (name) {
-                        case PROFILE:
-                            segment = SELECTED_PROFILE.variable();
-                            break;
-                        case SERVER_GROUP:
-                            segment = SELECTED_GROUP.variable();
-                            break;
-                        default:
-                            segment = name + "=" + (last ? "*" : value);
-                            break;
-                    }
-                    return segment;
-                });
+                AddressTemplate template;
+                if (address.size() == 1) {
+                    // do not replace "/profile=*" with "{selected.profile}"
+                    template = AddressTemplate.of(address.lastName() + "=*");
+                } else {
+                    // but replace "/profile=*/foo=bar" with "{selected.profile}/foo=*"
+                    template = AddressTemplate.of(address, (name, value, first, last, index) -> {
+                        String segment;
+
+                        if (first && last) {
+                            segment = name + "=*";
+                        } else {
+
+                        }
+                        switch (name) {
+                            case PROFILE:
+                                segment = SELECTED_PROFILE.variable();
+                                break;
+                            case SERVER_GROUP:
+                                segment = SELECTED_GROUP.variable();
+                                break;
+                            default:
+                                segment = name + "=" + (last ? "*" : value);
+                                break;
+                        }
+                        return segment;
+                    });
+                }
                 Capability capability = new Capability(capabilityName, dynamic);
                 capability.addTemplate(template);
                 rr.capabilities.add(capability);

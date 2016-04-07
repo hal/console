@@ -53,7 +53,7 @@ public class Capability {
 
     @Override
     public String toString() {
-        return "Capability(" + name + "@" + templates + ")";
+        return "Capability(" + name + " -> " + templates + ")";
     }
 
     public void addTemplate(final AddressTemplate template) {
