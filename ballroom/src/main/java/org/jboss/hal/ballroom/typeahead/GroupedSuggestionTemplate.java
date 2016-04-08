@@ -34,10 +34,17 @@ class GroupedSuggestionTemplate implements Templates.SuggestionTemplate {
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
         builder.appendHtmlConstant("<div class=\"" + ttGrouped + "\">");
         JsJsonArray groups = (JsJsonArray) data.get(GROUPS);
-        for (int i = 0; i < groups.length(); i++) {
-            builder.appendHtmlConstant("<span>").appendEscaped(groups.getString(i)).appendHtmlConstant("</span>");
+        if (groups.length() != 0) {
+            builder.appendHtmlConstant("<span>");
+            for (int i = 0; i < groups.length(); i++) {
+                builder.appendEscaped(groups.getString(i));
+                if (i < groups.length() - 1) {
+                    builder.appendEscaped(", ");
+                }
+            }
+            builder.appendHtmlConstant("</span>");
         }
-        builder.appendHtmlConstant("<span>").appendEscaped(data.getString(NAME)).appendHtmlConstant("</span>");
+        builder.appendHtmlConstant("<span>").appendEscaped(" | " + data.getString(NAME)).appendHtmlConstant("</span>");
         builder.appendHtmlConstant("</div>");
         return builder.toSafeHtml().asString();
     }

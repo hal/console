@@ -17,10 +17,8 @@ package org.jboss.hal.ballroom.typeahead;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -64,6 +62,11 @@ class GroupedResultProcessor extends AbstractResultProcessor<GroupedResultProces
         Grouped(final String name) {
             this.name = name;
             this.groups = new ArrayList<>();
+        }
+
+        @Override
+        public String toString() {
+            return name + " " + groups;
         }
     }
 
@@ -129,34 +132,10 @@ class GroupedResultProcessor extends AbstractResultProcessor<GroupedResultProces
             });
             List<String> names = Lists.transform(addresses, ResourceAddress::lastValue);
 
-            // find matching segments (if the segments of the first two addresses match we assume that
-            // all other segments match as well) and build final list w/o matching segments
-            Set<Integer> commonIndices = new HashSet<>();
-            if (segments.size() > 1) {
-                List<String> first = segments.get(0);
-                List<String> second = segments.get(0);
-                for (int i = 0; i < first.size(); i++) {
-                    if (first.get(i).equals(second.get(i))) {
-                        commonIndices.add(i);
-                    }
-                    i++;
-                }
-            }
-            List<List<String>> groupedSegments = Lists.transform(segments, addressSegments -> {
-                List<String> stripped = new ArrayList<>();
-                for (int i = 0; i < addressSegments.size(); i++) {
-                    if (commonIndices.contains(i)) {
-                        continue;
-                    }
-                    stripped.add(addressSegments.get(i));
-                }
-                return stripped;
-            });
-
             // build model list
             for (int i = 0; i < names.size(); i++) {
                 Grouped model = new Grouped(names.get(i));
-                model.groups.addAll(groupedSegments.get(i));
+                model.groups.addAll(segments.get(i));
                 models.add(model);
             }
         }

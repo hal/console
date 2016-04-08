@@ -28,6 +28,9 @@ import org.jboss.hal.meta.StatementContext;
 import org.junit.Before;
 import org.junit.Test;
 
+import static java.util.stream.Collectors.toList;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -35,6 +38,50 @@ import static org.junit.Assert.assertTrue;
  */
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class SingleOperationTwoWildcardsTest {
+
+    private static final String[] NAMES = new String[]{
+            // standard-sockets
+            "ajp",
+            "http",
+            "https",
+            "txn-recovery-environment",
+            "txn-status-manager",
+            // ha-sockets
+            "ajp",
+            "http",
+            "https",
+            "jgroups-mping",
+            "jgroups-tcp",
+            "jgroups-tcp-fd",
+            "jgroups-udp",
+            "jgroups-udp-fd",
+            "modcluster",
+            "txn-recovery-environment",
+            "txn-status-manager",
+            // full-sockets
+            "ajp",
+            "http",
+            "https",
+            "iiop",
+            "iiop-ssl",
+            "txn-recovery-environment",
+            "txn-status-manager",
+            // full-ha-sockets
+            "ajp",
+            "http",
+            "https",
+            "iiop",
+            "iiop-ssl",
+            "jgroups-mping",
+            "jgroups-tcp",
+            "jgroups-tcp-fd",
+            "jgroups-udp",
+            "jgroups-udp-fd",
+            "modcluster",
+            "txn-recovery-environment",
+            "txn-status-manager",
+    };
+
 
     private GroupedResultProcessor resultProcessor;
     private ModelNode result;
@@ -63,10 +110,22 @@ public class SingleOperationTwoWildcardsTest {
 
     @Test
     public void wildcardQuery() throws Exception {
+        List<Grouped> models = resultProcessor.processToModel("*", result);
+        List<String> names = models.stream().map(model -> model.name).collect(toList());
+        assertArrayEquals(NAMES, names.toArray());
+        models.forEach(model -> {
+            assertEquals(1, model.groups.size());
+            assertTrue(model.groups.get(0).startsWith("socket-binding-group => "));
+        });
     }
 
     @Test
     public void oneMatch() throws Exception {
+        List<Grouped> models = resultProcessor.processToModel("iiop-ssl", result);
+        assertEquals(2, models.size());
+        models.forEach(model -> assertEquals("iiop-ssl", model.name));
+        assertEquals("socket-binding-group => full-sockets", models.get(0).groups.get(0));
+        assertEquals("socket-binding-group => full-ha-sockets", models.get(1).groups.get(0));
     }
 
     @Test

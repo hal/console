@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.ballroom.typeahead;
 
-import elemental.js.json.JsJsonObject;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsType;
 

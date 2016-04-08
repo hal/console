@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.ballroom.typeahead;
 
-import elemental.json.JsonObject;
-import elemental.util.ArrayOf;
+import elemental.js.json.JsJsonObject;
+import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsFunction;
 
 /**
@@ -26,5 +26,5 @@ import jsinterop.annotations.JsFunction;
 @FunctionalInterface
 public interface AsyncCallback {
 
-    void async(ArrayOf<JsonObject> suggestions);
+    void async(JsArrayOf<JsJsonObject> suggestions);
 }
