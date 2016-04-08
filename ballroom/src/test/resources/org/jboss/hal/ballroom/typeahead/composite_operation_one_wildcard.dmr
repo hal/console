@@ -1,10 +1,10 @@
 {
-    "operations" => [
-        "/profile=full/subsystem=datasources/data-source=*:read-resource",
-        "/profile=ha/subsystem=datasources/data-source=*:read-resource"
-    ],
-    "comment" => "The operations are not used. They're just here as part of the documentation",
     "step-1" => {
+        "operations" => [
+            "/profile=full/subsystem=datasources/data-source=*:read-resource",
+            "/profile=ha/subsystem=datasources/data-source=*:read-resource"
+        ],
+        "comment" => "The operations are not used. They're just here as part of the documentation",
         "outcome" => "success",
         "result" => [{
             "address" => [

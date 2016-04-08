@@ -1,10 +1,10 @@
 {
-    "operations" => [
-        "/socket-binding-group=*/local-destination-outbound-socket-binding=*:read-resource",
-        "/socket-binding-group=*/remote-destination-outbound-socket-binding=*:read-resource"
-    ],
-    "comment" => "The operations are not used. They're just here as part of the documentation",
     "step-1" => {
+        "operations" => [
+            "/socket-binding-group=*/local-destination-outbound-socket-binding=*:read-resource",
+            "/socket-binding-group=*/remote-destination-outbound-socket-binding=*:read-resource"
+        ],
+        "comment" => "The operations are not used. They're just here as part of the documentation",
         "outcome" => "success",
         "result" => [
             {

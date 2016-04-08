@@ -22,8 +22,11 @@ import elemental.js.util.JsArrayOf;
 import org.jboss.hal.dmr.ModelNode;
 
 /**
- * Abstract result processor for implementations which makes it easy to unit test the processor. If your result
- * processor is really trivial and does not need to be tested, there's no need to extend from this class.
+ * Abstract result processor which makes it easy to unit test the processor. If your result processor is really trivial
+ * and does not need to be tested, there's no need to extend from this class.
+ * <p>
+ * The bulk of work should be placed into {@link #processToModel(String, ModelNode)} which can easily be unit tested.
+ * Whereas {@link #asJson(List)} should contain no logic other than mapping the model to json.
  *
  * @author Harald Pehl
  */
