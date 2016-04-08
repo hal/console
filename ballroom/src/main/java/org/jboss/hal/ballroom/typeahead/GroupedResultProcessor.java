@@ -16,11 +16,13 @@
 package org.jboss.hal.ballroom.typeahead;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import elemental.js.json.JsJsonArray;
 import elemental.js.json.JsJsonObject;
@@ -51,7 +53,20 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
  * }
  * </pre>
  */
-class GroupedResultProcessor implements ResultProcessor {
+class GroupedResultProcessor extends AbstractResultProcessor<GroupedResultProcessor.Grouped>
+        implements ResultProcessor {
+
+    static class Grouped {
+
+        final String name;
+        final List<String> groups;
+
+        Grouped(final String name) {
+            this.name = name;
+            this.groups = new ArrayList<>();
+        }
+    }
+
 
     static final String GROUPS = "groups";
     private static final Logger logger = LoggerFactory.getLogger(GroupedResultProcessor.class);
@@ -63,7 +78,9 @@ class GroupedResultProcessor implements ResultProcessor {
     }
 
     @Override
-    public JsArrayOf<JsJsonObject> process(final String query, final ModelNode result) {
+    protected List<Grouped> processToModel(final String query, final ModelNode result) {
+        List<Grouped> models = new ArrayList<>();
+
         // first collect all addresses from the result
         List<ResourceAddress> addresses = new ArrayList<>();
         if (operation instanceof Composite) {
@@ -97,23 +114,23 @@ class GroupedResultProcessor implements ResultProcessor {
                 if (iterator.next().asList().size() != length) {
                     //noinspection HardCodedStringLiteral
                     logger.error("Different address types in result processor for operation {}", operation);
-                    return JsArrayOf.create();
+                    return Collections.emptyList();
                 }
             }
 
             // turn the list of addresses into a list of lists of string segments w/o the last segment (name)
-            // and store the names in an extra list
+            // but backup the names in an extra list for later use
             List<List<String>> segments = Lists.transform(addresses, address -> {
-                        List<String> addresSegments = new ArrayList<>();
-                        for (Property property : address.getParent().asPropertyList()) {
-                            addresSegments.add(property.getName() + " => " + property.getValue().asString());
-                        }
-                        return addresSegments;
-                    });
+                List<String> addresSegments = new ArrayList<>();
+                for (Property property : address.getParent().asPropertyList()) {
+                    addresSegments.add(property.getName() + " => " + property.getValue().asString());
+                }
+                return addresSegments;
+            });
             List<String> names = Lists.transform(addresses, ResourceAddress::lastValue);
 
             // find matching segments (if the segments of the first two addresses match we assume that
-            // all other segments match as well)
+            // all other segments match as well) and build final list w/o matching segments
             Set<Integer> commonIndices = new HashSet<>();
             if (segments.size() > 1) {
                 List<String> first = segments.get(0);
@@ -125,9 +142,7 @@ class GroupedResultProcessor implements ResultProcessor {
                     i++;
                 }
             }
-
-            // build final list w/o matching segments
-            List<List<String>> groups = Lists.transform(segments, addressSegments -> {
+            List<List<String>> groupedSegments = Lists.transform(segments, addressSegments -> {
                 List<String> stripped = new ArrayList<>();
                 for (int i = 0; i < addressSegments.size(); i++) {
                     if (commonIndices.contains(i)) {
@@ -138,26 +153,37 @@ class GroupedResultProcessor implements ResultProcessor {
                 return stripped;
             });
 
-            // finally build json object
-            JsArrayOf<JsJsonObject> objects = JsArrayOf.create();
+            // build model list
             for (int i = 0; i < names.size(); i++) {
-                //noinspection unchecked
-                JsJsonObject object = JsJsonObject.create();
-                object.put(NAME, names.get(i));
-                JsJsonArray jsonGroups = (JsJsonArray) JsJsonArray.create();
-                List<String> group = groups.get(i);
-                for (int j = 0; j < group.size(); j++) {
-                    jsonGroups.set(j, group.get(j));
-                }
-                object.put(GROUPS, jsonGroups);
-                objects.push(object);
+                Grouped model = new Grouped(names.get(i));
+                model.groups.addAll(groupedSegments.get(i));
+                models.add(model);
             }
-            return objects;
         }
-        return JsArrayOf.create();
+
+        return models;
+    }
+
+    @Override
+    protected JsArrayOf<JsJsonObject> asJson(final List<Grouped> models) {
+        JsArrayOf<JsJsonObject> objects = JsArrayOf.create();
+        for (Grouped model : models) {
+            JsJsonObject object = JsJsonObject.create();
+            object.put(NAME, model.name);
+            JsJsonArray jsonGroups = (JsJsonArray) JsJsonArray.create();
+            int i = 0;
+            for (String group : model.groups) {
+                jsonGroups.set(i, group);
+                i++;
+            }
+            object.put(GROUPS, jsonGroups);
+            objects.push(object);
+        }
+        return objects;
     }
 
     private boolean match(String query, ResourceAddress address) {
-        return (SuggestHandler.SHOW_ALL_VALUE.equals(query) || address.lastValue().contains(query));
+        return !Strings.isNullOrEmpty(query) &&
+                (SuggestHandler.SHOW_ALL_VALUE.equals(query) || address.lastValue().contains(query));
     }
 }

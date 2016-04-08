@@ -38,6 +38,12 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-dmr</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
             <artifactId>hal-meta</artifactId>
         </dependency>
         <dependency>
@@ -63,6 +69,11 @@
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-elemental</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss</groupId>
+            <artifactId>jboss-dmr</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
