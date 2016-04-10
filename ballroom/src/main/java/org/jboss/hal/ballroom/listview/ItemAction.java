@@ -20,10 +20,12 @@ package org.jboss.hal.ballroom.listview;
  */
 public class ItemAction<T> {
 
+    final String id;
     final String title;
     final ItemActionHandler<T> handler;
 
-    public ItemAction(final String title, final ItemActionHandler<T> handler) {
+    public ItemAction(final String id, final String title, final ItemActionHandler<T> handler) {
+        this.id = id;
         this.title = title;
         this.handler = handler;
     }

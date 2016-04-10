@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.meta.processing;
 
+import java.util.Set;
+
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
@@ -24,12 +26,11 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
+import org.jboss.hal.meta.capabilitiy.Capability;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.security.SecurityFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Set;
 
 /**
  * @author Harald Pehl
@@ -76,6 +77,12 @@ class RrdFunction implements Function<FunctionContext> {
                                 logger.debug("Add metadata for {}", rr.address);
                                 metadataRegistry.add(rr.address,
                                         new Metadata(rr.securityContext, rr.resourceDescription, capabilities));
+                            }
+                            if (!rr.capabilities.isEmpty()) {
+                                logger.debug("Add capabilities for {}", rr.address);
+                                for (Capability capability : rr.capabilities) {
+                                    capabilities.register(capability);
+                                }
                             }
                         }
                         control.proceed();

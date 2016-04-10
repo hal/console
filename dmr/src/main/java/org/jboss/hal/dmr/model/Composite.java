@@ -72,10 +72,6 @@ public class Composite extends Operation implements Iterable<Operation> {
     }
 
     public String asCli() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("batch\n"); //NON-NLS
-        Joiner.on('\n').appendTo(builder, Lists.transform(operations, Operation::asCli));
-        builder.append("\nrun-batch -v"); //NON-NLS
-        return builder.toString();
+        return Joiner.on('\n').join(Lists.transform(operations, Operation::asCli));
     }
 }

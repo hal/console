@@ -19,7 +19,6 @@ import com.google.gwt.core.client.GWT;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.js.events.JsEvent;
-import elemental.js.json.JsJsonObject;
 import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
@@ -35,29 +34,17 @@ import org.jboss.hal.dmr.dispatch.DmrPayloadProcessor;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.resources.Constants;
 
-import java.util.List;
-
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
-import static org.jboss.hal.dmr.dispatch.Dispatcher.*;
+import static org.jboss.hal.dmr.dispatch.Dispatcher.APPLICATION_DMR_ENCODED;
+import static org.jboss.hal.dmr.dispatch.Dispatcher.HEADER_MANAGEMENT_CLIENT_NAME;
+import static org.jboss.hal.dmr.dispatch.Dispatcher.HEADER_MANAGEMENT_CLIENT_VALUE;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
 
 /**
  * A type ahead engine based on <a href="https://twitter.github.io/typeahead.js/">typeahead.js</a> ready to be used
- * with form items. Use one of the builders to setup an instance and call {@link Typeahead#attach()} after the form
- * item was attached to the DOM.
- * <p>
- * <pre>
- * ResourceAddress address = AddressTemplate.of("/socket-binding-group=standard-sockets")
- *         .resolve(statementContext);
- * Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, address)
- *         .param(CHILD_TYPE, "socket-binding")
- *         .build();
- *
- * Form&lt;Foo&gt; form = ...;
- * form.getItem("foo").registerSuggestHandler(new Typeahead.ReadChildrenNamesBuilder(operation).build());
- * </pre>
+ * with form items.
  *
  * @see <a href="https://twitter.github.io/typeahead.js/">https://twitter.github.io/typeahead.js/</a>
  */
@@ -68,17 +55,19 @@ public class Typeahead implements SuggestHandler, Attachable {
         private final Operation operation;
         private final ResultProcessor resultProcessor;
         private final Identifier identifier;
-        protected DataTokenizer dataTokenizer;
-        protected Display display;
+        private Templates.SuggestionTemplate suggestion;
+        private Display display;
+        private DataTokenizer dataTokenizer;
 
-        public Builder(final Operation operation, final ResultProcessor resultProcessor, final Identifier identifier) {
+        public Builder(final Operation operation, final ResultProcessor resultProcessor,
+                final Identifier identifier) {
             this.operation = operation;
             this.resultProcessor = resultProcessor;
             this.identifier = identifier;
         }
 
-        public Builder dataTokenizer(DataTokenizer dataTokenizer) {
-            this.dataTokenizer = dataTokenizer;
+        public Builder suggestion(Templates.SuggestionTemplate suggestion) {
+            this.suggestion = suggestion;
             return this;
         }
 
@@ -87,33 +76,13 @@ public class Typeahead implements SuggestHandler, Attachable {
             return this;
         }
 
+        public Builder dataTokenizer(DataTokenizer dataTokenizer) {
+            this.dataTokenizer = dataTokenizer;
+            return this;
+        }
+
         public Typeahead build() {
             return new Typeahead(this);
-        }
-    }
-
-
-    public static class ReadChildrenNamesBuilder extends Builder {
-
-        public ReadChildrenNamesBuilder(final Operation readChildrenNames) {
-            super(readChildrenNames,
-                    (query, result) -> {
-                        List<ModelNode> children = result.asList();
-                        JsArrayOf<JsJsonObject> objects = JsArrayOf.create();
-                        for (ModelNode child : children) {
-                            String value = child.asString();
-                            if (SHOW_ALL_VALUE.equals(query) || value.contains(query)) {
-                                JsJsonObject object = JsJsonObject.create();
-                                object.put(VALUE, value);
-                                objects.push(object);
-                            }
-                        }
-                        return objects;
-                    },
-                    data -> data.getString(VALUE));
-
-            dataTokenizer = data -> data.getString(VALUE).split("\\s+"); //NON-NLS
-            display = data -> data.getString(VALUE);
         }
     }
 
@@ -167,11 +136,11 @@ public class Typeahead implements SuggestHandler, Attachable {
     }
 
 
+    public static final String WHITESPACE = "\\s+";
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String CLOSE = "close";
     private static final String CHANGE_EVENT = "typeahead:change";
     private static final String VAL = "val";
-    private static final String VALUE = "value";
 
     private final Options options;
     private final Dataset dataset;
@@ -210,20 +179,21 @@ public class Typeahead implements SuggestHandler, Attachable {
                 ModelNode result = payload.get(RESULT);
                 return builder.resultProcessor.process(query, result);
             }
-            return JsArrayOf.<JsJsonObject>create();
+            return JsArrayOf.create();
         };
 
         Bloodhound.Options bloodhoundOptions = new Bloodhound.Options();
         bloodhoundOptions.datumTokenizer = builder.dataTokenizer == null
-                ? data -> builder.identifier.identify(data).split("\\s+") //NON-NLS
+                ? data -> builder.identifier.identify(data).split(WHITESPACE)
                 : builder.dataTokenizer;
-        bloodhoundOptions.queryTokenizer = query -> query.split("\\s+"); //NON-NLS
+        bloodhoundOptions.queryTokenizer = query -> query.split(WHITESPACE);
         bloodhoundOptions.identify = builder.identifier;
         bloodhoundOptions.sufficient = Integer.MAX_VALUE; // we'd like to always have fresh results from the backend
         bloodhoundOptions.remote = remoteOptions;
         bloodhound = new Bloodhound(bloodhoundOptions);
 
-        Dataset.Templates templates = new Dataset.Templates();
+        Templates templates = new Templates();
+        templates.suggestion = builder.suggestion;
         //noinspection HardCodedStringLiteral
         templates.notFound = context -> "<div class=\"empty-message\">" +
                 "<span class=\"pficon pficon-warning-triangle-o\"></span>" + CONSTANTS.noItems() +
@@ -259,10 +229,6 @@ public class Typeahead implements SuggestHandler, Attachable {
         Element menu = Browser.getDocument()
                 .querySelector(formItemSelector() + " .twitter-typeahead .tt-menu.tt-open"); //NON-NLS
         Elements.setVisible(menu, false);
-    }
-
-    public Dataset getDataset() {
-        return dataset;
     }
 
     public void clearRemoteCache() {

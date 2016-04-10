@@ -73,11 +73,13 @@ public class TableButtonFactory {
         this.resources = resources;
     }
 
-    public <T extends ModelNode> Button<T> add(String id, String type, AddressTemplate template, ScheduledCommand afterAdd) {
+    public <T extends ModelNode> Button<T> add(String id, String type, AddressTemplate template,
+            ScheduledCommand afterAdd) {
         return add(id, type, template, afterAdd, null);
     }
 
-    public <T extends ModelNode> Button<T> add(String id, String type, AddressTemplate template, ScheduledCommand afterAdd,
+    public <T extends ModelNode> Button<T> add(String id, String type, AddressTemplate template,
+            ScheduledCommand afterAdd,
             @NonNls final String firstAttribute, @NonNls final String... otherAttributes) {
 
         AddResourceDialog.Callback<T> addResourceCallback = (name, model) -> {
@@ -134,6 +136,8 @@ public class TableButtonFactory {
                         ResourceAddress address = addressTemplate.resolve(statementContext, nameProvider.get());
                         Operation operation = new Operation.Builder(REMOVE, address).build();
                         dispatcher.execute(operation, result -> {
+                            MessageEvent.fire(eventBus, Message.success(
+                                    resources.messages().removeResourceSuccess(type, nameProvider.get())));
                             if (afterRemove != null) {
                                 afterRemove.execute();
                             }

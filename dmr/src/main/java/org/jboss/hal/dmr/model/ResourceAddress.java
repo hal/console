@@ -15,12 +15,12 @@
  */
 package org.jboss.hal.dmr.model;
 
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
 
 /**
  * Represents a fully qualified DMR address ready to be put into a DMR operation.
@@ -76,6 +76,10 @@ public class ResourceAddress extends ModelNode {
         List<ModelNode> parent = new ArrayList<>(asList());
         parent.remove(parent.size() - 1);
         return new ResourceAddress(new ModelNode().set(parent));
+    }
+
+    public int size() {
+        return isDefined() ? asList().size() : 0;
     }
 
     @Override

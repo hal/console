@@ -75,8 +75,7 @@ public class ListView<T> implements IsElement, SecurityContextAware {
      * Select the item and fires a selection event
      */
     public void selectItem(T item) {
-        String id = itemRenderer.render(item).getId();
-        ListItem<T> listItem = items.get(id);
+        ListItem<T> listItem = getItem(item);
         if (listItem != null) {
             select(listItem, true);
         }
@@ -84,12 +83,12 @@ public class ListView<T> implements IsElement, SecurityContextAware {
 
     void select(ListItem<T> item, boolean select) {
         if (select) {
-            item.root.getClassList().add(active);
+            item.asElement().getClassList().add(active);
             if (selectHandler != null) {
                 selectHandler.onSelect(item.item);
             }
         } else {
-            item.root.getClassList().remove(active);
+            item.asElement().getClassList().remove(active);
         }
         if (!multiselect) {
             // deselect all other items
@@ -97,7 +96,7 @@ public class ListView<T> implements IsElement, SecurityContextAware {
                 if (otherItem == item) {
                     continue;
                 }
-                otherItem.root.getClassList().remove(active);
+                otherItem.asElement().getClassList().remove(active);
             }
         }
     }
@@ -132,8 +131,27 @@ public class ListView<T> implements IsElement, SecurityContextAware {
         return selected;
     }
 
+    public void enableAction(T item, String actionId) {
+        ListItem<T> listItem = getItem(item);
+        if (listItem != null) {
+            listItem.enableAction(actionId);
+        }
+    }
+
+    public void disableAction(T item, String actionId) {
+        ListItem<T> listItem = getItem(item);
+        if (listItem != null) {
+            listItem.disableAction(actionId);
+        }
+    }
+
     @Override
     public void onSecurityContextChange(final SecurityContext securityContext) {
 
+    }
+
+    private ListItem<T> getItem(T item) {
+        String itemId = itemRenderer.render(item).getId();
+        return items.get(itemId);
     }
 }

@@ -18,7 +18,7 @@ package org.jboss.hal.client.configuration;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.IdBuilder;
-import org.jboss.hal.ballroom.layout.LayoutBuilder;
+import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -101,8 +101,10 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
         Element element = new LayoutBuilder()
             .row()
                 .column()
-                    .header(PATHS)
-                    .add(info, table.asElement(), form.asElement())
+                    .header(PATHS).end()
+                    .add(info)
+                    .add(table.asElement())
+                    .add(form.asElement())
                 .end()
             .end()
         .build();

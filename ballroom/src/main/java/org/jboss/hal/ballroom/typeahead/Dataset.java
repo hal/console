@@ -38,28 +38,6 @@ public class Dataset {
     }
 
 
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    public static class NotFoundContext {
-
-        public String query;
-    }
-
-
-    @JsFunction
-    @FunctionalInterface
-    public interface NotFoundTemplate {
-
-        String render(NotFoundContext context);
-    }
-
-
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    public static class Templates {
-
-        public NotFoundTemplate notFound;
-    }
-
-
     public Source source;
     public boolean async;
     public int limit;

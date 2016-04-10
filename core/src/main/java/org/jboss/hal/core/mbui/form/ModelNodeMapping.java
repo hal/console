@@ -34,6 +34,7 @@ import java.util.Map;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelType.BIG_INTEGER;
+import static org.jboss.hal.dmr.ModelType.EXPRESSION;
 import static org.jboss.hal.dmr.ModelType.INT;
 
 /**
@@ -66,51 +67,65 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                 }
 
                 ModelNode value = model.get(formItem.getName());
-                ModelType type = attributeDescription.get(TYPE).asType();
-                switch (type) {
-                    case BOOLEAN:
-                        formItem.setValue(value.asBoolean());
-                        break;
-
-                    case INT:
-                        // NumberFormItem uses *always* long
-                        formItem.setValue((long) value.asInt());
-                        break;
-                    case BIG_INTEGER:
-                    case LONG:
-                        formItem.setValue(value.asLong());
-                        break;
-
-                    case LIST:
-                        List<String> list = Lists.transform(value.asList(), ModelNode::asString);
-                        formItem.setValue(list);
-                        break;
-
-                    case OBJECT:
-                        List<Property> properties = value.asPropertyList();
-                        Map<String, String> map = new HashMap<>();
-                        for (Property property : properties) {
-                            map.put(property.getName(), property.getValue().asString());
-                        }
-                        formItem.setValue(map);
-                        break;
-
-                    case STRING:
-                        formItem.setValue(value.asString());
-                        break;
-
-                    // unsupported types
-                    case BIG_DECIMAL:
-                    case DOUBLE:
-                    case BYTES:
-                    case EXPRESSION:
-                    case PROPERTY:
-                    case TYPE:
-                    case UNDEFINED:
+                ModelType valueType = value.getType();
+                    if (valueType == EXPRESSION) {
+                    if (formItem.supportsExpressions()) {
+                        formItem.setExpressionValue(value.asString());
+                    } else {
                         //noinspection HardCodedStringLiteral
-                        logger.warn("{}: populating form field '{}' of type '{}' not implemented", id(form), name,
-                                type);
-                        break;
+                        logger.error(
+                                "{}: Unable to populate form item '{}': Value is an expression, but form item does not support expressions",
+                                id(form), name);
+                        continue;
+                    }
+
+                } else {
+                    ModelType descriptionType = attributeDescription.get(TYPE).asType();
+                    switch (descriptionType) {
+                        case BOOLEAN:
+                            formItem.setValue(value.asBoolean());
+                            break;
+
+                        case INT:
+                            // NumberFormItem uses *always* long
+                            formItem.setValue((long) value.asInt());
+                            break;
+                        case BIG_INTEGER:
+                        case LONG:
+                            formItem.setValue(value.asLong());
+                            break;
+
+                        case LIST:
+                            List<String> list = Lists.transform(value.asList(), ModelNode::asString);
+                            formItem.setValue(list);
+                            break;
+
+                        case OBJECT:
+                            List<Property> properties = value.asPropertyList();
+                            Map<String, String> map = new HashMap<>();
+                            for (Property property : properties) {
+                                map.put(property.getName(), property.getValue().asString());
+                            }
+                            formItem.setValue(map);
+                            break;
+
+                        case STRING:
+                            formItem.setValue(value.asString());
+                            break;
+
+                        // unsupported types
+                        case BIG_DECIMAL:
+                        case DOUBLE:
+                        case BYTES:
+                        case EXPRESSION:
+                        case PROPERTY:
+                        case TYPE:
+                        case UNDEFINED:
+                            //noinspection HardCodedStringLiteral
+                            logger.warn("{}: populating form field '{}' of type '{}' not implemented", id(form), name,
+                                    descriptionType);
+                            break;
+                    }
                 }
                 formItem.setUndefined(false);
 

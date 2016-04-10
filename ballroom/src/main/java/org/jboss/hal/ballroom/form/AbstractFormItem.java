@@ -15,6 +15,9 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -37,9 +40,6 @@ import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
-
-import java.util.LinkedList;
-import java.util.List;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Collections.singletonList;
@@ -441,6 +441,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     @Override
     public void setText(final String text) {
         inputElement.setText(text);
+        valueElement.setTextContent(text);
     }
 
     String asString(T value) {

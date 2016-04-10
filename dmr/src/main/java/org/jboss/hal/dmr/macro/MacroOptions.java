@@ -25,19 +25,13 @@ import org.jboss.hal.dmr.model.NamedNode;
 public class MacroOptions extends NamedNode {
 
     public static final MacroOptionsResources RESOURCES = GWT.create(MacroOptionsResources.class);
-    public static final String EXECUTE_DURING_RECORDING = "execute-during-recording";
     public static final String OMIT_READ_OPERATIONS = "omit-read-operations";
     public static final String OPEN_IN_EDITOR = "open-in-editor";
 
     public MacroOptions() {
         super("", new ModelNode());
-        get(EXECUTE_DURING_RECORDING).set(true);
         get(OMIT_READ_OPERATIONS).set(false);
         get(OPEN_IN_EDITOR).set(false);
-    }
-
-    public boolean executeDuringRecording() {
-        return get(EXECUTE_DURING_RECORDING).asBoolean(true);
     }
 
     public boolean omitReadOperations() {

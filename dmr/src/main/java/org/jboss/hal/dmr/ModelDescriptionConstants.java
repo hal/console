@@ -54,9 +54,11 @@ public interface ModelDescriptionConstants {
     String ALLOWED = "allowed";
     String ANY = "any";
     String ATTRIBUTES = "attributes";
+    String ATTRIBUTES_ONLY = "attributes-only";
 
     String BYTES = "bytes";
 
+    String CAPABILITIES = "capabilities";
     String CAPABILITY_REFERENCE = "capability-reference";
     String CHILD_TYPE = "child-type";
     String CHILDREN = "children";
@@ -95,6 +97,7 @@ public interface ModelDescriptionConstants {
     String INCLUDE = "include";
     String INCLUDES = "includes";
     String INCLUDE_ALIASES = "include-aliases";
+    String INCLUDE_DEFAULTS = "include-defaults";
     String INCLUDE_RUNTIME = "include-runtime";
     String INCLUDE_SINGLETONS = "include-singletons";
     String INHERITED = "inherited";
@@ -170,6 +173,7 @@ public interface ModelDescriptionConstants {
     String SERVER_GROUPS = "server-groups";
     String SERVER_OPERATIONS = "server-operations";
     String SOCKET_BINDING = "socket-binding";
+    String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SHUTDOWN = "shutdown";
     String STANDALONE = "standalone";
     String START = "start";

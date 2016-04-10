@@ -15,12 +15,6 @@
  */
 package org.jboss.hal.meta;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jetbrains.annotations.NonNls;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,6 +23,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jetbrains.annotations.NonNls;
 
 /**
  * Wrapper for a DMR address which might contain multiple variable parts.
@@ -61,10 +62,53 @@ import java.util.NoSuchElementException;
  */
 public final class AddressTemplate {
 
-    // ------------------------------------------------------ factory
+    // ------------------------------------------------------ factories
+
+
+    @FunctionalInterface
+    public interface Unresolver {
+
+        String unresolve(String name, String value, boolean first, boolean last, int index);
+    }
 
     public static AddressTemplate of(@NonNls String template) {
         return new AddressTemplate(template);
+    }
+
+    /**
+     * Turns a resource address into an address template which is the opposite of {@link #resolve(StatementContext,
+     * String...)}.
+     */
+    public static AddressTemplate of(ResourceAddress address) {
+        return of(address, null);
+    }
+
+    /**
+     * Turns a resource address into an address template which is the opposite of {@link #resolve(StatementContext,
+     * String...)}. Use the {@link Unresolver} function to specify how the segments of the resource address are
+     * "unresolved". It is called for each segment of the specified resource address.
+     */
+    public static AddressTemplate of(ResourceAddress address, Unresolver unresolver) {
+        int index = 0;
+        boolean first = true;
+        StringBuilder builder = new StringBuilder();
+        for (Iterator<Property> iterator = address.asPropertyList().iterator(); iterator.hasNext(); ) {
+            Property property = iterator.next();
+            String name = property.getName();
+            String value = property.getValue().asString();
+
+            String segment = unresolver == null
+                    ? name + "=" + value
+                    : unresolver.unresolve(name, value, first, !iterator.hasNext(), index);
+            builder.append(segment);
+
+            if (iterator.hasNext()) {
+                builder.append("/");
+            }
+            first = false;
+            index++;
+        }
+        return of(builder.toString());
     }
 
 
@@ -237,6 +281,7 @@ public final class AddressTemplate {
      *
      * @param context   the statement context
      * @param wildcards An optional list of wildcards which are used to resolve any wildcards in this address template
+     *                  from left to right
      *
      * @return a full qualified resource address which might be empty, but which does not contain any tokens
      */

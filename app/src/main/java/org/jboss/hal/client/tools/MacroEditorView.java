@@ -15,26 +15,27 @@
  */
 package org.jboss.hal.client.tools;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.Clipboard;
 import org.jboss.hal.ballroom.EmptyState;
+import org.jboss.hal.ballroom.LayoutBuilder;
+import org.jboss.hal.ballroom.Tooltip;
+import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
-import org.jboss.hal.ballroom.layout.LayoutBuilder;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
 import org.jboss.hal.ballroom.listview.ListView;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.dmr.macro.Macro;
-import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
 
 import javax.inject.Inject;
 import java.util.Arrays;
@@ -43,7 +44,6 @@ import java.util.List;
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.lang.Math.max;
 import static java.util.Collections.singletonList;
-import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.resources.CSS.*;
 
@@ -52,12 +52,17 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public class MacroEditorView extends PatternFlyViewImpl implements MacroEditorPresenter.MyView {
 
+    private static final String COPY_TO_CLIPBOARD_ELEMENT = "copyToClipboardElement";
+    private static final String PLAY_ACTION = "play";
+    private static final String RENAME_ACTION = "rename";
+    private static final String REMOVE_ACTION = "remove";
     private static final int MIN_HEIGHT = 70;
 
     private final Resources resources;
     private final EmptyState empty;
     private final ListView<Macro> macroList;
     private final AceEditor editor;
+    private final Element copyToClipboard;
     private final Iterable<Element> elements;
     private MacroEditorPresenter presenter;
 
@@ -90,9 +95,18 @@ public class MacroEditorView extends PatternFlyViewImpl implements MacroEditorPr
             @Override
             public List<ItemAction<Macro>> actions() {
                 return Arrays.asList(
-                        new ItemAction<Macro>(resources.constants().play(), macro -> presenter.play(macro)),
-                        new ItemAction<Macro>(resources.constants().rename(), macro -> presenter.rename(macro)),
-                        new ItemAction<Macro>(resources.constants().remove(), macro -> presenter.remove(macro)));
+                        new ItemAction<Macro>(PLAY_ACTION, resources.constants().play(),
+                                macro -> presenter.play(macro)),
+                        new ItemAction<Macro>(RENAME_ACTION, resources.constants().rename(),
+                                macro -> presenter.rename(macro)),
+                        new ItemAction<Macro>(REMOVE_ACTION, resources.constants().remove(),
+                                macro -> DialogFactory.confirmation(
+                                        resources.messages().removeResourceConfirmationTitle(macro.getName()),
+                                        resources.messages().removeResourceConfirmationQuestion(macro.getName()),
+                                        () -> {
+                                            presenter.remove(macro);
+                                            return true;
+                                        }).show()));
             }
         });
         macroList.onSelect(this::loadMacro);
@@ -102,22 +116,32 @@ public class MacroEditorView extends PatternFlyViewImpl implements MacroEditorPr
         editorOptions.readOnly = true;
         editorOptions.showPrintMargin = false;
         editor = new AceEditor(Ids.MACRO_EDITOR, editorOptions);
+
         // @formatter:off
-        Element editorContainer = new Elements.Builder()
+        Elements.Builder builder = new Elements.Builder()
             .div().css(macroEditor)
-                .button().css(btn, btnDefault, copy).on(click, event -> copyToClipboard())
-                    .span().css(fontAwesome("clipboard")).end()
+                .button()
+                    .css(btn, btnDefault, copy)
+                    .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
+                    .data(UIConstants.PLACEMENT, "left") //NON-NLS
+                    .title(resources.constants().copyToClipboard())
+                    .rememberAs(COPY_TO_CLIPBOARD_ELEMENT)
+                        .span().css(fontAwesome("clipboard")).end()
                 .end()
                 .add(editor.asElement())
-            .end()
-        .build();
+            .end();
         // @formatter:on
+
+        Element editorContainer = builder.build();
+        copyToClipboard = builder.referenceFor(COPY_TO_CLIPBOARD_ELEMENT);
+        Clipboard clipboard = new Clipboard(copyToClipboard);
+        clipboard.onCopy(event -> copyToClipboard(event.client));
 
         // @formatter:off
         elements = new LayoutBuilder()
             .row()
-                .column(0, 4).add(macroList.asElement()).end()
-                .column(0, 8).add(editorContainer).end()
+                .column(4).add(macroList.asElement()).end()
+                .column(8).add(editorContainer).end()
             .end()
         .elements();
         // @formatter:on
@@ -167,13 +191,33 @@ public class MacroEditorView extends PatternFlyViewImpl implements MacroEditorPr
         macroList.selectItem(macro);
     }
 
-    private void loadMacro(Macro macro) {
-        String operations = Joiner.on('\n').join(Lists.transform(macro.getOperations(), Operation::asCli));
-        editor.getEditor().getSession().setValue(operations);
+    @Override
+    public void enableMacro(final Macro macro) {
+        macroList.enableAction(macro, PLAY_ACTION);
+        macroList.enableAction(macro, RENAME_ACTION);
+        macroList.enableAction(macro, REMOVE_ACTION);
     }
 
-    private void copyToClipboard() {
-        editor.getEditor().selectAll();
-        editor.getEditor().focus();
+    @Override
+    public void disableMacro(final Macro macro) {
+        macroList.disableAction(macro, PLAY_ACTION);
+        macroList.disableAction(macro, RENAME_ACTION);
+        macroList.disableAction(macro, REMOVE_ACTION);
+    }
+
+    private void loadMacro(Macro macro) {
+        editor.getEditor().getSession().setValue(macro.asCli());
+    }
+
+    private void copyToClipboard(Clipboard clipboard) {
+        if (macroList.selectedItem() != null) {
+            clipboard.setText(macroList.selectedItem().asCli());
+            Tooltip tooltip = Tooltip.element(copyToClipboard);
+            tooltip.hide()
+                    .setTitle(resources.constants().copied())
+                    .show()
+                    .onHide(() -> tooltip.setTitle(resources.constants().copyToClipboard()));
+            Browser.getWindow().setTimeout(tooltip::hide, 1000);
+        }
     }
 }

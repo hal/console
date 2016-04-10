@@ -19,6 +19,9 @@ import elemental.js.json.JsJsonObject;
 import jsinterop.annotations.JsFunction;
 
 /**
+ * For a given suggestion, determines the string representation of it. This will be used when setting the value of the
+ * input control after a suggestion is selected.
+ *
  * @author Harald Pehl
  */
 @JsFunction

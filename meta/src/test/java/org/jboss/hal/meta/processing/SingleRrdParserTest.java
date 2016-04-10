@@ -1,5 +1,7 @@
 package org.jboss.hal.meta.processing;
 
+import java.util.Set;
+
 import elemental.client.Browser;
 import org.jboss.hal.dmr.ExternalModelNode;
 import org.jboss.hal.dmr.ModelNode;
@@ -9,18 +11,18 @@ import org.jboss.hal.meta.StatementContext;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Set;
-
 import static org.jboss.hal.meta.processing.RrdParserTestHelper.*;
 import static org.mockito.Mockito.mock;
 
 /**
  * @author Harald Pehl
  */
+@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral"})
 public class SingleRrdParserTest {
 
+
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         mock(Browser.class);
     }
 
@@ -153,5 +155,6 @@ public class SingleRrdParserTest {
                 "/server-group=other-server-group",
                 "/server-group=other-server-group/jvm=default");
         assertSecurityContextOnly(results);
+        assertCapability(results, "org.wildfly.domain.server-group");
     }
 }

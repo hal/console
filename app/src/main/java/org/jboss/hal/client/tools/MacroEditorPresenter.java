@@ -60,6 +60,8 @@ public class MacroEditorPresenter
         void empty();
         void setMacros(Iterable<Macro> macros);
         void selectMacro(final Macro macro);
+        void enableMacro(Macro macro);
+        void disableMacro(Macro macro);
     }
     // @formatter:on
 
@@ -104,6 +106,10 @@ public class MacroEditorPresenter
     @Override
     protected void onReset() {
         super.onReset();
+        load();
+    }
+
+    private void load() {
         if (macros.isEmpty()) {
             getView().empty();
         } else {
@@ -131,6 +137,7 @@ public class MacroEditorPresenter
         Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
             @Override
             public void onFailure(final FunctionContext context) {
+                getView().enableMacro(macro);
                 MessageEvent
                         .fire(getEventBus(),
                                 Message.error(resources.constants().macroPlaybackError(), context.getErrorMessage()));
@@ -138,9 +145,11 @@ public class MacroEditorPresenter
 
             @Override
             public void onSuccess(final FunctionContext context) {
+                getView().enableMacro(macro);
                 MessageEvent.fire(getEventBus(), Message.success(resources.constants().macroPlaybackSuccessful()));
             }
         };
+        getView().disableMacro(macro);
         new Async<FunctionContext>(progress.get())
                 .waterfall(new FunctionContext(), outcome, functions.toArray(new Function[functions.size()]));
     }
@@ -150,6 +159,7 @@ public class MacroEditorPresenter
     }
 
     void remove(Macro macro) {
-
+        macros.remove(macro);
+        load();
     }
 }

@@ -22,6 +22,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventHandler;
 import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.ballroom.ProgressElement;
+import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.ui.UIRegistry;
@@ -88,13 +89,14 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
         if (version.greaterThan(environment.getHalVersion())) {
             logger.info("A new HAL version is available. Current version: {}, new version: {}", //NON-NLS
                     environment.getHalVersion(), version);
-            String updateAvailable = resources().messages().updateAvailable(environment.getHalVersion().toString(),
+            String message = resources().messages().updateAvailable(environment.getHalVersion().toString(),
                     version.toString());
-            this.updateAvailable.setTitle(updateAvailable);
-            this.updateAvailable.getDataset().setAt(UIConstants.TOGGLE, UIConstants.TOOLTIP);
-            this.updateAvailable.getDataset().setAt(UIConstants.PLACEMENT, "top");
-            this.updateAvailable.getDataset().setAt("container", "body"); //NON-NLS
-            Elements.setVisible(this.updateAvailable, true);
+            updateAvailable.setTitle(message);
+            updateAvailable.getDataset().setAt(UIConstants.TOGGLE, UIConstants.TOOLTIP);
+            updateAvailable.getDataset().setAt(UIConstants.PLACEMENT, "top");
+            updateAvailable.getDataset().setAt("container", "body"); //NON-NLS
+            Tooltip.element(updateAvailable).init();
+            Elements.setVisible(updateAvailable, true);
         }
     }
 

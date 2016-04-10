@@ -88,6 +88,14 @@ gulp.task('copy', function () {
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 4}));
     gulp.src('bower_components/patternfly/dist/js/patternfly.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 4}));
+
+    // ZeroClipboard
+    gulp.src('bower_components/zeroclipboard/dist/ZeroClipboard.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
+    gulp.src('bower_components/zeroclipboard/dist/ZeroClipboard.min.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
+    gulp.src('bower_components/zeroclipboard/dist/ZeroClipboard.swf')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
 });
 
 // Clean

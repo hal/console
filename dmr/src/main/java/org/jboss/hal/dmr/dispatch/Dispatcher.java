@@ -203,16 +203,14 @@ public class Dispatcher implements RecordingHandler {
             url = endpoints.dmr();
         }
 
-        if (macros.currentOptions() == null || macros.currentOptions().executeDuringRecording()) {
-            XMLHttpRequest xhr = newXhr(url, method, operation, new DmrPayloadProcessor(), callback, failedCallback,
-                    exceptionCallback);
-            xhr.setRequestHeader(HEADER_ACCEPT, APPLICATION_DMR_ENCODED);
-            xhr.setRequestHeader(HEADER_CONTENT_TYPE, APPLICATION_DMR_ENCODED);
-            if (method == GET) {
-                xhr.send();
-            } else {
-                xhr.send(operation.toBase64String());
-            }
+        XMLHttpRequest xhr = newXhr(url, method, operation, new DmrPayloadProcessor(), callback, failedCallback,
+                exceptionCallback);
+        xhr.setRequestHeader(HEADER_ACCEPT, APPLICATION_DMR_ENCODED);
+        xhr.setRequestHeader(HEADER_CONTENT_TYPE, APPLICATION_DMR_ENCODED);
+        if (method == GET) {
+            xhr.send();
+        } else {
+            xhr.send(operation.toBase64String());
         }
         recordOperation(operation);
     }
@@ -339,12 +337,12 @@ public class Dispatcher implements RecordingHandler {
         if (event.getAction() == RecordingEvent.Action.START && macros.current() == null) {
             MacroOptions options = event.getOptions();
             String description = options.hasDefined(DESCRIPTION) ? options.get(DESCRIPTION).asString() : null;
-            macros.start(new Macro(options.getName(), description), options);
+            macros.startRecording(new Macro(options.getName(), description), options);
 
         } else if (event.getAction() == RecordingEvent.Action.STOP && macros.current() != null) {
             Macro finished = macros.current();
             MacroOptions options = macros.currentOptions();
-            macros.stop();
+            macros.stopRecording();
             eventBus.fireEvent(new MacroFinishedEvent(finished, options));
         }
     }

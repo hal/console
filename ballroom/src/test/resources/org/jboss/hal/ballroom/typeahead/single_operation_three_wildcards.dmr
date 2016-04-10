@@ -1,0 +1,332 @@
+[
+    {
+        "operation" => "/core-service=management/access=authorization/constraint=application-classification/type=*/classification=*/applies-to=*:read-resource",
+        "comment" => "The operation is not used. It's just here as part of the documentation",
+        "address" => [
+            ("core-service" => "management"),
+            ("access" => "authorization"),
+            ("constraint" => "application-classification"),
+            ("type" => "core"),
+            ("classification" => "deployment"),
+            ("applies-to" => "/")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "address" => "/",
+            "attributes" => [],
+            "entire-resource" => false,
+            "operations" => [
+                "full-replace-deployment",
+                "upload-deployment-stream",
+                "upload-deployment-bytes",
+                "upload-deployment-url"
+            ]
+        }
+    },
+    {
+        "address" => [
+            ("core-service" => "management"),
+            ("access" => "authorization"),
+            ("constraint" => "application-classification"),
+            ("type" => "core"),
+            ("classification" => "deployment"),
+            ("applies-to" => "/deployment=*")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "address" => "/deployment=*",
+            "attributes" => [],
+            "entire-resource" => true,
+            "operations" => []
+        }
+    },
+    {
+        "address" => [
+            ("core-service" => "management"),
+            ("access" => "authorization"),
+            ("constraint" => "application-classification"),
+            ("type" => "core"),
+            ("classification" => "deployment"),
+            ("applies-to" => "/server-group=*/deployment-overlay=*")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "address" => "/server-group=*/deployment-overlay=*",
+            "attributes" => [],
+            "entire-resource" => true,
+            "operations" => []
+        }
+    },
+    {
+        "address" => [
+            ("core-service" => "management"),
+            ("access" => "authorization"),
+            ("constraint" => "application-classification"),
+            ("type" => "core"),
+            ("classification" => "deployment"),
+            ("applies-to" => "/server-group=*/deployment=*")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "address" => "/server-group=*/deployment=*",
+            "attributes" => [],
+            "entire-resource" => true,
+            "operations" => []
+        }
+    },
+    {
+        "address" => [
+            ("core-service" => "management"),
+            ("access" => "authorization"),
+            ("constraint" => "application-classification"),
+            ("type" => "core"),
+            ("classification" => "deployment"),
+            ("applies-to" => "/deployment-overlay=*")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "address" => "/deployment-overlay=*",
+            "attributes" => [],
+            "entire-resource" => true,
+            "operations" => []
+        }
+    },
+    {
+        "address" => [
+            ("core-service" => "management"),
+            ("access" => "authorization"),
+            ("constraint" => "application-classification"),
+            ("type" => "naming"),
+            ("classification" => "binding"),
+            ("applies-to" => "/profile=*/subsystem=naming/binding=*")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "address" => "/profile=*/subsystem=naming/binding=*",
+            "attributes" => [],
+            "entire-resource" => true,
+            "operations" => []
+        }
+    },
+    {
+        "address" => [
+            ("core-service" => "management"),
+            ("access" => "authorization"),
+            ("constraint" => "application-classification"),
+            ("type" => "resource-adapters"),
+            ("classification" => "resource-adapter"),
+            ("applies-to" => "/profile=*/subsystem=resource-adapters/resource-adapter=*")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "address" => "/profile=*/subsystem=resource-adapters/resource-adapter=*",
+            "attributes" => [],
+            "entire-resource" => true,
+            "operations" => []
+        }
+    },
+    {
+        "address" => [
+            ("core-service" => "management"),
+            ("access" => "authorization"),
+            ("constraint" => "application-classification"),
+            ("type" => "logging"),
+            ("classification" => "logger"),
+            ("applies-to" => "/profile=*/subsystem=logging/logging-profile=*/logger=*")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "address" => "/profile=*/subsystem=logging/logging-profile=*/logger=*",
+            "attributes" => [],
+            "entire-resource" => true,
+            "operations" => []
+        }
+    },
+    {
+        "address" => [
+            ("core-service" => "management"),
+            ("access" => "authorization"),
+            ("constraint" => "application-classification"),
+            ("type" => "logging"),
+            ("classification" => "logger"),
+            ("applies-to" => "/profile=*/subsystem=logging/logger=*")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "address" => "/profile=*/subsystem=logging/logger=*",
+            "attributes" => [],
+            "entire-resource" => true,
+            "operations" => []
+        }
+    },
+    {
+        "address" => [
+            ("core-service" => "management"),
+            ("access" => "authorization"),
+            ("constraint" => "application-classification"),
+            ("type" => "logging"),
+            ("classification" => "logging-profile"),
+            ("applies-to" => "/profile=*/subsystem=logging/logging-profile=*")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "address" => "/profile=*/subsystem=logging/logging-profile=*",
+            "attributes" => [],
+            "entire-resource" => true,
+            "operations" => []
+        }
+    },
+    {
+        "address" => [
+            ("core-service" => "management"),
+            ("access" => "authorization"),
+            ("constraint" => "application-classification"),
+            ("type" => "mail"),
+            ("classification" => "mail-session"),
+            ("applies-to" => "/profile=*/subsystem=mail/mail-session=*")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "address" => "/profile=*/subsystem=mail/mail-session=*",
+            "attributes" => [],
+            "entire-resource" => true,
+            "operations" => []
+        }
+    },
+    {
+        "address" => [
+            ("core-service" => "management"),
+            ("access" => "authorization"),
+            ("constraint" => "application-classification"),
+            ("type" => "messaging-activemq"),
+            ("classification" => "queue"),
+            ("applies-to" => "/profile=*/subsystem=messaging-activemq/server=*/queue=*")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "address" => "/profile=*/subsystem=messaging-activemq/server=*/queue=*",
+            "attributes" => [],
+            "entire-resource" => true,
+            "operations" => []
+        }
+    },
+    {
+        "address" => [
+            ("core-service" => "management"),
+            ("access" => "authorization"),
+            ("constraint" => "application-classification"),
+            ("type" => "messaging-activemq"),
+            ("classification" => "jms-queue"),
+            ("applies-to" => "/profile=*/subsystem=messaging-activemq/server=*/jms-queue=*")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "address" => "/profile=*/subsystem=messaging-activemq/server=*/jms-queue=*",
+            "attributes" => [],
+            "entire-resource" => true,
+            "operations" => []
+        }
+    },
+    {
+        "address" => [
+            ("core-service" => "management"),
+            ("access" => "authorization"),
+            ("constraint" => "application-classification"),
+            ("type" => "messaging-activemq"),
+            ("classification" => "security-setting"),
+            ("applies-to" => "/profile=*/subsystem=messaging-activemq/server=*/security-setting=*")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "address" => "/profile=*/subsystem=messaging-activemq/server=*/security-setting=*",
+            "attributes" => [],
+            "entire-resource" => true,
+            "operations" => []
+        }
+    },
+    {
+        "address" => [
+            ("core-service" => "management"),
+            ("access" => "authorization"),
+            ("constraint" => "application-classification"),
+            ("type" => "messaging-activemq"),
+            ("classification" => "jms-topic"),
+            ("applies-to" => "/profile=*/subsystem=messaging-activemq/server=*/jms-topic=*")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "address" => "/profile=*/subsystem=messaging-activemq/server=*/jms-topic=*",
+            "attributes" => [],
+            "entire-resource" => true,
+            "operations" => []
+        }
+    },
+    {
+        "address" => [
+            ("core-service" => "management"),
+            ("access" => "authorization"),
+            ("constraint" => "application-classification"),
+            ("type" => "security"),
+            ("classification" => "security-domain"),
+            ("applies-to" => "/profile=*/subsystem=security/security-domain=*")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "address" => "/profile=*/subsystem=security/security-domain=*",
+            "attributes" => [],
+            "entire-resource" => true,
+            "operations" => []
+        }
+    },
+    {
+        "address" => [
+            ("core-service" => "management"),
+            ("access" => "authorization"),
+            ("constraint" => "application-classification"),
+            ("type" => "datasources"),
+            ("classification" => "data-source"),
+            ("applies-to" => "/profile=*/subsystem=datasources/data-source=*")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "address" => "/profile=*/subsystem=datasources/data-source=*",
+            "attributes" => [],
+            "entire-resource" => true,
+            "operations" => []
+        }
+    },
+    {
+        "address" => [
+            ("core-service" => "management"),
+            ("access" => "authorization"),
+            ("constraint" => "application-classification"),
+            ("type" => "datasources"),
+            ("classification" => "jdbc-driver"),
+            ("applies-to" => "/profile=*/subsystem=datasources/jdbc-driver=*")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "address" => "/profile=*/subsystem=datasources/jdbc-driver=*",
+            "attributes" => [],
+            "entire-resource" => true,
+            "operations" => []
+        }
+    },
+    {
+        "address" => [
+            ("core-service" => "management"),
+            ("access" => "authorization"),
+            ("constraint" => "application-classification"),
+            ("type" => "datasources"),
+            ("classification" => "xa-data-source"),
+            ("applies-to" => "/profile=*/subsystem=datasources/xa-data-source=*")
+        ],
+        "outcome" => "success",
+        "result" => {
+            "address" => "/profile=*/subsystem=datasources/xa-data-source=*",
+            "attributes" => [],
+            "entire-resource" => true,
+            "operations" => []
+        }
+    }
+]

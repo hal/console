@@ -77,10 +77,12 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     private static final Logger logger = LoggerFactory.getLogger(HeaderView.class);
 
     private Map<String, Element> tlc;
+    private int messageTimeoutHandle;
     private HeaderPresenter presenter;
 
     @DataElement Element logoFirst;
     @DataElement Element logoLast;
+    @DataElement Element messagesIcon;
     @DataElement Element messagesLabel;
     @DataElement Element userName;
     @DataElement Element roles;
@@ -179,7 +181,6 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     @Override
     public void showMessage(final Message message) {
         // TODO Prevent showing two messages at once -> queue multiple messages
-        // TODO Hovering over the message stops the timer
         switch (message.getLevel()) {
             case ERROR:
                 logger.error(message.getMessage());
@@ -191,13 +192,24 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
                 logger.info(message.getMessage());
                 break;
         }
-        Window window = Browser.getWindow();
         Element body = Browser.getDocument().getBody();
         Element messageElement = new MessageElement(message).asElement();
         body.insertBefore(messageElement, body.getFirstChild());
         if (!message.isSticky()) {
-            window.setTimeout(() -> body.removeChild(messageElement), MESSAGE_TIMEOUT);
+            startMessageTimeout(messageElement);
+            messageElement.setOnmouseover(event -> stopMessageTimeout());
+            messageElement.setOnmouseout(event -> startMessageTimeout(messageElement));
         }
+    }
+
+    private void startMessageTimeout(Element element) {
+        Window window = Browser.getWindow();
+        Element body = Browser.getDocument().getBody();
+        messageTimeoutHandle = window.setTimeout(() -> body.removeChild(element), MESSAGE_TIMEOUT);
+    }
+
+    private void stopMessageTimeout() {
+        Browser.getWindow().clearTimeout(messageTimeoutHandle);
     }
 
     @Override

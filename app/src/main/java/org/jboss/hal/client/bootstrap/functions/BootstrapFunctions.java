@@ -28,9 +28,11 @@ public class BootstrapFunctions {
 
     @Inject
     public BootstrapFunctions(final ReadEnvironment readEnvironment,
+            final RegisterCoreCapabilities registerCoreCapabilities,
             final FinishBootstrap finishBootstrap) {
         this.functions = new BootstrapFunction[]{
                 readEnvironment,
+                registerCoreCapabilities,
                 finishBootstrap
         };
     }

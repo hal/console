@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import java.util.List;
+
 import elemental.dom.Element;
 import elemental.js.events.JsEvent;
 import elemental.js.util.JsArrayOf;
@@ -23,8 +25,6 @@ import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
 import org.jetbrains.annotations.NonNls;
-
-import java.util.List;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.ballroom.js.JsHelper.asJsArray;

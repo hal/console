@@ -15,7 +15,11 @@
  */
 package org.jboss.hal.meta.processing;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.capabilitiy.Capability;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 
@@ -27,8 +31,12 @@ public class RrdResult {
     public final ResourceAddress address;
     public ResourceDescription resourceDescription;
     public SecurityContext securityContext;
+    public Set<Capability> capabilities;
 
-    public RrdResult(final ResourceAddress address) {this.address = address;}
+    public RrdResult(final ResourceAddress address) {
+        this.address = address;
+        this.capabilities = new HashSet<>();
+    }
 
     public boolean isDefined() {
         return resourceDescription != null || securityContext != null;
