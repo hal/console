@@ -18,33 +18,35 @@ package org.jboss.hal.ballroom.typeahead;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental.js.json.JsJsonArray;
 import elemental.js.json.JsJsonObject;
+import elemental.json.JsonObject;
 
-import static org.jboss.hal.ballroom.typeahead.GroupedResultProcessor.GROUPS;
+import static org.jboss.hal.ballroom.typeahead.NestedResultProcessor.ADDRESSES;
+import static org.jboss.hal.ballroom.typeahead.NestedResultProcessor.KEY;
+import static org.jboss.hal.ballroom.typeahead.NestedResultProcessor.VALUE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.resources.CSS.ttGrouped;
+import static org.jboss.hal.resources.CSS.ttNested;
 
 /**
  * @author Harald Pehl
  */
-class GroupedSuggestionTemplate implements Templates.SuggestionTemplate {
+class NestedSuggestionTemplate implements Templates.SuggestionTemplate {
 
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
     public String render(final JsJsonObject data) {
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
-        builder.appendHtmlConstant("<div class=\"" + ttGrouped + "\">");
-        JsJsonArray groups = (JsJsonArray) data.get(GROUPS);
-        if (groups.length() != 0) {
-            builder.appendHtmlConstant("<span>");
-            for (int i = 0; i < groups.length(); i++) {
-                builder.appendEscaped(groups.getString(i));
-                if (i < groups.length() - 1) {
-                    builder.appendEscaped(", ");
-                }
+        builder.appendHtmlConstant("<div class=\"" + ttNested + "\">");
+        JsJsonArray addresses = (JsJsonArray) data.get(ADDRESSES);
+        if (addresses.length() != 0) {
+            for (int i = 0; i < addresses.length(); i++) {
+                JsonObject keyValue = addresses.getObject(i);
+                builder.appendHtmlConstant("<span title=\"" + keyValue.getString(KEY) + "\">");
+                builder.appendEscaped(keyValue.getString(VALUE));
+                builder.appendEscaped(" / ");
+                builder.appendHtmlConstant("</span>");
             }
-            builder.appendHtmlConstant("</span>");
         }
-        builder.appendHtmlConstant("<span>").appendEscaped(" | " + data.getString(NAME)).appendHtmlConstant("</span>");
+        builder.appendHtmlConstant("<span>").appendEscaped(data.getString(NAME)).appendHtmlConstant("</span>");
         builder.appendHtmlConstant("</div>");
         return builder.toSafeHtml().asString();
     }

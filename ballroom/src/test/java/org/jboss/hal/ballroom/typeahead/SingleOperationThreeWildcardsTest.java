@@ -17,7 +17,7 @@ package org.jboss.hal.ballroom.typeahead;
 
 import java.util.List;
 
-import org.jboss.hal.ballroom.typeahead.GroupedResultProcessor.Grouped;
+import org.jboss.hal.ballroom.typeahead.NestedResultProcessor.Result;
 import org.jboss.hal.dmr.ExternalModelNode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
@@ -36,7 +36,7 @@ import static org.junit.Assert.assertTrue;
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class SingleOperationThreeWildcardsTest {
 
-    private GroupedResultProcessor resultProcessor;
+    private NestedResultProcessor resultProcessor;
     private ModelNode result;
 
     @Before
@@ -45,20 +45,20 @@ public class SingleOperationThreeWildcardsTest {
                 .of("/core-service=management/access=authorization/constraint=application-classification/type=*/classification=*/applies-to=*")
                 .resolve(StatementContext.NOOP);
         Operation operation = new Operation.Builder(ModelDescriptionConstants.READ_RESOURCE_OPERATION, address).build();
-        resultProcessor = new GroupedResultProcessor(operation);
+        resultProcessor = new NestedResultProcessor(operation);
         result = ExternalModelNode
                 .read(NamesResultProcessorTest.class.getResourceAsStream("single_operation_three_wildcards.dmr"));
     }
 
     @Test
     public void nullQuery() throws Exception {
-        List<Grouped> models = resultProcessor.processToModel(null, result);
+        List<Result> models = resultProcessor.processToModel(null, result);
         assertTrue(models.isEmpty());
     }
 
     @Test
     public void emptyQuery() throws Exception {
-        List<Grouped> models = resultProcessor.processToModel("", result);
+        List<Result> models = resultProcessor.processToModel("", result);
         assertTrue(models.isEmpty());
     }
 

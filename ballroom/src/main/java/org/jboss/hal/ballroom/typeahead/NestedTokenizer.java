@@ -20,24 +20,29 @@ import java.util.Set;
 
 import elemental.js.json.JsJsonObject;
 import elemental.json.JsonArray;
+import elemental.json.JsonObject;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.ballroom.typeahead.GroupedResultProcessor.GROUPS;
+import static org.jboss.hal.ballroom.typeahead.NestedResultProcessor.ADDRESSES;
+import static org.jboss.hal.ballroom.typeahead.NestedResultProcessor.KEY;
+import static org.jboss.hal.ballroom.typeahead.NestedResultProcessor.VALUE;
 import static org.jboss.hal.ballroom.typeahead.Typeahead.WHITESPACE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
  * @author Harald Pehl
  */
-class GroupedTokenizer implements DataTokenizer {
+class NestedTokenizer implements DataTokenizer {
 
     @Override
     public String[] tokenize(final JsJsonObject data) {
         Set<String> tokens = new HashSet<>();
         tokens.addAll(asList(data.getString(NAME).split(WHITESPACE)));
-        JsonArray groups = data.getArray(GROUPS);
-        for (int i = 0; i < groups.length(); i++) {
-            tokens.addAll(asList(groups.getString(i).split(WHITESPACE)));
+        JsonArray addresses = data.getArray(ADDRESSES);
+        for (int i = 0; i < addresses.length(); i++) {
+            JsonObject keyValue = addresses.getObject(i);
+            tokens.addAll(asList(keyValue.getString(KEY).split(WHITESPACE)));
+            tokens.addAll(asList(keyValue.getString(VALUE).split(WHITESPACE)));
         }
         return tokens.toArray(new String[tokens.size()]);
     }

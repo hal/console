@@ -16,8 +16,9 @@
 package org.jboss.hal.ballroom.typeahead;
 
 import java.util.List;
+import java.util.Map;
 
-import org.jboss.hal.ballroom.typeahead.GroupedResultProcessor.Grouped;
+import org.jboss.hal.ballroom.typeahead.NestedResultProcessor.Result;
 import org.jboss.hal.dmr.ExternalModelNode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
@@ -83,7 +84,7 @@ public class SingleOperationTwoWildcardsTest {
     };
 
 
-    private GroupedResultProcessor resultProcessor;
+    private NestedResultProcessor resultProcessor;
     private ModelNode result;
 
     @Before
@@ -91,41 +92,47 @@ public class SingleOperationTwoWildcardsTest {
         ResourceAddress address = AddressTemplate.of("/socket-binding-group=*/socket-binding=*")
                 .resolve(StatementContext.NOOP);
         Operation operation = new Operation.Builder(ModelDescriptionConstants.READ_RESOURCE_OPERATION, address).build();
-        resultProcessor = new GroupedResultProcessor(operation);
+        resultProcessor = new NestedResultProcessor(operation);
         result = ExternalModelNode
                 .read(NamesResultProcessorTest.class.getResourceAsStream("single_operation_two_wildcards.dmr"));
     }
 
     @Test
     public void nullQuery() throws Exception {
-        List<Grouped> models = resultProcessor.processToModel(null, result);
+        List<Result> models = resultProcessor.processToModel(null, result);
         assertTrue(models.isEmpty());
     }
 
     @Test
     public void emptyQuery() throws Exception {
-        List<Grouped> models = resultProcessor.processToModel("", result);
+        List<Result> models = resultProcessor.processToModel("", result);
         assertTrue(models.isEmpty());
     }
 
     @Test
     public void wildcardQuery() throws Exception {
-        List<Grouped> models = resultProcessor.processToModel("*", result);
+        List<Result> models = resultProcessor.processToModel("*", result);
         List<String> names = models.stream().map(model -> model.name).collect(toList());
         assertArrayEquals(NAMES, names.toArray());
         models.forEach(model -> {
-            assertEquals(1, model.groups.size());
-            assertTrue(model.groups.get(0).startsWith("socket-binding-group => "));
+            assertEquals(1, model.addresses.size());
+            assertEquals("socket-binding-group", model.addresses.keySet().iterator().next());
         });
     }
 
     @Test
     public void oneMatch() throws Exception {
-        List<Grouped> models = resultProcessor.processToModel("iiop-ssl", result);
+        List<Result> models = resultProcessor.processToModel("iiop-ssl", result);
         assertEquals(2, models.size());
         models.forEach(model -> assertEquals("iiop-ssl", model.name));
-        assertEquals("socket-binding-group => full-sockets", models.get(0).groups.get(0));
-        assertEquals("socket-binding-group => full-ha-sockets", models.get(1).groups.get(0));
+
+        Map.Entry<String, String> entry = models.get(0).addresses.entrySet().iterator().next();
+        assertEquals("socket-binding-group", entry.getKey());
+        assertEquals("full-sockets", entry.getValue());
+
+        entry = models.get(1).addresses.entrySet().iterator().next();
+        assertEquals("socket-binding-group", entry.getKey());
+        assertEquals("full-ha-sockets", entry.getValue());
     }
 
     @Test

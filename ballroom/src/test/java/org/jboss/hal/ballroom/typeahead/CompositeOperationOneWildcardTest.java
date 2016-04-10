@@ -17,7 +17,7 @@ package org.jboss.hal.ballroom.typeahead;
 
 import java.util.List;
 
-import org.jboss.hal.ballroom.typeahead.GroupedResultProcessor.Grouped;
+import org.jboss.hal.ballroom.typeahead.NestedResultProcessor.Result;
 import org.jboss.hal.dmr.ExternalModelNode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
@@ -37,7 +37,7 @@ import static org.junit.Assert.assertTrue;
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class CompositeOperationOneWildcardTest {
 
-    private GroupedResultProcessor resultProcessor;
+    private NestedResultProcessor resultProcessor;
     private ModelNode result;
 
     @Before
@@ -50,20 +50,20 @@ public class CompositeOperationOneWildcardTest {
                 .resolve(StatementContext.NOOP);
         Operation operation2 = new Operation.Builder(ModelDescriptionConstants.READ_RESOURCE_OPERATION, address2)
                 .build();
-        resultProcessor = new GroupedResultProcessor(new Composite(operation1, operation2));
+        resultProcessor = new NestedResultProcessor(new Composite(operation1, operation2));
         result = ExternalModelNode
                 .read(NamesResultProcessorTest.class.getResourceAsStream("composite_operation_one_wildcard.dmr"));
     }
 
     @Test
     public void nullQuery() throws Exception {
-        List<Grouped> models = resultProcessor.processToModel(null, result);
+        List<Result> models = resultProcessor.processToModel(null, result);
         assertTrue(models.isEmpty());
     }
 
     @Test
     public void emptyQuery() throws Exception {
-        List<Grouped> models = resultProcessor.processToModel("", result);
+        List<Result> models = resultProcessor.processToModel("", result);
         assertTrue(models.isEmpty());
     }
 

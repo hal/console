@@ -66,20 +66,20 @@ public class TypeaheadProvider {
                 suggestionTemplate = null;
 
             } else {
-                resultProcessor = new GroupedResultProcessor(operation);
-                identifier = new GroupedIdentifier();
-                dataTokenizer = new GroupedTokenizer();
+                resultProcessor = new NestedResultProcessor(operation);
+                identifier = new NestedIdentifier();
+                dataTokenizer = new NestedTokenizer();
                 display = data -> data.getString(NAME);
-                suggestionTemplate = new GroupedSuggestionTemplate();
+                suggestionTemplate = new NestedSuggestionTemplate();
             }
 
         } else {
             operation = new Composite(operations);
-            resultProcessor = new GroupedResultProcessor(operation);
-            identifier = new GroupedIdentifier();
-            dataTokenizer = new GroupedTokenizer();
+            resultProcessor = new NestedResultProcessor(operation);
+            identifier = new NestedIdentifier();
+            dataTokenizer = new NestedTokenizer();
             display = data -> data.getString(NAME);
-            suggestionTemplate = new GroupedSuggestionTemplate();
+            suggestionTemplate = new NestedSuggestionTemplate();
         }
 
         return new Typeahead.Builder(operation, resultProcessor, identifier)
@@ -123,7 +123,7 @@ public class TypeaheadProvider {
         int wildcards = 0;
         if (address.isDefined()) {
             for (Property property : address.asPropertyList()) {
-                if ("*".equals(property.getName())) {
+                if ("*".equals(property.getValue().asString())) {
                     wildcards++;
                 }
             }

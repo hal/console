@@ -17,23 +17,26 @@ package org.jboss.hal.ballroom.typeahead;
 
 import elemental.js.json.JsJsonObject;
 import elemental.json.JsonArray;
+import elemental.json.JsonObject;
 
-import static org.jboss.hal.ballroom.typeahead.GroupedResultProcessor.GROUPS;
+import static org.jboss.hal.ballroom.typeahead.NestedResultProcessor.ADDRESSES;
+import static org.jboss.hal.ballroom.typeahead.NestedResultProcessor.KEY;
+import static org.jboss.hal.ballroom.typeahead.NestedResultProcessor.VALUE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
  * @author Harald Pehl
  */
-class GroupedIdentifier implements Identifier {
+class NestedIdentifier implements Identifier {
 
     @Override
     public String identify(final JsJsonObject data) {
         StringBuilder builder = new StringBuilder();
-        JsonArray groups = data.getArray(GROUPS);
-        for (int i = 0; i < groups.length(); i++) {
-            String segment = groups.getString(i).replace(" => ", "-");
-            builder.append("-").append(segment);
+        JsonArray addresses = data.getArray(ADDRESSES);
+        for (int i = 0; i < addresses.length(); i++) {
+            JsonObject keyValue = addresses.getObject(i);
+            builder.append(keyValue.getString(KEY)).append("-").append(keyValue.getString(VALUE)).append("-");
         }
-        return data.getString(NAME) + builder.toString();
+        return builder.toString() + data.getString(NAME);
     }
 }

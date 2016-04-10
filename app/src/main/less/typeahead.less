@@ -136,8 +136,11 @@
     line-height: @line-height-base;
     color: @dropdown-link-color;
 
-    &.tt-grouped > span:first-child {
+    &.tt-nested > span {
       color: #999;
+    }
+    &.tt-nested > span:last-child {
+      color: inherit;
     }
 
     &.tt-cursor, &:hover {

@@ -18,10 +18,11 @@ package org.jboss.hal.ballroom.typeahead;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import elemental.js.json.JsJsonArray;
 import elemental.js.json.JsJsonObject;
 import elemental.js.util.JsArrayOf;
@@ -45,44 +46,50 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
  * <pre>
  * {
  *     "name": "http",
- *     "groups": [
- *         "socket-binding-group => standard-sockets"
+ *     "addresses": [
+ *         {
+ *             "key": "socket-binding-group",
+ *             "value": "standard-sockets"
+ *         }
  *     ]
  * }
  * </pre>
  */
-class GroupedResultProcessor extends AbstractResultProcessor<GroupedResultProcessor.Grouped>
+// TODO Rename this to NestedResultProcessor and change the JSON as stated above
+class NestedResultProcessor extends AbstractResultProcessor<NestedResultProcessor.Result>
         implements ResultProcessor {
 
-    static class Grouped {
+    static class Result {
 
         final String name;
-        final List<String> groups;
+        final LinkedHashMap<String, String> addresses;
 
-        Grouped(final String name) {
+        Result(final String name) {
             this.name = name;
-            this.groups = new ArrayList<>();
+            this.addresses = new LinkedHashMap<>();
         }
 
         @Override
         public String toString() {
-            return name + " " + groups;
+            return name + " " + addresses;
         }
     }
 
 
-    static final String GROUPS = "groups";
-    private static final Logger logger = LoggerFactory.getLogger(GroupedResultProcessor.class);
+    static final String ADDRESSES = "addresses";
+    static final String KEY = "key";
+    static final String VALUE = "value";
+    private static final Logger logger = LoggerFactory.getLogger(NestedResultProcessor.class);
 
     private final Operation operation;
 
-    GroupedResultProcessor(final Operation operation) {
+    NestedResultProcessor(final Operation operation) {
         this.operation = operation;
     }
 
     @Override
-    protected List<Grouped> processToModel(final String query, final ModelNode result) {
-        List<Grouped> models = new ArrayList<>();
+    protected List<Result> processToModel(final String query, final ModelNode result) {
+        List<Result> models = new ArrayList<>();
 
         // first collect all addresses from the result
         List<ResourceAddress> addresses = new ArrayList<>();
@@ -121,21 +128,12 @@ class GroupedResultProcessor extends AbstractResultProcessor<GroupedResultProces
                 }
             }
 
-            // turn the list of addresses into a list of lists of string segments w/o the last segment (name)
-            // but backup the names in an extra list for later use
-            List<List<String>> segments = Lists.transform(addresses, address -> {
-                List<String> addresSegments = new ArrayList<>();
+            // turn the addresses into a list of models
+            for (ResourceAddress address : addresses) {
+                Result model = new Result(address.lastValue());
                 for (Property property : address.getParent().asPropertyList()) {
-                    addresSegments.add(property.getName() + " => " + property.getValue().asString());
+                    model.addresses.put(property.getName(), property.getValue().asString());
                 }
-                return addresSegments;
-            });
-            List<String> names = Lists.transform(addresses, ResourceAddress::lastValue);
-
-            // build model list
-            for (int i = 0; i < names.size(); i++) {
-                Grouped model = new Grouped(names.get(i));
-                model.groups.addAll(segments.get(i));
                 models.add(model);
             }
         }
@@ -144,18 +142,21 @@ class GroupedResultProcessor extends AbstractResultProcessor<GroupedResultProces
     }
 
     @Override
-    protected JsArrayOf<JsJsonObject> asJson(final List<Grouped> models) {
+    protected JsArrayOf<JsJsonObject> asJson(final List<Result> models) {
         JsArrayOf<JsJsonObject> objects = JsArrayOf.create();
-        for (Grouped model : models) {
+        for (Result model : models) {
             JsJsonObject object = JsJsonObject.create();
             object.put(NAME, model.name);
             JsJsonArray jsonGroups = (JsJsonArray) JsJsonArray.create();
             int i = 0;
-            for (String group : model.groups) {
-                jsonGroups.set(i, group);
+            for (Map.Entry<String, String> entry : model.addresses.entrySet()) {
+                JsJsonObject keyValue = JsJsonObject.create();
+                keyValue.put(KEY, entry.getKey());
+                keyValue.put(VALUE, entry.getValue());
+                jsonGroups.set(i, keyValue);
                 i++;
             }
-            object.put(GROUPS, jsonGroups);
+            object.put(ADDRESSES, jsonGroups);
             objects.push(object);
         }
         return objects;
