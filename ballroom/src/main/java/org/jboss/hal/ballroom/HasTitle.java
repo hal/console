@@ -16,7 +16,7 @@
 package org.jboss.hal.ballroom;
 
 /**
- * Meant to be implemented by UI elements which have a title.
+ * Meant to be implemented by elements which have a title.
  *
  * @author Harald Pehl
  */

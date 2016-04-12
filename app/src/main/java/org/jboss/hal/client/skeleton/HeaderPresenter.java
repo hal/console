@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.skeleton;
 
+import javax.inject.Inject;
+
 import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
@@ -36,8 +38,6 @@ import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.MessageEvent.MessageHandler;
-
-import javax.inject.Inject;
 
 import static org.jboss.hal.resources.Names.NYI;
 
@@ -109,7 +109,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         getView().selectTlc(placeManager.getCurrentPlaceRequest().getNameToken());
     }
 
-    public void goTo(final String token) {
+    void goTo(final String token) {
         PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token).build();
         placeManager.revealPlace(placeRequest);
     }

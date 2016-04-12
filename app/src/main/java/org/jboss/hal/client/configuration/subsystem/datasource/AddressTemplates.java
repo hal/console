@@ -22,11 +22,13 @@ import org.jboss.hal.meta.AddressTemplate;
  */
 public interface AddressTemplates {
 
-    String DATA_SOURCE_ADDRESS = "/{selected.profile}/subsystem=datasources/data-source=*";
+    String ANY_DATA_SOURCE_ADDRESS = "/{any.profile}/subsystem=datasources/data-source=*";
+    String SELECTED_DATA_SOURCE_ADDRESS = "/{selected.profile}/subsystem=datasources/data-source=*";
     String XA_DATA_SOURCE_ADDRESS = "/{selected.profile}/subsystem=datasources/xa-data-source=*";
     String JDBC_DRIVER_ADDRESS = "/{any.profile}/subsystem=datasources/data-source=*";
 
-    AddressTemplate DATA_SOURCE_TEMPLATE = AddressTemplate.of(DATA_SOURCE_ADDRESS);
+    AddressTemplate ANY_DATA_SOURCE_TEMPLATE = AddressTemplate.of(ANY_DATA_SOURCE_ADDRESS);
+    AddressTemplate SELECTED_DATA_SOURCE_TEMPLATE = AddressTemplate.of(SELECTED_DATA_SOURCE_ADDRESS);
     AddressTemplate XA_DATA_SOURCE_TEMPLATE = AddressTemplate.of(XA_DATA_SOURCE_ADDRESS);
     AddressTemplate JDBC_DRIVER_TEMPLATE = AddressTemplate.of(JDBC_DRIVER_ADDRESS);
 

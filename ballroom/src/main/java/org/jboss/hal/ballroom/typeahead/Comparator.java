@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.ballroom.typeahead;
 
-import elemental.json.JsonObject;
+import elemental.js.json.JsJsonObject;
 import jsinterop.annotations.JsFunction;
 
 /**
@@ -25,5 +25,5 @@ import jsinterop.annotations.JsFunction;
 @FunctionalInterface
 public interface Comparator {
 
-    int compare(JsonObject data1, JsonObject data2);
+    int compare(JsJsonObject data1, JsJsonObject data2);
 }

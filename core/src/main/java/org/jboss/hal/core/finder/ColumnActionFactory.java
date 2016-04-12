@@ -38,7 +38,7 @@ import org.jetbrains.annotations.NonNls;
 
 import javax.inject.Inject;
 
-import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTIION;
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -132,6 +132,6 @@ public class ColumnActionFactory {
 
     public <T> ColumnAction<T> refresh(String id) {
         Element element = new Elements.Builder().span().css(fontAwesome(CSS.refresh)).end().build();
-        return new ColumnAction<>(id, element, column -> column.refresh(RESTORE_SELECTIION));
+        return new ColumnAction<>(id, element, column -> column.refresh(RESTORE_SELECTION));
     }
 }

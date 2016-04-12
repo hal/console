@@ -49,7 +49,7 @@ public class NewDataSourceWizard extends Wizard<Context, State> {
                 resources.messages().addResourceTitle(xa ? Names.XA_DATASOURCE : Names.DATASOURCE),
                 new Context(environment.isStandalone(), xa));
 
-        AddressTemplate dataSourceTemplate = xa ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE;
+        AddressTemplate dataSourceTemplate = xa ? XA_DATA_SOURCE_TEMPLATE : SELECTED_DATA_SOURCE_TEMPLATE;
         Metadata dataSourceMetadata = metadataRegistry.lookup(dataSourceTemplate);
         Metadata driverMetadata = metadataRegistry.lookup(JDBC_DRIVER_TEMPLATE);
 

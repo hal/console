@@ -15,69 +15,52 @@
  */
 package org.jboss.hal.core.finder;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
+
 /**
  * @author Harald Pehl
  */
-public class FinderPath implements Iterable<FinderPath.Segment> {
-
-    public static final class Segment {
-
-        public final String key;
-        public final String value;
-
-        public Segment(final String key, final String value) {
-            this.key = key;
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return key + "=" + value;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public String getValue() {
-            return value;
-        }
-    }
+public class FinderPath implements Iterable<FinderSegment> {
 
     public static FinderPath empty() {
         return new FinderPath(new ArrayList<>());
     }
 
     public static FinderPath from(String path) {
-        List<Segment> s = new ArrayList<>();
+        List<FinderSegment> s = new ArrayList<>();
         Map<String, String> segments = Splitter.on('/').withKeyValueSeparator('=').split(path);
         for (Map.Entry<String, String> entry : segments.entrySet()) {
-            s.add(new Segment(entry.getKey(), entry.getValue()));
+            s.add(new FinderSegment(entry.getKey(), entry.getValue()));
         }
         return new FinderPath(s);
     }
 
-    private final List<Segment> segments;
+    private final List<FinderSegment> segments;
 
 
-    private FinderPath(final List<Segment> segments) {this.segments = segments;}
+    private FinderPath(final List<FinderSegment> segments) {this.segments = segments;}
 
-    public FinderPath append(String key, String value) {
-        segments.add(new Segment(key, value));
-        return this;
+    public FinderSegment append(String key, String value) {
+        final FinderSegment segment = new FinderSegment(key, value);
+        segments.add(segment);
+        return segment;
+    }
+
+    public <T> FinderSegment<T> append(FinderColumn<T> finderColumn) {
+        final FinderSegment<T> segment = new FinderSegment<>(finderColumn);
+        segments.add(segment);
+        return segment;
     }
 
     @Override
-    public Iterator<Segment> iterator() {
+    public Iterator<FinderSegment> iterator() {
         return segments.iterator();
     }
 
@@ -87,7 +70,7 @@ public class FinderPath implements Iterable<FinderPath.Segment> {
 
     public void clear() {segments.clear();}
 
-    public Segment last() {
+    public FinderSegment last() {
         if (!isEmpty()) {
             return segments.get(segments.size() - 1);
         }
@@ -97,7 +80,7 @@ public class FinderPath implements Iterable<FinderPath.Segment> {
     /**
      * @return a reversed copy of this path. The current path is not modified.
      */
-    public FinderPath reversed() {
+    FinderPath reversed() {
         return new FinderPath(Lists.reverse(segments));
     }
 

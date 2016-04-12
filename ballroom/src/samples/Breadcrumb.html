@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Breadcrumb</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="../../../app/src/main/resources/org/jboss/hal/public/css/hal.css" rel="stylesheet">
+
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.dataTables.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/typeahead.bundle.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/tagmanager.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/dataTables.buttons.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/dataTables.select.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jstree.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-select.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-switch.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/patternfly.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/ace.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/ZeroClipboard.min.js"></script>
+</head>
+<body>
+<nav data-element="header" class="navbar navbar-default navbar-pf navbar-fixed-top" role="navigation">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".hal-header-collapse">
+            <span class="sr-only">{{resources().constants().toggleNavigation()}}</span>
+            <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+        </button>
+        <a data-element="logoLink" class="navbar-brand logo clickable">
+            <span data-element="logoFirst" class="logo-text logo-text-first">Wild</span><span data-element="logoLast" class="logo-text logo-text-last">Fly</span>
+        </a>
+    </div>
+    <div class="collapse navbar-collapse hal-header-collapse">
+        <ol class="breadcrumb hal-breadcrumb">
+            <li>
+                <a data-element="backLink" class="back" href="#"><i class="fa fa-angle-double-left"></i>&nbsp;Back</a>
+            </li>
+            <li>
+                <span class="key"><a href=#">Configuration</a></span>
+                <span class="arrow">&#8658;</span>
+                <span class="value">Profiles</span>
+            </li>
+            <li>
+                <span class="key"><a href=#">Profiles</a></span>
+                <span class="arrow">&#8658;</span>
+                <span class="value dropdown">
+                    <a id="profiles-value" data-target="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="#">default <span class="caret"></span></a>
+                    <ul class="dropdown-menu value-dropdown" aria-labelledby="profiles-value">
+                        <li><a href="#">full</a></li>
+                        <li><a href="#">full-ha</a></li>
+                        <li><a href="#">ha</a></li>
+                    </ul>
+                </span>
+            </li>
+            <li>
+                <span class="key"><a href=#">Subsystem</a></span>
+                <span class="arrow">&#8658;</span>
+                <span class="value dropdown">
+                    <a id="subsystem-value" data-target="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="#">Datasource <span class="caret"></span></a>
+                    <ul class="dropdown-menu value-dropdown" aria-labelledby="subsystem-value">
+                        <li><a href="#">Batch</a></li>
+                        <li><a href="#">JBeret</a></li>
+                        <li><a href="#">Bean Validation</a></li>
+                        <li><a href="#">EE</a></li>
+                        <li><a href="#">EJB3</a></li>
+                        <li><a href="#">IIOP</a></li>
+                        <li><a href="#">OpenJDK</a></li>
+                        <li><a href="#">Infinispan</a></li>
+                        <li><a href="#">IO</a></li>
+                        <li><a href="#">JAX-RS</a></li>
+                        <li><a href="#">JCA</a></li>
+                        <li><a href="#">JDA</a></li>
+                        <li><a href="#">JMX</a></li>
+                        <li><a href="#">JPA</a></li>
+                        <li><a href="#">JSF</a></li>
+                        <li><a href="#">Jsr77</a></li>
+                        <li><a href="#">Logging</a></li>
+                        <li><a href="#">Mail</a></li>
+                        <li><a href="#">Messaging</a></li>
+                        <li><a href="#">ActiveMQ</a></li>
+                        <li><a href="#">Naming</a></li>
+                        <li><a href="#">Pojo</a></li>
+                        <li><a href="#">Remoting</a></li>
+                        <li><a href="#">Request Controller</a></li>
+                        <li><a href="#">Resource Adapters</a></li>
+                        <li><a href="#">SAR</a></li>
+                        <li><a href="#">Security</a></li>
+                        <li><a href="#">Security Manager</a></li>
+                        <li><a href="#">Transactions</a></li>
+                        <li><a href="#">Web</a></li>
+                        <li><a href="#">Undertow</a></li>
+                        <li><a href="#">Web Services</a></li>
+                        <li><a href="#">Weld</a></li>
+                    </ul>
+                </span>
+            </li>
+            <!--
+                        <li>
+                            <span class="key">Subsystem2</span>
+                            <span class="arrow">&#8658;</span>
+                            <span class="value">Datasource2</span>
+                        </li>
+                        <li>
+                            <span class="key">Subsystem3</span>
+                            <span class="arrow">&#8658;</span>
+                            <span class="value">Datasource3</span>
+                        </li>
+                        <li>
+                            <span class="key">Subsystem4</span>
+                            <span class="arrow">&#8658;</span>
+                            <span class="value">Datasource4</span>
+                        </li>
+            -->
+            <li>
+                <span class="key"><a href=#">Type</a></span>
+                <span class="arrow">&#8658;</span>
+                <span class="value dropdown">
+                    <a id="type-value" data-target="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="#">Non-XA <span class="caret"></span></a>
+                    <ul class="dropdown-menu value-dropdown" aria-labelledby="type-value">
+                        <li><a href="#">XA</a></li>
+                    </ul>
+                </span>
+            </li>
+            <li class="active">
+                <span class="key"><a href=#">Datasource</a></span>
+                <span class="arrow">&#8658;</span>
+                <span class="value dropdown">
+                    <a id="datasource-value" data-target="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="#">ExampleDS <span class="caret"></span></a>
+                    <ul class="dropdown-menu value-dropdown" aria-labelledby="datasource-value">
+                        <li class="empty">No items</li>
+                    </ul>
+                </span>
+            </li>
+        </ol>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <h1>Lorem Ipsum</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                <b>Is es profecto tu.</b> An eum locum libenter invisit, ubi Demosthenes et Aeschines inter se decertare soliti sunt? Illis videtur, qui illud non dubitant bonum dicere -; Que Manilium, ab iisque M. Idne consensisse de Calatino plurimas gentis arbitramur, primarium populi fuisse, quod praestantissimus fuisset in conficiendis voluptatibus? Vitae autem degendae ratio maxime quidem illis placuit quieta.
+            </p>
+
+            <p>Cum id quoque, ut cupiebat, audivisset, evelli iussit eam, qua erat transfixus, hastam. Quod eo liquidius faciet, si perspexerit rerum inter eas verborumne sit controversia. Comprehensum, quod cognitum non habet?
+                <code>A mene tu?</code> Itaque haec cum illis est dissensio, cum Peripateticis nulla sane. Hoc enim identidem dicitis, non intellegere nos quam dicatis voluptatem.
+            </p>
+
+            <p>Duo Reges: constructio interrete.
+                <b>Quippe: habes enim a rhetoribus;</b> Sic igitur in homine perfectio ista in eo potissimum, quod est optimum, id est in virtute, laudatur. Quaero igitur, quo modo hae tantae commendationes a natura profectae subito a sapientia relictae sint. Prodest, inquit, mihi eo esse animo.
+                <i>Quorum sine causa fieri nihil putandum est.</i> Ut alios omittam, hunc appello, quem ille unum secutus est. Eorum enim est haec querela, qui sibi cari sunt seseque diligunt.
+            </p>
+
+            <p><b>Quonam, inquit, modo?</b> Cur tantas regiones barbarorum pedibus obiit, tot maria transmisit?
+                <a href='http://loripsum.net/' target='_blank'>Utram tandem linguam nescio?</a> Quid, si reviviscant Platonis illi et deinceps qui eorum auditores fuerunt, et tecum ita loquantur? Ergo omni animali illud, quod appetiti positum est in eo, quod naturae est accommodatum. Ex quo intellegitur officium medium quiddam esse, quod neque in bonis ponatur neque in contrariis. Estne, quaeso, inquam, sitienti in bibendo voluptas? Quamvis enim depravatae non sint, pravae tamen esse possunt. Is cum arderet podagrae doloribus visitassetque hominem Charmides Epicureus perfamiliaris et tristis exiret, Mane, quaeso, inquit, Charmide noster; Quicquid enim a sapientia proficiscitur, id continuo debet expletum esse omnibus suis partibus; Si longus, levis; Quod enim dissolutum sit, id esse sine sensu, quod autem sine sensu sit, id nihil ad nos pertinere omnino.
+            </p>
+
+            <ul>
+                <li>Ergo ita: non posse honeste vivi, nisi honeste vivatur?</li>
+                <li>Ut placet, inquit, etsi enim illud erat aptius, aequum cuique concedere.</li>
+                <li>In quibus doctissimi illi veteres inesse quiddam caeleste et divinum putaverunt.</li>
+                <li>Quae animi affectio suum cuique tribuens atque hanc, quam dico.</li>
+            </ul>
+<pre>
+Itaque e contrario moderati aequabilesque habitus,
+affectiones ususque corporis apti esse ad naturam videntur.
+
+Nam illud vehementer repugnat, eundem beatum esse et multis
+malis oppressum.
+</pre>
+
+            <blockquote cite='http://loripsum.net'>
+                Quis est, qui non oderit libidinosam, protervam adolescentiam?
+            </blockquote>
+            <p>
+                <a href='http://loripsum.net/' target='_blank'>Non semper, inquam;</a> Summum ením bonum exposuit vacuitatem doloris; Tum Piso: Atqui, Cicero, inquit, ista studia, si ad imitandos summos viros spectant, ingeniosorum sunt;
+                <a href='http://loripsum.net/' target='_blank'>Si quicquam extra virtutem habeatur in bonis.</a> In eo enim positum est id, quod dicimus esse expetendum. Perturbationes autem nulla naturae vi commoventur, omniaque ea sunt opiniones ac iudicia levitatis. Quamquam scripsit artem rhetoricam Cleanthes, Chrysippus etiam, sed sic, ut, si quis obmutescere concupierit, nihil aliud legere debeat. Sic enim censent, oportunitatis esse beate vivere. Ergo omni animali illud, quod appetiti positum est in eo, quod naturae est accommodatum. Quae fere omnia appellantur uno ingenii nomine, easque virtutes qui habent, ingeniosi vocantur.
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

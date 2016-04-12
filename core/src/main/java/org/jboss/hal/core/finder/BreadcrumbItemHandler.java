@@ -16,34 +16,12 @@
 package org.jboss.hal.core.finder;
 
 /**
- * Holds state as the user navigates using the finder.
+ * An action which will be invoked when selecting one of the item in the breadcrumb dropdown.
  *
  * @author Harald Pehl
  */
-public class FinderContext {
+@FunctionalInterface
+public interface BreadcrumbItemHandler<T> {
 
-    private String token;
-    private final FinderPath path;
-
-    FinderContext() {
-        token = null;
-        path = FinderPath.empty();
-    }
-
-    public void reset(final String token) {
-        this.token = token;
-        path.clear();
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(final String token) {
-        this.token = token;
-    }
-
-    public FinderPath getPath() {
-        return path;
-    }
+    void execute(T item, FinderContext finderContext);
 }

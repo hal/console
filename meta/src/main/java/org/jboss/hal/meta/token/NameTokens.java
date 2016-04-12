@@ -17,6 +17,7 @@ package org.jboss.hal.meta.token;
 
 import java.util.Set;
 
+@SuppressWarnings("DuplicateStringLiteralInspection")
 public interface NameTokens {
 
     String ACCESS_CONTROL = "/access-control";

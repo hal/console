@@ -15,6 +15,10 @@
  */
 package org.jboss.hal.client.configuration;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.inject.Inject;
+
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
@@ -26,10 +30,6 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 
 import static java.util.Arrays.asList;
 

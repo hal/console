@@ -15,6 +15,9 @@
  */
 package org.jboss.hal.core.finder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -23,9 +26,6 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.HasTitle;
 import org.jboss.hal.spi.Message;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Controls the layout of a finder item. For simple items you only need to implement the {@link #getTitle()} method.

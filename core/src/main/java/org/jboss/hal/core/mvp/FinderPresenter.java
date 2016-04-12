@@ -15,14 +15,18 @@
  */
 package org.jboss.hal.core.mvp;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.HasFinder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 
 /**
  * @author Harald Pehl
@@ -56,12 +60,25 @@ public abstract class FinderPresenter<V extends PatternFlyView, Proxy_ extends P
     @Override
     protected void onReset() {
         super.onReset();
+        AsyncCallback<FinderColumn> callback = new AsyncCallback<FinderColumn>() {
+            @Override
+            public void onFailure(final Throwable caught) {
+                MessageEvent
+                        .fire(getEventBus(), Message.error(resources.constants().unknownError(), caught.getMessage()));
+            }
+
+            @Override
+            public void onSuccess(final FinderColumn result) {
+                // nop
+            }
+        };
+
         String token = getProxy().getNameToken();
         if (path != null) {
             finder.select(token, FinderPath.from(path),
-                    () -> finder.reset(token, initialColumn(), initialPreview()));
+                    () -> finder.reset(token, initialColumn(), initialPreview(), callback));
         } else {
-            finder.reset(token, initialColumn(), initialPreview());
+            finder.reset(token, initialColumn(), initialPreview(), callback);
         }
     }
 

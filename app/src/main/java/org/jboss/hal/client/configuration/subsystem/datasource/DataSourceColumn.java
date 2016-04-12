@@ -15,6 +15,12 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import com.google.common.collect.Lists;
 import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
@@ -45,12 +51,6 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message.Level;
 import org.jboss.hal.spi.Requires;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -60,7 +60,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Harald Pehl
  */
 @AsyncColumn(ModelDescriptionConstants.DATA_SOURCE)
-@Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS, JDBC_DRIVER_ADDRESS})
+@Requires({SELECTED_DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS, JDBC_DRIVER_ADDRESS})
 public class DataSourceColumn extends FinderColumn<DataSource> {
 
     private final MetadataRegistry metadataRegistry;
@@ -139,7 +139,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 List<ItemAction<DataSource>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.view(viewRequest));
                 actions.add(itemActionFactory.remove(Names.DATASOURCE, dataSource.getName(),
-                        DATA_SOURCE_TEMPLATE, DataSourceColumn.this));
+                        SELECTED_DATA_SOURCE_TEMPLATE, DataSourceColumn.this));
                 if (isEnabled(dataSource)) {
                     actions.add(new ItemAction<>(resources.constants().disable(), p -> disable(p, dataSourceAddress)));
                     actions.add(new ItemAction<>(resources.constants().testConnection(),
@@ -169,7 +169,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     private ResourceAddress dataSourceAddress(FinderPath path, DataSource dataSource) {
         return xa(path)
                 ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName())
-                : DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName());
+                : SELECTED_DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName());
     }
 
     private boolean isEnabled(DataSource datasource) {

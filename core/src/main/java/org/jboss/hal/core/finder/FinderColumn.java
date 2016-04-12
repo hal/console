@@ -15,6 +15,12 @@
  */
 package org.jboss.hal.core.finder;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -34,18 +40,16 @@ import org.jboss.hal.resources.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.jboss.gwt.elemento.core.EventType.*;
+import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.gwt.elemento.core.EventType.keydown;
+import static org.jboss.gwt.elemento.core.EventType.keyup;
 import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.core.finder.Finder.DATA_BREADCRUMB;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
-import static org.jboss.hal.resources.UIConstants.*;
+import static org.jboss.hal.resources.UIConstants.GROUP;
+import static org.jboss.hal.resources.UIConstants.ROLE;
+import static org.jboss.hal.resources.UIConstants.TABINDEX;
 
 /**
  * Describes and renders a column in a finder. A column has a unique id, a title, a number of optional column actions
@@ -70,6 +74,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         private boolean showCount;
         private boolean withFilter;
         private PreviewCallback<T> previewCallback;
+        private BreadcrumbItemHandler<T> breadcrumbItemHandler;
         private List<T> items;
         private ItemsProvider<T> itemsProvider;
         private ItemSelectionHandler<T> selectionHandler;
@@ -127,13 +132,18 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             return this;
         }
 
+        public Builder<T> onBreadcrumbItem(BreadcrumbItemHandler<T> handler) {
+            this.breadcrumbItemHandler = handler;
+            return this;
+        }
+
         public FinderColumn<T> build() {
             return new FinderColumn<>(this);
         }
     }
 
 
-    public enum RefreshMode {CLEAR_SELECTION, RESTORE_SELECTIION}
+    public enum RefreshMode {CLEAR_SELECTION, RESTORE_SELECTION}
 
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
@@ -154,6 +164,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     private final ItemSelectionHandler<T> selectionHandler;
     private final Map<String, FinderRow<T>> rows;
     private final PreviewCallback<T> previewCallback;
+    private final BreadcrumbItemHandler<T> breadcrumbItemHandler;
 
     private final Element root;
     private final Element headerElement;
@@ -177,6 +188,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         this.selectionHandler = builder.selectionHandler;
         this.rows = new HashMap<>();
         this.previewCallback = builder.previewCallback;
+        this.breadcrumbItemHandler = builder.breadcrumbItemHandler;
         this.asElement = false;
 
         // header
@@ -538,6 +550,10 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         this.itemRenderer = itemRenderer;
     }
 
+    ItemRenderer<T> getItemRenderer() {
+        return itemRenderer;
+    }
+
     /**
      * Sometimes you need to reference {@code this} in the items provider. This is not possible if the items provider
      * is part of the builder which is passed to {@code super()}. In this case the items provider can be specified
@@ -549,6 +565,18 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     protected void setItemsProvider(final ItemsProvider<T> itemsProvider) {
         assertNotAsElement("setItemsProvider()");
         this.itemsProvider = itemsProvider;
+    }
+
+    ItemsProvider<T> getItemsProvider() {
+        return itemsProvider;
+    }
+
+    List<T> getInitialItems() {
+        return initialItems;
+    }
+
+    BreadcrumbItemHandler<T> getBreadcrumbItemHandler() {
+        return breadcrumbItemHandler;
     }
 
     private void assertNotAsElement(String method) {
@@ -572,7 +600,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             case CLEAR_SELECTION:
                 refresh(() -> finder.selectPreviousColumn(id));
                 break;
-            case RESTORE_SELECTIION:
+            case RESTORE_SELECTION:
                 FinderRow<T> row = selectedRow();
                 refresh(() -> {
                     if (row != null) {

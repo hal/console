@@ -15,7 +15,13 @@
  */
 package org.jboss.hal.client.skeleton;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import javax.annotation.PostConstruct;
+
 import com.google.common.base.Joiner;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.gwtplatform.mvp.client.ViewImpl;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
@@ -27,13 +33,17 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventHandler;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
+import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.InstanceInfo;
 import org.jboss.hal.config.User;
-import org.jboss.hal.core.finder.Breadcrumb;
+import org.jboss.hal.core.finder.BreadcrumbItemHandler;
 import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderSegment;
+import org.jboss.hal.core.finder.FinderSegment.DropdownItem;
+import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.core.modelbrowser.ModelBrowserPath;
 import org.jboss.hal.core.modelbrowser.ModelBrowserPath.Segment;
@@ -41,21 +51,20 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
+import static java.util.Collections.singletonList;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.skeleton.HeaderPresenter.MESSAGE_TIMEOUT;
 import static org.jboss.hal.config.InstanceInfo.WILDFLY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.Names.*;
+import static org.jboss.hal.resources.Names.HAL;
+import static org.jboss.hal.resources.Names.MANAGEMENT_CONSOLE;
+import static org.jboss.hal.resources.Names.NYI;
 
 /**
  * @author Harald Pehl
@@ -114,7 +123,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     String historyToken(String token) {
         PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token).build();
-        return "#" + tokenFormatter().toHistoryToken(Collections.singletonList(placeRequest));
+        return "#" + tokenFormatter().toHistoryToken(singletonList(placeRequest));
     }
 
     String historyToken(String token, FinderPath path) {
@@ -123,7 +132,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
             builder.with("path", path.toString());
         }
         PlaceRequest placeRequest = builder.build();
-        return "#" + tokenFormatter().toHistoryToken(Collections.singletonList(placeRequest));
+        return "#" + tokenFormatter().toHistoryToken(singletonList(placeRequest));
     }
 
     @Override
@@ -228,7 +237,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         Elements.setVisible(topLevelTabs, false);
         Elements.setVisible(breadcrumbs, true);
         if (title != null) {
-            clearBreadcrump();
+            clearBreadcrumb();
             Element li = new Elements.Builder().li().textContent(title).end().build();
             breadcrumbs.appendChild(li);
         }
@@ -247,37 +256,85 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         }
     }
 
-    private void clearBreadcrump() {
+    private void clearBreadcrumb() {
         while (breadcrumbs.getLastChild() != null && breadcrumbs.getChildren().getLength() > 1) {
             breadcrumbs.removeChild(breadcrumbs.getLastChild());
         }
     }
 
     @Override
-    public void updateBreadcrumb(final FinderContext finderContext) {
-        clearBreadcrump();
+    public void updateBreadcrumb(final FinderContext context) {
+        clearBreadcrumb();
         FinderPath currentPath = FinderPath.empty();
-        Iterator<FinderPath.Segment> pathIterator = finderContext.getPath().iterator();
-        Iterator<Breadcrumb.Segment> breadcrumbIterator = finderContext.getBreadcrumb().iterator();
+        Iterator<FinderSegment> pathIterator = context.getPath().iterator();
         //noinspection WhileLoopReplaceableByForEach
-        while (breadcrumbIterator.hasNext()) {
+        while (pathIterator.hasNext()) {
 
-            Breadcrumb.Segment breadcrumbSegment = breadcrumbIterator.next();
-            FinderPath.Segment pathSegment = pathIterator.next();
-            currentPath.append(pathSegment.getKey(), pathSegment.getValue());
-            boolean last = currentPath.size() == finderContext.getPath().size();
+            //noinspection unchecked
+            FinderSegment<Object> segment = pathIterator.next();
+            currentPath.append(segment.getKey(), segment.getValue());
+            boolean last = currentPath.size() == context.getPath().size();
 
             Elements.Builder builder = new Elements.Builder().li();
             if (last) {
                 builder.css(active);
+            }
+            // @formatter:off
+            builder
+                .span().css(key)
+                    .a(historyToken(context.getToken(), currentPath))
+                        .textContent(segment.getBreadcrumbKey())
+                    .end()
+                .end()
+                .span().css(arrow).innerHtml(SafeHtmlUtils.fromSafeConstant("&#8658;")).end();
+            // @formatter:on
+
+            builder.span();
+            if (segment.canProvideValues()) {
+                builder.css(value, dropdown);
+                String id = IdBuilder.build(segment.getKey(), VALUE);
+                builder.a().id(id)
+                        .css(clickable)
+                        .data(UIConstants.TARGET, "#")
+                        .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
+                        .aria(UIConstants.HAS_POPUP, String.valueOf(true))
+                        .aria(UIConstants.EXPANDED, String.valueOf(false))
+                        .attr(UIConstants.ROLE, UIConstants.BUTTON)
+                        .on(click, event -> {
+                            Element ul = ((Element) event.getCurrentTarget()).getNextElementSibling();
+                            segment.dropdown(context, items -> {
+                                Elements.removeChildrenFrom(ul);
+                                if (items.isEmpty()) {
+                                    Element empty = new Elements.Builder().li().css(CSS.empty)
+                                            .textContent(HeaderView.this.resources().constants().noItems()).end()
+                                            .build();
+                                    ul.appendChild(empty);
+                                } else {
+                                    for (DropdownItem<Object> dropdownItem : items) {
+                                        Object item = dropdownItem.item;
+                                        ItemDisplay<Object> display = dropdownItem.display;
+                                        BreadcrumbItemHandler<Object> handler = dropdownItem.handler;
+                                        Element element = new Elements.Builder().li().a()
+                                                .css(clickable)
+                                                .on(click, e -> handler.execute(item, context))
+                                                .textContent(display.getTitle()).end().end().build();
+                                        ul.appendChild(element);
+                                    }
+                                }
+                            });
+                        })
+                        .span().textContent(segment.getBreadcrumbValue() + " ").end()
+                        .span().css(caret).end()
+                        .end();
+                builder.ul()
+                        .css(dropdownMenu, valueDropdown)
+                        .aria(UIConstants.LABELLED_BY, id)
+                        .end();
             } else {
-                builder.a(historyToken(finderContext.getToken(), currentPath));
+                builder.css(value);
+                builder.textContent(segment.getBreadcrumbValue());
             }
-            builder.span().css(key).textContent(breadcrumbSegment.key).end()
-                    .span().css(value).textContent(breadcrumbSegment.value).end();
-            if (!last) {
-                builder.end(); // </a>
-            }
+            builder.end(); // </span>
             builder.end(); // </li>
             breadcrumbs.appendChild(builder.build());
         }
@@ -306,18 +363,25 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
                     Segment value = segments[1];
                     boolean link = value != ModelBrowserPath.WILDCARD && iterator.hasNext();
 
-                    Elements.Builder builder = new Elements.Builder().li();
-                    builder.a().css(clickable).on(click, event -> modelBrowser.select(key.id, true))
-                            .span().css(CSS.key).textContent(key.text).end()
-                            .end();
+                    // @formatter:off
+                    Elements.Builder builder = new Elements.Builder()
+                        .li()
+                            .span().css(CSS.key)
+                                .a().css(clickable).on(click, event -> modelBrowser.select(key.id, true))
+                                    .textContent(key.text)
+                                .end()
+                            .end()
+                            .span().css(arrow).innerHtml(SafeHtmlUtils.fromSafeConstant("&#8658;")).end()
+                            .span().css(CSS.value);
+                    // @formatter:on
                     if (link) {
                         builder.a().css(clickable).on(click, event -> modelBrowser.select(value.id, true));
                     }
-                    builder.span().css(CSS.value).textContent(value.text).end();
+                    builder.textContent(value.text);
                     if (link) {
-                        builder.end();
+                        builder.end(); // </a>
                     }
-                    builder.end();
+                    builder.end().end(); // </span> </li>
                     breadcrumbs.appendChild(builder.build());
                 }
             }

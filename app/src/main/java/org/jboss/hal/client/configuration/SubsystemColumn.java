@@ -15,6 +15,11 @@
  */
 package org.jboss.hal.client.configuration;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import javax.inject.Inject;
+
 import com.google.gwt.resources.client.ExternalTextResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -43,14 +48,12 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION;
 import static org.jboss.hal.resources.CSS.itemText;
 import static org.jboss.hal.resources.CSS.subtitle;
 
@@ -176,6 +179,23 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                         Operation operation = new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION, address)
                                 .build();
                         return new ResourceDescriptionPreview(item.getTitle(), dispatcher, operation);
+                    }
+                })
+
+                .onBreadcrumbItem((item, context) -> {
+                    PlaceRequest placeRequest = null;
+                    if (item.isBuiltIn() && item.getToken() != null) {
+                        placeRequest = new PlaceRequest.Builder().nameToken(item.getToken()).build();
+
+                    } else if (!item.isBuiltIn()) {
+                        ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, item.getName());
+                        placeRequest = new PlaceRequest.Builder()
+                                .nameToken(NameTokens.MODEL_BROWSER)
+                                .with(ModelBrowserPresenter.ADDRESS_PARAM, address.toString())
+                                .build();
+                    }
+                    if (placeRequest != null) {
+                        placeManager.revealPlace(placeRequest);
                     }
                 }));
     }

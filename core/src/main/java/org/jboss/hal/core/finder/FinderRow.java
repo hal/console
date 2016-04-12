@@ -46,6 +46,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
 
     private final Finder finder;
     private final FinderColumn<T> column;
+    private final ItemDisplay<T> display;
     private final String nextColumn;
     private final String id;
     private final T item;
@@ -64,10 +65,11 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
 
         this.finder = finder;
         this.column = column;
+        this.display = display;
         this.nextColumn = display.nextColumn();
         this.id = display.getId();
         this.item = item;
-        this.primaryAction = display.actions().isEmpty() ? null : display.actions().iterator().next().handler;
+        this.primaryAction = display.actions().isEmpty() ? null : display.actions().get(0).handler;
         this.previewContent = previewCallback != null ? previewCallback.onPreview(item) : new PreviewContent(
                 display.getTitle());
 
@@ -222,5 +224,9 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
 
     T getItem() {
         return item;
+    }
+
+    ItemDisplay<T> getDisplay() {
+        return display;
     }
 }
