@@ -281,16 +281,22 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         }
     }
 
-    void publishContext() {
-        PlaceRequest current = placeManager.getCurrentPlaceRequest();
-        PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(current.getNameToken());
+    void updateHistory() {
+        if (!context.getToken().equals(placeManager.getCurrentPlaceRequest().getNameToken())) {
+            // only finder tokens of the same type please
+            return;
+        }
+        PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(context.getToken());
         if (!context.getPath().isEmpty()) {
             builder.with("path", context.getPath().toString());
         }
         PlaceRequest update = builder.build();
-        if (!current.equals(update)) {
+        if (!update.equals(placeManager.getCurrentPlaceRequest())) {
             placeManager.updateHistory(update, true);
         }
+    }
+
+    void publishContext() {
         eventBus.fireEvent(new FinderContextEvent(context));
     }
 
@@ -337,6 +343,9 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     // ------------------------------------------------------ public interface
 
+    /**
+     * Resets the finder to its initial state by showing the initial column and preview.
+     */
     public void reset(final String token, final String initialColumn, final PreviewContent initialPreview,
             AsyncCallback<FinderColumn> callback) {
         initialColumnsByToken.put(token, initialColumn);
@@ -348,9 +357,17 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         appendColumn(initialColumn, callback);
         selectColumn(initialColumn);
         showPreview(initialPreview);
+        updateHistory();
         publishContext();
     }
 
+    /**
+     * Selects the columns as specified in the finder path. Please note that this might be a complex and long running
+     * operation since each segment in the finder path is turned into a function. The function will load and initialize
+     * the column and select the item as specified in the segment.
+     * <p>
+     * If the path is empty, the fallback operation is executed.
+     */
     public void select(final String token, final FinderPath path, final Runnable fallback) {
         if (path.isEmpty()) {
             fallback.run();
@@ -399,6 +416,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                     } else if (!context.emptyStack()) {
                         FinderColumn column = context.pop();
                         processLastColumnSelection(column);
+                        updateHistory();
                         publishContext();
                     }
                 }
@@ -407,6 +425,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 public void onSuccess(final FunctionContext context) {
                     FinderColumn column = context.pop();
                     processLastColumnSelection(column);
+                    updateHistory();
                     publishContext();
                 }
 
@@ -421,6 +440,14 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 }
             }, functions);
         }
+    }
+
+    /**
+     * Updates the finder path. This methods emits a {@link FinderContextEvent} to publish the updated path.
+     */
+    public void updatePath(FinderPath path) {
+        context.reset(path);
+        publishContext();
     }
 
     @Override

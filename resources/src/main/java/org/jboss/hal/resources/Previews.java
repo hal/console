@@ -38,9 +38,6 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/interfaces.html")
     ExternalTextResource interfaces();
 
-    @Source("previews/subsystems/non-xa.html")
-    ExternalTextResource nonXa();
-
     @Source("previews/paths.html")
     ExternalTextResource paths();
 
@@ -61,7 +58,4 @@ public interface Previews extends ClientBundleWithLookup {
 
     @Source("previews/system-properties.html")
     ExternalTextResource systemProperties();
-
-    @Source("previews/subsystems/xa.html")
-    ExternalTextResource xa();
 }

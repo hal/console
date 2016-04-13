@@ -20,12 +20,12 @@ import java.util.Set;
 @SuppressWarnings("DuplicateStringLiteralInspection")
 public interface NameTokens {
 
-    String ACCESS_CONTROL = "/access-control";
-    String BATCH = "/configuration/{profile}/batch";
-    String CONFIGURATION = "/configuration";
+    String ACCESS_CONTROL = "/access-control-finder";
+    String BATCH = "/configuration/{profile}/batch-jberet";
+    String CONFIGURATION = "/configuration-finder";
     String DATA_SOURCE = "/configuration/{profile}/data-source/{name}";
     String DEPLOYMENT_SCANNERS = "/configuration/{profile}/deployment-scanners";
-    String DEPLOYMENTS = "/deployments";
+    String DEPLOYMENTS = "/deployments-finder";
     String EE = "/configuration/{profile}/ee";
     String EJB3 = "/configuration/{profile}/ejb3";
     String HOMEPAGE = "/home";
@@ -38,11 +38,11 @@ public interface NameTokens {
     String LOGGING = "/configuration/{profile}/logging";
     String MACRO_EDITOR = "/macro-editor";
     String MODEL_BROWSER = "/model-browser";
-    String PATCHING = "/patching";
+    String PATCHING = "/patching-finder";
     String PATH = "/path";
     String REMOTING = "/configuration/{profile}/remoting";
     String REQUEST_CONTROLLER = "/configuration/{profile}/request-controller";
-    String RUNTIME = "/runtime";
+    String RUNTIME = "/runtime-finder";
     String SOCKET_BINDING = "/socket-binding/{name}";
     String SYSTEM_PROPERTIES = "/system-properties";
     String TRANSACTIONS = "/configuration/{profile}/transactions";

@@ -74,6 +74,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         private boolean showCount;
         private boolean withFilter;
         private PreviewCallback<T> previewCallback;
+        private BreadcrumbItemsProvider<T> breadcrumbItemsProvider;
         private BreadcrumbItemHandler<T> breadcrumbItemHandler;
         private List<T> items;
         private ItemsProvider<T> itemsProvider;
@@ -132,6 +133,11 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             return this;
         }
 
+        public Builder<T> breadcrumbItemsProvider(BreadcrumbItemsProvider<T> breadcrumbItemsProvider) {
+            this.breadcrumbItemsProvider = breadcrumbItemsProvider;
+            return this;
+        }
+
         public Builder<T> onBreadcrumbItem(BreadcrumbItemHandler<T> handler) {
             this.breadcrumbItemHandler = handler;
             return this;
@@ -164,7 +170,8 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     private final ItemSelectionHandler<T> selectionHandler;
     private final Map<String, FinderRow<T>> rows;
     private final PreviewCallback<T> previewCallback;
-    private final BreadcrumbItemHandler<T> breadcrumbItemHandler;
+    private BreadcrumbItemsProvider<T> breadcrumbItemsProvider;
+    private BreadcrumbItemHandler<T> breadcrumbItemHandler;
 
     private final Element root;
     private final Element headerElement;
@@ -188,6 +195,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         this.selectionHandler = builder.selectionHandler;
         this.rows = new HashMap<>();
         this.previewCallback = builder.previewCallback;
+        this.breadcrumbItemsProvider = builder.breadcrumbItemsProvider;
         this.breadcrumbItemHandler = builder.breadcrumbItemHandler;
         this.asElement = false;
 
@@ -354,6 +362,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                                 selectedRow.showPreview();
                             }
                             finder.updateContext();
+                            finder.updateHistory();
                             finder.publishContext();
                         }
                     }
@@ -385,6 +394,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                                             column.row(firstElement).showPreview();
                                         }
                                         finder.updateContext();
+                                        finder.updateHistory();
                                         finder.publishContext();
                                         finder.selectColumn(nextColumn);
                                     }
@@ -520,12 +530,15 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
     }
 
+
+    // ------------------------------------------------------ internal setter / getter
+
     /**
      * Sometimes you need to reference {@code this} in the column action handler. This is not possible if they're
      * part of the builder which is passed to {@code super()}. In this case you can use this method to add your column
      * actions <strong>after</strong> the call to {@code super()}.
      * <p>
-     * However make sure to call the setter <strong>before</strong> the column is used {@link #asElement()} and gets
+     * However make sure to call this method <strong>before</strong> the column is used {@link #asElement()} and gets
      * attached to the DOM!
      */
     protected void addColumnAction(ColumnAction<T> columnAction) {
@@ -573,6 +586,28 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
     List<T> getInitialItems() {
         return initialItems;
+    }
+
+    /**
+     * Sometimes you need to reference {@code this} in the breadcrumb items provider. This is not possible if the
+     * breadcrumb items provider is part of the builder which is passed to {@code super()}. In this case the breadcrumb
+     * items provider can be specified <strong>after</strong> the call to {@code super()} using this setter.
+     * <p>
+     * However make sure to call the setter <strong>before</strong> the column is used {@link #asElement()} and gets
+     * attached to the DOM!
+     */
+    public void setBreadcrumbItemsProvider(final BreadcrumbItemsProvider<T> breadcrumbItemsProvider) {
+        assertNotAsElement("setBreadcrumbItemsProvider()");
+        this.breadcrumbItemsProvider = breadcrumbItemsProvider;
+    }
+
+    BreadcrumbItemsProvider<T> getBreadcrumbItemsProvider() {
+        return breadcrumbItemsProvider;
+    }
+
+    public void setBreadcrumbItemHandler(final BreadcrumbItemHandler<T> breadcrumbItemHandler) {
+        // No UI related property, so no need to call assertNotAsElement()
+        this.breadcrumbItemHandler = breadcrumbItemHandler;
     }
 
     BreadcrumbItemHandler<T> getBreadcrumbItemHandler() {
@@ -634,6 +669,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             @Override
             public void onSuccess(final FinderColumn column) {
                 finder.updateContext();
+                finder.updateHistory();
                 finder.publishContext();
                 if (andThen != null) {
                     andThen.execute();

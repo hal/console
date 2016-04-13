@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Harald Pehl
@@ -45,15 +47,14 @@ public class FinderSegment<T> {
     }
 
 
+    private static final Logger logger = LoggerFactory.getLogger(FinderSegment.class);
+
     private final String key;
-    private final String value;
+    private String value;
     private String breadcrumbKey;
     private String breadcrumbValue;
 
-    private List<T> initialItems;
-    private ItemsProvider<T> itemsProvider;
-    private ItemRenderer<T> itemRenderer;
-    private BreadcrumbItemHandler<T> breadcrumbItemHandler;
+    private FinderColumn<T> column;
 
     FinderSegment(final String key, final String value) {
         this.key = key;
@@ -63,7 +64,7 @@ public class FinderSegment<T> {
     FinderSegment(final FinderColumn<T> column) {
         this.key = column.getId();
         this.breadcrumbKey = column.getTitle();
-        this.breadcrumbItemHandler = column.getBreadcrumbItemHandler();
+        this.column = column;
 
         FinderRow selectedRow = column.selectedRow();
         if (selectedRow != null) {
@@ -73,16 +74,11 @@ public class FinderSegment<T> {
             this.value = null;
             this.breadcrumbValue = null;
         }
-
-        if (column.getBreadcrumbItemHandler() != null) {
-            this.initialItems = column.getInitialItems();
-            this.itemsProvider = column.getItemsProvider();
-            this.itemRenderer = column.getItemRenderer();
-        }
     }
 
     @Override
     public String toString() {
+        // Do not change this implementation as the place management relies on it!
         return key + "=" + value;
     }
 
@@ -102,39 +98,61 @@ public class FinderSegment<T> {
         return breadcrumbValue;
     }
 
-    public boolean canProvideValues() {
-        return (initialItems != null || itemsProvider != null) && itemRenderer != null;
+    public void setValues(String value, String breadcrumbValue) {
+        this.value = value;
+        this.breadcrumbValue = breadcrumbValue;
     }
 
-    public void dropdown(final FinderContext finderContext, DropdownCallback<T> callback) {
+    /**
+     * @return {@code true} if this segment was initialized with a column which has an {@linkplain
+     * BreadcrumbItemHandler breadcrumb item handler} and either {@linkplain FinderColumn#getInitialItems() initial
+     * items}, an {@linkplain FinderColumn#getItemsProvider() items provider} or a {@linkplain
+     * FinderColumn#getBreadcrumbItemsProvider() breadcrumb items provider}.
+     */
+    public boolean supportsDropdown() {
+        return column != null && column.getBreadcrumbItemHandler() != null &&
+                (
+                        (column.getInitialItems() != null && !column.getInitialItems().isEmpty()) ||
+                                column.getItemsProvider() != null ||
+                                column.getBreadcrumbItemsProvider() != null
+                );
+    }
+
+    public void dropdown(final FinderContext context, DropdownCallback<T> callback) {
         List<DropdownItem<T>> elements = new ArrayList<>();
-        if ((initialItems != null && !initialItems.isEmpty())) {
-            collectDropdownElements(elements, initialItems);
+        AsyncCallback<List<T>> asyncCallback = new AsyncCallback<List<T>>() {
+            @Override
+            public void onFailure(final Throwable caught) {
+                logger.error("Cannot provide dropdown items for breadcrumb segment {}={}: {}", key, value, //NON-NLS
+                        caught.getMessage());
+            }
+
+            @Override
+            public void onSuccess(final List<T> result) {
+                collectDropdownElements(elements, result);
+                callback.onItems(elements);
+            }
+        };
+
+        if (column.getBreadcrumbItemsProvider() != null) {
+            column.getBreadcrumbItemsProvider().get(context, asyncCallback);
+
+        } else if (column.getInitialItems() != null && !column.getInitialItems().isEmpty()) {
+            collectDropdownElements(elements, column.getInitialItems());
             callback.onItems(elements);
 
-        } else {
-            itemsProvider.get(finderContext, new AsyncCallback<List<T>>() {
-                @Override
-                public void onFailure(final Throwable caught) {
-                    // ignore
-                }
-
-                @Override
-                public void onSuccess(final List<T> result) {
-                    collectDropdownElements(elements, result);
-                    callback.onItems(elements);
-                }
-            });
+        } else if (column.getItemsProvider() != null) {
+            column.getItemsProvider().get(context, asyncCallback);
         }
     }
 
     private void collectDropdownElements(List<DropdownItem<T>> elements, List<T> items) {
         for (T item : items) {
-            ItemDisplay<T> display = itemRenderer.render(item);
+            ItemDisplay<T> display = column.getItemRenderer().render(item);
             if (display.getId().equals(value)) {
                 continue;
             }
-            elements.add(new DropdownItem<>(item, display, breadcrumbItemHandler));
+            elements.add(new DropdownItem<>(item, display, column.getBreadcrumbItemHandler()));
         }
     }
 }

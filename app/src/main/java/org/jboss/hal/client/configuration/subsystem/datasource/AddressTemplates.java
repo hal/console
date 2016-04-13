@@ -24,12 +24,12 @@ public interface AddressTemplates {
 
     String ANY_DATA_SOURCE_ADDRESS = "/{any.profile}/subsystem=datasources/data-source=*";
     String SELECTED_DATA_SOURCE_ADDRESS = "/{selected.profile}/subsystem=datasources/data-source=*";
-    String XA_DATA_SOURCE_ADDRESS = "/{selected.profile}/subsystem=datasources/xa-data-source=*";
+    String SELECTED_XA_DATA_SOURCE_ADDRESS = "/{selected.profile}/subsystem=datasources/xa-data-source=*";
     String JDBC_DRIVER_ADDRESS = "/{any.profile}/subsystem=datasources/data-source=*";
 
     AddressTemplate ANY_DATA_SOURCE_TEMPLATE = AddressTemplate.of(ANY_DATA_SOURCE_ADDRESS);
     AddressTemplate SELECTED_DATA_SOURCE_TEMPLATE = AddressTemplate.of(SELECTED_DATA_SOURCE_ADDRESS);
-    AddressTemplate XA_DATA_SOURCE_TEMPLATE = AddressTemplate.of(XA_DATA_SOURCE_ADDRESS);
+    AddressTemplate SELECTED_XA_DATA_SOURCE_TEMPLATE = AddressTemplate.of(SELECTED_XA_DATA_SOURCE_ADDRESS);
     AddressTemplate JDBC_DRIVER_TEMPLATE = AddressTemplate.of(JDBC_DRIVER_ADDRESS);
 
     AddressTemplate DATA_SOURCE_SUBSYSTEM_TEMPLATE = AddressTemplate.of("/{selected.profile}/subsystem=datasources");

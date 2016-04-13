@@ -15,13 +15,13 @@
  */
 package org.jboss.hal.meta.subsystem;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Harald Pehl

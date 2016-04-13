@@ -53,10 +53,10 @@ public class FinderPath implements Iterable<FinderSegment> {
         return segment;
     }
 
-    public <T> FinderSegment<T> append(FinderColumn<T> finderColumn) {
+    public <T> FinderPath append(FinderColumn<T> finderColumn) {
         final FinderSegment<T> segment = new FinderSegment<>(finderColumn);
         segments.add(segment);
-        return segment;
+        return this;
     }
 
     @Override
@@ -77,6 +77,18 @@ public class FinderPath implements Iterable<FinderSegment> {
         return null;
     }
 
+    public FinderPath copy() {
+        return new FinderPath(segments);
+    }
+
+    public FinderPath parent() {
+        if (isEmpty()) {
+            return new FinderPath(segments);
+        } else {
+            return new FinderPath(segments.subList(0, size() - 1));
+        }
+    }
+
     /**
      * @return a reversed copy of this path. The current path is not modified.
      */
@@ -86,6 +98,7 @@ public class FinderPath implements Iterable<FinderSegment> {
 
     @Override
     public String toString() {
+        // Do not change this implementation as the place management relies on it!
         return Joiner.on("/").join(segments);
     }
 }

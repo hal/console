@@ -16,12 +16,15 @@
 package org.jboss.hal.core.finder;
 
 /**
- * An action which will be invoked when selecting one of the item in the breadcrumb dropdown.
+ * Handler which will be invoked when selecting one of the items in the breadcrumb dropdown.
+ * <p>
+ * When the handler navigates to another place which changes the finder path, the handler must call {@link
+ * Finder#updatePath(FinderPath)} with the updated finder path!
  *
  * @author Harald Pehl
  */
 @FunctionalInterface
 public interface BreadcrumbItemHandler<T> {
 
-    void execute(T item, FinderContext finderContext);
+    void execute(T item, FinderContext context);
 }

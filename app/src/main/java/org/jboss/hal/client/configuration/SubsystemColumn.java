@@ -16,13 +16,14 @@
 package org.jboss.hal.client.configuration;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
 
+import com.google.common.collect.FluentIterable;
 import com.google.gwt.resources.client.ExternalTextResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
@@ -31,8 +32,10 @@ import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.client.tools.ModelBrowserPresenter;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.finder.ItemsProvider;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
@@ -50,6 +53,7 @@ import org.jboss.hal.spi.Column;
 
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
+import static java.util.Collections.singletonList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
@@ -93,6 +97,11 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 .itemRenderer(item -> new ItemDisplay<SubsystemMetadata>() {
 
                     @Override
+                    public String getId() {
+                        return item.getName();
+                    }
+
+                    @Override
                     public Element asElement() {
                         return item.getSubtitle() != null
                                 ? new Elements.Builder()
@@ -122,21 +131,10 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
                     @Override
                     public List<ItemAction<SubsystemMetadata>> actions() {
-                        PlaceRequest placeRequest;
-                        if (item.isBuiltIn() && item.getToken() != null) {
-                            placeRequest = new PlaceRequest.Builder().nameToken(item.getToken()).build();
-                            return Collections.singletonList(new ItemAction<>(resources.constants().view(),
+                        final PlaceRequest placeRequest = subsystemPlaceRequest(item, statementContext);
+                        if (placeRequest != null) {
+                            return singletonList(new ItemAction<>(resources.constants().view(),
                                     item -> placeManager.revealPlace(placeRequest)));
-
-                        } else if (!item.isBuiltIn()) {
-                            ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, item.getName());
-                            placeRequest = new PlaceRequest.Builder()
-                                    .nameToken(NameTokens.MODEL_BROWSER)
-                                    .with(ModelBrowserPresenter.ADDRESS_PARAM, address.toString())
-                                    .build();
-                            return Collections.singletonList(new ItemAction<>(resources.constants().view(),
-                                    item -> placeManager.revealPlace(placeRequest)));
-
                         } else {
                             return ItemDisplay.super.actions();
                         }
@@ -144,29 +142,6 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 })
                 .showCount()
                 .withFilter()
-
-                .itemsProvider((context, callback) -> {
-                    ResourceAddress address = AddressTemplate.of("/{selected.profile}").resolve(statementContext);
-                    Operation subsystemOp = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, address)
-                            .param(CHILD_TYPE, ModelDescriptionConstants.SUBSYSTEM).build();
-                    dispatcher.execute(subsystemOp, result -> {
-
-                        List<SubsystemMetadata> combined = new ArrayList<>();
-                        for (ModelNode modelNode : result.asList()) {
-                            String name = modelNode.asString();
-                            if (subsystems.isBuiltIn(name)) {
-                                combined.add(subsystems.getSubsystem(name));
-
-                            } else {
-                                String title = new LabelBuilder().label(name);
-                                SubsystemMetadata subsystem = new SubsystemMetadata(name, title, null, null, null,
-                                        false);
-                                combined.add(subsystem);
-                            }
-                        }
-                        callback.onSuccess(combined);
-                    });
-                })
 
                 .onPreview(item -> {
                     String camelCase = LOWER_HYPHEN.to(LOWER_CAMEL, item.getName());
@@ -180,23 +155,75 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                                 .build();
                         return new ResourceDescriptionPreview(item.getTitle(), dispatcher, operation);
                     }
-                })
-
-                .onBreadcrumbItem((item, context) -> {
-                    PlaceRequest placeRequest = null;
-                    if (item.isBuiltIn() && item.getToken() != null) {
-                        placeRequest = new PlaceRequest.Builder().nameToken(item.getToken()).build();
-
-                    } else if (!item.isBuiltIn()) {
-                        ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, item.getName());
-                        placeRequest = new PlaceRequest.Builder()
-                                .nameToken(NameTokens.MODEL_BROWSER)
-                                .with(ModelBrowserPresenter.ADDRESS_PARAM, address.toString())
-                                .build();
-                    }
-                    if (placeRequest != null) {
-                        placeManager.revealPlace(placeRequest);
-                    }
                 }));
+
+        ItemsProvider<SubsystemMetadata> itemsProvider = (context, callback) -> {
+            ResourceAddress address = AddressTemplate.of("/{selected.profile}").resolve(statementContext);
+            Operation subsystemOp = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, address)
+                    .param(CHILD_TYPE, ModelDescriptionConstants.SUBSYSTEM).build();
+            dispatcher.execute(subsystemOp, result -> {
+
+                List<SubsystemMetadata> combined = new ArrayList<>();
+                for (ModelNode modelNode : result.asList()) {
+                    String name = modelNode.asString();
+                    if (subsystems.isBuiltIn(name)) {
+                        combined.add(subsystems.getSubsystem(name));
+
+                    } else {
+                        String title = new LabelBuilder().label(name);
+                        SubsystemMetadata subsystem = new SubsystemMetadata(name, title, null, null, null,
+                                false);
+                        combined.add(subsystem);
+                    }
+                }
+                callback.onSuccess(combined);
+            });
+        };
+        setItemsProvider(itemsProvider);
+
+        // reuse the items provider to provide breadcrumb items
+        setBreadcrumbItemsProvider((context, callback) -> {
+            itemsProvider.get(context, new AsyncCallback<List<SubsystemMetadata>>() {
+                @Override
+                public void onFailure(final Throwable caught) {
+                    callback.onFailure(caught);
+                }
+
+                @Override
+                public void onSuccess(final List<SubsystemMetadata> result) {
+                    // only subsystems w/o next columns and w/ tokens will show up in the breadcrumb dropdown
+                    //noinspection Guava
+                    List<SubsystemMetadata> subsystemsWithTokens = FluentIterable.from(result)
+                            .filter(metadata -> metadata.getToken() != null && metadata.getNextColumn() == null)
+                            .toList();
+                    callback.onSuccess(subsystemsWithTokens);
+                }
+            });
+        });
+        setBreadcrumbItemHandler((item, context) -> {
+            PlaceRequest placeRequest = subsystemPlaceRequest(item, statementContext);
+            if (placeRequest != null) {
+                FinderPath itemPath = context.getPath().copy();
+                itemPath.last().setValues(item.getName(), item.getTitle());
+
+                finder.updatePath(itemPath);
+                placeManager.revealPlace(placeRequest);
+            }
+        });
+    }
+
+    private static PlaceRequest subsystemPlaceRequest(SubsystemMetadata metadata, StatementContext statementContext) {
+        PlaceRequest placeRequest = null;
+        if (metadata.isBuiltIn() && metadata.getToken() != null) {
+            placeRequest = new PlaceRequest.Builder().nameToken(metadata.getToken()).build();
+
+        } else if (!metadata.isBuiltIn()) {
+            ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, metadata.getName());
+            placeRequest = new PlaceRequest.Builder()
+                    .nameToken(NameTokens.MODEL_BROWSER)
+                    .with(ModelBrowserPresenter.ADDRESS_PARAM, address.toString())
+                    .build();
+        }
+        return placeRequest;
     }
 }

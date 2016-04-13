@@ -290,7 +290,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
             // @formatter:on
 
             builder.span();
-            if (segment.canProvideValues()) {
+            if (segment.supportsDropdown()) {
                 builder.css(value, dropdown);
                 String id = IdBuilder.build(segment.getKey(), VALUE);
                 builder.a().id(id)
@@ -342,10 +342,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     @Override
     public void updateBreadcrumb(final ModelBrowserPath path) {
-        while (breadcrumbs.getLastChild() != null && breadcrumbs.getChildren().getLength() > 1) {
-            breadcrumbs.removeChild(breadcrumbs.getLastChild());
-        }
-
+        clearBreadcrumb();
         if (path == null) {
             // deselection
             breadcrumbs.appendChild(

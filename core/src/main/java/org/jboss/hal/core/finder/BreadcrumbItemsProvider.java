@@ -15,39 +15,18 @@
  */
 package org.jboss.hal.core.finder;
 
+import java.util.List;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 /**
- * Holds state as the user navigates using the finder.
+ * Function to load the items shown in the breadcrumb dropdown. Normally this list equals to the list which is returned
+ * by {@link ItemsProvider}.
  *
  * @author Harald Pehl
  */
-public class FinderContext {
+@FunctionalInterface
+public interface BreadcrumbItemsProvider<T> {
 
-    private String token;
-    private FinderPath path;
-
-    FinderContext() {
-        token = null;
-        path = FinderPath.empty();
-    }
-
-    void reset(final String token) {
-        this.token = token;
-        path.clear();
-    }
-
-    void reset(final FinderPath path) {
-        this.path = path;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(final String token) {
-        this.token = token;
-    }
-
-    public FinderPath getPath() {
-        return path;
-    }
+    void get(FinderContext context, AsyncCallback<List<T>> callback);
 }
