@@ -13,41 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.finder;
+package org.jboss.hal.client.configuration.subsystem;
+
+import javax.inject.Inject;
+
+import org.jboss.hal.core.modelbrowser.ModelBrowser;
+import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
- * Holds state as the user navigates using the finder.
- *
  * @author Harald Pehl
  */
-public class FinderContext {
+public class GenericSubsystemView extends PatternFlyViewImpl implements GenericSubsystemPresenter.MyView {
 
-    private String token;
-    private FinderPath path;
+    private final ModelBrowser modelBrowser;
 
-    FinderContext() {
-        token = null;
-        path = new FinderPath();
+    @Inject
+    public GenericSubsystemView(ModelBrowser modelBrowser) {
+        this.modelBrowser = modelBrowser;
+        initElements(modelBrowser);
     }
 
-    void reset(final String token) {
-        this.token = token;
-        path.clear();
-    }
-
-    public void reset(final FinderPath path) {
-        this.path = path;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(final String token) {
-        this.token = token;
-    }
-
-    public FinderPath getPath() {
-        return path;
+    @Override
+    public void setRoot(final ResourceAddress root) {
+        modelBrowser.setRoot(root, false);
     }
 }

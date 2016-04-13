@@ -38,12 +38,10 @@ import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.InstanceInfo;
 import org.jboss.hal.config.User;
-import org.jboss.hal.core.finder.BreadcrumbItemHandler;
 import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.FinderSegment.DropdownItem;
-import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.core.modelbrowser.ModelBrowserPath;
 import org.jboss.hal.core.modelbrowser.ModelBrowserPath.Segment;
@@ -228,19 +226,18 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     }
 
     @Override
-    public void applicationMode() {
-        applicationMode(null);
+    public void fullscreenMode(final String title) {
+        applicationMode();
+        clearBreadcrumb();
+        Element li = Browser.getDocument().createLIElement();
+        li.setTextContent(title);
+        breadcrumbs.appendChild(li);
     }
 
     @Override
-    public void applicationMode(final String title) {
+    public void applicationMode() {
         Elements.setVisible(topLevelTabs, false);
         Elements.setVisible(breadcrumbs, true);
-        if (title != null) {
-            clearBreadcrumb();
-            Element li = new Elements.Builder().li().textContent(title).end().build();
-            breadcrumbs.appendChild(li);
-        }
     }
 
     @Override
@@ -265,29 +262,27 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     @Override
     public void updateBreadcrumb(final FinderContext context) {
         clearBreadcrumb();
-        FinderPath currentPath = FinderPath.empty();
-        Iterator<FinderSegment> pathIterator = context.getPath().iterator();
-        //noinspection WhileLoopReplaceableByForEach
-        while (pathIterator.hasNext()) {
+        FinderPath currentPath = new FinderPath();
 
+        for (Iterator<FinderSegment> iterator = context.getPath().iterator(); iterator.hasNext(); ) {
             //noinspection unchecked
-            FinderSegment<Object> segment = pathIterator.next();
+            FinderSegment<Object> segment = iterator.next();
+            boolean last = !iterator.hasNext();
             currentPath.append(segment.getKey(), segment.getValue());
-            boolean last = currentPath.size() == context.getPath().size();
 
             Elements.Builder builder = new Elements.Builder().li();
             if (last) {
                 builder.css(active);
             }
-            // @formatter:off
-            builder
-                .span().css(key)
-                    .a(historyToken(context.getToken(), currentPath))
+            builder.span().css(key);
+            if (context.getToken() != null) {
+                builder.a(historyToken(context.getToken(), currentPath))
                         .textContent(segment.getBreadcrumbKey())
-                    .end()
-                .end()
-                .span().css(arrow).innerHtml(SafeHtmlUtils.fromSafeConstant("&#8658;")).end();
-            // @formatter:on
+                        .end();
+            } else {
+                builder.textContent(segment.getBreadcrumbKey());
+            }
+            builder.end().span().css(arrow).innerHtml(SafeHtmlUtils.fromSafeConstant("&#8658;")).end();
 
             builder.span();
             if (segment.supportsDropdown()) {
@@ -311,13 +306,10 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
                                     ul.appendChild(empty);
                                 } else {
                                     for (DropdownItem<Object> dropdownItem : items) {
-                                        Object item = dropdownItem.item;
-                                        ItemDisplay<Object> display = dropdownItem.display;
-                                        BreadcrumbItemHandler<Object> handler = dropdownItem.handler;
                                         Element element = new Elements.Builder().li().a()
                                                 .css(clickable)
-                                                .on(click, e -> handler.execute(item, context))
-                                                .textContent(display.getTitle()).end().end().build();
+                                                .on(click, e -> dropdownItem.onSelect(context))
+                                                .textContent(dropdownItem.getTitle()).end().end().build();
                                         ul.appendChild(element);
                                     }
                                 }

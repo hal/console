@@ -53,8 +53,8 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         void selectTlc(String nameToken);
         void showMessage(Message message);
         void tlcMode();
+        void fullscreenMode(String title);
         void applicationMode();
-        void applicationMode(String title);
         void updateBack(FinderContext finderContext);
         void updateBreadcrumb(FinderContext finderContext);
         void updateBreadcrumb(ModelBrowserPath path);
@@ -150,7 +150,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         getView().applicationMode();
     }
 
-    public void applicationMode(String title) {
-        getView().applicationMode(title);
+    public void fullscreenMode(final String title) {
+        getView().fullscreenMode(title);
     }
 }

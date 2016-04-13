@@ -38,6 +38,14 @@ public class FinderSegment<T> {
             this.display = display;
             this.handler = handler;
         }
+
+        public void onSelect(FinderContext context) {
+            handler.execute(item, context);
+        }
+
+        public String getTitle() {
+            return display.getTitle();
+        }
     }
 
 
@@ -47,18 +55,38 @@ public class FinderSegment<T> {
     }
 
 
+    private static class ItemActionBreadcrumbHandler<T> implements BreadcrumbItemHandler<T> {
+
+        private final ItemAction<T> itemAction;
+
+        private ItemActionBreadcrumbHandler(final ItemAction<T> itemAction) {this.itemAction = itemAction;}
+
+        @Override
+        public void execute(final T item, final FinderContext context) {
+            itemAction.handler.execute(item);
+        }
+    }
+
+
     private static final Logger logger = LoggerFactory.getLogger(FinderSegment.class);
 
     private final String key;
-    private String value;
-    private String breadcrumbKey;
-    private String breadcrumbValue;
+    private final String value;
+    private final String breadcrumbKey;
+    private final String breadcrumbValue;
 
     private FinderColumn<T> column;
 
     FinderSegment(final String key, final String value) {
+        this(key, value, key, value);
+    }
+
+    FinderSegment(final String key, final String value, final String breadcrumbKey,
+            final String breadcrumbValue) {
         this.key = key;
         this.value = value;
+        this.breadcrumbKey = breadcrumbKey;
+        this.breadcrumbValue = breadcrumbValue;
     }
 
     FinderSegment(final FinderColumn<T> column) {
@@ -82,6 +110,10 @@ public class FinderSegment<T> {
         return key + "=" + value;
     }
 
+    public void connect(FinderColumn<T> column) {
+        this.column = column;
+    }
+
     public String getKey() {
         return key;
     }
@@ -98,11 +130,6 @@ public class FinderSegment<T> {
         return breadcrumbValue;
     }
 
-    public void setValues(String value, String breadcrumbValue) {
-        this.value = value;
-        this.breadcrumbValue = breadcrumbValue;
-    }
-
     /**
      * @return {@code true} if this segment was initialized with a column which has an {@linkplain
      * BreadcrumbItemHandler breadcrumb item handler} and either {@linkplain FinderColumn#getInitialItems() initial
@@ -110,12 +137,14 @@ public class FinderSegment<T> {
      * FinderColumn#getBreadcrumbItemsProvider() breadcrumb items provider}.
      */
     public boolean supportsDropdown() {
-        return column != null && column.getBreadcrumbItemHandler() != null &&
-                (
-                        (column.getInitialItems() != null && !column.getInitialItems().isEmpty()) ||
-                                column.getItemsProvider() != null ||
-                                column.getBreadcrumbItemsProvider() != null
-                );
+        if (column != null) {
+            return ((column.getBreadcrumbItemHandler() != null || column.useFirstActionAsBreadcrumbHandler()) &&
+                    ((column.getInitialItems() != null && !column.getInitialItems().isEmpty()) ||
+                            column.getItemsProvider() != null ||
+                            column.getBreadcrumbItemsProvider() != null
+                    ));
+        }
+        return false;
     }
 
     public void dropdown(final FinderContext context, DropdownCallback<T> callback) {
@@ -123,7 +152,7 @@ public class FinderSegment<T> {
         AsyncCallback<List<T>> asyncCallback = new AsyncCallback<List<T>>() {
             @Override
             public void onFailure(final Throwable caught) {
-                logger.error("Cannot provide dropdown items for breadcrumb segment {}={}: {}", key, value, //NON-NLS
+                logger.error("Cannot provide dropdown items for breadcrumb segment '{}': {}", this, //NON-NLS
                         caught.getMessage());
             }
 
@@ -134,6 +163,7 @@ public class FinderSegment<T> {
             }
         };
 
+        // check the different ways to provide breadcrumb items in this order
         if (column.getBreadcrumbItemsProvider() != null) {
             column.getBreadcrumbItemsProvider().get(context, asyncCallback);
 
@@ -152,7 +182,25 @@ public class FinderSegment<T> {
             if (display.getId().equals(value)) {
                 continue;
             }
-            elements.add(new DropdownItem<>(item, display, column.getBreadcrumbItemHandler()));
+            BreadcrumbItemHandler<T> breadcrumbItemHandler = column.getBreadcrumbItemHandler();
+            if (breadcrumbItemHandler == null && column.useFirstActionAsBreadcrumbHandler()) {
+                List<ItemAction<T>> actions = display.actions();
+                if (actions != null && !actions.isEmpty()) {
+                    breadcrumbItemHandler = new ItemActionBreadcrumbHandler<>(actions.get(0));
+                } else {
+                    //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
+                    logger.error("Unable to get breadcrumb handler for segment '{}': " +
+                            "Column '{}' was specified to use first item action as breadcrumb handler, " +
+                            "but no actions were found.", this, column.getId());
+                }
+            } else {
+                //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
+                logger.error("Unable to get breadcrumb handler for segment '{}': " +
+                        "No handler found for column '{}'", this, column.getId());
+            }
+            if (breadcrumbItemHandler != null) {
+                elements.add(new DropdownItem<>(item, display, breadcrumbItemHandler));
+            }
         }
     }
 }

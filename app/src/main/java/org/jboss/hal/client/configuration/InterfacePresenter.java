@@ -15,26 +15,37 @@
  */
 package org.jboss.hal.client.configuration;
 
+import java.util.Map;
+import javax.inject.Inject;
+
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import javax.inject.Inject;
-import java.util.Map;
-
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONFIGURATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INTERFACE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
@@ -62,17 +73,24 @@ public class InterfacePresenter extends
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
+    private final OperationFactory operationFactory;
+    private final Resources resources;
     private String interfce;
 
     @Inject
     public InterfacePresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy proxy,
+            final Finder finder,
             final Dispatcher dispatcher,
-            final StatementContext statementContext) {
-        super(eventBus, view, proxy);
+            final StatementContext statementContext,
+            final OperationFactory operationFactory,
+            final Resources resources) {
+        super(eventBus, view, proxy, finder);
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
+        this.operationFactory = operationFactory;
+        this.resources = resources;
     }
 
     @Override
@@ -92,13 +110,26 @@ public class InterfacePresenter extends
         loadInterface();
     }
 
+    @Override
+    protected FinderPath finderPath() {
+        return new FinderPath()
+                .append(CONFIGURATION, Names.INTERFACES.toLowerCase(), Names.CONFIGURATION, Names.INTERFACES)
+                .append(INTERFACE, interfce, Names.INTERFACE);
+    }
+
     private void loadInterface() {
         ResourceAddress address = ROOT_TEMPLATE.resolve(statementContext, interfce);
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address).build();
         dispatcher.execute(operation, result -> getView().update(result));
     }
 
-    public void saveInterface(final Map<String, Object> changedValues) {
-        loadInterface();
+    void saveInterface(final Map<String, Object> changedValues) {
+        Composite composite = operationFactory
+                .fromChangeSet(ROOT_TEMPLATE.resolve(statementContext, interfce), changedValues);
+        dispatcher.execute(composite, (CompositeResult result) -> {
+            MessageEvent.fire(getEventBus(),
+                    Message.success(resources.messages().modifyResourceSuccess(Names.PATH, interfce)));
+            loadInterface();
+        });
     }
 }

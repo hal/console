@@ -29,10 +29,9 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LabelBuilder;
-import org.jboss.hal.client.tools.ModelBrowserPresenter;
+import org.jboss.hal.client.configuration.subsystem.GenericSubsystemPresenter;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemsProvider;
@@ -85,6 +84,21 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
     private static final AddressTemplate SUBSYSTEM_TEMPLATE = AddressTemplate.of("{selected.profile}/subsystem=*");
 
+    private static PlaceRequest subsystemPlaceRequest(SubsystemMetadata metadata, StatementContext statementContext) {
+        PlaceRequest placeRequest = null;
+        if (metadata.isBuiltIn() && metadata.getToken() != null) {
+            placeRequest = new PlaceRequest.Builder().nameToken(metadata.getToken()).build();
+
+        } else if (!metadata.isBuiltIn()) {
+            ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, metadata.getName());
+            placeRequest = new PlaceRequest.Builder()
+                    .nameToken(NameTokens.GENERIC_SUBSYSTEM)
+                    .with(GenericSubsystemPresenter.ADDRESS_PARAM, address.toString())
+                    .build();
+        }
+        return placeRequest;
+    }
+
     @Inject
     public SubsystemColumn(final Finder finder,
             final Dispatcher dispatcher,
@@ -94,8 +108,8 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
             final Resources resources) {
 
         super(new Builder<SubsystemMetadata>(finder, ModelDescriptionConstants.SUBSYSTEM, Names.SUBSYSTEM)
-                .itemRenderer(item -> new ItemDisplay<SubsystemMetadata>() {
 
+                .itemRenderer(item -> new ItemDisplay<SubsystemMetadata>() {
                     @Override
                     public String getId() {
                         return item.getName();
@@ -142,6 +156,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 })
                 .showCount()
                 .withFilter()
+                .useFirstActionAsBreadcrumbHandler()
 
                 .onPreview(item -> {
                     String camelCase = LOWER_HYPHEN.to(LOWER_CAMEL, item.getName());
@@ -182,48 +197,22 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
         setItemsProvider(itemsProvider);
 
         // reuse the items provider to provide breadcrumb items
-        setBreadcrumbItemsProvider((context, callback) -> {
-            itemsProvider.get(context, new AsyncCallback<List<SubsystemMetadata>>() {
-                @Override
-                public void onFailure(final Throwable caught) {
-                    callback.onFailure(caught);
-                }
+        setBreadcrumbItemsProvider((context, callback) ->
+                itemsProvider.get(context, new AsyncCallback<List<SubsystemMetadata>>() {
+                    @Override
+                    public void onFailure(final Throwable caught) {
+                        callback.onFailure(caught);
+                    }
 
-                @Override
-                public void onSuccess(final List<SubsystemMetadata> result) {
-                    // only subsystems w/o next columns and w/ tokens will show up in the breadcrumb dropdown
-                    //noinspection Guava
-                    List<SubsystemMetadata> subsystemsWithTokens = FluentIterable.from(result)
-                            .filter(metadata -> metadata.getToken() != null && metadata.getNextColumn() == null)
-                            .toList();
-                    callback.onSuccess(subsystemsWithTokens);
-                }
-            });
-        });
-        setBreadcrumbItemHandler((item, context) -> {
-            PlaceRequest placeRequest = subsystemPlaceRequest(item, statementContext);
-            if (placeRequest != null) {
-                FinderPath itemPath = context.getPath().copy();
-                itemPath.last().setValues(item.getName(), item.getTitle());
-
-                finder.updatePath(itemPath);
-                placeManager.revealPlace(placeRequest);
-            }
-        });
-    }
-
-    private static PlaceRequest subsystemPlaceRequest(SubsystemMetadata metadata, StatementContext statementContext) {
-        PlaceRequest placeRequest = null;
-        if (metadata.isBuiltIn() && metadata.getToken() != null) {
-            placeRequest = new PlaceRequest.Builder().nameToken(metadata.getToken()).build();
-
-        } else if (!metadata.isBuiltIn()) {
-            ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, metadata.getName());
-            placeRequest = new PlaceRequest.Builder()
-                    .nameToken(NameTokens.MODEL_BROWSER)
-                    .with(ModelBrowserPresenter.ADDRESS_PARAM, address.toString())
-                    .build();
-        }
-        return placeRequest;
+                    @Override
+                    public void onSuccess(final List<SubsystemMetadata> result) {
+                        // only subsystems w/o next columns and w/ tokens will show up in the breadcrumb dropdown
+                        //noinspection Guava
+                        List<SubsystemMetadata> subsystemsWithTokens = FluentIterable.from(result)
+                                .filter(metadata -> metadata.getToken() != null && metadata.getNextColumn() == null)
+                                .toList();
+                        callback.onSuccess(subsystemsWithTokens);
+                    }
+                }));
     }
 }

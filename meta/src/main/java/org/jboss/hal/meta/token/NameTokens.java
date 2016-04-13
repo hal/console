@@ -28,6 +28,7 @@ public interface NameTokens {
     String DEPLOYMENTS = "/deployments-finder";
     String EE = "/configuration/{profile}/ee";
     String EJB3 = "/configuration/{profile}/ejb3";
+    String GENERIC_SUBSYSTEM = "/configuration/generic";
     String HOMEPAGE = "/home";
     String IIOP = "/configuration/{profile}/iiop";
     String INTERFACE = "/interface/{name}";

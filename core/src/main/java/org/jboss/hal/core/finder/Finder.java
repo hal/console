@@ -282,22 +282,18 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     }
 
     void updateHistory() {
-        if (!context.getToken().equals(placeManager.getCurrentPlaceRequest().getNameToken())) {
-            // only finder tokens of the same type please
-            return;
+        // only finder tokens of the same type please
+        PlaceRequest current = placeManager.getCurrentPlaceRequest();
+        if (context.getToken().equals(current.getNameToken())) {
+            PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(context.getToken());
+            if (!context.getPath().isEmpty()) {
+                builder.with("path", context.getPath().toString());
+            }
+            PlaceRequest update = builder.build();
+            if (!update.equals(current)) {
+                placeManager.updateHistory(update, true);
+            }
         }
-        PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(context.getToken());
-        if (!context.getPath().isEmpty()) {
-            builder.with("path", context.getPath().toString());
-        }
-        PlaceRequest update = builder.build();
-        if (!update.equals(placeManager.getCurrentPlaceRequest())) {
-            placeManager.updateHistory(update, true);
-        }
-    }
-
-    void publishContext() {
-        eventBus.fireEvent(new FinderContextEvent(context));
     }
 
     void selectColumn(String columnId) {
@@ -327,10 +323,6 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         }
     }
 
-    FinderColumn getColumn(String columnId) {
-        return columns.get(columnId);
-    }
-
     void showPreview(PreviewContent preview) {
         Elements.removeChildrenFrom(previewColumn);
         if (preview != null) {
@@ -358,7 +350,6 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         selectColumn(initialColumn);
         showPreview(initialPreview);
         updateHistory();
-        publishContext();
     }
 
     /**
@@ -417,7 +408,6 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                         FinderColumn column = context.pop();
                         processLastColumnSelection(column);
                         updateHistory();
-                        publishContext();
                     }
                 }
 
@@ -426,7 +416,6 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                     FinderColumn column = context.pop();
                     processLastColumnSelection(column);
                     updateHistory();
-                    publishContext();
                 }
 
                 private void processLastColumnSelection(FinderColumn column) {
@@ -442,14 +431,6 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         }
     }
 
-    /**
-     * Updates the finder path. This methods emits a {@link FinderContextEvent} to publish the updated path.
-     */
-    public void updatePath(FinderPath path) {
-        context.reset(path);
-        publishContext();
-    }
-
     @Override
     public void onSecurityContextChange(final SecurityContext securityContext) {
         for (FinderColumn column : columns.values()) {
@@ -459,6 +440,10 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     public String getId() {
         return id;
+    }
+
+    public FinderColumn getColumn(String columnId) {
+        return columns.get(columnId);
     }
 
     public FinderContext getContext() {

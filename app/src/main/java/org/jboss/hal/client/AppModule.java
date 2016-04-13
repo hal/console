@@ -29,6 +29,8 @@ import org.jboss.hal.client.configuration.InterfacePresenter;
 import org.jboss.hal.client.configuration.InterfaceView;
 import org.jboss.hal.client.configuration.PathsPresenter;
 import org.jboss.hal.client.configuration.PathsView;
+import org.jboss.hal.client.configuration.subsystem.GenericSubsystemPresenter;
+import org.jboss.hal.client.configuration.subsystem.GenericSubsystemView;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourcePresenter;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceView;
@@ -116,6 +118,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 DeploymentPresenter.MyView.class,
                 DeploymentView.class,
                 DeploymentPresenter.MyProxy.class);
+
+        bindPresenter(GenericSubsystemPresenter.class,
+                GenericSubsystemPresenter.MyView.class,
+                GenericSubsystemView.class,
+                GenericSubsystemPresenter.MyProxy.class);
 
         bindPresenter(HomepagePresenter.class,
                 HomepagePresenter.MyView.class,

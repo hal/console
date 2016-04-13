@@ -37,7 +37,7 @@ public class Subsystems {
         // built-in subsystems
         // TODO set builtin flag to true once the subsystem implementations are in place
         add(new SubsystemMetadata("batch-jberet", "Batch", "JBeret", NameTokens.BATCH, null, false));
-        add(new SubsystemMetadata("datasources", Names.DATASOURCE, null, null, Ids.DATA_SOURCE_TYPE_COLUMN, true));
+        add(new SubsystemMetadata("datasources", Names.DATASOURCE, null, null, ModelDescriptionConstants.DATA_SOURCE, true));
         add(new SubsystemMetadata("deployment-scanner", "Deployment Scanners", null, NameTokens.DEPLOYMENT_SCANNERS, null, false));
         add(new SubsystemMetadata("ee", "EE", null, NameTokens.EE, null, false));
         add(new SubsystemMetadata("ejb3", "EJB3", null, NameTokens.EJB3, null, false));

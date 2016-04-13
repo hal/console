@@ -17,9 +17,6 @@ package org.jboss.hal.core.finder;
 
 /**
  * Handler which will be invoked when selecting one of the items in the breadcrumb dropdown.
- * <p>
- * When the handler navigates to another place which changes the finder path, the handler must call {@link
- * Finder#updatePath(FinderPath)} with the updated finder path!
  *
  * @author Harald Pehl
  */

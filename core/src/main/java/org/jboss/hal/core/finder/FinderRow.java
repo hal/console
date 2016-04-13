@@ -163,7 +163,6 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         finder.reduceTo(column);
         finder.updateContext();
         finder.updateHistory();
-        finder.publishContext();
         appendNextColumn();
         // </keep>
         showPreview();

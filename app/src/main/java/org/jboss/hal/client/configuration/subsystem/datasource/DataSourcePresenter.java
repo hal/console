@@ -24,6 +24,8 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.ProfileSelectionEvent;
+import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
@@ -75,10 +77,11 @@ public class DataSourcePresenter extends
     public DataSourcePresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy proxy,
+            final Finder finder,
             final Resources resources,
             final Dispatcher dispatcher,
             final StatementContext statementContext) {
-        super(eventBus, view, proxy);
+        super(eventBus, view, proxy, finder);
         this.resources = resources;
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
@@ -106,6 +109,11 @@ public class DataSourcePresenter extends
     protected void onReset() {
         super.onReset();
         loadDataSource();
+    }
+
+    @Override
+    protected FinderPath finderPath() {
+        return null;
     }
 
     private void loadDataSource() {
