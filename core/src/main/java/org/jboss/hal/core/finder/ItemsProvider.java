@@ -15,9 +15,9 @@
  */
 package org.jboss.hal.core.finder;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import java.util.List;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * Function to load the items of the <em>current</em> column. Use the finder context and its path to find out what is

@@ -13,14 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom;
+package org.jboss.hal.core.finder;
+
+import java.util.List;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
- * Meant to be implemented by elements which have a title.
+ * Function to load the items shown in the breadcrumb dropdown. Normally this list equals to the list which is returned
+ * by {@link ItemsProvider}.
  *
  * @author Harald Pehl
  */
-public interface HasTitle {
+@FunctionalInterface
+public interface BreadcrumbItemsProvider<T> {
 
-    String getTitle();
+    void get(FinderContext context, AsyncCallback<List<T>> callback);
 }

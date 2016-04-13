@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom;
+package org.jboss.hal.core.finder;
 
 /**
- * Meant to be implemented by elements which have a title.
+ * Handler which will be invoked when selecting one of the items in the breadcrumb dropdown.
  *
  * @author Harald Pehl
  */
-public interface HasTitle {
+@FunctionalInterface
+public interface BreadcrumbItemHandler<T> {
 
-    String getTitle();
+    void execute(T item, FinderContext context);
 }

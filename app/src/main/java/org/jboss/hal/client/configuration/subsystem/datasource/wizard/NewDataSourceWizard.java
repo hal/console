@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
+import java.util.List;
+
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSource;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
@@ -27,9 +29,9 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import java.util.List;
-
-import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.JDBC_DRIVER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.SELECTED_DATA_SOURCE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.SELECTED_XA_DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.State.*;
 
 /**
@@ -49,7 +51,7 @@ public class NewDataSourceWizard extends Wizard<Context, State> {
                 resources.messages().addResourceTitle(xa ? Names.XA_DATASOURCE : Names.DATASOURCE),
                 new Context(environment.isStandalone(), xa));
 
-        AddressTemplate dataSourceTemplate = xa ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE;
+        AddressTemplate dataSourceTemplate = xa ? SELECTED_XA_DATA_SOURCE_TEMPLATE : SELECTED_DATA_SOURCE_TEMPLATE;
         Metadata dataSourceMetadata = metadataRegistry.lookup(dataSourceTemplate);
         Metadata driverMetadata = metadataRegistry.lookup(JDBC_DRIVER_TEMPLATE);
 

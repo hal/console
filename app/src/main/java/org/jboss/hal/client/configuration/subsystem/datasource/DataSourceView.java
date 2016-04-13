@@ -15,11 +15,15 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.inject.Inject;
+
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
@@ -32,12 +36,11 @@ import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityFramework;
 import org.jboss.hal.resources.Names;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
-import static org.jboss.hal.resources.Ids.*;
+import static org.jboss.hal.resources.Ids.DATA_SOURCE_ATTRIBUTES_FORM;
+import static org.jboss.hal.resources.Ids.DATA_SOURCE_ATTRIBUTES_TAB;
+import static org.jboss.hal.resources.Ids.DATA_SOURCE_CONNECTION_FORM;
+import static org.jboss.hal.resources.Ids.DATA_SOURCE_CONNECTION_TAB;
 import static org.jboss.hal.resources.Names.ATTRIBUTES;
 
 /**
@@ -56,8 +59,8 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
             ResourceDescriptions descriptions,
             Capabilities capabilities) {
 
-        SecurityContext securityContext = securityFramework.lookup(AddressTemplates.DATA_SOURCE_TEMPLATE);
-        ResourceDescription description = descriptions.lookup(AddressTemplates.DATA_SOURCE_TEMPLATE);
+        SecurityContext securityContext = securityFramework.lookup(AddressTemplates.ANY_DATA_SOURCE_TEMPLATE);
+        ResourceDescription description = descriptions.lookup(AddressTemplates.ANY_DATA_SOURCE_TEMPLATE);
         Metadata metadata = new Metadata(securityContext, description, capabilities);
 
         Element info = new Elements.Builder().p().textContent(description.getDescription()).end().build();

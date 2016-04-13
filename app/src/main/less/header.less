@@ -83,12 +83,14 @@
 }
 
 .hal-breadcrumb {
+  //display: table;
   display: flex;
   flex-wrap: nowrap;
   margin-bottom: 0;
   padding-top: 10px;
   padding-bottom: 9px;
-  overflow-y: auto;
+  // TODO If we enable this dropdown menus will be clipped
+  //overflow-y: auto;
 
   @media (max-width: 767px) {
     padding-top: 5px;
@@ -96,14 +98,7 @@
   }
   #gradient > .vertical(@navbar-pf-navbar-primary-bg-color-start, @navbar-pf-navbar-primary-bg-color-stop);
 
-  .active {
-    color: #7dc3e8;
-    .key:after {
-      color: #bee1f4;
-    }
-  }
-
-  li {
+  > li {
     color: #fff;
     display: flex;
     flex-wrap: nowrap;
@@ -113,15 +108,7 @@
       font-size: 12px;
     }
 
-    a {
-      color: #fff;
-
-      &.back {
-        padding-left: 20px;
-      }
-    }
-    .key:after {
-      content: "\21d2";
+    > .arrow {
       color: #999;
       font-size: 14px;
       padding: 0 5px;
@@ -130,12 +117,32 @@
       }
     }
 
+    > a, .key > a, .value > a, .value.dropdown > a {
+      color: #fff;
+
+      &.back {
+        padding-left: 20px;
+      }
+    }
+
+    .value > .value-dropdown {
+      max-height: 400px;
+      overflow-x: scroll;
+      top: 26px;
+
+      li.empty{
+        color: #999;
+        font-style: italic;
+        padding: 5px;
+      }
+    }
+
     .back, .key, .value {
       white-space: nowrap;
     }
   }
 
-  li + li:before {
+  > li + li:before {
     content: '/';
     font-size: 14px;
     @media (max-width: 767px) {
@@ -143,4 +150,15 @@
     }
     padding: 0 10px;
   }
+
+  li.active {
+    color: #7dc3e8;
+    .arrow {
+      color: #bee1f4;
+    }
+    > a, .key > a, .value > a, .value.dropdown > a {
+      color: #7dc3e8;
+    }
+  }
+
 }

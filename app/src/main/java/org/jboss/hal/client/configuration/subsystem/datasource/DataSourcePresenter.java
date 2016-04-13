@@ -15,12 +15,17 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
+import java.util.Map;
+import javax.inject.Inject;
+
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.ProfileSelectionEvent;
+import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
@@ -39,10 +44,10 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import javax.inject.Inject;
-import java.util.Map;
-
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STANDALONE;
 
 /**
  * @author Harald Pehl
@@ -53,7 +58,7 @@ public class DataSourcePresenter extends
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.DATA_SOURCE)
-    @Requires(AddressTemplates.DATA_SOURCE_ADDRESS)
+    @Requires(AddressTemplates.ANY_DATA_SOURCE_ADDRESS)
     public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<DataSourcePresenter> {
@@ -72,10 +77,11 @@ public class DataSourcePresenter extends
     public DataSourcePresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy proxy,
+            final Finder finder,
             final Resources resources,
             final Dispatcher dispatcher,
             final StatementContext statementContext) {
-        super(eventBus, view, proxy);
+        super(eventBus, view, proxy, finder);
         this.resources = resources;
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
@@ -105,14 +111,20 @@ public class DataSourcePresenter extends
         loadDataSource();
     }
 
+    @Override
+    protected FinderPath finderPath() {
+        return null;
+    }
+
     private void loadDataSource() {
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
-                AddressTemplates.DATA_SOURCE_TEMPLATE.resolve(statementContext, datasource)).build();
+                AddressTemplates.SELECTED_DATA_SOURCE_TEMPLATE.resolve(statementContext, datasource)).build();
         dispatcher.execute(operation, result -> getView().update(datasource, result));
     }
 
     void saveDataSource(final Map<String, Object> changedValues) {
-        ResourceAddress resourceAddress = AddressTemplates.DATA_SOURCE_TEMPLATE.resolve(statementContext, datasource);
+        ResourceAddress resourceAddress = AddressTemplates.SELECTED_DATA_SOURCE_TEMPLATE
+                .resolve(statementContext, datasource);
         Composite composite = operationFactory.fromChangeSet(resourceAddress, changedValues);
 
         dispatcher.execute(composite, (CompositeResult result) -> {

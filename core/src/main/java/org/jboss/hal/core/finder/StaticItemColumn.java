@@ -53,16 +53,16 @@ public class StaticItemColumn extends FinderColumn<StaticItem> {
         }
     }
 
-    public StaticItemColumn(final Finder finder, final String id, String title,
-            List<StaticItem> items) {
+    public StaticItemColumn(final Finder finder, final String id, final String title,
+            final List<StaticItem> items) {
         super(new Builder<StaticItem>(finder, id, title)
                 .itemRenderer(StaticItemDisplay::new)
                 .initialItems(items)
                 .onPreview(StaticItem::getPreviewContent));
     }
 
-    public StaticItemColumn(final Finder finder, final String id, String title,
-            ItemsProvider<StaticItem> itemsProvider) {
+    public StaticItemColumn(final Finder finder, final String id, final String title,
+            final ItemsProvider<StaticItem> itemsProvider) {
         super(new Builder<StaticItem>(finder, id, title)
                 .itemRenderer(StaticItemDisplay::new)
                 .itemsProvider(itemsProvider)

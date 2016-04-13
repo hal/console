@@ -15,6 +15,15 @@
  */
 package org.jboss.hal.core.finder;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -36,23 +45,16 @@ import org.jboss.hal.core.finder.ColumnRegistry.LookupCallback;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
-import org.jboss.hal.resources.CSS;
 import org.jboss.hal.spi.Footer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.lang.Math.max;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.column;
+import static org.jboss.hal.resources.CSS.finder;
+import static org.jboss.hal.resources.CSS.finderPreview;
+import static org.jboss.hal.resources.CSS.row;
 import static org.jboss.hal.resources.Ids.FINDER;
 
 /**
@@ -69,10 +71,10 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
      */
     private class SelectFunction implements Function<FunctionContext> {
 
-        private final FinderPath.Segment segment;
+        private final FinderSegment segment;
         private final Element columnElement;
 
-        private SelectFunction(final FinderPath.Segment segment, final Element columnElement) {
+        private SelectFunction(final FinderSegment segment, final Element columnElement) {
             this.segment = segment;
             this.columnElement = columnElement;
         }
@@ -268,39 +270,30 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     void updateContext() {
         context.getPath().clear();
-        context.getBreadcrumb().clear();
 
-        for (Element column : Elements.children(root)) {
-            if (column == previewColumn) {
+        for (Element columnElement : Elements.children(root)) {
+            if (columnElement == previewColumn) {
                 break;
             }
-            String key = column.getId();
-            String breadcrumbKey = String.valueOf(column.getDataset().at(DATA_BREADCRUMB));
-            Element activeItem = column.querySelector("li." + CSS.active); //NON-NLS
-            if (activeItem != null) {
-                String value = activeItem.getId();
-                String breadcrumbValue = String.valueOf(activeItem.getDataset().at(DATA_BREADCRUMB));
-                if (key != null && value != null) {
-                    context.getPath().append(key, value);
-                }
-                if (breadcrumbKey != null && breadcrumbValue != null) {
-                    context.getBreadcrumb().append(breadcrumbKey, breadcrumbValue);
-                }
-            }
+            String key = columnElement.getId();
+            FinderColumn column = columns.get(key);
+            context.getPath().append(column);
         }
     }
 
-    void publishContext() {
+    void updateHistory() {
+        // only finder tokens of the same type please
         PlaceRequest current = placeManager.getCurrentPlaceRequest();
-        PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(current.getNameToken());
-        if (!context.getPath().isEmpty()) {
-            builder.with("path", context.getPath().toString());
+        if (context.getToken().equals(current.getNameToken())) {
+            PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(context.getToken());
+            if (!context.getPath().isEmpty()) {
+                builder.with("path", context.getPath().toString());
+            }
+            PlaceRequest update = builder.build();
+            if (!update.equals(current)) {
+                placeManager.updateHistory(update, true);
+            }
         }
-        PlaceRequest update = builder.build();
-        if (!current.equals(update)) {
-            placeManager.updateHistory(update, true);
-        }
-        eventBus.fireEvent(new FinderContextEvent(context));
     }
 
     void selectColumn(String columnId) {
@@ -330,10 +323,6 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         }
     }
 
-    FinderColumn getColumn(String columnId) {
-        return columns.get(columnId);
-    }
-
     void showPreview(PreviewContent preview) {
         Elements.removeChildrenFrom(previewColumn);
         if (preview != null) {
@@ -346,19 +335,30 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     // ------------------------------------------------------ public interface
 
-    public void reset(final String token, final String initialColumn, final PreviewContent initialPreview) {
+    /**
+     * Resets the finder to its initial state by showing the initial column and preview.
+     */
+    public void reset(final String token, final String initialColumn, final PreviewContent initialPreview,
+            AsyncCallback<FinderColumn> callback) {
         initialColumnsByToken.put(token, initialColumn);
 
         while (root.getFirstChild() != previewColumn) {
             root.removeChild(root.getFirstChild());
         }
         context.reset(token);
-        appendColumn(initialColumn, null);
+        appendColumn(initialColumn, callback);
         selectColumn(initialColumn);
         showPreview(initialPreview);
-        publishContext();
+        updateHistory();
     }
 
+    /**
+     * Selects the columns as specified in the finder path. Please note that this might be a complex and long running
+     * operation since each segment in the finder path is turned into a function. The function will load and initialize
+     * the column and select the item as specified in the segment.
+     * <p>
+     * If the path is empty, the fallback operation is executed.
+     */
     public void select(final String token, final FinderPath path, final Runnable fallback) {
         if (path.isEmpty()) {
             fallback.run();
@@ -373,8 +373,8 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 String match = null;
                 FinderPath newPath = path.reversed();
                 FinderPath currentPath = context.getPath().reversed();
-                for (FinderPath.Segment newSegment : newPath) {
-                    for (FinderPath.Segment currentSegment : currentPath) {
+                for (FinderSegment newSegment : newPath) {
+                    for (FinderSegment currentSegment : currentPath) {
                         if (newSegment.getKey().equals(currentSegment.getKey())) {
                             match = newSegment.getKey();
                             break;
@@ -393,7 +393,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             int index = 0;
             Function[] functions = new Function[path.size()];
             HTMLCollection columns = root.getChildren();
-            for (FinderPath.Segment segment : path) {
+            for (FinderSegment segment : path) {
                 Element column = index < columns.getLength() ? (Element) columns.item(index) : null;
                 functions[index] = new SelectFunction(segment, column);
                 index++;
@@ -407,7 +407,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                     } else if (!context.emptyStack()) {
                         FinderColumn column = context.pop();
                         processLastColumnSelection(column);
-                        publishContext();
+                        updateHistory();
                     }
                 }
 
@@ -415,7 +415,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 public void onSuccess(final FunctionContext context) {
                     FinderColumn column = context.pop();
                     processLastColumnSelection(column);
-                    publishContext();
+                    updateHistory();
                 }
 
                 private void processLastColumnSelection(FinderColumn column) {
@@ -440,6 +440,10 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     public String getId() {
         return id;
+    }
+
+    public FinderColumn getColumn(String columnId) {
+        return columns.get(columnId);
     }
 
     public FinderContext getContext() {

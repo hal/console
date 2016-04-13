@@ -35,6 +35,7 @@ public interface CSS {
     String alertInfo = "alert-info";
     String alertSuccess = "alert-success";
     String alertWarning = "alert-warning";
+    String arrow = "arrow";
     String attributes = "attributes";
     String blankSlatePf = "blank-slate-pf";
     String blankSlatePfIcon = "blank-slate-pf-icon";
@@ -190,6 +191,7 @@ public interface CSS {
     String toastPfTopRight = "toast-pf-top-right";
     String ttNested = "tt-nested";
     String value = "value";
+    String valueDropdown = "value-dropdown";
     String warningTriangleO = "warning-triangle-o";
     String wizardHeader = "wizard-header";
     String wizardProgress = "wizard-progress";

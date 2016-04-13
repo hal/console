@@ -70,7 +70,7 @@ public class Accordion implements IsElement {
                             .data("parent", "#" + this.id)
                             .aria(UIConstants.CONTROLS, id)
                             .aria(UIConstants.EXPANDED, String.valueOf(firstPanel))
-                            .attr(UIConstants.ROLE, "button") //NON-NLS
+                            .attr(UIConstants.ROLE, UIConstants.BUTTON)
                             .textContent(title)
                         .end()
                     .end()

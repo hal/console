@@ -42,10 +42,10 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String FOLDER_ELEMENT = "folderElement";
     private static final String BUTTON_CONTAINER = "buttonContainer";
-    private static final String TOOLTIP_TARGET = "tooltipTarget";
 
     private final Finder finder;
     private final FinderColumn<T> column;
+    private final ItemDisplay<T> display;
     private final String nextColumn;
     private final String id;
     private final T item;
@@ -64,10 +64,11 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
 
         this.finder = finder;
         this.column = column;
+        this.display = display;
         this.nextColumn = display.nextColumn();
         this.id = display.getId();
         this.item = item;
-        this.primaryAction = display.actions().isEmpty() ? null : display.actions().iterator().next().handler;
+        this.primaryAction = display.actions().isEmpty() ? null : display.actions().get(0).handler;
         this.previewContent = previewCallback != null ? previewCallback.onPreview(item) : new PreviewContent(
                 display.getTitle());
 
@@ -80,23 +81,20 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
             eb.css(display.getMarker().name().toLowerCase() + "-marker");
         }
 
-        Element tooltipTarget;
+        Element itemElement;
         if (display.asElement() != null) {
-            eb.add(display.asElement());
-            tooltipTarget = display.asElement();
+            itemElement = display.asElement();
         } else if (display.getTitle() != null) {
-            eb.span().css(itemText).textContent(display.getTitle()).rememberAs(TOOLTIP_TARGET).end();
-            tooltipTarget = eb.referenceFor(TOOLTIP_TARGET);
+            itemElement = new Elements.Builder().span().css(itemText).textContent(display.getTitle()).end().build();
         } else {
-            eb.span().css(itemText).textContent(NOT_AVAILABLE).rememberAs(TOOLTIP_TARGET).end();
-            tooltipTarget = eb.referenceFor(TOOLTIP_TARGET);
+            itemElement = new Elements.Builder().span().css(itemText).textContent(NOT_AVAILABLE).end().build();
         }
-
-        if (display.getTooltip() != null && tooltipTarget != null) {
-            tooltipTarget.setTitle(display.getTooltip());
-            tooltipTarget.getDataset().setAt(UIConstants.TOGGLE, UIConstants.TOOLTIP);
-            tooltipTarget.getDataset().setAt(UIConstants.PLACEMENT, "top");
+        if (display.getTooltip() != null && itemElement != null) {
+            itemElement.setTitle(display.getTooltip());
+            itemElement.getDataset().setAt(UIConstants.TOGGLE, UIConstants.TOOLTIP);
+            itemElement.getDataset().setAt(UIConstants.PLACEMENT, "top");
         }
+        eb.add(itemElement);
 
         if (display.nextColumn() != null) {
             eb.span().css(folder, fontAwesome("angle-right")).rememberAs(FOLDER_ELEMENT).end();
@@ -164,7 +162,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         // <keep> this in order!
         finder.reduceTo(column);
         finder.updateContext();
-        finder.publishContext();
+        finder.updateHistory();
         appendNextColumn();
         // </keep>
         showPreview();
@@ -222,5 +220,9 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
 
     T getItem() {
         return item;
+    }
+
+    ItemDisplay<T> getDisplay() {
+        return display;
     }
 }

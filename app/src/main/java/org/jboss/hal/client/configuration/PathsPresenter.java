@@ -15,10 +15,16 @@
  */
 package org.jboss.hal.client.configuration;
 
+import java.util.List;
+import java.util.Map;
+import javax.inject.Inject;
+
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
@@ -37,11 +43,8 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Map;
-
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONFIGURATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.meta.token.NameTokens.PATH;
@@ -76,11 +79,12 @@ public class PathsPresenter extends
     public PathsPresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy proxy,
+            final Finder finder,
             final Resources resources,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
             final OperationFactory operationFactory) {
-        super(eventBus, view, proxy);
+        super(eventBus, view, proxy, finder);
         this.resources = resources;
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
@@ -97,6 +101,12 @@ public class PathsPresenter extends
     protected void onReset() {
         super.onReset();
         loadPaths();
+    }
+
+    @Override
+    protected FinderPath finderPath() {
+        return new FinderPath()
+                .append(CONFIGURATION, Names.PATHS.toLowerCase(), Names.CONFIGURATION, Names.PATHS);
     }
 
     void loadPaths() {

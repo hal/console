@@ -15,6 +15,9 @@
  */
 package org.jboss.hal.client.configuration;
 
+import java.util.List;
+import javax.inject.Inject;
+
 import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -32,11 +35,10 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
-import javax.inject.Inject;
-import java.util.List;
-
 import static java.util.Arrays.asList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 
 @AsyncColumn(value = ModelDescriptionConstants.INTERFACE)
 @Requires(InterfacePresenter.ROOT_ADDRESS)
@@ -49,17 +51,21 @@ public class InterfaceColumn extends FinderColumn<Property> {
             final Dispatcher dispatcher) {
 
         super(new Builder<Property>(finder, ModelDescriptionConstants.INTERFACE, Names.INTERFACE)
+
                 .columnAction(columnActionFactory.add(
                         IdBuilder.build(ModelDescriptionConstants.INTERFACE, "add"),
                         Names.INTERFACE,
                         InterfacePresenter.ROOT_TEMPLATE,
                         "inet-address"))
                 .columnAction(columnActionFactory.refresh(IdBuilder.build(ModelDescriptionConstants.INTERFACE, "refresh")))
+
                 .itemsProvider((context, callback) -> {
                     Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
                             .param(CHILD_TYPE, ModelDescriptionConstants.INTERFACE).build();
                     dispatcher.execute(operation, result -> { callback.onSuccess(result.asPropertyList()); });
-                }));
+                })
+
+                .useFirstActionAsBreadcrumbHandler());
 
         setItemRenderer(property -> new ItemDisplay<Property>() {
             @Override

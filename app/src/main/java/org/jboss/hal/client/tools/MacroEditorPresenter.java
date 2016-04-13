@@ -15,6 +15,10 @@
  */
 package org.jboss.hal.client.tools;
 
+import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.web.bindery.event.shared.EventBus;
@@ -27,8 +31,7 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.ballroom.HasTitle;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.FullscreenPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -40,16 +43,11 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import java.util.List;
-
 /**
  * @author Harald Pehl
  */
 public class MacroEditorPresenter
-        extends ApplicationPresenter<MacroEditorPresenter.MyView, MacroEditorPresenter.MyProxy>
-        implements HasTitle {
+        extends FullscreenPresenter<MacroEditorPresenter.MyView, MacroEditorPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyStandard
@@ -82,7 +80,7 @@ public class MacroEditorPresenter
             final Macros macros,
             @Footer Provider<Progress> progress,
             final Resources resources) {
-        super(eventBus, view, proxy);
+        super(eventBus, view, proxy, resources.constants().macroEditor());
         this.dispatcher = dispatcher;
         this.macros = macros;
         this.progress = progress;
@@ -124,13 +122,7 @@ public class MacroEditorPresenter
         }
     }
 
-    @Override
-    public String getTitle() {
-        return resources.constants().macroEditor();
-    }
-
     void play(Macro macro) {
-        // TODO Disable play button during playback
         List<MacroOperationFunction> functions = Lists
                 .transform(macro.getOperations(),
                         operation -> new MacroOperationFunction(dispatcher, operation));

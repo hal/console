@@ -15,13 +15,13 @@
  */
 package org.jboss.hal.meta.subsystem;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Harald Pehl
@@ -37,7 +37,7 @@ public class Subsystems {
         // built-in subsystems
         // TODO set builtin flag to true once the subsystem implementations are in place
         add(new SubsystemMetadata("batch-jberet", "Batch", "JBeret", NameTokens.BATCH, null, false));
-        add(new SubsystemMetadata("datasources", Names.DATASOURCE, null, null, Ids.DATA_SOURCE_TYPE_COLUMN, true));
+        add(new SubsystemMetadata("datasources", Names.DATASOURCE, null, null, ModelDescriptionConstants.DATA_SOURCE, true));
         add(new SubsystemMetadata("deployment-scanner", "Deployment Scanners", null, NameTokens.DEPLOYMENT_SCANNERS, null, false));
         add(new SubsystemMetadata("ee", "EE", null, NameTokens.EE, null, false));
         add(new SubsystemMetadata("ejb3", "EJB3", null, NameTokens.EJB3, null, false));

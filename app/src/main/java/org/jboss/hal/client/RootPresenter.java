@@ -66,11 +66,11 @@ public class RootPresenter extends Presenter<RootPresenter.MyView, RootPresenter
         headerPresenter.tlcMode();
     }
 
-    void applicationMode() {
-        headerPresenter.applicationMode();
+    void fullscreenMode(final String title) {
+        headerPresenter.fullscreenMode(title);
     }
 
-    void applicationMode(String title) {
-        headerPresenter.applicationMode(title);
+    void applicationMode() {
+        headerPresenter.applicationMode();
     }
 }
