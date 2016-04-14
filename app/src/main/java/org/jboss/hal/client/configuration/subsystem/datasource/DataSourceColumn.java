@@ -82,7 +82,9 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             final ItemActionFactory itemActionFactory) {
 
         super(new Builder<DataSource>(finder, ModelDescriptionConstants.DATA_SOURCE, Names.DATASOURCE)
-                .onPreview(item -> new PreviewContent(item.getName())));
+                .onPreview(item -> new PreviewContent(item.getName()))
+                .useFirstActionAsBreadcrumbHandler());
+
         this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
         this.environment = environment;

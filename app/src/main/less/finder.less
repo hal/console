@@ -91,7 +91,6 @@
         cursor: pointer;
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
         padding: @finder-padding-tb @finder-padding-lr;
 
         &.active {
@@ -115,7 +114,7 @@
         }
 
         .item-text {
-          margin-right: 10px;
+          flex: 1 1 auto;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -125,6 +124,13 @@
           display: block;
           font-size: 10px;
           color: #8b8d8f;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .unpin, .pin, .folder, .btn-group, button {
+          margin-left: 10px;
         }
       }
 
@@ -140,11 +146,40 @@
         .item-text {
           font-style: italic;
           color: #8b8d8f;
+          flex-grow: 0;
         }
       }
 
       > li.empty:hover {
         background: none;
+      }
+    }
+
+    > ul.pinnable {
+      > li.pinned {
+        .pin, .unpin {
+          display: none;
+        }
+        &:hover {
+          .unpin {
+            display: inherit;
+          }
+        }
+      }
+
+      > li.pinned.last {
+        border-bottom: 1px solid @finder-border-color;
+      }
+
+      > li.unpinned {
+        .pin, .unpin {
+          display: none;
+        }
+        &:hover {
+          .pin {
+            display: inherit;
+          }
+        }
       }
     }
   }

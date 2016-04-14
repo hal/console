@@ -193,6 +193,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String ok();
     String operations();
     String output();
+    String pin();
     String ping();
     String play();
     String recordingStarted();
@@ -229,6 +230,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String type();
     String unknownError();
     String unknownResource();
+    String unpin();
     String view();
     String xaProperties();
     String yes();

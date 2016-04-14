@@ -23,12 +23,11 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.core.ProfileSelectionEvent;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.SubsystemPresenter;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
@@ -44,16 +43,15 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DATA_SOURCE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.STANDALONE;
 
 /**
  * @author Harald Pehl
  */
 public class DataSourcePresenter extends
-        ApplicationPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy> {
+        SubsystemPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -96,13 +94,8 @@ public class DataSourcePresenter extends
 
     @Override
     public void prepareFromRequest(final PlaceRequest request) {
-        super.prepareFromRequest(request);
-        String profile = request.getParameter(PROFILE, null);
-        if (profile != null && !STANDALONE.equals(profile)) {
-            getEventBus().fireEvent(new ProfileSelectionEvent(profile));
-        }
+        // TODO error handling when datasource is invalid or null
         datasource = request.getParameter(NAME, null);
-        // TODO error handling when profile / datasource is invalid or null
     }
 
     @Override
@@ -113,7 +106,8 @@ public class DataSourcePresenter extends
 
     @Override
     protected FinderPath finderPath() {
-        return null;
+        return FinderPath.subsystemPath(statementContext.selectedProfile(), Names.DATASOURCES.toLowerCase())
+                .append(DATA_SOURCE, datasource, Names.DATASOURCE);
     }
 
     private void loadDataSource() {

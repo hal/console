@@ -62,7 +62,7 @@ public class ProfileColumn extends FinderColumn<ModelNode> {
             final PlaceManager placeManager,
             final StatementContext statementContext) {
 
-        super(new Builder<ModelNode>(finder, ModelDescriptionConstants.PROFILE, Names.PROFILES)
+        super(new Builder<ModelNode>(finder, ModelDescriptionConstants.PROFILE, Names.PROFILE)
                 .columnAction(columnActionFactory.add(
                         IdBuilder.build(ModelDescriptionConstants.PROFILE, "add"),
                         Names.PROFILE,

@@ -25,6 +25,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental.dom.Element;
+import elemental.dom.NodeList;
 import elemental.events.Event;
 import elemental.events.KeyboardEvent;
 import elemental.events.KeyboardEvent.KeyCode;
@@ -73,6 +74,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         private ItemRenderer<T> itemRenderer;
         private boolean showCount;
         private boolean withFilter;
+        private boolean pinnable;
         private PreviewCallback<T> previewCallback;
         private BreadcrumbItemsProvider<T> breadcrumbItemsProvider;
         private BreadcrumbItemHandler<T> breadcrumbItemHandler;
@@ -89,6 +91,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             this.columnActions = new ArrayList<>();
             this.showCount = false;
             this.withFilter = false;
+            this.pinnable = false;
             this.items = new ArrayList<>();
         }
 
@@ -104,6 +107,11 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
         public Builder<T> withFilter() {
             this.withFilter = true;
+            return this;
+        }
+
+        public Builder<T> pinnable() {
+            this.pinnable = true;
             return this;
         }
 
@@ -177,6 +185,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     private final String id;
     private final String title;
     private final boolean showCount;
+    private final boolean pinnable;
     private final Element columnActions;
     private final List<T> initialItems;
     private ItemsProvider<T> itemsProvider;
@@ -204,6 +213,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         this.id = builder.id;
         this.title = builder.title;
         this.showCount = builder.showCount;
+        this.pinnable = builder.pinnable;
         this.initialItems = builder.items;
         this.itemsProvider = builder.itemsProvider;
         this.itemRenderer = builder.itemRenderer;
@@ -257,7 +267,11 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
 
         // rows
-        eb.ul().rememberAs(UL_ELEMENT).end().end(); // </ul> && </div>
+        eb.ul();
+        if (pinnable) {
+            eb.css(CSS.pinnable);
+        }
+        eb.rememberAs(UL_ELEMENT).end().end(); // </ul> && </div>
 
         // no items marker
         noItems = new Elements.Builder().li().css(empty)
@@ -497,6 +511,81 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
     }
 
+    boolean isPinnable() {
+        return pinnable;
+    }
+
+    void unpin(final FinderRow<T> row) {
+        row.asElement().getClassList().remove(pinned);
+        row.asElement().getClassList().add(unpinned);
+
+        // move row to unpinned section
+        ulElement.removeChild(row.asElement());
+        NodeList nodes = ulElement.querySelectorAll("." + unpinned);
+        if (nodes.getLength() == 0) {
+            // no unpinned rows append to bottom
+            ulElement.appendChild(row.asElement());
+        } else {
+            Element before = findPosition(nodes, row);
+            if (before != null) {
+                ulElement.insertBefore(row.asElement(), before);
+            } else {
+                ulElement.appendChild(row.asElement());
+            }
+        }
+        adjustPinSeparator();
+    }
+
+    void pin(final FinderRow<T> row) {
+        row.asElement().getClassList().remove(unpinned);
+        row.asElement().getClassList().add(pinned);
+
+        // move row to pinned section
+        ulElement.removeChild(row.asElement());
+        NodeList nodes = ulElement.querySelectorAll("." + pinned);
+        if (nodes.getLength() == 0) {
+            // no pinned rows append to top
+            ulElement.insertBefore(row.asElement(), ulElement.getFirstChild());
+        } else {
+            Element before = findPosition(nodes, row);
+            if (before != null) {
+                ulElement.insertBefore(row.asElement(), before);
+            } else {
+                Element firstUnpinned = ulElement.querySelector("." + unpinned);
+                if (firstUnpinned != null) {
+                    ulElement.insertBefore(row.asElement(), firstUnpinned);
+                } else {
+                    ulElement.appendChild(row.asElement());
+                }
+            }
+        }
+        adjustPinSeparator();
+        row.asElement().scrollIntoView(false);
+    }
+
+    private Element findPosition(NodeList nodes, FinderRow<T> row) {
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element currentElement = (Element) nodes.item(i);
+            FinderRow<T> currentRow = row(currentElement);
+            if (currentRow.getDisplay().getTitle().compareTo(row.getDisplay().getTitle()) > 0) {
+                return currentElement;
+            }
+        }
+        return null;
+    }
+
+    private void adjustPinSeparator() {
+        NodeList nodes = ulElement.querySelectorAll("." + pinned);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element element = (Element) nodes.item(i);
+            if (i == nodes.getLength() - 1) {
+                element.getClassList().add(last);
+            } else {
+                element.getClassList().remove(last);
+            }
+        }
+    }
+
     void setItems(AsyncCallback<FinderColumn> callback) {
         if (!initialItems.isEmpty()) {
             setItems(initialItems, callback);
@@ -526,6 +615,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             filterElement.setValue("");
         }
 
+        // TODO group/order if isPinnable() before appending to ul
         for (T item : items) {
             FinderRow<T> row = new FinderRow<>(finder, this, item,
                     itemRenderer.render(item), previewCallback);

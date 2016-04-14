@@ -27,6 +27,7 @@ public interface Names {
     String CONFIGURATION = "Configuration";
     String CONTENT_REPOSITORY = "Content Repository";
     String DATASOURCE = "Datasource";
+    String DATASOURCES = "Datasources";
     String DEPLOYMENTS = "Deployments";
     String HAL = "HAL";
     String HOSTS = "Hosts";

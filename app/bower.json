@@ -15,12 +15,12 @@
     "datatables.net-select": "~1.1.2",
     "jquery": "~2.2.2",
     "jstree": "~3.2.1",
-    "patternfly": "~3.3.2",
+    "patternfly": "~3.3.3",
     "tagmanager": "~3.0.2",
     "typeahead.js": "~0.11.1",
     "zeroclipboard": "^2.2.0"
   },
   "resolutions": {
-    "jquery": "~2.2.2"
+    "jquery": "~2.2.3"
   }
 }

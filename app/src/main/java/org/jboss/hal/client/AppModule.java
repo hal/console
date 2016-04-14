@@ -20,7 +20,6 @@ import com.gwtplatform.mvp.client.annotations.DefaultPlace;
 import com.gwtplatform.mvp.client.annotations.ErrorPlace;
 import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
-import com.gwtplatform.mvp.shared.proxy.RouteTokenFormatter;
 import org.jboss.hal.client.accesscontrol.AccessControlPresenter;
 import org.jboss.hal.client.accesscontrol.AccessControlView;
 import org.jboss.hal.client.configuration.ConfigurationPresenter;
@@ -69,7 +68,7 @@ public class AppModule extends AbstractTemplatedPresenterModule {
 
         DefaultModule defaultModule = new DefaultModule.Builder()
                 .placeManager(HalPlaceManager.class)
-                .tokenFormatter(RouteTokenFormatter.class)
+                // .tokenFormatter(RouteTokenFormatter.class)
                 .build();
         install(defaultModule);
 

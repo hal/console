@@ -104,6 +104,7 @@ public interface CSS {
     String inputGroupBtn = "input-group-btn";
     String itemText = "item-text";
     String key = "key";
+    String last = "last";
     String lead = "lead";
     String listGroup = "list-group";
     String listGroupItem = "list-group-item";
@@ -121,7 +122,6 @@ public interface CSS {
     String listViewPfStacked = "list-view-pf-stacked";
     String loading = "loading";
     String loadingContainer = "loading-container";
-    String macroConsole = "macro-console";
     String macroEditor = "macro-editor";
     String macroList = "macro-list";
     String messageDetails = "message-details";
@@ -156,6 +156,9 @@ public interface CSS {
     String panelGroup = "panel-group";
     String panelHeading = "panel-heading";
     String panelTitle = "panel-title";
+    String pin = "pin";
+    String pinned = "pinned";
+    String pinnable = "pinnable";
     String progress = "progress";
     String progressBar = "progress-bar";
     String progressBarStriped = "progress-bar-striped";
@@ -190,6 +193,8 @@ public interface CSS {
     String toastPfMaxWidth = "toast-pf-max-width";
     String toastPfTopRight = "toast-pf-top-right";
     String ttNested = "tt-nested";
+    String unpin = "unpin";
+    String unpinned = "unpinned";
     String value = "value";
     String valueDropdown = "value-dropdown";
     String warningTriangleO = "warning-triangle-o";

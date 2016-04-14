@@ -33,6 +33,7 @@ import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.OperationFactory;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
@@ -57,6 +58,7 @@ public class IiopPresenter extends SubsystemPresenter<IiopPresenter.MyView, Iiop
 
     public interface MyView extends PatternFlyView, HasPresenter<IiopPresenter> {
         void update(ModelNode modelNode);
+        void clear();
     }
     // @formatter:on
 
@@ -103,16 +105,23 @@ public class IiopPresenter extends SubsystemPresenter<IiopPresenter.MyView, Iiop
     }
 
     private void load() {
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, ROOT_TEMPLATE.resolve(statementContext))
+        ResourceAddress address = ROOT_TEMPLATE.resolve(statementContext);
+        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
                 .build();
-        dispatcher.execute(operation, result -> getView().update(result));
+        dispatcher.execute(operation,
+                result -> getView().update(result),
+                (o, failure) -> {
+                    MessageEvent.fire(getEventBus(), Message.error(resources.constants().unknownResource(),
+                            resources.messages().unknownResource(address.toString(), failure)));
+                    getView().clear();
+                });
     }
 
     public void save(final Map<String, Object> changedValues) {
         Composite composite = operationFactory.fromChangeSet(ROOT_TEMPLATE.resolve(statementContext), changedValues);
         dispatcher.execute(composite, (CompositeResult result) -> {
             MessageEvent.fire(getEventBus(),
-                    Message.success(resources.messages().modifySingleResourceSuccess(IIOP_OPENJDK))); //NON-NLS
+                    Message.success(resources.messages().modifySingleResourceSuccess(IIOP_OPENJDK)));
             load();
         });
     }

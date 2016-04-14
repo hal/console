@@ -80,4 +80,9 @@ public class IiopView extends PatternFlyViewImpl implements IiopPresenter.MyView
     public void update(final ModelNode modelNode) {
         form.view(modelNode);
     }
+
+    @Override
+    public void clear() {
+        form.clear();
+    }
 }

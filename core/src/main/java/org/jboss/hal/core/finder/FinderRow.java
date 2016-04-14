@@ -31,7 +31,7 @@ import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
 
 /**
  * UI class for a single row in in a finder column. Only used internally in the finder.
- *
+ * <p>
  * TODO Add an option to activate an inline progress element which sets a striped background for long running
  * actions like 'restart server group'. Think about replacing the actions with a cancel button
  *
@@ -80,6 +80,9 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         if (display.getMarker() != null) {
             eb.css(display.getMarker().name().toLowerCase() + "-marker");
         }
+        if (column.isPinnable()) {
+            eb.css(unpinned);
+        }
 
         Element itemElement;
         if (display.asElement() != null) {
@@ -96,10 +99,26 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         }
         eb.add(itemElement);
 
+        // oder: 1) pin/unpin icon, 2) folder icon, 3) button(s)
+        if (column.isPinnable()) {
+            eb.span()
+                    .css(unpin, pfIcon("close"))
+                    .title(CONSTANTS.unpin())
+                    .on(click, e -> {
+                        e.stopPropagation();
+                        column.unpin(FinderRow.this);
+                    }).end();
+            eb.span()
+                    .css(pin, pfIcon("thumb-tack-o"))
+                    .title(CONSTANTS.pin())
+                    .on(click, e -> {
+                        e.stopPropagation();
+                        column.pin(FinderRow.this);
+                    }).end();
+        }
         if (display.nextColumn() != null) {
             eb.span().css(folder, fontAwesome("angle-right")).rememberAs(FOLDER_ELEMENT).end();
         }
-
         if (!display.actions().isEmpty()) {
             if (display.actions().size() == 1) {
                 ItemAction<T> action = display.actions().get(0);

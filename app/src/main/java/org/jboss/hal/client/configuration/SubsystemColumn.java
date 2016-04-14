@@ -161,6 +161,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 })
                 .showCount()
                 .withFilter()
+                .pinnable()
                 .useFirstActionAsBreadcrumbHandler()
 
                 .onPreview(item -> {
