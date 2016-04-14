@@ -22,10 +22,11 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.core.ProfileSelectionEvent;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.SubsystemPresenter;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
@@ -41,7 +42,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
  * @author Harald Pehl
  */
 public class GenericSubsystemPresenter
-        extends ApplicationPresenter<GenericSubsystemPresenter.MyView, GenericSubsystemPresenter.MyProxy> {
+        extends SubsystemPresenter<GenericSubsystemPresenter.MyView, GenericSubsystemPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyStandard
@@ -77,6 +78,11 @@ public class GenericSubsystemPresenter
             address = AddressTemplate.of(parameter).resolve(statementContext);
         } else {
             address = ResourceAddress.ROOT;
+        }
+        for (Property property : address.asPropertyList()) {
+            if (PROFILE.equals(property.getName())) {
+                getEventBus().fireEvent(new ProfileSelectionEvent(property.getValue().asString()));
+            }
         }
     }
 

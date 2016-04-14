@@ -253,14 +253,16 @@ public final class AddressTemplate {
         return AddressTemplate.of(join(this.optional, replacedTokens));
     }
 
-    /**
-     * Returns the resource type of the last segment for this address template
-     *
-     * @return the resource type
-     */
-    public String getResourceType() {
+    public String lastKey() {
         if (!tokens.isEmpty() && tokens.getLast().hasKey()) {
             return tokens.getLast().getKey();
+        }
+        return null;
+    }
+
+    public String lastValue() {
+        if (!tokens.isEmpty() && tokens.getLast().hasKey()) {
+            return tokens.getLast().getValue();
         }
         return null;
     }

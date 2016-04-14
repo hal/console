@@ -30,11 +30,11 @@ import org.jboss.gwt.elemento.core.IsElement;
  *
  * @author Harald Pehl
  */
-public abstract class PatternFlyPresenter<V extends PatternFlyView, Proxy_ extends Proxy<?>>
+abstract class PatternFlyPresenter<V extends PatternFlyView, Proxy_ extends Proxy<?>>
         extends HalPresenter<V, Proxy_>
         implements IsElement, HasElements {
 
-    public PatternFlyPresenter(final EventBus eventBus, final V view, final Proxy_ proxy,
+    PatternFlyPresenter(final EventBus eventBus, final V view, final Proxy_ proxy,
             final GwtEvent.Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, slot);
     }

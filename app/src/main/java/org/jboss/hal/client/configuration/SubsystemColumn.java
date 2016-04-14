@@ -55,6 +55,7 @@ import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
 import static java.util.Collections.singletonList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION;
 import static org.jboss.hal.resources.CSS.itemText;
@@ -87,7 +88,9 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
     private static PlaceRequest subsystemPlaceRequest(SubsystemMetadata metadata, StatementContext statementContext) {
         PlaceRequest placeRequest = null;
         if (metadata.isBuiltIn() && metadata.getToken() != null) {
-            placeRequest = new PlaceRequest.Builder().nameToken(metadata.getToken()).build();
+            placeRequest = new PlaceRequest.Builder().nameToken(metadata.getToken())
+                    .with(PROFILE, statementContext.selectedProfile())
+                    .build();
 
         } else if (!metadata.isBuiltIn()) {
             ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, metadata.getName());
@@ -206,10 +209,10 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
                     @Override
                     public void onSuccess(final List<SubsystemMetadata> result) {
-                        // only subsystems w/o next columns and w/ tokens will show up in the breadcrumb dropdown
+                        // only subsystems w/o next columns will show up in the breadcrumb dropdown
                         //noinspection Guava
                         List<SubsystemMetadata> subsystemsWithTokens = FluentIterable.from(result)
-                                .filter(metadata -> metadata.getToken() != null && metadata.getNextColumn() == null)
+                                .filter(metadata -> metadata.getNextColumn() == null)
                                 .toList();
                         callback.onSuccess(subsystemsWithTokens);
                     }

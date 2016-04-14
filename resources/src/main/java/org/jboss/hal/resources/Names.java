@@ -31,6 +31,7 @@ public interface Names {
     String HAL = "HAL";
     String HOSTS = "Hosts";
     String INTERFACE = "Interface";
+    String IIOP_OPENJDK = "IIOP (OpenJDK)";
     String INTERFACES = "Interfaces";
     String MANAGEMENT_CONSOLE = "Management Console";
     String MANAGEMENT_MODEL = "Management Model";

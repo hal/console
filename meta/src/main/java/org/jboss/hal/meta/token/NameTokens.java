@@ -20,40 +20,36 @@ import java.util.Set;
 @SuppressWarnings("DuplicateStringLiteralInspection")
 public interface NameTokens {
 
-    String ACCESS_CONTROL = "/access-control-finder";
-    String BATCH = "/configuration/{profile}/batch-jberet";
-    String CONFIGURATION = "/configuration-finder";
-    String DATA_SOURCE = "/configuration/{profile}/data-source/{name}";
-    String DEPLOYMENT_SCANNERS = "/configuration/{profile}/deployment-scanners";
-    String DEPLOYMENTS = "/deployments-finder";
-    String EE = "/configuration/{profile}/ee";
-    String EJB3 = "/configuration/{profile}/ejb3";
-    String GENERIC_SUBSYSTEM = "/configuration/generic";
+    String ACCESS_CONTROL = "/access-control";
+    String BATCH = "/batch-jberet/{profile}";
+    String CONFIGURATION = "/configuration";
+    String DATA_SOURCE = "/data-source/{profile}/{name}";
+    String DEPLOYMENT_SCANNERS = "/deployment-scanners/{profile}";
+    String DEPLOYMENTS = "/deployments";
+    String EE = "/ee/{profile}";
+    String EJB3 = "/ejb3/{profile}";
+    String GENERIC_SUBSYSTEM = "/generic";
     String HOMEPAGE = "/home";
-    String IIOP = "/configuration/{profile}/iiop";
+    String IIOP = "/iiop/{profile}";
     String INTERFACE = "/interface/{name}";
-    String IO = "/configuration/{profile}/io";
-    String JCA = "/configuration/{profile}/jca";
-    String JMX = "/configuration/{profile}/jmx";
-    String JPA = "/configuration/{profile}/jpa";
-    String LOGGING = "/configuration/{profile}/logging";
+    String IO = "/io/{profile}";
+    String JCA = "/jca/{profile}";
+    String JMX = "/jmx/{profile}";
+    String JPA = "/jpa/{profile}";
+    String LOGGING = "/logging/{profile}";
     String MACRO_EDITOR = "/macro-editor";
     String MODEL_BROWSER = "/model-browser";
-    String PATCHING = "/patching-finder";
+    String PATCHING = "/patching";
     String PATH = "/path";
-    String REMOTING = "/configuration/{profile}/remoting";
-    String REQUEST_CONTROLLER = "/configuration/{profile}/request-controller";
-    String RUNTIME = "/runtime-finder";
+    String REMOTING = "/remoting/{profile}";
+    String REQUEST_CONTROLLER = "/request-controller/{profile}";
+    String RUNTIME = "/runtime";
     String SOCKET_BINDING = "/socket-binding/{name}";
     String SYSTEM_PROPERTIES = "/system-properties";
-    String TRANSACTIONS = "/configuration/{profile}/transactions";
+    String TRANSACTIONS = "/transactions/{profile}";
     String UNDER_THE_BRIDGE = "/utb";
-    String WEBSERVICES = "/configuration/{profile}/webservices";
-    String XA_DATA_SOURCE = "/configuration/{profile}/xa-data-source/{name}";
+    String WEBSERVICES = "/webservices/{profile}";
+    String XA_DATA_SOURCE = "/xa-data-source/{profile}/{name}";
 
     Set<String> getTokens();
-
-    boolean wasRevealed(String token);
-
-    void markedRevealed(String token);
 }

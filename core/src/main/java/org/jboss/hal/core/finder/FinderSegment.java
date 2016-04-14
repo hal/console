@@ -182,6 +182,7 @@ public class FinderSegment<T> {
             if (display.getId().equals(value)) {
                 continue;
             }
+
             BreadcrumbItemHandler<T> breadcrumbItemHandler = column.getBreadcrumbItemHandler();
             if (breadcrumbItemHandler == null && column.useFirstActionAsBreadcrumbHandler()) {
                 List<ItemAction<T>> actions = display.actions();
@@ -193,13 +194,16 @@ public class FinderSegment<T> {
                             "Column '{}' was specified to use first item action as breadcrumb handler, " +
                             "but no actions were found.", this, column.getId());
                 }
+            }
+
+            if (breadcrumbItemHandler != null) {
+                elements.add(new DropdownItem<>(item, display, breadcrumbItemHandler));
             } else {
+                // This method only gets called when supportsDropdown() returned true.
+                // So there has to be a handler
                 //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
                 logger.error("Unable to get breadcrumb handler for segment '{}': " +
                         "No handler found for column '{}'", this, column.getId());
-            }
-            if (breadcrumbItemHandler != null) {
-                elements.add(new DropdownItem<>(item, display, breadcrumbItemHandler));
             }
         }
     }

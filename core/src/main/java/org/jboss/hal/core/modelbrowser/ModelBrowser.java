@@ -29,6 +29,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.ButtonElement;
+import elemental.js.util.JsArrayOf;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.flow.Async;
@@ -71,10 +72,7 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.js.JsHelper.asList;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Key.ANY_GROUP;
 import static org.jboss.hal.meta.StatementContext.Key.ANY_PROFILE;
 import static org.jboss.hal.resources.CSS.*;
@@ -82,6 +80,7 @@ import static org.jboss.hal.resources.Names.NYI;
 
 /**
  * TODO Removing a filter in a scoped model browser does not work
+ *
  * @author Harald Pehl
  */
 public class ModelBrowser implements HasElements {
@@ -251,6 +250,20 @@ public class ModelBrowser implements HasElements {
         tree.attach();
         tree.onSelectionChange((event, selectionContext) -> onTreeSelection(selectionContext));
         childrenPanel.attach();
+    }
+
+    private void emptyTree() {
+        Context context = new Context(ResourceAddress.ROOT, Collections.emptySet());
+        Node<Context> rootNode = new Node.Builder<>(ROOT_ID, Names.NOT_AVAILABLE, context)
+                .folder()
+                .build();
+
+        tree = new Tree<>(Ids.MODEL_BROWSER, rootNode, (node, callback) -> callback.result(JsArrayOf.create()));
+        Elements.removeChildrenFrom(treeContainer);
+        treeContainer.appendChild(tree.asElement());
+        tree.attach();
+        childrenPanel.hide();
+        resourcePanel.hide();
     }
 
 
@@ -528,12 +541,35 @@ public class ModelBrowser implements HasElements {
             throw new IllegalArgumentException("Invalid root address: " + root +
                     ". ModelBrowser.setRoot() must be called with a concrete address.");
         }
-        initTree(root, resource);
-        tree.api().openNode(ROOT_ID, () -> resourcePanel.tabs.showTab(0));
-        select(ROOT_ID, false);
 
-        Browser.getWindow().setOnresize(event -> adjustHeight());
-        adjustHeight();
+        Operation ping = new Operation.Builder(READ_RESOURCE_OPERATION, root).build();
+        dispatcher.execute(ping,
+                result -> {
+                    initTree(root, resource);
+                    tree.api().openNode(ROOT_ID, () -> resourcePanel.tabs.showTab(0));
+                    select(ROOT_ID, false);
+
+                    Browser.getWindow().setOnresize(event -> adjustHeight());
+                    adjustHeight();
+                },
+
+                (operation, failure) -> {
+                    emptyTree();
+                    MessageEvent.fire(eventBus, Message.error(resources.constants().unknownResource(),
+                            resources.messages().unknownResource(root.toString(), failure)));
+
+                    Browser.getWindow().setOnresize(event -> adjustHeight());
+                    adjustHeight();
+                },
+
+                (operation, exception) -> {
+                    emptyTree();
+                    MessageEvent.fire(eventBus, Message.error(resources.constants().unknownResource(),
+                            resources.messages().unknownResource(root.toString(), exception.getMessage())));
+
+                    Browser.getWindow().setOnresize(event -> adjustHeight());
+                    adjustHeight();
+                });
     }
 
     public void select(final String id, final boolean closeSelected) {

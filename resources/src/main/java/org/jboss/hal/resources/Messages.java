@@ -57,6 +57,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml listHint();
     String messages(@PluralCount int count);
     String modifyResourceSuccess(String type, String name);
+    String modifySingleResourceSuccess(String type);
     SafeHtml noMacrosDescription(String startMacro);
     String pageNotFound(String invalidHistoryToken);
     String patternMismatch(String pattern);
@@ -69,5 +70,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml requiredMarker();
     String updateAvailable(String current, String update);
     String unit(String unit);
+    String unknownResource(String address, String reason);
     //@formatter:on
 }

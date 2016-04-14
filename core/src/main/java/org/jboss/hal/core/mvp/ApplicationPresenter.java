@@ -37,7 +37,7 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
 
     protected final Finder finder;
 
-    public ApplicationPresenter(final EventBus eventBus, final V view, final Proxy_ proxy, final Finder finder) {
+    protected ApplicationPresenter(final EventBus eventBus, final V view, final Proxy_ proxy, final Finder finder) {
         super(eventBus, view, proxy, Slots.MAIN);
         this.finder = finder;
     }
@@ -54,6 +54,8 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
      * directly using the breadcrumb dropdown, this information is crucial to restore the path in the finder context.
      * <p>
      * If this method returns {@code null} the path in the finder context is not touched.
+     * <p>
+     * Lifecycle: The method is called in {@link #onReset()}.
      */
     protected abstract FinderPath finderPath();
 

@@ -69,18 +69,33 @@ public class AddressTemplateTest {
     }
 
     @Test
-    public void resourceType() {
+    public void lastKey() {
         AddressTemplate at = AddressTemplate.of("/");
-        assertNull(at.getResourceType());
+        assertNull(at.lastKey());
 
         at = AddressTemplate.of("a=b");
-        assertEquals("a", at.getResourceType());
+        assertEquals("a", at.lastKey());
 
         at = AddressTemplate.of("a=b/{c}");
-        assertNull(at.getResourceType());
+        assertNull(at.lastKey());
 
         at = AddressTemplate.of("{a}/b={c}");
-        assertEquals("b", at.getResourceType());
+        assertEquals("b", at.lastKey());
+    }
+
+    @Test
+    public void lastValue() {
+        AddressTemplate at = AddressTemplate.of("/");
+        assertNull(at.lastValue());
+
+        at = AddressTemplate.of("a=b");
+        assertEquals("b", at.lastValue());
+
+        at = AddressTemplate.of("a=b/{c}");
+        assertNull(at.lastValue());
+
+        at = AddressTemplate.of("{a}/b={c}");
+        assertEquals("{c}", at.lastValue());
     }
 
     @Test

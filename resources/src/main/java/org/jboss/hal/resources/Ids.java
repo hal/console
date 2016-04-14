@@ -71,6 +71,8 @@ public interface Ids {
     String HOMEPAGE_RUNTIME_SERVER_SECTION = "homepage-runtime-server-section";
     String HOMEPAGE_RUNTIME_SERVER_GROUP_SECTION = "homepage-runtime-server-group-section";
 
+    String IIOP_FORM = "iiop-form";
+
     String MACRO_CONSOLE = "macro-console";
     String MACRO_EDITOR = "macro-editor";
     String MACRO_LIST = "macro-list";

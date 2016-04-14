@@ -228,6 +228,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String tools();
     String type();
     String unknownError();
+    String unknownResource();
     String view();
     String xaProperties();
     String yes();
