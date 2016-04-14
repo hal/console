@@ -15,6 +15,12 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.gwt.regexp.shared.RegExp;
@@ -26,16 +32,12 @@ import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.form.TagsManager.Bridge;
 import org.jboss.hal.resources.CSS;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import static org.jboss.hal.ballroom.IdBuilder.build;
 import static org.jboss.hal.ballroom.IdBuilder.uniqueId;
 import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.formControl;
+import static org.jboss.hal.resources.CSS.properties;
+import static org.jboss.hal.resources.CSS.tagManagerContainer;
 
 /**
  * @author Harald Pehl
@@ -112,8 +114,8 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
 
     @Override
     protected void setReadonlyValue(final Map<String, String> value) {
+        Elements.removeChildrenFrom(valueElement);
         if (value != null && !value.isEmpty()) {
-            Elements.removeChildrenFrom(valueElement);
             for (Element element : keyValueElements(value)) {
                 valueElement.appendChild(element);
             }

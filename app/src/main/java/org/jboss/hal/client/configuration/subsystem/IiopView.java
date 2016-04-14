@@ -54,6 +54,7 @@ public class IiopView extends PatternFlyViewImpl implements IiopPresenter.MyView
         form = new ModelNodeForm.Builder<>(Ids.IIOP_FORM, metadata)
                 .onSave((form, changedValues) -> presenter.save(changedValues))
                 .build();
+        registerAttachable(form);
 
         // @formatter:off
         Element layout = new LayoutBuilder()

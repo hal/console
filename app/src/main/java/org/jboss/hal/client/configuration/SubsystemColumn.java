@@ -88,9 +88,11 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
     private static PlaceRequest subsystemPlaceRequest(SubsystemMetadata metadata, StatementContext statementContext) {
         PlaceRequest placeRequest = null;
         if (metadata.isBuiltIn() && metadata.getToken() != null) {
-            placeRequest = new PlaceRequest.Builder().nameToken(metadata.getToken())
-                    .with(PROFILE, statementContext.selectedProfile())
-                    .build();
+            PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(metadata.getToken());
+            if (statementContext.selectedProfile() != null) {
+                builder.with(PROFILE, statementContext.selectedProfile());
+            }
+            placeRequest = builder.build();
 
         } else if (!metadata.isBuiltIn()) {
             ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, metadata.getName());
