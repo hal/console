@@ -1,5 +1,6 @@
 package org.jboss.hal.ballroom;
 
+import org.jboss.hal.resources.IdBuilder;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

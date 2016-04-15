@@ -32,8 +32,8 @@ import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.form.TagsManager.Bridge;
 import org.jboss.hal.resources.CSS;
 
-import static org.jboss.hal.ballroom.IdBuilder.build;
-import static org.jboss.hal.ballroom.IdBuilder.uniqueId;
+import static org.jboss.hal.resources.IdBuilder.build;
+import static org.jboss.hal.resources.IdBuilder.uniqueId;
 import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.formControl;
 import static org.jboss.hal.resources.CSS.properties;

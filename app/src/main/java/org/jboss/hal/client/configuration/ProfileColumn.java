@@ -20,7 +20,7 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.client.configuration.subsystem.GenericSubsystemPresenter;
 import org.jboss.hal.core.ProfileSelectionEvent;
 import org.jboss.hal.core.finder.ColumnActionFactory;

@@ -25,7 +25,7 @@ import com.google.gwt.user.client.Window;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.client.configuration.subsystem.datasource.wizard.NewDataSourceWizard;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;

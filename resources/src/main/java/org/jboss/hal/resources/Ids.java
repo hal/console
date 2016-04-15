@@ -82,6 +82,8 @@ public interface Ids {
     String PATHS_TABLE = "paths-table";
     String ROOT_CONTAINER = "hal-root-container";
 
+    String STORAGE_PREFIX = "org.jboss.hal";
+
     String TLC_ACCESS_CONTROL = "tlc-access-control";
     String TLC_CONFIGURATION = "tlc-configuration";
     String TLC_DEPLOYMENTS = "tlc-deployments";

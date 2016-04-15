@@ -21,6 +21,7 @@ import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.UIConstants;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;

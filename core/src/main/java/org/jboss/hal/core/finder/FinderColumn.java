@@ -18,26 +18,30 @@ package org.jboss.hal.core.finder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.dom.NodeList;
 import elemental.events.Event;
 import elemental.events.KeyboardEvent;
 import elemental.events.KeyboardEvent.KeyCode;
 import elemental.html.InputElement;
+import elemental.html.Storage;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -534,6 +538,12 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             }
         }
         adjustPinSeparator();
+
+        // remove from local storage
+        Storage storage = Browser.getWindow().getLocalStorage();
+        if (storage != null) {
+            storage.removeItem(storageKey(row.getDisplay()));
+        }
     }
 
     void pin(final FinderRow<T> row) {
@@ -561,6 +571,12 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
         adjustPinSeparator();
         row.asElement().scrollIntoView(false);
+
+        // save to local storage
+        Storage storage = Browser.getWindow().getLocalStorage();
+        if (storage != null) {
+            storage.setItem(storageKey(row.getDisplay()), "pinned"); //NON-NLS
+        }
     }
 
     private Element findPosition(NodeList nodes, FinderRow<T> row) {
@@ -572,6 +588,10 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             }
         }
         return null;
+    }
+
+    private String storageKey(ItemDisplay<T> display) {
+        return IdBuilder.build(Ids.STORAGE_PREFIX, '.', getId(), display.getId());
     }
 
     private void adjustPinSeparator() {
@@ -616,8 +636,34 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
 
         // TODO group/order if isPinnable() before appending to ul
-        for (T item : items) {
-            FinderRow<T> row = new FinderRow<>(finder, this, item,
+        List<T> pinnedItems = new ArrayList<>();
+        List<T> unpinnedItems = new ArrayList<>();
+        Storage storage = Browser.getWindow().getLocalStorage();
+        if (storage != null) {
+            for (T item : items) {
+                String pinned = storage.getItem(storageKey(itemRenderer.render(item)));
+                if (pinned != null) {
+                    pinnedItems.add(item);
+                } else {
+                    unpinnedItems.add(item);
+                }
+            }
+        } else {
+            unpinnedItems.addAll(items);
+        }
+
+        for (Iterator<T> iterator = pinnedItems.iterator(); iterator.hasNext(); ) {
+            T item = iterator.next();
+            FinderRow<T> row = new FinderRow<>(finder, this, item, true,
+                    itemRenderer.render(item), previewCallback);
+            rows.put(row.getId(), row);
+            ulElement.appendChild(row.asElement());
+            if (!iterator.hasNext()) {
+                row.asElement().getClassList().add(last);
+            }
+        }
+        for (T item : unpinnedItems) {
+            FinderRow<T> row = new FinderRow<>(finder, this, item, false,
                     itemRenderer.render(item), previewCallback);
             rows.put(row.getId(), row);
             ulElement.appendChild(row.asElement());

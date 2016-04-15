@@ -32,7 +32,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.jboss.hal.ballroom;
+package org.jboss.hal.resources;
+
+import java.util.List;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -40,8 +42,6 @@ import com.google.common.collect.Lists;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.Widget;
 import org.jetbrains.annotations.NonNls;
-
-import java.util.List;
 
 /**
  * Helper to generate unique IDs.
@@ -51,6 +51,10 @@ import java.util.List;
 public final class IdBuilder {
 
     public static String build(@NonNls String id, @NonNls String... additionalIds) {
+        return build(id, '-', additionalIds);
+    }
+
+    public static String build(@NonNls String id, char separator, @NonNls String... additionalIds) {
         if (Strings.emptyToNull(id) == null) {
             throw new IllegalArgumentException("Id must not be null");
         }
@@ -60,7 +64,7 @@ public final class IdBuilder {
                 ids.add(Strings.emptyToNull(additionalId));
             }
         }
-        return Joiner.on('-').skipNulls().join(ids);
+        return Joiner.on(separator).skipNulls().join(ids);
     }
 
     public static void set(Widget widget, @NonNls String id) {

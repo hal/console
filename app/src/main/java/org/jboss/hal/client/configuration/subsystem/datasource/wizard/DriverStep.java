@@ -17,7 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.wizard.WizardStep;

@@ -21,6 +21,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
+import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.UIConstants;
 
@@ -59,6 +60,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
     FinderRow(final Finder finder,
             final FinderColumn<T> column,
             final T item,
+            final boolean pinned,
             final ItemDisplay<T> display,
             final PreviewCallback<T> previewCallback) {
 
@@ -81,7 +83,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
             eb.css(display.getMarker().name().toLowerCase() + "-marker");
         }
         if (column.isPinnable()) {
-            eb.css(unpinned);
+            eb.css(pinned ? CSS.pinned : CSS.unpinned);
         }
 
         Element itemElement;

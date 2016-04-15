@@ -27,8 +27,8 @@ import org.jboss.hal.resources.CSS;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jboss.hal.ballroom.IdBuilder.build;
-import static org.jboss.hal.ballroom.IdBuilder.uniqueId;
+import static org.jboss.hal.resources.IdBuilder.build;
+import static org.jboss.hal.resources.IdBuilder.uniqueId;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.*;

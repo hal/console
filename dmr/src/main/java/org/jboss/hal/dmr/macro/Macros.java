@@ -15,17 +15,20 @@
  */
 package org.jboss.hal.dmr.macro;
 
-import com.google.gwt.storage.client.Storage;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.Operation;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import elemental.client.Browser;
+import elemental.html.Storage;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -36,7 +39,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 public class Macros {
 
-    private static final String KEY_PREFIX = "org.jboss.hal.macros.";
+    private static final String KEY_PREFIX = IdBuilder.build(Ids.STORAGE_PREFIX, '.', "macros");
 
     private final Map<String, Macro> macros;
     private final Storage storage;
@@ -44,7 +47,7 @@ public class Macros {
     private MacroOptions options;
 
     public Macros() {
-        storage = Storage.getLocalStorageIfSupported();
+        storage = Browser.getWindow().getLocalStorage();
         macros = load();
     }
 
@@ -132,7 +135,7 @@ public class Macros {
             current.seal();
             macros.put(current.getName(), current);
             if (storage != null) {
-                storage.setItem(KEY_PREFIX + current.getName(), serialize(current));
+                storage.setItem(IdBuilder.build(KEY_PREFIX, '.', current.getName()), serialize(current));
             }
 
             current = null;
