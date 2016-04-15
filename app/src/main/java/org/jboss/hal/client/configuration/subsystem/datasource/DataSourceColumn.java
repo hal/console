@@ -52,6 +52,7 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.itemText;
 import static org.jboss.hal.resources.CSS.subtitle;
 
@@ -92,8 +93,10 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         this.templates = templates;
 
         addColumnAction(columnActionFactory.add(IdBuilder.build(ModelDescriptionConstants.DATA_SOURCE, "add"),
-                column -> launchNewDataSourceWizard(false)));
-        // TODO Add action for XA datasources
+                resources.messages().addResourceTitle(Names.DATASOURCE), column -> launchNewDataSourceWizard(false)));
+        addColumnAction(columnActionFactory.add(IdBuilder.build(ModelDescriptionConstants.XA_DATA_SOURCE, "add"),
+                resources.messages().addResourceTitle(Names.XA_DATASOURCE), fontAwesome("credit-card"),
+                column -> launchNewDataSourceWizard(true)));
         addColumnAction(columnActionFactory.refresh(IdBuilder.build(ModelDescriptionConstants.DATA_SOURCE, "refresh")));
 
         setItemsProvider((context, callback) -> {
@@ -151,14 +154,16 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 ResourceAddress dataSourceAddress = dataSourceAddress(dataSource);
 
                 String profile = environment.isStandalone() ? STANDALONE : statementContext.selectedProfile();
-                PlaceRequest viewRequest = new PlaceRequest.Builder()
-                        .nameToken(dataSource.isXa() ? NameTokens.XA_DATA_SOURCE : NameTokens.DATA_SOURCE)
+                PlaceRequest.Builder builder = new PlaceRequest.Builder()
+                        .nameToken(NameTokens.DATA_SOURCE)
                         .with(PROFILE, profile)
-                        .with(NAME, dataSource.getName()) //NON-NLS
-                        .build();
+                        .with(NAME, dataSource.getName());
+                if (dataSource.isXa()) {
+                    builder.with(DataSourcePresenter.XA_PARAM, String.valueOf(true));
+                }
 
                 List<ItemAction<DataSource>> actions = new ArrayList<>();
-                actions.add(itemActionFactory.view(viewRequest));
+                actions.add(itemActionFactory.view(builder.build()));
                 actions.add(itemActionFactory.remove(Names.DATASOURCE, dataSource.getName(),
                         SELECTED_DATA_SOURCE_TEMPLATE, DataSourceColumn.this));
                 if (isEnabled(dataSource)) {

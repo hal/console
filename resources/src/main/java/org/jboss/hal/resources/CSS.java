@@ -210,10 +210,20 @@ public interface CSS {
         return column + "-" + columnMedium + "-" + offset + "-" + String.valueOf(columns);
     }
 
+    /**
+     * Builds a Font Awesome CSS class.
+     *
+     * @param name the name of the Font awesome icon <strong>w/o</strong> the "fa fa-" prefix.
+     */
     static String fontAwesome(@NonNls String name) {
         return "fa fa-" + name; //NON-NLS
     }
 
+    /**
+     * Builds a PatternFly icon class.
+     *
+     * @param name the name of the PatternFly icon <strong>w/o</strong> the "pficon pficon-" prefix.
+     */
     static String pfIcon(@NonNls String name) {
         return "pficon pficon-" + name; //NON-NLS
     }

@@ -198,6 +198,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String play();
     String recordingStarted();
     String recordingStopped();
+    String refresh();
     String remove();
     String removeResource();
     String rename();

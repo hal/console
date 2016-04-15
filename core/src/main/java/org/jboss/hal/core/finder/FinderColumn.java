@@ -21,18 +21,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.dom.NodeList;
 import elemental.events.Event;
 import elemental.events.KeyboardEvent;
 import elemental.events.KeyboardEvent.KeyCode;
 import elemental.html.InputElement;
-import elemental.html.Storage;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Tooltip;
@@ -41,7 +40,6 @@ import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.IdBuilder;
-import org.jboss.hal.resources.Ids;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -195,11 +193,13 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     private ItemsProvider<T> itemsProvider;
     private ItemRenderer<T> itemRenderer;
     private final ItemSelectionHandler<T> selectionHandler;
-    private final Map<String, FinderRow<T>> rows;
     private final PreviewCallback<T> previewCallback;
     private BreadcrumbItemsProvider<T> breadcrumbItemsProvider;
     private BreadcrumbItemHandler<T> breadcrumbItemHandler;
     private boolean firstActionAsBreadcrumbHandler;
+
+    private final Map<String, FinderRow<T>> rows;
+    private final FinderColumnStorage storage;
 
     private final Element root;
     private final Element headerElement;
@@ -222,12 +222,14 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         this.itemsProvider = builder.itemsProvider;
         this.itemRenderer = builder.itemRenderer;
         this.selectionHandler = builder.selectionHandler;
-        this.rows = new HashMap<>();
         this.previewCallback = builder.previewCallback;
         this.breadcrumbItemsProvider = builder.breadcrumbItemsProvider;
         this.breadcrumbItemHandler = builder.breadcrumbItemHandler;
         this.firstActionAsBreadcrumbHandler = builder.firstActionAsBreadcrumbHandler;
         this.asElement = false;
+
+        this.rows = new HashMap<>();
+        this.storage = new FinderColumnStorage(id);
 
         // header
         Elements.Builder eb = new Elements.Builder()
@@ -538,12 +540,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             }
         }
         adjustPinSeparator();
-
-        // remove from local storage
-        Storage storage = Browser.getWindow().getLocalStorage();
-        if (storage != null) {
-            storage.removeItem(storageKey(row.getDisplay()));
-        }
+        storage.unpinItem(row.getId());
     }
 
     void pin(final FinderRow<T> row) {
@@ -571,12 +568,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
         adjustPinSeparator();
         row.asElement().scrollIntoView(false);
-
-        // save to local storage
-        Storage storage = Browser.getWindow().getLocalStorage();
-        if (storage != null) {
-            storage.setItem(storageKey(row.getDisplay()), "pinned"); //NON-NLS
-        }
+        storage.pinItem(row.getId());
     }
 
     private Element findPosition(NodeList nodes, FinderRow<T> row) {
@@ -588,10 +580,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             }
         }
         return null;
-    }
-
-    private String storageKey(ItemDisplay<T> display) {
-        return IdBuilder.build(Ids.STORAGE_PREFIX, '.', getId(), display.getId());
     }
 
     private void adjustPinSeparator() {
@@ -635,14 +623,13 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             filterElement.setValue("");
         }
 
-        // TODO group/order if isPinnable() before appending to ul
         List<T> pinnedItems = new ArrayList<>();
         List<T> unpinnedItems = new ArrayList<>();
-        Storage storage = Browser.getWindow().getLocalStorage();
-        if (storage != null) {
+        Set<String> pinnedItemIds = storage.pinnedItems();
+        if (pinnable && !pinnedItemIds.isEmpty()) {
             for (T item : items) {
-                String pinned = storage.getItem(storageKey(itemRenderer.render(item)));
-                if (pinned != null) {
+                String id = itemRenderer.render(item).getId();
+                if (pinnedItemIds.contains(id)) {
                     pinnedItems.add(item);
                 } else {
                     unpinnedItems.add(item);
@@ -651,7 +638,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         } else {
             unpinnedItems.addAll(items);
         }
-
         for (Iterator<T> iterator = pinnedItems.iterator(); iterator.hasNext(); ) {
             T item = iterator.next();
             FinderRow<T> row = new FinderRow<>(finder, this, item, true,

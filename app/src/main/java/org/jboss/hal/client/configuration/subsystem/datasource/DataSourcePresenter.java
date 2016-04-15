@@ -48,6 +48,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
 /**
+ * Presenter which is used for both XA and normal data sources.
  * @author Harald Pehl
  */
 public class DataSourcePresenter extends
@@ -56,7 +57,7 @@ public class DataSourcePresenter extends
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.DATA_SOURCE)
-    @Requires(AddressTemplates.ANY_DATA_SOURCE_ADDRESS)
+    @Requires({AddressTemplates.ANY_DATA_SOURCE_ADDRESS, AddressTemplates.ANY_XA_DATA_SOURCE_ADDRESS})
     public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<DataSourcePresenter> {
@@ -64,6 +65,8 @@ public class DataSourcePresenter extends
     }
     // @formatter:on
 
+
+    static final String XA_PARAM = "xa";
 
     private final Resources resources;
     private final Dispatcher dispatcher;

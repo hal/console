@@ -23,6 +23,7 @@ import org.jboss.hal.meta.AddressTemplate;
 public interface AddressTemplates {
 
     String ANY_DATA_SOURCE_ADDRESS = "/{any.profile}/subsystem=datasources/data-source=*";
+    String ANY_XA_DATA_SOURCE_ADDRESS = "/{any.profile}/subsystem=datasources/xa-data-source=*";
     String SELECTED_DATA_SOURCE_ADDRESS = "/{selected.profile}/subsystem=datasources/data-source=*";
     String SELECTED_XA_DATA_SOURCE_ADDRESS = "/{selected.profile}/subsystem=datasources/xa-data-source=*";
     String JDBC_DRIVER_ADDRESS = "/{any.profile}/subsystem=datasources/data-source=*";

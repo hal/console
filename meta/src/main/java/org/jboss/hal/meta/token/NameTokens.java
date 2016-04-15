@@ -49,7 +49,6 @@ public interface NameTokens {
     String TRANSACTIONS = "transactions";
     String UNDER_THE_BRIDGE = "utb";
     String WEBSERVICES = "webservices";
-    String XA_DATA_SOURCE = "xa-data-source";
 
     Set<String> getTokens();
 }
