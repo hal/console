@@ -224,6 +224,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String summary();
     String supportsExpressions();
 
+    String tags();
     String testConnection();
     String toggleDropdown();
     String toggleNavigation();

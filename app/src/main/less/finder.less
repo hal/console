@@ -129,13 +129,20 @@
           white-space: nowrap;
         }
 
-        .unpin, .pin, .folder, .btn-group, button {
+        .tags {
+          display: none;
+        }
+
+        .tags, .unpin, .pin, .folder, .btn-group, button {
           margin-left: 10px;
         }
       }
 
       > li:hover, li.active:hover {
         background-color: @hover-color;
+        .tags {
+          display: inherit;
+        }
       }
 
       > li.empty {

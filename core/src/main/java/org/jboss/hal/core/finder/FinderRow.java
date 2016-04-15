@@ -101,7 +101,14 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         }
         eb.add(itemElement);
 
-        // oder: 1) pin/unpin icon, 2) folder icon, 3) button(s)
+        // oder: 1) tags, 2) pin/unpin icon, 3) folder icon, 4) button(s)
+        eb.span()
+                .css(tags, fontAwesome("tags"))
+                .title(CONSTANTS.tags())
+                .on(click, e -> {
+                    e.stopPropagation();
+                    column.tags(FinderRow.this);
+                }).end();
         if (column.isPinnable()) {
             eb.span()
                     .css(unpin, pfIcon("close"))
