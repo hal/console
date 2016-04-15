@@ -129,20 +129,13 @@
           white-space: nowrap;
         }
 
-        .tags {
-          display: none;
-        }
-
-        .tags, .unpin, .pin, .folder, .btn-group, button {
+        .unpin, .pin, .folder, .btn-group, button {
           margin-left: 10px;
         }
       }
 
       > li:hover, li.active:hover {
         background-color: @hover-color;
-        .tags {
-          display: inherit;
-        }
       }
 
       > li.empty {
@@ -204,6 +197,31 @@
 
     .lead {
       font-size: 14px;
+    }
+
+    h2 {
+      font-size: 18px;
+    }
+
+    .list-group > .list-group-item {
+      display: flex;
+
+      .key {
+        color: #8b8d8f;
+        width: 30%;
+
+        &:after {
+          content: ":";
+        }
+      }
+
+      .value {
+        margin-left: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 70%;
+      }
     }
   }
 }

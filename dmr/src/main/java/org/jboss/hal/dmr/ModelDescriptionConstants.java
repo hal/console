@@ -64,6 +64,7 @@ public interface ModelDescriptionConstants {
     String CHILDREN = "children";
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
     String COMPOSITE = "composite";
+    String CONNECTION_URL = "connection-url";
     String CONFIGURATION = "configuration";
     String CRITERIA = "criteria";
 
@@ -74,6 +75,7 @@ public interface ModelDescriptionConstants {
     String DESCRIPTION = "description";
     @SuppressWarnings("DuplicateStringLiteralInspection")
     String DISABLED = "disabled";
+    String DRIVER_NAME = "driver-name";
 
     String ENABLED = "enabled";
     String EXCEPTIONS = "exceptions";
@@ -176,6 +178,7 @@ public interface ModelDescriptionConstants {
     String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SHUTDOWN = "shutdown";
     String STANDALONE = "standalone";
+    String STATISTICS_ENABLED = "statistics-enabled";
     String START = "start";
     String STEPS = "steps";
     String STORAGE = "storage";

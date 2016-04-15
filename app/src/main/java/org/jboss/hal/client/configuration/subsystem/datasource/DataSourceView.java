@@ -26,17 +26,17 @@ import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.description.ResourceDescription;
-import org.jboss.hal.meta.description.ResourceDescriptions;
-import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.meta.security.SecurityFramework;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Names;
 
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.ANY_DATA_SOURCE_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONNECTION_URL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JNDI_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
 import static org.jboss.hal.resources.Ids.DATA_SOURCE_ATTRIBUTES_FORM;
 import static org.jboss.hal.resources.Ids.DATA_SOURCE_ATTRIBUTES_TAB;
 import static org.jboss.hal.resources.Ids.DATA_SOURCE_CONNECTION_FORM;
@@ -55,15 +55,10 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
     private DataSourcePresenter presenter;
 
     @Inject
-    public DataSourceView(SecurityFramework securityFramework,
-            ResourceDescriptions descriptions,
-            Capabilities capabilities) {
+    public DataSourceView(MetadataRegistry metadataRegistry) {
 
-        SecurityContext securityContext = securityFramework.lookup(AddressTemplates.ANY_DATA_SOURCE_TEMPLATE);
-        ResourceDescription description = descriptions.lookup(AddressTemplates.ANY_DATA_SOURCE_TEMPLATE);
-        Metadata metadata = new Metadata(securityContext, description, capabilities);
-
-        Element info = new Elements.Builder().p().textContent(description.getDescription()).end().build();
+        Metadata metadata = metadataRegistry.lookup(ANY_DATA_SOURCE_TEMPLATE);
+        Element info = new Elements.Builder().p().textContent(metadata.getDescription().getDescription()).end().build();
 
         forms = new ArrayList<>();
         Tabs tabs = new Tabs();
@@ -71,14 +66,14 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
         Form.SaveCallback<ModelNode> saveCallback = (form, changedValues) -> presenter.saveDataSource(changedValues);
 
         currentForm = new ModelNodeForm.Builder<>(DATA_SOURCE_ATTRIBUTES_FORM, metadata)
-                .include(ModelDescriptionConstants.JNDI_NAME, ENABLED, "statistics-enabled", "driver-name")
+                .include(JNDI_NAME, ENABLED, DRIVER_NAME, STATISTICS_ENABLED)
                 .onSave(saveCallback)
                 .build();
         forms.add(currentForm);
         tabs.add(DATA_SOURCE_ATTRIBUTES_TAB, ATTRIBUTES, currentForm.asElement());
 
         currentForm = new ModelNodeForm.Builder<>(DATA_SOURCE_CONNECTION_FORM, metadata)
-                .include("connection-url", "new-connection-sql", "transaction-isolation", "jta", "use-ccm")
+                .include(CONNECTION_URL, "new-connection-sql", "transaction-isolation", "jta", "use-ccm")
                 .onSave(saveCallback)
                 .build();
         forms.add(currentForm);

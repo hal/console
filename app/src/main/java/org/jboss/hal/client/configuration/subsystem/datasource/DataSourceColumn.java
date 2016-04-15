@@ -25,7 +25,6 @@ import com.google.gwt.user.client.Window;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.client.configuration.subsystem.datasource.wizard.NewDataSourceWizard;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
@@ -34,7 +33,6 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
-import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
@@ -44,6 +42,7 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
@@ -83,7 +82,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             final ItemActionFactory itemActionFactory) {
 
         super(new Builder<DataSource>(finder, ModelDescriptionConstants.DATA_SOURCE, Names.DATASOURCE)
-                .onPreview(item -> new PreviewContent(item.getName()))
+                .onPreview(item -> new DataSourcePreview(item, resources))
                 .useFirstActionAsBreadcrumbHandler());
 
         this.metadataRegistry = metadataRegistry;
@@ -191,10 +190,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     }
 
     private boolean isEnabled(DataSource datasource) {
-        if (!datasource.has(ModelDescriptionConstants.ENABLED)) {
-            throw new IllegalStateException("Datasource " + datasource.getName() + " does not have enabled attribute");
-        }
-        return datasource.get(ENABLED).asBoolean();
+        return datasource.hasDefined(ENABLED) && datasource.get(ENABLED).asBoolean();
     }
 
     private void disable(final DataSource dataSource, final ResourceAddress address) {

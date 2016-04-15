@@ -15,19 +15,15 @@
  */
 package org.jboss.hal.client.configuration;
 
+import javax.inject.Inject;
+
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.description.ResourceDescription;
-import org.jboss.hal.meta.description.ResourceDescriptions;
-import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.meta.security.SecurityFramework;
-
-import javax.inject.Inject;
+import org.jboss.hal.meta.MetadataRegistry;
 
 import static org.jboss.hal.resources.Ids.PATHS_FORM;
 import static org.jboss.hal.resources.Names.INTERFACE;
@@ -42,16 +38,12 @@ public class InterfaceView extends PatternFlyViewImpl implements InterfacePresen
     private InterfacePresenter presenter;
 
     @Inject
-    public InterfaceView(SecurityFramework securityFramework,
-            ResourceDescriptions descriptions,
-            Capabilities capabilities) {
+    public InterfaceView(MetadataRegistry metadataRegistry) {
 
-        ResourceDescription description = descriptions.lookup(InterfacePresenter.ROOT_TEMPLATE);
-        SecurityContext securityContext = securityFramework.lookup(InterfacePresenter.ROOT_TEMPLATE);
-
+        Metadata metadata = metadataRegistry.lookup(InterfacePresenter.ROOT_TEMPLATE);
 //        new Dialog.Builder(resources.messages())
 
-        form = new ModelNodeForm.Builder<>(PATHS_FORM, new Metadata(securityContext, description, capabilities))
+        form = new ModelNodeForm.Builder<>(PATHS_FORM, metadata)
                 .exclude("resolved-address")
                 .onSave((form, changedValues) -> presenter.saveInterface(changedValues))
                 .build();

@@ -582,10 +582,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         return null;
     }
 
-    void tags(final FinderRow<T> row) {
-
-    }
-
     private void adjustPinSeparator() {
         NodeList nodes = ulElement.querySelectorAll("." + pinned);
         for (int i = 0; i < nodes.getLength(); i++) {

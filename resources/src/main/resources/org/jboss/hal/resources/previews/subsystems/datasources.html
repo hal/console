@@ -1,16 +1,9 @@
-<!--
-  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~ http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
-<p>The Datasource subsystem allows you to create and configure datasources and manage JDBC database drivers.</p>
+<p>The datasource subsystem allows you to create and configure datasources and manage JDBC database drivers.</p>
+<h2>Datasource Types</h2>
+<p>The two general types of resources are referred to as datasources and XA datasources.
+<ul>
+    <li>Non-XA datasources are used for applications which do not use transactions, or applications which use transactions with a single database.</li>
+    <li>XA datasources are used by applications whose transactions are distributed across multiple databases. XA datasources introduce additional overhead.</li>
+</ul>
+<h2>JDBC</h2>
+<p>The JDBC API is the standard that defines how databases are accessed by Java applications. An application configures a datasource that references a JDBC driver. Application code can then be written against the driver, rather than the database. The driver converts the code to the database language. This means that if the correct driver is installed, an application can be used with any supported database.</p>

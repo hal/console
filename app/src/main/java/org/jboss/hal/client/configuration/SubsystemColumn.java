@@ -71,8 +71,8 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
         ResourceDescriptionPreview(final String header, final Dispatcher dispatcher, final Operation operation) {
             super(header);
-            builder.section().rememberAs(CONTENT_ELEMENT).end();
-            Element content = builder.referenceFor(CONTENT_ELEMENT);
+            previewBuilder().section().rememberAs(CONTENT_ELEMENT).end();
+            Element content = previewBuilder().referenceFor(CONTENT_ELEMENT);
             dispatcher.execute(operation, result -> {
                 if (result.hasDefined(DESCRIPTION)) {
                     SafeHtml html = SafeHtmlUtils.fromSafeConstant(result.get(DESCRIPTION).asString());

@@ -24,11 +24,7 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.description.ResourceDescription;
-import org.jboss.hal.meta.description.ResourceDescriptions;
-import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.meta.security.SecurityFramework;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 
 import static org.jboss.hal.resources.Names.IIOP_OPENJDK;
@@ -42,15 +38,10 @@ public class IiopView extends PatternFlyViewImpl implements IiopPresenter.MyView
     private IiopPresenter presenter;
 
     @Inject
-    public IiopView(SecurityFramework securityFramework,
-            ResourceDescriptions descriptions,
-            Capabilities capabilities) {
+    public IiopView(MetadataRegistry metadataRegistry) {
 
-        SecurityContext securityContext = securityFramework.lookup(IiopPresenter.ROOT_TEMPLATE);
-        ResourceDescription description = descriptions.lookup(IiopPresenter.ROOT_TEMPLATE);
-        Metadata metadata = new Metadata(securityContext, description, capabilities);
-
-        Element info = new Elements.Builder().p().textContent(description.getDescription()).end().build();
+        Metadata metadata = metadataRegistry.lookup(IiopPresenter.ROOT_TEMPLATE);
+        Element info = new Elements.Builder().p().textContent(metadata.getDescription().getDescription()).end().build();
         form = new ModelNodeForm.Builder<>(Ids.IIOP_FORM, metadata)
                 .onSave((form, changedValues) -> presenter.save(changedValues))
                 .build();

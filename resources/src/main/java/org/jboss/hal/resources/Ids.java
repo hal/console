@@ -45,6 +45,7 @@ public interface Ids {
     String DATA_SOURCE_ATTRIBUTES_TAB = "data-source-attributes-tab";
     String DATA_SOURCE_CONNECTION_FORM = "data-source-connection-form";
     String DATA_SOURCE_CONNECTION_TAB = "data-source-connection-tab";
+    String DATA_SOURCE_PREVIEW_FORM = "data-source-preview-form";
     String DATA_SOURCE_WIZARD = "data-source-wizard";
 
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";

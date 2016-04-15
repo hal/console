@@ -44,6 +44,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String addResourceSuccess(String type, String name);
     String addResourceTitle(String text);
     String connectedTo(String url);
+    SafeHtml dataSourceEnabledPreview(String type, String name);
+    SafeHtml dataSourceDisabledPreview(String type, String name);
     SafeHtml emptyModelNodeForm();
 
     SafeHtml endpointError(String url);
