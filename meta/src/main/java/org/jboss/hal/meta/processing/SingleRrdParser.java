@@ -29,8 +29,8 @@ import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.StatementContext.Key.SELECTED_GROUP;
-import static org.jboss.hal.meta.StatementContext.Key.SELECTED_PROFILE;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
 /**
  * @author Harald Pehl
@@ -95,8 +95,6 @@ public class SingleRrdParser {
 
                         if (first && last) {
                             segment = name + "=*";
-                        } else {
-
                         }
                         switch (name) {
                             case PROFILE:

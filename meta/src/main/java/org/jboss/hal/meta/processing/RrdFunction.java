@@ -79,7 +79,7 @@ class RrdFunction implements Function<FunctionContext> {
                                         new Metadata(rr.securityContext, rr.resourceDescription, capabilities));
                             }
                             if (!rr.capabilities.isEmpty()) {
-                                logger.debug("Add capabilities for {}", rr.address);
+                                logger.debug("Add capabilities {} for {}", rr.capabilities, rr.address);
                                 for (Capability capability : rr.capabilities) {
                                     capabilities.register(capability);
                                 }

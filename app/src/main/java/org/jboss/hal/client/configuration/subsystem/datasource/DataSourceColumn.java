@@ -60,8 +60,8 @@ import static org.jboss.hal.resources.CSS.subtitle;
  *
  * @author Harald Pehl
  */
-@AsyncColumn(ModelDescriptionConstants.DATA_SOURCE)
-@Requires({SELECTED_DATA_SOURCE_ADDRESS, SELECTED_XA_DATA_SOURCE_ADDRESS, JDBC_DRIVER_ADDRESS})
+@AsyncColumn(DATA_SOURCE)
+@Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS, JDBC_DRIVER_ADDRESS})
 public class DataSourceColumn extends FinderColumn<DataSource> {
 
     private final MetadataRegistry metadataRegistry;
@@ -81,8 +81,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory) {
 
-        super(new Builder<DataSource>(finder, ModelDescriptionConstants.DATA_SOURCE, Names.DATASOURCE)
-                .onPreview(item -> new DataSourcePreview(item, resources))
+        super(new Builder<DataSource>(finder, DATA_SOURCE, Names.DATASOURCE)
                 .useFirstActionAsBreadcrumbHandler());
 
         this.metadataRegistry = metadataRegistry;
@@ -91,26 +90,26 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         this.resources = resources;
         this.templates = templates;
 
-        addColumnAction(columnActionFactory.add(IdBuilder.build(ModelDescriptionConstants.DATA_SOURCE, "add"),
+        addColumnAction(columnActionFactory.add(IdBuilder.build(DATA_SOURCE, "add"),
                 resources.messages().addResourceTitle(Names.DATASOURCE), column -> launchNewDataSourceWizard(false)));
         addColumnAction(columnActionFactory.add(IdBuilder.build(ModelDescriptionConstants.XA_DATA_SOURCE, "add"),
                 resources.messages().addResourceTitle(Names.XA_DATASOURCE), fontAwesome("credit-card"),
                 column -> launchNewDataSourceWizard(true)));
-        addColumnAction(columnActionFactory.refresh(IdBuilder.build(ModelDescriptionConstants.DATA_SOURCE, "refresh")));
+        addColumnAction(columnActionFactory.refresh(IdBuilder.build(DATA_SOURCE, "refresh")));
 
         setItemsProvider((context, callback) -> {
             ResourceAddress dataSourceAddress = DATA_SOURCE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
             Operation dataSourceOperation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, dataSourceAddress)
-                    .param(CHILD_TYPE, ModelDescriptionConstants.DATA_SOURCE).build();
+                    .param(CHILD_TYPE, DATA_SOURCE).build();
             Operation xaDataSourceOperation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
                     dataSourceAddress)
                     .param(CHILD_TYPE, ModelDescriptionConstants.XA_DATA_SOURCE).build();
             dispatcher.execute(new Composite(dataSourceOperation, xaDataSourceOperation), (CompositeResult result) -> {
                 List<DataSource> combined = new ArrayList<>();
                 combined.addAll(Lists.transform(result.step(0).get(RESULT).asPropertyList(),
-                        input -> new DataSource(input, false)));
+                        property -> new DataSource(property, false)));
                 combined.addAll(Lists.transform(result.step(1).get(RESULT).asPropertyList(),
-                        input -> new DataSource(input, true)));
+                        property -> new DataSource(property, true)));
                 callback.onSuccess(combined);
             });
         });
@@ -150,8 +149,6 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
             @Override
             public List<ItemAction<DataSource>> actions() {
-                ResourceAddress dataSourceAddress = dataSourceAddress(dataSource);
-
                 String profile = environment.isStandalone() ? STANDALONE : statementContext.selectedProfile();
                 PlaceRequest.Builder builder = new PlaceRequest.Builder()
                         .nameToken(NameTokens.DATA_SOURCE)
@@ -164,17 +161,18 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 List<ItemAction<DataSource>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.view(builder.build()));
                 actions.add(itemActionFactory.remove(Names.DATASOURCE, dataSource.getName(),
-                        SELECTED_DATA_SOURCE_TEMPLATE, DataSourceColumn.this));
+                        DATA_SOURCE_TEMPLATE, DataSourceColumn.this));
                 if (isEnabled(dataSource)) {
-                    actions.add(new ItemAction<>(resources.constants().disable(), p -> disable(p, dataSourceAddress)));
-                    actions.add(new ItemAction<>(resources.constants().testConnection(),
-                            p -> testConnection(p, dataSourceAddress)));
+                    actions.add(new ItemAction<>(resources.constants().disable(), ds -> disable(ds)));
+                    actions.add(new ItemAction<>(resources.constants().testConnection(), ds -> testConnection(ds)));
                 } else {
-                    actions.add(new ItemAction<>(resources.constants().enable(), p -> enable(p, dataSourceAddress)));
+                    actions.add(new ItemAction<>(resources.constants().enable(), ds -> enable(ds)));
                 }
                 return actions;
             }
         });
+
+        setPreviewCallback(item -> new DataSourcePreview(this, item, resources));
     }
 
     private void launchNewDataSourceWizard(final boolean xa) {
@@ -185,23 +183,26 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
     private ResourceAddress dataSourceAddress(DataSource dataSource) {
         return dataSource.isXa()
-                ? SELECTED_XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName())
-                : SELECTED_DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName());
+                ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName())
+                : DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName());
     }
 
     private boolean isEnabled(DataSource datasource) {
         return datasource.hasDefined(ENABLED) && datasource.get(ENABLED).asBoolean();
     }
 
-    private void disable(final DataSource dataSource, final ResourceAddress address) {
+    void disable(final DataSource dataSource) {
+        ResourceAddress dataSourceAddress = dataSourceAddress(dataSource);
         Window.alert(Names.NYI);
     }
 
-    private void enable(final DataSource dataSource, final ResourceAddress address) {
+    void enable(final DataSource dataSource) {
+        ResourceAddress dataSourceAddress = dataSourceAddress(dataSource);
         Window.alert(Names.NYI);
     }
 
-    private void testConnection(final DataSource dataSource, final ResourceAddress address) {
+    private void testConnection(final DataSource dataSource) {
+        ResourceAddress dataSourceAddress = dataSourceAddress(dataSource);
         Window.alert(Names.NYI);
     }
 }

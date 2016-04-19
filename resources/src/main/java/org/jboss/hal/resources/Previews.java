@@ -32,11 +32,17 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/subsystems/datasources.html")
     ExternalTextResource datasources();
 
+    @Source("previews/subsystems/datasources-only.html")
+    ExternalTextResource datasourcesOnly();
+
     @Source("previews/deployments.html")
     ExternalTextResource deployments();
 
     @Source("previews/interfaces.html")
     ExternalTextResource interfaces();
+
+    @Source("previews/subsystems/jdbc-drivers.html")
+    ExternalTextResource jdbcDrivers();
 
     @Source("previews/paths.html")
     ExternalTextResource paths();

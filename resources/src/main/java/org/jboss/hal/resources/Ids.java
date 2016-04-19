@@ -45,11 +45,9 @@ public interface Ids {
     String DATA_SOURCE_ATTRIBUTES_TAB = "data-source-attributes-tab";
     String DATA_SOURCE_CONNECTION_FORM = "data-source-connection-form";
     String DATA_SOURCE_CONNECTION_TAB = "data-source-connection-tab";
-    String DATA_SOURCE_PREVIEW_FORM = "data-source-preview-form";
+    String DATA_SOURCE_DRIVER_COLUMN = "data-source-driver";
     String DATA_SOURCE_WIZARD = "data-source-wizard";
-
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
-
     String DOMAIN_BROWSE_BY = "domain-browse-by";
 
     String ENDPOINT_ADD = "endpoint-add";
@@ -62,7 +60,6 @@ public interface Ids {
     String HEADER_MESSAGES = "header-messages";
     String HEADER_ROLES = "header-roles";
     String HEADER_USERNAME = "header-username";
-
     String HOMEPAGE_ACCESS_CONTROL_SECTION = "homepage-access-control-section";
     String HOMEPAGE_CONFIGURATION_SECTION = "homepage-configuration-section";
     String HOMEPAGE_DEPLOYMENTS_SECTION = "homepage-deployments-section";
@@ -74,13 +71,14 @@ public interface Ids {
 
     String IIOP_FORM = "iiop-form";
 
-    String MACRO_CONSOLE = "macro-console";
     String MACRO_EDITOR = "macro-editor";
     String MACRO_LIST = "macro-list";
     String MACRO_OPTIONS = "macro-options";
     String MODEL_BROWSER = "model-browser";
+
     String PATHS_FORM = "paths-form";
     String PATHS_TABLE = "paths-table";
+
     String ROOT_CONTAINER = "hal-root-container";
 
     String STORAGE_PREFIX = "org.jboss.hal";

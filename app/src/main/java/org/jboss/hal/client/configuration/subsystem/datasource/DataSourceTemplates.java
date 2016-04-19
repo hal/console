@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 
 import java.util.ArrayList;
@@ -42,9 +43,9 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
         // ------------------------------------------------------ H2
         // Driver
         driver = new JdbcDriver("h2");
-        driver.get("driver-module-name").set("com.h2database.h2");
+        driver.get(ModelDescriptionConstants.DRIVER_MODULE_NAME).set("com.h2database.h2");
         driver.get("driver-class-name").set("org.h2.Driver");
-        driver.get("driver-xa-datasource-class-name").set("org.h2.jdbcx.JdbcDataSource");
+        driver.get(ModelDescriptionConstants.DRIVER_XA_DATASOURCE_CLASS_NAME).set("org.h2.jdbcx.JdbcDataSource");
 
         // DS
         dataSource = new DataSource("H2DS", false);
@@ -72,9 +73,9 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
         // ------------------------------------------------------ PostgreSQL
         // Driver
         driver = new JdbcDriver("postgresql");
-        driver.get("driver-module-name").set("org.postgresql");
+        driver.get(ModelDescriptionConstants.DRIVER_MODULE_NAME).set("org.postgresql");
         driver.get("driver-class-name").set("org.postgresql.Driver");
-        driver.get("driver-xa-datasource-class-name").set("org.postgresql.xa.PGXADataSource");
+        driver.get(ModelDescriptionConstants.DRIVER_XA_DATASOURCE_CLASS_NAME).set("org.postgresql.xa.PGXADataSource");
 
         // DS
         dataSource = new DataSource("PostgresDS", false);
@@ -108,9 +109,9 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
         // ------------------------------------------------------ MySQL
         // Driver
         driver = new JdbcDriver("mysql");
-        driver.get("driver-module-name").set("com.mysql");
+        driver.get(ModelDescriptionConstants.DRIVER_MODULE_NAME).set("com.mysql");
         driver.get("driver-class-name").set("com.mysql.jdbc.Driver");
-        driver.get("driver-xa-datasource-class-name").set("com.mysql.jdbc.jdbc2.optional.MysqlXADataSource");
+        driver.get(ModelDescriptionConstants.DRIVER_XA_DATASOURCE_CLASS_NAME).set("com.mysql.jdbc.jdbc2.optional.MysqlXADataSource");
 
         // DS
         dataSource = new DataSource("MySqlDS", false);
@@ -143,9 +144,9 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
         // ------------------------------------------------------ Oracle
         // Driver
         driver = new JdbcDriver("oracle");
-        driver.get("driver-module-name").set("com.oracle");
+        driver.get(ModelDescriptionConstants.DRIVER_MODULE_NAME).set("com.oracle");
         driver.get("driver-class-name").set("oracle.jdbc.driver.OracleDriver");
-        driver.get("driver-xa-datasource-class-name").set("oracle.jdbc.xa.client.OracleXADataSource");
+        driver.get(ModelDescriptionConstants.DRIVER_XA_DATASOURCE_CLASS_NAME).set("oracle.jdbc.xa.client.OracleXADataSource");
 
         // DS
         dataSource = new DataSource("OracleDS", false);
@@ -181,9 +182,9 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
         // ------------------------------------------------------ Microsoft SQL Server
         // Driver
         driver = new JdbcDriver("sqlserver");
-        driver.get("driver-module-name").set("com.microsoft");
+        driver.get(ModelDescriptionConstants.DRIVER_MODULE_NAME).set("com.microsoft");
         driver.get("driver-class-name").set("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        driver.get("driver-xa-datasource-class-name").set("com.microsoft.sqlserver.jdbc.SQLServerXADataSource");
+        driver.get(ModelDescriptionConstants.DRIVER_XA_DATASOURCE_CLASS_NAME).set("com.microsoft.sqlserver.jdbc.SQLServerXADataSource");
 
         // DS
         dataSource = new DataSource("MSSQLDS", false);
@@ -216,9 +217,9 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
         // ------------------------------------------------------ DB2
         // Driver
         driver = new JdbcDriver("ibmdb2");
-        driver.get("driver-module-name").set("com.ibm");
+        driver.get(ModelDescriptionConstants.DRIVER_MODULE_NAME).set("com.ibm");
         driver.get("driver-class-name").set("COM.ibm.db2.jdbc.app.DB2Driver");
-        driver.get("driver-xa-datasource-class-name").set("COM.ibm.db2.jdbc.DB2XADataSource");
+        driver.get(ModelDescriptionConstants.DRIVER_XA_DATASOURCE_CLASS_NAME).set("COM.ibm.db2.jdbc.DB2XADataSource");
 
         // DS
         dataSource = new DataSource("DB2DS", false);
@@ -259,9 +260,9 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
         // ------------------------------------------------------ Sybase
         // Driver
         driver = new JdbcDriver("sybase");
-        driver.get("driver-module-name").set("com.sybase");
+        driver.get(ModelDescriptionConstants.DRIVER_MODULE_NAME).set("com.sybase");
         driver.get("driver-class-name").set("com.sybase.jdbc.SybDriver");
-        driver.get("driver-xa-datasource-class-name").set("com.sybase.jdbc4.jdbc.SybXADataSource");
+        driver.get(ModelDescriptionConstants.DRIVER_XA_DATASOURCE_CLASS_NAME).set("com.sybase.jdbc4.jdbc.SybXADataSource");
 
         // DS
         dataSource = new DataSource("SybaseDB", false);

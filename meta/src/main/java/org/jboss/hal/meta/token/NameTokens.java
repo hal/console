@@ -17,38 +17,40 @@ package org.jboss.hal.meta.token;
 
 import java.util.Set;
 
+import org.jboss.hal.dmr.ModelDescriptionConstants;
+
 @SuppressWarnings("DuplicateStringLiteralInspection")
 public interface NameTokens {
 
     String ACCESS_CONTROL = "access-control";
-    String BATCH = "batch-jberet";
+    String BATCH = ModelDescriptionConstants.BATCH_JBERET;
     String CONFIGURATION = "configuration";
-    String DATA_SOURCE = "data-source";
-    String DEPLOYMENT_SCANNERS = "deployment-scanners";
+    String DATA_SOURCE = ModelDescriptionConstants.DATA_SOURCE;
+    String DEPLOYMENT_SCANNERS = ModelDescriptionConstants.DEPLOYMENT_SCANNER;
     String DEPLOYMENTS = "deployments";
-    String EE = "ee";
-    String EJB3 = "ejb3";
+    String EE = ModelDescriptionConstants.EE;
+    String EJB3 = ModelDescriptionConstants.EJB3;
     String GENERIC_SUBSYSTEM = "generic";
     String HOMEPAGE = "home";
-    String IIOP = "iiop";
+    String IIOP = ModelDescriptionConstants.IIOP_OPENJDK;
     String INTERFACE = "interface";
-    String IO = "io";
-    String JCA = "jca";
-    String JMX = "jmx";
-    String JPA = "jpa";
-    String LOGGING = "logging";
+    String IO = ModelDescriptionConstants.IO;
+    String JCA = ModelDescriptionConstants.JCA;
+    String JMX = ModelDescriptionConstants.JMX;
+    String JPA = ModelDescriptionConstants.JPA;
+    String LOGGING = ModelDescriptionConstants.LOGGING;
     String MACRO_EDITOR = "macro-editor";
     String MODEL_BROWSER = "model-browser";
     String PATCHING = "patching";
     String PATH = "path";
-    String REMOTING = "remoting";
-    String REQUEST_CONTROLLER = "request-controller";
+    String REMOTING = ModelDescriptionConstants.REMOTING;
+    String REQUEST_CONTROLLER = ModelDescriptionConstants.REQUEST_CONTROLLER;
     String RUNTIME = "runtime";
-    String SOCKET_BINDING = "socket-binding";
+    String SOCKET_BINDING = ModelDescriptionConstants.SOCKET_BINDING;
     String SYSTEM_PROPERTIES = "system-properties";
-    String TRANSACTIONS = "transactions";
+    String TRANSACTIONS = ModelDescriptionConstants.TRANSACTIONS;
     String UNDER_THE_BRIDGE = "utb";
-    String WEBSERVICES = "webservices";
+    String WEBSERVICES = ModelDescriptionConstants.WEBSERVICES;
 
     Set<String> getTokens();
 }

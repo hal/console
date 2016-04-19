@@ -15,24 +15,32 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
-import org.jboss.hal.ballroom.LabelBuilder;
+import java.util.List;
+
+import com.google.common.collect.Lists;
+import elemental.dom.Element;
+import elemental.dom.NodeList;
+import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
-import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.alert;
+import static org.jboss.hal.resources.CSS.alertInfo;
+import static org.jboss.hal.resources.CSS.alertSuccess;
+import static org.jboss.hal.resources.CSS.pfIcon;
 
 /**
  * @author Harald Pehl
  */
 class DataSourcePreview extends PreviewContent {
 
+    private static final String ALERT = "alertElement";
     private static final String DATASOURCE = "datasource";
     private static final String XA_DATASOURCE = "XA datasource";
 
-    DataSourcePreview(final DataSource dataSource, final Resources resources) {
+    DataSourcePreview(final DataSourceColumn column, final DataSource dataSource, final Resources resources) {
         super(dataSource.getName(), dataSource.isXa() ? Names.XA_DATASOURCE : Names.DATASOURCE);
         boolean enabled = dataSource.hasDefined(ENABLED) && dataSource.get(ENABLED).asBoolean();
 
@@ -42,7 +50,7 @@ class DataSourcePreview extends PreviewContent {
         } else {
             previewBuilder().css(alert, alertInfo).span().css(pfIcon("info")).end();
         }
-        previewBuilder().span();
+        previewBuilder().span().rememberAs(ALERT);
         if (dataSource.isXa()) {
             if (enabled) {
                 previewBuilder()
@@ -61,30 +69,24 @@ class DataSourcePreview extends PreviewContent {
             }
         }
         previewBuilder().end().end(); // </span> && </div>
-
-        previewBuilder().h(2).textContent(resources.constants().attributes()).end();
-
-        previewBuilder().ul().css(listGroup);
-        addAttribute(dataSource, JNDI_NAME);
-        addAttribute(dataSource, DRIVER_NAME);
-        if (!dataSource.isXa()) {
-            addAttribute(dataSource, CONNECTION_URL);
+        Element alertElement = previewBuilder().referenceFor(ALERT);
+        NodeList links = alertElement.getElementsByTagName("a"); //NON-NLS
+        if (links.getLength() != 0) {
+            Element link = (Element) links.item(0);
+            if (enabled) {
+                link.setOnclick(event -> column.disable(dataSource));
+            } else {
+                link.setOnclick(event -> column.enable(dataSource));
+            }
         }
-        addAttribute(dataSource, ENABLED);
-        addAttribute(dataSource, STATISTICS_ENABLED);
-        previewBuilder().end();
-    }
 
-    private void addAttribute(DataSource dataSource, String name) {
-        LabelBuilder labelBuilder = new LabelBuilder();
-        String value = dataSource.get(name).asString();
-
-        previewBuilder().li().css(listGroupItem)
-                .span().css(key).textContent(labelBuilder.label(name)).end()
-                .span().css(CSS.value).textContent(value);
-        if (value.length() > 15) {
-            previewBuilder().title(value);
+        List<String> attributes = Lists
+                .newArrayList(JNDI_NAME, DRIVER_NAME, CONNECTION_URL, ENABLED, STATISTICS_ENABLED);
+        if (dataSource.isXa()) {
+            attributes.remove(2);
         }
-        previewBuilder().end().end();
+        PreviewAttributes<DataSource> previewAttributes = new PreviewAttributes<>(dataSource,
+                resources.constants().main_attributes(), attributes).end();
+        previewBuilder().addAll(previewAttributes);
     }
 }

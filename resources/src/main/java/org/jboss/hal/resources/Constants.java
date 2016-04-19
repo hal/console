@@ -73,13 +73,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String edit();
     String enable();
     String enabled();
-
     String endpointSelectTitle();
     String endpointSelectDescription();
     String endpointConnect();
     String endpointAddTitle();
     String endpointAddDescription();
-
     String expressionResolver();
 
     String failed();
@@ -89,11 +87,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String formResetDesc();
 
     String help();
-    String input();
-
     String homepageNewToEap();
     String homepageTakeATour();
-
     String homepageDeploymentsSubHeader();
     String homepageDeploymentsSection();
     String homepageDeploymentsStandaloneStepIntro();
@@ -102,7 +97,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageDeploymentsDomainStepIntro();
     String homepageDeploymentsDomainStep1();
     String homepageDeploymentsDomainStep2();
-
     String homepageConfigurationStandaloneSubHeader();
     String homepageConfigurationDomainSubHeader();
     String homepageConfigurationSection();
@@ -111,7 +105,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageConfigurationDomainStep1();
     String homepageConfigurationStep2();
     String homepageConfigurationStep3();
-
     String homepageRuntimeStandaloneSubHeader();
     String homepageRuntimeStandaloneSection();
     String homepageRuntimeStepIntro();
@@ -129,18 +122,15 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageRuntimeDomainMonitorServerSection();
     String homepageRuntimeDomainMonitorServerStep1();
     String homepageRuntimeDomainMonitorServerStep2();
-
     String homepageAccessControlSubHeader();
     String homepageAccessControlSection();
     String homepageAccessControlStepIntro();
     String homepageAccessControlStep1();
     String homepageAccessControlStep2();
-
     String homepagePatchingSection();
     String homepagePatchingStep1();
     String homepagePatchingDomainStep2();
     String homepagePatchingStepApply();
-
     String homepageHelpNeedHelp();
     String homepageHelpGeneralResources();
     String homepageHelpEapDocumentationText();
@@ -172,15 +162,21 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageHelpModelReferenceText();
     String homepageHelpLatestNews();
 
+    String input();
+
     String jdbcDriver();
+
     String loading();
     String logout();
+
     String macroEditor();
     String macroPlaybackError();
     String macroPlaybackSuccessful();
+    String main_attributes();
     String message();
     String metadataError();
     String modelBrowser();
+
     String name();
     String next();
     String no();
@@ -190,12 +186,16 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noMacros();
     String notANumber();
     String nothingSelected();
+
     String ok();
     String operations();
     String output();
+
     String pin();
     String ping();
     String play();
+    String providedBy();
+
     String recordingStarted();
     String recordingStopped();
     String refresh();
@@ -205,13 +205,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String required();
     String requiredField();
     String reset();
-
     String restartAllServices();
     String restartJvm();
     String restartNoServices();
     String restartResourceServices();
-
     String restricted();
+
     String sameOrigin();
     String save();
     String settings();

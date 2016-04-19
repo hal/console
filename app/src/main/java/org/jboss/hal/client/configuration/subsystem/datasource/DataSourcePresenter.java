@@ -28,6 +28,7 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.core.mvp.SubsystemPresenter;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
@@ -43,6 +44,8 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DATA_SOURCE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
@@ -57,7 +60,7 @@ public class DataSourcePresenter extends
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.DATA_SOURCE)
-    @Requires({AddressTemplates.ANY_DATA_SOURCE_ADDRESS, AddressTemplates.ANY_XA_DATA_SOURCE_ADDRESS})
+    @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS})
     public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<DataSourcePresenter> {
@@ -109,19 +112,18 @@ public class DataSourcePresenter extends
 
     @Override
     protected FinderPath finderPath() {
-        return FinderPath.subsystemPath(statementContext.selectedProfile(), Names.DATASOURCES.toLowerCase())
+        return FinderPath.subsystemPath(statementContext.selectedProfile(), ModelDescriptionConstants.DATASOURCES)
                 .append(DATA_SOURCE, datasource, Names.DATASOURCE);
     }
 
     private void loadDataSource() {
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
-                AddressTemplates.SELECTED_DATA_SOURCE_TEMPLATE.resolve(statementContext, datasource)).build();
+                AddressTemplates.DATA_SOURCE_TEMPLATE.resolve(statementContext, datasource)).build();
         dispatcher.execute(operation, result -> getView().update(datasource, result));
     }
 
     void saveDataSource(final Map<String, Object> changedValues) {
-        ResourceAddress resourceAddress = AddressTemplates.SELECTED_DATA_SOURCE_TEMPLATE
-                .resolve(statementContext, datasource);
+        ResourceAddress resourceAddress = AddressTemplates.DATA_SOURCE_TEMPLATE.resolve(statementContext, datasource);
         Composite composite = operationFactory.fromChangeSet(resourceAddress, changedValues);
 
         dispatcher.execute(composite, (CompositeResult result) -> {

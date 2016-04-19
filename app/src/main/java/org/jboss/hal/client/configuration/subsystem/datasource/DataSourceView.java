@@ -30,18 +30,14 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 
-import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.ANY_DATA_SOURCE_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CONNECTION_URL;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.JNDI_NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.Ids.DATA_SOURCE_ATTRIBUTES_FORM;
 import static org.jboss.hal.resources.Ids.DATA_SOURCE_ATTRIBUTES_TAB;
 import static org.jboss.hal.resources.Ids.DATA_SOURCE_CONNECTION_FORM;
 import static org.jboss.hal.resources.Ids.DATA_SOURCE_CONNECTION_TAB;
-import static org.jboss.hal.resources.Names.ATTRIBUTES;
 
 /**
  * @author Harald Pehl
@@ -55,9 +51,9 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
     private DataSourcePresenter presenter;
 
     @Inject
-    public DataSourceView(MetadataRegistry metadataRegistry) {
+    public DataSourceView(MetadataRegistry metadataRegistry, Resources resources) {
 
-        Metadata metadata = metadataRegistry.lookup(ANY_DATA_SOURCE_TEMPLATE);
+        Metadata metadata = metadataRegistry.lookup(DATA_SOURCE_TEMPLATE);
         Element info = new Elements.Builder().p().textContent(metadata.getDescription().getDescription()).end().build();
 
         forms = new ArrayList<>();
@@ -70,7 +66,7 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
                 .onSave(saveCallback)
                 .build();
         forms.add(currentForm);
-        tabs.add(DATA_SOURCE_ATTRIBUTES_TAB, ATTRIBUTES, currentForm.asElement());
+        tabs.add(DATA_SOURCE_ATTRIBUTES_TAB, resources.constants().attributes(), currentForm.asElement());
 
         currentForm = new ModelNodeForm.Builder<>(DATA_SOURCE_CONNECTION_FORM, metadata)
                 .include(CONNECTION_URL, "new-connection-sql", "transaction-isolation", "jta", "use-ccm")

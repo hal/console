@@ -23,6 +23,8 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+
 /**
  * @author Harald Pehl
  */
@@ -35,27 +37,32 @@ public class Subsystems {
         subsystems = new HashMap<>();
 
         // TODO set builtin flag to true once the subsystem implementations are in place
-        add(new SubsystemMetadata("batch-jberet", "Batch", "JBeret", NameTokens.BATCH, null, false));
-        add(new SubsystemMetadata("datasources", Names.DATASOURCES, null, null, ModelDescriptionConstants.DATA_SOURCE, true));
-        add(new SubsystemMetadata("deployment-scanner", "Deployment Scanners", null, NameTokens.DEPLOYMENT_SCANNERS, null, false));
-        add(new SubsystemMetadata("ee", "EE", null, NameTokens.EE, null, false));
-        add(new SubsystemMetadata("ejb3", "EJB3", null, NameTokens.EJB3, null, false));
-        add(new SubsystemMetadata("iiop-openjdk", "IIOP", "OpenJDK", NameTokens.IIOP, null, true));
-        add(new SubsystemMetadata("infinispan", "Infinispan", null, null, Ids.CACHE_CONTAINER_COLUMN, true));
-        add(new SubsystemMetadata("io", "IO", null, NameTokens.IO, null, false));
-        add(new SubsystemMetadata("jca", "JCA", null, NameTokens.JCA, null, false));
-        add(new SubsystemMetadata("jmx", "JMX", null, NameTokens.JMX, null, false));
-        add(new SubsystemMetadata("jpa", "JPA", null, NameTokens.JPA, null, false));
-        add(new SubsystemMetadata("logging", "Logging", null, NameTokens.LOGGING, null, false));
-        add(new SubsystemMetadata("mail", "Mail", null, null, ModelDescriptionConstants.MAIL_SESSION, true));
-        add(new SubsystemMetadata("messaging-activemq", "Messaging", "ActiveMQ", null, ModelDescriptionConstants.MESSAGING_SERVER, true));
-        add(new SubsystemMetadata("remoting", "Remoting", null, NameTokens.REMOTING, null, false));
-        add(new SubsystemMetadata("request-controller", "Request Controller", null, NameTokens.REQUEST_CONTROLLER, null, false));
-        add(new SubsystemMetadata("resource-adapters", "Resource Adapters", null, null, ModelDescriptionConstants.RESOURCE_ADAPTER, true));
-        add(new SubsystemMetadata("security", "Security", null, null, ModelDescriptionConstants.SECURITY_DOMAIN, true));
-        add(new SubsystemMetadata("transactions", "Transactions", null, NameTokens.TRANSACTIONS, null, false));
-        add(new SubsystemMetadata("undertow", "Web", "Undertow", null, Ids.WEB_SETTINGS_COLUMN, true));
-        add(new SubsystemMetadata("webservices", "Web Services", null, NameTokens.WEBSERVICES, null, false));
+        add(new SubsystemMetadata(BATCH_JBERET, "Batch", "JBeret", NameTokens.BATCH, null, false));
+        add(new SubsystemMetadata(DATASOURCES, Names.DATASOURCES_DRIVERS, null, null,
+                Ids.DATA_SOURCE_DRIVER_COLUMN, true));
+        add(new SubsystemMetadata(DEPLOYMENT_SCANNER, "Deployment Scanners", null, NameTokens.DEPLOYMENT_SCANNERS,
+                null, false));
+        add(new SubsystemMetadata(EE, "EE", null, NameTokens.EE, null, false));
+        add(new SubsystemMetadata(EJB3, "EJB3", null, NameTokens.EJB3, null, false));
+        add(new SubsystemMetadata(IIOP_OPENJDK, "IIOP", "OpenJDK", NameTokens.IIOP, null, true));
+        add(new SubsystemMetadata(INFINISPAN, "Infinispan", null, null, Ids.CACHE_CONTAINER_COLUMN, true));
+        add(new SubsystemMetadata(IO, "IO", null, NameTokens.IO, null, false));
+        add(new SubsystemMetadata(JCA, "JCA", null, NameTokens.JCA, null, false));
+        add(new SubsystemMetadata(JMX, "JMX", null, NameTokens.JMX, null, false));
+        add(new SubsystemMetadata(JPA, "JPA", null, NameTokens.JPA, null, false));
+        add(new SubsystemMetadata(LOGGING, "Logging", null, NameTokens.LOGGING, null, false));
+        add(new SubsystemMetadata(MAIL, "Mail", null, null, ModelDescriptionConstants.MAIL_SESSION, true));
+        add(new SubsystemMetadata(MESSAGING_ACTIVEMQ, "Messaging", "ActiveMQ", null,
+                ModelDescriptionConstants.MESSAGING_SERVER, true));
+        add(new SubsystemMetadata(REMOTING, "Remoting", null, NameTokens.REMOTING, null, false));
+        add(new SubsystemMetadata(REQUEST_CONTROLLER, "Request Controller", null, NameTokens.REQUEST_CONTROLLER, null,
+                false));
+        add(new SubsystemMetadata(RESOURCE_ADAPTERS, "Resource Adapters", null, null,
+                RESOURCE_ADAPTER, true));
+        add(new SubsystemMetadata(SECURITY, "Security", null, null, ModelDescriptionConstants.SECURITY_DOMAIN, true));
+        add(new SubsystemMetadata(TRANSACTIONS, "Transactions", null, NameTokens.TRANSACTIONS, null, false));
+        add(new SubsystemMetadata(UNDERTOW, "Web", "Undertow", null, Ids.WEB_SETTINGS_COLUMN, true));
+        add(new SubsystemMetadata(WEBSERVICES, "Web Services", null, NameTokens.WEBSERVICES, null, false));
     }
 
     private void add(SubsystemMetadata subsystem) {

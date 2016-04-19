@@ -190,10 +190,10 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     private final boolean pinnable;
     private final Element columnActions;
     private final List<T> initialItems;
+    private final ItemSelectionHandler<T> selectionHandler;
     private ItemsProvider<T> itemsProvider;
     private ItemRenderer<T> itemRenderer;
-    private final ItemSelectionHandler<T> selectionHandler;
-    private final PreviewCallback<T> previewCallback;
+    private PreviewCallback<T> previewCallback;
     private BreadcrumbItemsProvider<T> breadcrumbItemsProvider;
     private BreadcrumbItemHandler<T> breadcrumbItemHandler;
     private boolean firstActionAsBreadcrumbHandler;
@@ -719,6 +719,18 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
     List<T> getInitialItems() {
         return initialItems;
+    }
+
+    /**
+     * Sometimes you need to reference {@code this} in the preview callback. This is not possible if the preview
+     * callback is part of the builder which is passed to {@code super()}. In this case the preview callback can be
+     * specified <strong>after</strong> the call to {@code super()} using this setter.
+     * <p>
+     * However make sure to call the setter <strong>before</strong> the column is used {@link #asElement()} and gets
+     * attached to the DOM!
+     */
+    public void setPreviewCallback(final PreviewCallback<T> previewCallback) {
+        this.previewCallback = previewCallback;
     }
 
     /**

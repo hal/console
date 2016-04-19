@@ -25,7 +25,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
@@ -40,11 +39,11 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.core.finder.ColumnRegistry.LookupCallback;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.spi.Footer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,7 +118,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
 
     /**
-     * The maximum number of visible columns. If there are more columns given the first column is hidden when column
+     * The maximum number of visible columns. If there are more columns, the first column is hidden when column
      * {@code MAX_VISIBLE_COLUMNS + 1} is shown.
      */
     public static final int MAX_VISIBLE_COLUMNS = 4;
@@ -130,7 +129,6 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     private static final Logger logger = LoggerFactory.getLogger(Finder.class);
 
     private final PlaceManager placeManager;
-    private final EventBus eventBus;
     private final ColumnRegistry columnRegistry;
     private final Provider<Progress> progress;
     private final String id;
@@ -145,11 +143,9 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     @Inject
     public Finder(final PlaceManager placeManager,
-            final EventBus eventBus,
             final ColumnRegistry columnRegistry,
             @Footer final Provider<Progress> progress) {
         this.placeManager = placeManager;
-        this.eventBus = eventBus;
         this.columnRegistry = columnRegistry;
         this.progress = progress;
 

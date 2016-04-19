@@ -38,7 +38,6 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.tree.Node;
@@ -58,6 +57,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -73,8 +73,8 @@ import static org.jboss.hal.ballroom.js.JsHelper.asList;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.StatementContext.Key.ANY_GROUP;
-import static org.jboss.hal.meta.StatementContext.Key.ANY_PROFILE;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NYI;
 
@@ -488,9 +488,9 @@ public class ModelBrowser implements HasElements {
         return AddressTemplate.of(address, (name, value, first, last, index) -> {
             String segment;
             if (PROFILE.equals(name)) {
-                segment = ANY_PROFILE.variable();
+                segment = SELECTED_PROFILE.variable();
             } else if (SERVER_GROUP.equals(name)) {
-                segment = ANY_GROUP.variable();
+                segment = SELECTED_GROUP.variable();
             } else {
                 if (last && node != null && node.data != null && !node.data.hasSingletons()) {
                     segment = name + "=*";

@@ -23,19 +23,23 @@ package org.jboss.hal.resources;
 public interface Names {
 
     String ACCESS_CONTROL = "Access Control";
-    String ATTRIBUTES = "Attributes";
     String CONFIGURATION = "Configuration";
     String CONTENT_REPOSITORY = "Content Repository";
     String DATASOURCE = "Datasource";
     String DATASOURCES = "Datasources";
+    String DATASOURCES_DRIVERS = "Datasources & Drivers";
+    String DEPLOYMENT = "Deployment";
     String DEPLOYMENTS = "Deployments";
     String HAL = "HAL";
     String HOSTS = "Hosts";
     String INTERFACE = "Interface";
     String IIOP_OPENJDK = "IIOP (OpenJDK)";
     String INTERFACES = "Interfaces";
+    String JDBC_DRIVER = "JDBC Driver";
+    String JDBC_DRIVERS = "JDBC Drivers";
     String MANAGEMENT_CONSOLE = "Management Console";
     String MANAGEMENT_MODEL = "Management Model";
+    String MODULE = "Module";
     String NOT_AVAILABLE = "n/a";
     String NOT_SUPPORTED = "not supported";
     String NYI = "not yet implemented";
@@ -48,6 +52,7 @@ public interface Names {
     String RUNTIME = "Runtime";
     String SERVER = "Server";
     String SERVER_GROUPS = "Server Groups";
+    String SLOT = "Slot";
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDINGS = "Socket Bindings";
     String SUBSYSTEM = "Subsystem";
