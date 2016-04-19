@@ -32,16 +32,16 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 public class JdbcDriver extends NamedNode {
 
     public enum Provider {
-        UNKNOWN(Names.NOT_AVAILABLE), DEPLOYMENT(Names.DEPLOYMENT), MODULE(Names.MODULE);
+        UNKNOWN(Names.NOT_AVAILABLE), DEPLOYMENT(Names.DEPLOYMENT.toLowerCase()), MODULE(Names.MODULE.toLowerCase());
 
-        private final String label;
+        private final String text;
 
-        Provider(final String label) {
-            this.label = label;
+        Provider(final String text) {
+            this.text = text;
         }
 
-        public String label() {
-            return label;
+        public String text() {
+            return text;
         }
     }
 
@@ -52,6 +52,10 @@ public class JdbcDriver extends NamedNode {
 
     public JdbcDriver(final String name) {
         super(name, new ModelNode());
+    }
+
+    public JdbcDriver(final String name, final ModelNode modelNode) {
+        super(name, modelNode);
     }
 
     public JdbcDriver(final Property property) {
@@ -73,11 +77,7 @@ public class JdbcDriver extends NamedNode {
     }
 
     public String getModule() {
-        String module = get(DRIVER_MODULE_NAME).asString();
-        if (hasDefined(MODULE_SLOT)) {
-            module += " slot " + get(MODULE_SLOT).asString(); //NON-NLS
-        }
-        return module;
+        return get(DRIVER_MODULE_NAME).asString();
     }
 
     public List<String> getDriverClasses() {
@@ -103,11 +103,5 @@ public class JdbcDriver extends NamedNode {
             }
         }
         return version;
-    }
-
-    void reset(ModelNode modelNode) {
-        String name = getName();
-        set(modelNode);
-        setName(name);
     }
 }

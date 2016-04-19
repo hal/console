@@ -42,7 +42,12 @@
       justify-content: space-between;
       padding: @finder-padding-tb @finder-padding-lr;
 
+      .hidden-columns {
+        margin-right: 5px;
+      }
+
       h1 {
+        flex: 1 0 auto;
         font-size: 13px;
         font-weight: 700;
         line-height: 1.67;
@@ -111,6 +116,10 @@
         }
         &.warning-marker {
           border-left-color: @brand-warning;
+        }
+
+        .item-icon {
+          margin-right: 5px;
         }
 
         .item-text {

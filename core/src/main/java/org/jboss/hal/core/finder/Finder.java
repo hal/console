@@ -49,7 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
-import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static org.jboss.hal.resources.CSS.column;
 import static org.jboss.hal.resources.CSS.finder;
 import static org.jboss.hal.resources.CSS.finderPreview;
@@ -117,12 +117,12 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     }
 
 
+    static final String DATA_BREADCRUMB = "breadcrumb";
     /**
      * The maximum number of visible columns. If there are more columns, the first column is hidden when column
      * {@code MAX_VISIBLE_COLUMNS + 1} is shown.
      */
-    public static final int MAX_VISIBLE_COLUMNS = 4;
-    static final String DATA_BREADCRUMB = "breadcrumb";
+    private static final int MAX_VISIBLE_COLUMNS = 4;
 
     private static final int MAX_COLUMNS = 12;
     private static final String PREVIEW_COLUMN = "previewColumn";
@@ -200,9 +200,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     private void resizePreview() {
         int columns = root.getChildren().length() - 1;
-        // TODO Restrict to MAX_VISIBLE_COLUMNS and enable / disable horizontal scrolling
-        // int previewSize = MAX_COLUMNS - 2 * min(columns, MAX_VISIBLE_COLUMNS);
-        int previewSize = max(1, MAX_COLUMNS - 2 * columns);
+        int previewSize = MAX_COLUMNS - 2 * min(columns, MAX_VISIBLE_COLUMNS);
         previewColumn.setClassName(finderPreview + " " + column(previewSize));
     }
 
@@ -229,6 +227,8 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     private void appendColumn(FinderColumn<?> column, AsyncCallback<FinderColumn> callback) {
         column.resetSelection();
         columns.put(column.getId(), column);
+        showHideColumns();
+
         root.insertBefore(column.asElement(), previewColumn);
         column.setItems(callback);
         resizePreview();
@@ -261,7 +261,26 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 iterator.remove();
             }
         }
+        showHideColumns();
         resizePreview();
+    }
+
+    private void showHideColumns() {
+        int index = 0;
+        int hideUntilHere = columns.size() - MAX_VISIBLE_COLUMNS;
+        for (FinderColumn column : columns.values()) {
+            Elements.setVisible(column.asElement(), index >= hideUntilHere);
+            column.markHiddenColumns(false);
+            index++;
+        }
+        if (hideUntilHere > 0) {
+            for (FinderColumn column : columns.values()) {
+                if (Elements.isVisible(column.asElement())) {
+                    column.markHiddenColumns(true);
+                    break;
+                }
+            }
+        }
     }
 
     void updateContext() {

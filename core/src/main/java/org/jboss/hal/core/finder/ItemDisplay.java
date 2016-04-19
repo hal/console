@@ -74,6 +74,16 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
     }
 
     /**
+     * Whether to show an icon left to the item text. The icon should be an PatternFly or FontAwesome icon in normal
+     * size.
+     *
+     * @return {@code null} by default
+     */
+    default Element getIcon() {
+        return null;
+    }
+
+    /**
      * Whether this item triggers a next column (hence is a folder not a leaf).
      *
      * @return {@code null} by default

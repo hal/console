@@ -18,8 +18,9 @@ package org.jboss.hal.client.configuration.subsystem.datasource;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import elemental.client.Browser;
 import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental.html.SpanElement;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
@@ -40,9 +41,11 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.JDBC_DRIVER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.JDBC_DRIVER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver.Provider.DEPLOYMENT;
+import static org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver.Provider.MODULE;
+import static org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver.Provider.UNKNOWN;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.JDBC_DRIVER;
-import static org.jboss.hal.resources.CSS.itemText;
-import static org.jboss.hal.resources.CSS.subtitle;
+import static org.jboss.hal.resources.CSS.fontAwesome;
 
 /**
  * @author Harald Pehl
@@ -79,25 +82,28 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                         }
                     };
                     new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
-                            new JdbcDriverFunctions.Read(statementContext, dispatcher),
+                            new JdbcDriverFunctions.ReadConfiguration(statementContext, dispatcher),
                             new TopologyFunctions.ServerGroupsOfProfile(dispatcher, statementContext.selectedProfile()),
                             new TopologyFunctions.RunningServersOfGroupsInContext(dispatcher),
-                            new JdbcDriverFunctions.AddRuntimeInfo(dispatcher));
+                            new JdbcDriverFunctions.ReadRuntime(dispatcher),
+                            new JdbcDriverFunctions.CombineDriverResults());
                 })
 
                 .itemRenderer(driver -> new ItemDisplay<JdbcDriver>() {
+
                     @Override
-                    public Element asElement() {
-                        if (driver.getProvider() != JdbcDriver.Provider.UNKNOWN) {
-                            String providedBy = resources.constants().providedBy() + " " + driver.getProvider()
-                                    .label();
-                            return new Elements.Builder()
-                                    .span().css(itemText)
-                                    .span().textContent(driver.getName()).end()
-                                    .start("small").css(subtitle).textContent(providedBy).end()
-                                    .end().build();
+                    public Element getIcon() {
+                        SpanElement icon = null;
+                        JdbcDriver.Provider provider = driver.getProvider();
+                        if (provider != UNKNOWN) {
+                            icon = Browser.getDocument().createSpanElement();
+                            if (provider == MODULE) {
+                                icon.setClassName(fontAwesome("cubes"));
+                            } else if (provider == DEPLOYMENT) {
+                                icon.setClassName(fontAwesome("archive"));
+                            }
                         }
-                        return null;
+                        return icon;
                     }
 
                     @Override

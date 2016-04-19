@@ -177,6 +177,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
+    private static final String HIDDEN_COLUMNS_ELEMENT = "hiddenColumnsElement";
     private static final String HEADER_ELEMENT = "headerElement";
     private static final String COLUMN_ACTIONS_ELEMENT = "columnActionsElement";
     private static final String FILTER_ELEMENT = "filterElement";
@@ -202,6 +203,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     private final FinderColumnStorage storage;
 
     private final Element root;
+    private final Element hiddenColumns;
     private final Element headerElement;
     private final InputElement filterElement;
     private final Element ulElement;
@@ -239,6 +241,8 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                 .attr(TABINDEX, "-1")
                 .on(keydown, this::onNavigation)
                 .header()
+                .span().css(CSS.hiddenColumns, fontAwesome("angle-double-left")).title(CONSTANTS.hiddenColumns())
+                .rememberAs(HIDDEN_COLUMNS_ELEMENT).end()
                 .h(1).textContent(builder.title).title(builder.title).rememberAs(HEADER_ELEMENT).end();
 
         // column actions
@@ -285,6 +289,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                 .end().build();
 
         root = eb.build();
+        hiddenColumns = eb.referenceFor(HIDDEN_COLUMNS_ELEMENT);
         headerElement = eb.referenceFor(HEADER_ELEMENT);
         columnActions = eb.referenceFor(COLUMN_ACTIONS_ELEMENT);
         filterElement = builder.withFilter ? eb.referenceFor(FILTER_ELEMENT) : null;
@@ -456,6 +461,10 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
 
     // ------------------------------------------------------ internal API
+
+    void markHiddenColumns(boolean show) {
+        Elements.setVisible(hiddenColumns, show);
+    }
 
     private Element activeElement() {return ulElement.querySelector("li." + active);} //NON-NLS
 

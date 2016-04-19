@@ -15,7 +15,11 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.FluentIterable;
 import org.jboss.gwt.flow.Control;
@@ -41,19 +45,21 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 public class JdbcDriverFunctions {
 
+    public static final String CONFIGURATION_DRIVERS = "jdbcDriverFunctions.configurationDrivers";
+    public static final String RUNTIME_DRIVERS = "jdbcDriverFunctions.runtimeDrivers";
     public static final String DRIVERS = "jdbcDriverFunctions.drivers";
 
 
     /**
      * Reads the JDBC drivers from {@code /{selected.profile}/subsystem=datasource/jdbc-driver=*} and puts the result
-     * as {@code List<JdbcDriver>} under the key {@link JdbcDriverFunctions#DRIVERS} into the context.
+     * as {@code List<JdbcDriver>} under the key {@link JdbcDriverFunctions#CONFIGURATION_DRIVERS} into the context.
      */
-    public static class Read implements Function<FunctionContext> {
+    public static class ReadConfiguration implements Function<FunctionContext> {
 
         private final StatementContext statementContext;
         private final Dispatcher dispatcher;
 
-        public Read(final StatementContext statementContext, final Dispatcher dispatcher) {
+        public ReadConfiguration(final StatementContext statementContext, final Dispatcher dispatcher) {
             this.statementContext = statementContext;
             this.dispatcher = dispatcher;
         }
@@ -68,7 +74,7 @@ public class JdbcDriverFunctions {
                 List<JdbcDriver> drivers = FluentIterable.from(result.asPropertyList())
                         .transform(JdbcDriver::new)
                         .toList();
-                control.getContext().set(DRIVERS, drivers);
+                control.getContext().set(CONFIGURATION_DRIVERS, drivers);
                 control.proceed();
             });
         }
@@ -76,19 +82,20 @@ public class JdbcDriverFunctions {
 
 
     /**
-     * Populates the jdbc drivers returned by {@link Read} with runtime data provided by the {@code
-     * :installed-drivers-list} operation. Needs both the list of drivers and a list of running servers.
+     * Reads the JDBC drivers from a list of running servers which are expected in the context under the key
+     * {@link TopologyFunctions#RUNNING_SERVERS}. The drivers are read using the {@code :installed-drivers-list}
+     * operation. Stores the result as {@code List<JdbcDriver>} under the key {@link
+     * JdbcDriverFunctions#RUNTIME_DRIVERS} into the context.
      */
-    public static class AddRuntimeInfo implements Function<FunctionContext> {
+    public static class ReadRuntime implements Function<FunctionContext> {
 
         private final Dispatcher dispatcher;
 
-        public AddRuntimeInfo(final Dispatcher dispatcher) {this.dispatcher = dispatcher;}
+        public ReadRuntime(final Dispatcher dispatcher) {this.dispatcher = dispatcher;}
 
         @Override
         public void execute(final Control<FunctionContext> control) {
-            List<JdbcDriver> drivers = control.getContext().get(DRIVERS);
-            List<Server> servers = control.getContext().get(TopologyFunctions.SERVERS);
+            List<Server> servers = control.getContext().get(TopologyFunctions.RUNNING_SERVERS);
             if (servers != null && !servers.isEmpty()) {
                 //noinspection Guava
                 List<Operation> operations = FluentIterable.from(servers)
@@ -100,18 +107,16 @@ public class JdbcDriverFunctions {
                         })
                         .toList();
                 dispatcher.executeInFunction(control, new Composite(operations), (CompositeResult result) -> {
+                    List<JdbcDriver> drivers = new ArrayList<>();
                     for (ModelNode step : result) {
                         if (!step.isFailure()) {
-                            // for each server we get the List of installed drivers
+                            // for each server we get the list of installed drivers
                             for (ModelNode modelNode : step.get(RESULT).asList()) {
-                                String driverName = modelNode.get(DRIVER_NAME).asString();
-                                JdbcDriver existingDriver = findDriver(drivers, driverName);
-                                if (existingDriver != null) {
-                                    existingDriver.reset(modelNode);
-                                }
+                                drivers.add(new JdbcDriver(modelNode.get(DRIVER_NAME).asString(), modelNode));
                             }
                         }
                     }
+                    control.getContext().set(RUNTIME_DRIVERS, drivers);
                     control.proceed();
                 });
 
@@ -119,14 +124,37 @@ public class JdbcDriverFunctions {
                 control.proceed();
             }
         }
+    }
 
-        private JdbcDriver findDriver(List<JdbcDriver> drivers, String name) {
-            for (JdbcDriver driver : drivers) {
-                if (driver.getName().equals(name)) {
-                    return driver;
+
+    /**
+     * Combines and sorts the results form {@link JdbcDriverFunctions.ReadConfiguration} and {@link
+     * JdbcDriverFunctions.ReadRuntime} with a preference for runtime drivers over configuration drivers.
+     * <p>
+     * Stores the result as {@code List<JdbcDriver>} under the key {@link JdbcDriverFunctions#DRIVERS} into the
+     * context.
+     */
+    public static class CombineDriverResults implements Function<FunctionContext> {
+
+        @Override
+        public void execute(final Control<FunctionContext> control) {
+            Map<String, JdbcDriver> map = new HashMap<>();
+            List<JdbcDriver> configDrivers = control.getContext().get(JdbcDriverFunctions.CONFIGURATION_DRIVERS);
+            List<JdbcDriver> runtimeDrivers = control.getContext().get(JdbcDriverFunctions.RUNTIME_DRIVERS);
+            if (configDrivers != null) {
+                for (JdbcDriver driver : configDrivers) {
+                    map.put(driver.getName(), driver);
                 }
             }
-            return null;
+            if (runtimeDrivers != null) {
+                for (JdbcDriver driver : runtimeDrivers) {
+                    map.put(driver.getName(), driver);
+                }
+            }
+            List<JdbcDriver> drivers = new ArrayList<>(map.values());
+            Collections.sort(drivers, (driver1, driver2) -> driver1.getName().compareTo(driver2.getName()));
+            control.getContext().set(DRIVERS, drivers);
+            control.proceed();
         }
     }
 }

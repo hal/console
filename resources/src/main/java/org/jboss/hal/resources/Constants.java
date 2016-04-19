@@ -87,6 +87,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String formResetDesc();
 
     String help();
+    String hiddenColumns();
     String homepageNewToEap();
     String homepageTakeATour();
     String homepageDeploymentsSubHeader();

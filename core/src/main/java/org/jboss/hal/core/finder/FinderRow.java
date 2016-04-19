@@ -86,6 +86,12 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
             eb.css(pinned ? CSS.pinned : CSS.unpinned);
         }
 
+        Element icon = display.getIcon();
+        if (icon != null) {
+            icon.getClassList().add(CSS.itemIcon);
+            eb.add(icon);
+        }
+
         Element itemElement;
         if (display.asElement() != null) {
             itemElement = display.asElement();

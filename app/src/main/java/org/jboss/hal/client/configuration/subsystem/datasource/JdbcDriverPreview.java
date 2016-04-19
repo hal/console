@@ -22,6 +22,8 @@ import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver.Provider.DEPLOYMENT;
+import static org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver.Provider.MODULE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_VERSION;
 
 /**
@@ -31,26 +33,20 @@ class JdbcDriverPreview extends PreviewContent {
 
     JdbcDriverPreview(final JdbcDriver driver, final Resources resources) {
         super(driver.getName());
-        LabelBuilder labelBuilder = new LabelBuilder();
 
+        JdbcDriver.Provider provider = driver.getProvider();
+        if (provider == MODULE) {
+            previewBuilder().p().innerHtml(
+                    resources.messages().jdbcDriverProvidedByPreview(provider.text(), driver.getModule())).end();
+        } else if (provider == DEPLOYMENT) {
+            previewBuilder().p().innerHtml(
+                    resources.messages().jdbcDriverProvidedByPreview(provider.text(), driver.getDeploymentName()))
+                    .end();
+        }
+
+        LabelBuilder labelBuilder = new LabelBuilder();
         PreviewAttributes<JdbcDriver> attributes = new PreviewAttributes<>(driver,
                 resources.constants().main_attributes())
-
-                .append(model -> {
-                    String value = null;
-                    switch (model.getProvider()) {
-                        case DEPLOYMENT:
-                            value = model.getProvider().label() + " " + model.getDeploymentName();
-                            break;
-                        case MODULE:
-                            value = model.getProvider().label() + " " + model.getModule();
-                            break;
-                        case UNKNOWN:
-                            value = model.getProvider().label();
-                            break;
-                    }
-                    return new String[]{resources.constants().providedBy(), value};
-                })
 
                 .append(model -> {
                     return new String[]{labelBuilder.label("driver-classes"), //NON-NLS

@@ -55,6 +55,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String homepagePatchingStandaloneStepIntro(String name);
     String homepagePatchingDomainStepIntro(String name);
 
+    SafeHtml jdbcDriverProvidedByPreview(String type, String value);
+    String jdbcDriverProvidedByTooltip(String type, String value);
+
     String invalidRange(long value, long min, long max);
     SafeHtml listHint();
     String messages(@PluralCount int count);

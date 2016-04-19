@@ -29,14 +29,14 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * Set of functions to read runtime data like running server of a specific server group
+ * Set of functions to read runtime data like running server of a specific server group.
  *
  * @author Harald Pehl
  */
 public class TopologyFunctions {
 
     private static final String SERVER_GROUPS = "topologyFunctions.serverGroups";
-    public static final String SERVERS = "topologyFunctions.servers";
+    public static final String RUNNING_SERVERS = "topologyFunctions.runningServers";
 
 
     /**
@@ -74,9 +74,9 @@ public class TopologyFunctions {
 
 
     /**
-     * Returns a list of running servers which belong to a specific server group. Expects to find the list in the
-     * context under the key {@link TopologyFunctions#SERVER_GROUPS}. Stores the list in the context under the key
-     * {@link TopologyFunctions#SERVERS}.
+     * Returns a list of running servers which belong to one of the server groups found under the key {@link
+     * TopologyFunctions#SERVER_GROUPS} in the context. Stores the list in the context under the key {@link
+     * TopologyFunctions#RUNNING_SERVERS}.
      */
     public static class RunningServersOfGroupsInContext implements Function<FunctionContext> {
 
@@ -111,7 +111,7 @@ public class TopologyFunctions {
                             .filter(modelNode -> !modelNode.isFailure())
                             .transform(modelNode -> new Server(modelNode.get(RESULT)))
                             .toList();
-                    control.getContext().set(SERVERS, servers);
+                    control.getContext().set(RUNNING_SERVERS, servers);
                     control.proceed();
                 });
             }
