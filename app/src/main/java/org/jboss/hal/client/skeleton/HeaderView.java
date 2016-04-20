@@ -33,7 +33,6 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventHandler;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.InstanceInfo;
@@ -47,6 +46,7 @@ import org.jboss.hal.core.modelbrowser.ModelBrowserPath;
 import org.jboss.hal.core.modelbrowser.ModelBrowserPath.Segment;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
@@ -56,8 +56,10 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.singletonList;
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.client.skeleton.HeaderPresenter.MAX_BREADCRUMB_VALUE_LENGTH;
 import static org.jboss.hal.client.skeleton.HeaderPresenter.MESSAGE_TIMEOUT;
 import static org.jboss.hal.config.InstanceInfo.WILDFLY;
+import static org.jboss.hal.core.Strings.abbreviateMiddle;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.HAL;
@@ -314,9 +316,17 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
                                     }
                                 }
                             });
-                        })
-                        .span().textContent(segment.getBreadcrumbValue() + " ").end()
-                        .span().css(caret).end()
+                        });
+
+                String breadcrumbValue = segment.getBreadcrumbValue();
+                if (breadcrumbValue.length() > MAX_BREADCRUMB_VALUE_LENGTH) {
+                    builder.span()
+                            .textContent(abbreviateMiddle(breadcrumbValue, MAX_BREADCRUMB_VALUE_LENGTH) + " ")
+                            .title(breadcrumbValue).end();
+                } else {
+                    builder.span().textContent(breadcrumbValue + " ").end();
+                }
+                builder.span().css(caret).end()
                         .end();
                 builder.ul()
                         .css(dropdownMenu, valueDropdown)
@@ -324,7 +334,13 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
                         .end();
             } else {
                 builder.css(value);
-                builder.textContent(segment.getBreadcrumbValue());
+                String breadcrumbValue = segment.getBreadcrumbValue();
+                if (breadcrumbValue.length() > MAX_BREADCRUMB_VALUE_LENGTH) {
+                    builder.textContent(abbreviateMiddle(breadcrumbValue, MAX_BREADCRUMB_VALUE_LENGTH))
+                            .title(breadcrumbValue);
+                } else {
+                    builder.textContent(segment.getBreadcrumbValue());
+                }
             }
             builder.end(); // </span>
             builder.end(); // </li>

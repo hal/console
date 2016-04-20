@@ -36,8 +36,11 @@ package org.jboss.hal.resources;
 
 import java.util.List;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.Widget;
@@ -65,6 +68,22 @@ public final class IdBuilder {
             }
         }
         return Joiner.on(separator).skipNulls().join(ids);
+    }
+
+    /**
+     * Turns a label which can whitespace and upper/lower case characters into an all lowercase id separated with "-".
+     */
+    public static String asId(@NonNls String text) {
+        Iterable<String> parts = Splitter
+                .on(CharMatcher.whitespace().or(CharMatcher.is('-')))
+                .omitEmptyStrings()
+                .trimResults()
+                .split(text);
+        //noinspection Guava
+        return FluentIterable.from(parts)
+                .transform(String::toLowerCase)
+                .transform(CharMatcher.javaLetterOrDigit()::retainFrom)
+                .join(Joiner.on('-'));
     }
 
     public static void set(Widget widget, @NonNls String id) {

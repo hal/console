@@ -33,7 +33,6 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -90,11 +89,10 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         this.resources = resources;
         this.templates = templates;
 
-        addColumnAction(columnActionFactory.add(IdBuilder.build(DATA_SOURCE, "add"),
-                resources.messages().addResourceTitle(Names.DATASOURCE), column -> launchNewDataSourceWizard(false)));
-        addColumnAction(columnActionFactory.add(IdBuilder.build(ModelDescriptionConstants.XA_DATA_SOURCE, "add"),
-                resources.messages().addResourceTitle(Names.XA_DATASOURCE), fontAwesome("credit-card"),
-                column -> launchNewDataSourceWizard(true)));
+        addColumnAction(columnActionFactory.add(IdBuilder.build(DATA_SOURCE, "add"), Names.DATASOURCE,
+                column -> launchNewDataSourceWizard(false)));
+        addColumnAction(columnActionFactory.add(IdBuilder.build(XA_DATA_SOURCE, "add"), Names.XA_DATASOURCE,
+                fontAwesome("credit-card"), column -> launchNewDataSourceWizard(true)));
         addColumnAction(columnActionFactory.refresh(IdBuilder.build(DATA_SOURCE, "refresh")));
 
         setItemsProvider((context, callback) -> {
@@ -103,7 +101,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                     .param(CHILD_TYPE, DATA_SOURCE).build();
             Operation xaDataSourceOperation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
                     dataSourceAddress)
-                    .param(CHILD_TYPE, ModelDescriptionConstants.XA_DATA_SOURCE).build();
+                    .param(CHILD_TYPE, XA_DATA_SOURCE).build();
             dispatcher.execute(new Composite(dataSourceOperation, xaDataSourceOperation), (CompositeResult result) -> {
                 List<DataSource> combined = new ArrayList<>();
                 combined.addAll(Lists.transform(result.step(0).get(RESULT).asPropertyList(),

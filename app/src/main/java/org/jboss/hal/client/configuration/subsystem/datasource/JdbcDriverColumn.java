@@ -15,9 +15,12 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.SpanElement;
@@ -25,18 +28,32 @@ import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.client.runtime.domain.TopologyFunctions;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.finder.ItemAction;
+import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Footer;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.JDBC_DRIVER_ADDRESS;
@@ -44,7 +61,7 @@ import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTem
 import static org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver.Provider.DEPLOYMENT;
 import static org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver.Provider.MODULE;
 import static org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver.Provider.UNKNOWN;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.JDBC_DRIVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 /**
@@ -57,17 +74,17 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
 
     @Inject
     protected JdbcDriverColumn(final Finder finder,
+            final Environment environment,
             final ColumnActionFactory columnActionFactory,
+            final ItemActionFactory itemActionFactory,
+            final EventBus eventBus,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
+            final MetadataRegistry metadataRegistry,
             final @Footer Provider<Progress> progress,
             final Resources resources) {
 
         super(new FinderColumn.Builder<JdbcDriver>(finder, JDBC_DRIVER, Names.JDBC_DRIVER)
-
-                .columnAction(columnActionFactory.add(IdBuilder.build(JDBC_DRIVER, "add"), Names.JDBC_DRIVER,
-                        JDBC_DRIVER_TEMPLATE))
-                .columnAction(columnActionFactory.refresh(IdBuilder.build(JDBC_DRIVER, "refresh")))
 
                 .itemsProvider((context, callback) -> {
                     Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
@@ -88,31 +105,72 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                             new JdbcDriverFunctions.ReadRuntime(dispatcher),
                             new JdbcDriverFunctions.CombineDriverResults());
                 })
-
-                .itemRenderer(driver -> new ItemDisplay<JdbcDriver>() {
-
-                    @Override
-                    public Element getIcon() {
-                        SpanElement icon = null;
-                        JdbcDriver.Provider provider = driver.getProvider();
-                        if (provider != UNKNOWN) {
-                            icon = Browser.getDocument().createSpanElement();
-                            if (provider == MODULE) {
-                                icon.setClassName(fontAwesome("cubes"));
-                            } else if (provider == DEPLOYMENT) {
-                                icon.setClassName(fontAwesome("archive"));
-                            }
-                        }
-                        return icon;
-                    }
-
-                    @Override
-                    public String getTitle() {
-                        return driver.getName();
-                    }
-                })
-
                 .useFirstActionAsBreadcrumbHandler());
+
+        addColumnAction(columnActionFactory.add(IdBuilder.build(JDBC_DRIVER, "add"), Names.JDBC_DRIVER,
+                column -> {
+                    Metadata metadata = metadataRegistry.lookup(JDBC_DRIVER_TEMPLATE);
+                    Form<ModelNode> form = new ModelNodeForm.Builder<>(
+                            IdBuilder.build(JDBC_DRIVER, "add", "form"), metadata)
+                            .createResource()
+                            .include(DRIVER_NAME, DRIVER_MODULE_NAME, DRIVER_CLASS_NAME,
+                                    DRIVER_DATASOURCE_CLASS_NAME, DRIVER_XA_DATASOURCE_CLASS_NAME,
+                                    DRIVER_MAJOR_VERSION, DRIVER_MINOR_VERSION)
+                            .build();
+                    AddResourceDialog dialog = new AddResourceDialog(
+                            resources.messages().addResourceTitle(Names.JDBC_DRIVER), form,
+                            (name, modelNode) -> {
+                                if (modelNode != null) {
+                                    ResourceAddress address = JDBC_DRIVER_TEMPLATE.resolve(statementContext, name);
+                                    Operation operation = new Operation.Builder(ADD, address)
+                                            .payload(modelNode)
+                                            .build();
+                                    dispatcher.execute(operation, result -> {
+                                        MessageEvent.fire(eventBus,
+                                                Message.success(resources.messages()
+                                                        .addResourceSuccess(Names.JDBC_DRIVER,
+                                                                modelNode.get(DRIVER_NAME).asString())));
+                                        column.refresh(name);
+                                    });
+                                }
+                            });
+                    dialog.show();
+                }));
+        addColumnAction(columnActionFactory.refresh(IdBuilder.build(JDBC_DRIVER, "refresh")));
+
+        setItemRenderer(driver -> new ItemDisplay<JdbcDriver>() {
+            @Override
+            public Element getIcon() {
+                SpanElement icon = null;
+                JdbcDriver.Provider provider = driver.getProvider();
+                if (provider != UNKNOWN) {
+                    icon = Browser.getDocument().createSpanElement();
+                    if (provider == MODULE) {
+                        icon.setClassName(fontAwesome("cubes"));
+                    } else if (provider == DEPLOYMENT) {
+                        icon.setClassName(fontAwesome("archive"));
+                    }
+                }
+                return icon;
+            }
+
+            @Override
+            public String getTitle() {
+                return driver.getName();
+            }
+
+            @Override
+            public List<ItemAction<JdbcDriver>> actions() {
+                String profile = environment.isStandalone() ? STANDALONE : statementContext.selectedProfile();
+                List<ItemAction<JdbcDriver>> actions = new ArrayList<>();
+                actions.add(itemActionFactory.view(NameTokens.JDBC_DRIVER, PROFILE, profile, NAME, driver.getName()));
+                if (driver.getProvider() == MODULE) {
+                    actions.add(itemActionFactory.remove(Names.JDBC_DRIVER, driver.getName(), JDBC_DRIVER_TEMPLATE,
+                            JdbcDriverColumn.this));
+                }
+                return actions;
+            }
+        });
 
         setPreviewCallback(driver -> new JdbcDriverPreview(driver, resources));
     }

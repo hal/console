@@ -2,8 +2,22 @@
 <h2>Datasources</h2>
 <p>The two general types of resources are referred to as datasources and XA datasources.
 <ul>
-    <li>Non-XA datasources are used for applications which do not use transactions, or applications which use transactions with a single database.</li>
-    <li>XA datasources are used by applications whose transactions are distributed across multiple databases. XA datasources introduce additional overhead.</li>
+    <li><strong>Non-XA datasources</strong> are used for applications which do not use transactions, or applications which use transactions with a single database.</li>
+    <li><strong>XA datasources</strong> are used by applications whose transactions are distributed across multiple databases. XA datasources introduce additional overhead.</li>
 </ul>
-<h2>JDBC</h2>
-<p>The JDBC API is the standard that defines how databases are accessed by Java applications. An application configures a datasource that references a JDBC driver. Application code can then be written against the driver, rather than the database. The driver converts the code to the database language. This means that if the correct driver is installed, an application can be used with any supported database.</p>
+<h2>JDBC Drivers</h2>
+<p>Before your application can connect to a datasource, your datasource vendor's JDBC drivers need to be installed. You can choose between two different ways to install JDBC drivers:</p>
+<dl>
+    <dt>Modules</dt>
+    <dd><p>To install a JDBC driver as a module you need to create a file path structure under the
+        <code>WILDFLY_HOME/modules</code>, copy the JDBC driver JAR into the
+        <code>main/</code> subdirectory and create a <code>module.xml</code> file.</p>
+        <p>Once the JDBC driver is available as a module you can use this section to add, modify and remove driver configurations.</p>
+    </dd>
+
+    <dt>Deployments</dt>
+    <dd>
+        <p>You can deploy JDBC drivers just like any other deployment. This means that you can deploy them across multiple servers in a server group, if you use a managed domain. Any JDBC 4-compliant driver will automatically be recognized and installed into the system by name and version.</p>
+        <p>In domain mode drivers deployed as applications will only show up in this section if there are running servers which match the selected profile. Also these kind of drivers will be read-only. To remove them you will need to undeploy the related deployment.</p>
+    </dd>
+</dl>

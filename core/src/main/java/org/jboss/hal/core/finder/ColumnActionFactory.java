@@ -51,7 +51,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
  */
 public class ColumnActionFactory {
 
-    private class ColumnAddResourceCallback<T> implements AddResourceDialog.Callback<ModelNode> {
+    private class ColumnAddResourceCallback<T> implements AddResourceDialog.Callback {
 
         private final FinderColumn<T> column;
         private final String type;
@@ -110,30 +110,30 @@ public class ColumnActionFactory {
     public <T> ColumnAction<T> add(String id, String type, AddressTemplate template,
             @NonNls final String firstAttribute, @NonNls final String... otherAttributes) {
 
-        return add(id, resources.messages().addResourceTitle(type), column -> {
+        return add(id, type, column -> {
             Metadata metadata = metadataRegistry.lookup(template);
             ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(
-                    IdBuilder.build(id, "add", "form"), metadata)
+                    IdBuilder.build(id, "form"), metadata)
                     .createResource()
                     .unboundFormItem(new NameItem(), 0);
             if (firstAttribute != null) {
                 builder.include(firstAttribute, otherAttributes);
             }
-            AddResourceDialog<ModelNode> dialog = new AddResourceDialog<>(
+            AddResourceDialog dialog = new AddResourceDialog(
                     resources.messages().addResourceTitle(type), builder.build(),
                     new ColumnAddResourceCallback<>(column, type, template));
             dialog.show();
         });
     }
 
-    public <T> ColumnAction<T> add(String id, String tooltip, ColumnActionHandler<T> handler) {
-        return add(id, tooltip, pfIcon("add-circle-o"), handler);
+    public <T> ColumnAction<T> add(String id, String type, ColumnActionHandler<T> handler) {
+        return add(id, type, pfIcon("add-circle-o"), handler);
     }
 
-    public <T> ColumnAction<T> add(String id, String tooltip, String iconCss, ColumnActionHandler<T> handler) {
+    public <T> ColumnAction<T> add(String id, String type, String iconCss, ColumnActionHandler<T> handler) {
         Element element = new Elements.Builder().span()
                 .css(iconCss)
-                .title(tooltip)
+                .title(resources.messages().addResourceTitle(type))
                 .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
                 .data(UIConstants.PLACEMENT, "bottom")
                 .end().build();

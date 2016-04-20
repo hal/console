@@ -43,11 +43,13 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String activeRoles(String roles);
     String addResourceSuccess(String type, String name);
     String addResourceTitle(String text);
+
     String connectedTo(String url);
+
     SafeHtml dataSourceEnabledPreview(String type, String name);
     SafeHtml dataSourceDisabledPreview(String type, String name);
-    SafeHtml emptyModelNodeForm();
 
+    SafeHtml emptyModelNodeForm();
     SafeHtml endpointError(String url);
     SafeHtml endpointOk(String url);
 
@@ -55,24 +57,31 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String homepagePatchingStandaloneStepIntro(String name);
     String homepagePatchingDomainStepIntro(String name);
 
+    SafeHtml jdbcDriverDeploymentHint();
     SafeHtml jdbcDriverProvidedByPreview(String type, String value);
-    String jdbcDriverProvidedByTooltip(String type, String value);
 
     String invalidRange(long value, long min, long max);
+
     SafeHtml listHint();
+
     String messages(@PluralCount int count);
     String modifyResourceSuccess(String type, String name);
     String modifySingleResourceSuccess(String type);
+
     SafeHtml noMacrosDescription(String startMacro);
+
     String pageNotFound(String invalidHistoryToken);
     String patternMismatch(String pattern);
     SafeHtml propertiesHint();
+
     String recordedOperations(@PluralCount int count);
     String removeResourceConfirmationTitle(String name);
     SafeHtml removeResourceConfirmationQuestion(String name);
     String removeResourceSuccess(String type, String name);
     SafeHtml requiredHelp();
     SafeHtml requiredMarker();
+    String resourceNotFound(String type, String name);
+
     String updateAvailable(String current, String update);
     String unit(String unit);
     String unknownResource(String address, String reason);

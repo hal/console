@@ -195,7 +195,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String pin();
     String ping();
     String play();
-    String providedBy();
+    String pool();
 
     String recordingStarted();
     String recordingStopped();
@@ -214,11 +214,13 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String sameOrigin();
     String save();
+    String security();
     String settings();
     String showAll();
     String specifyDriver();
     String start();
     String startMacro();
+    String statements();
     String stopMacro();
     String storage();
     String summary();
@@ -226,15 +228,23 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String tags();
     String testConnection();
+    String timeouts();
     String toggleDropdown();
     String toggleNavigation();
     String tools();
+    String tracking();
     String type();
+
     String unknownError();
     String unknownResource();
     String unpin();
+
+    String validation();
     String view();
+
     String xaProperties();
+
     String yes();
+
     //@formatter:on
 }

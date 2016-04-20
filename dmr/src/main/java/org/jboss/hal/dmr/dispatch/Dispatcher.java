@@ -15,6 +15,10 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
+import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.html.FormData;
@@ -40,10 +44,6 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import java.util.List;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
@@ -374,5 +374,16 @@ public class Dispatcher implements RecordingHandler {
         } else {
             return operation.getName().startsWith("read");
         }
+    }
+
+
+    // ------------------------------------------------------ getter
+
+    public FailedCallback defaultFailedCallback() {
+        return failedCallback;
+    }
+
+    public ExceptionCallback defaultExceptionCallback() {
+        return exceptionCallback;
     }
 }

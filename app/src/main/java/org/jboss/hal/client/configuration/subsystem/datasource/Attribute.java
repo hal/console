@@ -15,37 +15,23 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.NamedNode;
-
 /**
  * @author Harald Pehl
  */
-public class DataSource extends NamedNode {
+class Attribute {
 
-    private final boolean xa;
+    enum Scope {BOTH, NON_XA, XA}
 
-    public DataSource(final boolean xa) {
-        this("", xa);
+
+    final String name;
+    final Scope scope;
+
+    Attribute(final String name) {
+        this(name, Scope.BOTH);
     }
 
-    DataSource(final String name, final boolean xa) {
-        super(name, new ModelNode());
-        this.xa = xa;
-    }
-
-    public DataSource(final String name, final ModelNode modelNode, final boolean xa) {
-        super(name, modelNode);
-        this.xa = xa;
-    }
-
-    public DataSource(final Property property, final boolean xa) {
-        super(property);
-        this.xa = xa;
-    }
-
-    public boolean isXa() {
-        return xa;
+    Attribute(final String name, final Scope scope) {
+        this.name = name;
+        this.scope = scope;
     }
 }

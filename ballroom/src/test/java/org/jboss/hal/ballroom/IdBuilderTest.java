@@ -29,4 +29,13 @@ public class IdBuilderTest {
     public void illegal() {
         IdBuilder.build(null);
     }
+
+    @Test
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    public void asId() {
+        assertEquals("lorem-ipsum", IdBuilder.asId("lorem-ipsum"));
+        assertEquals("lorem-ipsum", IdBuilder.asId("Lorem Ipsum"));
+        assertEquals("l0rem-ip5um", IdBuilder.asId("l0rem-ip5um"));
+        assertEquals("lorem--ipsum", IdBuilder.asId("lorem §±!@#$%^&*()=_+[]{};'\\:\"|,./<>?`~ ipsum"));
+    }
 }

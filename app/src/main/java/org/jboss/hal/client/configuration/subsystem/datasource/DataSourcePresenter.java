@@ -28,16 +28,16 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.core.mvp.SubsystemPresenter;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
@@ -46,12 +46,14 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DATASOURCES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DATA_SOURCE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
 /**
  * Presenter which is used for both XA and normal data sources.
+ *
  * @author Harald Pehl
  */
 public class DataSourcePresenter extends
@@ -64,7 +66,8 @@ public class DataSourcePresenter extends
     public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<DataSourcePresenter> {
-        void update(String name, ModelNode datasource);
+        void clear(boolean xa);
+        void update(DataSource dataSource);
     }
     // @formatter:on
 
@@ -75,7 +78,8 @@ public class DataSourcePresenter extends
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final OperationFactory operationFactory;
-    private String datasource;
+    private String name;
+    private boolean xa;
 
     @Inject
     public DataSourcePresenter(final EventBus eventBus,
@@ -100,8 +104,9 @@ public class DataSourcePresenter extends
 
     @Override
     public void prepareFromRequest(final PlaceRequest request) {
-        // TODO error handling when datasource is invalid or null
-        datasource = request.getParameter(NAME, null);
+        super.prepareFromRequest(request);
+        name = request.getParameter(NAME, null);
+        xa = Boolean.valueOf(request.getParameter(XA_PARAM, String.valueOf(false)));
     }
 
     @Override
@@ -112,24 +117,43 @@ public class DataSourcePresenter extends
 
     @Override
     protected FinderPath finderPath() {
-        return FinderPath.subsystemPath(statementContext.selectedProfile(), ModelDescriptionConstants.DATASOURCES)
-                .append(DATA_SOURCE, datasource, Names.DATASOURCE);
+        return FinderPath.subsystemPath(statementContext.selectedProfile(), DATASOURCES)
+                .append(Ids.DATA_SOURCE_DRIVER_COLUMN, DATASOURCES, Names.DATASOURCES_DRIVERS, Names.DATASOURCES)
+                .append(DATA_SOURCE, name, Names.DATASOURCE);
     }
 
     private void loadDataSource() {
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
-                AddressTemplates.DATA_SOURCE_TEMPLATE.resolve(statementContext, datasource)).build();
-        dispatcher.execute(operation, result -> getView().update(datasource, result));
+                template().resolve(statementContext, name)).build();
+        dispatcher.execute(operation,
+                result -> getView().update(new DataSource(name, result, xa)),
+                (op, failure) -> {
+                    getView().clear(xa);
+                    MessageEvent.fire(getEventBus(),
+                            Message.error(resources.messages().resourceNotFound(type(), name), failure));
+                },
+                (op, exception) -> {
+                    getView().clear(xa);
+                    dispatcher.defaultExceptionCallback().onException(op, exception);
+                });
     }
 
     void saveDataSource(final Map<String, Object> changedValues) {
-        ResourceAddress resourceAddress = AddressTemplates.DATA_SOURCE_TEMPLATE.resolve(statementContext, datasource);
+        ResourceAddress resourceAddress = template().resolve(statementContext, name);
         Composite composite = operationFactory.fromChangeSet(resourceAddress, changedValues);
 
         dispatcher.execute(composite, (CompositeResult result) -> {
             MessageEvent.fire(getEventBus(),
-                    Message.success(resources.messages().modifyResourceSuccess(Names.DATASOURCE, datasource)));
+                    Message.success(resources.messages().modifyResourceSuccess(type(), name)));
             loadDataSource();
         });
+    }
+
+    private AddressTemplate template() {
+        return xa ? AddressTemplates.XA_DATA_SOURCE_TEMPLATE : AddressTemplates.DATA_SOURCE_TEMPLATE;
+    }
+
+    private String type() {
+        return xa ? Names.DATASOURCE : Names.XA_DATASOURCE;
     }
 }

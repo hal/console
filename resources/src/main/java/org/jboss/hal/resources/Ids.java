@@ -41,10 +41,6 @@ public interface Ids {
 
     String CACHE_CONTAINER_COLUMN = "cache-container";
 
-    String DATA_SOURCE_ATTRIBUTES_FORM = "data-source-attributes-form";
-    String DATA_SOURCE_ATTRIBUTES_TAB = "data-source-attributes-tab";
-    String DATA_SOURCE_CONNECTION_FORM = "data-source-connection-form";
-    String DATA_SOURCE_CONNECTION_TAB = "data-source-connection-tab";
     String DATA_SOURCE_DRIVER_COLUMN = "data-source-driver";
     String DATA_SOURCE_WIZARD = "data-source-wizard";
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
@@ -70,6 +66,9 @@ public interface Ids {
     String HOMEPAGE_RUNTIME_SERVER_GROUP_SECTION = "homepage-runtime-server-group-section";
 
     String IIOP_FORM = "iiop-form";
+
+    String JDBC_DRIVER_ATTRIBUTES_FORM = "jdbc-driver-attributes-form";
+    String JDBC_DRIVER_ATTRIBUTES_TAB = "jdbc-driver-attributes-tab";
 
     String MACRO_EDITOR = "macro-editor";
     String MACRO_LIST = "macro-list";

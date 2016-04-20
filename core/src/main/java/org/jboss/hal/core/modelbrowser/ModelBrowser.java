@@ -418,7 +418,7 @@ public class ModelBrowser implements HasElements {
                     public void onMetadata(Metadata metadata) {
                         String id = IdBuilder.build(parent.id, "singleton", "add");
                         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata).createResource().build();
-                        AddResourceDialog<ModelNode> dialog = new AddResourceDialog<>(
+                        AddResourceDialog dialog = new AddResourceDialog(
                                 resources.messages().addResourceTitle(singleton), form,
                                 (n, modelNode) -> {
                                     Operation.Builder builder = new Operation.Builder(ADD,
@@ -463,7 +463,7 @@ public class ModelBrowser implements HasElements {
             metadataProcessor.lookup(template, progress.get(), new DefaultMetadataCallback(parent.data.getAddress()) {
                 @Override
                 public void onMetadata(Metadata metadata) {
-                    AddResourceDialog<ModelNode> dialog = new AddResourceDialog<>(
+                    AddResourceDialog dialog = new AddResourceDialog(
                             IdBuilder.build(parent.id, "add"),
                             resources.messages().addResourceTitle(parent.text),
                             metadata, (name, modelNode) -> {

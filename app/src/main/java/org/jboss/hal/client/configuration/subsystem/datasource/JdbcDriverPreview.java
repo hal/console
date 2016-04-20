@@ -42,6 +42,7 @@ class JdbcDriverPreview extends PreviewContent {
             previewBuilder().p().innerHtml(
                     resources.messages().jdbcDriverProvidedByPreview(provider.text(), driver.getDeploymentName()))
                     .end();
+            previewBuilder().p().innerHtml(resources.messages().jdbcDriverDeploymentHint()).end();
         }
 
         LabelBuilder labelBuilder = new LabelBuilder();
