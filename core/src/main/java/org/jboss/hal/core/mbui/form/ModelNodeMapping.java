@@ -60,10 +60,13 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
             if (model.hasDefined(name)) {
                 ModelNode attributeDescription = resourceDescription.findAttribute(name);
                 if (attributeDescription == null) {
-                    //noinspection HardCodedStringLiteral
-                    logger.error("{}: Unable to populate form item '{}': No attribute description found in\n{}",
-                            id(form), name, resourceDescription);
-                    continue;
+                    attributeDescription = resourceDescription.get(name);
+                    if (attributeDescription == null) {
+                        //noinspection HardCodedStringLiteral
+                        logger.error("{}: Unable to populate form item '{}': No attribute description found in\n{}",
+                                id(form), name, resourceDescription);
+                        continue;
+                    }
                 }
 
                 ModelNode value = model.get(formItem.getName());
@@ -149,10 +152,13 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
             } else if (formItem.isModified()) {
                 ModelNode attributeDescription = resourceDescription.findAttribute(name);
                 if (attributeDescription == null) {
-                    //noinspection HardCodedStringLiteral
-                    logger.error("{}: Unable to persist attribute '{}': No attribute description found in\n{}",
-                            id(form), name, resourceDescription);
-                    continue;
+                    attributeDescription = resourceDescription.get(name);
+                    if (attributeDescription == null) {
+                        //noinspection HardCodedStringLiteral
+                        logger.error("{}: Unable to persist attribute '{}': No attribute description found in\n{}",
+                                id(form), name, resourceDescription);
+                        continue;
+                    }
                 }
                 ModelType type = attributeDescription.get(TYPE).asType();
                 Object value = formItem.getValue();

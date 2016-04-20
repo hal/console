@@ -15,15 +15,6 @@
  */
 package org.jboss.hal.core.mbui.form;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
@@ -34,14 +25,7 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.HelpTextBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
-import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
-import org.jboss.hal.ballroom.form.DataMapping;
-import org.jboss.hal.ballroom.form.DefaultForm;
-import org.jboss.hal.ballroom.form.ExistingModelStateMachine;
-import org.jboss.hal.ballroom.form.FormItem;
-import org.jboss.hal.ballroom.form.FormItemProvider;
-import org.jboss.hal.ballroom.form.StateMachine;
-import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
+import org.jboss.hal.ballroom.form.*;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
@@ -51,10 +35,10 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.*;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.CSS.alert;
-import static org.jboss.hal.resources.CSS.alertInfo;
-import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.CSS.*;
 
 /**
  * TODO Add form based validations based on "alternatives" => ["foo"] information from the resource description
@@ -73,7 +57,14 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         }
     }
 
-
+    /**
+     * 
+     * <p>Builde useful to automatically inspects the read-resource-description and associated the 
+     * attributes (by calling: include, customFormitem) and creates the required form itens and help text.</p>
+     * <p>This will not work if the resource description is for attribute of type LIST. For this try, to use the ModelNodeFormAttributeList</p> 
+     * 
+     * @param <T>
+     */
     public static class Builder<T extends ModelNode> {
 
         private static final String ILLEGAL_COMBINATION = "Illegal combination in ";
@@ -90,6 +81,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         boolean unsorted;
         boolean requiredOnly;
         boolean includeRuntime;
+        boolean attributeTypeList;
         SaveCallback<T> saveCallback;
         CancelCallback<T> cancelCallback;
         ResetCallback<T> resetCallback;
@@ -197,6 +189,16 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             return this;
         }
 
+        /**
+         * Makes the automatic bindings to work with a single attribute of type LIST, each
+         * item list, comprising of a set of attributes (but these attributes as not regular).
+         * @return this Builder itself.
+         */
+        public Builder<T> attributeTypeList() {
+            this.attributeTypeList = true;
+            return this;
+        }
+
 
         // ------------------------------------------------------ build
 
@@ -214,17 +216,19 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                     throw new IllegalStateException(
                             ILLEGAL_COMBINATION + formId() + ": createResource && viewOnly");
                 }
-                String path = OPERATIONS + "." + ADD + "." + REQUEST_PROPERTIES;
-                if (!ModelNodeHelper.failSafeGet(metadata.getDescription(), path).isDefined()) {
-                    throw new IllegalStateException("No request properties found for " + formId() +
-                            " / operation add in resource description " + metadata.getDescription());
-                }
-                if (!excludes.isEmpty()) {
-                    List<Property> requiredRequestProperties = metadata.getDescription().getRequiredRequestProperties();
-                    for (Property property : requiredRequestProperties) {
-                        if (excludes.contains(property.getName())) {
-                            throw new IllegalStateException("Required request property " + property.getName() +
-                                    " must not be excluded from " + formId() + " when using createMode == true");
+                if (!attributeTypeList) {
+                    String path = OPERATIONS + "." + ADD + "." + REQUEST_PROPERTIES;
+                    if (!ModelNodeHelper.failSafeGet(metadata.getDescription(), path).isDefined()) {
+                        throw new IllegalStateException("No request properties found for " + formId() +
+                                " / operation add in resource description " + metadata.getDescription());
+                    }
+                    if (!excludes.isEmpty()) {
+                        List<Property> requiredRequestProperties = metadata.getDescription().getRequiredRequestProperties();
+                        for (Property property : requiredRequestProperties) {
+                            if (excludes.contains(property.getName())) {
+                                throw new IllegalStateException("Required request property " + property.getName() +
+                                        " must not be excluded from " + formId() + " when using createMode == true");
+                            }
                         }
                     }
                 }
@@ -261,18 +265,20 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         this.cancelCallback = builder.cancelCallback;
         this.resetCallback = builder.resetCallback;
 
-        String path = builder.createResource ? Joiner.on('.').join(OPERATIONS, ADD, REQUEST_PROPERTIES) : ATTRIBUTES;
-        Iterable<Property> allProperties = ModelNodeHelper.failSafeGet(builder.metadata.getDescription(), path)
-                .asPropertyList();
-        //noinspection Guava
-        FluentIterable<Property> fi = FluentIterable.from(allProperties).filter(new PropertyFilter(builder));
-        Iterable<Property> filtered = builder.unsorted ? fi.toList() :
-                fi.toSortedList((p1, p2) -> p1.getName().compareTo(p2.getName()));
-
+        Iterable<Property> formProperties = Collections.emptyList();
+        if (builder.attributeTypeList) {
+            formProperties = builder.metadata.getDescription().asPropertyList();
+        } else {
+            String path = builder.createResource ? Joiner.on('.').join(OPERATIONS, ADD, REQUEST_PROPERTIES) : ATTRIBUTES;
+            formProperties = ModelNodeHelper.failSafeGet(builder.metadata.getDescription(), path).asPropertyList();
+            //noinspection Guava
+        }
+        FluentIterable<Property> fi = FluentIterable.from(formProperties).filter(new PropertyFilter(builder));
+        formProperties = builder.unsorted ? fi.toList() : fi.toSortedList((p1, p2) -> p1.getName().compareTo(p2.getName()));
         int index = 0;
         LabelBuilder labelBuilder = new LabelBuilder();
         HelpTextBuilder helpTextBuilder = new HelpTextBuilder();
-        for (Property property : filtered) {
+        for (Property property : formProperties) {
 
             // any unbound form items for the current index?
             for (Iterator<UnboundFormItem> iterator = builder.unboundFormItems.iterator(); iterator.hasNext(); ) {

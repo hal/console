@@ -30,6 +30,7 @@ public interface Names {
     String DATASOURCES_DRIVERS = "Datasources & Drivers";
     String DEPLOYMENT = "Deployment";
     String DEPLOYMENTS = "Deployments";
+    String EE = "EE";
     String HAL = "HAL";
     String HOSTS = "Hosts";
     String INTERFACE = "Interface";

@@ -62,6 +62,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String data();
     String defaultValue();
+    String defaultBindings();
+    String deploymentAttributes();
     String details();
     String detectedDriver();
     String disable();
@@ -86,6 +88,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String formErrors();
     String formResetDesc();
 
+    String globalModules();
+    String globalModuleAdd();
+    
     String help();
     String hiddenColumns();
     String homepageNewToEap();

@@ -37,6 +37,8 @@ import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplat
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceView;
 import org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriverPresenter;
 import org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriverView;
+import org.jboss.hal.client.configuration.subsystem.ee.EEPresenter;
+import org.jboss.hal.client.configuration.subsystem.ee.EEView;
 import org.jboss.hal.client.deployment.DeploymentPresenter;
 import org.jboss.hal.client.deployment.DeploymentView;
 import org.jboss.hal.client.homepage.HomepagePresenter;
@@ -116,6 +118,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 DataSourcePresenter.MyView.class,
                 DataSourceView.class,
                 DataSourcePresenter.MyProxy.class);
+
+        bindPresenter(EEPresenter.class,
+                EEPresenter.MyView.class,
+                EEView.class,
+                EEPresenter.MyProxy.class);
 
         bindPresenter(DeploymentPresenter.class,
                 DeploymentPresenter.MyView.class,

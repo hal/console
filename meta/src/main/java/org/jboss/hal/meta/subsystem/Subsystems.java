@@ -15,13 +15,13 @@
  */
 package org.jboss.hal.meta.subsystem;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -42,7 +42,7 @@ public class Subsystems {
                 Ids.DATA_SOURCE_DRIVER_COLUMN, true));
         add(new SubsystemMetadata(DEPLOYMENT_SCANNER, "Deployment Scanners", null, NameTokens.DEPLOYMENT_SCANNERS,
                 null, false));
-        add(new SubsystemMetadata(EE, "EE", null, NameTokens.EE, null, false));
+        add(new SubsystemMetadata(EE, "EE", null, NameTokens.EE, null, true));
         add(new SubsystemMetadata(EJB3, "EJB3", null, NameTokens.EJB3, null, false));
         add(new SubsystemMetadata(IIOP_OPENJDK, "IIOP", "OpenJDK", NameTokens.IIOP, null, true));
         add(new SubsystemMetadata(INFINISPAN, "Infinispan", null, null, Ids.CACHE_CONTAINER_COLUMN, true));
