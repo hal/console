@@ -46,6 +46,7 @@ public class TypeaheadProvider {
         }
 
         boolean singleAddress = Iterables.size(addresses) == 1;
+        //noinspection Guava
         List<Operation> operations = FluentIterable.from(addresses)
                 .transform((address) -> operation(address, singleAddress)).toList();
         Operation operation;

@@ -15,26 +15,26 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.inject.Inject;
 
+import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LayoutBuilder;
-import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver.Provider;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.JDBC_DRIVER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.Ids.JDBC_DRIVER_ATTRIBUTES_FORM;
-import static org.jboss.hal.resources.Ids.JDBC_DRIVER_ATTRIBUTES_TAB;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JDBC_DRIVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 
 /**
  * @author Harald Pehl
@@ -43,45 +43,41 @@ public class JdbcDriverView extends PatternFlyViewImpl implements JdbcDriverPres
 
     private static final String HEADER_ELEMENT = "headerElement";
 
-    private final List<Form<JdbcDriver>> forms;
-    private Element header;
+    private final Resources resources;
+    private final Form<JdbcDriver> form;
+    private final Element header;
+    private final Element providedBy;
     private JdbcDriverPresenter presenter;
 
     @Inject
-    public JdbcDriverView(MetadataRegistry metadataRegistry,
-            Resources resources) {
+    public JdbcDriverView(MetadataRegistry metadataRegistry, Resources resources) {
+        this.resources = resources;
 
         Metadata metadata = metadataRegistry.lookup(JDBC_DRIVER_TEMPLATE);
         Element info = new Elements.Builder().p().textContent(metadata.getDescription().getDescription()).end().build();
+        providedBy = Browser.getDocument().createElement("p"); //NON-NLS
 
-        forms = new ArrayList<>();
-        Tabs tabs = new Tabs();
-        ModelNodeForm<JdbcDriver> currentForm;
-        Form.SaveCallback<JdbcDriver> saveCallback = (form, changedValues) -> presenter.saveJdbcDriver(changedValues);
-
-        currentForm = new ModelNodeForm.Builder<JdbcDriver>(JDBC_DRIVER_ATTRIBUTES_FORM, metadata)
-                .include(DRIVER_NAME, DRIVER_MODULE_NAME, DRIVER_CLASS_NAME,
-                        DRIVER_DATASOURCE_CLASS_NAME, DRIVER_XA_DATASOURCE_CLASS_NAME,
-                        DRIVER_MAJOR_VERSION, DRIVER_MINOR_VERSION)
-                .onSave(saveCallback)
+        form = new ModelNodeForm.Builder<JdbcDriver>(IdBuilder.build(JDBC_DRIVER, "form"), metadata)
+                .exclude(DEPLOYMENT_NAME, PROFILE)
+                .onSave((f, changedValues) -> presenter.saveJdbcDriver(changedValues))
                 .build();
-        forms.add(currentForm);
-        tabs.add(JDBC_DRIVER_ATTRIBUTES_TAB, resources.constants().attributes(), currentForm.asElement());
 
         // @formatter:off
+        //noinspection Guava
         LayoutBuilder layoutBuilder = new LayoutBuilder()
             .row()
                 .column()
                     .header(Names.JDBC_DRIVER).rememberAs(HEADER_ELEMENT).end()
                     .add(info)
-                    .add(tabs.asElement())
+                    .add(providedBy)
+                    .add(form)
                 .end()
             .end();
         // @formatter:on
 
         Element root = layoutBuilder.build();
         header = layoutBuilder.referenceFor(HEADER_ELEMENT);
-        registerAttachables(forms);
+        registerAttachable(form);
         initElement(root);
     }
 
@@ -91,10 +87,21 @@ public class JdbcDriverView extends PatternFlyViewImpl implements JdbcDriverPres
     }
 
     @Override
+    public void clear() {
+        header.setTextContent(Names.JDBC_DRIVER);
+        Elements.setVisible(providedBy, false);
+        form.clear();
+    }
+
+    @Override
     public void update(final JdbcDriver driver) {
         header.setTextContent(driver.getName());
-        for (Form<JdbcDriver> form : forms) {
-            form.view(driver);
-        }
+
+        Provider provider = driver.getProvider();
+        Elements.setVisible(providedBy, true);
+        providedBy.setInnerHTML(
+                resources.messages().jdbcDriverProvidedByPreview(provider.text(), driver.getModule()).asString());
+
+        form.view(driver);
     }
 }

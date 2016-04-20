@@ -29,18 +29,26 @@ import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.core.mvp.SubsystemPresenter;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.CompositeResult;
+import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.OperationFactory;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.JDBC_DRIVER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.JDBC_DRIVER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DATASOURCES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.JDBC_DRIVER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
 /**
  * @author Harald Pehl
@@ -55,6 +63,7 @@ public class JdbcDriverPresenter extends
     public interface MyProxy extends ProxyPlace<JdbcDriverPresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<JdbcDriverPresenter> {
+        void clear();
         void update(JdbcDriver driver);
     }
     // @formatter:on
@@ -108,10 +117,29 @@ public class JdbcDriverPresenter extends
     }
 
     private void loadJdbcDriver() {
-
+        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
+                JDBC_DRIVER_TEMPLATE.resolve(statementContext, name)).build();
+        dispatcher.execute(operation,
+                result -> getView().update(new JdbcDriver(name, result)),
+                (op, failure) -> {
+                    getView().clear();
+                    MessageEvent.fire(getEventBus(),
+                            Message.error(resources.messages().resourceNotFound(Names.JDBC_DRIVER, name), failure));
+                },
+                (op, exception) -> {
+                    getView().clear();
+                    dispatcher.defaultExceptionCallback().onException(op, exception);
+                });
     }
 
     void saveJdbcDriver(final Map<String, Object> changedValues) {
+        ResourceAddress resourceAddress = JDBC_DRIVER_TEMPLATE.resolve(statementContext, name);
+        Composite composite = operationFactory.fromChangeSet(resourceAddress, changedValues);
 
+        dispatcher.execute(composite, (CompositeResult result) -> {
+            MessageEvent.fire(getEventBus(),
+                    Message.success(resources.messages().modifyResourceSuccess(Names.JDBC_DRIVER, name)));
+            loadJdbcDriver();
+        });
     }
 }

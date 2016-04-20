@@ -58,7 +58,7 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
 
             String name = formItem.getName();
             if (model.hasDefined(name)) {
-                ModelNode attributeDescription = resourceDescription.find(name);
+                ModelNode attributeDescription = resourceDescription.findAttribute(name);
                 if (attributeDescription == null) {
                     //noinspection HardCodedStringLiteral
                     logger.error("{}: Unable to populate form item '{}': No attribute description found in\n{}",
@@ -147,7 +147,7 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                 model.remove(name);
 
             } else if (formItem.isModified()) {
-                ModelNode attributeDescription = resourceDescription.find(name);
+                ModelNode attributeDescription = resourceDescription.findAttribute(name);
                 if (attributeDescription == null) {
                     //noinspection HardCodedStringLiteral
                     logger.error("{}: Unable to persist attribute '{}': No attribute description found in\n{}",

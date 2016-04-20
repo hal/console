@@ -16,6 +16,7 @@
 package org.jboss.hal.core.mvp;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -74,7 +75,7 @@ public abstract class PatternFlyViewImpl extends ViewImpl implements PatternFlyV
         }
     }
 
-    protected <A extends Attachable> void registerAttachables(List<A> attachables) {
+    protected <A extends Attachable> void registerAttachables(Collection<A> attachables) {
         this.attachables.addAll(attachables);
     }
 

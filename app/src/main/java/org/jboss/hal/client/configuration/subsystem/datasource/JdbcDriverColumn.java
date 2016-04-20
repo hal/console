@@ -162,9 +162,13 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
             @Override
             public List<ItemAction<JdbcDriver>> actions() {
                 String profile = environment.isStandalone() ? STANDALONE : statementContext.selectedProfile();
+                String provider = driver.getProvider().name().toLowerCase();
                 List<ItemAction<JdbcDriver>> actions = new ArrayList<>();
-                actions.add(itemActionFactory.view(NameTokens.JDBC_DRIVER, PROFILE, profile, NAME, driver.getName()));
+
                 if (driver.getProvider() == MODULE) {
+                    actions.add(itemActionFactory.view(NameTokens.JDBC_DRIVER,
+                            PROFILE, profile,
+                            NAME, driver.getName()));
                     actions.add(itemActionFactory.remove(Names.JDBC_DRIVER, driver.getName(), JDBC_DRIVER_TEMPLATE,
                             JdbcDriverColumn.this));
                 }

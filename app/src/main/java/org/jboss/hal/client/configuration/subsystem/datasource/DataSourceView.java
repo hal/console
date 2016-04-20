@@ -44,6 +44,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.IdBuilder.asId;
 
 /**
+ * TODO Add support for nested 'connection-properties' (non-xa) and 'xa-datasource-properties' (xa)
+ *
  * @author Harald Pehl
  */
 public class DataSourceView extends PatternFlyViewImpl implements DataSourcePresenter.MyView {

@@ -15,14 +15,14 @@
  */
 package org.jboss.hal.meta.description;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
-
-import java.util.Collections;
-import java.util.List;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -98,7 +98,7 @@ public class ResourceDescription extends ModelNode {
         return hasOperations() ? get(OPERATIONS).asPropertyList() : Collections.emptyList();
     }
 
-    public ModelNode find(String name) {
+    public ModelNode findAttribute(String name) {
         List<Property> properties = hasAttributes() ? getAttributes() : getRequestProperties();
         for (Property property : properties) {
             if (name.equals(property.getName())) {
