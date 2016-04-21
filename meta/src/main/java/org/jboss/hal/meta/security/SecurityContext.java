@@ -57,6 +57,10 @@ public class SecurityContext extends ModelNode {
         }
     };
 
+    /**
+     * A security context with hardcoded permissions to read, write and execute any resource.
+     * 
+     */
     public static final SecurityContext RWX = new SecurityContext(new ModelNode()) {
         @Override
         public boolean isReadable() {

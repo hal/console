@@ -71,6 +71,7 @@ public interface ModelDescriptionConstants {
     String DATA_SOURCE = "data-source";
     String DATASOURCES = "datasources";
     String DEFAULT = "default";
+    String DEFAULT_BINDINGS = "default-bindings";
     String DEPLOYMENT = "deployment";
     String DEPLOYMENT_NAME = "deployment-name";
     String DEPLOYMENT_SCANNER = "deployment-scanner";
@@ -97,6 +98,7 @@ public interface ModelDescriptionConstants {
     String FAILED = "failed";
     String FAILURE_DESCRIPTION = "failure-description";
 
+    String GLOBAL_MODULES = "global-modules";
     String GRACEFUL_SHUTDOWN_TIMEOUT = "graceful-shutdown-timeout";
     String GROUP = "group";
 
@@ -126,6 +128,8 @@ public interface ModelDescriptionConstants {
     String JNDI_NAME = "jndi-name";
     String JPA = "jpa";
 
+    String LIST_ADD = "list-add";
+    String LIST_REMOVE = "list-remove";
     String LOCAL = "local";
     String LOCALE = "locale";
     String LOGGING = "logging";
@@ -204,6 +208,7 @@ public interface ModelDescriptionConstants {
     String SERVER_GROUP = "server-group";
     String SERVER_GROUPS = "server-groups";
     String SERVER_OPERATIONS = "server-operations";
+    String SERVICE = "service";
     String SOCKET_BINDING = "socket-binding";
     String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SHUTDOWN = "shutdown";
