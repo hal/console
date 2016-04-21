@@ -143,8 +143,11 @@ public class PreviewContent implements HasElements, SecurityContextAware, Attach
         String readableHeader = header.length() > MAX_HEADER_LENGTH
                 ? Strings.abbreviateMiddle(header, MAX_HEADER_LENGTH)
                 : header;
-        Elements.Builder builder = new Elements.Builder();
-        return builder.h(1).textContent(readableHeader).title(header).end();
+        Elements.Builder builder = new Elements.Builder().h(1).textContent(readableHeader);
+        if (!readableHeader.equals(header)) {
+            builder.title(header);
+        }
+        return builder.end();
     }
 
     protected void registerAttachable(Attachable first, Attachable... rest) {
