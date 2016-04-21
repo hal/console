@@ -365,6 +365,10 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         context.reset(token);
         appendColumn(initialColumn, callback);
         selectColumn(initialColumn);
+        for (FinderColumn column : columns.values()) {
+            Elements.setVisible(column.asElement(), true);
+            column.markHiddenColumns(false);
+        }
         showPreview(initialPreview);
         updateHistory();
     }

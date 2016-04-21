@@ -97,8 +97,8 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                     };
                     new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
                             new JdbcDriverFunctions.ReadConfiguration(statementContext, dispatcher),
-                            new TopologyFunctions.ServerGroupsOfProfile(dispatcher, statementContext.selectedProfile()),
-                            new TopologyFunctions.RunningServersOfGroupsInContext(dispatcher),
+                            new TopologyFunctions.RunningServersOfProfile(dispatcher,
+                                    statementContext.selectedProfile()),
                             new JdbcDriverFunctions.ReadRuntime(dispatcher),
                             new JdbcDriverFunctions.CombineDriverResults());
                 }));
@@ -108,7 +108,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                     Metadata metadata = metadataRegistry.lookup(JDBC_DRIVER_TEMPLATE);
                     Form<ModelNode> form = new ModelNodeForm.Builder<>(
                             IdBuilder.build(JDBC_DRIVER, "add", "form"), metadata)
-                            .createResource()
+                            .addFromRequestProperties()
                             .exclude(DEPLOYMENT_NAME, MODULE_SLOT, PROFILE)
                             .build();
                     AddResourceDialog dialog = new AddResourceDialog(

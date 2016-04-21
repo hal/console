@@ -28,6 +28,7 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
+import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderContextEvent;
 import org.jboss.hal.core.finder.FinderContextEvent.FinderContextHandler;
@@ -69,6 +70,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
     private final Environment environment;
     private final Endpoints endpoints;
     private final User user;
+    private final Finder finder;
 
     @Inject
     public HeaderPresenter(final EventBus eventBus,
@@ -76,12 +78,14 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
             final PlaceManager placeManager,
             final Environment environment,
             final Endpoints endpoints,
-            final User user) {
+            final User user,
+            final Finder finder) {
         super(eventBus, view);
         this.placeManager = placeManager;
         this.environment = environment;
         this.endpoints = endpoints;
         this.user = user;
+        this.finder = finder;
     }
 
     @Override
@@ -152,6 +156,9 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
     }
 
     public void fullscreenMode(final String title) {
+        if (finder.getContext().getToken() != null) {
+            getView().updateBack(finder.getContext());
+        }
         getView().fullscreenMode(title);
     }
 }

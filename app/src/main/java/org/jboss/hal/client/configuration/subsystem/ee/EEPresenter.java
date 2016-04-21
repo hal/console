@@ -15,33 +15,38 @@
  */
 package org.jboss.hal.client.configuration.subsystem.ee;
 
+import java.util.Map;
+import javax.inject.Inject;
+
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.Api;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.core.mvp.SubsystemPresenter;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.*;
+import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.CompositeResult;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.OperationFactory;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.security.SecurityContext;
+import org.jboss.hal.meta.security.SecurityFramework;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -49,9 +54,6 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
-
-import javax.inject.Inject;
-import java.util.Map;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -71,24 +73,42 @@ public class EEPresenter extends SubsystemPresenter<EEPresenter.MyView, EEPresen
     }
     // @formatter:on
 
+
+    static Metadata globalModulesMetadata(final SecurityFramework securityFramework,
+            final ResourceDescriptions descriptions, final Capabilities capabilities) {
+        SecurityContext securityContext = securityFramework.lookup(AddressTemplates.EE_SUBSYSTEM_TEMPLATE);
+        ResourceDescription eeDescription = descriptions.lookup(AddressTemplates.EE_SUBSYSTEM_TEMPLATE);
+
+        ResourceDescription globalModulesDescription;
+        Property globalModules = eeDescription.findAttribute(ATTRIBUTES, GLOBAL_MODULES);
+        if (globalModules != null && globalModules.getValue().hasDefined(VALUE_TYPE)) {
+            ModelNode repackaged = new ModelNode();
+            repackaged.get(ATTRIBUTES).set(globalModules.getValue().get(VALUE_TYPE));
+            globalModulesDescription = new ResourceDescription(repackaged);
+        } else {
+            globalModulesDescription = new ResourceDescription(new ModelNode());
+        }
+        return new Metadata(securityContext, globalModulesDescription, capabilities);
+    }
+
     private final Resources resources;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final OperationFactory operationFactory;
     private final EventBus eventBus;
-    private final Capabilities capabilities;
-    private ResourceDescription globalModulesResourceDescription;
+    private final Metadata globalModulesMetadata;
 
     @Inject
     public EEPresenter(final EventBus eventBus,
-                       final MyView view,
-                       final MyProxy proxy,
-                       final Finder finder,
-                       final Resources resources,
-                       final Dispatcher dispatcher,
-                       final StatementContext statementContext,
-                       final ResourceDescriptions descriptions,
-                       final Capabilities capabilities) {
+            final MyView view,
+            final MyProxy proxy,
+            final Finder finder,
+            final Resources resources,
+            final Dispatcher dispatcher,
+            final StatementContext statementContext,
+            final SecurityFramework securityFramework,
+            final ResourceDescriptions descriptions,
+            final Capabilities capabilities) {
         super(eventBus, view, proxy, finder);
 
         this.resources = resources;
@@ -96,18 +116,7 @@ public class EEPresenter extends SubsystemPresenter<EEPresenter.MyView, EEPresen
         this.statementContext = statementContext;
         this.operationFactory = new OperationFactory();
         this.eventBus = eventBus;
-        this.capabilities = capabilities;
-
-        ResourceDescription descriptionEESbsystem = descriptions.lookup(AddressTemplates.EE_SUBSYSTEM_TEMPLATE);
-
-        globalModulesResourceDescription = new ResourceDescription();
-        for (Property e: descriptionEESbsystem.getAttributes()) {
-            if (GLOBAL_MODULES.equals(e.getName())) {
-                ModelNode modelNode = e.getValue().get(VALUE_TYPE);
-                globalModulesResourceDescription.set(modelNode);
-                break;
-            }
-        }
+        this.globalModulesMetadata = globalModulesMetadata(securityFramework, descriptions, capabilities);
     }
 
     @Override
@@ -124,14 +133,15 @@ public class EEPresenter extends SubsystemPresenter<EEPresenter.MyView, EEPresen
 
     @Override
     protected FinderPath finderPath() {
-        return FinderPath.subsystemPath(statementContext.selectedProfile(), AddressTemplates.EE_SUBSYSTEM_TEMPLATE.lastValue());
+        return FinderPath
+                .subsystemPath(statementContext.selectedProfile(), AddressTemplates.EE_SUBSYSTEM_TEMPLATE.lastValue());
     }
 
-    void loadEESubsystem() {
+    private void loadEESubsystem() {
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
                 AddressTemplates.EE_SUBSYSTEM_TEMPLATE.resolve(statementContext))
+                .param(RECURSIVE, true)
                 .build();
-        operation.get(RECURSIVE).set(true);
         dispatcher.execute(operation, result -> getView().update(result));
     }
 
@@ -141,96 +151,67 @@ public class EEPresenter extends SubsystemPresenter<EEPresenter.MyView, EEPresen
 
         dispatcher.execute(composite, (CompositeResult result) -> {
             MessageEvent.fire(getEventBus(),
-                    Message.success(resources.messages().modifyResourceSuccess(Names.EE, resources.constants().deploymentAttributes())));
+                    Message.success(resources.messages()
+                            .modifyResourceSuccess(Names.EE, resources.constants().deploymentAttributes())));
             loadEESubsystem();
         });
     }
 
-    public void saveDefaultBindings(Map<String, Object> changedValues) {
+    void saveDefaultBindings(Map<String, Object> changedValues) {
         ResourceAddress resourceAddress = AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE.resolve(statementContext);
         Composite composite = operationFactory.fromChangeSet(resourceAddress, changedValues);
 
         dispatcher.execute(composite, (CompositeResult result) -> {
             MessageEvent.fire(getEventBus(),
-                    Message.success(resources.messages().modifyResourceSuccess(Names.EE, resources.constants().defaultBindings())));
+                    Message.success(resources.messages()
+                            .modifyResourceSuccess(Names.EE, resources.constants().defaultBindings())));
             loadEESubsystem();
         });
 
     }
 
     void launchAddDialogGlobalModule() {
-        
-        Metadata metadata = new Metadata(SecurityContext.RWX, globalModulesResourceDescription, capabilities);
-
-        Form<GlobalModule> form = new ModelNodeForm.Builder<GlobalModule>(Ids.EE_GLOBAL_MODULES_FORM, metadata)
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.EE_GLOBAL_MODULES_FORM, globalModulesMetadata)
                 .addOnly()
-                .createResource()
-                .attributeTypeList()
                 .include("name", "slot", "annotations", "services", "meta-inf")
                 .unsorted()
-                .onSave((form2, changedValues) -> {
-                    GlobalModule globalModule = form2.getModel();
-
-                    ModelNode opListAdd = new ModelNode();
-                    opListAdd.get(ModelDescriptionConstants.ADDRESS).set(AddressTemplates.EE_SUBSYSTEM_TEMPLATE.resolve(statementContext));
-                    opListAdd.get(OP).set(LIST_ADD);
-                    opListAdd.get(NAME).set(GLOBAL_MODULES);
-                    opListAdd.get(VALUE).set(globalModule);
-                    Operation op = new Operation(opListAdd);
-
-                    dispatcher.execute(op, result -> loadEESubsystem());
-                    
-                })
                 .build();
 
-        
-        Element addPage = new Elements.Builder()
-                .div()
-                .p().textContent(resources.constants().globalModuleAdd()).end()
-                .add(form.asElement())
-                .end().build();
+        AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.GLOBAL_MODULES),
+                form, (name, globalModule) -> {
+            ResourceAddress address = AddressTemplates.EE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
+            Operation operation = new Operation.Builder(LIST_ADD, address)
+                    .param(NAME, GLOBAL_MODULES)
+                    .param(VALUE, globalModule)
+                    .build();
+            dispatcher.execute(operation, result -> {
+                MessageEvent.fire(eventBus, Message.success(
+                        resources.messages().addResourceSuccess(Names.GLOBAL_MODULES, name)));
+                loadEESubsystem();
+            });
+        });
 
-        form.add(new GlobalModule());
-        Dialog dialog = new Dialog.Builder(resources.constants().globalModuleAdd())
-                .add(addPage)
-                .primary(() -> {
-                    form.save();
-                    return true;
-                })
-                .secondary(() -> {
-                    form.cancel();
-                    return true;
-                })
-                .closeIcon(false)
-                .closeOnEsc(false)
-                .build();
-        dialog.registerAttachable(form);
         dialog.show();
-        
     }
 
-    public void removeGlobalModule(Api<ModelNode> tableApi) {
-        Dialog dialog = DialogFactory.confirmation(resources.messages().removeResourceConfirmationTitle(resources.constants().globalModules()),
-                resources.messages().removeResourceConfirmationQuestion(tableApi.selectedRow().get(NAME).asString()),
+    void removeGlobalModule(ModelNode globalModule) {
+        String name = globalModule.get(NAME).asString();
+        Dialog dialog = DialogFactory.confirmation(
+                resources.messages().removeResourceConfirmationTitle(Names.GLOBAL_MODULES),
+                resources.messages().removeResourceConfirmationQuestion(name),
                 () -> {
-
-                    ModelNode opListRemove = new ModelNode();
-                    opListRemove.get(ModelDescriptionConstants.ADDRESS).set(AddressTemplates.EE_SUBSYSTEM_TEMPLATE.resolve(statementContext));
-                    opListRemove.get(OP).set(LIST_REMOVE);
-                    opListRemove.get(NAME).set(GLOBAL_MODULES);
-                    opListRemove.get(VALUE).set(tableApi.selectedRow());
-                    Operation op = new Operation(opListRemove);
-                    
-                    dispatcher.execute(op, result -> {
+                    ResourceAddress address = AddressTemplates.EE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
+                    Operation operation = new Operation.Builder(LIST_REMOVE, address)
+                            .param(NAME, GLOBAL_MODULES)
+                            .param(VALUE, globalModule)
+                            .build();
+                    dispatcher.execute(operation, result -> {
                         MessageEvent.fire(eventBus, Message.success(
-                                resources.messages().removeResourceSuccess("Global Module", tableApi.selectedRow().get(NAME).asString())));
+                                resources.messages().removeResourceSuccess(Names.GLOBAL_MODULES, name)));
                         loadEESubsystem();
                     });
                     return true;
                 });
         dialog.show();
     }
-
-
-
 }

@@ -74,47 +74,42 @@ public class TopologyFunctions {
 
 
     /**
-     * Returns a list of running servers which belong to one of the server groups found under the key {@link
-     * TopologyFunctions#SERVER_GROUPS} in the context. Stores the list in the context under the key {@link
-     * TopologyFunctions#RUNNING_SERVERS}.
+     * Returns a list of running servers which belong to the specified profile. Stores the list in the context under
+     * the
+     * key {@link TopologyFunctions#RUNNING_SERVERS}.
      */
-    public static class RunningServersOfGroupsInContext implements Function<FunctionContext> {
+    public static class RunningServersOfProfile implements Function<FunctionContext> {
 
         private final Dispatcher dispatcher;
+        private final String profile;
 
-        public RunningServersOfGroupsInContext(final Dispatcher dispatcher) {this.dispatcher = dispatcher;}
+        public RunningServersOfProfile(final Dispatcher dispatcher, final String profile) {
+            this.dispatcher = dispatcher;
+            this.profile = profile;
+        }
 
         @Override
         @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
         public void execute(final Control<FunctionContext> control) {
-            // select important attributes
-            ModelNode select = new ModelNode().add("host").add("launch-type").add(NAME).add("profile-name")
-                    .add("running-mode").add(SERVER_GROUP).add("server-state").add("suspend-state").add("uuid");
             ResourceAddress address = new ResourceAddress().add(HOST, "*").add(SERVER, "*");
 
-            List<String> serverGroups = control.getContext().get(SERVER_GROUPS);
-            if (serverGroups.size() > 1) {
-                // TODO Setup and process a composite with a query operation for each host
+            ModelNode select = new ModelNode().add(HOST).add("launch-type").add(NAME).add("profile-name")
+                    .add("running-mode").add(SERVER_GROUP).add("server-state").add("suspend-state").add("uuid");
 
-            } else {
-                Operation.Builder builder = new Operation.Builder(QUERY, address)
-                        .param(SELECT, select);
-                if (serverGroups.isEmpty()) {
-                    builder.param(WHERE, new ModelNode().set("running-mode",
-                            "NORMAL")); // pseudo query to get results even when serverGroups.isEmpty()
-                } else {
-                    builder.param(WHERE, new ModelNode().set(SERVER_GROUP, serverGroups.get(0)));
-                }
-                dispatcher.executeInFunction(control, builder.build(), result -> {
-                    //noinspection Guava
-                    List<Server> servers = FluentIterable.from(result.asList())
-                            .filter(modelNode -> !modelNode.isFailure())
-                            .transform(modelNode -> new Server(modelNode.get(RESULT)))
-                            .toList();
-                    control.getContext().set(RUNNING_SERVERS, servers);
-                    control.proceed();
-                });
-            }
+            Operation operation = new Operation.Builder(QUERY, address)
+                    .param(SELECT, select)
+                    .param(WHERE, new ModelNode().set("profile-name", profile))
+                    .build();
+
+            dispatcher.executeInFunction(control, operation, result -> {
+                //noinspection Guava
+                List<Server> servers = FluentIterable.from(result.asList())
+                        .filter(modelNode -> !modelNode.isFailure())
+                        .transform(modelNode -> new Server(modelNode.get(RESULT)))
+                        .toList();
+                control.getContext().set(RUNNING_SERVERS, servers);
+                control.proceed();
+            });
         }
     }
 }

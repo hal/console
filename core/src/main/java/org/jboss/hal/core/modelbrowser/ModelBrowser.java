@@ -417,7 +417,9 @@ public class ModelBrowser implements HasElements {
                     @Override
                     public void onMetadata(Metadata metadata) {
                         String id = IdBuilder.build(parent.id, "singleton", "add");
-                        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata).createResource().build();
+                        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                                .addFromRequestProperties()
+                                .build();
                         AddResourceDialog dialog = new AddResourceDialog(
                                 resources.messages().addResourceTitle(singleton), form,
                                 (n, modelNode) -> {

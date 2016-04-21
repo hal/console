@@ -18,11 +18,16 @@ package org.jboss.hal.client.configuration.subsystem.datasource;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.resources.IdBuilder;
 
 /**
  * @author Harald Pehl
  */
 public class DataSource extends NamedNode {
+
+    static String id(String name, boolean xa) {
+        return IdBuilder.build(name, xa ? "xa" : "non-xa");
+    }
 
     private final boolean xa;
 

@@ -31,6 +31,7 @@ public interface Names {
     String DEPLOYMENT = "Deployment";
     String DEPLOYMENTS = "Deployments";
     String EE = "EE";
+    String GLOBAL_MODULES = "Global Modules";
     String HAL = "HAL";
     String HOSTS = "Hosts";
     String INTERFACE = "Interface";

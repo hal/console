@@ -107,7 +107,7 @@ public class TableButtonFactory {
             public void onMetadata(final Metadata metadata) {
                 ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(
                         IdBuilder.build(id, "add", "form"), metadata)
-                        .createResource()
+                        .addFromRequestProperties()
                         .unboundFormItem(new NameItem(), 0);
                 if (firstAttribute != null) {
                     builder.include(firstAttribute, otherAttributes);

@@ -8,12 +8,19 @@ import static org.junit.Assert.*;
 /**
  * @author Harald Pehl
  */
+@SuppressWarnings("HardCodedStringLiteral")
 public class ModelNodeHelperTest {
 
     private ModelNode modelNode;
     private ModelNode foo;
     private ModelNode bar;
 
+    /**
+     * Creates the model node
+     * <pre>
+     *     ("foo" => ("bar" => 42))
+     * </pre>
+     */
     @Before
     public void setUp() {
         modelNode = new ModelNode();

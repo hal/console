@@ -115,7 +115,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         setItemRenderer(dataSource -> new ItemDisplay<DataSource>() {
             @Override
             public String getId() {
-                return IdBuilder.build(dataSource.getName(), (dataSource.isXa() ? "xa" : "non-xa"));
+                return DataSource.id(dataSource.getName(), dataSource.isXa());
             }
 
             @Override

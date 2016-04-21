@@ -36,13 +36,11 @@ class PropertyFilter implements Predicate<Property> {
     @SuppressWarnings("Guava")
     public boolean apply(final Property property) {
         Predicate<Property> filter;
-        Predicate<Property> required = p -> p.getValue().hasDefined(REQUIRED) && p.getValue().get(REQUIRED).asBoolean();
-        Predicate<Property> notNillable = p -> p.getValue().hasDefined(NILLABLE) && !p.getValue().get(NILLABLE)
-                .asBoolean();
+        Predicate<Property> required = p -> (
+                (p.getValue().hasDefined(REQUIRED) && p.getValue().get(REQUIRED).asBoolean()) ||
+                        (p.getValue().hasDefined(NILLABLE) && !p.getValue().get(NILLABLE).asBoolean()));
 
-        if (builder.createResource) {
-            // if builder.includes isn't empty include required properties plus the ones defined there
-            // otherwise include either all or only required properties
+        if (builder.addOnly) {
             if (builder.includes.isEmpty()) {
                 filter = builder.requiredOnly ? required : Predicates.alwaysTrue();
             } else {
@@ -52,7 +50,7 @@ class PropertyFilter implements Predicate<Property> {
 
         } else {
             if (builder.includes.isEmpty() && builder.excludes.isEmpty()) {
-                filter = builder.requiredOnly ? notNillable : Predicates.alwaysTrue();
+                filter = builder.requiredOnly ? required : Predicates.alwaysTrue();
             } else if (!builder.excludes.isEmpty()) {
                 filter = p -> !builder.excludes.contains(p.getName());
             } else {

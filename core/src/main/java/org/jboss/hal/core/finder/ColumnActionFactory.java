@@ -114,7 +114,7 @@ public class ColumnActionFactory {
             Metadata metadata = metadataRegistry.lookup(template);
             ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(
                     IdBuilder.build(id, "form"), metadata)
-                    .createResource()
+                    .addFromRequestProperties()
                     .unboundFormItem(new NameItem(), 0);
             if (firstAttribute != null) {
                 builder.include(firstAttribute, otherAttributes);

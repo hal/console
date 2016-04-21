@@ -34,6 +34,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.core.modelbrowser.ModelBrowser.PLACE_HOLDER_ELEMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.resources.CSS.lead;
@@ -121,8 +122,8 @@ class ResourcePanel implements HasElements {
             });
 
             tabs.setContent(attributesId,
-                    new AttributesTable(metadata.getDescription().getAttributes(), resources).asElement());
-            if (metadata.getDescription().hasOperations()) {
+                    new AttributesTable(metadata.getDescription().getAttributes(ATTRIBUTES), resources).asElement());
+            if (!metadata.getDescription().getOperations().isEmpty()) {
                 tabs.setContent(operationsId,
                         new OperationsTable(metadata.getDescription().getOperations(), resources).asElement());
             }

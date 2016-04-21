@@ -119,7 +119,7 @@ public class DataSourcePresenter extends
     protected FinderPath finderPath() {
         return FinderPath.subsystemPath(statementContext.selectedProfile(), DATASOURCES)
                 .append(Ids.DATA_SOURCE_DRIVER_COLUMN, DATASOURCES, Names.DATASOURCES_DRIVERS, Names.DATASOURCES)
-                .append(DATA_SOURCE, name, Names.DATASOURCE);
+                .append(DATA_SOURCE, DataSource.id(name, xa), Names.DATASOURCE, name);
     }
 
     private void loadDataSource() {

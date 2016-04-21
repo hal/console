@@ -15,7 +15,15 @@
  */
 package org.jboss.hal.core.mbui.form;
 
-import com.google.common.base.Joiner;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -25,9 +33,15 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.HelpTextBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
-import org.jboss.hal.ballroom.form.*;
+import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
+import org.jboss.hal.ballroom.form.DataMapping;
+import org.jboss.hal.ballroom.form.DefaultForm;
+import org.jboss.hal.ballroom.form.ExistingModelStateMachine;
+import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.ballroom.form.FormItemProvider;
+import org.jboss.hal.ballroom.form.StateMachine;
+import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Messages;
@@ -35,13 +49,14 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.alert;
+import static org.jboss.hal.resources.CSS.alertInfo;
+import static org.jboss.hal.resources.CSS.pfIcon;
 
 /**
  * TODO Add form based validations based on "alternatives" => ["foo"] information from the resource description
+ *
  * @author Harald Pehl
  */
 public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
@@ -57,12 +72,14 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         }
     }
 
+
     /**
-     * 
-     * <p>Builde useful to automatically inspects the read-resource-description and associated the 
-     * attributes (by calling: include, customFormitem) and creates the required form itens and help text.</p>
-     * <p>This will not work if the resource description is for attribute of type LIST. For this try, to use the ModelNodeFormAttributeList</p> 
-     * 
+     * Builder useful to automatically inspect the read-resource-description and associate the
+     * attributes (by calling: include, customFormItem). Creates the required form items and help texts.
+     * <p>
+     * This will not work if the resource description is for attribute of type LIST. For this try, to use the
+     * ModelNodeFormAttributeList.
+     *
      * @param <T>
      */
     public static class Builder<T extends ModelNode> {
@@ -75,13 +92,12 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         final Set<String> excludes;
         final Map<String, FormItemProvider> providers;
         final List<UnboundFormItem> unboundFormItems;
-        boolean createResource;
         boolean viewOnly;
         boolean addOnly;
         boolean unsorted;
         boolean requiredOnly;
         boolean includeRuntime;
-        boolean attributeTypeList;
+        String attributePath;
         SaveCallback<T> saveCallback;
         CancelCallback<T> cancelCallback;
         ResetCallback<T> resetCallback;
@@ -97,12 +113,11 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             this.excludes = new HashSet<>();
             this.providers = new HashMap<>();
             this.unboundFormItems = new ArrayList<>();
-            this.createResource = false;
             this.viewOnly = false;
             this.addOnly = false;
             this.unsorted = false;
             this.includeRuntime = false;
-            this.dataMapping = new ModelNodeMapping<>(metadata.getDescription());
+            this.attributePath = ATTRIBUTES;
         }
 
         public Builder<T> include(final String[] attributes) {
@@ -125,18 +140,32 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             return this;
         }
 
-        public Builder<T> createResource() {
-            this.createResource = true;
+        /**
+         * Use this flag if you just want to use the form to add model nodes. This will create a form with an
+         * {@link AddOnlyStateMachine}.
+         * <p>
+         * The attributes will be taken from the {@code ATTRIBUTES} child node.
+         */
+        public Builder<T> addOnly() {
+            this.addOnly = true;
+            this.attributePath = ATTRIBUTES;
+            return this;
+        }
+
+        /**
+         * Use this flag if you just want to use the form to add model nodes. This will create a form with an
+         * {@link AddOnlyStateMachine}.
+         * <p>
+         * The attribute will be taken from the {@code REQUEST_PROPERTIES} of the {@code ADD} operation.
+         */
+        public Builder<T> addFromRequestProperties() {
+            this.addOnly = true;
+            this.attributePath = OPERATIONS + "." + ADD + "." + REQUEST_PROPERTIES;
             return this;
         }
 
         public Builder<T> viewOnly() {
             this.viewOnly = true;
-            return this;
-        }
-
-        public Builder<T> addOnly() {
-            this.addOnly = true;
             return this;
         }
 
@@ -189,16 +218,6 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             return this;
         }
 
-        /**
-         * Makes the automatic bindings to work with a single attribute of type LIST, each
-         * item list, comprising of a set of attributes (but these attributes as not regular).
-         * @return this Builder itself.
-         */
-        public Builder<T> attributeTypeList() {
-            this.attributeTypeList = true;
-            return this;
-        }
-
 
         // ------------------------------------------------------ build
 
@@ -211,39 +230,28 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             if (viewOnly && addOnly) {
                 throw new IllegalStateException(ILLEGAL_COMBINATION + formId() + ": viewOnly && addOnly");
             }
-            if (createResource) {
-                if (viewOnly) {
-                    throw new IllegalStateException(
-                            ILLEGAL_COMBINATION + formId() + ": createResource && viewOnly");
-                }
-                if (!attributeTypeList) {
-                    String path = OPERATIONS + "." + ADD + "." + REQUEST_PROPERTIES;
-                    if (!ModelNodeHelper.failSafeGet(metadata.getDescription(), path).isDefined()) {
-                        throw new IllegalStateException("No request properties found for " + formId() +
-                                " / operation add in resource description " + metadata.getDescription());
+
+            List<Property> attributes = metadata.getDescription().getAttributes(attributePath);
+            if (addOnly && attributes.isEmpty()) {
+                throw new IllegalStateException("No attributes found for " + formId() + " using path " + attributePath +
+                        " and resource description " + metadata.getDescription());
+            }
+
+            if (!excludes.isEmpty()) {
+                List<Property> requiredAttributes = metadata.getDescription().getRequiredAttributes(attributePath);
+                for (Property attribute : requiredAttributes) {
+                    if (excludes.contains(attribute.getName())) {
+                        throw new IllegalStateException(
+                                "Required attribute " + attribute.getName() + " must not be excluded from " + formId());
                     }
-                    if (!excludes.isEmpty()) {
-                        List<Property> requiredRequestProperties = metadata.getDescription().getRequiredRequestProperties();
-                        for (Property property : requiredRequestProperties) {
-                            if (excludes.contains(property.getName())) {
-                                throw new IllegalStateException("Required request property " + property.getName() +
-                                        " must not be excluded from " + formId() + " when using createMode == true");
-                            }
-                        }
-                    }
-                }
-            } else {
-                if (!metadata.getDescription().hasDefined(ATTRIBUTES)) {
-                    throw new IllegalStateException("No attributes found for " + formId() +
-                            " in resource description " + metadata.getDescription());
                 }
             }
         }
 
         StateMachine stateMachine() {
-            return createResource || addOnly ?
-                    new AddOnlyStateMachine() :
-                    (viewOnly ? new ViewOnlyStateMachine() : new ExistingModelStateMachine());
+            return addOnly
+                    ? new AddOnlyStateMachine()
+                    : (viewOnly ? new ViewOnlyStateMachine() : new ExistingModelStateMachine());
         }
 
         private String formId() {
@@ -255,29 +263,27 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
     private static final Messages MESSAGES = GWT.create(Messages.class);
     private static final Logger logger = LoggerFactory.getLogger(ModelNodeForm.class);
 
-    private final FormItemProvider formItemProvider;
-
     private ModelNodeForm(final Builder<T> builder) {
-        super(builder.id, builder.stateMachine(), builder.dataMapping, builder.metadata.getSecurityContext());
+        super(builder.id,
+                builder.stateMachine(),
+                builder.dataMapping != null ? builder.dataMapping : new ModelNodeMapping<>(
+                        builder.metadata.getDescription().getAttributes(builder.attributePath)),
+                builder.metadata.getSecurityContext());
 
-        this.formItemProvider = new DefaultFormItemProvider(builder.metadata.getCapabilities());
         this.saveCallback = builder.saveCallback;
         this.cancelCallback = builder.cancelCallback;
         this.resetCallback = builder.resetCallback;
 
-        Iterable<Property> formProperties = Collections.emptyList();
-        if (builder.attributeTypeList) {
-            formProperties = builder.metadata.getDescription().asPropertyList();
-        } else {
-            String path = builder.createResource ? Joiner.on('.').join(OPERATIONS, ADD, REQUEST_PROPERTIES) : ATTRIBUTES;
-            formProperties = ModelNodeHelper.failSafeGet(builder.metadata.getDescription(), path).asPropertyList();
-            //noinspection Guava
-        }
+        List<Property> formProperties = builder.metadata.getDescription().getAttributes(builder.attributePath);
+        //noinspection Guava
         FluentIterable<Property> fi = FluentIterable.from(formProperties).filter(new PropertyFilter(builder));
-        formProperties = builder.unsorted ? fi.toList() : fi.toSortedList((p1, p2) -> p1.getName().compareTo(p2.getName()));
+        formProperties = builder.unsorted ? fi.toList() : fi
+                .toSortedList((p1, p2) -> p1.getName().compareTo(p2.getName()));
+
         int index = 0;
         LabelBuilder labelBuilder = new LabelBuilder();
         HelpTextBuilder helpTextBuilder = new HelpTextBuilder();
+        FormItemProvider formItemProvider = new DefaultFormItemProvider(builder.metadata.getCapabilities());
         for (Property property : formProperties) {
 
             // any unbound form items for the current index?

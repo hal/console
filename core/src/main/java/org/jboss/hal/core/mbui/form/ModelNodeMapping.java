@@ -15,6 +15,11 @@
  */
 package org.jboss.hal.core.mbui.form;
 
+import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.form.DefaultMapping;
@@ -23,14 +28,8 @@ import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.meta.description.ResourceDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelType.BIG_INTEGER;
@@ -40,14 +39,14 @@ import static org.jboss.hal.dmr.ModelType.INT;
 /**
  * @author Harald Pehl
  */
-public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
+class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelNodeMapping.class);
 
-    private final ResourceDescription resourceDescription;
+    private final List<Property> attributeDescriptions;
 
-    public ModelNodeMapping(final ResourceDescription resourceDescription) {
-        this.resourceDescription = resourceDescription;
+    ModelNodeMapping(final List<Property> attributeDescriptions) {
+        this.attributeDescriptions = attributeDescriptions;
     }
 
     @Override
@@ -58,20 +57,17 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
 
             String name = formItem.getName();
             if (model.hasDefined(name)) {
-                ModelNode attributeDescription = resourceDescription.findAttribute(name);
+                ModelNode attributeDescription = findAttribute(name);
                 if (attributeDescription == null) {
-                    attributeDescription = resourceDescription.get(name);
-                    if (attributeDescription == null) {
-                        //noinspection HardCodedStringLiteral
-                        logger.error("{}: Unable to populate form item '{}': No attribute description found in\n{}",
-                                id(form), name, resourceDescription);
-                        continue;
-                    }
+                    //noinspection HardCodedStringLiteral
+                    logger.error("{}: Unable to populate form item '{}': No attribute description found in\n{}",
+                            id(form), name, attributeDescriptions);
+                    continue;
                 }
 
                 ModelNode value = model.get(formItem.getName());
                 ModelType valueType = value.getType();
-                    if (valueType == EXPRESSION) {
+                if (valueType == EXPRESSION) {
                     if (formItem.supportsExpressions()) {
                         formItem.setExpressionValue(value.asString());
                     } else {
@@ -150,15 +146,12 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                 model.remove(name);
 
             } else if (formItem.isModified()) {
-                ModelNode attributeDescription = resourceDescription.findAttribute(name);
+                ModelNode attributeDescription = findAttribute(name);
                 if (attributeDescription == null) {
-                    attributeDescription = resourceDescription.get(name);
-                    if (attributeDescription == null) {
-                        //noinspection HardCodedStringLiteral
-                        logger.error("{}: Unable to persist attribute '{}': No attribute description found in\n{}",
-                                id(form), name, resourceDescription);
-                        continue;
-                    }
+                    //noinspection HardCodedStringLiteral
+                    logger.error("{}: Unable to persist attribute '{}': No attribute description found in\n{}",
+                            id(form), name, attributeDescriptions);
+                    continue;
                 }
                 ModelType type = attributeDescription.get(TYPE).asType();
                 Object value = formItem.getValue();
@@ -234,6 +227,15 @@ public class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                 }
             }
         }
+    }
+
+    private ModelNode findAttribute(final String name) {
+        for (Property property : attributeDescriptions) {
+            if (name.equals(property.getName())) {
+                return property.getValue();
+            }
+        }
+        return null;
     }
 
     private String id(Form<T> form) {
