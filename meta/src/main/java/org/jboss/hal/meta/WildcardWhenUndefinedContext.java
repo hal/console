@@ -16,15 +16,13 @@
 package org.jboss.hal.meta;
 
 /**
- * A statement context which resolves the {@code selected.*} tuples using wildcards. This statement context is used by
- * {@link AbstractRegistry} to read the resource description, security context and other meta data not only for the
- * selected, but for all resources (across profiles and server groups).
+ * A statement context which resolves the {@code selected.*} tuples to wildcards if they are not yet defined.
  *
  * @author Harald Pehl
  */
-public class WildcardContext extends FilteringStatementContext implements StatementContext {
+public class WildcardWhenUndefinedContext extends FilteringStatementContext implements StatementContext {
 
-    public WildcardContext(final StatementContext delegate) {
+    public WildcardWhenUndefinedContext(final StatementContext delegate) {
         super(delegate, new Filter() {
             @Override
             public String filter(final String key) {
@@ -33,8 +31,13 @@ public class WildcardContext extends FilteringStatementContext implements Statem
 
             @Override
             public String[] filterTuple(final String tuple) {
-                Tuple t = Tuple.from(tuple);
-                return t != null ? new String[]{t.resource(), "*"} : null;
+                String[] resolved = delegate.resolveTuple(tuple);
+                if (resolved == null) {
+                    Tuple t = Tuple.from(tuple);
+                    return t != null ? new String[]{t.resource(), "*"} : null;
+                } else {
+                    return resolved;
+                }
             }
         });
     }

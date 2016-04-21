@@ -15,15 +15,15 @@
  */
 package org.jboss.hal.ballroom;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import elemental.dom.Element;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.UIConstants;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.gwt.elemento.core.EventType.click;

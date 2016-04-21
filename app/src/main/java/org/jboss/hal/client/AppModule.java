@@ -35,8 +35,6 @@ import org.jboss.hal.client.configuration.subsystem.IiopView;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourcePresenter;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceView;
-import org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriverPresenter;
-import org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriverView;
 import org.jboss.hal.client.configuration.subsystem.ee.EEPresenter;
 import org.jboss.hal.client.configuration.subsystem.ee.EEView;
 import org.jboss.hal.client.deployment.DeploymentPresenter;
@@ -119,15 +117,15 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 DataSourceView.class,
                 DataSourcePresenter.MyProxy.class);
 
-        bindPresenter(EEPresenter.class,
-                EEPresenter.MyView.class,
-                EEView.class,
-                EEPresenter.MyProxy.class);
-
         bindPresenter(DeploymentPresenter.class,
                 DeploymentPresenter.MyView.class,
                 DeploymentView.class,
                 DeploymentPresenter.MyProxy.class);
+
+        bindPresenter(EEPresenter.class,
+                EEPresenter.MyView.class,
+                EEView.class,
+                EEPresenter.MyProxy.class);
 
         bindPresenter(GenericSubsystemPresenter.class,
                 GenericSubsystemPresenter.MyView.class,
@@ -148,11 +146,6 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 InterfacePresenter.MyView.class,
                 InterfaceView.class,
                 InterfacePresenter.MyProxy.class);
-
-        bindPresenter(JdbcDriverPresenter.class,
-                JdbcDriverPresenter.MyView.class,
-                JdbcDriverView.class,
-                JdbcDriverPresenter.MyProxy.class);
 
         bindPresenter(MacroEditorPresenter.class,
                 MacroEditorPresenter.MyView.class,

@@ -30,6 +30,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.PatternFly;
+import org.jboss.hal.core.Strings;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
@@ -44,8 +45,11 @@ import org.slf4j.LoggerFactory;
 public class PreviewContent implements HasElements, SecurityContextAware, Attachable {
 
     protected static final String CONTENT_ELEMENT = "content";
+
     private static final String ERROR_MESSAGE = "Unable to get preview content from '{}': {}";
     private static final Logger logger = LoggerFactory.getLogger(PreviewContent.class);
+    private static final int MAX_HEADER_LENGTH = 30;
+
 
     private final Elements.Builder builder;
     private final List<Attachable> attachables;
@@ -136,7 +140,11 @@ public class PreviewContent implements HasElements, SecurityContextAware, Attach
     }
 
     private Elements.Builder header(final String header) {
-        return new Elements.Builder().h(1).textContent(header).end();
+        String readableHeader = header.length() > MAX_HEADER_LENGTH
+                ? Strings.abbreviateMiddle(header, MAX_HEADER_LENGTH)
+                : header;
+        Elements.Builder builder = new Elements.Builder();
+        return builder.h(1).textContent(readableHeader).title(header).end();
     }
 
     protected void registerAttachable(Attachable first, Attachable... rest) {

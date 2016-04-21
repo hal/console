@@ -43,23 +43,23 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  *
  * @author Harald Pehl
  */
-public class JdbcDriverFunctions {
+class JdbcDriverFunctions {
 
-    public static final String CONFIGURATION_DRIVERS = "jdbcDriverFunctions.configurationDrivers";
-    public static final String RUNTIME_DRIVERS = "jdbcDriverFunctions.runtimeDrivers";
-    public static final String DRIVERS = "jdbcDriverFunctions.drivers";
+    private static final String CONFIGURATION_DRIVERS = "jdbcDriverFunctions.configurationDrivers";
+    private static final String RUNTIME_DRIVERS = "jdbcDriverFunctions.runtimeDrivers";
+    static final String DRIVERS = "jdbcDriverFunctions.drivers";
 
 
     /**
      * Reads the JDBC drivers from {@code /{selected.profile}/subsystem=datasource/jdbc-driver=*} and puts the result
      * as {@code List<JdbcDriver>} under the key {@link JdbcDriverFunctions#CONFIGURATION_DRIVERS} into the context.
      */
-    public static class ReadConfiguration implements Function<FunctionContext> {
+    static class ReadConfiguration implements Function<FunctionContext> {
 
         private final StatementContext statementContext;
         private final Dispatcher dispatcher;
 
-        public ReadConfiguration(final StatementContext statementContext, final Dispatcher dispatcher) {
+        ReadConfiguration(final StatementContext statementContext, final Dispatcher dispatcher) {
             this.statementContext = statementContext;
             this.dispatcher = dispatcher;
         }
@@ -87,11 +87,11 @@ public class JdbcDriverFunctions {
      * operation. Stores the result as {@code List<JdbcDriver>} under the key {@link
      * JdbcDriverFunctions#RUNTIME_DRIVERS} into the context.
      */
-    public static class ReadRuntime implements Function<FunctionContext> {
+    static class ReadRuntime implements Function<FunctionContext> {
 
         private final Dispatcher dispatcher;
 
-        public ReadRuntime(final Dispatcher dispatcher) {this.dispatcher = dispatcher;}
+        ReadRuntime(final Dispatcher dispatcher) {this.dispatcher = dispatcher;}
 
         @Override
         public void execute(final Control<FunctionContext> control) {
@@ -134,7 +134,7 @@ public class JdbcDriverFunctions {
      * Stores the result as {@code List<JdbcDriver>} under the key {@link JdbcDriverFunctions#DRIVERS} into the
      * context.
      */
-    public static class CombineDriverResults implements Function<FunctionContext> {
+    static class CombineDriverResults implements Function<FunctionContext> {
 
         @Override
         public void execute(final Control<FunctionContext> control) {

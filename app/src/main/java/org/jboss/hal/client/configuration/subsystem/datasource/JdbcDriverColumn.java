@@ -30,7 +30,6 @@ import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.client.runtime.domain.TopologyFunctions;
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -46,7 +45,6 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -74,7 +72,6 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
 
     @Inject
     protected JdbcDriverColumn(final Finder finder,
-            final Environment environment,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
             final EventBus eventBus,
@@ -104,8 +101,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                             new TopologyFunctions.RunningServersOfGroupsInContext(dispatcher),
                             new JdbcDriverFunctions.ReadRuntime(dispatcher),
                             new JdbcDriverFunctions.CombineDriverResults());
-                })
-                .useFirstActionAsBreadcrumbHandler());
+                }));
 
         addColumnAction(columnActionFactory.add(IdBuilder.build(JDBC_DRIVER, "add"), Names.JDBC_DRIVER,
                 column -> {
@@ -113,9 +109,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                     Form<ModelNode> form = new ModelNodeForm.Builder<>(
                             IdBuilder.build(JDBC_DRIVER, "add", "form"), metadata)
                             .createResource()
-                            .include(DRIVER_NAME, DRIVER_MODULE_NAME, DRIVER_CLASS_NAME,
-                                    DRIVER_DATASOURCE_CLASS_NAME, DRIVER_XA_DATASOURCE_CLASS_NAME,
-                                    DRIVER_MAJOR_VERSION, DRIVER_MINOR_VERSION)
+                            .exclude(DEPLOYMENT_NAME, MODULE_SLOT, PROFILE)
                             .build();
                     AddResourceDialog dialog = new AddResourceDialog(
                             resources.messages().addResourceTitle(Names.JDBC_DRIVER), form,
@@ -161,14 +155,8 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
 
             @Override
             public List<ItemAction<JdbcDriver>> actions() {
-                String profile = environment.isStandalone() ? STANDALONE : statementContext.selectedProfile();
-                String provider = driver.getProvider().name().toLowerCase();
                 List<ItemAction<JdbcDriver>> actions = new ArrayList<>();
-
                 if (driver.getProvider() == MODULE) {
-                    actions.add(itemActionFactory.view(NameTokens.JDBC_DRIVER,
-                            PROFILE, profile,
-                            NAME, driver.getName()));
                     actions.add(itemActionFactory.remove(Names.JDBC_DRIVER, driver.getName(), JDBC_DRIVER_TEMPLATE,
                             JdbcDriverColumn.this));
                 }

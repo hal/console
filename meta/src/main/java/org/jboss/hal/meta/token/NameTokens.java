@@ -33,7 +33,6 @@ public interface NameTokens {
     String GENERIC_SUBSYSTEM = "generic";
     String HOMEPAGE = "home";
     String IIOP = ModelDescriptionConstants.IIOP_OPENJDK;
-    String JDBC_DRIVER = "jdbc-driver";
     String INTERFACE = "interface";
     String IO = ModelDescriptionConstants.IO;
     String JCA = ModelDescriptionConstants.JCA;

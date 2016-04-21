@@ -49,6 +49,7 @@ public class FinderSegment<T> {
     }
 
 
+    @FunctionalInterface
     public interface DropdownCallback<T> {
 
         void onItems(List<DropdownItem<T>> items);
@@ -137,6 +138,7 @@ public class FinderSegment<T> {
      * FinderColumn#getBreadcrumbItemsProvider() breadcrumb items provider}.
      */
     public boolean supportsDropdown() {
+        //noinspection SimplifiableIfStatement
         if (column != null) {
             return ((column.getBreadcrumbItemHandler() != null || column.useFirstActionAsBreadcrumbHandler()) &&
                     ((column.getInitialItems() != null && !column.getInitialItems().isEmpty()) ||

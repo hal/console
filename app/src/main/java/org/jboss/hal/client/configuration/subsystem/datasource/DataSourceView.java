@@ -37,6 +37,7 @@ import org.jboss.hal.resources.Names;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.datasource.Attribute.Scope.BOTH;
 import static org.jboss.hal.client.configuration.subsystem.datasource.Attribute.Scope.NON_XA;
 import static org.jboss.hal.client.configuration.subsystem.datasource.Attribute.Scope.XA;
@@ -170,7 +171,7 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
     public DataSourceView(MetadataRegistry metadataRegistry) {
 
         Metadata nonXaMeta = metadataRegistry.lookup(DATA_SOURCE_TEMPLATE);
-        Metadata xaMeta = metadataRegistry.lookup(DATA_SOURCE_TEMPLATE);
+        Metadata xaMeta = metadataRegistry.lookup(XA_DATA_SOURCE_TEMPLATE);
         nonXaInfo = new Elements.Builder().p().textContent(nonXaMeta.getDescription().getDescription()).end()
                 .build();
         xaInfo = new Elements.Builder().p().textContent(xaMeta.getDescription().getDescription()).end().build();

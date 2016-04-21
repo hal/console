@@ -30,7 +30,7 @@ public abstract class AbstractRegistry<T> implements Registry<T> {
     private final String type;
 
     protected AbstractRegistry(final StatementContext statementContext, final String type) {
-        this.statementContext = statementContext;
+        this.statementContext = new WildcardWhenUndefinedContext(statementContext);
         this.type = type;
     }
 
