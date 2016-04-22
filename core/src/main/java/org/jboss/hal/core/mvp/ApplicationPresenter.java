@@ -17,6 +17,7 @@ package org.jboss.hal.core.mvp;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderContextEvent;
@@ -27,6 +28,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Base class for all application presenters displayed in {@link Slots#MAIN}.
+ * <p>
+ * If the view implements {@link HasVerticalNavigation} this presenter takes care of calling {@link
+ * VerticalNavigation#on()} when the presenter is revealed and {@link VerticalNavigation#off()} when the presenter is
+ * hidden.
  *
  * @author Harald Pehl
  */
@@ -43,9 +48,25 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
     }
 
     @Override
+    protected void onReveal() {
+        super.onReveal();
+        if (getView() instanceof HasVerticalNavigation) {
+            ((HasVerticalNavigation) getView()).getVerticalNavigation().on();
+        }
+    }
+
+    @Override
     protected void onReset() {
         super.onReset();
         updateBreadcrumb();
+    }
+
+    @Override
+    protected void onHide() {
+        super.onHide();
+        if (getView() instanceof HasVerticalNavigation) {
+            ((HasVerticalNavigation) getView()).getVerticalNavigation().off();
+        }
     }
 
     /**

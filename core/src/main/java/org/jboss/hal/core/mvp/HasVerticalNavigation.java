@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom;
+package org.jboss.hal.core.mvp;
+
+import org.jboss.hal.ballroom.VerticalNavigation;
 
 /**
- * Interface for elements which need to run code when they get attached to the DOM. Global initialization logic which
- * is relevant across elements should be placed in {@link PatternFly#initComponents()} though.
+ * Meant to be implemented by views which have a vertical navigation. Works together with {@link ApplicationPresenter}
+ * to automatically show and hide the vertical navigation when the presenter is revealed and hidden.
  *
  * @author Harald Pehl
  */
-public interface Attachable {
+public interface HasVerticalNavigation {
 
-    void attach();
+    VerticalNavigation getVerticalNavigation();
 }

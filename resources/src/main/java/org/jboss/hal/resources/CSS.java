@@ -60,6 +60,7 @@ public interface CSS {
     String columnMedium = "md";
     String collapse = "collapse";
     String containerFluid = "container-fluid";
+    String containerPfNavPfVerticalHal = "container-pf-nav-pf-vertical-hal";
     String controlLabel = "control-label";
     String copy = "copy";
 
@@ -121,6 +122,7 @@ public interface CSS {
     String listGroupItem = "list-group-item";
     String listGroupItemHeading = "list-group-item-heading";
     String listGroupItemText = "list-group-item-text";
+    String listGroupItemValue = "list-group-item-value";
     String listViewPf = "list-view-pf";
     String listViewPfAdditionalInfo = "list-view-pf-additional-info";
     String listViewPfAdditionalInfoItem = "list-view-pf-additional-info-item";
@@ -154,6 +156,8 @@ public interface CSS {
 
     String nav = "nav";
     String navbar = "navbar";
+    String navPfVertical = "nav-pf-vertical";
+    String navPfVerticalHal = "nav-pf-vertical-hal";
     String navTabs = "nav-tabs";
     String navTabsHal = "nav-tabs-hal";
     String navTabsPf = "nav-tabs-pf";

@@ -45,13 +45,13 @@ public interface Ids {
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
     String DOMAIN_BROWSE_BY = "domain-browse-by";
 
+    String EE_ATTRIBUTES_ENTRY = "ee-attributes-entry";
     String EE_ATTRIBUTES_FORM = "ee-attributes-form";
-    String EE_ATTRIBUTES_TAB = "ee-attributes-tab";
-    String EE_GLOBAL_MODULES_TAB = "ee-global-modules-tab";
+    String EE_GLOBAL_MODULES_ENTRY = "ee-global-modules-entry";
     String EE_GLOBAL_MODULES_TABLE = "ee-global-modules-table";
     String EE_GLOBAL_MODULES_FORM = "ee-global-modules-form";
+    String EE_DEFAULT_BINDINGS_ENTRY = "ee-default-bindings-entry";
     String EE_DEFAULT_BINDINGS_FORM = "ee-default-bindings-form";
-    String EE_DEFAULT_BINDINGS_TAB = "ee-default-bindings-tab";
 
     String ENDPOINT_ADD = "endpoint-add";
     String ENDPOINT_PING = "endpoint-ping";

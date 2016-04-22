@@ -30,6 +30,7 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HasPresenter;
+import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.core.mvp.SubsystemPresenter;
 import org.jboss.hal.dmr.ModelNode;
@@ -68,7 +69,8 @@ public class EEPresenter extends SubsystemPresenter<EEPresenter.MyView, EEPresen
     @Requires(AddressTemplates.EE_ADDRESS)
     public interface MyProxy extends ProxyPlace<EEPresenter> {}
 
-    public interface MyView extends PatternFlyView, HasPresenter<EEPresenter> {
+    public interface MyView extends PatternFlyView, HasVerticalNavigation, HasPresenter<EEPresenter> {
+        void reset();
         void update(ModelNode eeData);
     }
     // @formatter:on
@@ -128,6 +130,7 @@ public class EEPresenter extends SubsystemPresenter<EEPresenter.MyView, EEPresen
     @Override
     protected void onReset() {
         super.onReset();
+        getView().reset();
         loadEESubsystem();
     }
 

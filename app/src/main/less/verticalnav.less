@@ -1,0 +1,20 @@
+/*
+ * Adjust the top and bottom position to the header and footer used in HAL.
+ * Adjust the width to match two columns (which is used by the finder).
+ */
+.nav-pf-vertical-hal {
+  bottom: 26px;
+  min-height: 1px;
+  top: 71px;
+  @media (min-width: @screen-md-min) {
+    width: percentage((2 / @grid-columns));
+  }
+}
+
+.container-pf-nav-pf-vertical-hal {
+  margin-left: percentage((2 / @grid-columns));
+}
+
+.nav-pf-vertical > .list-group > .list-group-item > a {
+  width: 100%;
+}

@@ -20,10 +20,11 @@ import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.Scheduler;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LayoutBuilder;
-import org.jboss.hal.ballroom.Tabs;
+import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
@@ -46,6 +47,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_BINDINGS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.GLOBAL_MODULES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVICE;
+import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.Ids.*;
 
 /**
@@ -55,10 +57,10 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
 
     private static final String HEADER_ELEMENT = "headerElement";
 
-    private Element header;
+    private final Map<String, ModelNodeForm<ModelNode>> forms = new HashMap<>(2);
+    private final VerticalNavigation navigation;
+    private final DataTable<ModelNode> globalModulesTable;
     private EEPresenter presenter;
-    private Map<String, ModelNodeForm<ModelNode>> forms = new HashMap<>(2);
-    private DataTable<ModelNode> globalModulesTable;
 
     @Inject
     public EEView(SecurityFramework securityFramework,
@@ -66,17 +68,13 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
             Capabilities capabilities,
             final Resources resources) {
 
-        Tabs tabs = new Tabs();
+        navigation = new VerticalNavigation();
 
         // ============================================
-        // attributes - deployments tab
+        // attributes - deployments
         SecurityContext securityContext = securityFramework.lookup(AddressTemplates.EE_SUBSYSTEM_TEMPLATE);
         ResourceDescription eeDescription = descriptions.lookup(AddressTemplates.EE_SUBSYSTEM_TEMPLATE);
         Metadata metadata = new Metadata(securityContext, eeDescription, capabilities);
-
-        Element info = new Elements.Builder().p().textContent(eeDescription
-                .getDescription() + " It provides the ability to specify a list of modules that should be made available to all deployments.")
-                .end().build();
 
         ModelNodeForm<ModelNode> eeAttributesForm = new ModelNodeForm.Builder<>(EE_ATTRIBUTES_FORM, metadata)
                 .include("annotation-property-replacement",
@@ -87,11 +85,11 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
                 .build();
 
         forms.put(EE_ATTRIBUTES_FORM, eeAttributesForm);
-        tabs.add(EE_ATTRIBUTES_TAB, Names.DEPLOYMENTS, eeAttributesForm.asElement());
+        navigation.add(EE_ATTRIBUTES_ENTRY, Names.DEPLOYMENTS, fontAwesome("archive"), eeAttributesForm.asElement());
         registerAttachable(eeAttributesForm);
 
         // ============================================
-        // global modules tab
+        // global modules
         Metadata globalModulesMetadata = EEPresenter
                 .globalModulesMetadata(securityFramework, descriptions, capabilities);
 
@@ -102,11 +100,14 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
                 .build();
 
         globalModulesTable = new ModelNodeTable<>(Ids.EE_GLOBAL_MODULES_TABLE, options);
-        tabs.add(EE_GLOBAL_MODULES_TAB, Names.GLOBAL_MODULES, globalModulesTable.asElement());
+        // Register as 'IsElement' instead of 'Element' since the data table's root element changes after it has been
+        // attached to the DOM. If registered as 'IsElement' the navigation will take care of this when showing and
+        // hiding the table
+        navigation.add(EE_GLOBAL_MODULES_ENTRY, Names.GLOBAL_MODULES, fontAwesome("cube"), globalModulesTable);
         registerAttachable(globalModulesTable);
 
         // ============================================
-        // service=default-bindings tab
+        // service=default-bindings
         ResourceDescription defaultBindingsResource = descriptions
                 .lookup(AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE);
         SecurityContext securityContextDefBindings = securityFramework
@@ -126,29 +127,44 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
                 .build();
 
         forms.put(EE_DEFAULT_BINDINGS_FORM, defaultBindingsForm);
-        tabs.add(EE_DEFAULT_BINDINGS_TAB, resources.constants().defaultBindings(), defaultBindingsForm.asElement());
+        navigation.add(EE_DEFAULT_BINDINGS_ENTRY, resources.constants().defaultBindings(), fontAwesome("link"),
+                defaultBindingsForm.asElement());
         registerAttachable(defaultBindingsForm);
 
+        // ============================================
+        // main layout
+        Element info = new Elements.Builder().p().textContent(eeDescription
+                .getDescription() + " It provides the ability to specify a list of modules that should be made available to all deployments.")
+                .end().build();
+
         // @formatter:off
-        Element tabElement = tabs.asElement();
         LayoutBuilder layoutBuilder = new LayoutBuilder()
             .row()
                 .column()
                     .header(Names.EE).rememberAs(HEADER_ELEMENT).end()
                     .add(info)
-                    .add(tabElement)
+                    .addAll(navigation.panes())
                 .end()
             .end();
         // @formatter:on
 
         Element root = layoutBuilder.build();
-        header = layoutBuilder.referenceFor(HEADER_ELEMENT);
         initElement(root);
     }
 
     @Override
     public void setPresenter(final EEPresenter presenter) {
         this.presenter = presenter;
+    }
+
+    @Override
+    public VerticalNavigation getVerticalNavigation() {
+        return navigation;
+    }
+
+    @Override
+    public void reset() {
+        Scheduler.get().scheduleDeferred(() -> navigation.show(EE_ATTRIBUTES_ENTRY));
     }
 
     @Override
