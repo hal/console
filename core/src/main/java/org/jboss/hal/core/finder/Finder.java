@@ -359,6 +359,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             AsyncCallback<FinderColumn> callback) {
         initialColumnsByToken.put(token, initialColumn);
 
+        columns.clear();
         while (root.getFirstChild() != previewColumn) {
             root.removeChild(root.getFirstChild());
         }
