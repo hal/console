@@ -15,13 +15,14 @@
  */
 package org.jboss.hal.meta.description;
 
+import java.util.HashMap;
+import java.util.Map;
+import javax.inject.Inject;
+
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AbstractRegistry;
 import org.jboss.hal.meta.StatementContext;
-
-import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ResourceDescriptions extends AbstractRegistry<ResourceDescription> {
 
@@ -31,8 +32,8 @@ public class ResourceDescriptions extends AbstractRegistry<ResourceDescription> 
     private final Map<ResourceAddress, ResourceDescription> registry;
 
     @Inject
-    public ResourceDescriptions(final StatementContext statementContext) {
-        super(statementContext, RESOURCE_DESCRIPTION_TYPE);
+    public ResourceDescriptions(final StatementContext statementContext, final Environment environment) {
+        super(statementContext, RESOURCE_DESCRIPTION_TYPE, environment);
         this.registry = new HashMap<>();
     }
 

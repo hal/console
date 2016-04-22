@@ -22,11 +22,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Lists;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.client.runtime.domain.Server;
 import org.jboss.hal.client.runtime.domain.TopologyFunctions;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
@@ -89,39 +91,55 @@ class JdbcDriverFunctions {
      */
     static class ReadRuntime implements Function<FunctionContext> {
 
+        private final Environment environment;
         private final Dispatcher dispatcher;
 
-        ReadRuntime(final Dispatcher dispatcher) {this.dispatcher = dispatcher;}
+        ReadRuntime(final Environment environment, final Dispatcher dispatcher) {
+            this.environment = environment;
+            this.dispatcher = dispatcher;
+        }
 
         @Override
         public void execute(final Control<FunctionContext> control) {
-            List<Server> servers = control.getContext().get(TopologyFunctions.RUNNING_SERVERS);
-            if (servers != null && !servers.isEmpty()) {
-                //noinspection Guava
-                List<Operation> operations = FluentIterable.from(servers)
-                        .transform(server -> {
-                            ResourceAddress address = new ResourceAddress().add(HOST, server.getHost())
-                                    .add(SERVER, server.getName())
-                                    .add(SUBSYSTEM, DATASOURCES);
-                            return new Operation.Builder("installed-drivers-list", address).build(); //NON-NLS
-                        })
-                        .toList();
-                dispatcher.executeInFunction(control, new Composite(operations), (CompositeResult result) -> {
-                    List<JdbcDriver> drivers = new ArrayList<>();
-                    for (ModelNode step : result) {
-                        if (!step.isFailure()) {
-                            // for each server we get the list of installed drivers
-                            for (ModelNode modelNode : step.get(RESULT).asList()) {
-                                drivers.add(new JdbcDriver(modelNode.get(DRIVER_NAME).asString(), modelNode));
-                            }
-                        }
-                    }
+            if (environment.isStandalone()) {
+                ResourceAddress address = new ResourceAddress().add(SUBSYSTEM, DATASOURCES);
+                Operation operation = new Operation.Builder("installed-drivers-list", address).build(); //NON-NLS
+                dispatcher.executeInFunction(control, operation, result -> {
+                    List<JdbcDriver> drivers = Lists.transform(result.asList(),
+                            modelNode -> new JdbcDriver(modelNode.get(DRIVER_NAME).asString(), modelNode));
                     control.getContext().set(RUNTIME_DRIVERS, drivers);
                     control.proceed();
                 });
 
             } else {
-                control.proceed();
+                List<Server> servers = control.getContext().get(TopologyFunctions.RUNNING_SERVERS);
+                if (servers != null && !servers.isEmpty()) {
+                    //noinspection Guava
+                    List<Operation> operations = FluentIterable.from(servers)
+                            .transform(server -> {
+                                ResourceAddress address = new ResourceAddress().add(HOST, server.getHost())
+                                        .add(SERVER, server.getName())
+                                        .add(SUBSYSTEM, DATASOURCES);
+                                return new Operation.Builder("installed-drivers-list", address).build(); //NON-NLS
+                            })
+                            .toList();
+                    dispatcher.executeInFunction(control, new Composite(operations), (CompositeResult result) -> {
+                        List<JdbcDriver> drivers = new ArrayList<>();
+                        for (ModelNode step : result) {
+                            if (!step.isFailure()) {
+                                // for each server we get the list of installed drivers
+                                for (ModelNode modelNode : step.get(RESULT).asList()) {
+                                    drivers.add(new JdbcDriver(modelNode.get(DRIVER_NAME).asString(), modelNode));
+                                }
+                            }
+                        }
+                        control.getContext().set(RUNTIME_DRIVERS, drivers);
+                        control.proceed();
+                    });
+
+                } else {
+                    control.proceed();
+                }
             }
         }
     }

@@ -15,13 +15,14 @@
  */
 package org.jboss.hal.meta.security;
 
+import java.util.HashMap;
+import java.util.Map;
+import javax.inject.Inject;
+
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AbstractRegistry;
 import org.jboss.hal.meta.StatementContext;
-
-import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.Map;
 
 public class SecurityFramework extends AbstractRegistry<SecurityContext> {
 
@@ -30,8 +31,8 @@ public class SecurityFramework extends AbstractRegistry<SecurityContext> {
     private final Map<ResourceAddress, SecurityContext> registry;
 
     @Inject
-    public SecurityFramework(final StatementContext statementContext) {
-        super(statementContext, SECURITY_CONTEXT_TYPE);
+    public SecurityFramework(final StatementContext statementContext, final Environment environment) {
+        super(statementContext, SECURITY_CONTEXT_TYPE, environment);
         this.registry = new HashMap<>();
     }
 

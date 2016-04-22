@@ -1,34 +1,40 @@
 package org.jboss.hal.meta.processing;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.google.common.collect.Sets;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Collections;
-import java.util.List;
+import org.mockito.Mockito;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.processing.LookupResult.RESOURCE_DESCRIPTION_PRESENT;
 import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESENT;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Harald Pehl
  */
 public class CreateRrdOperationsTest {
 
+    private Environment environment;
     private CreateRrdOperations rrdOps;
     private StatementContext statementContext;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
+        environment = Mockito.mock(Environment.class);
         statementContext = StatementContext.NOOP;
-        rrdOps = new CreateRrdOperations(statementContext);
+        rrdOps = new CreateRrdOperations(statementContext, environment);
     }
 
     @Test

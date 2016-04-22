@@ -30,6 +30,7 @@ import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.client.runtime.domain.TopologyFunctions;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -74,6 +75,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
     protected JdbcDriverColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
+            final Environment environment,
             final EventBus eventBus,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
@@ -97,9 +99,9 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                     };
                     new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
                             new JdbcDriverFunctions.ReadConfiguration(statementContext, dispatcher),
-                            new TopologyFunctions.RunningServersOfProfile(dispatcher,
+                            new TopologyFunctions.RunningServersOfProfile(environment, dispatcher,
                                     statementContext.selectedProfile()),
-                            new JdbcDriverFunctions.ReadRuntime(dispatcher),
+                            new JdbcDriverFunctions.ReadRuntime(environment, dispatcher),
                             new JdbcDriverFunctions.CombineDriverResults());
                 }));
 

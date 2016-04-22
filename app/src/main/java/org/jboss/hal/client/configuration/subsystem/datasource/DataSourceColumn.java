@@ -19,13 +19,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.user.client.Window;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.flow.Async;
+import org.jboss.gwt.flow.Function;
+import org.jboss.gwt.flow.FunctionContext;
+import org.jboss.gwt.flow.Outcome;
+import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.client.configuration.subsystem.datasource.wizard.NewDataSourceWizard;
+import org.jboss.hal.client.runtime.domain.TopologyFunctions;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -45,6 +52,7 @@ import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
+import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message.Level;
 import org.jboss.hal.spi.Requires;
 
@@ -64,8 +72,10 @@ import static org.jboss.hal.resources.CSS.subtitle;
 public class DataSourceColumn extends FinderColumn<DataSource> {
 
     private final MetadataRegistry metadataRegistry;
+    private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final Environment environment;
+    private final Provider<Progress> progress;
     private final Resources resources;
     private final DataSourceTemplates templates;
 
@@ -74,6 +84,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             final Dispatcher dispatcher,
             final StatementContext statementContext,
             final Environment environment,
+            final @Footer Provider<Progress> progress,
             final Resources resources,
             final DataSourceTemplates templates,
             final Finder finder,
@@ -84,8 +95,10 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 .useFirstActionAsBreadcrumbHandler());
 
         this.metadataRegistry = metadataRegistry;
+        this.dispatcher = dispatcher;
         this.statementContext = statementContext;
         this.environment = environment;
+        this.progress = progress;
         this.resources = resources;
         this.templates = templates;
 
@@ -174,9 +187,45 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     }
 
     private void launchNewDataSourceWizard(final boolean xa) {
-        NewDataSourceWizard wizard = new NewDataSourceWizard(metadataRegistry, environment, resources, templates,
-                Collections.emptyList(), Collections.emptyList(), xa);
-        wizard.show();
+        Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
+            @Override
+            public void onFailure(final FunctionContext context) {
+                launchWizard(Collections.emptyList(), Collections.emptyList());
+            }
+
+            @Override
+            public void onSuccess(final FunctionContext context) {
+                List<DataSource> dataSources = context.get(DATASOURCES);
+                List<JdbcDriver> drivers = context.get(JdbcDriverFunctions.DRIVERS);
+                launchWizard(dataSources, drivers);
+            }
+
+            private void launchWizard(List<DataSource> dataSources, List<JdbcDriver> drivers) {
+                NewDataSourceWizard wizard = new NewDataSourceWizard(metadataRegistry, environment, resources,
+                        templates, dataSources, drivers, xa);
+                wizard.show();
+            }
+        };
+
+        Function<FunctionContext> readDataSources = control -> {
+            ResourceAddress dataSourceAddress = DATA_SOURCE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
+            Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, dataSourceAddress)
+                    .param(CHILD_TYPE, xa ? XA_DATA_SOURCE : DATA_SOURCE).build();
+            dispatcher.executeInFunction(control, operation, result -> {
+                List<DataSource> dataSources = Lists.transform(result.asPropertyList(),
+                        property -> new DataSource(property, xa));
+                control.getContext().set(DATASOURCES, dataSources);
+                control.proceed();
+            });
+        };
+
+        new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
+                readDataSources,
+                new JdbcDriverFunctions.ReadConfiguration(statementContext, dispatcher),
+                new TopologyFunctions.RunningServersOfProfile(environment, dispatcher,
+                        statementContext.selectedProfile()),
+                new JdbcDriverFunctions.ReadRuntime(environment, dispatcher),
+                new JdbcDriverFunctions.CombineDriverResults());
     }
 
     private ResourceAddress dataSourceAddress(DataSource dataSource) {

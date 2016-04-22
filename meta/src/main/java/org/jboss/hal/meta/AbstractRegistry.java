@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.meta;
 
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +30,9 @@ public abstract class AbstractRegistry<T> implements Registry<T> {
     private final StatementContext statementContext;
     private final String type;
 
-    protected AbstractRegistry(final StatementContext statementContext, final String type) {
-        this.statementContext = new WildcardWhenUndefinedContext(statementContext);
+    protected AbstractRegistry(final StatementContext statementContext, final String type,
+            final Environment environment) {
+        this.statementContext = new WildcardWhenUndefinedContext(statementContext, environment);
         this.type = type;
     }
 

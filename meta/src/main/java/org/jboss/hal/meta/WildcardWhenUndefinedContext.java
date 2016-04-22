@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.meta;
 
+import org.jboss.hal.config.Environment;
+
 /**
  * A statement context which resolves the {@code selected.*} tuples to wildcards if they are not yet defined.
  *
@@ -22,7 +24,7 @@ package org.jboss.hal.meta;
  */
 public class WildcardWhenUndefinedContext extends FilteringStatementContext implements StatementContext {
 
-    public WildcardWhenUndefinedContext(final StatementContext delegate) {
+    public WildcardWhenUndefinedContext(final StatementContext delegate, Environment environment) {
         super(delegate, new Filter() {
             @Override
             public String filter(final String key) {
@@ -34,10 +36,11 @@ public class WildcardWhenUndefinedContext extends FilteringStatementContext impl
                 String[] resolved = delegate.resolveTuple(tuple);
                 if (resolved == null) {
                     Tuple t = Tuple.from(tuple);
-                    return t != null ? new String[]{t.resource(), "*"} : null;
-                } else {
-                    return resolved;
+                    if (t != null && !environment.isStandalone()) {
+                        resolved = new String[]{t.resource(), "*"};
+                    }
                 }
+                return resolved;
             }
         });
     }

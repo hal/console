@@ -83,7 +83,7 @@ public class TypeaheadProvider {
             suggestionTemplate = new NestedSuggestionTemplate();
         }
 
-        return new Typeahead.Builder(operation, resultProcessor, identifier)
+        return new Typeahead.OperationBuilder(operation, resultProcessor, identifier)
                 .dataTokenizer(dataTokenizer)
                 .display(display)
                 .suggestion(suggestionTemplate)

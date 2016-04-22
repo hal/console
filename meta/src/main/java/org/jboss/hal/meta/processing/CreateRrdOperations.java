@@ -18,6 +18,7 @@ package org.jboss.hal.meta.processing;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
@@ -37,8 +38,8 @@ class CreateRrdOperations {
 
     private final StatementContext statementContext;
 
-    CreateRrdOperations(final StatementContext statementContext) {
-        this.statementContext = new WildcardWhenUndefinedContext(statementContext);
+    CreateRrdOperations(final StatementContext statementContext, final Environment environment) {
+        this.statementContext = new WildcardWhenUndefinedContext(statementContext, environment);
     }
 
     public List<Operation> create(LookupResult lookupResult) {

@@ -15,12 +15,14 @@
  */
 package org.jboss.hal.client.runtime.domain;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.FluentIterable;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -35,55 +37,22 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 public class TopologyFunctions {
 
-    private static final String SERVER_GROUPS = "topologyFunctions.serverGroups";
     public static final String RUNNING_SERVERS = "topologyFunctions.runningServers";
 
 
     /**
-     * Returns all server groups based on the specified profile. Stores the result as a list of strings in the context
-     * under the key {@link TopologyFunctions#SERVER_GROUPS}.
-     */
-    public static class ServerGroupsOfProfile implements Function<FunctionContext> {
-
-        private final Dispatcher dispatcher;
-        private final String profile;
-
-        public ServerGroupsOfProfile(final Dispatcher dispatcher, final String profile) {
-            this.dispatcher = dispatcher;
-            this.profile = profile;
-        }
-
-        @Override
-        public void execute(final Control<FunctionContext> control) {
-            Operation operation = new Operation.Builder(QUERY, new ResourceAddress().add(SERVER_GROUP, "*"))
-                    .param(SELECT, new String[]{PROFILE}) // we need to select something
-                    .param(WHERE, new ModelNode().set(PROFILE, profile))
-                    .build();
-            dispatcher.executeInFunction(control, operation, result -> {
-                //noinspection Guava
-                List<String> serverGroups = FluentIterable.from(result.asList())
-                        .filter(modelNode -> !modelNode.isFailure())
-                        .transform(modelNode -> new ResourceAddress(modelNode.get(ADDRESS)))
-                        .transform(ResourceAddress::lastValue)
-                        .toList();
-                control.getContext().set(SERVER_GROUPS, serverGroups);
-                control.proceed();
-            });
-        }
-    }
-
-
-    /**
      * Returns a list of running servers which belong to the specified profile. Stores the list in the context under
-     * the
-     * key {@link TopologyFunctions#RUNNING_SERVERS}.
+     * the key {@link TopologyFunctions#RUNNING_SERVERS}. Stores an empty list when running in standalone mode.
      */
     public static class RunningServersOfProfile implements Function<FunctionContext> {
 
+        private final Environment environment;
         private final Dispatcher dispatcher;
         private final String profile;
 
-        public RunningServersOfProfile(final Dispatcher dispatcher, final String profile) {
+        public RunningServersOfProfile(final Environment environment, final Dispatcher dispatcher,
+                final String profile) {
+            this.environment = environment;
             this.dispatcher = dispatcher;
             this.profile = profile;
         }
@@ -91,25 +60,32 @@ public class TopologyFunctions {
         @Override
         @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
         public void execute(final Control<FunctionContext> control) {
-            ResourceAddress address = new ResourceAddress().add(HOST, "*").add(SERVER, "*");
-
-            ModelNode select = new ModelNode().add(HOST).add("launch-type").add(NAME).add("profile-name")
-                    .add("running-mode").add(SERVER_GROUP).add("server-state").add("suspend-state").add("uuid");
-
-            Operation operation = new Operation.Builder(QUERY, address)
-                    .param(SELECT, select)
-                    .param(WHERE, new ModelNode().set("profile-name", profile))
-                    .build();
-
-            dispatcher.executeInFunction(control, operation, result -> {
-                //noinspection Guava
-                List<Server> servers = FluentIterable.from(result.asList())
-                        .filter(modelNode -> !modelNode.isFailure())
-                        .transform(modelNode -> new Server(modelNode.get(RESULT)))
-                        .toList();
+            if (environment.isStandalone()) {
+                List<Server> servers = Collections.emptyList();
                 control.getContext().set(RUNNING_SERVERS, servers);
                 control.proceed();
-            });
+
+            } else {
+                ResourceAddress address = new ResourceAddress().add(HOST, "*").add(SERVER, "*");
+
+                ModelNode select = new ModelNode().add(HOST).add("launch-type").add(NAME).add("profile-name")
+                        .add("running-mode").add(SERVER_GROUP).add("server-state").add("suspend-state").add("uuid");
+
+                Operation operation = new Operation.Builder(QUERY, address)
+                        .param(SELECT, select)
+                        .param(WHERE, new ModelNode().set("profile-name", profile))
+                        .build();
+
+                dispatcher.executeInFunction(control, operation, result -> {
+                    //noinspection Guava
+                    List<Server> servers = FluentIterable.from(result.asList())
+                            .filter(modelNode -> !modelNode.isFailure())
+                            .transform(modelNode -> new Server(modelNode.get(RESULT)))
+                            .toList();
+                    control.getContext().set(RUNNING_SERVERS, servers);
+                    control.proceed();
+                });
+            }
         }
     }
 }

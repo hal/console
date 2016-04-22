@@ -15,17 +15,19 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
+import java.util.List;
+
 import elemental.dom.Element;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSource;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-
-import java.util.List;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
@@ -45,6 +47,17 @@ class NamesStep extends WizardStep<Context, State> {
                 .include("jndi-name")
                 .onSave((form, changedValues) -> wizard.getContext().dataSource = form.getModel())
                 .build();
+
+        FormItem<String> nameItem = form.getFormItem(NAME);
+        nameItem.addValidationHandler(value -> {
+            for (DataSource dataSource : existingDataSources) {
+                if (dataSource.getName().equals(value)) {
+                    return ValidationResult.invalid(resources.messages().duplicateResource(Names.DATASOURCE));
+                }
+            }
+            return ValidationResult.OK;
+        });
+        registerAttachable(form);
     }
 
     @Override

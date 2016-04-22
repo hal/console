@@ -15,11 +15,12 @@
  */
 package org.jboss.hal.meta;
 
-import org.jboss.hal.dmr.model.ResourceAddress;
-
-import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
+import javax.inject.Inject;
+
+import org.jboss.hal.config.Environment;
+import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
  * Registry for {@link Metadata} which combines the information from {@link org.jboss.hal.meta.description.ResourceDescriptions},
@@ -34,8 +35,8 @@ public class MetadataRegistry extends AbstractRegistry<Metadata> {
     private final Map<ResourceAddress, Metadata> registry;
 
     @Inject
-    public MetadataRegistry(final StatementContext statementContext) {
-        super(statementContext, METADATA_TYPE);
+    public MetadataRegistry(final StatementContext statementContext, final Environment environment) {
+        super(statementContext, METADATA_TYPE, environment);
         this.registry = new HashMap<>();
     }
 

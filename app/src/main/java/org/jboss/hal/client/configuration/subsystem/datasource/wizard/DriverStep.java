@@ -15,20 +15,21 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+import com.google.gwt.core.client.Scheduler;
 import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.resources.IdBuilder;
-import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.ballroom.form.SuggestHandler;
+import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Resources;
-
-import java.util.List;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
@@ -37,8 +38,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
  */
 class DriverStep extends WizardStep<Context, State> {
 
-    private final Tabs tabs;
     private final ModelNodeForm<JdbcDriver> form;
+    private SuggestHandler suggestHandler;
 
     DriverStep(final NewDataSourceWizard wizard, final List<JdbcDriver> drivers,
             final Metadata metadata, final Resources resources) {
@@ -49,18 +50,19 @@ class DriverStep extends WizardStep<Context, State> {
                 .requiredOnly()
                 .onSave((form, changedValues) -> wizard.getContext().driver = form.getModel())
                 .build();
-        Element nyi = new Elements.Builder().p().textContent(Names.NYI).end().build();
 
-        tabs = new Tabs();
-        tabs.add(IdBuilder.build(id(), "driver", "step", "specify"), resources.constants().specifyDriver(),
-                form.asElement());
-        tabs.add(IdBuilder.build(id(), "driver", "step", "detected"), resources.constants().detectedDriver(),
-                nyi);
+        List<String> names = Lists.transform(drivers, JdbcDriver::getName);
+        if (!names.isEmpty()) {
+            FormItem<String> nameItem = form.getFormItem(NAME);
+            suggestHandler = new Typeahead.StaticBuilder(names).build();
+            nameItem.registerSuggestHandler(suggestHandler);
+        }
+        registerAttachable(form);
     }
 
     @Override
     public Element asElement() {
-        return tabs.asElement();
+        return form.asElement();
     }
 
     @Override
@@ -71,6 +73,12 @@ class DriverStep extends WizardStep<Context, State> {
         nameItem.setUndefined(false);
 
         form.edit(context.driver);
+
+        Scheduler.get().scheduleDeferred(() -> {
+            if (suggestHandler != null) {
+                suggestHandler.close();
+            }
+        });
     }
 
     @Override
