@@ -52,9 +52,7 @@
         font-weight: 700;
         line-height: 1.67;
         margin: 0 10px 0 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        .text-overflow();
       }
     }
 
@@ -124,18 +122,14 @@
 
         .item-text {
           flex: 1 1 auto;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+          .text-overflow();
         }
 
         .subtitle {
           display: block;
           font-size: 10px;
           color: #8b8d8f;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+          .text-overflow();
         }
 
         .unpin, .pin, .folder, .btn-group, button {
@@ -227,9 +221,7 @@
 
       .value {
         margin-left: 10px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        .text-overflow();
         width: 70%;
       }
     }

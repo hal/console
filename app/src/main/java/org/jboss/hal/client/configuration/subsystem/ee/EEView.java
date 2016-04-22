@@ -21,25 +21,23 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.Scheduler;
-import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.description.ResourceDescription;
-import org.jboss.hal.meta.description.ResourceDescriptions;
-import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.meta.security.SecurityFramework;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -48,6 +46,7 @@ import org.jboss.hal.resources.Resources;
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.marginTop10;
 import static org.jboss.hal.resources.Ids.*;
 
 /**
@@ -57,26 +56,30 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
 
     private static final String HEADER_ELEMENT = "headerElement";
 
-    private final Map<String, ModelNodeForm<ModelNode>> forms = new HashMap<>(2);
+    private final MetadataRegistry metadataRegistry;
+    private final Resources resources;
     private final VerticalNavigation navigation;
+    private final Map<String, ModelNodeForm<ModelNode>> forms;
     private final DataTable<ModelNode> globalModulesTable;
+
     private EEPresenter presenter;
 
     @Inject
-    public EEView(SecurityFramework securityFramework,
-            ResourceDescriptions descriptions,
-            Capabilities capabilities,
+    public EEView(MetadataRegistry metadataRegistry,
             final Resources resources) {
-
-        navigation = new VerticalNavigation();
+        this.metadataRegistry = metadataRegistry;
+        this.resources = resources;
+        this.navigation = new VerticalNavigation();
+        this.forms = new HashMap<>();
 
         // ============================================
         // attributes - deployments
-        SecurityContext securityContext = securityFramework.lookup(AddressTemplates.EE_SUBSYSTEM_TEMPLATE);
-        ResourceDescription eeDescription = descriptions.lookup(AddressTemplates.EE_SUBSYSTEM_TEMPLATE);
-        Metadata metadata = new Metadata(securityContext, eeDescription, capabilities);
+        Metadata eeMetadata = metadataRegistry.lookup(AddressTemplates.EE_SUBSYSTEM_TEMPLATE);
+        Element info = new Elements.Builder().p().textContent(eeMetadata.getDescription()
+                .getDescription() + " It provides the ability to specify a list of modules that should be made available to all deployments.")
+                .end().build();
 
-        ModelNodeForm<ModelNode> eeAttributesForm = new ModelNodeForm.Builder<>(EE_ATTRIBUTES_FORM, metadata)
+        ModelNodeForm<ModelNode> eeAttributesForm = new ModelNodeForm.Builder<>(EE_ATTRIBUTES_FORM, eeMetadata)
                 .include("annotation-property-replacement",
                         "ear-subdeployments-isolated",
                         "jboss-descriptor-property-replacement",
@@ -90,13 +93,13 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
 
         // ============================================
         // global modules
-        Metadata globalModulesMetadata = EEPresenter
-                .globalModulesMetadata(securityFramework, descriptions, capabilities);
+        Metadata globalModulesMetadata = EEPresenter.globalModulesMetadata(metadataRegistry);
 
         Options<ModelNode> options = new ModelNodeTable.Builder<>(globalModulesMetadata)
                 .columns(NAME, "slot", "annotations", "services", "meta-inf")
                 .button(resources.constants().add(), (event, api) -> presenter.launchAddDialogGlobalModule())
-                .button(resources.constants().remove(), (event, api) -> presenter.removeGlobalModule(api.selectedRow()))
+                .button(resources.constants().remove(), Button.Scope.SELECTED,
+                        (event, api) -> presenter.removeGlobalModule(api.selectedRow()))
                 .build();
 
         globalModulesTable = new ModelNodeTable<>(Ids.EE_GLOBAL_MODULES_TABLE, options);
@@ -108,12 +111,7 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
 
         // ============================================
         // service=default-bindings
-        ResourceDescription defaultBindingsResource = descriptions
-                .lookup(AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE);
-        SecurityContext securityContextDefBindings = securityFramework
-                .lookup(AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE);
-        Metadata defaultBindingsMetadata = new Metadata(securityContextDefBindings, defaultBindingsResource,
-                capabilities);
+        Metadata defaultBindingsMetadata = metadataRegistry.lookup(AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE);
 
         ModelNodeForm<ModelNode> defaultBindingsForm = new ModelNodeForm.Builder<>(EE_DEFAULT_BINDINGS_FORM,
                 defaultBindingsMetadata)
@@ -134,24 +132,18 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
         // ============================================
         // services
         Tabs serviceTabs = new Tabs();
-        Element nyi = Browser.getDocument().createElement("p");
-        nyi.setTextContent(Names.NYI);
         serviceTabs.add(IdBuilder.build(EE, "service", "context-service"), "Context Service",
-                ((Element) nyi.cloneNode(true)));
+                dummyImplementation(AddressTemplates.CONTEXT_SERVICE_TEMPLATE));
         serviceTabs.add(IdBuilder.build(EE, "service", "executor"), "Executor",
-                ((Element) nyi.cloneNode(true)));
+                dummyImplementation(AddressTemplates.MANAGED_EXECUTOR_TEMPLATE));
         serviceTabs.add(IdBuilder.build(EE, "service", "scheduled-executor"), "Scheduled Executor",
-                ((Element) nyi.cloneNode(true)));
+                dummyImplementation(AddressTemplates.MANAGED_EXECUTOR_SCHEDULED_TEMPLATE));
         serviceTabs.add(IdBuilder.build(EE, "service", "thread-factories"), "Thread Factories",
-                ((Element) nyi.cloneNode(true)));
+                dummyImplementation(AddressTemplates.MANAGED_THREAD_FACTORY_TEMPLATE));
         navigation.add(IdBuilder.build(EE, "services", "entry"), "Services", fontAwesome("cogs"), serviceTabs);
 
         // ============================================
         // main layout
-        Element info = new Elements.Builder().p().textContent(eeDescription
-                .getDescription() + " It provides the ability to specify a list of modules that should be made available to all deployments.")
-                .end().build();
-
         // @formatter:off
         LayoutBuilder layoutBuilder = new LayoutBuilder()
             .row()
@@ -165,6 +157,12 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
 
         Element root = layoutBuilder.build();
         initElement(root);
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
+        // TODO Bind the forms to the related tables
     }
 
     @Override
@@ -201,5 +199,27 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
             Form<ModelNode> formDefaulBindings = forms.get(EE_DEFAULT_BINDINGS_FORM);
             formDefaulBindings.view(defaultBindings);
         }
+    }
+
+    private Iterable<Element> dummyImplementation(AddressTemplate template) {
+
+        Metadata metadata = metadataRegistry.lookup(template);
+
+        String baseId = IdBuilder.build(EE, "service", template.lastKey());
+        Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
+                .column(NAME, resources.constants().name(), (cell, type, row, meta) -> row.getName())
+                .build();
+        ModelNodeTable<NamedNode> table = new ModelNodeTable<>(IdBuilder.build(baseId, "table"), options);
+        registerAttachable(table);
+
+        ModelNodeForm<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(IdBuilder.build(baseId, "form"), metadata)
+                .build();
+        registerAttachable(form);
+
+        return new Elements.Builder()
+                .p().css(marginTop10).textContent(metadata.getDescription().getDescription()).end()
+                .add(table.asElement())
+                .add(form.asElement())
+                .elements();
     }
 }

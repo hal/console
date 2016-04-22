@@ -42,12 +42,9 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
-import org.jboss.hal.meta.description.ResourceDescriptions;
-import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.meta.security.SecurityFramework;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -76,13 +73,11 @@ public class EEPresenter extends SubsystemPresenter<EEPresenter.MyView, EEPresen
     // @formatter:on
 
 
-    static Metadata globalModulesMetadata(final SecurityFramework securityFramework,
-            final ResourceDescriptions descriptions, final Capabilities capabilities) {
-        SecurityContext securityContext = securityFramework.lookup(AddressTemplates.EE_SUBSYSTEM_TEMPLATE);
-        ResourceDescription eeDescription = descriptions.lookup(AddressTemplates.EE_SUBSYSTEM_TEMPLATE);
+    static Metadata globalModulesMetadata(MetadataRegistry metadataRegistry) {
+        Metadata metadata = metadataRegistry.lookup(AddressTemplates.EE_SUBSYSTEM_TEMPLATE);
 
         ResourceDescription globalModulesDescription;
-        Property globalModules = eeDescription.findAttribute(ATTRIBUTES, GLOBAL_MODULES);
+        Property globalModules = metadata.getDescription().findAttribute(ATTRIBUTES, GLOBAL_MODULES);
         if (globalModules != null && globalModules.getValue().hasDefined(VALUE_TYPE)) {
             ModelNode repackaged = new ModelNode();
             repackaged.get(ATTRIBUTES).set(globalModules.getValue().get(VALUE_TYPE));
@@ -90,7 +85,7 @@ public class EEPresenter extends SubsystemPresenter<EEPresenter.MyView, EEPresen
         } else {
             globalModulesDescription = new ResourceDescription(new ModelNode());
         }
-        return new Metadata(securityContext, globalModulesDescription, capabilities);
+        return new Metadata(metadata.getSecurityContext(), globalModulesDescription, metadata.getCapabilities());
     }
 
     private final Resources resources;
@@ -108,9 +103,7 @@ public class EEPresenter extends SubsystemPresenter<EEPresenter.MyView, EEPresen
             final Resources resources,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
-            final SecurityFramework securityFramework,
-            final ResourceDescriptions descriptions,
-            final Capabilities capabilities) {
+            final MetadataRegistry metadataRegistry) {
         super(eventBus, view, proxy, finder);
 
         this.resources = resources;
@@ -118,7 +111,7 @@ public class EEPresenter extends SubsystemPresenter<EEPresenter.MyView, EEPresen
         this.statementContext = statementContext;
         this.operationFactory = new OperationFactory();
         this.eventBus = eventBus;
-        this.globalModulesMetadata = globalModulesMetadata(securityFramework, descriptions, capabilities);
+        this.globalModulesMetadata = globalModulesMetadata(metadataRegistry);
     }
 
     @Override

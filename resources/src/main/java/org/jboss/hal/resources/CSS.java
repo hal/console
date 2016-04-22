@@ -252,4 +252,6 @@ public interface CSS {
     static String pfIcon(@NonNls String name) {
         return "pficon pficon-" + name; //NON-NLS
     }
+
+    String marginTop10 = "margin-top-10";
 }

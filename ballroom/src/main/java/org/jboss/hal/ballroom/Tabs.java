@@ -15,7 +15,9 @@
  */
 package org.jboss.hal.ballroom;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import elemental.dom.Element;
@@ -25,6 +27,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.UIConstants;
 
+import static java.util.Arrays.asList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
@@ -78,6 +81,10 @@ public class Tabs implements IsElement {
     }
 
     public Tabs add(String id, String title, Element first, Element... rest) {
+        return add(id, title, elements(first, rest));
+    }
+
+    public Tabs add(String id, String title, Iterable<Element> elements) {
         int size = tabs.getChildElementCount();
         if (size != panes.getChildElementCount()) {
             throw new IllegalStateException(
@@ -116,17 +123,23 @@ public class Tabs implements IsElement {
         if (panes.getChildren().getLength() == 1) {
             pane.getClassList().add(active);
         }
-        fillPane(pane, first, rest);
+        fillPane(pane, elements);
 
         return this;
     }
 
-    private void fillPane(Element pane, Element first, Element... rest) {
-        pane.appendChild(first);
+    private List<Element> elements(Element first, Element... rest) {
+        List<Element> elements = new ArrayList<>();
+        elements.add(first);
         if (rest != null) {
-            for (Element element : rest) {
-                pane.appendChild(element);
-            }
+            elements.addAll(asList(rest));
+        }
+        return elements;
+    }
+
+    private void fillPane(Element pane, Iterable<Element> elements) {
+        for (Element element : elements) {
+            pane.appendChild(element);
         }
     }
 
@@ -149,7 +162,7 @@ public class Tabs implements IsElement {
             Element pane = paneElements.get(id);
             if (pane != null) {
                 Elements.removeChildrenFrom(pane);
-                fillPane(pane, first, rest);
+                fillPane(pane, elements(first, rest));
             }
         }
     }
