@@ -6,15 +6,12 @@
   bottom: 26px;
   min-height: 1px;
   top: 71px;
-  @media (min-width: @screen-md-min) {
-    width: percentage((2 / @grid-columns));
+
+  @media (max-width: 767px) {
+    top: 38px;
   }
 }
 
-.container-pf-nav-pf-vertical-hal {
-  margin-left: percentage((2 / @grid-columns));
-}
-
-.nav-pf-vertical > .list-group > .list-group-item > a {
-  width: 100%;
+.container-pf-nav-pf-vertical {
+  margin-left: 200px; // since we do not use .layout-pf.layout-pf-fixed for the html tag
 }

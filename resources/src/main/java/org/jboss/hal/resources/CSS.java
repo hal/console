@@ -60,7 +60,7 @@ public interface CSS {
     String columnMedium = "md";
     String collapse = "collapse";
     String containerFluid = "container-fluid";
-    String containerPfNavPfVerticalHal = "container-pf-nav-pf-vertical-hal";
+    String containerPfNavPfVertical = "container-pf-nav-pf-vertical";
     String controlLabel = "control-label";
     String copy = "copy";
 

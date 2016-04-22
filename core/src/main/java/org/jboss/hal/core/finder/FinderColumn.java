@@ -40,6 +40,7 @@ import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.UIConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -234,16 +235,22 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         this.storage = new FinderColumnStorage(id);
 
         // header
+        // @formatter:off
         Elements.Builder eb = new Elements.Builder()
-                .div().id(id)
+            .div().id(id)
                 .data(DATA_BREADCRUMB, title)
                 .css(finderColumn, column(2))
                 .attr(TABINDEX, "-1")
                 .on(keydown, this::onNavigation)
-                .header()
-                .span().css(CSS.hiddenColumns, fontAwesome("angle-double-left")).title(CONSTANTS.hiddenColumns())
-                .rememberAs(HIDDEN_COLUMNS_ELEMENT).end()
-                .h(1).textContent(builder.title).title(builder.title).rememberAs(HEADER_ELEMENT).end();
+                    .header()
+                        .span().css(CSS.hiddenColumns, fontAwesome("angle-double-left"))
+                            .title(CONSTANTS.hiddenColumns())
+                            .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
+                            .data(UIConstants.PLACEMENT, "bottom")
+                            .rememberAs(HIDDEN_COLUMNS_ELEMENT)
+                        .end()
+                        .h(1).textContent(builder.title).title(builder.title).rememberAs(HEADER_ELEMENT).end();
+        // @formatter:on
 
         // column actions
         eb.div().rememberAs(COLUMN_ACTIONS_ELEMENT);
@@ -256,7 +263,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                 eb.add(newColumnButton(action));
             }
         }
-        eb.end().end(); // </columnActions> && </updateHeader>
+        eb.end().end(); // </columnActions> && </header>
 
         // filter box
         if (builder.withFilter) {

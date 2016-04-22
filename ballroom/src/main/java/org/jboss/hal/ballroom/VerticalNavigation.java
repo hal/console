@@ -103,7 +103,7 @@ public class VerticalNavigation {
 
     /**
      * Inserts the vertical instance before the root container and adds the CSS class {@link
-     * org.jboss.hal.resources.CSS#containerPfNavPfVerticalHal} to the root container.
+     * org.jboss.hal.resources.CSS#containerPfNavPfVertical} to the root container.
      */
     public void on() {
         if (singleton != null) {
@@ -116,14 +116,14 @@ public class VerticalNavigation {
         Element rootContainer = Browser.getDocument().getElementById(Ids.ROOT_CONTAINER);
         if (rootContainer != null) {
             Browser.getDocument().getBody().insertBefore(root, rootContainer);
-            rootContainer.getClassList().add(containerPfNavPfVerticalHal);
+            rootContainer.getClassList().add(containerPfNavPfVertical);
             VerticalNavigation.singleton = this;
         }
     }
 
     /**
      * Removes the vertical navigation from the body and removes the CSS class {@link
-     * org.jboss.hal.resources.CSS#containerPfNavPfVerticalHal} from the root container.
+     * org.jboss.hal.resources.CSS#containerPfNavPfVertical} from the root container.
      */
     public void off() {
         if (singleton != null && singleton.root != null && Browser.getDocument().getBody().contains(singleton.root)) {
@@ -132,7 +132,7 @@ public class VerticalNavigation {
         }
         Element rootContainer = Browser.getDocument().getElementById(Ids.ROOT_CONTAINER);
         if (rootContainer != null) {
-            rootContainer.getClassList().remove(containerPfNavPfVerticalHal);
+            rootContainer.getClassList().remove(containerPfNavPfVertical);
         }
     }
 

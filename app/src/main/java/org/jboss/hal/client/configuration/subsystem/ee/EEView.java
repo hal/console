@@ -21,9 +21,11 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.Scheduler;
+import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LayoutBuilder;
+import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.DataTable;
@@ -38,15 +40,13 @@ import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityFramework;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_BINDINGS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.GLOBAL_MODULES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVICE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.Ids.*;
 
@@ -130,6 +130,21 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
         navigation.add(EE_DEFAULT_BINDINGS_ENTRY, resources.constants().defaultBindings(), fontAwesome("link"),
                 defaultBindingsForm.asElement());
         registerAttachable(defaultBindingsForm);
+
+        // ============================================
+        // services
+        Tabs serviceTabs = new Tabs();
+        Element nyi = Browser.getDocument().createElement("p");
+        nyi.setTextContent(Names.NYI);
+        serviceTabs.add(IdBuilder.build(EE, "service", "context-service"), "Context Service",
+                ((Element) nyi.cloneNode(true)));
+        serviceTabs.add(IdBuilder.build(EE, "service", "executor"), "Executor",
+                ((Element) nyi.cloneNode(true)));
+        serviceTabs.add(IdBuilder.build(EE, "service", "scheduled-executor"), "Scheduled Executor",
+                ((Element) nyi.cloneNode(true)));
+        serviceTabs.add(IdBuilder.build(EE, "service", "thread-factories"), "Thread Factories",
+                ((Element) nyi.cloneNode(true)));
+        navigation.add(IdBuilder.build(EE, "services", "entry"), "Services", fontAwesome("cogs"), serviceTabs);
 
         // ============================================
         // main layout
