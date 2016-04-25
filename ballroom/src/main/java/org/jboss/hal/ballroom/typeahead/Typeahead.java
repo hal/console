@@ -141,7 +141,7 @@ public class Typeahead implements SuggestHandler, Attachable {
     @FunctionalInterface
     public interface ChangeListener {
 
-        void onSelect(JsEvent event);
+        void onChange(JsEvent event);
     }
 
 
@@ -190,6 +190,7 @@ public class Typeahead implements SuggestHandler, Attachable {
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String CLOSE = "close";
     private static final String CHANGE_EVENT = "typeahead:change";
+    private static final String SELECT_EVENT = "typeahead:select";
     private static final String VAL = "val";
 
     private final Options options;

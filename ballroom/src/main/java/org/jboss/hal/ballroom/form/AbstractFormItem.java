@@ -35,10 +35,10 @@ import elemental.html.ParagraphElement;
 import elemental.html.SpanElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Messages;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -49,6 +49,7 @@ import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.UIConstants.HIDDEN;
+import static org.jboss.hal.resources.UIConstants.TABINDEX;
 
 /**
  * TODO Implement org.jboss.hal.ballroom.form.Form.State#READONLY
@@ -77,7 +78,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     private boolean restricted;
     private boolean expressionAllowed;
     private SuggestHandler suggestHandler;
-    T defaultValue;
+    private T defaultValue;
 
     // Form.State#EDITING elements
     private final LabelElement inputLabelElement;
@@ -152,6 +153,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
             .button().css(btn, btnDefault)
                 .on(click, event -> showAll())
                 .title(CONSTANTS.showAll())
+                .attr(TABINDEX, String.valueOf(-1))
                 .start("i").css(fontAwesome("angle-down")).end()
             .end().build();
 
@@ -184,7 +186,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         readonlyRestricted = new Elements.Builder()
                 .span()
                 .css(fontAwesome("lock"), CSS.restricted)
-                .aria(HIDDEN, "true") //NON-NLS
+                .aria(HIDDEN, String.valueOf(true))
                 .end()
                 .build();
 

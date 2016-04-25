@@ -69,7 +69,7 @@ class NamesStep extends WizardStep<Context, State> {
     @Override
     protected void onShow(final Context context) {
         // name is unbound so we have to bind it manually
-        FormItem<Object> nameItem = form.getFormItem(NAME);
+        FormItem<String> nameItem = form.getFormItem(NAME);
         nameItem.setValue(context.dataSource.getName());
         nameItem.setUndefined(false);
 

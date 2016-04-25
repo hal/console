@@ -253,6 +253,7 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
 
     @Override
     public void update(final DataSource dataSource) {
+        // TODO Add a suggestion handler for the DRIVER_NAME field
         showHide(dataSource.isXa());
         header.setTextContent(dataSource.getName());
         if (dataSource.isXa()) {
