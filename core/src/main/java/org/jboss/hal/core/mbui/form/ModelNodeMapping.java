@@ -165,7 +165,7 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                     case LONG:
                         Long longValue = (Long) value;
                         if (longValue == null) {
-                            model.remove(name);
+                            failSafeRemove(model, name);
                         } else {
                             if (type == BIG_INTEGER) {
                                 model.get(name).set(BigInteger.valueOf(longValue));
@@ -180,7 +180,7 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                     case LIST:
                         List<String> list = (List<String>) value;
                         if (list.isEmpty()) {
-                            model.remove(name);
+                            failSafeRemove(model, name);
                         } else {
                             ModelNode listNode = new ModelNode();
                             for (String s : list) {
@@ -193,7 +193,7 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                     case OBJECT:
                         Map<String, String> map = (Map<String, String>) value;
                         if (map.isEmpty()) {
-                            model.remove(name);
+                            failSafeRemove(model, name);
                         } else {
                             ModelNode mapNode = new ModelNode();
                             for (Map.Entry<String, String> entry : map.entrySet()) {
@@ -206,7 +206,7 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                     case STRING:
                         String stringValue = String.valueOf(value);
                         if (Strings.isNullOrEmpty(stringValue)) {
-                            model.remove(name);
+                            failSafeRemove(model, name);
                         } else {
                             model.get(name).set(stringValue);
                         }
@@ -226,6 +226,12 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                         break;
                 }
             }
+        }
+    }
+
+    private void failSafeRemove(T model, String attribute) {
+        if (model.isDefined()) {
+            model.remove(attribute);
         }
     }
 
