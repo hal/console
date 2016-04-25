@@ -41,6 +41,8 @@ class PropertyFilter implements Predicate<Property> {
                         (p.getValue().hasDefined(NILLABLE) && !p.getValue().get(NILLABLE).asBoolean()));
 
         if (builder.addOnly) {
+            // if builder.includes is empty include either all or only required properties
+            // otherwise include required properties plus the ones defined in builder.includes
             if (builder.includes.isEmpty()) {
                 filter = builder.requiredOnly ? required : Predicates.alwaysTrue();
             } else {

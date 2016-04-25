@@ -17,9 +17,12 @@ package org.jboss.hal.core.mbui.form;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -88,7 +91,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
         final String id;
         private Metadata metadata;
-        final Set<String> includes;
+        final LinkedHashSet<String> includes;
         final Set<String> excludes;
         final Map<String, FormItemProvider> providers;
         final List<UnboundFormItem> unboundFormItems;
@@ -109,13 +112,14 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         public Builder(@NonNls final String id, final Metadata metadata) {
             this.id = id;
             this.metadata = metadata;
-            this.includes = new HashSet<>();
+            this.includes = new LinkedHashSet<>();
             this.excludes = new HashSet<>();
             this.providers = new HashMap<>();
             this.unboundFormItems = new ArrayList<>();
             this.viewOnly = false;
             this.addOnly = false;
             this.unsorted = false;
+            this.requiredOnly = false;
             this.includeRuntime = false;
             this.attributePath = ATTRIBUTES;
         }
@@ -274,17 +278,37 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         this.cancelCallback = builder.cancelCallback;
         this.resetCallback = builder.resetCallback;
 
-        List<Property> formProperties = builder.metadata.getDescription().getAttributes(builder.attributePath);
+        List<Property> properties = new ArrayList<>();
         //noinspection Guava
-        FluentIterable<Property> fi = FluentIterable.from(formProperties).filter(new PropertyFilter(builder));
-        formProperties = builder.unsorted ? fi.toList() : fi
-                .toSortedList((p1, p2) -> p1.getName().compareTo(p2.getName()));
+        List<Property> filteredProperties = FluentIterable
+                .from(builder.metadata.getDescription().getAttributes(builder.attributePath))
+                .filter(new PropertyFilter(builder))
+                .toList();
+        LinkedHashMap<String, Property> filteredByName = new LinkedHashMap<>();
+        for (Property property : filteredProperties) {
+            filteredByName.put(property.getName(), property);
+        }
+
+        if (builder.unsorted && !builder.includes.isEmpty()) {
+            // re-shuffle the properties:
+            // 1. the ones specified in 'builder.includes'
+            // 2. the remaining from 'filteredProperties'
+            for (String include : builder.includes) {
+                properties.add(filteredByName.remove(include));
+            }
+            properties.addAll(filteredByName.values());
+        } else if (builder.unsorted) {
+            properties.addAll(filteredByName.values());
+        } else {
+            properties.addAll(filteredProperties);
+            Collections.sort(properties, (p1, p2)-> p1.getName().compareTo(p2.getName()));
+        }
 
         int index = 0;
         LabelBuilder labelBuilder = new LabelBuilder();
         HelpTextBuilder helpTextBuilder = new HelpTextBuilder();
         FormItemProvider formItemProvider = new DefaultFormItemProvider(builder.metadata.getCapabilities());
-        for (Property property : formProperties) {
+        for (Property property : properties) {
 
             // any unbound form items for the current index?
             for (Iterator<UnboundFormItem> iterator = builder.unboundFormItems.iterator(); iterator.hasNext(); ) {

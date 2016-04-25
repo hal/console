@@ -15,25 +15,53 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.wizard.WizardStep;
-import org.jboss.hal.resources.Names;
+import org.jboss.hal.client.configuration.subsystem.datasource.DataSource;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Resources;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONNECTION_URL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JNDI_NAME;
 
 /**
  * @author Harald Pehl
  */
 class SummaryStep extends WizardStep<Context, State> {
 
-    private final Element root;
+    private final ModelNodeForm<DataSource> form;
 
-    SummaryStep(final NewDataSourceWizard wizard, final String title) {
-        super(wizard, title);
-        root = new Elements.Builder().p().textContent(Names.NYI).end().build();
+    SummaryStep(final NewDataSourceWizard wizard, final Metadata metadata, final Resources resources,
+            final boolean xa) {
+        super(wizard, resources.constants().summary());
+
+        List<String> attributes = new ArrayList<>();
+        attributes.add(JNDI_NAME);
+        if (!xa) {
+            attributes.add(CONNECTION_URL);
+        }
+        attributes.add(DRIVER_NAME);
+
+        form = new ModelNodeForm.Builder<DataSource>(IdBuilder.build(id(), "summary", "step"), metadata)
+                .include(attributes)
+                .unsorted()
+                .viewOnly()
+                .build();
     }
 
     @Override
     public Element asElement() {
-        return root;
+        return form.asElement();
+    }
+
+    @Override
+    protected void onShow(final Context context) {
+        form.view(context.dataSource);
     }
 }

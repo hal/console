@@ -61,11 +61,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String custom();
 
     String data();
+    String databaseDisabled();
+    String databaseEnabled();
     String defaultValue();
     String defaultBindings();
     String deploymentAttributes();
     String details();
-    String detectedDriver();
     String disable();
     String disabled();
     String dispatcherException();
@@ -187,6 +188,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noDetails();
     String noItems();
     String noMacros();
+    String noRunningServers();
     String notANumber();
     String nothingSelected();
 
@@ -219,7 +221,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String security();
     String settings();
     String showAll();
-    String specifyDriver();
     String start();
     String startMacro();
     String statements();
@@ -230,6 +231,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String tags();
     String testConnection();
+    String testConnectionError();
+    String testConnectionSuccess();
     String timeouts();
     String toggleDropdown();
     String toggleNavigation();
@@ -247,6 +250,5 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String xaProperties();
 
     String yes();
-
     //@formatter:on
 }

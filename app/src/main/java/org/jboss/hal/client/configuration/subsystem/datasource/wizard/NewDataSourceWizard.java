@@ -46,11 +46,12 @@ public class NewDataSourceWizard extends Wizard<Context, State> {
             final DataSourceTemplates templates,
             final List<DataSource> existingDataSources,
             final List<JdbcDriver> drivers,
-            final boolean xa) {
+            final boolean xa,
+            final FinishCallback<Context> finishCallback) {
 
         super(IdBuilder.build(DATA_SOURCE, "wizard"),
                 resources.messages().addResourceTitle(xa ? Names.XA_DATASOURCE : Names.DATASOURCE),
-                new Context(environment.isStandalone(), xa));
+                new Context(environment.isStandalone(), xa), finishCallback);
 
         AddressTemplate dataSourceTemplate = xa ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE;
         Metadata dataSourceMetadata = metadataRegistry.lookup(dataSourceTemplate);
@@ -60,8 +61,8 @@ public class NewDataSourceWizard extends Wizard<Context, State> {
         addStep(NAMES, new NamesStep(this, existingDataSources, dataSourceMetadata, resources));
         addStep(DRIVER, new DriverStep(this, drivers, driverMetadata, resources));
         addStep(PROPERTIES, new PropertiesStep(this, resources));
-        addStep(CONNECTION, new ConnectionStep(this, resources));
-        addStep(SUMMARY, new SummaryStep(this, resources.constants().summary()));
+        addStep(CONNECTION, new ConnectionStep(this, dataSourceMetadata, resources, xa));
+        addStep(SUMMARY, new SummaryStep(this, dataSourceMetadata, resources, xa));
     }
 
     @Override

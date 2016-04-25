@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import com.google.common.collect.Lists;
-import com.google.gwt.user.client.Window;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
@@ -32,6 +32,7 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.client.configuration.subsystem.datasource.wizard.NewDataSourceWizard;
+import org.jboss.hal.client.runtime.Server;
 import org.jboss.hal.client.runtime.domain.TopologyFunctions;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
@@ -53,7 +54,9 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Footer;
+import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.Message.Level;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.*;
@@ -73,6 +76,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
     private final MetadataRegistry metadataRegistry;
     private final Dispatcher dispatcher;
+    private final EventBus eventBus;
     private final StatementContext statementContext;
     private final Environment environment;
     private final Provider<Progress> progress;
@@ -82,6 +86,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     @Inject
     public DataSourceColumn(final MetadataRegistry metadataRegistry,
             final Dispatcher dispatcher,
+            final EventBus eventBus,
             final StatementContext statementContext,
             final Environment environment,
             final @Footer Provider<Progress> progress,
@@ -96,6 +101,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
         this.metadataRegistry = metadataRegistry;
         this.dispatcher = dispatcher;
+        this.eventBus = eventBus;
         this.statementContext = statementContext;
         this.environment = environment;
         this.progress = progress;
@@ -172,7 +178,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 List<ItemAction<DataSource>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.view(builder.build()));
                 actions.add(itemActionFactory.remove(Names.DATASOURCE, dataSource.getName(),
-                        DATA_SOURCE_TEMPLATE, DataSourceColumn.this));
+                        dataSource.isXa() ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE, DataSourceColumn.this));
                 if (isEnabled(dataSource)) {
                     actions.add(new ItemAction<>(resources.constants().disable(), ds -> disable(ds)));
                     actions.add(new ItemAction<>(resources.constants().testConnection(), ds -> testConnection(ds)));
@@ -202,7 +208,17 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
             private void launchWizard(List<DataSource> dataSources, List<JdbcDriver> drivers) {
                 NewDataSourceWizard wizard = new NewDataSourceWizard(metadataRegistry, environment, resources,
-                        templates, dataSources, drivers, xa);
+                        templates, dataSources, drivers, xa, context -> {
+                    DataSource dataSource = context.getDataSource();
+                    Operation operation = new Operation.Builder(ADD, dataSourceAddress(dataSource))
+                            .payload(dataSource)
+                            .build();
+                    dispatcher.execute(operation, result -> {
+                        MessageEvent.fire(eventBus, Message.success(
+                                resources.messages().addResourceSuccess(Names.DATASOURCE, dataSource.getName())));
+                        refresh(DataSource.id(dataSource.getName(), dataSource.isXa()));
+                    });
+                });
                 wizard.show();
             }
         };
@@ -239,17 +255,57 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     }
 
     void disable(final DataSource dataSource) {
-        ResourceAddress dataSourceAddress = dataSourceAddress(dataSource);
-        Window.alert(Names.NYI);
+        ResourceAddress address = dataSourceAddress(dataSource);
+        Operation operation = new Operation.Builder("disable", address).build();
+        dispatcher.execute(operation, result -> {
+            MessageEvent.fire(eventBus,
+                    Message.success(resources.constants().databaseDisabled()));
+            refresh(RefreshMode.RESTORE_SELECTION);
+        });
     }
 
     void enable(final DataSource dataSource) {
-        ResourceAddress dataSourceAddress = dataSourceAddress(dataSource);
-        Window.alert(Names.NYI);
+        ResourceAddress address = dataSourceAddress(dataSource);
+        Operation operation = new Operation.Builder("enable", address).build();
+        dispatcher.execute(operation, result -> {
+            MessageEvent.fire(eventBus,
+                    Message.success(resources.constants().databaseEnabled()));
+            refresh(RefreshMode.RESTORE_SELECTION);
+        });
     }
 
     private void testConnection(final DataSource dataSource) {
-        ResourceAddress dataSourceAddress = dataSourceAddress(dataSource);
-        Window.alert(Names.NYI);
+        TopologyFunctions.RunningServersOfProfile runningServers = new TopologyFunctions.RunningServersOfProfile(
+                environment, dispatcher, statementContext.selectedProfile());
+        Function<FunctionContext> testConnection = control -> {
+            List<Server> servers = control.getContext().get(TopologyFunctions.RUNNING_SERVERS);
+            if (!servers.isEmpty()) {
+                Server server = servers.get(0);
+                ResourceAddress address = server.getServerAddress().add(SUBSYSTEM, DATASOURCES)
+                        .add(DATA_SOURCE, dataSource.getName());
+                Operation operation = new Operation.Builder("test-connection-in-pool", address).build(); //NON-NLS
+                dispatcher.executeInFunction(control, operation, result -> control.proceed());
+
+            } else {
+                control.getContext().setErrorMessage(resources.constants().noRunningServers());
+                control.abort();
+            }
+        };
+
+        Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
+            @Override
+            public void onFailure(final FunctionContext context) {
+                MessageEvent.fire(eventBus,
+                        Message.error(resources.constants().testConnectionError(), context.getErrorMessage()));
+            }
+
+            @Override
+            public void onSuccess(final FunctionContext context) {
+                MessageEvent.fire(eventBus, Message.success(resources.constants().testConnectionSuccess()));
+            }
+        };
+
+        new Async<FunctionContext>(progress.get())
+                .waterfall(new FunctionContext(), outcome, runningServers, testConnection);
     }
 }

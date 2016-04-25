@@ -20,6 +20,10 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.resources.IdBuilder;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_NAME;
+
 /**
  * @author Harald Pehl
  */
@@ -52,5 +56,10 @@ public class DataSource extends NamedNode {
 
     public boolean isXa() {
         return xa;
+    }
+
+    public void setDriver(final JdbcDriver driver) {
+        get(DRIVER_NAME).set(driver.getName());
+        get(DRIVER_CLASS).set(driver.get(DRIVER_CLASS_NAME));
     }
 }

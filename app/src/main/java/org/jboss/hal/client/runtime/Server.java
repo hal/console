@@ -15,15 +15,107 @@
  */
 package org.jboss.hal.client.runtime;
 
-import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.model.ResourceAddress;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_CONFIG;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 
 /**
+ * Combination of the two resources {@code server-config} and {@code server}. Make sure to check the status before
+ * reading server related attributes.
+ *
  * @author Harald Pehl
  */
 public class Server extends NamedNode {
 
-    public Server(final Property property) {
-        super(property);
+    /**
+     * Status as defined by {@code server-config.status}
+     */
+    public enum Status {
+        STARTED, STOPPED, UNDEFINED
+    }
+
+
+    /**
+     * State as defined by {@code server.server-state}
+     */
+    public enum State {
+        STARTING, RUNNING, RESTART_REQUIRED, RELOAD_REQUIRED, UNDEFINED
+    }
+
+
+    public Server(final ModelNode node) {
+        super(node.get(NAME).asString(), node);
+    }
+
+    @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
+    public String getServerGroup() {
+        if (hasDefined("group")) { // first try to read from server-config
+            return get("group").asString();
+        } else if (hasDefined(SERVER_GROUP)) { // then from server
+            return get(SERVER_GROUP).asString();
+        }
+        return null;
+    }
+
+    public String getHost() {
+        return hasDefined(HOST) ? get(HOST).asString() : null;
+    }
+
+    /**
+     * @return the status as defined by {@code server-config.status}
+     */
+    @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
+    public Status getStatus() {
+        if (hasDefined("status")) {
+            return Status.valueOf(get("status").asString().toUpperCase());
+        }
+        return Status.UNDEFINED;
+    }
+
+    /**
+     * If this method returns {@code true} it's safe to read the server related attributes like "host", "server-state"
+     * or "suspend-state".
+     */
+    public boolean isStarted() {
+        return getStatus() == Status.STARTED;
+    }
+
+    /**
+     * @return the state as defined by {@code server.server-status}
+     */
+    @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
+    public State getState() {
+        if (hasDefined("server-state")) {
+            return State.valueOf(get("server-state").asString());
+        }
+        return State.UNDEFINED;
+    }
+
+    /**
+     * @return the {@oced /host=&lt;host&gt;/server-config=&lt;server&gt;} address or {@link ResourceAddress#ROOT} if
+     * either host or server-config is undefined.
+     */
+    public ResourceAddress getServerConfigAddress() {
+        if (getHost() != null && getName() != null) {
+            return new ResourceAddress().add(HOST, getHost()).add(SERVER_CONFIG, getName());
+        }
+        return ResourceAddress.ROOT;
+    }
+
+    /**
+     * @return the {@oced /host=&lt;host&gt;/server=&lt;server&gt;} address or {@link ResourceAddress#ROOT} if either
+     * host or server is undefined.
+     */
+    public ResourceAddress getServerAddress() {
+        if (getHost() != null && getName() != null) {
+            return new ResourceAddress().add(HOST, getHost()).add(SERVER, getName());
+        }
+        return ResourceAddress.ROOT;
     }
 }

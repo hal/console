@@ -22,7 +22,7 @@ import org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver;
 /**
  * @author Harald Pehl
  */
-class Context {
+public class Context {
 
     final boolean standalone;
     final boolean xa;
@@ -43,5 +43,9 @@ class Context {
     void useTemplate() {
         dataSource = template.getDataSource();
         driver = template.getDriver();
+    }
+
+    public DataSource getDataSource() {
+        return dataSource;
     }
 }

@@ -22,6 +22,7 @@ import com.google.common.collect.FluentIterable;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
+import org.jboss.hal.client.runtime.Server;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -37,6 +38,10 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 public class TopologyFunctions {
 
+    /**
+     * The list of running servers as {@code List&lt;Server&gt;} provided by the {@link RunningServersOfProfile}
+     * function
+     */
     public static final String RUNNING_SERVERS = "topologyFunctions.runningServers";
 
 

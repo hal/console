@@ -78,6 +78,7 @@ public interface ModelDescriptionConstants {
     String DESCRIBE = "describe";
     String DESCRIPTION = "description";
     String DISABLED = "disabled";
+    String DRIVER_CLASS = "driver-class";
     String DRIVER_CLASS_NAME = "driver-class-name";
     String DRIVER_DATASOURCE_CLASS_NAME = "driver-datasource-class-name";
     String DRIVER_MODULE_NAME = "driver-module-name";
@@ -163,6 +164,7 @@ public interface ModelDescriptionConstants {
     String OPERATION_HEADERS = "operation-headers";
     String OUTCOME = "outcome";
 
+    String PASSWORD = "password";
     String PORT = "port";
     String PROFILE = "profile";
     String PROXIES = "proxies";

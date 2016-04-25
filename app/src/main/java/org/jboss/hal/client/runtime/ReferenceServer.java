@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.domain;
+package org.jboss.hal.client.runtime;
 
 /**
  * Keeps information about the host/server names for resources which are only valid if they have a relation to a running

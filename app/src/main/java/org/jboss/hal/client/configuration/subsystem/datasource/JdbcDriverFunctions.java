@@ -26,7 +26,7 @@ import com.google.common.collect.Lists;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.hal.client.runtime.domain.Server;
+import org.jboss.hal.client.runtime.Server;
 import org.jboss.hal.client.runtime.domain.TopologyFunctions;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.ModelNode;
@@ -117,9 +117,7 @@ class JdbcDriverFunctions {
                     //noinspection Guava
                     List<Operation> operations = FluentIterable.from(servers)
                             .transform(server -> {
-                                ResourceAddress address = new ResourceAddress().add(HOST, server.getHost())
-                                        .add(SERVER, server.getName())
-                                        .add(SUBSYSTEM, DATASOURCES);
+                                ResourceAddress address = server.getServerAddress().add(SUBSYSTEM, DATASOURCES);
                                 return new Operation.Builder("installed-drivers-list", address).build(); //NON-NLS
                             })
                             .toList();

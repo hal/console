@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.resources.Names;
 
 import static com.google.common.base.Strings.emptyToNull;
@@ -29,7 +28,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-public class JdbcDriver extends NamedNode {
+public class JdbcDriver extends ModelNode {
 
     public enum Provider {
         UNKNOWN(Names.NOT_AVAILABLE), DEPLOYMENT(Names.DEPLOYMENT.toLowerCase()), MODULE(Names.MODULE.toLowerCase());
@@ -51,15 +50,20 @@ public class JdbcDriver extends NamedNode {
     }
 
     public JdbcDriver(final String name) {
-        super(name, new ModelNode());
-    }
-
-    public JdbcDriver(final String name, final ModelNode modelNode) {
-        super(name, modelNode);
+        this(name, new ModelNode());
     }
 
     public JdbcDriver(final Property property) {
-        super(property);
+        this(property.getName(), property.getValue());
+    }
+
+    public JdbcDriver(final String name, final ModelNode modelNode) {
+        set(modelNode);
+        get(DRIVER_NAME).set(name);
+    }
+
+    public String getName() {
+        return get(DRIVER_NAME).asString();
     }
 
     public Provider getProvider() {

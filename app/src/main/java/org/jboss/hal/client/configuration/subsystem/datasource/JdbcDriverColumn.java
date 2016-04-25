@@ -111,7 +111,9 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                     Form<ModelNode> form = new ModelNodeForm.Builder<>(
                             IdBuilder.build(JDBC_DRIVER, "add", "form"), metadata)
                             .addFromRequestProperties()
-                            .exclude(DEPLOYMENT_NAME, MODULE_SLOT, PROFILE)
+                            .include(DRIVER_NAME, DRIVER_MODULE_NAME, DRIVER_CLASS_NAME, DRIVER_MAJOR_VERSION,
+                                    DRIVER_MINOR_VERSION)
+                            .unsorted()
                             .build();
                     AddResourceDialog dialog = new AddResourceDialog(
                             resources.messages().addResourceTitle(Names.JDBC_DRIVER), form,

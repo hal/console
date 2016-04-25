@@ -801,10 +801,15 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                 refresh(() -> finder.selectPreviousColumn(id));
                 break;
             case RESTORE_SELECTION:
-                FinderRow<T> row = selectedRow();
+                FinderRow<T> oldRow = selectedRow();
                 refresh(() -> {
-                    if (row != null) {
-                        row.click();
+                    if (oldRow != null) {
+                        FinderRow<T> updatedRow = rows.get(oldRow.getId());
+                        if (updatedRow != null) {
+                            updatedRow.click();
+                        } else {
+                            finder.selectPreviousColumn(id);
+                        }
                     } else {
                         finder.selectPreviousColumn(id);
                     }

@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.ballroom.typeahead;
 
-import java.util.List;
+import java.util.Collection;
 
 import com.google.gwt.core.client.GWT;
 import elemental.client.Browser;
@@ -93,9 +93,9 @@ public class Typeahead implements SuggestHandler, Attachable {
         static final String ID = "id";
         static final String ITEM = "item";
 
-        private final List<String> items;
+        private final Collection<String> items;
 
-        public StaticBuilder(final List<String> items) {
+        public StaticBuilder(final Collection<String> items) {
             super(data -> String.valueOf(data.getNumber(ID)));
             this.items = items;
         }

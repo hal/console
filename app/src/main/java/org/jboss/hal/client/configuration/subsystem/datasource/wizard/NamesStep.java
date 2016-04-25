@@ -29,6 +29,7 @@ import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JNDI_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
@@ -44,7 +45,7 @@ class NamesStep extends WizardStep<Context, State> {
 
         form = new ModelNodeForm.Builder<DataSource>(IdBuilder.build(id(), "names", "step"), metadata)
                 .unboundFormItem(new NameItem(), 0)
-                .include("jndi-name")
+                .include(JNDI_NAME)
                 .onSave((form, changedValues) -> wizard.getContext().dataSource = form.getModel())
                 .build();
 
