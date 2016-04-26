@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<mbui>
+    <vertical-navigation>
+        <!--
+            Root Logger
+        -->
+        <item id="logging-root-logger-item" title="Root Logger" icon="fa fa-sitemap" ref="root-logger">
+            <metadata template="/{selected.profile}/subsystem=logging/root-logger=ROOT">
+                <h1>Root Logger</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <form id="logging-root-logger-form" on-save="{{presenter.saveRootLogger(model, changedValues)}}">
+                    <attributes>
+                        <attribute name="filter-spec"/>
+                        <attribute name="handlers"/>
+                        <attribute name="level"/>
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+
+
+        <!--
+            Categories / Logger
+        -->
+        <item id="logging-categories-item" title="Categories" icon="fa fa-folder-open-o" ref="logging-categories">
+            <metadata template="/{selected.profile}/subsystem=logging/logger=*">
+                <h1>Categories</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="logging-categories-table" form-ref="logging-categories-form">
+                    <actions>
+                        <action id="logging-categories-add">
+                            <handler ref="add-resource">
+                                <attributes>
+                                    <attribute name="name" unbound="true"/>
+                                    <attribute name="filter-spec"/>
+                                    <attribute name="handlers"/>
+                                    <attribute name="level"/>
+                                    <attribute name="use-parent-handlers"/>
+                                </attributes>
+                            </handler>
+                        </action>
+                        <action id="logging-categories-remove" handler-ref="remove=resource" scope="selected"/>
+                    </actions>
+                    <columns>
+                        <column name="category"/>
+                        <column name="level"/>
+                    </columns>
+                </table>
+                <form id="logging-categories-form" on-save="{{presenter.saveCategory(model, changedValues)}}">
+                    <attributes>
+                        <attribute name="category"/>
+                        <attribute name="filter-spec"/>
+                        <attribute name="handlers"/>
+                        <attribute name="level"/>
+                        <attribute name="use-parent-handlers"/>
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+
+
+        <!--
+            Handler
+        -->
+        <item id="logging-handler-item" title="Handler" icon="fa fa-cogs">
+            <tabs>
+
+                <!-- Console -->
+                <tab id="logging-handler-console-tab">
+                    <metadata template="/{selected.profile}/subsystem=logging/console-handler=*">
+                        <h1>Console Handler</h1>
+                        <p>{{metadata.getDescription().getDescription()}}</p>
+                        <table id="logging-handler-console-table" form-ref="logging-handler-console-form">
+                            <actions>
+                                <action id="logging-handler-console-add">
+                                    <handler ref="add-resource">
+                                        <attributes>
+                                            <attribute name="name"/>
+                                            <attribute name="autoflush"/>
+                                            <attribute name="enabled"/>
+                                            <attribute name="encoding"/>
+                                            <attribute name="filter-spec"/>
+                                            <attribute name="formatter"/>
+                                            <attribute name="named-formatter">
+                                                <suggest-handler>
+                                                    <templates>
+                                                        <template
+                                                                address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
+                                                        <template
+                                                                address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                                    </templates>
+                                                </suggest-handler>
+                                            </attribute>
+                                            <attribute name="level"/>
+                                            <attribute name="target"/>
+                                        </attributes>
+                                    </handler>
+                                </action>
+                                <action id="logging-handler-remove" handler-ref="remove=resource" scope="selected"/>
+                            </actions>
+                            <columns>
+                                <column name="name" title="{{resources.constants().name()}}"/>
+                                <column name="level"/>
+                            </columns>
+                        </table>
+                        <form id="logging-handler-console-form"
+                              on-save="{{presenter.saveConsoleHandler(model, changedValues)}}">
+                            <attributes>
+                                <attribute name="autoflush"/>
+                                <attribute name="enabled"/>
+                                <attribute name="encoding"/>
+                                <attribute name="filter-spec"/>
+                                <attribute name="formatter"/>
+                                <attribute name="named-formatter">
+                                    <suggest-handler>
+                                        <templates>
+                                            <template
+                                                    address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
+                                            <template
+                                                    address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        </templates>
+                                    </suggest-handler>
+                                </attribute>
+                                <attribute name="level"/>
+                                <attribute name="target"/>
+                            </attributes>
+                        </form>
+                    </metadata>
+                </tab>
+
+                <!-- File -->
+                <tab id="logging-handler-file-tab">
+                    <metadata template="/{selected.profile}/subsystem=logging/console-handler=*">
+                        <h1>Console Handler</h1>
+                        <p>{{metadata.getDescription().getDescription()}}</p>
+                        <table id="logging-handler-file-table" form-ref="logging-handler-file-form">
+                            <actions>
+                                <!-- custom handler since required attribute 'file' is of type OBJECT -->
+                                <action id="logging-handler-file-add"
+                                        handler="{{presenter.launchAddFileHandlerDialog()}}"/>
+                                <action id="logging-categories-remove" handler-ref="remove=resource" scope="selected"/>
+                            </actions>
+                            <columns>
+                                <column name="name" title="{{resources.constants().name()}}"/>
+                                <column name="level"/>
+                            </columns>
+                        </table>
+                        <form id="logging-handler-file-form"
+                              on-save="{{presenter.saveFileHandler(model, changedValues)}}">
+                            <attributes>
+                                <attribute name="append"/>
+                                <attribute name="autoflush"/>
+                                <attribute name="enabled"/>
+                                <attribute name="encoding"/>
+                                <attribute name="filter-spec"/>
+                                <attribute name="formatter"/>
+                                <attribute name="named-formatter">
+                                    <suggest-handler>
+                                        <templates>
+                                            <template
+                                                    address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
+                                            <template
+                                                    address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        </templates>
+                                    </suggest-handler>
+                                </attribute>
+                                <attribute name="level"/>
+                                <attribute name="target"/>
+                            </attributes>
+                        </form>
+                    </metadata>
+                </tab>
+                <tab id="logging-handler-periodic-tab">
+                </tab>
+                <tab id="logging-handler-periodic-size-tab">
+                </tab>
+                <tab id="logging-handler-size-tab">
+                </tab>
+                <tab id="logging-handler-async-tab">
+                </tab>
+                <tab id="logging-handler-custom-tab">
+                </tab>
+                <tab id="logging-handler-syslog-tab">
+                </tab>
+            </tabs>
+        </item>
+
+
+        <!--
+            Formatter
+        -->
+        <item id="logging-formatter-item" title="Formatter" icon="fa fa-pencil">
+
+        </item>
+    </vertical-navigation>
+</mbui>

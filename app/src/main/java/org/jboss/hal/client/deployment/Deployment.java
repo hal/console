@@ -15,13 +15,17 @@
  */
 package org.jboss.hal.client.deployment;
 
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import org.jboss.hal.client.runtime.Server;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DISABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBDEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
 
 /**
  * A deployed and assigned content on a specific server.
@@ -47,11 +51,11 @@ public class Deployment extends Content {
         }
     }
 
-    private final ReferenceServer referenceServer;
+    private final Server referenceServer;
     private final List<Subdeployment> subdeployments;
     private final List<Subsystem> subsystems;
 
-    public Deployment(final ReferenceServer referenceServer, final ModelNode node) {
+    public Deployment(final Server referenceServer, final ModelNode node) {
         super(node);
         this.referenceServer = referenceServer;
         this.subdeployments = new ArrayList<>();
@@ -94,7 +98,7 @@ public class Deployment extends Content {
         StringBuilder builder = new StringBuilder();
         builder.append("Deployment{").append(getName());
         if (!isStandalone()) {
-            builder.append("@").append(referenceServer.getHost()).append("/").append(referenceServer.getServer());
+            builder.append("@").append(referenceServer.getHost()).append("/").append(referenceServer.getName());
         }
         builder.append(", ")
                 .append((isEnabled() ? ENABLED : DISABLED))
@@ -108,7 +112,7 @@ public class Deployment extends Content {
         return referenceServer.isStandalone();
     }
 
-    public ReferenceServer getReferenceServer() {
+    public Server getReferenceServer() {
         return referenceServer;
     }
 

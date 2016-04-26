@@ -60,7 +60,6 @@ public interface Names {
     String SUBSYSTEM = "Subsystem";
     String SUBSYSTEMS = "Subsystems";
     String SYSTEM_PROPERTIES = "System Properties";
-    String UNASSIGNED_CONTENT = "Unassigned Content";
     String UNKNOWN = "unknown";
     String XA_DATASOURCE = "XA Datasource";
 }

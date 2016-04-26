@@ -29,14 +29,23 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration-standalone.html")
     ExternalTextResource configurationStandalone();
 
+    @Source("previews/deployments/content-repository.html")
+    ExternalTextResource contentRepository();
+
     @Source("previews/subsystems/datasources.html")
     ExternalTextResource datasources();
 
     @Source("previews/subsystems/datasources-only.html")
     ExternalTextResource datasourcesOnly();
 
-    @Source("previews/deployments.html")
-    ExternalTextResource deployments();
+    @Source("previews/deployments/domain.html")
+    ExternalTextResource deploymentsDomain();
+
+    @Source("previews/deployments/server-groups.html")
+    ExternalTextResource deploymentsServerGroups();
+
+    @Source("previews/deployments/standalone.html")
+    ExternalTextResource deploymentsStandalone();
 
     @Source("previews/interfaces.html")
     ExternalTextResource interfaces();

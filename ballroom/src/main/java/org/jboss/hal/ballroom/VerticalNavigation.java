@@ -143,7 +143,7 @@ public class VerticalNavigation {
      * the
      * visibility of the registered elements.
      *
-     * @param id      An unique id for thei navigation entry
+     * @param id      An unique id for the navigation entry
      * @param text    the text shown in the vertical navigation
      * @param element the element which visibility is controlled by this vertical navigation.
      */

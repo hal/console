@@ -70,7 +70,6 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 @Requires(JDBC_DRIVER_ADDRESS)
 public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
 
-
     @Inject
     protected JdbcDriverColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
@@ -103,7 +102,9 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                                     statementContext.selectedProfile()),
                             new JdbcDriverFunctions.ReadRuntime(environment, dispatcher),
                             new JdbcDriverFunctions.CombineDriverResults());
-                }));
+                })
+                .withFilter()
+        );
 
         addColumnAction(columnActionFactory.add(IdBuilder.build(JDBC_DRIVER, "add"), Names.JDBC_DRIVER,
                 column -> {
@@ -155,6 +156,14 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
             @Override
             public String getTitle() {
                 return driver.getName();
+            }
+
+            @Override
+            public String getFilterData() {
+                if ((driver.getProvider() == DEPLOYMENT || driver.getProvider()== MODULE)) {
+                    return getTitle() + " " + driver.getProvider().text();
+                }
+                return getTitle();
             }
 
             @Override

@@ -70,6 +70,7 @@
         box-shadow: none;
         outline: none;
         padding-left: @finder-padding-lr;
+        z-index: 0;
 
         &:focus, &:hover {
           border-bottom: 1px solid @finder-border-color;
@@ -93,6 +94,11 @@
       margin: 0;
       padding: 0;
       overflow-y: auto;
+
+      &.ondrag {
+        outline: 2px dashed #333;
+        outline-offset: -10px;
+      }
 
       > li {
         align-items: center;
