@@ -66,6 +66,7 @@ public interface ModelDescriptionConstants {
     String COMPOSITE = "composite";
     String CONNECTION_URL = "connection-url";
     String CONFIGURATION = "configuration";
+    String CONTEXT_SERVICE = "context-service";
     String CRITERIA = "criteria";
 
     String DATA_SOURCE = "data-source";
@@ -137,6 +138,9 @@ public interface ModelDescriptionConstants {
 
     String MAIL = "mail";
     String MAIL_SESSION = "mail-session";
+    String MANAGED_EXECUTOR_SERVICE = "managed-executor-service";
+    String MANAGED_SCHEDULED_EXECUTOR_SERVICE = "managed-scheduled-executor-service";
+    String MANAGED_THREAD_FACTORY = "managed-thread-factory";
     String MASK = "mask";
     String MAX = "max";
     String MAX_LENGTH = "max-length";

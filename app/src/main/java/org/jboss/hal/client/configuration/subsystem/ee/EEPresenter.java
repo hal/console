@@ -41,6 +41,7 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -133,7 +134,7 @@ public class EEPresenter extends SubsystemPresenter<EEPresenter.MyView, EEPresen
                 .subsystemPath(statementContext.selectedProfile(), AddressTemplates.EE_SUBSYSTEM_TEMPLATE.lastValue());
     }
 
-    private void loadEESubsystem() {
+    void loadEESubsystem() {
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
                 AddressTemplates.EE_SUBSYSTEM_TEMPLATE.resolve(statementContext))
                 .param(RECURSIVE, true)
@@ -141,29 +142,15 @@ public class EEPresenter extends SubsystemPresenter<EEPresenter.MyView, EEPresen
         dispatcher.execute(operation, result -> getView().update(result));
     }
 
-    void saveAttributes(final Map<String, Object> changedValues) {
-        ResourceAddress resourceAddress = AddressTemplates.EE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
+    void save(AddressTemplate addressTemplate, final Map<String, Object> changedValues, String successMsg) {
+        ResourceAddress resourceAddress = addressTemplate.resolve(statementContext);
         Composite composite = operationFactory.fromChangeSet(resourceAddress, changedValues);
 
         dispatcher.execute(composite, (CompositeResult result) -> {
             MessageEvent.fire(getEventBus(),
-                    Message.success(resources.messages()
-                            .modifyResourceSuccess(Names.EE, resources.constants().deploymentAttributes())));
+                    Message.success(resources.messages().modifyResourceSuccess(Names.EE, successMsg)));
             loadEESubsystem();
         });
-    }
-
-    void saveDefaultBindings(Map<String, Object> changedValues) {
-        ResourceAddress resourceAddress = AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE.resolve(statementContext);
-        Composite composite = operationFactory.fromChangeSet(resourceAddress, changedValues);
-
-        dispatcher.execute(composite, (CompositeResult result) -> {
-            MessageEvent.fire(getEventBus(),
-                    Message.success(resources.messages()
-                            .modifyResourceSuccess(Names.EE, resources.constants().defaultBindings())));
-            loadEESubsystem();
-        });
-
     }
 
     void launchAddDialogGlobalModule() {
