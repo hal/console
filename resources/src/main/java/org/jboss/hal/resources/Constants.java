@@ -41,6 +41,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String action();
     String add();
     String allSingletonsExist();
+    String assign();
+    String assignedContentDesc();
     String attribute();
     String attributes();
 
@@ -56,6 +58,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String close();
     String connection();
     String connectToServer();
+    String content();
+    String contentRepository();
     String copied();
     String copyToClipboard();
     String custom();
@@ -240,6 +244,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String tracking();
     String type();
 
+    String unassign();
+    String unassignedContentDesc();
+    String unassignedContentOnly();
     String unknownError();
     String unknownResource();
     String unpin();

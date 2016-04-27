@@ -97,6 +97,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             final ItemActionFactory itemActionFactory) {
 
         super(new Builder<DataSource>(finder, DATA_SOURCE, Names.DATASOURCE)
+                .withFilter()
                 .useFirstActionAsBreadcrumbHandler());
 
         this.metadataRegistry = metadataRegistry;
@@ -156,12 +157,20 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
             @Override
             public Level getMarker() {
-                return isEnabled(dataSource) ? Level.SUCCESS : Level.INFO;
+                return dataSource.isEnabled() ? Level.SUCCESS : Level.INFO;
             }
 
             @Override
             public String getTooltip() {
-                return isEnabled(dataSource) ? resources.constants().enabled() : resources.constants().disabled();
+                return dataSource.isEnabled() ? resources.constants().enabled() : resources.constants().disabled();
+            }
+
+            @Override
+            public String getFilterData() {
+                //noinspection HardCodedStringLiteral
+                return getTitle() + " " +
+                        (dataSource.isXa() ? "xa" : "normal") + " " +
+                        (dataSource.isEnabled() ? ENABLED : DISABLED);
             }
 
             @Override
@@ -179,7 +188,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 actions.add(itemActionFactory.view(builder.build()));
                 actions.add(itemActionFactory.remove(Names.DATASOURCE, dataSource.getName(),
                         dataSource.isXa() ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE, DataSourceColumn.this));
-                if (isEnabled(dataSource)) {
+                if (dataSource.isEnabled()) {
                     actions.add(new ItemAction<>(resources.constants().disable(), ds -> disable(ds)));
                     actions.add(new ItemAction<>(resources.constants().testConnection(), ds -> testConnection(ds)));
                 } else {
@@ -248,10 +257,6 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         return dataSource.isXa()
                 ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName())
                 : DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName());
-    }
-
-    private boolean isEnabled(DataSource datasource) {
-        return datasource.hasDefined(ENABLED) && datasource.get(ENABLED).asBoolean();
     }
 
     void disable(final DataSource dataSource) {

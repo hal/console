@@ -20,7 +20,7 @@ import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyStandard;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
@@ -62,7 +62,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 public class EEPresenter extends SubsystemPresenter<EEPresenter.MyView, EEPresenter.MyProxy> {
 
     // @formatter:off
-    @ProxyStandard
+    @ProxyCodeSplit
     @NameToken(NameTokens.EE)
     @Requires(AddressTemplates.EE_ADDRESS)
     public interface MyProxy extends ProxyPlace<EEPresenter> {}

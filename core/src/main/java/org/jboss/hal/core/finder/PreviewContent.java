@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PreviewContent implements HasElements, SecurityContextAware, Attachable {
 
-    protected static final String CONTENT_ELEMENT = "content";
+    protected static final String CONTENT_ELEMENT = "contentRepository";
 
     private static final String ERROR_MESSAGE = "Unable to get preview content from '{}': {}";
     private static final Logger logger = LoggerFactory.getLogger(PreviewContent.class);

@@ -40,10 +40,13 @@ package org.jboss.hal.resources;
 public interface Ids {
 
     String CACHE_CONTAINER_COLUMN = "cache-container";
+    String CONTENT_COLUMN = "content";
 
     String DATA_SOURCE_DRIVER_COLUMN = "data-source-driver";
-    String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
+    String DEPLOYMENT_BROWSE_BY_COLUMN = "deployment-browse-by";
+    String DEPLOYMENT_SERVER_GROUPS_COLUMN = "deployment-server-groups";
     String DOMAIN_BROWSE_BY = "domain-browse-by";
+    String DOMAIN_SERVER_GROUPS_COLUMN = "domain-server-groups";
 
     String EE_ATTRIBUTES_ENTRY = "ee-attributes-entry";
     String EE_ATTRIBUTES_FORM = "ee-attributes-form";
@@ -92,6 +95,8 @@ public interface Ids {
     String TLC_HOMEPAGE = "tlc-homepage";
     String TLC_PATCHING = "tlc-patching";
     String TLC_RUNTIME = "tlc-runtime";
+
+    String UNASSIGNED_CONTENT_COLUMN = "unassigned-content";
 
     String WEB_SETTINGS_COLUMN = "settings";
 }

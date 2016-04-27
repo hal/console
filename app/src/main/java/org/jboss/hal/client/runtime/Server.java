@@ -19,11 +19,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_CONFIG;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * Combination of the two resources {@code server-config} and {@code server}. Make sure to check the status before
@@ -49,6 +45,19 @@ public class Server extends NamedNode {
     }
 
 
+    private static final String STANDALONE_SERVER = "standalone.server";
+    private static final String STANDALONE_HOST = "standalone.host";
+    public static final Server STANDALONE = new Server(STANDALONE_SERVER, STANDALONE_HOST,
+            Status.STARTED, State.RUNNING);
+
+
+    private Server(String server, String host, Status status, State state) {
+        super(server, new ModelNode());
+        get(HOST).set(host);
+        get(STATUS).set(status.name().toLowerCase());
+        get(SERVER_STATE).set(state.name());
+    }
+
     public Server(final ModelNode node) {
         super(node.get(NAME).asString(), node);
     }
@@ -72,8 +81,8 @@ public class Server extends NamedNode {
      */
     @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
     public Status getStatus() {
-        if (hasDefined("status")) {
-            return Status.valueOf(get("status").asString().toUpperCase());
+        if (hasDefined(STATUS)) {
+            return Status.valueOf(get(STATUS).asString().toUpperCase());
         }
         return Status.UNDEFINED;
     }
@@ -91,31 +100,31 @@ public class Server extends NamedNode {
      */
     @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
     public State getState() {
-        if (hasDefined("server-state")) {
-            return State.valueOf(get("server-state").asString());
+        if (hasDefined(SERVER_STATE)) {
+            return State.valueOf(get(SERVER_STATE).asString());
         }
         return State.UNDEFINED;
     }
 
-    /**
-     * @return the {@oced /host=&lt;host&gt;/server-config=&lt;server&gt;} address or {@link ResourceAddress#ROOT} if
-     * either host or server-config is undefined.
-     */
-    public ResourceAddress getServerConfigAddress() {
-        if (getHost() != null && getName() != null) {
-            return new ResourceAddress().add(HOST, getHost()).add(SERVER_CONFIG, getName());
-        }
-        return ResourceAddress.ROOT;
+    public boolean isStandalone() {
+        return STANDALONE_SERVER.equals(getName()) && STANDALONE_HOST.equals(getHost());
     }
 
     /**
-     * @return the {@oced /host=&lt;host&gt;/server=&lt;server&gt;} address or {@link ResourceAddress#ROOT} if either
+     * @return the {@code /host=&lt;host&gt;/server-config=&lt;server&gt;} address or {@link ResourceAddress#ROOT} if
+     * either host or server-config is undefined.
+     */
+    public ResourceAddress getServerConfigAddress() {
+        return isStandalone() ? ResourceAddress.ROOT : new ResourceAddress().add(HOST, getHost())
+                .add(SERVER_CONFIG, getName());
+    }
+
+    /**
+     * @return the {@code /host=&lt;host&gt;/server=&lt;server&gt;} address or {@link ResourceAddress#ROOT} if either
      * host or server is undefined.
      */
     public ResourceAddress getServerAddress() {
-        if (getHost() != null && getName() != null) {
-            return new ResourceAddress().add(HOST, getHost()).add(SERVER, getName());
-        }
-        return ResourceAddress.ROOT;
+        return isStandalone() ? ResourceAddress.ROOT : new ResourceAddress().add(HOST, getHost())
+                .add(SERVER, getName());
     }
 }

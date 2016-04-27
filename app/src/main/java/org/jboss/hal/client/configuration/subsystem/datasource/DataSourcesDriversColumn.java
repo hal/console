@@ -36,8 +36,7 @@ import static java.util.Arrays.asList;
 public class DataSourcesDriversColumn extends StaticItemColumn {
 
     @Inject
-    public DataSourcesDriversColumn(final Finder finder,
-            Resources resources) {
+    public DataSourcesDriversColumn(final Finder finder, Resources resources) {
 
         super(finder, Ids.DATA_SOURCE_DRIVER_COLUMN, Names.DATASOURCES_DRIVERS, asList(
                 new StaticItem.Builder(Names.DATASOURCES)

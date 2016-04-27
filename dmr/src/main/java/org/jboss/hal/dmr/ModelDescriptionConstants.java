@@ -214,13 +214,15 @@ public interface ModelDescriptionConstants {
     String SERVER_GROUP = "server-group";
     String SERVER_GROUPS = "server-groups";
     String SERVER_OPERATIONS = "server-operations";
+    String SERVER_STATE = "server-state";
     String SERVICE = "service";
     String SOCKET_BINDING = "socket-binding";
     String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SHUTDOWN = "shutdown";
     String STANDALONE = "standalone";
-    String STATISTICS_ENABLED = "statistics-enabled";
     String START = "start";
+    String STATUS = "status";
+    String STATISTICS_ENABLED = "statistics-enabled";
     String STEPS = "steps";
     String STORAGE = "storage";
     String SUBDEPLOYMENT = "subdeployment";
