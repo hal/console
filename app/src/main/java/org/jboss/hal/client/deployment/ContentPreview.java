@@ -34,7 +34,7 @@ class ContentPreview extends PreviewContent {
             previewBuilder().p().textContent(resources.constants().unassignedContentDesc()).end();
         } else {
             previewBuilder().p().textContent(resources.constants().assignedContentDesc()).end();
-            previewBuilder().ol();
+            previewBuilder().ul();
             for (Assignment assignment : content.getAssignments()) {
                 previewBuilder().li()
                         .start("code").textContent(assignment.getServerGroup()).end()
