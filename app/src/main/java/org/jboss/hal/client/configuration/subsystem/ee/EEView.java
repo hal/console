@@ -96,7 +96,7 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
                 .build();
 
         forms.put(EE_ATTRIBUTES_FORM, eeAttributesForm);
-        navigation.add(EE_ATTRIBUTES_ENTRY, Names.DEPLOYMENTS, fontAwesome("archive"), eeAttributesForm.asElement());
+        navigation.addPrimary(EE_ATTRIBUTES_ENTRY, Names.DEPLOYMENTS, fontAwesome("archive"), eeAttributesForm.asElement());
         registerAttachable(eeAttributesForm);
 
         // ============================================
@@ -114,7 +114,7 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
         // Register as 'IsElement' instead of 'Element' since the data table's root element changes after it has been
         // attached to the DOM. If registered as 'IsElement' the navigation will take care of this when showing and
         // hiding the table
-        navigation.add(EE_GLOBAL_MODULES_ENTRY, Names.GLOBAL_MODULES, fontAwesome("cube"), globalModulesTable);
+        navigation.addPrimary(EE_GLOBAL_MODULES_ENTRY, Names.GLOBAL_MODULES, fontAwesome("cube"), globalModulesTable);
         registerAttachable(globalModulesTable);
 
         // ============================================
@@ -134,7 +134,7 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
                 .build();
 
         forms.put(EE_DEFAULT_BINDINGS_FORM, defaultBindingsForm);
-        navigation.add(EE_DEFAULT_BINDINGS_ENTRY, resources.constants().defaultBindings(), fontAwesome("link"),
+        navigation.addPrimary(EE_DEFAULT_BINDINGS_ENTRY, resources.constants().defaultBindings(), fontAwesome("link"),
                 defaultBindingsForm.asElement());
         registerAttachable(defaultBindingsForm);
 
@@ -149,7 +149,7 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
                 buildServicePanel(AddressTemplates.MANAGED_EXECUTOR_SCHEDULED_TEMPLATE));
         serviceTabs.add(IdBuilder.build(EE, "service", "thread-factories"), "Thread Factories",
                 buildServicePanel(AddressTemplates.MANAGED_THREAD_FACTORY_TEMPLATE));
-        navigation.add(IdBuilder.build(EE, "services", "entry"), "Services", fontAwesome("cogs"), serviceTabs);
+        navigation.addPrimary(IdBuilder.build(EE, "services", "entry"), "Services", fontAwesome("cogs"), serviceTabs);
 
         // ============================================
         // main layout

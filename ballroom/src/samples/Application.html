@@ -80,7 +80,7 @@
     </nav>
 </footer>
 
-<div class="nav-pf-vertical nav-pf-vertical-hal">
+<div class="nav-pf-vertical nav-pf-vertical-hal nav-pf-vertical-with-secondary-nav">
     <ul class="list-group">
         <li class="list-group-item">
             <a href="#">
@@ -88,11 +88,48 @@
                 <span class="list-group-item-value">Dashboard</span>
             </a>
         </li>
-        <li class="list-group-item active">
-            <a href="#">
+        <li class="list-group-item persistent-secondary" data-target="#clusters-secondary">
+            <a class="clickable">
                 <span class="pficon pficon-cluster"></span>
                 <span class="list-group-item-value">Clusters</span>
             </a>
+            <div id="clusters-secondary" class="nav-pf-persistent-secondary nav-pf-persistent-secondary-hal">
+                <div class="persistent-secondary-header">
+                    <a class="clickable fa fa-arrow-circle-o-left" data-toggle="collapse-secondary-nav"></a>
+                    <span>Clusters</span>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <a href="#">
+                            <span class="list-group-item-value">Volumes</span>
+                            <div class="badge-container-pf"> <span class="badge">1</span></div>
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <span class="list-group-item-value">Bricks</span>
+                            <div class="badge-container-pf"> <span class="badge">12</span></div>
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <span class="list-group-item-value">Quotas</span>
+                            <div class="badge-container-pf"> <span class="badge">3</span></div>
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <span class="list-group-item-value">Logical Volumes in the European data center located in Munich</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <span class="list-group-item-value">Pools</span>
+                            <div class="badge-container-pf"><span class="badge">10</span></div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </li>
         <li class="list-group-item">
             <a href="#">
@@ -103,7 +140,7 @@
     </ul>
 </div>
 
-<div class="container-fluid container-pf-nav-pf-vertical">
+<div class="container-fluid container-pf-nav-pf-vertical container-pf-nav-pf-vertical-with-secondary">
     <div class="row">
         <div class="col-md-12 col-sm-12">
             <h1>Lorem Ipsum</h1>
@@ -524,6 +561,7 @@ malis oppressum.
 <script>
     $(document).ready(function () {
         $(".datatable").DataTable({pageLength: 7});
+        $().setupVerticalNavigation(true);
     });
 </script>
 

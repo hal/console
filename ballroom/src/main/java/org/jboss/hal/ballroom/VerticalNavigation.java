@@ -15,8 +15,10 @@
  */
 package org.jboss.hal.ballroom;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.FluentIterable;
@@ -47,12 +49,35 @@ import static org.jboss.hal.resources.CSS.*;
  * methods {@link VerticalNavigation#on()} and {@link VerticalNavigation#off()} to insert and remove the vertical
  * navigation from the DOM.
  * <p>
- * Please note: Currently only one level is supported!
  *
  * @author Harald Pehl
  * @see <a href="https://www.patternfly.org/patterns/vertical-with-persistent-secondary/">https://www.patternfly.org/patterns/vertical-with-persistent-secondary/</a>
  */
 public class VerticalNavigation {
+
+    private static class Entry implements IsElement {
+
+        private final String id;
+        private final String text;
+        private final Element element;
+        private final List<Entry> children;
+        private int badge;
+
+        private Entry(final String id, final String text, final Element element) {
+            this.id = id;
+            this.text = text;
+            this.element = element;
+            this.children = new ArrayList<>();
+        }
+
+        public boolean add(final Entry entry) {return children.add(entry);}
+
+        @Override
+        public Element asElement() {
+            return element;
+        }
+    }
+
 
     private static class Pane implements IsElement {
 
@@ -64,7 +89,7 @@ public class VerticalNavigation {
             this.isElement = null;
         }
 
-        public Pane(final IsElement isElement) {
+        Pane(final IsElement isElement) {
             this.element = null;
             this.isElement = isElement;
         }
@@ -83,7 +108,7 @@ public class VerticalNavigation {
 
     private final Element root;
     private final Element ul;
-    private final Map<String, Element> entries;
+    private final Map<String, Entry> entries;
     private final LinkedHashMap<String, Pane> panes;
 
     public VerticalNavigation() {
@@ -102,8 +127,7 @@ public class VerticalNavigation {
     }
 
     /**
-     * Inserts the vertical instance before the root container and adds the CSS class {@link
-     * org.jboss.hal.resources.CSS#containerPfNavPfVertical} to the root container.
+     * Inserts the vertical instance before the root container and adds the related CSS classes to the root container.
      */
     public void on() {
         if (singleton != null) {
@@ -122,8 +146,7 @@ public class VerticalNavigation {
     }
 
     /**
-     * Removes the vertical navigation from the body and removes the CSS class {@link
-     * org.jboss.hal.resources.CSS#containerPfNavPfVertical} from the root container.
+     * Removes the vertical navigation from the body and removes the related CSS class from the root container.
      */
     public void off() {
         if (singleton != null && singleton.root != null && Browser.getDocument().getBody().contains(singleton.root)) {
@@ -136,38 +159,47 @@ public class VerticalNavigation {
         }
     }
 
+
+    // ------------------------------------------------------ add primary items
+
+    public VerticalNavigation addPrimary(String id, String text) {
+        return addPrimary(id, text, null, (Pane)null);
+    }
+
     /**
-     * Adds a navigation entry to the navigation which controls the visibility of the specified element. Unlike similar
-     * UI elements such as {@code Tabs} the element is <strong>not</strong> added as a child of this navigation. The
-     * elements should be rather children of the root container. Registration means the vertical navigation controls
-     * the
-     * visibility of the registered elements.
+     * Adds a primary navigation entry to the navigation which controls the visibility of the specified element.
+     * <p>
+     * Unlike similar UI elements such as {@code Tabs} the element is <strong>not</strong> added as a child of this
+     * navigation. The element should be rather a child of the root container.
      *
-     * @param id      An unique id for thei navigation entry
+     * @param id      An unique id for the navigation entry
      * @param text    the text shown in the vertical navigation
      * @param element the element which visibility is controlled by this vertical navigation.
      */
-    public VerticalNavigation add(String id, String text, IsElement element) {
-        return add(id, text, null, new Pane(element));
+    public VerticalNavigation addPrimary(String id, String text, IsElement element) {
+        return addPrimary(id, text, null, new Pane(element));
     }
 
-    public VerticalNavigation add(String id, String text, Element element) {
-        return add(id, text, null, new Pane(element));
+    public VerticalNavigation addPrimary(String id, String text, Element element) {
+        return addPrimary(id, text, null, new Pane(element));
     }
 
-    public VerticalNavigation add(String id, String text, String iconClass, IsElement element) {
-        return add(id, text, iconClass, new Pane(element));
+    public VerticalNavigation addPrimary(String id, String text, String iconClass, IsElement element) {
+        return addPrimary(id, text, iconClass, new Pane(element));
     }
 
-    public VerticalNavigation add(String id, String text, String iconClass, Element element) {
-        return add(id, text, iconClass, new Pane(element));
+    public VerticalNavigation addPrimary(String id, String text, String iconClass, Element element) {
+        return addPrimary(id, text, iconClass, new Pane(element));
     }
 
-    private VerticalNavigation add(String id, String text, String iconClass, Pane pane) {
+    private VerticalNavigation addPrimary(String id, String text, String iconClass, Pane pane) {
         // @formatter:off
         Elements.Builder builder = new Elements.Builder()
             .li().css(listGroupItem).id(id)
-                .a().css(clickable).on(click, event -> show(id));
+                .a().css(clickable);
+                    if (pane != null) {
+                        builder.on(click, event -> show(id));
+                    }
                     if (iconClass != null) {
                         builder.span().css(iconClass).end();
                     }
@@ -176,20 +208,40 @@ public class VerticalNavigation {
             .end();
         // @formatter:on
 
-        Element li = builder.build();
-        ul.appendChild(li);
-        entries.put(id, li);
-        panes.put(id, pane);
+        Entry entry = new Entry(id, text, builder.build());
+        ul.appendChild(entry.asElement());
+        entries.put(id, entry);
+        if (pane != null) {
+            panes.put(id, pane);
+        }
 
         return this;
     }
 
+
+    // ------------------------------------------------------ add secondary items
+
+    public VerticalNavigation addSecondary(String primaryId, String id, IsElement element) {
+        return addSecondary(primaryId, id, new Pane(element));
+    }
+
+    public VerticalNavigation addSecondary(String primaryId, String id, Element element) {
+        return addSecondary(primaryId, id, new Pane(element));
+    }
+
+    private VerticalNavigation addSecondary(String primaryId, String id, Pane pane) {
+        return this;
+    }
+
+
+    // ------------------------------------------------------ misc
+
     public void show(String id) {
-        for (Map.Entry<String, Element> entry : entries.entrySet()) {
+        for (Map.Entry<String, Entry> entry : entries.entrySet()) {
             if (entry.getKey().equals(id)) {
-                entry.getValue().getClassList().add(active);
+                entry.getValue().asElement().getClassList().add(active);
             } else {
-                entry.getValue().getClassList().remove(active);
+                entry.getValue().asElement().getClassList().remove(active);
             }
         }
         for (Map.Entry<String, Pane> entry : panes.entrySet()) {
