@@ -17,11 +17,8 @@ package org.jboss.hal.client.configuration.subsystem.logging;
 
 import java.util.List;
 import java.util.Map;
-import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates;
 import org.jboss.hal.core.finder.Finder;
@@ -40,11 +37,9 @@ import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
@@ -57,13 +52,13 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 public class LoggingPresenter extends SubsystemPresenter<LoggingPresenter.MyView, LoggingPresenter.MyProxy> {
 
     // @formatter:off
-    @ProxyCodeSplit
-    @NameToken(NameTokens.LOGGING)
-    @Requires({ROOT_LOGGER_ADDRESS, LOGGER_ADDRESS,
-            ASYNC_HANDLER_ADDRESS, CONSOLE_HANDLER_ADDRESS, CUSTOM_HANDLER_ADDRESS, FILE_HANDLER_ADDRESS,
-            PERIODIC_ROTATING_FILE_HANDLER_ADDRESS, PERIODIC_SIZE_ROTATING_FILE_HANDLER_ADDRESS,
-            SIZE_ROTATING_FILE_HANDLER_ADDRESS, SYSLOG_HANDLER_ADDRESS,
-            CUSTOM_FORMATTER_ADDRESS, PATTERN_FORMATTER_ADDRESS})
+    // @ProxyCodeSplit
+    // @NameToken(NameTokens.LOGGING)
+    // @Requires({ROOT_LOGGER_ADDRESS, LOGGER_ADDRESS,
+    //         ASYNC_HANDLER_ADDRESS, CONSOLE_HANDLER_ADDRESS, CUSTOM_HANDLER_ADDRESS, FILE_HANDLER_ADDRESS,
+    //         PERIODIC_ROTATING_FILE_HANDLER_ADDRESS, PERIODIC_SIZE_ROTATING_FILE_HANDLER_ADDRESS,
+    //         SIZE_ROTATING_FILE_HANDLER_ADDRESS, SYSLOG_HANDLER_ADDRESS,
+    //         CUSTOM_FORMATTER_ADDRESS, PATTERN_FORMATTER_ADDRESS})
     public interface MyProxy extends ProxyPlace<LoggingPresenter> {}
 
     public interface MyView extends PatternFlyView, HasVerticalNavigation, HasPresenter<LoggingPresenter> {
@@ -90,7 +85,7 @@ public class LoggingPresenter extends SubsystemPresenter<LoggingPresenter.MyView
     private final OperationFactory operationFactory;
     private final Resources resources;
 
-    @Inject
+    // @Inject
     public LoggingPresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy proxy,

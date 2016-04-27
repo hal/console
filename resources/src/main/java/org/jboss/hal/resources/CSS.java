@@ -38,6 +38,8 @@ public interface CSS {
     String arrow = "arrow";
     String attributes = "attributes";
 
+    String badge = "badge";
+    String badgeContainerPf = "badge-container-pf";
     String blankSlatePf = "blank-slate-pf";
     String blankSlatePfIcon = "blank-slate-pf-icon";
     String blankSlatePfMainAction = "blank-slate-pf-main-action";
@@ -61,6 +63,7 @@ public interface CSS {
     String collapse = "collapse";
     String containerFluid = "container-fluid";
     String containerPfNavPfVertical = "container-pf-nav-pf-vertical";
+    String containerPfNavPfVerticalWithSecondary = "container-pf-nav-pf-vertical-with-secondary";
     String controlLabel = "control-label";
     String copy = "copy";
 
@@ -156,8 +159,11 @@ public interface CSS {
 
     String nav = "nav";
     String navbar = "navbar";
+    String navPfPersistentSecondary = "nav-pf-persistent-secondary";
+    String navPfPersistentSecondaryHal = "nav-pf-persistent-secondary-hal";
     String navPfVertical = "nav-pf-vertical";
     String navPfVerticalHal = "nav-pf-vertical-hal";
+    String navPfVerticalWithSecondaryNav = "nav-pf-vertical-with-secondary-nav";
     String navTabs = "nav-tabs";
     String navTabsHal = "nav-tabs-hal";
     String navTabsPf = "nav-tabs-pf";
@@ -175,6 +181,8 @@ public interface CSS {
     String panelGroup = "panel-group";
     String panelHeading = "panel-heading";
     String panelTitle = "panel-title";
+    String persistentSecondary = "persistent-secondary";
+    String persistentSecondaryHeader = "persistent-secondary-header";
     String pin = "pin";
     String pinned = "pinned";
     String pinnable = "pinnable";
@@ -193,6 +201,7 @@ public interface CSS {
     String restricted = "restricted";
     String row = "row";
 
+    String secondaryVisiblePf = "secondary-visible-pf";
     String selectpicker = "selectpicker";
     String separator = "separator";
     String spinner = "spinner";
@@ -252,6 +261,4 @@ public interface CSS {
     static String pfIcon(@NonNls String name) {
         return "pficon pficon-" + name; //NON-NLS
     }
-
-    String marginTop10 = "margin-top-10";
 }

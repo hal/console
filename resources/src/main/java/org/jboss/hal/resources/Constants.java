@@ -68,7 +68,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String databaseDisabled();
     String databaseEnabled();
     String defaultValue();
-    String defaultBindings();
     String deploymentAttributes();
     String details();
     String disable();

@@ -20,12 +20,10 @@ import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 
-import com.google.common.collect.Lists;
 import com.google.gwt.core.client.Scheduler;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LayoutBuilder;
-import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Button;
@@ -35,8 +33,8 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
@@ -48,8 +46,8 @@ import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.resources.CSS.fontAwesome;
-import static org.jboss.hal.resources.CSS.marginTop10;
 import static org.jboss.hal.resources.Ids.*;
 
 /**
@@ -57,15 +55,27 @@ import static org.jboss.hal.resources.Ids.*;
  */
 public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
 
-    private static final String HEADER_ELEMENT = "headerElement";
+    // local ids
+    private static final String CONTEXT_SERVICE_ID = IdBuilder.build(EE, "service", "context-service");
+    private static final String MANAGED_EXECUTOR_ID = IdBuilder.build(EE, "service", "executor");
+    private static final String MANAGED_EXECUTOR_SCHEDULED_ID = IdBuilder.build(EE, "service", "scheduled-executor");
+    private static final String MANAGED_THREAD_FACTORY_ID = IdBuilder.build(EE, "service", "thread-factories");
+
+    // local names
+    private static final String DEFAULT_BINDINGS_NAME = "Default Bindings";
+    private static final String CONTEXT_SERVICE_NAME = "Context Service";
+    private static final String MANAGED_EXECUTOR_NAME = "Executor";
+    private static final String MANAGED_EXECUTOR_SCHEDULED_NAME = "Scheduled Executor";
+    private static final String SERVICES_NAME = "Services";
+    private static final String MANAGED_THREAD_FACTORY_NAME = "Thread Factories";
 
     private final MetadataRegistry metadataRegistry;
     private final Resources resources;
     private final VerticalNavigation navigation;
+    private final TableButtonFactory tableButtonFactory;
     private final Map<String, ModelNodeForm> forms;
     private final DataTable<ModelNode> globalModulesTable;
-    private final Map<String, ModelNodeTable<NamedNode>> tables = new HashMap<>(4);
-    private final TableButtonFactory tableButtonFactory;
+    private final Map<String, ModelNodeTable> tables;
 
     private EEPresenter presenter;
 
@@ -76,28 +86,35 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
         this.metadataRegistry = metadataRegistry;
         this.resources = resources;
         this.tableButtonFactory = tableButtonFactory;
+
         this.navigation = new VerticalNavigation();
         this.forms = new HashMap<>();
+        this.tables = new HashMap<>(4);
 
         // ============================================
         // attributes - deployments
         Metadata eeMetadata = metadataRegistry.lookup(AddressTemplates.EE_SUBSYSTEM_TEMPLATE);
-        Element info = new Elements.Builder().p().textContent(eeMetadata.getDescription()
-                .getDescription() + " It provides the ability to specify a list of modules that should be made available to all deployments.")
-                .end().build();
 
         ModelNodeForm<ModelNode> eeAttributesForm = new ModelNodeForm.Builder<>(EE_ATTRIBUTES_FORM, eeMetadata)
                 .include("annotation-property-replacement",
                         "ear-subdeployments-isolated",
                         "jboss-descriptor-property-replacement",
                         "spec-descriptor-property-replacement")
-                .onSave((form1, changedValues1) -> presenter.save(AddressTemplates.EE_SUBSYSTEM_TEMPLATE, changedValues1, 
-                        resources.constants().deploymentAttributes()))
+                .onSave((form1, changedValues1) -> presenter
+                        .save(AddressTemplates.EE_SUBSYSTEM_TEMPLATE, changedValues1,
+                                resources.constants().deploymentAttributes()))
                 .build();
-
         forms.put(EE_ATTRIBUTES_FORM, eeAttributesForm);
-        navigation.addPrimary(EE_ATTRIBUTES_ENTRY, Names.DEPLOYMENTS, fontAwesome("archive"), eeAttributesForm.asElement());
         registerAttachable(eeAttributesForm);
+
+        Element navigationElement = new Elements.Builder()
+                .div()
+                .h(1).textContent(Names.DEPLOYMENTS).end()
+                .p().textContent(eeMetadata.getDescription().getDescription()).end()
+                .add(eeAttributesForm.asElement())
+                .end()
+                .build();
+        navigation.addPrimary(EE_ATTRIBUTES_ENTRY, Names.DEPLOYMENTS, fontAwesome("archive"), navigationElement);
 
         // ============================================
         // global modules
@@ -109,13 +126,17 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
                 .button(resources.constants().remove(), Button.Scope.SELECTED,
                         (event, api) -> presenter.removeGlobalModule(api.selectedRow()))
                 .build();
-
         globalModulesTable = new ModelNodeTable<>(Ids.EE_GLOBAL_MODULES_TABLE, options);
-        // Register as 'IsElement' instead of 'Element' since the data table's root element changes after it has been
-        // attached to the DOM. If registered as 'IsElement' the navigation will take care of this when showing and
-        // hiding the table
-        navigation.addPrimary(EE_GLOBAL_MODULES_ENTRY, Names.GLOBAL_MODULES, fontAwesome("cube"), globalModulesTable);
         registerAttachable(globalModulesTable);
+
+        navigationElement = new Elements.Builder()
+                .div()
+                .h(1).textContent(Names.GLOBAL_MODULES).end()
+                .p().textContent(globalModulesMetadata.getDescription().getDescription()).end()
+                .add(globalModulesTable.asElement())
+                .end()
+                .build();
+        navigation.addPrimary(EE_GLOBAL_MODULES_ENTRY, Names.GLOBAL_MODULES, fontAwesome("cube"), navigationElement);
 
         // ============================================
         // service=default-bindings
@@ -129,27 +150,36 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
                         "managed-executor-service",
                         "managed-scheduled-executor-service",
                         "managed-thread-factory")
-                .onSave((form, changedValues) -> presenter.save(AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE, 
-                        changedValues, resources.constants().defaultBindings()))
+                .onSave((form, changedValues) -> presenter.save(AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE,
+                        changedValues, DEFAULT_BINDINGS_NAME))
                 .build();
-
         forms.put(EE_DEFAULT_BINDINGS_FORM, defaultBindingsForm);
-        navigation.addPrimary(EE_DEFAULT_BINDINGS_ENTRY, resources.constants().defaultBindings(), fontAwesome("link"),
-                defaultBindingsForm.asElement());
         registerAttachable(defaultBindingsForm);
+
+        navigationElement = new Elements.Builder()
+                .div()
+                .h(1).textContent(DEFAULT_BINDINGS_NAME).end()
+                .p().textContent(defaultBindingsMetadata.getDescription().getDescription()).end()
+                .add(defaultBindingsForm.asElement())
+                .end()
+                .build();
+        navigation.addPrimary(EE_DEFAULT_BINDINGS_ENTRY, DEFAULT_BINDINGS_NAME, fontAwesome("link"),
+                navigationElement);
 
         // ============================================
         // services
-        Tabs serviceTabs = new Tabs();
-        serviceTabs.add(IdBuilder.build(EE, "service", "context-service"), "Context Service",
-                buildServicePanel(AddressTemplates.CONTEXT_SERVICE_TEMPLATE));
-        serviceTabs.add(IdBuilder.build(EE, "service", "executor"), "Executor",
-                buildServicePanel(AddressTemplates.MANAGED_EXECUTOR_TEMPLATE));
-        serviceTabs.add(IdBuilder.build(EE, "service", "scheduled-executor"), "Scheduled Executor",
-                buildServicePanel(AddressTemplates.MANAGED_EXECUTOR_SCHEDULED_TEMPLATE));
-        serviceTabs.add(IdBuilder.build(EE, "service", "thread-factories"), "Thread Factories",
-                buildServicePanel(AddressTemplates.MANAGED_THREAD_FACTORY_TEMPLATE));
-        navigation.addPrimary(IdBuilder.build(EE, "services", "entry"), "Services", fontAwesome("cogs"), serviceTabs);
+        String primaryId = IdBuilder.build(EE, "services", "entry");
+        navigation.addPrimary(primaryId, SERVICES_NAME, fontAwesome("cogs"));
+
+        navigation.addSecondary(primaryId, CONTEXT_SERVICE_ID, CONTEXT_SERVICE_NAME,
+                buildServicePanel(AddressTemplates.CONTEXT_SERVICE_TEMPLATE, CONTEXT_SERVICE_NAME));
+        navigation.addSecondary(primaryId, MANAGED_EXECUTOR_ID, MANAGED_EXECUTOR_NAME,
+                buildServicePanel(AddressTemplates.MANAGED_EXECUTOR_TEMPLATE, MANAGED_EXECUTOR_NAME));
+        navigation.addSecondary(primaryId, MANAGED_EXECUTOR_SCHEDULED_ID, MANAGED_EXECUTOR_SCHEDULED_NAME,
+                buildServicePanel(AddressTemplates.MANAGED_EXECUTOR_SCHEDULED_TEMPLATE,
+                        MANAGED_EXECUTOR_SCHEDULED_NAME));
+        navigation.addSecondary(primaryId, MANAGED_THREAD_FACTORY_ID, MANAGED_THREAD_FACTORY_NAME,
+                buildServicePanel(AddressTemplates.MANAGED_THREAD_FACTORY_TEMPLATE, MANAGED_THREAD_FACTORY_NAME));
 
         // ============================================
         // main layout
@@ -157,8 +187,6 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
         LayoutBuilder layoutBuilder = new LayoutBuilder()
             .row()
                 .column()
-                    .header(Names.EE).rememberAs(HEADER_ELEMENT).end()
-                    .add(info)
                     .addAll(navigation.panes())
                 .end()
             .end();
@@ -171,14 +199,15 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
     @Override
     public void attach() {
         super.attach();
-        bindFormToTable(CONTEXT_SERVICE);
+        bindFormToTable(ModelDescriptionConstants.CONTEXT_SERVICE);
         bindFormToTable(MANAGED_EXECUTOR_SERVICE);
         bindFormToTable(MANAGED_SCHEDULED_EXECUTOR_SERVICE);
         bindFormToTable(MANAGED_THREAD_FACTORY);
     }
 
+    @SuppressWarnings("unchecked")
     private void bindFormToTable(String formName) {
-        ModelNodeTable<NamedNode> table = tables.get(formName);
+        DataTable<ModelNode> table = tables.get(formName);
         table.api().bindForm(forms.get(formName));
     }
 
@@ -193,11 +222,12 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
     }
 
     @Override
-    public void reset() {
+    public void reveal() {
         Scheduler.get().scheduleDeferred(() -> navigation.show(EE_ATTRIBUTES_ENTRY));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void update(final ModelNode eeData) {
         // update the attributes - deployments tab
         Form<ModelNode> formDeployments = forms.get(EE_ATTRIBUTES_FORM);
@@ -212,68 +242,66 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
 
         // update the default-bindings tab
         if (eeData.hasDefined(SERVICE)) {
-            ModelNode defaultBindings = eeData.get(SERVICE).get(DEFAULT_BINDINGS);
-            Form<ModelNode> formDefaulBindings = forms.get(EE_DEFAULT_BINDINGS_FORM);
-            formDefaulBindings.view(defaultBindings);
+            ModelNode defaultBindings = eeData.get(SERVICE).get(DEFAULT_BINDINGS_NAME);
+            Form<ModelNode> formDefaultBindings = forms.get(EE_DEFAULT_BINDINGS_FORM);
+            formDefaultBindings.view(defaultBindings);
         }
         // update the context-service table
-        update(eeData, CONTEXT_SERVICE);
+        update(eeData, ModelDescriptionConstants.CONTEXT_SERVICE, CONTEXT_SERVICE_ID);
 
         // update the managed-executor-service table
-        update(eeData, MANAGED_EXECUTOR_SERVICE);
+        update(eeData, MANAGED_EXECUTOR_SERVICE, MANAGED_EXECUTOR_ID);
 
         // update the managed-scheduled-executor-service table
-        update(eeData, MANAGED_SCHEDULED_EXECUTOR_SERVICE);
+        update(eeData, MANAGED_SCHEDULED_EXECUTOR_SERVICE, MANAGED_EXECUTOR_SCHEDULED_ID);
 
         // update the managed-thread-factory table
-        update(eeData, MANAGED_THREAD_FACTORY);
+        update(eeData, MANAGED_THREAD_FACTORY, MANAGED_THREAD_FACTORY_ID);
 
     }
 
-    private void update(final ModelNode eeData, String tableName) {
-        if (eeData.hasDefined(tableName)) {
-            List<Property> _tempList= eeData.get(tableName).asPropertyList();
-            List<NamedNode> contextServiceModel = Lists.transform(_tempList, NamedNode::new);
-            Form form = forms.get(tableName);
-            ModelNodeTable<NamedNode> table = tables.get(tableName);
-            table.api().clear().add(contextServiceModel).refresh(RESET);
+    @SuppressWarnings("unchecked")
+    private void update(final ModelNode eeData, String resourceType, String navigationId) {
+        if (eeData.hasDefined(resourceType)) {
+            List<NamedNode> models = asNamedNodes(eeData.get(resourceType).asPropertyList());
+            Form form = forms.get(resourceType);
+            DataTable<NamedNode> table = tables.get(resourceType);
+            table.api().clear().add(models).refresh(RESET);
             form.clear();
+            navigation.updateBadge(navigationId, models.size());
         }
     }
 
-    private Iterable<Element> buildServicePanel(AddressTemplate template) {
+    @SuppressWarnings("ConstantConditions")
+    private Element buildServicePanel(AddressTemplate template, String type) {
 
         Metadata metadata = metadataRegistry.lookup(template);
 
         String baseId = IdBuilder.build(EE, "service", template.lastKey());
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
-                .column(NAME, resources.constants().name(), (cell, type, row, meta) -> row.getName())
-
+                .column(NAME, resources.constants().name(), (cell, t, row, meta) -> row.getName())
 
                 .button(tableButtonFactory.add(
-                        IdBuilder.build(baseId, "add"),
-                        Names.EE,
+                        IdBuilder.build(baseId, "add"), type,
                         template,
                         () -> presenter.loadEESubsystem()))
 
                 .button(tableButtonFactory.remove(
-                        Names.EE,
-                        () -> {
-                            ModelNodeTable<NamedNode> table = tables.get(template.lastKey());
-                            return table.api().selectedRow().getName();
-                        },
+                        type,
+                        (api) -> api.selectedRow().getName(),
                         template,
                         () -> presenter.loadEESubsystem()))
 
                 .build();
+
         ModelNodeTable<NamedNode> table = new ModelNodeTable<>(IdBuilder.build(baseId, "table"), options);
         registerAttachable(table);
         tables.put(template.lastKey(), table);
 
         ModelNodeForm<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(IdBuilder.build(baseId, "form"), metadata)
-                .onSave((form2, changedValues) -> {
-                    AddressTemplate template2 = template.replaceWildcards(table.api().selectedRow().getName());
-                    presenter.save(template2, changedValues, template.lastKey());
+                .onSave((f, changedValues) -> {
+                    AddressTemplate fullyQualified = template.replaceWildcards(table.api().selectedRow().getName());
+                    presenter.save(fullyQualified, changedValues, template.lastKey());
                 })
                 .build();
 
@@ -281,10 +309,12 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
         registerAttachable(form);
 
         return new Elements.Builder()
-                .p().css(marginTop10).textContent(metadata.getDescription().getDescription()).end()
+                .div()
+                .h(1).textContent(type).end()
+                .p().textContent(metadata.getDescription().getDescription()).end()
                 .add(table.asElement())
                 .add(form.asElement())
-                .elements();
+                .end()
+                .build();
     }
-
 }

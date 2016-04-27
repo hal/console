@@ -18,11 +18,13 @@ package org.jboss.hal.core.mbui.table;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import com.google.common.base.Function;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
+import org.jboss.hal.ballroom.table.Api;
 import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
@@ -124,20 +126,21 @@ public class TableButtonFactory {
         return button;
     }
 
-    public <T> Button<T> remove(String type, Provider<String> nameProvider, AddressTemplate addressTemplate,
+    @SuppressWarnings("Guava")
+    public <T> Button<T> remove(String type, Function<Api<T>, String> nameFunction, AddressTemplate addressTemplate,
             ScheduledCommand afterRemove) {
         Button<T> button = new Button<>();
         button.text = resources.constants().remove();
         button.extend = SELECTED_SINGLE.selector();
         button.action = (event, api) -> {
             Dialog dialog = DialogFactory.confirmation(resources.messages().removeResourceConfirmationTitle(type),
-                    resources.messages().removeResourceConfirmationQuestion(nameProvider.get()),
+                    resources.messages().removeResourceConfirmationQuestion(nameFunction.apply(api)),
                     () -> {
-                        ResourceAddress address = addressTemplate.resolve(statementContext, nameProvider.get());
+                        ResourceAddress address = addressTemplate.resolve(statementContext, nameFunction.apply(api));
                         Operation operation = new Operation.Builder(REMOVE, address).build();
                         dispatcher.execute(operation, result -> {
                             MessageEvent.fire(eventBus, Message.success(
-                                    resources.messages().removeResourceSuccess(type, nameProvider.get())));
+                                    resources.messages().removeResourceSuccess(type, nameFunction.apply(api))));
                             if (afterRemove != null) {
                                 afterRemove.execute();
                             }

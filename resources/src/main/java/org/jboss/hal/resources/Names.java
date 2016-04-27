@@ -24,7 +24,6 @@ public interface Names {
 
     String ACCESS_CONTROL = "Access Control";
     String CONFIGURATION = "Configuration";
-    String CONTENT_REPOSITORY = "Content Repository";
     String DATASOURCE = "Datasource";
     String DATASOURCES = "Datasources";
     String DATASOURCES_DRIVERS = "Datasources & Drivers";
@@ -54,7 +53,6 @@ public interface Names {
     String RUNTIME = "Runtime";
     String SERVER = "Server";
     String SERVER_GROUPS = "Server Groups";
-    String SLOT = "Slot";
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDINGS = "Socket Bindings";
     String SUBSYSTEM = "Subsystem";

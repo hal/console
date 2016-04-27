@@ -68,7 +68,7 @@ public class EEPresenter extends SubsystemPresenter<EEPresenter.MyView, EEPresen
     public interface MyProxy extends ProxyPlace<EEPresenter> {}
 
     public interface MyView extends PatternFlyView, HasVerticalNavigation, HasPresenter<EEPresenter> {
-        void reset();
+        void reveal();
         void update(ModelNode eeData);
     }
     // @formatter:on
@@ -81,6 +81,7 @@ public class EEPresenter extends SubsystemPresenter<EEPresenter.MyView, EEPresen
         Property globalModules = metadata.getDescription().findAttribute(ATTRIBUTES, GLOBAL_MODULES);
         if (globalModules != null && globalModules.getValue().hasDefined(VALUE_TYPE)) {
             ModelNode repackaged = new ModelNode();
+            repackaged.get(DESCRIPTION).set(globalModules.getValue().get(DESCRIPTION).asString());
             repackaged.get(ATTRIBUTES).set(globalModules.getValue().get(VALUE_TYPE));
             globalModulesDescription = new ResourceDescription(repackaged);
         } else {
@@ -122,9 +123,14 @@ public class EEPresenter extends SubsystemPresenter<EEPresenter.MyView, EEPresen
     }
 
     @Override
+    protected void onReveal() {
+        super.onReveal();
+        getView().reveal();
+    }
+
+    @Override
     protected void onReset() {
         super.onReset();
-        getView().reset();
         loadEESubsystem();
     }
 
