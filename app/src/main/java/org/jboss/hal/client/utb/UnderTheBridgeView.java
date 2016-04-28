@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import com.google.common.collect.Maps;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental.dom.Element;
-import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.Tabs;
@@ -31,7 +30,6 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.ballroom.typeahead.TypeaheadProvider;
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelNode;
@@ -42,6 +40,7 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
+import org.jboss.hal.resources.IdBuilder;
 
 import static org.jboss.hal.meta.security.SecurityContext.RWX;
 
@@ -111,8 +110,7 @@ public class UnderTheBridgeView extends PatternFlyViewImpl implements UnderTheBr
     private UnderTheBridgePresenter presenter;
 
     @Inject
-    public UnderTheBridgeView(final Environment environment,
-            final StatementContext statementContext,
+    public UnderTheBridgeView(final StatementContext statementContext,
             final UnderTheBridgeResources resources,
             final Capabilities capabilities) {
         this.forms = new ArrayList<>();

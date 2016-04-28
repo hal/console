@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.spi;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -25,8 +26,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * Specifies the required resources attached to an UI element. Currently this is either a presenter-proxy or a finder
  * column.
  */
-@Target(TYPE)
+@Documented
 @Retention(RUNTIME)
+@Target(TYPE)
 public @interface Requires {
 
     /**

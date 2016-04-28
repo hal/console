@@ -15,6 +15,11 @@
  */
 package org.jboss.hal.core.finder;
 
+import java.util.HashMap;
+import java.util.Map;
+import javax.inject.Inject;
+
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.dialog.Dialog;
@@ -25,16 +30,14 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
-
-import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.Map;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 
 /**
- * Convenience method for common item actions.
+ * Convenience methods for common item actions.
  *
  * @author Harald Pehl
  */
@@ -42,16 +45,19 @@ public class ItemActionFactory {
 
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
+    private final EventBus eventBus;
     private final PlaceManager placeManager;
     private final Resources resources;
 
     @Inject
     public ItemActionFactory(StatementContext statementContext,
             Dispatcher dispatcher,
+            EventBus eventBus,
             PlaceManager placeManager,
             Resources resources) {
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
+        this.eventBus = eventBus;
         this.placeManager = placeManager;
         this.resources = resources;
     }
@@ -78,7 +84,7 @@ public class ItemActionFactory {
 
     /**
      * Creates a 'remove' action which removes the specified resource from the given address. The address can contain a
-     * wildcard which is replace by the resource name. The action wil bring up a confirmation dialog. If confirmed the
+     * wildcard which is replaced by the resource name. The action wil bring up a confirmation dialog. If confirmed the
      * resource is removed and {@link FinderColumn#refresh(FinderColumn.RefreshMode)} is called.
      */
     public <T> ItemAction<T> remove(String type, String name, AddressTemplate addressTemplate, FinderColumn<T> column) {
@@ -88,7 +94,11 @@ public class ItemActionFactory {
                     () -> {
                         ResourceAddress address = addressTemplate.resolve(statementContext, name);
                         Operation operation = new Operation.Builder(REMOVE, address).build();
-                        dispatcher.execute(operation, result -> column.refresh(CLEAR_SELECTION));
+                        dispatcher.execute(operation, result -> {
+                            MessageEvent.fire(eventBus,
+                                    Message.success(resources.messages().removeResourceSuccess(type, name)));
+                            column.refresh(CLEAR_SELECTION);
+                        });
                         return true;
                     });
             dialog.show();

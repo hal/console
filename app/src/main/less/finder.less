@@ -13,6 +13,11 @@
     color: #4d5258;
     background-color: white;
     box-shadow: none;
+    outline: none;
+
+    &:active {
+      outline: none;
+    }
 
     &:hover {
       background-color: #eee;
@@ -42,14 +47,17 @@
       justify-content: space-between;
       padding: @finder-padding-tb @finder-padding-lr;
 
+      .hidden-columns {
+        margin-right: 5px;
+      }
+
       h1 {
+        flex: 1 0 auto;
         font-size: 13px;
         font-weight: 700;
         line-height: 1.67;
         margin: 0 10px 0 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        .text-overflow();
       }
     }
 
@@ -62,6 +70,7 @@
         box-shadow: none;
         outline: none;
         padding-left: @finder-padding-lr;
+        z-index: 0;
 
         &:focus, &:hover {
           border-bottom: 1px solid @finder-border-color;
@@ -86,12 +95,16 @@
       padding: 0;
       overflow-y: auto;
 
+      &.ondrag {
+        outline: 2px dashed #333;
+        outline-offset: -10px;
+      }
+
       > li {
         align-items: center;
         cursor: pointer;
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
         padding: @finder-padding-tb @finder-padding-lr;
 
         &.active {
@@ -114,17 +127,24 @@
           border-left-color: @brand-warning;
         }
 
+        .item-icon {
+          margin-right: 5px;
+        }
+
         .item-text {
-          margin-right: 10px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+          flex: 1 1 auto;
+          .text-overflow();
         }
 
         .subtitle {
           display: block;
           font-size: 10px;
           color: #8b8d8f;
+          .text-overflow();
+        }
+
+        .unpin, .pin, .folder, .btn-group, button {
+          margin-left: 10px;
         }
       }
 
@@ -140,11 +160,40 @@
         .item-text {
           font-style: italic;
           color: #8b8d8f;
+          flex-grow: 0;
         }
       }
 
       > li.empty:hover {
         background: none;
+      }
+    }
+
+    > ul.pinnable {
+      > li.pinned {
+        .pin, .unpin {
+          display: none;
+        }
+        &:hover {
+          .unpin {
+            display: inherit;
+          }
+        }
+      }
+
+      > li.pinned.last {
+        border-bottom: 1px solid @finder-border-color;
+      }
+
+      > li.unpinned {
+        .pin, .unpin {
+          display: none;
+        }
+        &:hover {
+          .pin {
+            display: inherit;
+          }
+        }
       }
     }
   }
@@ -159,9 +208,37 @@
 
   .finder-preview {
     background-color: white;
+    overflow: auto;
 
     .lead {
       font-size: 14px;
+    }
+
+    h2 {
+      font-size: 18px;
+    }
+
+    img.preview {
+      .img-responsive;
+    }
+
+    .list-group > .list-group-item {
+      display: flex;
+
+      .key {
+        color: #8b8d8f;
+        width: 30%;
+
+        &:after {
+          content: ":";
+        }
+      }
+
+      .value {
+        margin-left: 10px;
+        .text-overflow();
+        width: 70%;
+      }
     }
   }
 }

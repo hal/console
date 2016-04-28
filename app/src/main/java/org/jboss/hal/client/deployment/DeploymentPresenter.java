@@ -15,10 +15,15 @@
  */
 package org.jboss.hal.client.deployment;
 
+import javax.inject.Inject;
+
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import elemental.client.Browser;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.HasFinder;
@@ -30,8 +35,6 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-
-import javax.inject.Inject;
 
 /**
  * @author Harald Pehl
@@ -47,7 +50,26 @@ public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyV
     // @formatter:on
 
 
+    private class InitialPreview extends PreviewContent {
+
+        InitialPreview() {
+            super(Names.DEPLOYMENTS, environment.isStandalone()
+                    ? resources.previews().deploymentsStandalone()
+                    : resources.previews().deploymentsDomain());
+        }
+
+        @Override
+        public void onReset() {
+            if (environment.isStandalone()) {
+                Elements.setVisible(Browser.getDocument().getElementById(Ids.DRAG_AND_DROP_DEPLOYMENT),
+                        JsHelper.supportsAdvancedUpload());
+            }
+        }
+    }
+
+
     private final Environment environment;
+    private final Resources resources;
 
     @Inject
     public DeploymentPresenter(
@@ -55,22 +77,20 @@ public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyV
             final MyView view,
             final MyProxy proxy,
             final Finder finder,
-            final Resources resources,
-            final Environment environment) {
+            final Environment environment,
+            final Resources resources) {
         super(eventBus, view, proxy, finder, resources);
         this.environment = environment;
+        this.resources = resources;
     }
 
     @Override
     protected String initialColumn() {
-        return environment.isStandalone() ? ModelDescriptionConstants.DEPLOYMENT : Ids.DEPLOYMENT_BROWSE_BY;
+        return environment.isStandalone() ? ModelDescriptionConstants.DEPLOYMENT : Ids.DEPLOYMENT_BROWSE_BY_COLUMN;
     }
 
     @Override
     protected PreviewContent initialPreview() {
-        return new PreviewContent(Names.DEPLOYMENTS,
-                environment.isStandalone() ?
-                        resources.previews().runtimeStandalone() :
-                        resources.previews().runtimeDomain());
+        return new InitialPreview();
     }
 }

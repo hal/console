@@ -15,37 +15,48 @@
  */
 package org.jboss.hal.core.finder;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental.dom.Element;
+import elemental.dom.NodeList;
 import elemental.events.Event;
+import elemental.events.EventListener;
 import elemental.events.KeyboardEvent;
 import elemental.events.KeyboardEvent.KeyCode;
 import elemental.html.InputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.Tooltip;
+import org.jboss.hal.ballroom.dragndrop.DragEvent;
+import org.jboss.hal.ballroom.dragndrop.DropEventHandler;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.UIConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.jboss.gwt.elemento.core.EventType.*;
+import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.gwt.elemento.core.EventType.keydown;
+import static org.jboss.gwt.elemento.core.EventType.keyup;
 import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.core.finder.Finder.DATA_BREADCRUMB;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
-import static org.jboss.hal.resources.UIConstants.*;
+import static org.jboss.hal.resources.UIConstants.GROUP;
+import static org.jboss.hal.resources.UIConstants.ROLE;
+import static org.jboss.hal.resources.UIConstants.TABINDEX;
 
 /**
  * Describes and renders a column in a finder. A column has a unique id, a title, a number of optional column actions
@@ -69,7 +80,11 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         private ItemRenderer<T> itemRenderer;
         private boolean showCount;
         private boolean withFilter;
+        private boolean pinnable;
         private PreviewCallback<T> previewCallback;
+        private BreadcrumbItemsProvider<T> breadcrumbItemsProvider;
+        private BreadcrumbItemHandler<T> breadcrumbItemHandler;
+        private boolean firstActionAsBreadcrumbHandler;
         private List<T> items;
         private ItemsProvider<T> itemsProvider;
         private ItemSelectionHandler<T> selectionHandler;
@@ -82,6 +97,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             this.columnActions = new ArrayList<>();
             this.showCount = false;
             this.withFilter = false;
+            this.pinnable = false;
             this.items = new ArrayList<>();
         }
 
@@ -97,6 +113,11 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
         public Builder<T> withFilter() {
             this.withFilter = true;
+            return this;
+        }
+
+        public Builder<T> pinnable() {
+            this.pinnable = true;
             return this;
         }
 
@@ -127,16 +148,40 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             return this;
         }
 
+        public Builder<T> breadcrumbItemsProvider(BreadcrumbItemsProvider<T> breadcrumbItemsProvider) {
+            this.breadcrumbItemsProvider = breadcrumbItemsProvider;
+            return this;
+        }
+
+        /**
+         * Sets the handler which is executed when an item in the breadcrumb dropdown is selected. Has precedence over
+         * {@link #useFirstActionAsBreadcrumbHandler()}.
+         */
+        public Builder<T> onBreadcrumbItem(BreadcrumbItemHandler<T> handler) {
+            this.breadcrumbItemHandler = handler;
+            return this;
+        }
+
+        /**
+         * Uses the item first action as breadcrumb item handler. If a custom handler is set using {@link
+         * #onBreadcrumbItem(BreadcrumbItemHandler)} this handler will be used instead of the first item action.
+         */
+        public Builder<T> useFirstActionAsBreadcrumbHandler() {
+            this.firstActionAsBreadcrumbHandler = true;
+            return this;
+        }
+
         public FinderColumn<T> build() {
             return new FinderColumn<>(this);
         }
     }
 
 
-    public enum RefreshMode {CLEAR_SELECTION, RESTORE_SELECTIION}
+    public enum RefreshMode {CLEAR_SELECTION, RESTORE_SELECTION}
 
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
+    private static final String HIDDEN_COLUMNS_ELEMENT = "hiddenColumnsElement";
     private static final String HEADER_ELEMENT = "headerElement";
     private static final String COLUMN_ACTIONS_ELEMENT = "columnActionsElement";
     private static final String FILTER_ELEMENT = "filterElement";
@@ -147,15 +192,22 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     private final String id;
     private final String title;
     private final boolean showCount;
+    private final boolean pinnable;
     private final Element columnActions;
     private final List<T> initialItems;
+    private final ItemSelectionHandler<T> selectionHandler;
     private ItemsProvider<T> itemsProvider;
     private ItemRenderer<T> itemRenderer;
-    private final ItemSelectionHandler<T> selectionHandler;
+    private PreviewCallback<T> previewCallback;
+    private BreadcrumbItemsProvider<T> breadcrumbItemsProvider;
+    private BreadcrumbItemHandler<T> breadcrumbItemHandler;
+    private boolean firstActionAsBreadcrumbHandler;
+
     private final Map<String, FinderRow<T>> rows;
-    private final PreviewCallback<T> previewCallback;
+    private final FinderColumnStorage storage;
 
     private final Element root;
+    private final Element hiddenColumns;
     private final Element headerElement;
     private final InputElement filterElement;
     private final Element ulElement;
@@ -171,23 +223,37 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         this.id = builder.id;
         this.title = builder.title;
         this.showCount = builder.showCount;
+        this.pinnable = builder.pinnable;
         this.initialItems = builder.items;
         this.itemsProvider = builder.itemsProvider;
         this.itemRenderer = builder.itemRenderer;
         this.selectionHandler = builder.selectionHandler;
-        this.rows = new HashMap<>();
         this.previewCallback = builder.previewCallback;
+        this.breadcrumbItemsProvider = builder.breadcrumbItemsProvider;
+        this.breadcrumbItemHandler = builder.breadcrumbItemHandler;
+        this.firstActionAsBreadcrumbHandler = builder.firstActionAsBreadcrumbHandler;
         this.asElement = false;
 
+        this.rows = new HashMap<>();
+        this.storage = new FinderColumnStorage(id);
+
         // header
+        // @formatter:off
         Elements.Builder eb = new Elements.Builder()
-                .div().id(id)
+            .div().id(id)
                 .data(DATA_BREADCRUMB, title)
                 .css(finderColumn, column(2))
                 .attr(TABINDEX, "-1")
                 .on(keydown, this::onNavigation)
-                .header()
-                .h(1).textContent(builder.title).title(builder.title).rememberAs(HEADER_ELEMENT).end();
+                    .header()
+                        .span().css(CSS.hiddenColumns, fontAwesome("angle-double-left"))
+                            .title(CONSTANTS.hiddenColumns())
+                            .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
+                            .data(UIConstants.PLACEMENT, "bottom")
+                            .rememberAs(HIDDEN_COLUMNS_ELEMENT)
+                        .end()
+                        .h(1).textContent(builder.title).title(builder.title).rememberAs(HEADER_ELEMENT).end();
+        // @formatter:on
 
         // column actions
         eb.div().rememberAs(COLUMN_ACTIONS_ELEMENT);
@@ -200,7 +266,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                 eb.add(newColumnButton(action));
             }
         }
-        eb.end().end(); // </columnActions> && </updateHeader>
+        eb.end().end(); // </columnActions> && </header>
 
         // filter box
         if (builder.withFilter) {
@@ -221,7 +287,11 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
 
         // rows
-        eb.ul().rememberAs(UL_ELEMENT).end().end(); // </ul> && </div>
+        eb.ul();
+        if (pinnable) {
+            eb.css(CSS.pinnable);
+        }
+        eb.rememberAs(UL_ELEMENT).end().end(); // </ul> && </div>
 
         // no items marker
         noItems = new Elements.Builder().li().css(empty)
@@ -229,6 +299,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                 .end().build();
 
         root = eb.build();
+        hiddenColumns = eb.referenceFor(HIDDEN_COLUMNS_ELEMENT);
         headerElement = eb.referenceFor(HEADER_ELEMENT);
         columnActions = eb.referenceFor(COLUMN_ACTIONS_ELEMENT);
         filterElement = builder.withFilter ? eb.referenceFor(FILTER_ELEMENT) : null;
@@ -342,7 +413,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                                 selectedRow.showPreview();
                             }
                             finder.updateContext();
-                            finder.publishContext();
+                            finder.updateHistory();
                         }
                     }
                     break;
@@ -373,7 +444,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                                             column.row(firstElement).showPreview();
                                         }
                                         finder.updateContext();
-                                        finder.publishContext();
+                                        finder.updateHistory();
                                         finder.selectColumn(nextColumn);
                                     }
                                 });
@@ -400,6 +471,10 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
 
     // ------------------------------------------------------ internal API
+
+    void markHiddenColumns(boolean show) {
+        Elements.setVisible(hiddenColumns, show);
+    }
 
     private Element activeElement() {return ulElement.querySelector("li." + active);} //NON-NLS
 
@@ -461,6 +536,83 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
     }
 
+    boolean isPinnable() {
+        return pinnable;
+    }
+
+    void unpin(final FinderRow<T> row) {
+        row.asElement().getClassList().remove(pinned);
+        row.asElement().getClassList().add(unpinned);
+
+        // move row to unpinned section
+        ulElement.removeChild(row.asElement());
+        NodeList nodes = ulElement.querySelectorAll("." + unpinned);
+        if (nodes.getLength() == 0) {
+            // no unpinned rows append to bottom
+            ulElement.appendChild(row.asElement());
+        } else {
+            Element before = findPosition(nodes, row);
+            if (before != null) {
+                ulElement.insertBefore(row.asElement(), before);
+            } else {
+                ulElement.appendChild(row.asElement());
+            }
+        }
+        adjustPinSeparator();
+        storage.unpinItem(row.getId());
+    }
+
+    void pin(final FinderRow<T> row) {
+        row.asElement().getClassList().remove(unpinned);
+        row.asElement().getClassList().add(pinned);
+
+        // move row to pinned section
+        ulElement.removeChild(row.asElement());
+        NodeList nodes = ulElement.querySelectorAll("." + pinned);
+        if (nodes.getLength() == 0) {
+            // no pinned rows append to top
+            ulElement.insertBefore(row.asElement(), ulElement.getFirstChild());
+        } else {
+            Element before = findPosition(nodes, row);
+            if (before != null) {
+                ulElement.insertBefore(row.asElement(), before);
+            } else {
+                Element firstUnpinned = ulElement.querySelector("." + unpinned);
+                if (firstUnpinned != null) {
+                    ulElement.insertBefore(row.asElement(), firstUnpinned);
+                } else {
+                    ulElement.appendChild(row.asElement());
+                }
+            }
+        }
+        adjustPinSeparator();
+        row.asElement().scrollIntoView(false);
+        storage.pinItem(row.getId());
+    }
+
+    private Element findPosition(NodeList nodes, FinderRow<T> row) {
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element currentElement = (Element) nodes.item(i);
+            FinderRow<T> currentRow = row(currentElement);
+            if (currentRow.getDisplay().getTitle().compareTo(row.getDisplay().getTitle()) > 0) {
+                return currentElement;
+            }
+        }
+        return null;
+    }
+
+    private void adjustPinSeparator() {
+        NodeList nodes = ulElement.querySelectorAll("." + pinned);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element element = (Element) nodes.item(i);
+            if (i == nodes.getLength() - 1) {
+                element.getClassList().add(last);
+            } else {
+                element.getClassList().remove(last);
+            }
+        }
+    }
+
     void setItems(AsyncCallback<FinderColumn> callback) {
         if (!initialItems.isEmpty()) {
             setItems(initialItems, callback);
@@ -490,8 +642,33 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             filterElement.setValue("");
         }
 
-        for (T item : items) {
-            FinderRow<T> row = new FinderRow<>(finder, this, item,
+        List<T> pinnedItems = new ArrayList<>();
+        List<T> unpinnedItems = new ArrayList<>();
+        Set<String> pinnedItemIds = storage.pinnedItems();
+        if (pinnable && !pinnedItemIds.isEmpty()) {
+            for (T item : items) {
+                String id = itemRenderer.render(item).getId();
+                if (pinnedItemIds.contains(id)) {
+                    pinnedItems.add(item);
+                } else {
+                    unpinnedItems.add(item);
+                }
+            }
+        } else {
+            unpinnedItems.addAll(items);
+        }
+        for (Iterator<T> iterator = pinnedItems.iterator(); iterator.hasNext(); ) {
+            T item = iterator.next();
+            FinderRow<T> row = new FinderRow<>(finder, this, item, true,
+                    itemRenderer.render(item), previewCallback);
+            rows.put(row.getId(), row);
+            ulElement.appendChild(row.asElement());
+            if (!iterator.hasNext()) {
+                row.asElement().getClassList().add(last);
+            }
+        }
+        for (T item : unpinnedItems) {
+            FinderRow<T> row = new FinderRow<>(finder, this, item, false,
                     itemRenderer.render(item), previewCallback);
             rows.put(row.getId(), row);
             ulElement.appendChild(row.asElement());
@@ -513,7 +690,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
      * part of the builder which is passed to {@code super()}. In this case you can use this method to add your column
      * actions <strong>after</strong> the call to {@code super()}.
      * <p>
-     * However make sure to call the setter <strong>before</strong> the column is used {@link #asElement()} and gets
+     * However make sure to call this method <strong>before</strong> the column is used {@link #asElement()} and gets
      * attached to the DOM!
      */
     protected void addColumnAction(ColumnAction<T> columnAction) {
@@ -538,6 +715,10 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         this.itemRenderer = itemRenderer;
     }
 
+    ItemRenderer<T> getItemRenderer() {
+        return itemRenderer;
+    }
+
     /**
      * Sometimes you need to reference {@code this} in the items provider. This is not possible if the items provider
      * is part of the builder which is passed to {@code super()}. In this case the items provider can be specified
@@ -549,6 +730,88 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     protected void setItemsProvider(final ItemsProvider<T> itemsProvider) {
         assertNotAsElement("setItemsProvider()");
         this.itemsProvider = itemsProvider;
+    }
+
+    ItemsProvider<T> getItemsProvider() {
+        return itemsProvider;
+    }
+
+    List<T> getInitialItems() {
+        return initialItems;
+    }
+
+    /**
+     * Sometimes you need to reference {@code this} in the preview callback. This is not possible if the preview
+     * callback is part of the builder which is passed to {@code super()}. In this case the preview callback can be
+     * specified <strong>after</strong> the call to {@code super()} using this setter.
+     * <p>
+     * However make sure to call the setter <strong>before</strong> the column is used {@link #asElement()} and gets
+     * attached to the DOM!
+     */
+    protected void setPreviewCallback(final PreviewCallback<T> previewCallback) {
+        this.previewCallback = previewCallback;
+    }
+
+    /**
+     * Sometimes you need to reference {@code this} in the breadcrumb items provider. This is not possible if the
+     * breadcrumb items provider is part of the builder which is passed to {@code super()}. In this case the breadcrumb
+     * items provider can be specified <strong>after</strong> the call to {@code super()} using this setter.
+     * <p>
+     * However make sure to call the setter <strong>before</strong> the column is used {@link #asElement()} and gets
+     * attached to the DOM!
+     */
+    protected void setBreadcrumbItemsProvider(final BreadcrumbItemsProvider<T> breadcrumbItemsProvider) {
+        assertNotAsElement("setBreadcrumbItemsProvider()");
+        this.breadcrumbItemsProvider = breadcrumbItemsProvider;
+    }
+
+    BreadcrumbItemsProvider<T> getBreadcrumbItemsProvider() {
+        return breadcrumbItemsProvider;
+    }
+
+    protected void setBreadcrumbItemHandler(final BreadcrumbItemHandler<T> breadcrumbItemHandler) {
+        // No UI related property, so no need to call assertNotAsElement()
+        this.breadcrumbItemHandler = breadcrumbItemHandler;
+    }
+
+    BreadcrumbItemHandler<T> getBreadcrumbItemHandler() {
+        return breadcrumbItemHandler;
+    }
+
+    boolean useFirstActionAsBreadcrumbHandler() {
+        return firstActionAsBreadcrumbHandler;
+    }
+
+    protected void setOnDrop(DropEventHandler handler) {
+        EventListener noop = event -> {
+            event.preventDefault();
+            event.stopPropagation();
+        };
+        EventListener addDragIndicator = event -> {
+            noop.handleEvent(event);
+            ulElement.getClassList().add(ondrag);
+        };
+        EventListener removeDragIndicator = event -> {
+            noop.handleEvent(event);
+            ulElement.getClassList().remove(ondrag);
+        };
+
+        ulElement.setOndrag(noop);
+        ulElement.setOndragstart(noop);
+
+        ulElement.setOndragenter(addDragIndicator);
+        ulElement.setOndragover(addDragIndicator);
+
+        ulElement.setOndragleave(removeDragIndicator);
+        ulElement.setOndragend(removeDragIndicator);
+
+        ulElement.setOndrop(event -> {
+            noop.handleEvent(event);
+            removeDragIndicator.handleEvent(event);
+
+            DragEvent dragEvent = (DragEvent) event;
+            handler.onDrop(dragEvent);
+        });
     }
 
     private void assertNotAsElement(String method) {
@@ -570,13 +833,22 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     public void refresh(RefreshMode refreshMode) {
         switch (refreshMode) {
             case CLEAR_SELECTION:
-                refresh(() -> finder.selectPreviousColumn(id));
+                if (finder.columns() == 1) {
+                    refresh(finder::showInitialPreview);
+                } else {
+                    refresh(() -> finder.selectPreviousColumn(id));
+                }
                 break;
-            case RESTORE_SELECTIION:
-                FinderRow<T> row = selectedRow();
+            case RESTORE_SELECTION:
+                FinderRow<T> oldRow = selectedRow();
                 refresh(() -> {
-                    if (row != null) {
-                        row.click();
+                    if (oldRow != null) {
+                        FinderRow<T> updatedRow = rows.get(oldRow.getId());
+                        if (updatedRow != null) {
+                            updatedRow.click();
+                        } else {
+                            finder.selectPreviousColumn(id);
+                        }
                     } else {
                         finder.selectPreviousColumn(id);
                     }
@@ -606,7 +878,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             @Override
             public void onSuccess(final FinderColumn column) {
                 finder.updateContext();
-                finder.publishContext();
+                finder.updateHistory();
                 if (andThen != null) {
                     andThen.execute();
                 }

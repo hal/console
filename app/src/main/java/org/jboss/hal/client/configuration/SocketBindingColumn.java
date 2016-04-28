@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.configuration;
 
-import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;

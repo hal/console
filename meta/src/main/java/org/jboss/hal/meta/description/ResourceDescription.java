@@ -15,14 +15,13 @@
  */
 package org.jboss.hal.meta.description;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import java.util.Collections;
+import java.util.List;
+
+import com.google.common.collect.FluentIterable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
-
-import java.util.Collections;
-import java.util.List;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -33,10 +32,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 public class ResourceDescription extends ModelNode {
 
-    public ResourceDescription() {
-        super();
-    }
-
     public ResourceDescription(ModelNode payload) {
         set(payload);
     }
@@ -45,64 +40,35 @@ public class ResourceDescription extends ModelNode {
         return get(DESCRIPTION).asString();
     }
 
-    public boolean hasAttributes() {
-        return hasDefined(ATTRIBUTES) && !get(ATTRIBUTES).asList().isEmpty();
-    }
-
-    public List<Property> getAttributes() {
-        return hasAttributes() ?  get(ATTRIBUTES).asPropertyList() : Collections.emptyList();
-    }
-
-    public List<Property> getRequiredAttributes() {
-        if (hasAttributes()) {
-            Iterable<Property> required = Iterables.filter(getAttributes(),
-                    requestProperty -> requestProperty.getValue().hasDefined(NILLABLE) &&
-                            !requestProperty.getValue().get(NILLABLE).asBoolean());
-            return Lists.newArrayList(required);
-
-        } else {
-            return Collections.emptyList();
+    public List<Property> getAttributes(final String path) {
+        ModelNode attributes = ModelNodeHelper.failSafeGet(this, path);
+        if (attributes.isDefined()) {
+            return attributes.asPropertyList();
         }
+        return Collections.emptyList();
     }
 
-    public List<Property> getRequestProperties() {
-        String path = OPERATIONS + "." + ADD + "." + REQUEST_PROPERTIES;
-        ModelNode requestProperties = ModelNodeHelper.failSafeGet(this, path);
-        if (requestProperties.isDefined()) {
-            return requestProperties.asPropertyList();
-        } else {
-            return Collections.emptyList();
-        }
-    }
-
-    public List<Property> getRequiredRequestProperties() {
-        String path = OPERATIONS + "." + ADD + "." + REQUEST_PROPERTIES;
-        ModelNode requestProperties = ModelNodeHelper.failSafeGet(this, path);
-
-        if (requestProperties.isDefined()) {
-            Iterable<Property> required = Iterables.filter(getRequestProperties(),
-                    requestProperty -> requestProperty.getValue().hasDefined(REQUIRED) &&
-                            requestProperty.getValue().get(REQUIRED).asBoolean());
-            return Lists.newArrayList(required);
-
-        } else {
-            return Collections.emptyList();
-        }
-    }
-
-    public boolean hasOperations() {
-        return hasDefined(OPERATIONS) && !get(OPERATIONS).asList().isEmpty();
+    public List<Property> getRequiredAttributes(final String path) {
+        //noinspection Guava
+        return FluentIterable.from(getAttributes(path)).filter(property -> {
+            ModelNode attributeDescription = property.getValue();
+            if (attributeDescription.hasDefined(REQUIRED)) {
+                return attributeDescription.get(REQUIRED).asBoolean();
+            } else if (attributeDescription.hasDefined(NILLABLE)) {
+                return !attributeDescription.get(NILLABLE).asBoolean();
+            }
+            return false;
+        }).toList();
     }
 
     public List<Property> getOperations() {
-        return hasOperations() ? get(OPERATIONS).asPropertyList() : Collections.emptyList();
+        return hasDefined(OPERATIONS) ? get(OPERATIONS).asPropertyList() : Collections.emptyList();
     }
 
-    public ModelNode find(String name) {
-        List<Property> properties = hasAttributes() ? getAttributes() : getRequestProperties();
-        for (Property property : properties) {
+    public Property findAttribute(final String path, final String name) {
+        for (Property property : getAttributes(path)) {
             if (name.equals(property.getName())) {
-                return property.getValue();
+                return property;
             }
         }
         return null;

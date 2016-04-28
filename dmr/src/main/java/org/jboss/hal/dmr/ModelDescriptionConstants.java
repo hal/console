@@ -36,7 +36,7 @@
 package org.jboss.hal.dmr;
 
 /**
- * String constants frequently used in model descriptions.
+ * String constants frequently used in model descriptions and DMR operations.
  *
  * @author Brian Stansberry
  * @author Harald Pehl
@@ -44,7 +44,6 @@ package org.jboss.hal.dmr;
 public interface ModelDescriptionConstants {
 
     // KEEP THESE IN ALPHABETICAL ORDER!
-
     String ACCESS_CONTROL = "access-control";
     String ACCESS_TYPE = "access-type";
     String ADD = "add";
@@ -56,6 +55,7 @@ public interface ModelDescriptionConstants {
     String ATTRIBUTES = "attributes";
     String ATTRIBUTES_ONLY = "attributes-only";
 
+    String BATCH_JBERET = "batch-jberet";
     String BYTES = "bytes";
 
     String CAPABILITIES = "capabilities";
@@ -64,17 +64,33 @@ public interface ModelDescriptionConstants {
     String CHILDREN = "children";
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
     String COMPOSITE = "composite";
+    String CONNECTION_URL = "connection-url";
     String CONFIGURATION = "configuration";
+    String CONTEXT_SERVICE = "context-service";
     String CRITERIA = "criteria";
 
     String DATA_SOURCE = "data-source";
+    String DATASOURCES = "datasources";
     String DEFAULT = "default";
+    String DEFAULT_BINDINGS = "default-bindings";
     String DEPLOYMENT = "deployment";
+    String DEPLOYMENT_NAME = "deployment-name";
+    String DEPLOYMENT_SCANNER = "deployment-scanner";
     String DESCRIBE = "describe";
     String DESCRIPTION = "description";
-    @SuppressWarnings("DuplicateStringLiteralInspection")
     String DISABLED = "disabled";
+    String DRIVER_CLASS = "driver-class";
+    String DRIVER_CLASS_NAME = "driver-class-name";
+    String DRIVER_DATASOURCE_CLASS_NAME = "driver-datasource-class-name";
+    String DRIVER_MODULE_NAME = "driver-module-name";
+    String DRIVER_NAME = "driver-name";
+    String DRIVER_MAJOR_VERSION = "driver-major-version";
+    String DRIVER_MINOR_VERSION = "driver-minor-version";
+    String DRIVER_VERSION = "driver-version";
+    String DRIVER_XA_DATASOURCE_CLASS_NAME = "driver-xa-datasource-class-name";
 
+    String EE = "ee";
+    String EJB3 = "ejb3";
     String ENABLED = "enabled";
     String EXCEPTIONS = "exceptions";
     String EXECUTE = "execute";
@@ -83,7 +99,9 @@ public interface ModelDescriptionConstants {
 
     String FAILED = "failed";
     String FAILURE_DESCRIPTION = "failure-description";
+    String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
 
+    String GLOBAL_MODULES = "global-modules";
     String GRACEFUL_SHUTDOWN_TIMEOUT = "graceful-shutdown-timeout";
     String GROUP = "group";
 
@@ -94,27 +112,42 @@ public interface ModelDescriptionConstants {
     String HOST_FAILURE_DESCRIPTIONS = "host-failure-descriptions";
 
     String IGNORED = "ignored";
+    String IIOP_OPENJDK = "iiop-openjdk";
     String INCLUDE = "include";
     String INCLUDES = "includes";
     String INCLUDE_ALIASES = "include-aliases";
     String INCLUDE_DEFAULTS = "include-defaults";
     String INCLUDE_RUNTIME = "include-runtime";
     String INCLUDE_SINGLETONS = "include-singletons";
+    String INFINISPAN = "infinispan";
     String INHERITED = "inherited";
     String INPUT_STREAM_INDEX = "input-stream-index";
     String INTERFACE = "interface";
+    String IO = "io";
 
+    String JCA = "jca";
+    String JDBC_DRIVER = "jdbc-driver";
+    String JMX = "jmx";
     String JNDI_NAME = "jndi-name";
+    String JPA = "jpa";
 
+    String LIST_ADD = "list-add";
+    String LIST_REMOVE = "list-remove";
     String LOCAL = "local";
     String LOCALE = "locale";
+    String LOGGING = "logging";
 
+    String MAIL = "mail";
     String MAIL_SESSION = "mail-session";
+    String MANAGED_EXECUTOR_SERVICE = "managed-executor-service";
+    String MANAGED_SCHEDULED_EXECUTOR_SERVICE = "managed-scheduled-executor-service";
+    String MANAGED_THREAD_FACTORY = "managed-thread-factory";
     String MASK = "mask";
     String MAX = "max";
     String MAX_LENGTH = "max-length";
     String MAX_OCCURS = "max-occurs";
     String MAX_THREADS = "max-threads";
+    String MESSAGING_ACTIVEMQ = "messaging-activemq";
     String MESSAGING_SERVER = "messaging-server";
     String METRIC = "metric";
     String MIN = "min";
@@ -122,6 +155,7 @@ public interface ModelDescriptionConstants {
     String MIN_OCCURS = "min-occurs";
     String MIN_VALUE = "min-value";
     String MODEL_DESCRIPTION = "model-description";
+    String MODULE_SLOT = "module-slot";
 
     String NAME = "name";
     String NAMESPACE = "namespace";
@@ -135,9 +169,12 @@ public interface ModelDescriptionConstants {
     String OPERATION_HEADERS = "operation-headers";
     String OUTCOME = "outcome";
 
+    String PASSWORD = "password";
     String PORT = "port";
     String PROFILE = "profile";
     String PROXIES = "proxies";
+
+    String QUERY = "query";
 
     String READ = "read";
     String READ_ATTRIBUTE_OPERATION = "read-attribute";
@@ -152,37 +189,48 @@ public interface ModelDescriptionConstants {
     String READ_RESOURCE_OPERATION = "read-resource";
     String READ_WRITE = "read-write";
     String RELATIVE_TO = "relative-to";
+    String REMOTING = "remoting";
     String REMOVE = "remove";
     String REQUEST_PROPERTIES = "request-properties";
     String RECURSIVE = "recursive";
     String RECURSIVE_DEPTH = "recursive-depth";
     String REPLY_PROPERTIES = "reply-properties";
+    String REQUEST_CONTROLLER = "request-controller";
     String REQUIRED = "required";
     String REQUIRES = "requires";
     String RESPONSE = "response";
     String RESOURCE_ADAPTER = "resource-adapter";
+    String RESOURCE_ADAPTERS = "resource-adapters";
     String RESULT = "result";
     String ROLES = "HEADER_ROLES";
     String RUNTIME = "runtime";
     String RUNTIME_NAME = "runtime-name";
+
+    String SECURITY = "security";
     String SECURITY_DOMAIN = "security-domain";
+    String SELECT = "select";
     String SERVER = "server";
     String SERVERS = "servers";
     String SERVER_CONFIG = "server-config";
     String SERVER_GROUP = "server-group";
     String SERVER_GROUPS = "server-groups";
     String SERVER_OPERATIONS = "server-operations";
+    String SERVER_STATE = "server-state";
+    String SERVICE = "service";
     String SOCKET_BINDING = "socket-binding";
     String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SHUTDOWN = "shutdown";
     String STANDALONE = "standalone";
     String START = "start";
+    String STATUS = "status";
+    String STATISTICS_ENABLED = "statistics-enabled";
     String STEPS = "steps";
     String STORAGE = "storage";
     String SUBDEPLOYMENT = "subdeployment";
     String SUBSYSTEM = "subsystem";
     String SUCCESS = "success";
 
+    String TRANSACTIONS = "transactions";
     String TRIM_DESCRIPTIONS = "trim-descriptions";
     String TYPE = "type";
 
@@ -192,13 +240,15 @@ public interface ModelDescriptionConstants {
     String VALUE = "value";
     String VALUE_TYPE = "value-type";
 
+    String WEBSERVICES = "webservices";
+    String WHERE = "where";
     String WHOAMI = "whoami";
     String WRITE = "write";
     String WRITE_ATTRIBUTE_OPERATION = "write-attribute";
 
     String UNDEFINE_ATTRIBUTE_OPERATION = "undefine-attribute";
-    @SuppressWarnings("DuplicateStringLiteralInspection")
     String UNDEFINED = "undefined";
+    String UNDERTOW = "undertow";
 
     String XA_DATA_SOURCE = "xa-data-source";
 }

@@ -15,66 +15,99 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
+import java.util.List;
+import java.util.Map;
+
+import com.google.common.collect.Maps;
+import com.google.gwt.core.client.Scheduler;
 import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.IdBuilder;
-import org.jboss.hal.ballroom.Tabs;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.ballroom.form.SuggestHandler;
+import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver;
-import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Resources;
 
-import java.util.List;
-
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
  */
 class DriverStep extends WizardStep<Context, State> {
 
-    private final Tabs tabs;
+    private final Map<String, JdbcDriver> drivers;
     private final ModelNodeForm<JdbcDriver> form;
+    private final FormItem<String> nameItem;
+    private SuggestHandler suggestHandler;
 
     DriverStep(final NewDataSourceWizard wizard, final List<JdbcDriver> drivers,
             final Metadata metadata, final Resources resources) {
         super(wizard, resources.constants().jdbcDriver());
 
-        form = new ModelNodeForm.Builder<JdbcDriver>(IdBuilder.build(id(), "driver", "step"), metadata)
-                .unboundFormItem(new NameItem(), 0)
-                .requiredOnly()
+        this.drivers = Maps.uniqueIndex(drivers, JdbcDriver::getName);
+        this.form = new ModelNodeForm.Builder<JdbcDriver>(IdBuilder.build(id(), "driver", "step"),
+                adjustMetadata(metadata))
+                .include(DRIVER_NAME, DRIVER_MODULE_NAME, DRIVER_CLASS_NAME, DRIVER_MAJOR_VERSION,
+                        DRIVER_MINOR_VERSION)
+                .unsorted()
                 .onSave((form, changedValues) -> wizard.getContext().driver = form.getModel())
                 .build();
-        Element nyi = new Elements.Builder().p().textContent(Names.NYI).end().build();
+        this.nameItem = form.getFormItem(DRIVER_NAME);
 
-        tabs = new Tabs();
-        tabs.add(IdBuilder.build(id(), "driver", "step", "specify"), resources.constants().specifyDriver(),
-                form.asElement());
-        tabs.add(IdBuilder.build(id(), "driver", "step", "detected"), resources.constants().detectedDriver(),
-                nyi);
+        if (!this.drivers.isEmpty()) {
+            this.suggestHandler = new Typeahead.StaticBuilder(this.drivers.keySet()).build();
+            nameItem.registerSuggestHandler(suggestHandler);
+        }
+        registerAttachable(form);
+    }
+
+    private Metadata adjustMetadata(final Metadata metadata) {
+        ModelNode newAttributes = new ModelNode();
+        for (Property property : metadata.getDescription().get(ATTRIBUTES).asPropertyList()) {
+            ModelNode value = property.getValue().clone();
+            value.get(ACCESS_TYPE).set(READ_WRITE);
+            value.get(NILLABLE).set(!DRIVER_NAME.equals(property.getName()));
+            newAttributes.get(property.getName()).set(value);
+        }
+
+        metadata.getDescription().remove(ATTRIBUTES);
+        metadata.getDescription().get(ATTRIBUTES).set(newAttributes);
+        return metadata;
     }
 
     @Override
     public Element asElement() {
-        return tabs.asElement();
+        return form.asElement();
     }
 
     @Override
     protected void onShow(final Context context) {
-        // name is unbound so we have to bind it manually
-        FormItem<Object> nameItem = form.getFormItem(NAME);
-        nameItem.setValue(context.driver.getName());
-        nameItem.setUndefined(false);
-
         form.edit(context.driver);
+
+        if (suggestHandler != null) {
+            Typeahead.Bridge.select("#" + nameItem.getId(Form.State.EDITING)).onChange(event -> {
+                JdbcDriver driver = drivers.get(nameItem.getValue());
+                if (driver != null) {
+                    form.edit(driver);
+                }
+            });
+            Scheduler.get().scheduleDeferred(() -> suggestHandler.close());
+        }
     }
 
     @Override
     protected boolean onNext(final Context context) {
-        return form.save();
+        boolean valid = form.save();
+        if (valid) {
+            JdbcDriver driver = form.getModel();
+            context.dataSource.setDriver(driver);
+        }
+        return valid;
     }
 }

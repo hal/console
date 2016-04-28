@@ -1,5 +1,6 @@
 package org.jboss.hal.ballroom;
 
+import org.jboss.hal.resources.IdBuilder;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -27,5 +28,14 @@ public class IdBuilderTest {
     @Test(expected = IllegalArgumentException.class)
     public void illegal() {
         IdBuilder.build(null);
+    }
+
+    @Test
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    public void asId() {
+        assertEquals("lorem-ipsum", IdBuilder.asId("lorem-ipsum"));
+        assertEquals("lorem-ipsum", IdBuilder.asId("Lorem Ipsum"));
+        assertEquals("l0rem-ip5um", IdBuilder.asId("l0rem-ip5um"));
+        assertEquals("lorem--ipsum", IdBuilder.asId("lorem §±!@#$%^&*()=_+[]{};'\\:\"|,./<>?`~ ipsum"));
     }
 }

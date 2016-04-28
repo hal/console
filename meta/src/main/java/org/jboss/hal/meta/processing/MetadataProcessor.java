@@ -26,6 +26,7 @@ import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.Operation;
@@ -76,7 +77,8 @@ public class MetadataProcessor {
     private final CreateRrdOperations rrdOps;
 
     @Inject
-    public MetadataProcessor(final Dispatcher dispatcher,
+    public MetadataProcessor(final Environment environment,
+            final Dispatcher dispatcher,
             final StatementContext statementContext,
             final RequiredResources requiredResources,
             final MetadataRegistry metadataRegistry,
@@ -90,7 +92,7 @@ public class MetadataProcessor {
         this.resourceDescriptions = resourceDescriptions;
         this.capabilities = capabilities;
         this.lookup = new Lookup(resourceDescriptions, securityFramework);
-        this.rrdOps = new CreateRrdOperations(statementContext);
+        this.rrdOps = new CreateRrdOperations(statementContext, environment);
     }
 
     public void process(final String id, final Progress progress, final AsyncCallback<Void> callback) {

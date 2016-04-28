@@ -46,6 +46,7 @@ public class TypeaheadProvider {
         }
 
         boolean singleAddress = Iterables.size(addresses) == 1;
+        //noinspection Guava
         List<Operation> operations = FluentIterable.from(addresses)
                 .transform((address) -> operation(address, singleAddress)).toList();
         Operation operation;
@@ -82,7 +83,7 @@ public class TypeaheadProvider {
             suggestionTemplate = new NestedSuggestionTemplate();
         }
 
-        return new Typeahead.Builder(operation, resultProcessor, identifier)
+        return new Typeahead.OperationBuilder(operation, resultProcessor, identifier)
                 .dataTokenizer(dataTokenizer)
                 .display(display)
                 .suggestion(suggestionTemplate)

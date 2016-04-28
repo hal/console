@@ -15,10 +15,11 @@
  */
 package org.jboss.hal.core.finder;
 
+import javax.inject.Inject;
+
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -31,14 +32,14 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 
-import javax.inject.Inject;
-
-import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTIION;
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -50,7 +51,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
  */
 public class ColumnActionFactory {
 
-    private class ColumnAddResourceCallback<T> implements AddResourceDialog.Callback<ModelNode> {
+    private class ColumnAddResourceCallback<T> implements AddResourceDialog.Callback {
 
         private final FinderColumn<T> column;
         private final String type;
@@ -109,29 +110,43 @@ public class ColumnActionFactory {
     public <T> ColumnAction<T> add(String id, String type, AddressTemplate template,
             @NonNls final String firstAttribute, @NonNls final String... otherAttributes) {
 
-        return add(id, column -> {
+        return add(id, type, column -> {
             Metadata metadata = metadataRegistry.lookup(template);
             ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(
-                    IdBuilder.build(id, "add", "form"), metadata)
-                    .createResource()
+                    IdBuilder.build(id, "form"), metadata)
+                    .addFromRequestProperties()
                     .unboundFormItem(new NameItem(), 0);
             if (firstAttribute != null) {
                 builder.include(firstAttribute, otherAttributes);
             }
-            AddResourceDialog<ModelNode> dialog = new AddResourceDialog<>(
+            AddResourceDialog dialog = new AddResourceDialog(
                     resources.messages().addResourceTitle(type), builder.build(),
                     new ColumnAddResourceCallback<>(column, type, template));
             dialog.show();
         });
     }
 
-    public <T> ColumnAction<T> add(String id, ColumnActionHandler<T> handler) {
-        Element element = new Elements.Builder().span().css(pfIcon("add-circle-o")).end().build();
+    public <T> ColumnAction<T> add(String id, String type, ColumnActionHandler<T> handler) {
+        return add(id, type, pfIcon("add-circle-o"), handler);
+    }
+
+    public <T> ColumnAction<T> add(String id, String type, String iconCss, ColumnActionHandler<T> handler) {
+        Element element = new Elements.Builder().span()
+                .css(iconCss)
+                .title(resources.messages().addResourceTitle(type))
+                .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
+                .data(UIConstants.PLACEMENT, "bottom")
+                .end().build();
         return new ColumnAction<>(id, element, handler);
     }
 
     public <T> ColumnAction<T> refresh(String id) {
-        Element element = new Elements.Builder().span().css(fontAwesome(CSS.refresh)).end().build();
-        return new ColumnAction<>(id, element, column -> column.refresh(RESTORE_SELECTIION));
+        Element element = new Elements.Builder().span()
+                .css(fontAwesome(CSS.refresh))
+                .title(resources.constants().refresh())
+                .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
+                .data(UIConstants.PLACEMENT, "bottom")
+                .end().build();
+        return new ColumnAction<>(id, element, column -> column.refresh(RESTORE_SELECTION));
     }
 }

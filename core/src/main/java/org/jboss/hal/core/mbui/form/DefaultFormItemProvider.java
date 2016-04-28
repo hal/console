@@ -26,6 +26,7 @@ import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.ListItem;
 import org.jboss.hal.ballroom.form.MultiSelectBoxItem;
 import org.jboss.hal.ballroom.form.NumberItem;
+import org.jboss.hal.ballroom.form.PasswordItem;
 import org.jboss.hal.ballroom.form.PropertiesItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
@@ -152,7 +153,8 @@ class DefaultFormItemProvider implements FormItemProvider {
                 case STRING: {
                     List<String> allowedValues = stringValues(modelNode, ALLOWED);
                     if (allowedValues.isEmpty()) {
-                        TextBoxItem textBoxItem = new TextBoxItem(name, label);
+                        TextBoxItem textBoxItem = PASSWORD.equals(name) ? new PasswordItem(name,
+                                label) : new TextBoxItem(name, label);
                         if (modelNode.hasDefined(DEFAULT)) {
                             textBoxItem.setDefaultValue(modelNode.get(DEFAULT).asString());
                         }

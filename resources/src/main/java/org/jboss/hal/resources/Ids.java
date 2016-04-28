@@ -35,22 +35,27 @@
 package org.jboss.hal.resources;
 
 /**
- * Ids used in HTML elements
+ * Ids used in HTML elements and accross multiple classes
  */
 public interface Ids {
 
     String CACHE_CONTAINER_COLUMN = "cache-container";
+    String CONTENT_COLUMN = "content";
 
-    String DATA_SOURCE_ATTRIBUTES_FORM = "data-source-attributes-form";
-    String DATA_SOURCE_ATTRIBUTES_TAB = "data-source-attributes-tab";
-    String DATA_SOURCE_CONNECTION_FORM = "data-source-connection-form";
-    String DATA_SOURCE_CONNECTION_TAB = "data-source-connection-tab";
-    String DATA_SOURCE_TYPE_COLUMN = "type";
-    String DATA_SOURCE_WIZARD = "data-source-wizard";
-
-    String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
-
+    String DATA_SOURCE_DRIVER_COLUMN = "data-source-driver";
+    String DEPLOYMENT_BROWSE_BY_COLUMN = "deployment-browse-by";
+    String DEPLOYMENT_SERVER_GROUPS_COLUMN = "deployment-server-groups";
     String DOMAIN_BROWSE_BY = "domain-browse-by";
+    String DOMAIN_SERVER_GROUPS_COLUMN = "domain-server-groups";
+    String DRAG_AND_DROP_DEPLOYMENT = "drag-and-drop-deployment";
+
+    String EE_ATTRIBUTES_ENTRY = "ee-attributes-entry";
+    String EE_ATTRIBUTES_FORM = "ee-attributes-form";
+    String EE_GLOBAL_MODULES_ENTRY = "ee-global-modules-entry";
+    String EE_GLOBAL_MODULES_TABLE = "ee-global-modules-table";
+    String EE_GLOBAL_MODULES_FORM = "ee-global-modules-form";
+    String EE_DEFAULT_BINDINGS_ENTRY = "ee-default-bindings-entry";
+    String EE_DEFAULT_BINDINGS_FORM = "ee-default-bindings-form";
 
     String ENDPOINT_ADD = "endpoint-add";
     String ENDPOINT_PING = "endpoint-ping";
@@ -62,7 +67,6 @@ public interface Ids {
     String HEADER_MESSAGES = "header-messages";
     String HEADER_ROLES = "header-roles";
     String HEADER_USERNAME = "header-username";
-
     String HOMEPAGE_ACCESS_CONTROL_SECTION = "homepage-access-control-section";
     String HOMEPAGE_CONFIGURATION_SECTION = "homepage-configuration-section";
     String HOMEPAGE_DEPLOYMENTS_SECTION = "homepage-deployments-section";
@@ -72,14 +76,19 @@ public interface Ids {
     String HOMEPAGE_RUNTIME_SERVER_SECTION = "homepage-runtime-server-section";
     String HOMEPAGE_RUNTIME_SERVER_GROUP_SECTION = "homepage-runtime-server-group-section";
 
-    String MACRO_CONSOLE = "macro-console";
+    String IIOP_FORM = "iiop-form";
+
     String MACRO_EDITOR = "macro-editor";
     String MACRO_LIST = "macro-list";
     String MACRO_OPTIONS = "macro-options";
     String MODEL_BROWSER = "model-browser";
+
     String PATHS_FORM = "paths-form";
     String PATHS_TABLE = "paths-table";
+
     String ROOT_CONTAINER = "hal-root-container";
+
+    String STORAGE_PREFIX = "org.jboss.hal";
 
     String TLC_ACCESS_CONTROL = "tlc-access-control";
     String TLC_CONFIGURATION = "tlc-configuration";
@@ -87,6 +96,8 @@ public interface Ids {
     String TLC_HOMEPAGE = "tlc-homepage";
     String TLC_PATCHING = "tlc-patching";
     String TLC_RUNTIME = "tlc-runtime";
+
+    String UNASSIGNED_CONTENT_COLUMN = "unassigned-content";
 
     String WEB_SETTINGS_COLUMN = "settings";
 }

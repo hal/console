@@ -21,6 +21,7 @@ import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.UIConstants;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -70,7 +71,7 @@ public class Accordion implements IsElement {
                             .data("parent", "#" + this.id)
                             .aria(UIConstants.CONTROLS, id)
                             .aria(UIConstants.EXPANDED, String.valueOf(firstPanel))
-                            .attr(UIConstants.ROLE, "button") //NON-NLS
+                            .attr(UIConstants.ROLE, UIConstants.BUTTON)
                             .textContent(title)
                         .end()
                     .end()

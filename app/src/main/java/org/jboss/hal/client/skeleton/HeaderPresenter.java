@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.skeleton;
 
+import javax.inject.Inject;
+
 import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
@@ -26,6 +28,7 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
+import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderContextEvent;
 import org.jboss.hal.core.finder.FinderContextEvent.FinderContextHandler;
@@ -36,8 +39,6 @@ import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.MessageEvent.MessageHandler;
-
-import javax.inject.Inject;
 
 import static org.jboss.hal.resources.Names.NYI;
 
@@ -53,8 +54,8 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         void selectTlc(String nameToken);
         void showMessage(Message message);
         void tlcMode();
+        void fullscreenMode(String title);
         void applicationMode();
-        void applicationMode(String title);
         void updateBack(FinderContext finderContext);
         void updateBreadcrumb(FinderContext finderContext);
         void updateBreadcrumb(ModelBrowserPath path);
@@ -62,12 +63,14 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
     // @formatter:on
 
 
-    static final int MESSAGE_TIMEOUT = 3333; // ms
+    static final int MAX_BREADCRUMB_VALUE_LENGTH = 20;
+    static final int MESSAGE_TIMEOUT = 4321; // ms
 
     private final PlaceManager placeManager;
     private final Environment environment;
     private final Endpoints endpoints;
     private final User user;
+    private final Finder finder;
 
     @Inject
     public HeaderPresenter(final EventBus eventBus,
@@ -75,12 +78,14 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
             final PlaceManager placeManager,
             final Environment environment,
             final Endpoints endpoints,
-            final User user) {
+            final User user,
+            final Finder finder) {
         super(eventBus, view);
         this.placeManager = placeManager;
         this.environment = environment;
         this.endpoints = endpoints;
         this.user = user;
+        this.finder = finder;
     }
 
     @Override
@@ -109,7 +114,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         getView().selectTlc(placeManager.getCurrentPlaceRequest().getNameToken());
     }
 
-    public void goTo(final String token) {
+    void goTo(final String token) {
         PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token).build();
         placeManager.revealPlace(placeRequest);
     }
@@ -150,7 +155,10 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         getView().applicationMode();
     }
 
-    public void applicationMode(String title) {
-        getView().applicationMode(title);
+    public void fullscreenMode(final String title) {
+        if (finder.getContext().getToken() != null) {
+            getView().updateBack(finder.getContext());
+        }
+        getView().fullscreenMode(title);
     }
 }

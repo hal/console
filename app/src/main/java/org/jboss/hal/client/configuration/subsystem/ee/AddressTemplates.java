@@ -1,0 +1,39 @@
+/*
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jboss.hal.client.configuration.subsystem.ee;
+
+import org.jboss.hal.meta.AddressTemplate;
+
+/**
+ * @author Claudio Miranda
+ */
+public interface AddressTemplates {
+
+    String EE_ADDRESS                           = "/{selected.profile}/subsystem=ee";
+    String SERVICE_DEFAULT_BINDINGS_ADDRESS     = "/{selected.profile}/subsystem=ee/service=default-bindings";
+    String CONTEXT_SERVICE_ADDRESS              = "/{selected.profile}/subsystem=ee/context-service=*";
+    String MANAGED_EXECUTOR_ADDRESS             = "/{selected.profile}/subsystem=ee/managed-executor-service=*";
+    String MANAGED_EXECUTOR_SCHEDULED_ADDRESS   = "/{selected.profile}/subsystem=ee/managed-scheduled-executor-service=*";
+    String MANAGED_THREAD_FACTORY_ADDRESS       = "/{selected.profile}/subsystem=ee/managed-thread-factory=*";
+
+    AddressTemplate SERVICE_DEFAULT_BINDINGS_TEMPLATE   = AddressTemplate.of(SERVICE_DEFAULT_BINDINGS_ADDRESS);
+    AddressTemplate CONTEXT_SERVICE_TEMPLATE            = AddressTemplate.of(CONTEXT_SERVICE_ADDRESS);
+    AddressTemplate MANAGED_EXECUTOR_TEMPLATE           = AddressTemplate.of(MANAGED_EXECUTOR_ADDRESS);
+    AddressTemplate MANAGED_EXECUTOR_SCHEDULED_TEMPLATE = AddressTemplate.of(MANAGED_EXECUTOR_SCHEDULED_ADDRESS);
+    AddressTemplate MANAGED_THREAD_FACTORY_TEMPLATE     = AddressTemplate.of(MANAGED_THREAD_FACTORY_ADDRESS);
+
+    AddressTemplate EE_SUBSYSTEM_TEMPLATE = AddressTemplate.of("/{selected.profile}/subsystem=ee");
+}

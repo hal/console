@@ -15,6 +15,9 @@
  */
 package org.jboss.hal.client;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.client.Browser;
@@ -23,15 +26,13 @@ import elemental.html.DivElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.ballroom.HasTitle;
+import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.FullscreenPresenter;
 import org.jboss.hal.core.mvp.Slots;
 import org.jboss.hal.core.mvp.TopLevelCategory;
 import org.jboss.hal.resources.Ids;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.jboss.hal.client.RootPresenter.SLOT_FOOTER_CONTENT;
 import static org.jboss.hal.client.RootPresenter.SLOT_HEADER_CONTENT;
@@ -102,12 +103,10 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
 
             if (content instanceof TopLevelCategory) {
                 presenter.tlcMode();
-            } else {
-                if (content instanceof HasTitle) {
-                    presenter.applicationMode(((HasTitle) content).getTitle());
-                } else {
-                    presenter.applicationMode();
-                }
+            } else if (content instanceof FullscreenPresenter) {
+                presenter.fullscreenMode(((FullscreenPresenter) content).getTitle());
+            } else if (content instanceof ApplicationPresenter) {
+                presenter.applicationMode();
             }
 
         } else {

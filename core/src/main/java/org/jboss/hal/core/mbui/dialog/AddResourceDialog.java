@@ -32,10 +32,10 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 /**
  * @author Harald Pehl
  */
-public class AddResourceDialog<T extends ModelNode> {
+public class AddResourceDialog {
 
     @FunctionalInterface
-    public interface Callback<T> {
+    public interface Callback {
 
         /**
          * Called after the dialog was closed using the primary button.
@@ -45,23 +45,23 @@ public class AddResourceDialog<T extends ModelNode> {
          * @param model The model of the related form. {@code null} if the related resource description and thus
          *              the form does not contain attributes / form items.
          */
-        void onAdd(@Nullable final String name, @Nullable final T model);
+        void onAdd(@Nullable final String name, @Nullable final ModelNode model);
     }
 
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
-    private Form<T> form;
+    private Form<ModelNode> form;
     private Dialog dialog;
 
     /**
      * Creates an add resource dialog with a form which contains an unbound name item plus all request properties from
      * the add operation. Clicking on the add button will call the specified callback.
      */
-    public AddResourceDialog(final String id, final String title, final Metadata metadata, final Callback<T> callback) {
+    public AddResourceDialog(final String id, final String title, final Metadata metadata, final Callback callback) {
 
-        ModelNodeForm.Builder<T> formBuilder = new ModelNodeForm.Builder<T>(id, metadata)
-                .createResource()
+        ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(id, metadata)
+                .addFromRequestProperties()
                 .unboundFormItem(new NameItem(), 0)
                 .onSave((f, changedValues) -> saveForm(callback, changedValues, form.getModel()));
 
@@ -70,14 +70,14 @@ public class AddResourceDialog<T extends ModelNode> {
 
     /**
      * Uses an existing form for the dialog. If the form has a save callback it's overridden with {@link
-     * Callback#onAdd(String, Object)}.
+     * Callback#onAdd(String, ModelNode)}.
      */
-    public AddResourceDialog(final String title, final Form<T> form, final Callback<T> callback) {
+    public AddResourceDialog(final String title, final Form<ModelNode> form, final Callback callback) {
         form.setSaveCallback((f, changedValues) -> saveForm(callback, changedValues, form.getModel()));
         init(title, form);
     }
 
-    private void init(final String title, final Form<T> form) {
+    private void init(final String title, final Form<ModelNode> form) {
         this.form = form;
         this.dialog = new Dialog.Builder(title)
                 .add(form.asElement())
@@ -89,8 +89,8 @@ public class AddResourceDialog<T extends ModelNode> {
         this.dialog.registerAttachable(form);
     }
 
-    private void saveForm(final Callback<T> callback, final Map<String, Object> changedValues,
-            final T model) {
+    private void saveForm(final Callback callback, final Map<String, Object> changedValues,
+            final ModelNode model) {
         String name = String.valueOf(changedValues.remove(NAME));
         callback.onAdd(name, model);
     }
@@ -98,7 +98,6 @@ public class AddResourceDialog<T extends ModelNode> {
     public void show() {
         // First call dialog.show() (which attaches everything), then call form.add()
         dialog.show();
-        //noinspection unchecked
-        form.add((T) new ModelNode());
+        form.add(new ModelNode());
     }
 }

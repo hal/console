@@ -24,7 +24,7 @@ public interface AddressTemplates {
 
     String DATA_SOURCE_ADDRESS = "/{selected.profile}/subsystem=datasources/data-source=*";
     String XA_DATA_SOURCE_ADDRESS = "/{selected.profile}/subsystem=datasources/xa-data-source=*";
-    String JDBC_DRIVER_ADDRESS = "/{any.profile}/subsystem=datasources/data-source=*";
+    String JDBC_DRIVER_ADDRESS = "/{selected.profile}/subsystem=datasources/jdbc-driver=*";
 
     AddressTemplate DATA_SOURCE_TEMPLATE = AddressTemplate.of(DATA_SOURCE_ADDRESS);
     AddressTemplate XA_DATA_SOURCE_TEMPLATE = AddressTemplate.of(XA_DATA_SOURCE_ADDRESS);

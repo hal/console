@@ -15,12 +15,16 @@
  */
 package org.jboss.hal.core.mbui.table;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+
+import com.google.common.base.Function;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
+import org.jboss.hal.ballroom.table.Api;
 import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
@@ -33,14 +37,12 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.processing.MetadataProcessor;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
 
 import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED_SINGLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
@@ -82,7 +84,7 @@ public class TableButtonFactory {
             ScheduledCommand afterAdd,
             @NonNls final String firstAttribute, @NonNls final String... otherAttributes) {
 
-        AddResourceDialog.Callback<T> addResourceCallback = (name, model) -> {
+        AddResourceDialog.Callback addResourceCallback = (name, model) -> {
             ResourceAddress address = template.resolve(statementContext, name);
             Operation operation = new Operation.Builder(ADD, address)
                     .payload(model)
@@ -105,14 +107,14 @@ public class TableButtonFactory {
 
             @Override
             public void onMetadata(final Metadata metadata) {
-                ModelNodeForm.Builder<T> builder = new ModelNodeForm.Builder<T>(
+                ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(
                         IdBuilder.build(id, "add", "form"), metadata)
-                        .createResource()
+                        .addFromRequestProperties()
                         .unboundFormItem(new NameItem(), 0);
                 if (firstAttribute != null) {
                     builder.include(firstAttribute, otherAttributes);
                 }
-                AddResourceDialog<T> dialog = new AddResourceDialog<>(
+                AddResourceDialog dialog = new AddResourceDialog(
                         resources.messages().addResourceTitle(type), builder.build(), addResourceCallback);
                 dialog.show();
             }
@@ -124,20 +126,21 @@ public class TableButtonFactory {
         return button;
     }
 
-    public <T> Button<T> remove(String type, Provider<String> nameProvider, AddressTemplate addressTemplate,
+    @SuppressWarnings("Guava")
+    public <T> Button<T> remove(String type, Function<Api<T>, String> nameFunction, AddressTemplate addressTemplate,
             ScheduledCommand afterRemove) {
         Button<T> button = new Button<>();
         button.text = resources.constants().remove();
         button.extend = SELECTED_SINGLE.selector();
         button.action = (event, api) -> {
             Dialog dialog = DialogFactory.confirmation(resources.messages().removeResourceConfirmationTitle(type),
-                    resources.messages().removeResourceConfirmationQuestion(nameProvider.get()),
+                    resources.messages().removeResourceConfirmationQuestion(nameFunction.apply(api)),
                     () -> {
-                        ResourceAddress address = addressTemplate.resolve(statementContext, nameProvider.get());
+                        ResourceAddress address = addressTemplate.resolve(statementContext, nameFunction.apply(api));
                         Operation operation = new Operation.Builder(REMOVE, address).build();
                         dispatcher.execute(operation, result -> {
                             MessageEvent.fire(eventBus, Message.success(
-                                    resources.messages().removeResourceSuccess(type, nameProvider.get())));
+                                    resources.messages().removeResourceSuccess(type, nameFunction.apply(api))));
                             if (afterRemove != null) {
                                 afterRemove.execute();
                             }

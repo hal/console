@@ -23,45 +23,54 @@ import com.google.gwt.resources.client.ExternalTextResource;
  */
 public interface Previews extends ClientBundleWithLookup {
 
-    @Source("previews/configuration-domain.html")
+    @Source("previews/configuration/domain.html")
     ExternalTextResource configurationDomain();
 
-    @Source("previews/configuration-standalone.html")
+    @Source("previews/configuration/standalone.html")
     ExternalTextResource configurationStandalone();
 
-    @Source("previews/subsystems/datasources.html")
+    @Source("previews/deployments/content-repository.html")
+    ExternalTextResource contentRepository();
+
+    @Source("previews/configuration/subsystems/datasources.html")
     ExternalTextResource datasources();
 
-    @Source("previews/deployments.html")
-    ExternalTextResource deployments();
+    @Source("previews/configuration/subsystems/datasources-only.html")
+    ExternalTextResource datasourcesOnly();
 
-    @Source("previews/interfaces.html")
+    @Source("previews/deployments/domain.html")
+    ExternalTextResource deploymentsDomain();
+
+    @Source("previews/deployments/server-groups.html")
+    ExternalTextResource deploymentsServerGroups();
+
+    @Source("previews/deployments/standalone.html")
+    ExternalTextResource deploymentsStandalone();
+
+    @Source("previews/configuration/interfaces.html")
     ExternalTextResource interfaces();
 
-    @Source("previews/subsystems/non-xa.html")
-    ExternalTextResource nonXa();
+    @Source("previews/configuration/subsystems/jdbc-drivers.html")
+    ExternalTextResource jdbcDrivers();
 
-    @Source("previews/paths.html")
+    @Source("previews/configuration/paths.html")
     ExternalTextResource paths();
 
-    @Source("previews/profiles.html")
+    @Source("previews/configuration/profiles.html")
     ExternalTextResource profiles();
 
-    @Source("previews/runtime-domain.html")
+    @Source("previews/runtime/domain.html")
     ExternalTextResource runtimeDomain();
 
-    @Source("previews/runtime-standalone.html")
+    @Source("previews/runtime/standalone.html")
     ExternalTextResource runtimeStandalone();
 
-    @Source("previews/socket-bindings.html")
+    @Source("previews/configuration/socket-bindings.html")
     ExternalTextResource socketBindings();
 
-    @Source("previews/subsystems.html")
+    @Source("previews/configuration/subsystems.html")
     ExternalTextResource subsystems();
 
-    @Source("previews/system-properties.html")
+    @Source("previews/configuration/system-properties.html")
     ExternalTextResource systemProperties();
-
-    @Source("previews/subsystems/xa.html")
-    ExternalTextResource xa();
 }

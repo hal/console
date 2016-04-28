@@ -15,66 +15,39 @@
  */
 package org.jboss.hal.client.tools;
 
+import javax.inject.Inject;
+
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.FullscreenPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
-import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-
-import javax.inject.Inject;
+import org.jboss.hal.resources.Resources;
 
 /**
- * Presenter for resources w/o a specific implementation in HAL. Relies on the model browser to manage a (sub)tree of
- * the management model starting at the resource specified as place request parameter.
+ * Presenter for the model browser to view and modify the management model.
  *
  * @author Harald Pehl
  */
 public class ModelBrowserPresenter
-        extends ApplicationPresenter<ModelBrowserPresenter.MyView, ModelBrowserPresenter.MyProxy> {
+        extends FullscreenPresenter<ModelBrowserPresenter.MyView, ModelBrowserPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyStandard
     @NameToken(NameTokens.MODEL_BROWSER)
     public interface MyProxy extends ProxyPlace<ModelBrowserPresenter> {}
 
-    public interface MyView extends PatternFlyView {
-        void setRoot(ResourceAddress root);
-    }
+    public interface MyView extends PatternFlyView {}
     // @formatter:on
 
 
-    public final static String ADDRESS_PARAM = "address";
-
-    private final StatementContext statementContext;
-    private ResourceAddress address;
-
     @Inject
-    public ModelBrowserPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
-            final StatementContext statementContext) {
-        super(eventBus, view, proxy);
-        this.statementContext = statementContext;
-        this.address = ResourceAddress.ROOT;
-    }
-
-    @Override
-    public void prepareFromRequest(final PlaceRequest request) {
-        String parameter = request.getParameter(ADDRESS_PARAM, null);
-        if (parameter != null) {
-            address = AddressTemplate.of(parameter).resolve(statementContext);
-        } else {
-            address = ResourceAddress.ROOT;
-        }
-    }
-
-    @Override
-    protected void onReset() {
-        super.onReset();
-        getView().setRoot(address);
+    public ModelBrowserPresenter(final EventBus eventBus,
+            final MyView view,
+            final MyProxy proxy,
+            final Resources resources) {
+        super(eventBus, view, proxy, resources.constants().modelBrowser());
     }
 }

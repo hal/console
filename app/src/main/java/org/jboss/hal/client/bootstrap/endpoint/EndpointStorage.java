@@ -15,13 +15,16 @@
  */
 package org.jboss.hal.client.bootstrap.endpoint;
 
-import com.google.gwt.storage.client.Storage;
-import org.jboss.hal.dmr.ModelNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import elemental.client.Browser;
+import elemental.html.Storage;
+import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.resources.Ids;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Registry for the management endpoints which uses the local storage of the browser.
@@ -30,14 +33,14 @@ import java.util.List;
  */
 public class EndpointStorage {
 
-    private static final String KEY = "org.jboss.hal.endpoints";
+    private static final String KEY = IdBuilder.build(Ids.STORAGE_PREFIX, '.', "endpoints");
     private static final Logger logger = LoggerFactory.getLogger(EndpointStorage.class);
 
     private final Storage storage;
     private final List<Endpoint> endpoints;
 
     public EndpointStorage() {
-        storage = Storage.getLocalStorageIfSupported();
+        storage = Browser.getWindow().getLocalStorage();
         endpoints = load();
     }
 

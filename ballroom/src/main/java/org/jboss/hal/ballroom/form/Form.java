@@ -15,10 +15,10 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import java.util.Map;
+
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
-
-import java.util.Map;
 
 /**
  * A form using well defined states and operations.

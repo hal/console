@@ -20,25 +20,23 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 public interface StatementContext {
 
     @SuppressWarnings("HardCodedStringLiteral")
-    enum Key {
+    enum Tuple {
 
-        ANY_PROFILE("any.profile", PROFILE),
-        ANY_GROUP("any.group", SERVER_GROUP),
         SELECTED_PROFILE("selected.profile", PROFILE),
         SELECTED_GROUP("selected.group", SERVER_GROUP),
         SELECTED_HOST("selected.host", HOST),
         SELECTED_SERVER("selected.server", SERVER);
 
-        private final String key;
+        private final String tuple;
         private final String resource;
 
-        Key(final String key, final String resource) {
-            this.key = key;
+        Tuple(final String tuple, final String resource) {
+            this.tuple = tuple;
             this.resource = resource;
         }
 
-        public String key() {
-            return key;
+        public String tuple() {
+            return tuple;
         }
 
         public String resource() {
@@ -46,13 +44,13 @@ public interface StatementContext {
         }
 
         public String variable() {
-            return "{" + key + "}";
+            return "{" + tuple + "}";
         }
 
-        public static Key fromKey(String key) {
-            for (Key k : Key.values()) {
-                if (k.key().equals(key)) {
-                    return k;
+        public static Tuple from(String tuple) {
+            for (Tuple t : Tuple.values()) {
+                if (t.tuple().equals(tuple)) {
+                    return t;
                 }
             }
             return null;
@@ -69,9 +67,9 @@ public interface StatementContext {
         }
 
         @Override
-        public String[] resolveTuple(String key) {
+        public String[] resolveTuple(String tuple) {
             // tuples are resolved as "echo"
-            return new String[]{key, key};
+            return new String[]{tuple, tuple};
         }
 
         @Override
@@ -82,14 +80,14 @@ public interface StatementContext {
 
 
     /**
-     * Resolves a value matching the key.
+     * Resolves a value.
      */
     String resolve(String key);
 
     /**
-     * Resolves a tuple matching the key.
+     * Resolves a tuple.
      */
-    String[] resolveTuple(String key);
+    String[] resolveTuple(String tuple);
 
     String selectedProfile();
 }

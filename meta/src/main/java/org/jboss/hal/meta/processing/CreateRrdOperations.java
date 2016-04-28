@@ -15,16 +15,21 @@
  */
 package org.jboss.hal.meta.processing;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.jboss.hal.meta.WildcardWhenUndefinedContext;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.processing.LookupResult.*;
+import static org.jboss.hal.meta.processing.LookupResult.ALL_PRESENT;
+import static org.jboss.hal.meta.processing.LookupResult.NOTHING_PRESENT;
+import static org.jboss.hal.meta.processing.LookupResult.RESOURCE_DESCRIPTION_PRESENT;
+import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESENT;
 
 /**
  * @author Harald Pehl
@@ -33,8 +38,8 @@ class CreateRrdOperations {
 
     private final StatementContext statementContext;
 
-    CreateRrdOperations(final StatementContext statementContext) {
-        this.statementContext = statementContext;
+    CreateRrdOperations(final StatementContext statementContext, final Environment environment) {
+        this.statementContext = new WildcardWhenUndefinedContext(statementContext, environment);
     }
 
     public List<Operation> create(LookupResult lookupResult) {

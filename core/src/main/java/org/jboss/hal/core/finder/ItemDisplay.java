@@ -15,17 +15,14 @@
  */
 package org.jboss.hal.core.finder;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.collect.FluentIterable;
+import java.util.ArrayList;
+import java.util.List;
+
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.HasTitle;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.spi.Message;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Controls the layout of a finder item. For simple items you only need to implement the {@link #getTitle()} method.
@@ -42,8 +39,7 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
      * @return an id based on {@link #getTitle()}
      */
     default String getId() {
-        Iterable<String> parts = Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings().trimResults().split(getTitle());
-        return FluentIterable.from(parts).transform(String::toLowerCase).join(Joiner.on('-'));
+        return IdBuilder.asId(getTitle());
     }
 
     /**
@@ -70,6 +66,16 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
      * @return {@code null} by default
      */
     default String getTooltip() {
+        return null;
+    }
+
+    /**
+     * Whether to show an icon left to the item text. The icon should be an PatternFly or FontAwesome icon in normal
+     * size.
+     *
+     * @return {@code null} by default
+     */
+    default Element getIcon() {
         return null;
     }
 

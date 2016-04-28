@@ -15,16 +15,17 @@
  */
 package org.jboss.hal.core.mvp;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.PatternFly;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Harald Pehl
@@ -74,12 +75,13 @@ public abstract class PatternFlyViewImpl extends ViewImpl implements PatternFlyV
         }
     }
 
-    protected <A extends Attachable> void registerAttachables(List<A> attachables) {
+    protected <A extends Attachable> void registerAttachables(Collection<A> attachables) {
         this.attachables.addAll(attachables);
     }
 
     @Override
     public void attach() {
+        //noinspection Duplicates
         if (!attached) {
             PatternFly.initComponents();
             for (Attachable attachable : attachables) {

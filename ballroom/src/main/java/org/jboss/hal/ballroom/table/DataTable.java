@@ -94,7 +94,7 @@ public class DataTable<T> implements IsElement, Attachable {
     }
 
     public Element asElement() {
-        return tableElement;
+        return api == null ? tableElement : Browser.getDocument().getElementById(id + WRAPPER_SUFFIX);
     }
 
     /**

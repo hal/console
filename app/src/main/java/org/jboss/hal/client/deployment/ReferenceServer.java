@@ -22,6 +22,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 
 /**
  * The server which is used to load the runtime data of a {@link Deployment}.
+ * TODO Replace with Server
  *
  * @author Harald Pehl
  */

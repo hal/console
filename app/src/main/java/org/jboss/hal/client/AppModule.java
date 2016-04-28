@@ -20,7 +20,6 @@ import com.gwtplatform.mvp.client.annotations.DefaultPlace;
 import com.gwtplatform.mvp.client.annotations.ErrorPlace;
 import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
-import com.gwtplatform.mvp.shared.proxy.RouteTokenFormatter;
 import org.jboss.hal.client.accesscontrol.AccessControlPresenter;
 import org.jboss.hal.client.accesscontrol.AccessControlView;
 import org.jboss.hal.client.configuration.ConfigurationPresenter;
@@ -29,9 +28,15 @@ import org.jboss.hal.client.configuration.InterfacePresenter;
 import org.jboss.hal.client.configuration.InterfaceView;
 import org.jboss.hal.client.configuration.PathsPresenter;
 import org.jboss.hal.client.configuration.PathsView;
+import org.jboss.hal.client.configuration.subsystem.GenericSubsystemPresenter;
+import org.jboss.hal.client.configuration.subsystem.GenericSubsystemView;
+import org.jboss.hal.client.configuration.subsystem.IiopPresenter;
+import org.jboss.hal.client.configuration.subsystem.IiopView;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourcePresenter;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceView;
+import org.jboss.hal.client.configuration.subsystem.ee.EEPresenter;
+import org.jboss.hal.client.configuration.subsystem.ee.EEView;
 import org.jboss.hal.client.deployment.DeploymentPresenter;
 import org.jboss.hal.client.deployment.DeploymentView;
 import org.jboss.hal.client.homepage.HomepagePresenter;
@@ -65,7 +70,7 @@ public class AppModule extends AbstractTemplatedPresenterModule {
 
         DefaultModule defaultModule = new DefaultModule.Builder()
                 .placeManager(HalPlaceManager.class)
-                .tokenFormatter(RouteTokenFormatter.class)
+                // .tokenFormatter(RouteTokenFormatter.class)
                 .build();
         install(defaultModule);
 
@@ -117,10 +122,25 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 DeploymentView.class,
                 DeploymentPresenter.MyProxy.class);
 
+        bindPresenter(EEPresenter.class,
+                EEPresenter.MyView.class,
+                EEView.class,
+                EEPresenter.MyProxy.class);
+
+        bindPresenter(GenericSubsystemPresenter.class,
+                GenericSubsystemPresenter.MyView.class,
+                GenericSubsystemView.class,
+                GenericSubsystemPresenter.MyProxy.class);
+
         bindPresenter(HomepagePresenter.class,
                 HomepagePresenter.MyView.class,
                 HomepageView.class,
                 HomepagePresenter.MyProxy.class);
+
+        bindPresenter(IiopPresenter.class,
+                IiopPresenter.MyView.class,
+                IiopView.class,
+                IiopPresenter.MyProxy.class);
 
         bindPresenter(InterfacePresenter.class,
                 InterfacePresenter.MyView.class,

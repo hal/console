@@ -33,9 +33,14 @@ public interface CSS {
     String alertDanger = "alert-danger";
     String alertDismissable = "alert-dismissable";
     String alertInfo = "alert-info";
+    String alertLink = "alert-link";
     String alertSuccess = "alert-success";
     String alertWarning = "alert-warning";
+    String arrow = "arrow";
     String attributes = "attributes";
+
+    String badge = "badge";
+    String badgeContainerPf = "badge-container-pf";
     String blankSlatePf = "blank-slate-pf";
     String blankSlatePfIcon = "blank-slate-pf-icon";
     String blankSlatePfMainAction = "blank-slate-pf-main-action";
@@ -49,6 +54,7 @@ public interface CSS {
     String btnLg = "btn-lg";
     String btnLink = "btn-link";
     String btnPrimary = "btn-primary";
+
     String caret = "caret";
     String clearfix = "clearfix";
     String clickable = "clickable";
@@ -57,8 +63,11 @@ public interface CSS {
     String columnMedium = "md";
     String collapse = "collapse";
     String containerFluid = "container-fluid";
+    String containerPfNavPfVertical = "container-pf-nav-pf-vertical";
+    String containerPfNavPfVerticalWithSecondary = "container-pf-nav-pf-vertical-with-secondary";
     String controlLabel = "control-label";
     String copy = "copy";
+
     String dataTable = "datatable";
     String defaultValue = "default-value";
     String disabled = "disabled";
@@ -67,6 +76,7 @@ public interface CSS {
     String dropdownMenu = "dropdown-menu";
     String dropdownMenuRight = "dropdown-menu-right";
     String dropdownToggle = "dropdown-toggle";
+
     String eapHomeRow = "eap-home-row";
     String eapHomeTitle = "eap-home-title";
     String editing = "editing";
@@ -74,6 +84,7 @@ public interface CSS {
     String errorCircleO = "error-circle-o";
     String equals = "equals";
     String empty = "empty";
+
     String fade = "fade";
     String filter = "filter";
     String finder = "finder";
@@ -90,24 +101,32 @@ public interface CSS {
     String formLinkLabel = "form-link-label";
     String formLinks = "form-links";
     String formSection = "form-section";
+
     String hasError = "has-error";
     String hasFeedback = "has-feedback";
     String helpBlock = "help-block";
+    String hiddenColumns = "hidden-columns";
     String hint = "hint";
     String hover = "hover";
+
     String in = "in";
     String indicator = "indicator";
     String info = "info";
     String inputGroup = "input-group";
     String inputGroupAddon = "input-group-addon";
     String inputGroupBtn = "input-group-btn";
+    String itemIcon = "item-icon";
     String itemText = "item-text";
+
     String key = "key";
+
+    String last = "last";
     String lead = "lead";
     String listGroup = "list-group";
     String listGroupItem = "list-group-item";
     String listGroupItemHeading = "list-group-item-heading";
     String listGroupItemText = "list-group-item-text";
+    String listGroupItemValue = "list-group-item-value";
     String listViewPf = "list-view-pf";
     String listViewPfAdditionalInfo = "list-view-pf-additional-info";
     String listViewPfAdditionalInfoItem = "list-view-pf-additional-info-item";
@@ -120,7 +139,7 @@ public interface CSS {
     String listViewPfStacked = "list-view-pf-stacked";
     String loading = "loading";
     String loadingContainer = "loading-container";
-    String macroConsole = "macro-console";
+
     String macroEditor = "macro-editor";
     String macroList = "macro-list";
     String messageDetails = "message-details";
@@ -138,16 +157,25 @@ public interface CSS {
     String modelBrowserButtons = "model-browser-buttons";
     String modelBrowserContent = "model-browser-content";
     String modelBrowserTree = "model-browser-tree";
+
     String nav = "nav";
     String navbar = "navbar";
+    String navPfPersistentSecondary = "nav-pf-persistent-secondary";
+    String navPfPersistentSecondaryHal = "nav-pf-persistent-secondary-hal";
+    String navPfVertical = "nav-pf-vertical";
+    String navPfVerticalHal = "nav-pf-vertical-hal";
+    String navPfVerticalWithSecondaryNav = "nav-pf-vertical-with-secondary-nav";
     String navTabs = "nav-tabs";
     String navTabsHal = "nav-tabs-hal";
     String navTabsPf = "nav-tabs-pf";
     String noMacros = "no-macros";
+
     String offset = "offset";
     String ok = "ok";
+    String ondrag = "ondrag";
     String operationParameter = "operation-parameter";
     String operations = "operations";
+
     String panel = "panel";
     String panelBody = "panel-default";
     String panelCollapse = "panel-collapse";
@@ -155,6 +183,11 @@ public interface CSS {
     String panelGroup = "panel-group";
     String panelHeading = "panel-heading";
     String panelTitle = "panel-title";
+    String persistentSecondary = "persistent-secondary";
+    String persistentSecondaryHeader = "persistent-secondary-header";
+    String pin = "pin";
+    String pinned = "pinned";
+    String pinnable = "pinnable";
     String progress = "progress";
     String progressBar = "progress-bar";
     String progressBarStriped = "progress-bar-striped";
@@ -163,16 +196,20 @@ public interface CSS {
     String pullLeft = "pull-left";
     String pullRight = "pull-right";
     String pulse = "pulse";
+
     String radio = "radio";
     String readonly = "readonly";
     String refresh = "refresh";
     String restricted = "restricted";
     String row = "row";
+
+    String secondaryVisiblePf = "secondary-visible-pf";
     String selectpicker = "selectpicker";
     String separator = "separator";
     String spinner = "spinner";
     String srOnly = "sr-only";
     String subtitle = "subtitle";
+
     String tabContent = "tab-content";
     String tabPane = "tab-pane";
     String table = "table";
@@ -189,7 +226,13 @@ public interface CSS {
     String toastPfMaxWidth = "toast-pf-max-width";
     String toastPfTopRight = "toast-pf-top-right";
     String ttNested = "tt-nested";
+
+    String unpin = "unpin";
+    String unpinned = "unpinned";
+
     String value = "value";
+    String valueDropdown = "value-dropdown";
+
     String warningTriangleO = "warning-triangle-o";
     String wizardHeader = "wizard-header";
     String wizardProgress = "wizard-progress";
@@ -203,10 +246,20 @@ public interface CSS {
         return column + "-" + columnMedium + "-" + offset + "-" + String.valueOf(columns);
     }
 
+    /**
+     * Builds a FontAwesome CSS class.
+     *
+     * @param name the name of the FontAwesome icon <strong>w/o</strong> the "fa fa-" prefix.
+     */
     static String fontAwesome(@NonNls String name) {
         return "fa fa-" + name; //NON-NLS
     }
 
+    /**
+     * Builds a PatternFly icon class.
+     *
+     * @param name the name of the PatternFly icon <strong>w/o</strong> the "pficon pficon-" prefix.
+     */
     static String pfIcon(@NonNls String name) {
         return "pficon pficon-" + name; //NON-NLS
     }

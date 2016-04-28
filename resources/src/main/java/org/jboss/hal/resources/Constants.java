@@ -41,6 +41,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String action();
     String add();
     String allSingletonsExist();
+    String assign();
+    String assignedContentDesc();
     String attribute();
     String attributes();
 
@@ -56,14 +58,19 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String close();
     String connection();
     String connectToServer();
+    String content();
+    String contentRepository();
     String copied();
     String copyToClipboard();
     String custom();
 
     String data();
+    String databaseDisabled();
+    String databaseEnabled();
     String defaultValue();
+    String deploymentAttributes();
+    String deploymentFailed();
     String details();
-    String detectedDriver();
     String disable();
     String disabled();
     String dispatcherException();
@@ -73,13 +80,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String edit();
     String enable();
     String enabled();
-
     String endpointSelectTitle();
     String endpointSelectDescription();
     String endpointConnect();
     String endpointAddTitle();
     String endpointAddDescription();
-
     String expressionResolver();
 
     String failed();
@@ -89,11 +94,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String formResetDesc();
 
     String help();
-    String input();
-
+    String hiddenColumns();
     String homepageNewToEap();
     String homepageTakeATour();
-
     String homepageDeploymentsSubHeader();
     String homepageDeploymentsSection();
     String homepageDeploymentsStandaloneStepIntro();
@@ -102,7 +105,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageDeploymentsDomainStepIntro();
     String homepageDeploymentsDomainStep1();
     String homepageDeploymentsDomainStep2();
-
     String homepageConfigurationStandaloneSubHeader();
     String homepageConfigurationDomainSubHeader();
     String homepageConfigurationSection();
@@ -111,7 +113,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageConfigurationDomainStep1();
     String homepageConfigurationStep2();
     String homepageConfigurationStep3();
-
     String homepageRuntimeStandaloneSubHeader();
     String homepageRuntimeStandaloneSection();
     String homepageRuntimeStepIntro();
@@ -129,18 +130,15 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageRuntimeDomainMonitorServerSection();
     String homepageRuntimeDomainMonitorServerStep1();
     String homepageRuntimeDomainMonitorServerStep2();
-
     String homepageAccessControlSubHeader();
     String homepageAccessControlSection();
     String homepageAccessControlStepIntro();
     String homepageAccessControlStep1();
     String homepageAccessControlStep2();
-
     String homepagePatchingSection();
     String homepagePatchingStep1();
     String homepagePatchingDomainStep2();
     String homepagePatchingStepApply();
-
     String homepageHelpNeedHelp();
     String homepageHelpGeneralResources();
     String homepageHelpEapDocumentationText();
@@ -172,64 +170,92 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageHelpModelReferenceText();
     String homepageHelpLatestNews();
 
+    String input();
+
     String jdbcDriver();
+
     String loading();
     String logout();
+
     String macroEditor();
     String macroPlaybackError();
     String macroPlaybackSuccessful();
+    String main_attributes();
     String message();
     String metadataError();
     String modelBrowser();
+
     String name();
     String next();
     String no();
     String noAttributes();
     String noDetails();
+    String noDeploymentsUploaded();
     String noItems();
     String noMacros();
+    String noRunningServers();
     String notANumber();
     String nothingSelected();
+
     String ok();
     String operations();
     String output();
+
+    String pin();
     String ping();
     String play();
+    String pool();
+
     String recordingStarted();
     String recordingStopped();
+    String refresh();
     String remove();
     String removeResource();
     String rename();
     String required();
     String requiredField();
     String reset();
-
     String restartAllServices();
     String restartJvm();
     String restartNoServices();
     String restartResourceServices();
-
     String restricted();
+
     String sameOrigin();
     String save();
+    String security();
     String settings();
     String showAll();
-    String specifyDriver();
     String start();
     String startMacro();
+    String statements();
     String stopMacro();
     String storage();
     String summary();
     String supportsExpressions();
 
+    String tags();
     String testConnection();
+    String testConnectionError();
+    String testConnectionSuccess();
+    String timeouts();
     String toggleDropdown();
     String toggleNavigation();
     String tools();
+    String tracking();
     String type();
+
+    String unassign();
+    String unassignedContentDesc();
     String unknownError();
+    String unknownResource();
+    String unpin();
+
+    String validation();
     String view();
+
     String xaProperties();
+
     String yes();
     //@formatter:on
 }

@@ -22,7 +22,7 @@ import elemental.html.InputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.InputType;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.UIConstants;
 
 import java.util.HashMap;

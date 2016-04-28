@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent</artifactId>
-        <version>0.0.10</version>
+        <version>0.1.0</version>
     </parent>
 
     <artifactId>hal-parent-with-dependencies</artifactId>
@@ -36,8 +36,8 @@
         <annotations.version>15.0</annotations.version>
         <apt-tools.version>0.0.2</apt-tools.version>
         <auto-service.version>1.0-rc2</auto-service.version>
-        <circuit.version>0.1.4</circuit.version>
-        <elemento.version>0.2</elemento.version>
+        <circuit.version>0.1.6</circuit.version>
+        <elemento.version>0.2.1</elemento.version>
         <flow.version>0.0.3</flow.version>
         <gin.version>2.1.2</gin.version>
         <guava.version>20.0-hal</guava.version>

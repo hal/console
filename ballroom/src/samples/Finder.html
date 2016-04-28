@@ -14,7 +14,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<html>
+<html class="layout-pf layout-pf-fixed transitions">
 <head lang="en">
     <meta charset="UTF-8">
     <title>Finder</title>
@@ -88,15 +88,19 @@
             <ul>
                 <li class="error-marker">
                     <span class="item-text">default</span>
+                    <span class="folder fa fa-angle-right"></span>
                 </li>
                 <li class="info-marker">
                     <span class="item-text">full</span>
+                    <span class="folder fa fa-angle-right"></span>
                 </li>
                 <li class="success-marker">
                     <span class="item-text">ha</span>
+                    <span class="folder fa fa-angle-right"></span>
                 </li>
                 <li class="active warning-marker">
                     <span class="item-text">full-ha</span>
+                    <span class="folder fa fa-angle-right"></span>
                 </li>
             </ul>
         </div>
@@ -112,26 +116,119 @@
                 <input type="text" class="form-control" placeholder="Filter" aria-describedby="column-3-filter">
                 <span id="column3-filter" class="input-group-addon fa fa-search"></span>
             </div>
-            <ul>
-                <li><span class="item-text">Batch</span></li>
-                <li class="active"><span class="item-text">DataSources</span></li>
-                <li><span class="item-text">Deployment Scanner</span></li>
-                <li><span class="item-text">EE</span></li>
-                <li><span class="item-text">EJB</span></li>
-                <li><span class="item-text">IIOP<small class="subtitle">OpenJDK</small></span></li>
-                <li><span class="item-text">Infinispan</span></li>
-                <li><span class="item-text">IO</span></li>
-                <li><span class="item-text">JAX-RS</span></li>
-                <li><span class="item-text">Logging</span></li>
-                <li><span class="item-text">Mail</span></li>
-                <li><span class="item-text">Messaging<small class="subtitle">ActiveMQ</small></span></li>
-                <li><span class="item-text">Remoting</span></li>
-                <li><span class="item-text">Request Controller</span></li>
-                <li><span class="item-text">Security</span></li>
-                <li><span class="item-text">Transactions</span></li>
-                <li><span class="item-text">HTTP<small class="subtitle">Undertow</small></span></li>
-                <li><span class="item-text">Web Services</span></li>
-                <li><span class="item-text">Weld</span></li>
+            <ul class="pinnable">
+                <li class="pinned">
+                    <span class="item-text">Batch</span>
+                    <span class="unpin pficon-close"></span>
+                    <span class="pin pficon-thumb-tack-o"></span>
+                    <div class="btn-group pull-right">
+                        <button type="button" class="btn btn-finder">Action</button>
+                        <button type="button" class="btn btn-finder dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Another action</a></li>
+                            <li><a href="#">Something else here</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#">Separated link</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="active pinned">
+                    <span class="item-text">DataSources</span>
+                    <span class="unpin pficon-close"></span>
+                    <span class="pin pficon-thumb-tack-o"></span>
+                    <span class="folder fa fa-angle-right"></span>
+                </li>
+                <li class="pinned last">
+                    <span class="item-text">Deployment Scanner</span>
+                    <span class="unpin pficon-close"></span>
+                    <span class="pin pficon-thumb-tack-o"></span>
+                </li>
+                <li class="unpinned">
+                    <span class="item-text">EE</span>
+                    <span class="unpin pficon-close"></span>
+                    <span class="pin pficon-thumb-tack-o"></span>
+                    <button class="btn btn-finder">View</button>
+                </li>
+                <li class="unpinned">
+                    <span class="item-text">EJB</span>
+                    <span class="unpin pficon-close"></span>
+                    <span class="pin pficon-thumb-tack-o"></span>
+                </li>
+                <li class="unpinned">
+                    <span class="item-text">IIOP<small class="subtitle">OpenJDK</small></span>
+                    <span class="unpin pficon-close"></span>
+                    <span class="pin pficon-thumb-tack-o"></span>
+                </li>
+                <li class="unpinned">
+                    <span class="item-text">Infinispan</span>
+                    <span class="unpin pficon-close"></span>
+                    <span class="pin pficon-thumb-tack-o"></span>
+                    <span class="folder fa fa-angle-right"></span>
+                </li>
+                <li class="unpinned">
+                    <span class="item-text">IO<small class="subtitle">Subsystem with an extremely long subtitle</small></span>
+                    <span class="unpin pficon-close"></span>
+                    <span class="pin pficon-thumb-tack-o"></span>
+                    <button class="btn btn-finder">View</button>
+                </li>
+                <li class="unpinned">
+                    <span class="item-text">JAX-RS</span>
+                    <span class="unpin pficon-close"></span>
+                    <span class="pin pficon-thumb-tack-o"></span>
+                </li>
+                <li class="unpinned">
+                    <span class="item-text">Logging</span>
+                    <span class="unpin pficon-close"></span>
+                    <span class="pin pficon-thumb-tack-o"></span>
+                </li>
+                <li class="unpinned">
+                    <span class="item-text">Mail</span>
+                    <span class="unpin pficon-close"></span>
+                    <span class="pin pficon-thumb-tack-o"></span>
+                </li>
+                <li class="unpinned">
+                    <span class="item-text">Messaging<small class="subtitle">ActiveMQ</small></span>
+                    <span class="unpin pficon-close"></span>
+                    <span class="pin pficon-thumb-tack-o"></span>
+                </li>
+                <li class="unpinned">
+                    <span class="item-text">Remoting</span>
+                    <span class="unpin pficon-close"></span>
+                    <span class="pin pficon-thumb-tack-o"></span>
+                </li>
+                <li class="unpinned">
+                    <span class="item-text">Request Controller</span>
+                    <span class="unpin pficon-close"></span>
+                    <span class="pin pficon-thumb-tack-o"></span>
+                </li>
+                <li class="unpinned">
+                    <span class="item-text">Security</span>
+                    <span class="unpin pficon-close"></span>
+                    <span class="pin pficon-thumb-tack-o"></span>
+                </li>
+                <li class="unpinned">
+                    <span class="item-text">Transactions</span>
+                    <span class="unpin pficon-close"></span>
+                    <span class="pin pficon-thumb-tack-o"></span>
+                </li>
+                <li class="unpinned">
+                    <span class="item-text">HTTP<small class="subtitle">Undertow</small></span>
+                    <span class="unpin pficon-close"></span>
+                    <span class="pin pficon-thumb-tack-o"></span>
+                </li>
+                <li class="unpinned">
+                    <span class="item-text">Web Services</span>
+                    <span class="unpin pficon-close"></span>
+                    <span class="pin pficon-thumb-tack-o"></span>
+                </li>
+                <li class="unpinned">
+                    <span class="item-text">Weld</span>
+                    <span class="unpin pficon-close"></span>
+                    <span class="pin pficon-thumb-tack-o"></span>
+                </li>
             </ul>
         </div>
 
@@ -142,8 +239,14 @@
                 <h1>Type</h1>
             </header>
             <ul>
-                <li class="active"><span class="item-text">Non-XA</span></li>
-                <li><span class="item-text">XA</span></li>
+                <li class="active">
+                    <span class="item-icon fa fa-cubes"></span>
+                    <span class="item-text">Non-XA</span>
+                </li>
+                <li>
+                    <span class="item-icon fa fa-archive"></span>
+                    <span class="item-text">XA</span>
+                </li>
                 <li class="empty"><span class="item-text">No items</span></li>
             </ul>
         </div>

@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.ballroom.typeahead;
 
+import elemental.js.json.JsJsonObject;
+import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsConstructor;
 import jsinterop.annotations.JsType;
 
@@ -39,6 +41,7 @@ public class Bloodhound {
         public int sufficient;
         public Comparator sorter;
         public RemoteOptions remote;
+        public JsArrayOf<JsJsonObject> local;
     }
 
 

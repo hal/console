@@ -23,7 +23,7 @@ import elemental.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.IdBuilder;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;

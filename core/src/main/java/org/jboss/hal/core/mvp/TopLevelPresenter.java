@@ -25,7 +25,7 @@ public abstract class TopLevelPresenter<V extends PatternFlyView, Proxy_ extends
         extends PatternFlyPresenter<V, Proxy_>
         implements TopLevelCategory {
 
-    public TopLevelPresenter(final EventBus eventBus, final V view, final Proxy_ proxy) {
+    protected TopLevelPresenter(final EventBus eventBus, final V view, final Proxy_ proxy) {
         super(eventBus, view, proxy, Slots.MAIN);
     }
 }

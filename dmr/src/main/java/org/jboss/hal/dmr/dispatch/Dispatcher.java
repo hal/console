@@ -15,8 +15,13 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
+import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
+import elemental.html.File;
 import elemental.html.FormData;
 import elemental.html.InputElement;
 import elemental.xml.XMLHttpRequest;
@@ -40,10 +45,6 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import java.util.List;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
@@ -234,6 +235,28 @@ public class Dispatcher implements RecordingHandler {
 
     // ------------------------------------------------------ upload
 
+    public void upload(final File file, final Operation operation, final OperationCallback callback) {
+        upload(file, operation, callback, failedCallback, exceptionCallback);
+    }
+
+    public void upload(final File file, final Operation operation, final OperationCallback callback,
+            final FailedCallback failedCallback) {
+        upload(file, operation, callback, failedCallback, exceptionCallback);
+    }
+
+    public void upload(final File file, final Operation operation, final OperationCallback callback,
+            final FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
+        FormData formData = createFormData(file, operation.toBase64String());
+        uploadFormData(formData, operation, callback, failedCallback, exceptionCallback);
+    }
+
+    private native FormData createFormData(File file, String operation) /*-{
+        var formData = new $wnd.FormData();
+        formData.append(file.name, file);
+        formData.append("operation", new Blob([operation], {type: "application/dmr-encoded"}));
+        return formData;
+    }-*/;
+
     public void upload(final InputElement fileInput, final Operation operation, final OperationCallback callback) {
         upload(fileInput, operation, callback, failedCallback, exceptionCallback);
     }
@@ -246,11 +269,7 @@ public class Dispatcher implements RecordingHandler {
     public void upload(final InputElement fileInput, final Operation operation, final OperationCallback callback,
             final FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
         FormData formData = createFormData(fileInput, operation.toBase64String());
-        XMLHttpRequest xhr = newXhr(endpoints.upload(), POST, operation, new UploadPayloadProcessor(), callback,
-                failedCallback, exceptionCallback);
-        xhr.send(formData);
-        // TODO Support uploads in macros?
-        // recordOperation(operation);
+        uploadFormData(formData, operation, callback, failedCallback, exceptionCallback);
     }
 
     private native FormData createFormData(InputElement fileInput, String operation) /*-{
@@ -259,6 +278,15 @@ public class Dispatcher implements RecordingHandler {
         formData.append("operation", new Blob([operation], {type: "application/dmr-encoded"}));
         return formData;
     }-*/;
+
+    private void uploadFormData(FormData formData, final Operation operation, final OperationCallback callback,
+            final FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
+        XMLHttpRequest xhr = newXhr(endpoints.upload(), POST, operation, new UploadPayloadProcessor(), callback,
+                failedCallback, exceptionCallback);
+        xhr.send(formData);
+        // TODO Support uploads in macros?
+        // recordOperation(operation);
+    }
 
 
     // ------------------------------------------------------ create and setup xhr
@@ -374,5 +402,16 @@ public class Dispatcher implements RecordingHandler {
         } else {
             return operation.getName().startsWith("read");
         }
+    }
+
+
+    // ------------------------------------------------------ getter
+
+    public FailedCallback defaultFailedCallback() {
+        return failedCallback;
+    }
+
+    public ExceptionCallback defaultExceptionCallback() {
+        return exceptionCallback;
     }
 }

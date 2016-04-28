@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.core.mbui.table;
 
+import java.util.List;
+
 import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.table.Column;
 import org.jboss.hal.ballroom.table.DataTable;
@@ -26,8 +28,6 @@ import org.jboss.hal.meta.Metadata;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 
@@ -55,7 +55,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         }
 
         public Builder<T> column(@NonNls String attribute) {
-            Property attributeDescription = findDescription(metadata.getDescription().getAttributes(), attribute);
+            Property attributeDescription = metadata.getDescription().findAttribute(ATTRIBUTES, attribute);
             if (attributeDescription != null) {
                 Column<T> column = columnFactory.createColumn(attributeDescription);
                 return column(column);
@@ -64,15 +64,6 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
                         attribute, metadata.getDescription());
                 return that();
             }
-        }
-
-        private Property findDescription(final List<Property> attributeDescriptions, final String column) {
-            for (Property attributeDescription : attributeDescriptions) {
-                if (attributeDescription.getName().equals(column)) {
-                    return attributeDescription;
-                }
-            }
-            return null;
         }
 
         @Override

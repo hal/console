@@ -15,6 +15,9 @@
  */
 package org.jboss.hal.core.mvp;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
@@ -30,9 +33,6 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
 
 public class HalPlaceManager extends DefaultPlaceManager {
 

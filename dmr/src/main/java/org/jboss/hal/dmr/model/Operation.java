@@ -66,6 +66,18 @@ public class Operation extends ModelNode {
             return this;
         }
 
+        public Builder param(String name, @NonNls String[] values) {
+            for (String value : values) {
+                parameter.get(name).add(value);
+            }
+            return this;
+        }
+
+        public Builder param(String name, ModelNode value) {
+            parameter.get(name).set(value);
+            return this;
+        }
+
         public Builder payload(ModelNode payload) {
             parameter = payload;
             return this;

@@ -22,6 +22,7 @@ package org.jboss.hal.resources;
  */
 public interface UIConstants {
 
+    String BUTTON = "button";
     String COLLAPSE = "collapse";
     String CONTROLS = "controls";
     String DROPDOWN = "dropdown";
@@ -36,6 +37,7 @@ public interface UIConstants {
     String ROLE = "role";
     String TABINDEX = "tabindex";
     String TABLIST = "tablist";
+    String TARGET = "target";
     String TOGGLE = "toggle";
     String TOOLTIP = "tooltip";
 }

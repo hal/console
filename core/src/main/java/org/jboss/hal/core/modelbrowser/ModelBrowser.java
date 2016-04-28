@@ -29,6 +29,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.ButtonElement;
+import elemental.js.util.JsArrayOf;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.flow.Async;
@@ -37,7 +38,6 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.tree.Node;
@@ -57,6 +57,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -71,17 +72,15 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.js.JsHelper.asList;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
-import static org.jboss.hal.meta.StatementContext.Key.ANY_GROUP;
-import static org.jboss.hal.meta.StatementContext.Key.ANY_PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NYI;
 
 /**
  * TODO Removing a filter in a scoped model browser does not work
+ *
  * @author Harald Pehl
  */
 public class ModelBrowser implements HasElements {
@@ -253,6 +252,20 @@ public class ModelBrowser implements HasElements {
         childrenPanel.attach();
     }
 
+    private void emptyTree() {
+        Context context = new Context(ResourceAddress.ROOT, Collections.emptySet());
+        Node<Context> rootNode = new Node.Builder<>(ROOT_ID, Names.NOT_AVAILABLE, context)
+                .folder()
+                .build();
+
+        tree = new Tree<>(Ids.MODEL_BROWSER, rootNode, (node, callback) -> callback.result(JsArrayOf.create()));
+        Elements.removeChildrenFrom(treeContainer);
+        treeContainer.appendChild(tree.asElement());
+        tree.attach();
+        childrenPanel.hide();
+        resourcePanel.hide();
+    }
+
 
     // ------------------------------------------------------ event handler & co
 
@@ -404,8 +417,10 @@ public class ModelBrowser implements HasElements {
                     @Override
                     public void onMetadata(Metadata metadata) {
                         String id = IdBuilder.build(parent.id, "singleton", "add");
-                        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata).createResource().build();
-                        AddResourceDialog<ModelNode> dialog = new AddResourceDialog<>(
+                        Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                                .addFromRequestProperties()
+                                .build();
+                        AddResourceDialog dialog = new AddResourceDialog(
                                 resources.messages().addResourceTitle(singleton), form,
                                 (n, modelNode) -> {
                                     Operation.Builder builder = new Operation.Builder(ADD,
@@ -450,7 +465,7 @@ public class ModelBrowser implements HasElements {
             metadataProcessor.lookup(template, progress.get(), new DefaultMetadataCallback(parent.data.getAddress()) {
                 @Override
                 public void onMetadata(Metadata metadata) {
-                    AddResourceDialog<ModelNode> dialog = new AddResourceDialog<>(
+                    AddResourceDialog dialog = new AddResourceDialog(
                             IdBuilder.build(parent.id, "add"),
                             resources.messages().addResourceTitle(parent.text),
                             metadata, (name, modelNode) -> {
@@ -475,9 +490,9 @@ public class ModelBrowser implements HasElements {
         return AddressTemplate.of(address, (name, value, first, last, index) -> {
             String segment;
             if (PROFILE.equals(name)) {
-                segment = ANY_PROFILE.variable();
+                segment = SELECTED_PROFILE.variable();
             } else if (SERVER_GROUP.equals(name)) {
-                segment = ANY_GROUP.variable();
+                segment = SELECTED_GROUP.variable();
             } else {
                 if (last && node != null && node.data != null && !node.data.hasSingletons()) {
                     segment = name + "=*";
@@ -528,12 +543,35 @@ public class ModelBrowser implements HasElements {
             throw new IllegalArgumentException("Invalid root address: " + root +
                     ". ModelBrowser.setRoot() must be called with a concrete address.");
         }
-        initTree(root, resource);
-        tree.api().openNode(ROOT_ID, () -> resourcePanel.tabs.showTab(0));
-        select(ROOT_ID, false);
 
-        Browser.getWindow().setOnresize(event -> adjustHeight());
-        adjustHeight();
+        Operation ping = new Operation.Builder(READ_RESOURCE_OPERATION, root).build();
+        dispatcher.execute(ping,
+                result -> {
+                    initTree(root, resource);
+                    tree.api().openNode(ROOT_ID, () -> resourcePanel.tabs.showTab(0));
+                    select(ROOT_ID, false);
+
+                    Browser.getWindow().setOnresize(event -> adjustHeight());
+                    adjustHeight();
+                },
+
+                (operation, failure) -> {
+                    emptyTree();
+                    MessageEvent.fire(eventBus, Message.error(resources.constants().unknownResource(),
+                            resources.messages().unknownResource(root.toString(), failure)));
+
+                    Browser.getWindow().setOnresize(event -> adjustHeight());
+                    adjustHeight();
+                },
+
+                (operation, exception) -> {
+                    emptyTree();
+                    MessageEvent.fire(eventBus, Message.error(resources.constants().unknownResource(),
+                            resources.messages().unknownResource(root.toString(), exception.getMessage())));
+
+                    Browser.getWindow().setOnresize(event -> adjustHeight());
+                    adjustHeight();
+                });
     }
 
     public void select(final String id, final boolean closeSelected) {

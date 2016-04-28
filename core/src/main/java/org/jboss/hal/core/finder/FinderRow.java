@@ -21,6 +21,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
+import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.UIConstants;
 
@@ -31,7 +32,7 @@ import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
 
 /**
  * UI class for a single row in in a finder column. Only used internally in the finder.
- *
+ * <p>
  * TODO Add an option to activate an inline progress element which sets a striped background for long running
  * actions like 'restart server group'. Think about replacing the actions with a cancel button
  *
@@ -42,10 +43,10 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String FOLDER_ELEMENT = "folderElement";
     private static final String BUTTON_CONTAINER = "buttonContainer";
-    private static final String TOOLTIP_TARGET = "tooltipTarget";
 
     private final Finder finder;
     private final FinderColumn<T> column;
+    private final ItemDisplay<T> display;
     private final String nextColumn;
     private final String id;
     private final T item;
@@ -59,15 +60,17 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
     FinderRow(final Finder finder,
             final FinderColumn<T> column,
             final T item,
+            final boolean pinned,
             final ItemDisplay<T> display,
             final PreviewCallback<T> previewCallback) {
 
         this.finder = finder;
         this.column = column;
+        this.display = display;
         this.nextColumn = display.nextColumn();
         this.id = display.getId();
         this.item = item;
-        this.primaryAction = display.actions().isEmpty() ? null : display.actions().iterator().next().handler;
+        this.primaryAction = display.actions().isEmpty() ? null : display.actions().get(0).handler;
         this.previewContent = previewCallback != null ? previewCallback.onPreview(item) : new PreviewContent(
                 display.getTitle());
 
@@ -79,29 +82,51 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         if (display.getMarker() != null) {
             eb.css(display.getMarker().name().toLowerCase() + "-marker");
         }
+        if (column.isPinnable()) {
+            eb.css(pinned ? CSS.pinned : CSS.unpinned);
+        }
 
-        Element tooltipTarget;
+        Element icon = display.getIcon();
+        if (icon != null) {
+            icon.getClassList().add(CSS.itemIcon);
+            eb.add(icon);
+        }
+
+        Element itemElement;
         if (display.asElement() != null) {
-            eb.add(display.asElement());
-            tooltipTarget = display.asElement();
+            itemElement = display.asElement();
         } else if (display.getTitle() != null) {
-            eb.span().css(itemText).textContent(display.getTitle()).rememberAs(TOOLTIP_TARGET).end();
-            tooltipTarget = eb.referenceFor(TOOLTIP_TARGET);
+            itemElement = new Elements.Builder().span().css(itemText).textContent(display.getTitle()).end().build();
         } else {
-            eb.span().css(itemText).textContent(NOT_AVAILABLE).rememberAs(TOOLTIP_TARGET).end();
-            tooltipTarget = eb.referenceFor(TOOLTIP_TARGET);
+            itemElement = new Elements.Builder().span().css(itemText).textContent(NOT_AVAILABLE).end().build();
         }
-
-        if (display.getTooltip() != null && tooltipTarget != null) {
-            tooltipTarget.setTitle(display.getTooltip());
-            tooltipTarget.getDataset().setAt(UIConstants.TOGGLE, UIConstants.TOOLTIP);
-            tooltipTarget.getDataset().setAt(UIConstants.PLACEMENT, "top");
+        if (display.getTooltip() != null && itemElement != null) {
+            itemElement.setTitle(display.getTooltip());
+            itemElement.getDataset().setAt(UIConstants.TOGGLE, UIConstants.TOOLTIP);
+            itemElement.getDataset().setAt(UIConstants.PLACEMENT, "top");
         }
+        eb.add(itemElement);
 
+        // oder: 1) pin/unpin icon, 2) folder icon, 3) button(s)
+        if (column.isPinnable()) {
+            eb.span()
+                    .css(unpin, pfIcon("close"))
+                    .title(CONSTANTS.unpin())
+                    .on(click, e -> {
+                        e.stopPropagation();
+                        column.unpin(FinderRow.this);
+                    }).end();
+            eb.span()
+                    .css(pin, pfIcon("thumb-tack-o"))
+                    .title(CONSTANTS.pin())
+                    .on(click, e -> {
+                        e.stopPropagation();
+                        column.pin(FinderRow.this);
+                    }).end();
+        }
         if (display.nextColumn() != null) {
             eb.span().css(folder, fontAwesome("angle-right")).rememberAs(FOLDER_ELEMENT).end();
         }
-
         if (!display.actions().isEmpty()) {
             if (display.actions().size() == 1) {
                 ItemAction<T> action = display.actions().get(0);
@@ -164,7 +189,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         // <keep> this in order!
         finder.reduceTo(column);
         finder.updateContext();
-        finder.publishContext();
+        finder.updateHistory();
         appendNextColumn();
         // </keep>
         showPreview();
@@ -222,5 +247,9 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
 
     T getItem() {
         return item;
+    }
+
+    ItemDisplay<T> getDisplay() {
+        return display;
     }
 }

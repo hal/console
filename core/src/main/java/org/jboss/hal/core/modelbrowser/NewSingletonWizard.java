@@ -15,6 +15,11 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import javax.inject.Provider;
+
 import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
@@ -24,7 +29,6 @@ import elemental.html.InputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.InputType;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.tree.Node;
@@ -38,17 +42,13 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Provider;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.core.modelbrowser.NewSingletonWizard.SingletonState.CHOOSE;
@@ -159,7 +159,7 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
                         public void onMetadata(final Metadata metadata) {
                             String id = IdBuilder.build(id(), "form");
                             Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
-                                    .createResource()
+                                    .addFromRequestProperties()
                                     .onSave((f, changedValues) -> wizard.getContext().modelNode = f.getModel())
                                     .build();
                             root.appendChild(form.asElement());

@@ -18,11 +18,21 @@ package org.jboss.hal.client.configuration.subsystem.datasource;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.resources.IdBuilder;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
 
 /**
  * @author Harald Pehl
  */
 public class DataSource extends NamedNode {
+
+    static String id(String name, boolean xa) {
+        return IdBuilder.build(name, xa ? "xa" : "non-xa");
+    }
 
     private final boolean xa;
 
@@ -35,6 +45,11 @@ public class DataSource extends NamedNode {
         this.xa = xa;
     }
 
+    public DataSource(final String name, final ModelNode modelNode, final boolean xa) {
+        super(name, modelNode);
+        this.xa = xa;
+    }
+
     public DataSource(final Property property, final boolean xa) {
         super(property);
         this.xa = xa;
@@ -42,5 +57,14 @@ public class DataSource extends NamedNode {
 
     public boolean isXa() {
         return xa;
+    }
+
+    public boolean isEnabled() {
+        return hasDefined(ENABLED) && get(ENABLED).asBoolean();
+    }
+
+    public void setDriver(final JdbcDriver driver) {
+        get(DRIVER_NAME).set(driver.getName());
+        get(DRIVER_CLASS).set(driver.get(DRIVER_CLASS_NAME));
     }
 }

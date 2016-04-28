@@ -15,9 +15,11 @@
  */
 package org.jboss.hal.client.configuration;
 
+import java.util.List;
+import javax.inject.Inject;
+
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.IdBuilder;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
@@ -28,17 +30,11 @@ import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.description.ResourceDescription;
-import org.jboss.hal.meta.description.ResourceDescriptions;
-import org.jboss.hal.meta.security.SecurityContext;
-import org.jboss.hal.meta.security.SecurityFramework;
+import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-
-import javax.inject.Inject;
-import java.util.List;
 
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 import static org.jboss.hal.resources.Names.PATHS;
@@ -53,17 +49,12 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
     private PathsPresenter presenter;
 
     @Inject
-    public PathsView(SecurityFramework securityFramework,
-            ResourceDescriptions descriptions,
-            Capabilities capabilities,
+    public PathsView(MetadataRegistry metadataRegistry,
             TableButtonFactory tableButtonFactory,
             Resources resources) {
 
-        SecurityContext securityContext = securityFramework.lookup(PathsPresenter.ROOT_TEMPLATE);
-        ResourceDescription description = descriptions.lookup(PathsPresenter.ROOT_TEMPLATE);
-        Metadata metadata = new Metadata(securityContext, description, capabilities);
-
-        Element info = new Elements.Builder().p().textContent(description.getDescription()).end().build();
+        Metadata metadata = metadataRegistry.lookup(PathsPresenter.ROOT_TEMPLATE);
+        Element info = new Elements.Builder().p().textContent(metadata.getDescription().getDescription()).end().build();
 
         //noinspection ConstantConditions
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
@@ -79,7 +70,7 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
 
                 .button(tableButtonFactory.remove(
                         Names.PATH,
-                        () -> table.api().selectedRow().getName(),
+                        (api) -> api.selectedRow().getName(),
                         PathsPresenter.ROOT_TEMPLATE,
                         () -> presenter.loadPaths()))
 

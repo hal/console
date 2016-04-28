@@ -15,11 +15,13 @@
  */
 package org.jboss.hal.client.deployment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
 
 /**
  * An uploaded deployment blob.
@@ -36,7 +38,7 @@ public class Content extends NamedNode {
     }
 
     public String getRuntimeName() {
-        ModelNode runtimeName = get("runtime-name");
+        ModelNode runtimeName = get(RUNTIME_NAME);
         return runtimeName.isDefined() ? runtimeName.asString() : null;
     }
 

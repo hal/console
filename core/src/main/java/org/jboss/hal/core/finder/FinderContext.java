@@ -16,24 +16,27 @@
 package org.jboss.hal.core.finder;
 
 /**
+ * Holds state as the user navigates using the finder.
+ *
  * @author Harald Pehl
  */
 public class FinderContext {
 
     private String token;
-    private final FinderPath path;
-    private final Breadcrumb breadcrumb;
+    private FinderPath path;
 
-    public FinderContext() {
+    FinderContext() {
         token = null;
-        path = FinderPath.empty();
-        breadcrumb = Breadcrumb.empty();
+        path = new FinderPath();
     }
 
-    public void reset(final String token) {
+    void reset(final String token) {
         this.token = token;
         path.clear();
-        breadcrumb.clear();
+    }
+
+    public void reset(final FinderPath path) {
+        this.path = path;
     }
 
     public String getToken() {
@@ -46,9 +49,5 @@ public class FinderContext {
 
     public FinderPath getPath() {
         return path;
-    }
-
-    public Breadcrumb getBreadcrumb() {
-        return breadcrumb;
     }
 }
