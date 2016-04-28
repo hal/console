@@ -21,6 +21,9 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import elemental.client.Browser;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.HasFinder;
@@ -47,6 +50,24 @@ public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyV
     // @formatter:on
 
 
+    private class InitialPreview extends PreviewContent {
+
+        InitialPreview() {
+            super(Names.DEPLOYMENTS, environment.isStandalone()
+                    ? resources.previews().deploymentsStandalone()
+                    : resources.previews().deploymentsDomain());
+        }
+
+        @Override
+        public void onReset() {
+            if (environment.isStandalone()) {
+                Elements.setVisible(Browser.getDocument().getElementById(Ids.DRAG_AND_DROP_DEPLOYMENT),
+                        JsHelper.supportsAdvancedUpload());
+            }
+        }
+    }
+
+
     private final Environment environment;
     private final Resources resources;
 
@@ -70,9 +91,6 @@ public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyV
 
     @Override
     protected PreviewContent initialPreview() {
-        return new PreviewContent(Names.DEPLOYMENTS,
-                environment.isStandalone() ?
-                        resources.previews().deploymentsStandalone() :
-                        resources.previews().deploymentsDomain());
+        return new InitialPreview();
     }
 }

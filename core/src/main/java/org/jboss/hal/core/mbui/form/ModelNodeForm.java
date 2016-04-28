@@ -294,7 +294,10 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             // 1. the ones specified in 'builder.includes'
             // 2. the remaining from 'filteredProperties'
             for (String include : builder.includes) {
-                properties.add(filteredByName.remove(include));
+                Property removed = filteredByName.remove(include);
+                if (removed != null) {
+                    properties.add(removed);
+                }
             }
             properties.addAll(filteredByName.values());
         } else if (builder.unsorted) {

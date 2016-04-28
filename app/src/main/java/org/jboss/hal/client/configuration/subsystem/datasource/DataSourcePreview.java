@@ -18,67 +18,46 @@ package org.jboss.hal.client.configuration.subsystem.datasource;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import elemental.dom.Element;
-import elemental.dom.NodeList;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.CSS.alert;
-import static org.jboss.hal.resources.CSS.alertInfo;
-import static org.jboss.hal.resources.CSS.alertSuccess;
-import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.CSS.*;
 
 /**
  * @author Harald Pehl
  */
 class DataSourcePreview extends PreviewContent {
 
-    private static final String ALERT = "alertElement";
     private static final String DATASOURCE = "datasource";
     private static final String XA_DATASOURCE = "XA datasource";
 
     DataSourcePreview(final DataSourceColumn column, final DataSource dataSource, final Resources resources) {
         super(dataSource.getName(), dataSource.isXa() ? Names.XA_DATASOURCE : Names.DATASOURCE);
         boolean enabled = dataSource.hasDefined(ENABLED) && dataSource.get(ENABLED).asBoolean();
+        String type = dataSource.isXa() ? DATASOURCE : XA_DATASOURCE;
 
         previewBuilder().div();
         if (enabled) {
-            previewBuilder().css(alert, alertSuccess).span().css(pfIcon("ok")).end();
+            previewBuilder().css(alert, alertSuccess)
+                    .span().css(pfIcon("ok")).end()
+                    .span().innerHtml(resources.messages().resourceEnabled(type, dataSource.getName())).end()
+                    .span().textContent(" ").end()
+                    .a().css(clickable, alertLink).on(click, event -> column.disable(dataSource))
+                    .textContent(resources.constants().disable()).end();
+
         } else {
-            previewBuilder().css(alert, alertInfo).span().css(pfIcon("info")).end();
+            previewBuilder().css(alert, alertInfo)
+                    .span().css(pfIcon("info")).end()
+                    .span().innerHtml(resources.messages().resourceDisabled(type, dataSource.getName())).end()
+                    .span().textContent(" ").end()
+                    .a().css(clickable, alertLink).on(click, event -> column.enable(dataSource))
+                    .textContent(resources.constants().enable()).end();
         }
-        previewBuilder().span().rememberAs(ALERT);
-        if (dataSource.isXa()) {
-            if (enabled) {
-                previewBuilder()
-                        .innerHtml(resources.messages().dataSourceEnabledPreview(XA_DATASOURCE, dataSource.getName()));
-            } else {
-                previewBuilder()
-                        .innerHtml(resources.messages().dataSourceDisabledPreview(XA_DATASOURCE, dataSource.getName()));
-            }
-        } else {
-            if (enabled) {
-                previewBuilder()
-                        .innerHtml(resources.messages().dataSourceEnabledPreview(DATASOURCE, dataSource.getName()));
-            } else {
-                previewBuilder()
-                        .innerHtml(resources.messages().dataSourceDisabledPreview(DATASOURCE, dataSource.getName()));
-            }
-        }
-        previewBuilder().end().end(); // </span> && </div>
-        Element alertElement = previewBuilder().referenceFor(ALERT);
-        NodeList links = alertElement.getElementsByTagName("a"); //NON-NLS
-        if (links.getLength() != 0) {
-            Element link = (Element) links.item(0);
-            if (enabled) {
-                link.setOnclick(event -> column.disable(dataSource));
-            } else {
-                link.setOnclick(event -> column.enable(dataSource));
-            }
-        }
+        previewBuilder().end(); // </div>
 
         List<String> attributes = Lists
                 .newArrayList(JNDI_NAME, DRIVER_NAME, CONNECTION_URL, ENABLED, STATISTICS_ENABLED);

@@ -24,6 +24,7 @@ import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Names;
 
 import static org.jboss.hal.resources.CSS.key;
 import static org.jboss.hal.resources.CSS.listGroup;
@@ -64,7 +65,7 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
 
     public PreviewAttributes<T> append(final String attribute) {
         String label = labelBuilder.label(attribute);
-        String value = model.get(attribute).asString();
+        String value = model.hasDefined(attribute) ? model.get(attribute).asString() : Names.NOT_AVAILABLE;
         append(label, value);
         return this;
     }

@@ -122,10 +122,10 @@ public class UploadStatistics {
     private String sentences(SortedSet<String> added, SortedSet<String> replaced, SortedSet<String> failed) {
         List<String> sentences = new ArrayList<>();
         if (!added.isEmpty()) {
-            sentences.add(MESSAGES.deploymentAddedSuccess(added.size()));
+            sentences.add(MESSAGES.deploymentAdded(added.size()));
         }
         if (!replaced.isEmpty()) {
-            sentences.add(MESSAGES.deploymentReplacedSuccess(replaced.size()));
+            sentences.add(MESSAGES.deploymentReplaced(replaced.size()));
         }
         if (!failed.isEmpty()) {
             sentences.add(MESSAGES.deploymentFailed(failed.size()));

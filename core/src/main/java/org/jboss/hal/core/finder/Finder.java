@@ -135,6 +135,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     private final FinderContext context;
     private final LinkedHashMap<String, FinderColumn> columns;
     private final Map<String, String> initialColumnsByToken;
+    private final Map<String, PreviewContent> initialPreviewsByToken;
     private final Element root;
     private final Element previewColumn;
 
@@ -153,6 +154,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         this.context = new FinderContext();
         this.columns = new LinkedHashMap<>();
         this.initialColumnsByToken = new HashMap<>();
+        this.initialPreviewsByToken = new HashMap<>();
 
         // @formatter:off
         Elements.Builder builder = new Elements.Builder()
@@ -338,6 +340,10 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         }
     }
 
+    int columns() {
+        return columns.size();
+    }
+
     void showPreview(PreviewContent preview) {
         Elements.removeChildrenFrom(previewColumn);
         if (preview != null) {
@@ -346,6 +352,13 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             }
             preview.attach();
             preview.onReset();
+        }
+    }
+
+    void showInitialPreview() {
+        PreviewContent previewContent = initialPreviewsByToken.get(context.getToken());
+        if (previewContent != null) {
+            showPreview(previewContent);
         }
     }
 
@@ -358,6 +371,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     public void reset(final String token, final String initialColumn, final PreviewContent initialPreview,
             AsyncCallback<FinderColumn> callback) {
         initialColumnsByToken.put(token, initialColumn);
+        initialPreviewsByToken.put(token, initialPreview);
 
         columns.clear();
         while (root.getFirstChild() != previewColumn) {

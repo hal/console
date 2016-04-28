@@ -47,6 +47,7 @@ public interface Ids {
     String DEPLOYMENT_SERVER_GROUPS_COLUMN = "deployment-server-groups";
     String DOMAIN_BROWSE_BY = "domain-browse-by";
     String DOMAIN_SERVER_GROUPS_COLUMN = "domain-server-groups";
+    String DRAG_AND_DROP_DEPLOYMENT = "drag-and-drop-deployment";
 
     String EE_ATTRIBUTES_ENTRY = "ee-attributes-entry";
     String EE_ATTRIBUTES_FORM = "ee-attributes-form";

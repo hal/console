@@ -34,7 +34,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
  */
 public class Deployment extends Content {
 
-    enum Status {
+    public enum Status {
         OK, FAILED, STOPPED, UNDEFINED
     }
 

@@ -46,11 +46,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     String connectedTo(String url);
 
-    SafeHtml dataSourceEnabledPreview(String type, String name);
-    SafeHtml dataSourceDisabledPreview(String type, String name);
-    String deploymentAddedSuccess(@PluralCount int count);
+    String deploymentAdded(@PluralCount int count);
+    String deploymentDisabled(String name);
+    String deploymentEnabled(String name);
+    String deploymentEnabledError(String name);
     String deploymentFailed(@PluralCount int count);
-    String deploymentReplacedSuccess(@PluralCount int count);
+    String deploymentReplaced(@PluralCount int count);
     String duplicateResource(String type);
 
     SafeHtml emptyModelNodeForm();
@@ -85,6 +86,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml requiredHelp();
     SafeHtml requiredMarker();
     String resourceNotFound(String type, String name);
+    SafeHtml resourceDisabled(String type, String name);
+    SafeHtml resourceEnabled(String type, String name);
 
     String updateAvailable(String current, String update);
     String unit(String unit);

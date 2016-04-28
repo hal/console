@@ -57,12 +57,15 @@ public class InterfaceColumn extends FinderColumn<Property> {
                         Names.INTERFACE,
                         InterfacePresenter.ROOT_TEMPLATE,
                         "inet-address"))
-                .columnAction(columnActionFactory.refresh(IdBuilder.build(ModelDescriptionConstants.INTERFACE, "refresh")))
+                .columnAction(
+                        columnActionFactory.refresh(IdBuilder.build(ModelDescriptionConstants.INTERFACE, "refresh")))
 
                 .itemsProvider((context, callback) -> {
                     Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
                             .param(CHILD_TYPE, ModelDescriptionConstants.INTERFACE).build();
-                    dispatcher.execute(operation, result -> { callback.onSuccess(result.asPropertyList()); });
+                    dispatcher.execute(operation, result -> {
+                        callback.onSuccess(result.asPropertyList());
+                    });
                 })
 
                 .useFirstActionAsBreadcrumbHandler());

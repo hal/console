@@ -31,6 +31,8 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 
 /**
+ * Column used in domain mode to manage content in the content repository.
+ *
  * @author Harald Pehl
  */
 @Column(Ids.DEPLOYMENT_BROWSE_BY_COLUMN)
@@ -44,7 +46,7 @@ public class BrowseByColumn extends StaticItemColumn {
 
         @Override
         public void onReset() {
-            Elements.setVisible(Browser.getDocument().getElementById("drag-and-drop-deployment"), //NON-NLS
+            Elements.setVisible(Browser.getDocument().getElementById(Ids.DRAG_AND_DROP_DEPLOYMENT),
                     JsHelper.supportsAdvancedUpload());
         }
     }

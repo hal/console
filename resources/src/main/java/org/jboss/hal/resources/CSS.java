@@ -33,6 +33,7 @@ public interface CSS {
     String alertDanger = "alert-danger";
     String alertDismissable = "alert-dismissable";
     String alertInfo = "alert-info";
+    String alertLink = "alert-link";
     String alertSuccess = "alert-success";
     String alertWarning = "alert-warning";
     String arrow = "arrow";
