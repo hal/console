@@ -19,7 +19,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import com.google.common.collect.FluentIterable;
+import elemental.html.File;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
@@ -39,6 +42,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Harald Pehl
  */
 public class DeploymentFunctions {
+
+    public static final String UPLOAD_STATISTICS = "deploymentsFunctions.uploadStatistics";
+
 
     /**
      * Loads the contents form the content repository and pushes a {@code List&lt;Content&gt;} onto the context stack.
@@ -93,6 +99,122 @@ public class DeploymentFunctions {
                 control.getContext().push(new ArrayList<>(contentByName.values()));
                 control.proceed();
             });
+        }
+    }
+
+
+    /**
+     * Checks whether a deployment with the given name exists and pushes {@code 200} to the context stack if it exists,
+     * {@code 404} otherwise.
+     */
+    public static class CheckDeployment implements Function<FunctionContext> {
+
+        private final Dispatcher dispatcher;
+        private final String name;
+
+        public CheckDeployment(final Dispatcher dispatcher, final String name) {
+            this.dispatcher = dispatcher;
+            this.name = name;
+        }
+
+        @Override
+        public void execute(final Control<FunctionContext> control) {
+            Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, ResourceAddress.ROOT)
+                    .param(CHILD_TYPE, DEPLOYMENT)
+                    .build();
+            dispatcher.executeInFunction(control, operation, result -> {
+                //noinspection Guava
+                Set<String> names = FluentIterable.from(result.asList()).transform(ModelNode::asString).toSet();
+                if (names.contains(name)) {
+                    control.getContext().push(200);
+                } else {
+                    control.getContext().push(404);
+                }
+                control.proceed();
+            });
+        }
+    }
+
+
+    /**
+     * Creates a new deployment or replaces an existing deployment. The function looks for a status code in the
+     * context. If no status context or {@code 404} is found, a new deployment is created, if {@code 200} is found the
+     * deployment is replaced.
+     * <p>
+     * The function puts an {@link UploadStatistics} under the key {@link DeploymentFunctions#UPLOAD_STATISTICS}
+     * into the context.
+     */
+    public static class UploadOrReplace implements Function<FunctionContext> {
+
+        private final Dispatcher dispatcher;
+        private final File file;
+        private final boolean enabled;
+
+        public UploadOrReplace(final Dispatcher dispatcher, final File file, final boolean enabled) {
+            this.dispatcher = dispatcher;
+            this.file = file;
+            this.enabled = enabled;
+        }
+
+        @Override
+        public void execute(final Control<FunctionContext> control) {
+            boolean replace;
+            Operation.Builder builder;
+
+            if (control.getContext().emptyStack()) {
+                replace = false;
+            } else {
+                Integer status = control.getContext().pop();
+                replace = status == 200;
+            }
+
+            if (replace) {
+                builder = new Operation.Builder(FULL_REPLACE_DEPLOYMENT, ResourceAddress.ROOT) //NON-NLS
+                        .param(NAME, file.getName())
+                        .param(RUNTIME_NAME, file.getName());
+                // leave "enabled" as undefined to indicate that the state of the existing deployment should be retained
+            } else {
+                builder = new Operation.Builder(ADD, new ResourceAddress().add(DEPLOYMENT, file.getName()))
+                        .param(RUNTIME_NAME, file.getName())
+                        .param(ENABLED, enabled);
+            }
+            Operation operation = builder.build();
+            operation.get("content").add().get("input-stream-index").set(0); //NON-NLS
+
+            dispatcher.upload(file, operation,
+                    result -> {
+                        UploadStatistics statistics = control.getContext().get(UPLOAD_STATISTICS);
+                        if (statistics == null) {
+                            statistics = new UploadStatistics();
+                            control.getContext().set(UPLOAD_STATISTICS, statistics);
+                        }
+                        if (ADD.equals(operation.getName())) {
+                            statistics.recordAdded(file.getName());
+                        } else {
+                            statistics.recordReplaced(file.getName());
+                        }
+                        control.proceed();
+                    },
+
+                    (op, failure) -> {
+                        UploadStatistics statistics = control.getContext().get(UPLOAD_STATISTICS);
+                        if (statistics == null) {
+                            statistics = new UploadStatistics();
+                            control.getContext().set(UPLOAD_STATISTICS, statistics);
+                        }
+                        statistics.recordFailed(file.getName());
+                        control.proceed();
+                    },
+
+                    (op, exception) -> {
+                        UploadStatistics statistics = control.getContext().get(UPLOAD_STATISTICS);
+                        if (statistics == null) {
+                            statistics = new UploadStatistics();
+                            control.getContext().set(UPLOAD_STATISTICS, statistics);
+                        }
+                        statistics.recordFailed(file.getName());
+                        control.proceed();
+                    });
         }
     }
 }

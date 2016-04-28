@@ -18,6 +18,9 @@ package org.jboss.hal.client.deployment;
 import java.util.Arrays;
 import javax.inject.Inject;
 
+import elemental.client.Browser;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
@@ -33,14 +36,26 @@ import org.jboss.hal.spi.Column;
 @Column(Ids.DEPLOYMENT_BROWSE_BY_COLUMN)
 public class BrowseByColumn extends StaticItemColumn {
 
+    private static class ContentRepositoryPreview extends PreviewContent {
+
+        ContentRepositoryPreview(Resources resources) {
+            super(resources.constants().contentRepository(), resources.previews().contentRepository());
+        }
+
+        @Override
+        public void onReset() {
+            Elements.setVisible(Browser.getDocument().getElementById("drag-and-drop-deployment"), //NON-NLS
+                    JsHelper.supportsAdvancedUpload());
+        }
+    }
+
     @Inject
     public BrowseByColumn(final Finder finder,
             final Resources resources) {
         super(finder, Ids.DEPLOYMENT_BROWSE_BY_COLUMN, resources.constants().browseBy(),
                 Arrays.asList(
                         new StaticItem.Builder(resources.constants().contentRepository())
-                                .onPreview(new PreviewContent(resources.constants().contentRepository(),
-                                        resources.previews().contentRepository()))
+                                .onPreview(new ContentRepositoryPreview(resources))
                                 .nextColumn(Ids.CONTENT_COLUMN)
                                 .build(),
                         new StaticItem.Builder(Names.SERVER_GROUPS)

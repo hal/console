@@ -48,6 +48,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml dataSourceEnabledPreview(String type, String name);
     SafeHtml dataSourceDisabledPreview(String type, String name);
+    String deploymentAddedSuccess(@PluralCount int count);
+    String deploymentFailed(@PluralCount int count);
+    String deploymentReplacedSuccess(@PluralCount int count);
     String duplicateResource(String type);
 
     SafeHtml emptyModelNodeForm();

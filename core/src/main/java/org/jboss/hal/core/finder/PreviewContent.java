@@ -50,7 +50,6 @@ public class PreviewContent implements HasElements, SecurityContextAware, Attach
     private static final Logger logger = LoggerFactory.getLogger(PreviewContent.class);
     private static final int MAX_HEADER_LENGTH = 30;
 
-
     private final Elements.Builder builder;
     private final List<Attachable> attachables;
     private boolean attached;
@@ -59,7 +58,7 @@ public class PreviewContent implements HasElements, SecurityContextAware, Attach
      * Empty preview w/o content
      */
     public PreviewContent(final String header) {
-        this(header, (String)null);
+        this(header, (String) null);
     }
 
     public PreviewContent(final String header, final String lead) {

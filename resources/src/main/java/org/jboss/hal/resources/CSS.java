@@ -171,6 +171,7 @@ public interface CSS {
 
     String offset = "offset";
     String ok = "ok";
+    String ondrag = "ondrag";
     String operationParameter = "operation-parameter";
     String operations = "operations";
 

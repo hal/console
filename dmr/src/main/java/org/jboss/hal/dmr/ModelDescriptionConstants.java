@@ -99,6 +99,7 @@ public interface ModelDescriptionConstants {
 
     String FAILED = "failed";
     String FAILURE_DESCRIPTION = "failure-description";
+    String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
 
     String GLOBAL_MODULES = "global-modules";
     String GRACEFUL_SHUTDOWN_TIMEOUT = "graceful-shutdown-timeout";

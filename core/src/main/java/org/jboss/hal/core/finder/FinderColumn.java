@@ -469,6 +469,10 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
     // ------------------------------------------------------ internal API
 
+    protected Element ulElement() {
+        return ulElement;
+    }
+
     void markHiddenColumns(boolean show) {
         Elements.setVisible(hiddenColumns, show);
     }

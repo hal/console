@@ -48,6 +48,7 @@ public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyV
 
 
     private final Environment environment;
+    private final Resources resources;
 
     @Inject
     public DeploymentPresenter(
@@ -55,10 +56,11 @@ public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyV
             final MyView view,
             final MyProxy proxy,
             final Finder finder,
-            final Resources resources,
-            final Environment environment) {
+            final Environment environment,
+            final Resources resources) {
         super(eventBus, view, proxy, finder, resources);
         this.environment = environment;
+        this.resources = resources;
     }
 
     @Override

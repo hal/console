@@ -100,8 +100,8 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
                         "ear-subdeployments-isolated",
                         "jboss-descriptor-property-replacement",
                         "spec-descriptor-property-replacement")
-                .onSave((form1, changedValues1) -> presenter
-                        .save(AddressTemplates.EE_SUBSYSTEM_TEMPLATE, changedValues1,
+                .onSave((f, changedValues) -> presenter
+                        .save(AddressTemplates.EE_SUBSYSTEM_TEMPLATE, changedValues,
                                 resources.constants().deploymentAttributes()))
                 .build();
         forms.put(EE_ATTRIBUTES_FORM, eeAttributesForm);
