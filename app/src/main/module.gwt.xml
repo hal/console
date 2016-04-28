@@ -28,7 +28,7 @@
                                    value="org.jboss.hal.client.gin.CompositeModule"/>
 
     <define-configuration-property name="hal.version" is-multi-valued="false"/>
-    <set-configuration-property name="hal.version" value="0.0.10"/>
+    <set-configuration-property name="hal.version" value="0.1.0"/>
 
     <set-configuration-property name="CssResource.enableGss" value="true"/>
 
