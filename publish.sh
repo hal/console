@@ -30,7 +30,7 @@ mv app/target/hal-app-*/hal /tmp/
 git checkout gh-pages > /dev/null 2>&1
 git reset --hard origin/gh-pages > /dev/null 2>&1
 rm -rf *.png *.gif *.ico *.txt *.html *.js
-rm -rf css deferredjs fonts img js
+rm -rf css deferredjs fonts img js previews
 git commit -am "Prepare update" > /dev/null 2>&1
 git push -f origin gh-pages > /dev/null 2>&1
 mv /tmp/hal/* .
