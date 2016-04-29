@@ -11,27 +11,27 @@ Fresh start of the HAL management console using the latest frameworks / librarie
 
 HAL.next is a prototype and playground to test new features and evaluate the latest frameworks. The upcoming GWT 3.0 release will introduce many breaking changes for GWT applications. The most important change will be the deprecation of `gwt-user.jar`. This includes features such as the GWT widgets, deferred binding and GWT RPC. 
 
-In order to make the console future proof, it is necessary to replace these parts. At the same time this is an opportunity to fix some weak points of the current console and add new features. Currently the following features and enhancements are implemented / planned
+In order to make the console future proof, it is necessary to replace these parts. At the same time this is an opportunity to fix some weak points of the current console and add new features. Currently the following features and enhancements are implemented / planned:
 
-### General
+- General
 
-- Place management for finder *and* applications
-	- Cross-links between different parts of HAL (configuration ⟷ runtime ⟷ deployment)
-	- Applications / finder selections can be bookmarked
-	- Search can be re-implemented
-- Switch between applications using the breadcrumb
-- Macro recording
-- Fully PatternFly compliant
-- Enhanced form items for lists, properties and booleans
-- Make use of capabilities & requirements to show combo boxes with type-ahead support
-- Declarative UI using MBUI and a simple XML format (w/o behaviour). See [LoggingView.xml](app/src/main/resources/org/jboss/hal/client/configuration/subsystem/logging/LoggingView.xml) for an example.
-- Remove deprecated APIs 
+    - Place management for finder *and* applications
+        - Cross-links between different parts of HAL (configuration ⟷ runtime ⟷ deployment)
+        - Applications / finder selections can be bookmarked
+        - Search can be re-implemented
+    - Switch between applications using the breadcrumb
+    - Macro recording
+    - Fully PatternFly compliant
+    - Enhanced form items for lists, properties and booleans
+    - Make use of capabilities & requirements to show combo boxes with type-ahead support
+    - Declarative UI using MBUI and a simple XML format (w/o behaviour). See [LoggingView.xml](app/src/main/resources/org/jboss/hal/client/configuration/subsystem/logging/LoggingView.xml) for an example.
+    - Remove deprecated APIs 
 
-### Finder
+- Finder
 
-- Navigation using cursor keys
-- Filter items by name *and* by properties like 'enabled datasources' or 'deployments assigned to a specific server group'
-- Columns & items can be provided by extensions
+    - Navigation using cursor keys
+    - Filter items by name *and* by properties like 'enabled datasources' or 'deployments assigned to a specific server group'
+    - Columns & items can be provided by extensions
 
 ## Running
 
