@@ -27,7 +27,7 @@
 
     <groupId>org.jboss.hal</groupId>
     <artifactId>hal-parent</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <name>HAL :: Parent :: Aggregator</name>
     <description>The WildFly / EAP management console</description>
     <packaging>pom</packaging>
@@ -92,6 +92,7 @@
         <module>processors</module>
         <module>resources</module>
         <module>spi</module>
+        <module>standalone</module>
     </modules>
 
     <build>

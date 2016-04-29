@@ -97,9 +97,9 @@
                                             <suggest-handler>
                                                 <templates>
                                                     <!-- @formatter:off -->
-                                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
-                                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
-                                                        <!-- @formatter:on -->
+                                                    <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
+                                                    <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                                    <!-- @formatter:on -->
                                                 </templates>
                                             </suggest-handler>
                                         </attribute>
@@ -127,9 +127,9 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                            <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
-                                            <!-- @formatter:on -->
+                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
                             </attribute>
@@ -174,9 +174,9 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                            <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
-                                            <!-- @formatter:on -->
+                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
                             </attribute>
@@ -204,17 +204,17 @@
                                         <attribute name="level"/>
                                         <attribute name="subhandlers">
                                             <suggest-handler>
-                                                <!-- @formatter:off -->
-                                                    <templates>
-                                                        <template address="/{selected.profile}/subsystem=logging/console-handler=*"/>
-                                                        <template address="/{selected.profile}/subsystem=logging/custom-handler=*"/>
-                                                        <template address="/{selected.profile}/subsystem=logging/file-handler=*"/>
-                                                        <template address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*"/>
-                                                        <template address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*"/>
-                                                        <template address="/{selected.profile}/subsystem=logging/size-rotating-file-handler"/>
-                                                        <template address="/{selected.profile}/subsystem=logging/syslog-handler"/>
-                                                    </templates>
+                                                <templates>
+                                                    <!-- @formatter:off -->
+                                                    <template address="/{selected.profile}/subsystem=logging/console-handler=*"/>
+                                                    <template address="/{selected.profile}/subsystem=logging/custom-handler=*"/>
+                                                    <template address="/{selected.profile}/subsystem=logging/file-handler=*"/>
+                                                    <template address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*"/>
+                                                    <template address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*"/>
+                                                    <template address="/{selected.profile}/subsystem=logging/size-rotating-file-handler=*"/>
+                                                    <template address="/{selected.profile}/subsystem=logging/syslog-handler=*"/>
                                                     <!-- @formatter:on -->
+                                                </templates>
                                             </suggest-handler>
                                         </attribute>
                                         <attribute name="queue-length"/>
@@ -238,14 +238,14 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                            <template address="/{selected.profile}/subsystem=logging/console-handler=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/custom-handler=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/file-handler=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/size-rotating-file-handler"/>
-                                            <template address="/{selected.profile}/subsystem=logging/syslog-handler"/>
-                                            <!-- @formatter:on -->
+                                        <template address="/{selected.profile}/subsystem=logging/console-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/custom-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/size-rotating-file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/syslog-handler=*"/>
+                                        <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
                             </attribute>
@@ -266,7 +266,7 @@
             -->
             <sub-item id="logging-formatter-pattern" title="Pattern Formatter">
                 <metadata template="/{selected.profile}/subsystem=logging/pattern-formatter=*">
-                    <h1>Async Handler</h1>
+                    <h1>Pattern Formatter</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
                     <table id="logging-formatter-pattern-table" form-ref="logging-formatter-pattern-form">
                         <actions>
@@ -302,7 +302,7 @@
             -->
             <sub-item id="logging-formatter-custom" title="Pattern Formatter">
                 <metadata template="/{selected.profile}/subsystem=logging/custom-formatter=*">
-                    <h1>Async Handler</h1>
+                    <h1>Custom Formatter</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
                     <table id="logging-formatter-custom-table" form-ref="logging-formatter-custom-form">
                         <actions>

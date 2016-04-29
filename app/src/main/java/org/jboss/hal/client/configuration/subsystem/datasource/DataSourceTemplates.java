@@ -15,13 +15,13 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
-import org.jboss.hal.dmr.ModelDescriptionConstants;
-import org.jboss.hal.dmr.ModelNode;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
+import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.dmr.ModelNode;
 
 import static org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplate.Vendor.*;
 

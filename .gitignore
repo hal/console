@@ -6,7 +6,8 @@
 .project
 .classpath
 .wakatime-project
-out
-target
+dependency-reduced-pom.xml
 gwt-unitCache
 hs_err*
+out
+target
