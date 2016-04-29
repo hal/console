@@ -30,7 +30,7 @@ In order to make the console future proof, it's necessary to rewrite these parts
 
 - Finder
 
-    - Navigation using cursor keys. Open an application by pressing <Enter> and go back with <Bacpspace> 
+    - Navigation using cursor keys. Open an application by pressing ↵ (`enter`) and go back with ⌫ (`backspace`)
     - Pin frequently used subsystems to stay at the top
     - Filter items by name *and* by properties like 'enabled data-sources' or 'deployments assigned to a specific server group'
     - Columns can be provided by extensions
