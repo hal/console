@@ -46,7 +46,7 @@ There are different ways to launch HAL.next and connect to a running WildFly ins
  
         /host=master/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=<url>)
         reload --host=master
- 
+        
 ### Local / Production Mode
 
 The `standalone` module contains an executable jar which launches a local web server at http://localhost:9090.
@@ -71,6 +71,6 @@ Useful during development as it provides browser refresh after code changes.
 A recent version of HAL.next is also available on the `gh-pages` at https://hal.github.io/hal.next/. 
 
 1. Add https://hal.github.io/hal.next/ as allowed origin
-1. Open http://localhost:8888/hal/dev.html
+1. Open https://hal.github.io/hal.next/
 
 The remote version is served from **https** so you need to secure the management interface as well. 
