@@ -131,7 +131,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
         xaDataSource.get("pool-name").set("MysqlXADS_Pool");
         xaDataSource.get("jndi-name").set("java:/MysqlXADS");
         xaDataSource.get("driver-name").set("mysql");
-        xaDataSource.get("xa-datasource-properties").set(properties("ServerName", "localhost",
+        xaDataSource.get("xa-datasource-properties").set(properties("ServerName", Main.LOCALHOST,
                 "DatabaseName", "mysqldb"));
         xaDataSource.get("user-name").set("admin");
         xaDataSource.get("password").set("admin");

@@ -92,6 +92,7 @@
         <module>processors</module>
         <module>resources</module>
         <module>spi</module>
+        <module>standalone</module>
     </modules>
 
     <build>
