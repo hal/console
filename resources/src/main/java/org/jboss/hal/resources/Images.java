@@ -32,9 +32,6 @@ public interface Images extends ClientBundle {
     @Source("homepage/deployments.png")
     ImageResource deployments();
 
-    @Source("previews/deployments/deployment.png")
-    ImageResource deploymentPreview();
-
     @Source("homepage/help.png")
     ImageResource help();
 
