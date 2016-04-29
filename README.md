@@ -15,11 +15,12 @@ In order to make the console future proof, it is necessary to replace these part
 
 - General
 
-    - Place management for finder *and* applications
+    - Place management for finder *and* applications. This enables features like
         - Cross-links between different parts of HAL (configuration ⟷ runtime ⟷ deployment)
         - Applications / finder selections can be bookmarked
         - Search can be re-implemented
     - Switch between applications using the breadcrumb
+    - Add deployments using drag & drop
     - Macro recording
     - Fully PatternFly compliant
     - Enhanced form items for lists, properties and booleans
