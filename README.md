@@ -34,7 +34,7 @@ In order to make the console future proof, it is necessary to replace these part
 
 ### Planed
 
-- Declarative UI using MBUI and a simple XML format (w/o behaviour). See [LoggingView.xml](app/org/jboss/hal/client/configuration/subsystem/logging/LoggingView.xml)
+- Declarative UI using MBUI and a simple XML format (w/o behaviour). See [LoggingView.xml](app/src/main/resources/org/jboss/hal/client/configuration/subsystem/logging/LoggingView.xml)
 
 ## Running
 
