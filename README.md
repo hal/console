@@ -75,4 +75,4 @@ A recent version of HAL.next is also available on the `gh-pages` at https://hal.
 1. Add https://hal.github.io/hal.next/ as allowed origin
 1. Open https://hal.github.io/hal.next/
 
-The remote version is served from **https** so you need to secure the management interface as well. Please note that if you're using a self signed key store you might need to open the local management endpoint in the browser and accept the unsafe certificate before you can use it with HAL.
+The remote version is served from **https** so you need to secure the management interface as well. Please note that if you're using a self signed key store you might need to open the local management endpoint in the browser and accept the unsafe certificate before you can use it with HAL.next.
