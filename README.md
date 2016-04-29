@@ -1,4 +1,4 @@
-# HAL.Next
+# HAL.next
 
 Fresh start of the HAL management console using the latest frameworks / libraries. 
 
@@ -7,18 +7,73 @@ Fresh start of the HAL management console using the latest frameworks / librarie
 - Latest GWTP build
 - PatternFly
 
-## Demo
+## Motivation
 
-The latest version of HAL.Next can be found at https://hal.github.io/hal.next/. Please make sure to add this domain as allowed origin in WildFly.
+HAL.next is a prototype and playground to test new features and evaluate the latest frameworks. The upcoming GWT 3.0 release will introduce many breaking changes for GWT applications. The most important change will be the deprecation of `gwt-user.jar`. This includes features such as the GWT widgets, deferred binding and GWT RPC. 
 
-- standalone mode: 
+In order to make the console future proof, it is necessary to replace these parts. At the same time this is an opportunity to fix some weak points of the current console and add new features.
 
-        /core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=https://hal.github.io)
+### General
+
+- Place management for finder *and* applications
+	- Cross-links between different parts of HAL (configuration ⟷ runtime ⟷ deployment)
+	- Applications / finder selections can be bookmarked
+	- Search can be re-implemented
+- Switch between applications using the breadcrumb
+- Macro recording
+- Fully PatternFly compliant
+- Enhanced form items for lists, properties, booleans
+- Make use of capabilities & requirements to show combo boxes with type-ahead support
+- Remove deprecated APIs 
+
+### Finder
+
+- Navigation using cursor keys
+- Filter items by name *and* by properties like 'enabled datasources' or 'deployments assigned to a specific server group'
+- Columns & items can be provided by extensions
+
+### Planed
+
+- Declarative UI using MBUI and a simple XML format (w/o behaviour). See [LoggingView.xml](app/org/jboss/hal/client/configuration/subsystem/logging/LoggingView.xml)
+
+## Running
+
+There are different ways to launch HAL.next and connect to a running WildFly instance. Each one requires to configure the allowed origins of the HTTP management endpoint.
+ 
+- Standalone mode
+
+        /core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=<url>)
         reload
-    
-- domain mode:
 
-        /host=master/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=https://hal.github.io)
+- Domain mode
+ 
+        /host=master/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=<url>)
         reload --host=master
+ 
+### Local / Production Mode
 
-Please note since the demo is served from **https** you need to secure the management interface as well. 
+The `standalone` module contains an executable jar which launches a local web server at http://localhost:9090.
+  
+1. Add http://localhost:9090 as allowed origin
+1. `mvn install`
+1. `java -jar standalone/target/hal-standalone-<version>.jar`
+1. Open http://localhost:9090
+
+### Local / SuperDevMode
+
+Useful during development as it provides browser refresh after code changes. 
+
+1. Add http://localhost:8888 as allowed origin
+1. `mvn install -Dgwt.skipCompilation -Pdev` 
+1. `cd app`
+1. `./devmode.sh`
+1. Open http://localhost:8888/hal/dev.html
+
+### Remote
+
+A recent version of HAL.next is also available on the `gh-pages` at https://hal.github.io/hal.next/. 
+
+1. Add https://hal.github.io/hal.next/ as allowed origin
+1. Open http://localhost:8888/hal/dev.html
+
+The remote version is served from **https** so you need to secure the management interface as well. 

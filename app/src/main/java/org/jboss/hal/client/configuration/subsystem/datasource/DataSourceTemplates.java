@@ -15,13 +15,13 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
-import org.jboss.hal.dmr.ModelDescriptionConstants;
-import org.jboss.hal.dmr.ModelNode;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
+import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.dmr.ModelNode;
 
 import static org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplate.Vendor.*;
 
@@ -131,7 +131,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
         xaDataSource.get("pool-name").set("MysqlXADS_Pool");
         xaDataSource.get("jndi-name").set("java:/MysqlXADS");
         xaDataSource.get("driver-name").set("mysql");
-        xaDataSource.get("xa-datasource-properties").set(properties("ServerName", Main.LOCALHOST,
+        xaDataSource.get("xa-datasource-properties").set(properties("ServerName", "localhost",
                 "DatabaseName", "mysqldb"));
         xaDataSource.get("user-name").set("admin");
         xaDataSource.get("password").set("admin");
