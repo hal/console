@@ -269,6 +269,11 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         for (Iterator<FinderSegment> iterator = context.getPath().iterator(); iterator.hasNext(); ) {
             //noinspection unchecked
             FinderSegment<Object> segment = iterator.next();
+            if (segment.getKey() == null || segment.getValue() == null) {
+                // we need to ignore half filled segments which occur when removing items from a column
+                break;
+            }
+
             boolean last = !iterator.hasNext();
             currentPath.append(segment.getKey(), segment.getValue());
 
