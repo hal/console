@@ -30,6 +30,7 @@ In order to make the console future proof, it is necessary to replace these part
 - Finder
 
     - Navigation using cursor keys
+    - Pin frequently used subsystems to stay at the top
     - Filter items by name *and* by properties like 'enabled datasources' or 'deployments assigned to a specific server group'
     - Columns & items can be provided by extensions
 

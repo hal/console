@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
@@ -128,6 +129,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     private static final String PREVIEW_COLUMN = "previewColumn";
     private static final Logger logger = LoggerFactory.getLogger(Finder.class);
 
+    private final EventBus eventBus;
     private final PlaceManager placeManager;
     private final ColumnRegistry columnRegistry;
     private final Provider<Progress> progress;
@@ -143,9 +145,11 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     // ------------------------------------------------------ ui
 
     @Inject
-    public Finder(final PlaceManager placeManager,
+    public Finder(final EventBus eventBus,
+            final PlaceManager placeManager,
             final ColumnRegistry columnRegistry,
             @Footer final Provider<Progress> progress) {
+        this.eventBus = eventBus;
         this.placeManager = placeManager;
         this.columnRegistry = columnRegistry;
         this.progress = progress;
@@ -296,6 +300,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             FinderColumn column = columns.get(key);
             context.getPath().append(column);
         }
+        eventBus.fireEvent(new FinderContextEvent(context));
     }
 
     void updateHistory() {

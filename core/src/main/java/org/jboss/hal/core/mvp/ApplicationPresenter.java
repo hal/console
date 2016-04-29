@@ -97,7 +97,7 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
             }
             finder.getContext().reset(applicationPath);
         }
-        // The breadcrumb is part of the header. Notify the the header presenter to take care of updating the breadcrumb
+        // The breadcrumb is part of the header. Notify the header presenter to take care of updating the breadcrumb
         getEventBus().fireEvent(new FinderContextEvent(finder.getContext()));
     }
 }
