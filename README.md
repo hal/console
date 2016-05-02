@@ -76,3 +76,12 @@ A recent version of HAL.next is also available on the `gh-pages` branch at https
 1. Open https://hal.github.io/hal.next/
 
 The remote version is served from **https** so you need to secure the management interface as well. Please note that if you're using a self signed key store you might need to open the local management endpoint in the browser and accept the unsafe certificate before you can use it with HAL.next.
+
+### Bundled
+
+There's a WildFly 10.1.0 development version bundled with the HAL.next available at . 
+
+1. Download and extract 
+1. run `bin/standalone.sh` or `bin/domain.sh`
+1. Open http://localhost:9090
+1. Use `admin` / `admin` to login
