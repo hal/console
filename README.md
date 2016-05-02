@@ -32,8 +32,8 @@ In order to make the console future proof, it's necessary to rewrite these parts
 
     - Navigation using cursor keys. Open an application by pressing ↵ (`enter`) and go back with ⌫ (`backspace`)
     - Pin frequently used subsystems to stay at the top
-    - Filter items by name *and* by properties like 'enabled data-sources' or 'deployments assigned to a specific server group'
-    - Columns can be provided by extensions
+    - Filter items by name *and* by properties like 'enabled' in the data sources column
+    - Columns could be provided by extensions
 
 ## Running
 
@@ -70,7 +70,7 @@ Useful during development as it provides browser refresh after code changes.
 
 ### Remote
 
-A recent version of HAL.next is also available on the `gh-pages` at https://hal.github.io/hal.next/. 
+A recent version of HAL.next is also available on the `gh-pages` branch at https://hal.github.io/hal.next/. 
 
 1. Add https://hal.github.io/hal.next/ as allowed origin
 1. Open https://hal.github.io/hal.next/
