@@ -79,7 +79,7 @@ The remote version is served from **https** so you need to secure the management
 
 ### Bundled
 
-There's a WildFly 10.1.0 development version bundled with the HAL.next available at . 
+There's a WildFly 10.1.0 development version bundled with the HAL.next available at https://drive.google.com/file/d/0BzCXrwefSBHJbUxJRDJhcDlWWlE/view?usp=sharing. 
 
 1. Download and extract 
 1. run `bin/standalone.sh` or `bin/domain.sh`
