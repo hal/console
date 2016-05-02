@@ -24,7 +24,7 @@ In order to make the console future proof, it's necessary to rewrite these parts
     - Macro recording
     - PatternFly compliant
     - Enhanced form items for lists, properties and booleans
-    - Support for capabilities & requirements to show combo boxes with type-ahead support
+    - Use capabilities & requirements to generate combo boxes with type-ahead support
     - Declarative UI using MBUI and a simple XML format (w/o behaviour). See [LoggingView.xml](app/src/main/resources/org/jboss/hal/client/configuration/subsystem/logging/LoggingView.xml) for an example.
     - Remove deprecated APIs 
 
