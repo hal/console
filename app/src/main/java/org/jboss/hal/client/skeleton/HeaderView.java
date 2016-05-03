@@ -121,20 +121,6 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         Elements.setVisible(breadcrumbs, false);
     }
 
-    String historyToken(String token) {
-        PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token).build();
-        return "#" + tokenFormatter().toHistoryToken(singletonList(placeRequest));
-    }
-
-    String historyToken(String token, FinderPath path) {
-        PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(token);
-        if (!path.isEmpty()) {
-            builder.with("path", path.toString());
-        }
-        PlaceRequest placeRequest = builder.build();
-        return "#" + tokenFormatter().toHistoryToken(singletonList(placeRequest));
-    }
-
     @Override
     public void setPresenter(final HeaderPresenter presenter) {
         this.presenter = presenter;
@@ -174,6 +160,36 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         logoLast.setInnerText(parts[1]);
     }
 
+
+    // ------------------------------------------------------ links and tokens
+
+    String historyToken(String token) {
+        PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token).build();
+        return "#" + tokenFormatter().toHistoryToken(singletonList(placeRequest));
+    }
+
+    String historyToken(String token, FinderPath path) {
+        PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(token);
+        if (!path.isEmpty()) {
+            builder.with("path", path.toString());
+        }
+        PlaceRequest placeRequest = builder.build();
+        return "#" + tokenFormatter().toHistoryToken(singletonList(placeRequest));
+    }
+
+    @Override
+    public void updateBack(final FinderContext finderContext) {
+        String token = finderContext.getToken();
+        if (token != null) {
+            String historyToken = historyToken(token, finderContext.getPath());
+            backLink.setAttribute("href", historyToken); //NON-NLS
+            Element link = tlc.get(token);
+            if (link != null) {
+                link.setAttribute("href", historyToken); //NON-NLS
+            }
+        }
+    }
+
     @Override
     public void selectTlc(final String nameToken) {
         for (String token : tlc.keySet()) {
@@ -186,6 +202,9 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
             }
         }
     }
+
+
+    // ------------------------------------------------------ messages
 
     @Override
     public void showMessage(final Message message) {
@@ -221,6 +240,9 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         Browser.getWindow().clearTimeout(messageTimeoutHandle);
     }
 
+
+    // ------------------------------------------------------ modes
+
     @Override
     public void tlcMode() {
         Elements.setVisible(topLevelTabs, true);
@@ -242,18 +264,8 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         Elements.setVisible(breadcrumbs, true);
     }
 
-    @Override
-    public void updateBack(final FinderContext finderContext) {
-        String token = finderContext.getToken();
-        if (token != null) {
-            String historyToken = historyToken(token, finderContext.getPath());
-            backLink.setAttribute("href", historyToken); //NON-NLS
-            Element link = tlc.get(token);
-            if (link != null) {
-                link.setAttribute("href", historyToken); //NON-NLS
-            }
-        }
-    }
+
+    // ------------------------------------------------------ breadcrumb
 
     private void clearBreadcrumb() {
         while (breadcrumbs.getLastChild() != null && breadcrumbs.getChildren().getLength() > 1) {
@@ -397,6 +409,9 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
             }
         }
     }
+
+
+    // ------------------------------------------------------ event handler
 
     @EventHandler(element = "logoLink", on = click)
     void onLogo() {

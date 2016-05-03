@@ -163,7 +163,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
 
         /**
-         * Uses the item first action as breadcrumb item handler. If a custom handler is set using {@link
+         * Uses the item's first action as breadcrumb item handler. If a custom handler is set using {@link
          * #onBreadcrumbItem(BreadcrumbItemHandler)} this handler will be used instead of the first item action.
          */
         public Builder<T> useFirstActionAsBreadcrumbHandler() {
