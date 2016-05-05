@@ -96,12 +96,8 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
         Metadata eeMetadata = metadataRegistry.lookup(AddressTemplates.EE_SUBSYSTEM_TEMPLATE);
 
         ModelNodeForm<ModelNode> eeAttributesForm = new ModelNodeForm.Builder<>(EE_ATTRIBUTES_FORM, eeMetadata)
-                .include("annotation-property-replacement",
-                        "ear-subdeployments-isolated",
-                        "jboss-descriptor-property-replacement",
-                        "spec-descriptor-property-replacement")
-                .onSave((f, changedValues) -> presenter
-                        .save(AddressTemplates.EE_SUBSYSTEM_TEMPLATE, changedValues,
+                .onSave((form1, changedValues1) -> presenter
+                        .save(AddressTemplates.EE_SUBSYSTEM_TEMPLATE, changedValues1,
                                 resources.constants().deploymentAttributes()))
                 .build();
         forms.put(EE_ATTRIBUTES_FORM, eeAttributesForm);
@@ -144,12 +140,6 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
 
         ModelNodeForm<ModelNode> defaultBindingsForm = new ModelNodeForm.Builder<>(EE_DEFAULT_BINDINGS_FORM,
                 defaultBindingsMetadata)
-                .include("context-service",
-                        "datasource",
-                        "jms-connection-factory",
-                        "managed-executor-service",
-                        "managed-scheduled-executor-service",
-                        "managed-thread-factory")
                 .onSave((form, changedValues) -> presenter.save(AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE,
                         changedValues, DEFAULT_BINDINGS_NAME))
                 .build();
@@ -242,7 +232,7 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
 
         // update the default-bindings tab
         if (eeData.hasDefined(SERVICE)) {
-            ModelNode defaultBindings = eeData.get(SERVICE).get(DEFAULT_BINDINGS_NAME);
+            ModelNode defaultBindings = eeData.get(SERVICE).get(ModelDescriptionConstants.DEFAULT_BINDINGS);
             Form<ModelNode> formDefaultBindings = forms.get(EE_DEFAULT_BINDINGS_FORM);
             formDefaultBindings.view(defaultBindings);
         }

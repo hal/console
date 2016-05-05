@@ -40,6 +40,7 @@ public interface NameTokens {
     String JPA = ModelDescriptionConstants.JPA;
     String LOGGING = ModelDescriptionConstants.LOGGING;
     String MACRO_EDITOR = "macro-editor";
+    String MAIL_SESSION = ModelDescriptionConstants.MAIL_SESSION;
     String MODEL_BROWSER = "model-browser";
     String PATCHING = "patching";
     String PATH = "path";

@@ -180,6 +180,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String macroEditor();
     String macroPlaybackError();
     String macroPlaybackSuccessful();
+    String mailSession();
+    String mailServerTypeAlreadyExists();
     String main_attributes();
     String message();
     String metadataError();

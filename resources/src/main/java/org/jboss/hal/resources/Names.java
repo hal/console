@@ -38,6 +38,8 @@ public interface Names {
     String INTERFACES = "Interfaces";
     String JDBC_DRIVER = "JDBC Driver";
     String JDBC_DRIVERS = "JDBC Drivers";
+    String MAIL = "Mail";
+    String MAIL_SESSION = "Mail Session";
     String MANAGEMENT_CONSOLE = "Management Console";
     String MANAGEMENT_MODEL = "Management Model";
     String MODULE = "Module";
