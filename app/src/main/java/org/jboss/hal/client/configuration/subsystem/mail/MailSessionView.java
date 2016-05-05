@@ -72,9 +72,7 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
     private final Element header;
     private String mailSessionName;
 
-    static java.util.logging.Logger LOG = java.util.logging.Logger.getLogger("org.jboss");
     private List<NamedNode> serverTypeModels;
-
 
     @Inject
     public MailSessionView(MetadataRegistry metadataRegistry,

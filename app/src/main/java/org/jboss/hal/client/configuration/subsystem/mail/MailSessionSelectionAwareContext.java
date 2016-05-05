@@ -25,8 +25,6 @@ public class MailSessionSelectionAwareContext extends FilteringStatementContext 
 
     private static String MAIL_SESSION_KEY = "mail.session";
     static String MAIL_SESSION = "{" + MAIL_SESSION_KEY + "}";
-    
-    static java.util.logging.Logger LOG = java.util.logging.Logger.getLogger("org.jboss");
 
     public MailSessionSelectionAwareContext(final StatementContext delegate,
             final MailSessionView mailSessionView) {
@@ -43,8 +41,6 @@ public class MailSessionSelectionAwareContext extends FilteringStatementContext 
             public String[] filterTuple(String key) {
                 return null;
             }
-            
-            
         });
     }
 }

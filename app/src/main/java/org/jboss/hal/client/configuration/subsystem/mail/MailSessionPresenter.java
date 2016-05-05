@@ -94,7 +94,6 @@ public class MailSessionPresenter extends SubsystemPresenter<MailSessionPresente
     }
     // @formatter:on
 
-
     private final Resources resources;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
