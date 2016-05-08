@@ -1,0 +1,240 @@
+/*
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jboss.hal.client.configuration.subsystem.mail;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.inject.Inject;
+import javax.inject.Provider;
+
+import com.google.gwt.core.client.Scheduler;
+import com.google.web.bindery.event.shared.EventBus;
+import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.ballroom.LayoutBuilder;
+import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.table.ColumnBuilder;
+import org.jboss.hal.ballroom.table.DataTable;
+import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.ballroom.typeahead.TypeaheadProvider;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.core.mbui.table.TableButtonFactory;
+import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.processing.MetadataProcessor;
+import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Footer;
+
+import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
+import static org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter.MAIL_SESSION_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter.SERVER_TEMPLATE;
+import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+
+/**
+ * @author Claudio Miranda
+ */
+public class MailSessionView extends PatternFlyViewImpl implements MailSessionPresenter.MyView {
+
+    private static final String HEADER_ELEMENT = "headerElement";
+
+    private final Resources resources;
+    private final VerticalNavigation navigation;
+    private final Map<String, ModelNodeForm> forms;
+    private MailSessionPresenter presenter;
+    private final DataTable<NamedNode> serversTable;
+    private final Element header;
+    private String mailSessionName;
+
+    private List<NamedNode> serverTypeModels;
+
+    @Inject
+    public MailSessionView(MetadataRegistry metadataRegistry,
+            final MetadataProcessor metadataProcessor,
+            @Footer final Provider<Progress> progress,
+            final Dispatcher dispatcher,
+            final EventBus eventBus,
+            final StatementContext statementContext,
+            final Resources resources
+            
+            ) {
+        this.resources = resources;
+        this.navigation = new VerticalNavigation();
+        this.forms = new HashMap<>();
+
+        TableButtonFactory tableButtonFactory = new TableButtonFactory(metadataProcessor, progress, dispatcher, eventBus, 
+                new MailSessionSelectionAwareContext(statementContext, this), resources);
+        // ============================================
+        // mail-session attributes
+        Metadata mailSessionMetadata = metadataRegistry.lookup(MAIL_SESSION_TEMPLATE);
+
+        ModelNodeForm<ModelNode> mailSessionAttributesForm = new ModelNodeForm.Builder<>(Ids.MAIL_SESSION_ATTRIBUTES_FORM, mailSessionMetadata)
+                .onSave((form1, changedValues1) -> presenter.save(MAIL_SESSION_TEMPLATE, changedValues1))
+                .build();
+
+        Element navigationElement = new Elements.Builder()
+                .div()
+                .p().textContent(mailSessionMetadata.getDescription().getDescription()).end()
+                .add(mailSessionAttributesForm.asElement())
+                .end()
+                .build();
+        
+        forms.put(Ids.MAIL_SESSION_ATTRIBUTES_FORM, mailSessionAttributesForm);
+        navigation.addPrimary(Ids.MAIL_SESSION_ATTRIBUTES_ENTRY, resources.constants().attributes(), fontAwesome("archive"), navigationElement);
+        registerAttachable(mailSessionAttributesForm);
+
+        // ============================================
+        // server: smtp, pop, imap
+
+        Metadata serverMetadata = metadataRegistry.lookup(SERVER_TEMPLATE);
+
+        AddressTemplate serverTemplate = MAIL_SESSION_TEMPLATE.append("server=*");
+        AddressTemplate addressTemplate = serverTemplate.replaceWildcards(MailSessionSelectionAwareContext.MAIL_SESSION);
+        Options<NamedNode> tableOptions = new ModelNodeTable.Builder<NamedNode>(serverMetadata)
+                .column(new ColumnBuilder<NamedNode>(ModelDescriptionConstants.TYPE, resources.constants().type(),
+                        (cell, type, row, meta) -> row.getName().toUpperCase()).build())
+                .column(new ColumnBuilder<NamedNode>("outbound-socket-binding-ref", "Outbound Socket Binding",
+                        (cell, type, row, meta) -> row.get("outbound-socket-binding-ref").asString()).build())
+                .button(resources.constants().add(), (event, api) -> presenter.launchAddNewServer())
+                .button(tableButtonFactory.remove(
+                        ModelDescriptionConstants.SERVER,
+                        (api) -> api.selectedRow().getName(),
+                        addressTemplate,
+                        () -> presenter.loadMailSession()))
+                .build();
+        serversTable = new ModelNodeTable<>(Ids.MAIL_SESSION_SERVERS_TABLE, tableOptions);
+        registerAttachable(serversTable);
+
+        ModelNodeForm<NamedNode> formServer = new ModelNodeForm.Builder<NamedNode>(IdBuilder.build(ModelDescriptionConstants.SERVER, "form"), serverMetadata)
+                .include("outbound-socket-binding-ref", "username", "password", "ssl", "tls")
+                .unsorted()
+                .onSave((f, changedValues) -> {
+                    AddressTemplate fullyQualified = serverTemplate.replaceWildcards(mailSessionName, serversTable.api().selectedRow().getName());
+                    presenter.save(fullyQualified, changedValues);
+                })
+                .build();
+
+        registerAttachable(formServer);
+        forms.put(Ids.MAIL_SESSION_SERVERS_FORM, formServer);
+        
+        navigationElement = new Elements.Builder()
+                .div()
+                .p().textContent(serverMetadata.getDescription().getDescription()).end()
+                .add(serversTable.asElement())
+                .add(formServer.asElement())
+                .end()
+                .build();
+        navigation.addPrimary(Ids.MAIL_SESSION_SERVERS_ENTRY, Names.SERVER, fontAwesome("cube"), navigationElement);
+        
+
+        // ============================================
+        // main layout
+        // @formatter:off
+        LayoutBuilder layoutBuilder = new LayoutBuilder()
+            .row()
+                .column()
+                    .header(Names.MAIL_SESSION).rememberAs(HEADER_ELEMENT).end()
+                    .addAll(navigation.panes())
+                .end()
+            .end();
+        // @formatter:on
+
+        Element root = layoutBuilder.build();
+        header = layoutBuilder.referenceFor(HEADER_ELEMENT);
+        initElement(root);
+    }
+    
+    public String getMailSessionName() {
+        return mailSessionName;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void attach() {
+        super.attach();
+        ModelNodeForm form = forms.get(Ids.MAIL_SESSION_SERVERS_FORM);
+        serversTable.api().bindForm(form);
+    }
+
+    @Override
+    public void setPresenter(final MailSessionPresenter presenter) {
+        this.presenter = presenter;
+
+        ModelNodeForm form = forms.get(Ids.MAIL_SESSION_SERVERS_FORM);
+        form.getFormItem("outbound-socket-binding-ref").registerSuggestHandler(
+                new TypeaheadProvider().from(presenter.getSocketBindindResourceAddress()));
+    }
+
+    @Override
+    public VerticalNavigation getVerticalNavigation() {
+        return navigation;
+    }
+
+    @Override
+    public void reveal() {
+        Scheduler.get().scheduleDeferred(() -> navigation.show(Ids.MAIL_SESSION_ATTRIBUTES_ENTRY));
+    }
+
+    @Override
+    public void setMailSessionName(String name) {
+        this.mailSessionName = name;
+        header.setTextContent(resources.constants().mailSession() + ": " + name);
+    }
+
+    public boolean serverTypeExists(String serverType) {
+        boolean exists = false;
+        for (NamedNode node: serverTypeModels) {
+            if (node.getName().equals(serverType)) {
+                exists = true;
+                break;
+            }
+        }
+        return exists;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void update(final ModelNode mailSessionData) {
+        ModelNodeForm<ModelNode> formAttributes = forms.get(Ids.MAIL_SESSION_ATTRIBUTES_FORM);
+        formAttributes.view(mailSessionData);
+        
+        // clean the table model and refresh the UI state
+        serversTable.api().clear().refresh(RESET);
+        if (mailSessionData.hasDefined(ModelDescriptionConstants.SERVER)) {
+            // convert the list result from ModelNode to NamedNode
+            serverTypeModels = asNamedNodes(mailSessionData.get(ModelDescriptionConstants.SERVER).asPropertyList());
+            // update the table model and refresh the UI state
+            serversTable.api().clear().add(serverTypeModels).refresh(RESET);
+        }
+        // always clean the form under the table (the form associated to the table item)
+        ModelNodeForm<ModelNode> form = forms.get(Ids.MAIL_SESSION_SERVERS_FORM);
+        form.clear();
+    }
+
+}

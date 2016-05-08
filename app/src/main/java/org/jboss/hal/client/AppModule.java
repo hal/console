@@ -37,6 +37,8 @@ import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplat
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceView;
 import org.jboss.hal.client.configuration.subsystem.ee.EEPresenter;
 import org.jboss.hal.client.configuration.subsystem.ee.EEView;
+import org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter;
+import org.jboss.hal.client.configuration.subsystem.mail.MailSessionView;
 import org.jboss.hal.client.deployment.DeploymentPresenter;
 import org.jboss.hal.client.deployment.DeploymentView;
 import org.jboss.hal.client.homepage.HomepagePresenter;
@@ -156,6 +158,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 ModelBrowserPresenter.MyView.class,
                 ModelBrowserView.class,
                 ModelBrowserPresenter.MyProxy.class);
+
+        bindPresenter(MailSessionPresenter.class,
+                MailSessionPresenter.MyView.class,
+                MailSessionView.class,
+                MailSessionPresenter.MyProxy.class);
 
         bindPresenter(PathsPresenter.class,
                 PathsPresenter.MyView.class,

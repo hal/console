@@ -35,4 +35,13 @@ public class PasswordItem extends TextBoxItem {
         setupInputElement(passwordElement);
         return passwordElement;
     }
+
+    @Override
+    String asString(final String value) {
+        int len = value.length();
+        String val = "";
+        for (int i = 0; i < len; i++)
+            val += "*";
+        return val;
+    }
 }
