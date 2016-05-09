@@ -878,7 +878,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             @Override
             public void onSuccess(final FinderColumn column) {
                 finder.updateContext();
-                finder.updateHistory();
                 if (andThen != null) {
                     andThen.execute();
                 }

@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.core.mvp;
 
+import com.google.common.base.Strings;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
@@ -74,11 +75,11 @@ public abstract class FinderPresenter<V extends PatternFlyView, Proxy_ extends P
         };
 
         String token = getProxy().getNameToken();
-        if (path != null) {
+        if (Strings.isNullOrEmpty(path)) {
+            finder.reset(token, initialColumn(), initialPreview(), callback);
+        } else {
             finder.select(token, FinderPath.from(path),
                     () -> finder.reset(token, initialColumn(), initialPreview(), callback));
-        } else {
-            finder.reset(token, initialColumn(), initialPreview(), callback);
         }
     }
 
