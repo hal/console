@@ -21,7 +21,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
@@ -65,17 +64,11 @@ import static org.jboss.hal.resources.CSS.pfIcon;
  */
 public class MailSessionView extends PatternFlyViewImpl implements MailSessionPresenter.MyView {
 
-    private static final String HEADER_ELEMENT = "headerElement";
-
-    private final Resources resources;
     private final VerticalNavigation navigation;
     private final Map<String, ModelNodeForm> forms;
     private final DataTable<NamedNode> serversTable;
-    private final Element header;
 
     private MailSessionPresenter presenter;
-    private String mailSessionName;
-    private List<NamedNode> serverTypeModels;
 
     @Inject
     public MailSessionView(MetadataRegistry metadataRegistry,
@@ -86,7 +79,6 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
             final StatementContext statementContext,
             final Resources resources) {
 
-        this.resources = resources;
         this.navigation = new VerticalNavigation();
         this.forms = new HashMap<>();
 
@@ -112,7 +104,7 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
 
         forms.put(Ids.MAIL_SESSION_ATTRIBUTES_FORM, mailSessionAttributesForm);
         navigation.addPrimary(Ids.MAIL_SESSION_ATTRIBUTES_ENTRY, resources.constants().attributes(),
-                fontAwesome("list-ul"), navigationElement);
+                fontAwesome("envelope"), navigationElement);
         registerAttachable(mailSessionAttributesForm);
 
         // ============================================
@@ -137,7 +129,7 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
 
         ModelNodeForm<NamedNode> formServer = new ModelNodeForm.Builder<NamedNode>(
                 IdBuilder.build(ModelDescriptionConstants.SERVER, "form"), serverMetadata)
-                .include("outbound-socket-binding-ref", "username", "password", "ssl", "tls")
+                .include(MailSession.OUTBOUND_SOCKET_BINDING_REF, "username", "password", "ssl", "tls")
                 .unsorted()
                 .onSave((f, changedValues) -> {
                     presenter.save(changedValues);
@@ -162,14 +154,13 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
         LayoutBuilder layoutBuilder = new LayoutBuilder()
             .row()
                 .column()
-                    .header(Names.MAIL_SESSION).rememberAs(HEADER_ELEMENT).end()
+                    .header(Names.MAIL_SESSION).end()
                     .addAll(navigation.panes())
                 .end()
             .end();
         // @formatter:on
 
         Element root = layoutBuilder.build();
-        header = layoutBuilder.referenceFor(HEADER_ELEMENT);
         initElement(root);
     }
 
@@ -196,11 +187,6 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
     }
 
     @Override
-    public void reveal() {
-        Scheduler.get().scheduleDeferred(() -> navigation.show(Ids.MAIL_SESSION_ATTRIBUTES_ENTRY));
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public void update(final MailSession mailSession) {
         ModelNodeForm<ModelNode> formAttributes = forms.get(Ids.MAIL_SESSION_ATTRIBUTES_FORM);
@@ -211,7 +197,7 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
         serversTable.api().button(0).enable(mailSession.getServers().size() != 3);
         if (mailSession.hasDefined(ModelDescriptionConstants.SERVER)) {
             // convert the list result from ModelNode to NamedNode
-            serverTypeModels = asNamedNodes(
+            List<NamedNode> serverTypeModels = asNamedNodes(
                     mailSession.asModelNode().get(ModelDescriptionConstants.SERVER).asPropertyList());
             // update the table model and refresh the UI state
             serversTable.api().clear().add(serverTypeModels).refresh(RESET);

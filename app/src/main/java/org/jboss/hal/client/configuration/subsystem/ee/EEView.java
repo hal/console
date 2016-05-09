@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.Scheduler;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LayoutBuilder;
@@ -209,11 +208,6 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
     @Override
     public VerticalNavigation getVerticalNavigation() {
         return navigation;
-    }
-
-    @Override
-    public void reveal() {
-        Scheduler.get().scheduleDeferred(() -> navigation.show(EE_ATTRIBUTES_ENTRY));
     }
 
     @Override

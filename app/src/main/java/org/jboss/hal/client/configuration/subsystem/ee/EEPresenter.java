@@ -68,7 +68,6 @@ public class EEPresenter extends SubsystemPresenter<EEPresenter.MyView, EEPresen
     public interface MyProxy extends ProxyPlace<EEPresenter> {}
 
     public interface MyView extends PatternFlyView, HasVerticalNavigation, HasPresenter<EEPresenter> {
-        void reveal();
         void update(ModelNode eeData);
     }
     // @formatter:on
@@ -120,12 +119,6 @@ public class EEPresenter extends SubsystemPresenter<EEPresenter.MyView, EEPresen
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-    }
-
-    @Override
-    protected void onReveal() {
-        super.onReveal();
-        getView().reveal();
     }
 
     @Override

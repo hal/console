@@ -95,7 +95,6 @@ public class MailSessionPresenter
     public interface MyProxy extends ProxyPlace<MailSessionPresenter> {}
 
     public interface MyView extends PatternFlyView, HasVerticalNavigation, HasPresenter<MailSessionPresenter> {
-        void reveal();
         void update(MailSession mailSession);
     }
     // @formatter:on
@@ -103,11 +102,10 @@ public class MailSessionPresenter
     private final Resources resources;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
+    private final MetadataRegistry metadataRegistry;
     private final OperationFactory operationFactory;
-    private final EventBus eventBus;
-    private MetadataRegistry metadataRegistry;
-    private String mailSessionName;
     private ResourceAddress socketBindingResourceAddress;
+    private String mailSessionName;
 
     @Inject
     public MailSessionPresenter(final EventBus eventBus,
@@ -125,13 +123,12 @@ public class MailSessionPresenter
         this.dispatcher = dispatcher;
         this.statementContext = new SelectionAwareStatementContext(statementContext, () -> mailSessionName);
         this.operationFactory = new OperationFactory();
-        this.eventBus = eventBus;
-        this.socketBindingResourceAddress = SOCKET_BINDING_TEMPLATE.resolve(statementContext);
     }
 
     @Override
     protected void onBind() {
         super.onBind();
+        socketBindingResourceAddress = SOCKET_BINDING_TEMPLATE.resolve(statementContext);
         getView().setPresenter(this);
     }
 
@@ -139,12 +136,6 @@ public class MailSessionPresenter
     public void prepareFromRequest(final PlaceRequest request) {
         super.prepareFromRequest(request);
         mailSessionName = request.getParameter(NAME, null);
-    }
-
-    @Override
-    protected void onReveal() {
-        super.onReveal();
-        getView().reveal();
     }
 
     @Override
@@ -238,7 +229,7 @@ public class MailSessionPresenter
                                     .param(ModelDescriptionConstants.SERVER, name)
                                     .build();
                             dispatcher.execute(operation, result -> {
-                                MessageEvent.fire(eventBus,
+                                MessageEvent.fire(getEventBus(),
                                         Message.success(resources.messages()
                                                 .addResourceSuccess(Names.SERVER, serverType)));
                                 loadMailSession();

@@ -15,9 +15,7 @@
  */
 package org.jboss.hal.ballroom;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
@@ -122,7 +120,7 @@ public class VerticalNavigation {
 
     private final Element root;
     private final Element primaryUl;
-    private final Map<String, Entry> entries;
+    private final LinkedHashMap<String, Entry> entries;
     private final LinkedHashMap<String, Pane> panes;
 
     public VerticalNavigation() {
@@ -136,7 +134,7 @@ public class VerticalNavigation {
 
         this.primaryUl = builder.referenceFor(UL_ELEMENT);
         this.root = builder.build();
-        this.entries = new HashMap<>();
+        this.entries = new LinkedHashMap<>();
         this.panes = new LinkedHashMap<>();
     }
 
@@ -311,6 +309,12 @@ public class VerticalNavigation {
 
 
     // ------------------------------------------------------ misc
+
+    public void showInitial() {
+        if (!entries.isEmpty()) {
+            show(entries.keySet().iterator().next());
+        }
+    }
 
     public void show(String id) {
         Entry show = entries.get(id);
