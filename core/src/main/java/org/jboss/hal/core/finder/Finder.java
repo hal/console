@@ -470,6 +470,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 }
 
                 private void processLastColumnSelection(FinderColumn column) {
+                    selectColumn(column.getId());
                     column.refresh(RefreshMode.RESTORE_SELECTION);
                 }
             }, functions);
