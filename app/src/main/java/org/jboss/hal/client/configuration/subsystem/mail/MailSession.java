@@ -15,53 +15,54 @@
  */
 package org.jboss.hal.client.configuration.subsystem.mail;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.resources.Names;
 
 /**
  * @author Claudio Miranda
  */
-public class MailSession extends NamedNode {
-    
-    public MailSession(Property property) {
+class MailSession extends NamedNode {
+
+    static final String SMTP = "smtp";
+    static final String IMAP = "imap";
+    static final String POP3 = "pop3";
+    static final String SERVER = "server";
+    static final String OUTBOUND_SOCKET_BINDING_REF = "outbound-socket-binding-ref";
+
+    public MailSession(final String name, final ModelNode node) {
+        super(name, node);
+    }
+
+    MailSession(Property property) {
         super(property.getName(), property.getValue());
-
-        //ModelNode m = property.getValue();
-        if (hasDefined("server") && get("server").hasDefined("smtp")) 
-            get("smtp-socket-binding").set(get("server").get("smtp").get("outbound-socket-binding-ref").asString());
-
-        if (hasDefined("server") && get("server").hasDefined("imap")) 
-            get("imap-socket-binding").set(get("server").get("imap").get("outbound-socket-binding-ref").asString());
-        
-        if (hasDefined("server") && get("server").hasDefined("pop")) 
-            get("pop-socket-binding").set(get("server").get("pop").get("outbound-socket-binding-ref").asString());
-    }
-    
-    public String getSmtp() {
-        return safeGet("smtp-socket-binding");
-    }
-    
-    public String getJndi() {
-        return safeGet("jndi-name");
-    }
-    
-    public String getFrom() {
-        return safeGet("from");
-    }
-    
-    public String getImap() {
-        return safeGet("imap-socket-binding");
     }
 
-    public String getPop() {
-        return safeGet("pop-socket-binding");
+    List<String> getServers() {
+        List<String> servers = new ArrayList<>();
+        if (hasServer(SMTP)) {
+            servers.add(SMTP.toUpperCase());
+        }
+        if (hasServer(IMAP)) {
+            servers.add(IMAP.toUpperCase());
+        }
+        if (hasServer(POP3)) {
+            servers.add(POP3.toUpperCase());
+        }
+        return servers;
     }
 
-    private String safeGet(String name) {
-        if (get(name).isDefined())
-            return get(name).asString();
-        else
-            return null;
+    boolean hasServer(String name) {
+        return hasDefined(SERVER) && get(SERVER).hasDefined(name);
     }
 
+    String getServerSocketBinding(String name) {
+        ModelNode node = ModelNodeHelper.failSafeGet(this, SERVER + "." + name + "." + OUTBOUND_SOCKET_BINDING_REF);
+        return node.isDefined() ? node.asString() : Names.NOT_AVAILABLE;
+    }
 }

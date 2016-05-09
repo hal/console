@@ -154,11 +154,18 @@ public class Api<T> {
 
     // ------------------------------------------------------ API a-z
 
+    public native Api<T> button(int index);
+
     public native Api<T> clear();
 
     public native Api<T> data();
 
     public native Api<T> draw(String paging);
+
+    /**
+     * Disables or enables the button selected with {@link #button(int)}
+     */
+    public native Api<T> enable(boolean enable);
 
     /**
      * Adds a selection callback. Currently restricted to the "select" and "deselect" event.

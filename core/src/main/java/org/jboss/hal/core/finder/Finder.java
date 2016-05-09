@@ -360,6 +360,10 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         }
     }
 
+    private void clearPreview() {
+        Elements.removeChildrenFrom(previewColumn);
+    }
+
     void showInitialPreview() {
         PreviewContent previewContent = initialPreviewsByToken.get(context.getToken());
         if (previewContent != null) {
@@ -439,6 +443,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 functions[index] = new SelectFunction(segment, column);
                 index++;
             }
+            clearPreview(); // otherwise the previous (wrong) preview would be visible until all select functions have been finished
             new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), new Outcome<FunctionContext>() {
                 @Override
                 public void onFailure(final FunctionContext context) {
@@ -460,13 +465,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 }
 
                 private void processLastColumnSelection(FinderColumn column) {
-                    selectColumn(column.getId());
-                    FinderRow row = column.selectedRow();
-                    if (row != null) {
-                        row.asElement().scrollIntoView(false);
-                        row.appendNextColumn();
-                        row.showPreview();
-                    }
+                    column.refresh(FinderColumn.RefreshMode.RESTORE_SELECTION);
                 }
             }, functions);
         }

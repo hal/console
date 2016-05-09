@@ -13,32 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration.subsystem.mail;
+package org.jboss.hal.meta;
 
-import org.jboss.hal.meta.FilteringStatementContext;
-import org.jboss.hal.meta.StatementContext;
+import javax.inject.Provider;
 
 /**
- * @author Claudio Miranda
+ * A filtering statement context which resolves the key {@code selection} to the specified selection provider.
+ *
+ * @author Harald Pehl
  */
-public class MailSessionSelectionAwareContext extends FilteringStatementContext {
+public class SelectionAwareStatementContext extends FilteringStatementContext implements StatementContext {
 
-    private static String MAIL_SESSION_KEY = "mail.session";
-    static String MAIL_SESSION = "{" + MAIL_SESSION_KEY + "}";
+    public static final String SELECTION_KEY = "selection";
 
-    public MailSessionSelectionAwareContext(final StatementContext delegate,
-            final MailSessionView mailSessionView) {
+    public SelectionAwareStatementContext(final StatementContext delegate, final Provider<String> selectionProvider) {
         super(delegate, new Filter() {
             @Override
-            public String filter(String key) {
-                String val = "*";
-                if (MAIL_SESSION_KEY.equals(key))
-                    val = mailSessionView.getMailSessionName();
-                return val;
+            public String filter(final String key) {
+                if (SELECTION_KEY.equals(key)) {
+                    return selectionProvider.get();
+                }
+                return null;
             }
 
             @Override
-            public String[] filterTuple(String key) {
+            public String[] filterTuple(final String tuple) {
                 return null;
             }
         });

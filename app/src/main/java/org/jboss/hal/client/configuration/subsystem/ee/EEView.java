@@ -278,8 +278,7 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
 
                 .button(tableButtonFactory.remove(
                         type,
-                        (api) -> api.selectedRow().getName(),
-                        template,
+                        template, (api) -> api.selectedRow().getName(),
                         () -> presenter.loadEESubsystem()))
 
                 .build();

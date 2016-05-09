@@ -127,7 +127,7 @@ public class TableButtonFactory {
     }
 
     @SuppressWarnings("Guava")
-    public <T> Button<T> remove(String type, Function<Api<T>, String> nameFunction, AddressTemplate addressTemplate,
+    public <T> Button<T> remove(String type, AddressTemplate addressTemplate, Function<Api<T>, String> nameFunction,
             ScheduledCommand afterRemove) {
         Button<T> button = new Button<>();
         button.text = resources.constants().remove();

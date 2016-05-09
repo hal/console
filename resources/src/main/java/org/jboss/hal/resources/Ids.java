@@ -49,7 +49,6 @@ public interface Ids {
     String DOMAIN_SERVER_GROUPS_COLUMN = "domain-server-groups";
     String DRAG_AND_DROP_DEPLOYMENT = "drag-and-drop-deployment";
 
-    String EE_COLUMN = "ee-column";
     String EE_ATTRIBUTES_ENTRY = "ee-attributes-entry";
     String EE_ATTRIBUTES_FORM = "ee-attributes-form";
     String EE_GLOBAL_MODULES_ENTRY = "ee-global-modules-entry";
@@ -82,7 +81,6 @@ public interface Ids {
     String MACRO_EDITOR = "macro-editor";
     String MACRO_LIST = "macro-list";
     String MACRO_OPTIONS = "macro-options";
-    String MAIL = "mail";
     String MAIL_SESSION = "mail-session";
     String MAIL_SESSION_ATTRIBUTES_ENTRY = "mail-session-attributes-entry";
     String MAIL_SESSION_ATTRIBUTES_FORM = "mail-session-attributes-form";

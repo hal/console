@@ -15,19 +15,23 @@
  */
 package org.jboss.hal.client.configuration.subsystem.mail;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import javax.inject.Inject;
 
+import com.google.common.collect.FluentIterable;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
-import org.jboss.hal.ballroom.form.ValidationResult;
+import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.typeahead.TypeaheadProvider;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -48,6 +52,7 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.IdBuilder;
@@ -58,27 +63,30 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
+import static java.util.Arrays.asList;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Claudio Miranda
  */
-public class MailSessionPresenter extends SubsystemPresenter<MailSessionPresenter.MyView, MailSessionPresenter.MyProxy> {
+public class MailSessionPresenter
+        extends SubsystemPresenter<MailSessionPresenter.MyView, MailSessionPresenter.MyProxy> {
 
-    public static final String MAIL_ADDRESS         = "/{selected.profile}/subsystem=mail";
-    public static final String MAIL_SESSION_ADDRESS = "/{selected.profile}/subsystem=mail/mail-session=*";
-    // this server address set to smtp, because the address is a singleton, so it does not load the wildcard.
-    // the attributes for imap, smtp and pop3 are the same
-    public static final String SERVER_ADDRESS       = "/{selected.profile}/subsystem=mail/mail-session=*/server=smtp";
+    static final String MAIL_ADDRESS = "/{selected.profile}/subsystem=mail";
+    static final String MAIL_SESSION_ADDRESS = "/{selected.profile}/subsystem=mail/mail-session=*";
+    // The server address is set to smtp, because the address is a singleton, so it does not load the wildcard.
+    // The attributes for imap, smtp and pop3 are the same
+    static final String SERVER_ADDRESS = "/{selected.profile}/subsystem=mail/mail-session=*/server=smtp";
 
-    public static final AddressTemplate MAIL_TEMPLATE         = AddressTemplate.of(MAIL_ADDRESS);
-    public static final AddressTemplate MAIL_SESSION_TEMPLATE = AddressTemplate.of(MAIL_SESSION_ADDRESS);
-    public static final AddressTemplate SERVER_TEMPLATE       = AddressTemplate.of(SERVER_ADDRESS);
-    
-    public static final AddressTemplate SOCKET_BINDING_TEMPLATE = AddressTemplate
+    static final AddressTemplate MAIL_TEMPLATE = AddressTemplate.of(MAIL_ADDRESS);
+    static final AddressTemplate MAIL_SESSION_TEMPLATE = AddressTemplate.of(MAIL_SESSION_ADDRESS);
+    static final AddressTemplate SELECTED_MAIL_SESSION_TEMPLATE = AddressTemplate
+            .of("/{selected.profile}/subsystem=mail/mail-session={selection}");
+    static final AddressTemplate SERVER_TEMPLATE = AddressTemplate.of(SERVER_ADDRESS);
+
+    private static final AddressTemplate SOCKET_BINDING_TEMPLATE = AddressTemplate
             .of("/socket-binding-group=*/remote-destination-outbound-socket-binding=*");
+
 
     // @formatter:off
     @ProxyCodeSplit
@@ -88,9 +96,7 @@ public class MailSessionPresenter extends SubsystemPresenter<MailSessionPresente
 
     public interface MyView extends PatternFlyView, HasVerticalNavigation, HasPresenter<MailSessionPresenter> {
         void reveal();
-        void update(ModelNode mailData);
-        void setMailSessionName(String name);
-        boolean serverTypeExists(String serverType);
+        void update(MailSession mailSession);
     }
     // @formatter:on
 
@@ -101,7 +107,7 @@ public class MailSessionPresenter extends SubsystemPresenter<MailSessionPresente
     private final EventBus eventBus;
     private MetadataRegistry metadataRegistry;
     private String mailSessionName;
-    private ResourceAddress socketBindindResourceAddress;
+    private ResourceAddress socketBindingResourceAddress;
 
     @Inject
     public MailSessionPresenter(final EventBus eventBus,
@@ -117,10 +123,10 @@ public class MailSessionPresenter extends SubsystemPresenter<MailSessionPresente
         this.metadataRegistry = metadataRegistry;
         this.resources = resources;
         this.dispatcher = dispatcher;
-        this.statementContext = statementContext;
+        this.statementContext = new SelectionAwareStatementContext(statementContext, () -> mailSessionName);
         this.operationFactory = new OperationFactory();
         this.eventBus = eventBus;
-        this.socketBindindResourceAddress = SOCKET_BINDING_TEMPLATE.resolve(statementContext);
+        this.socketBindingResourceAddress = SOCKET_BINDING_TEMPLATE.resolve(statementContext);
     }
 
     @Override
@@ -130,11 +136,11 @@ public class MailSessionPresenter extends SubsystemPresenter<MailSessionPresente
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        loadMailSession();
+    public void prepareFromRequest(final PlaceRequest request) {
+        super.prepareFromRequest(request);
+        mailSessionName = request.getParameter(NAME, null);
     }
-    
+
     @Override
     protected void onReveal() {
         super.onReveal();
@@ -142,32 +148,30 @@ public class MailSessionPresenter extends SubsystemPresenter<MailSessionPresente
     }
 
     @Override
-    protected FinderPath finderPath() {
-        return FinderPath
-                .subsystemPath(statementContext.selectedProfile(), ModelDescriptionConstants.MAIL)
-                .append(Ids.MAIL_SESSION, Names.MAIL_SESSION, Names.MAIL_SESSION, mailSessionName);
+    protected void onReset() {
+        super.onReset();
+        loadMailSession();
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
-        super.prepareFromRequest(request);
-        mailSessionName = request.getParameter(NAME, null);
+    protected FinderPath finderPath() {
+        return FinderPath
+                .subsystemPath(statementContext.selectedProfile(), ModelDescriptionConstants.MAIL)
+                .append(Ids.MAIL_SESSION, mailSessionName, Names.MAIL_SESSION, mailSessionName);
     }
 
     void loadMailSession() {
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
-                // mailSessionName is retrieved from the GET parameter
-                MAIL_SESSION_TEMPLATE.replaceWildcards(mailSessionName).resolve(statementContext))
+        ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
+        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
                 .param(RECURSIVE, true)
                 .build();
         dispatcher.execute(operation, result -> {
-                    getView().update(result);
-                    getView().setMailSessionName(mailSessionName);
-                });
+            getView().update(new MailSession(mailSessionName, result));
+        });
     }
 
-    void save(AddressTemplate addressTemplate, final Map<String, Object> changedValues) {
-        ResourceAddress resourceAddress = addressTemplate.replaceWildcards(mailSessionName).resolve(statementContext);
+    void save(final Map<String, Object> changedValues) {
+        ResourceAddress resourceAddress = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
         Composite composite = operationFactory.fromChangeSet(resourceAddress, changedValues);
 
         dispatcher.execute(composite, (CompositeResult result) -> {
@@ -178,59 +182,78 @@ public class MailSessionPresenter extends SubsystemPresenter<MailSessionPresente
     }
 
     void launchAddNewServer() {
-
-        List<String> types = Arrays.asList("SMTP", "IMAP", "POP3");
-        SingleSelectBoxItem serverTypes = new SingleSelectBoxItem(ModelDescriptionConstants.SERVER_TYPE, 
-                resources.constants().type(), types);
-        serverTypes.setRequired(true);
-        
-        Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE);
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(
-                IdBuilder.build(ModelDescriptionConstants.SERVER, ModelDescriptionConstants.ADD, "form"), metadata)
-                .unboundFormItem(serverTypes, 0)
-                .include("outbound-socket-binding-ref", "username", "password", "ssl", "tls")
-                .addFromRequestProperties()
-                .unsorted()
+        SortedSet<String> availableServers = new TreeSet<>(asList(MailSession.SMTP.toUpperCase(),
+                MailSession.IMAP.toUpperCase(), MailSession.POP3.toUpperCase()));
+        ResourceAddress selectedSessionAddress = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
+        Operation serverNamesOp = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, selectedSessionAddress)
+                .param(CHILD_TYPE, MailSession.SERVER)
                 .build();
+        dispatcher.execute(serverNamesOp, serversResult -> {
+            //noinspection Guava
+            Set<String> existingServers = FluentIterable.from(serversResult.asList())
+                    .transform(node -> node.asString().toUpperCase())
+                    .toSet();
+            availableServers.removeAll(existingServers);
 
-        form.getFormItem("outbound-socket-binding-ref").registerSuggestHandler(
-                new TypeaheadProvider().from(socketBindindResourceAddress));
+            if (availableServers.isEmpty()) {
+                MessageEvent.fire(getEventBus(), Message.error(resources.constants().allMailServersExist()));
 
-        form.getFormItem(ModelDescriptionConstants.SERVER_TYPE).addValidationHandler(value -> {
-            String _serverType = value.toString();
-            if (getView().serverTypeExists(_serverType.toLowerCase())) {
-                return ValidationResult.invalid(resources.constants().mailServerTypeAlreadyExists());
-            } else 
-               return ValidationResult.OK;
-            
-        });
-        
-        AddResourceDialog dialog = new AddResourceDialog(
-                resources.messages().addResourceTitle(Names.SERVER), form,
-                (name, modelNode) -> {
+            } else {
+                FormItem<String> serverTypeItem;
+                if (availableServers.size() == 1) {
+                    serverTypeItem = new TextBoxItem(ModelDescriptionConstants.SERVER_TYPE,
+                            resources.constants().type());
+                    serverTypeItem.setValue(availableServers.first());
+                    serverTypeItem.setEnabled(false);
 
-                    String serverType = form.getFormItem(ModelDescriptionConstants.SERVER_TYPE).getText().toLowerCase();
-                    
-                    AddressTemplate resolvedServerAddress = MAIL_SESSION_TEMPLATE.replaceWildcards(mailSessionName)
-                            .append(ModelDescriptionConstants.SERVER + "=" + serverType);
-                    if (modelNode != null) {
-                        ResourceAddress address = resolvedServerAddress.resolve(statementContext);
-                        Operation operation = new Operation.Builder(ModelDescriptionConstants.ADD, address)
-                                .payload(modelNode)
-                                .param(ModelDescriptionConstants.SERVER, name)
-                                .build();
-                        dispatcher.execute(operation, result -> {
-                            MessageEvent.fire(eventBus,
-                                    Message.success(resources.messages()
-                                            .addResourceSuccess(Names.SERVER, serverType)));
-                            loadMailSession();
+                } else {
+                    serverTypeItem = new SingleSelectBoxItem(ModelDescriptionConstants.SERVER_TYPE,
+                            resources.constants().type(), new ArrayList<>(availableServers));
+                    serverTypeItem.setRequired(true);
+                }
+
+                Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE);
+                Form<ModelNode> form = new ModelNodeForm.Builder<>(
+                        IdBuilder.build(ModelDescriptionConstants.SERVER, ModelDescriptionConstants.ADD, "form"),
+                        metadata)
+                        .unboundFormItem(serverTypeItem, 0)
+                        .include(MailSession.OUTBOUND_SOCKET_BINDING_REF, "username", "password", "ssl", "tls")
+                        .addFromRequestProperties()
+                        .unsorted()
+                        .build();
+
+                form.getFormItem(MailSession.OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
+                        new TypeaheadProvider().from(socketBindingResourceAddress));
+
+                AddResourceDialog dialog = new AddResourceDialog(
+                        resources.messages().addResourceTitle(Names.SERVER), form,
+                        (name, modelNode) -> {
+
+                            String serverType = serverTypeItem.getValue().toLowerCase();
+                            ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE
+                                    .append(ModelDescriptionConstants.SERVER + "=" + serverType)
+                                    .resolve(statementContext);
+                            Operation operation = new Operation.Builder(ModelDescriptionConstants.ADD, address)
+                                    .payload(modelNode)
+                                    .param(ModelDescriptionConstants.SERVER, name)
+                                    .build();
+                            dispatcher.execute(operation, result -> {
+                                MessageEvent.fire(eventBus,
+                                        Message.success(resources.messages()
+                                                .addResourceSuccess(Names.SERVER, serverType)));
+                                loadMailSession();
+                            });
                         });
-                    }
-                });
-        dialog.show();
+                dialog.show();
+            }
+        });
     }
 
-    public ResourceAddress getSocketBindindResourceAddress() {
-        return socketBindindResourceAddress;
+    ResourceAddress getSocketBindingResourceAddress() {
+        return socketBindingResourceAddress;
+    }
+
+    String getMailSessionName() {
+        return mailSessionName;
     }
 }

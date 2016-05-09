@@ -78,4 +78,8 @@ public class NamedNode extends ModelNode {
     public void setName(final String name) {
         get(NAME).set(name);
     }
+
+    public ModelNode asModelNode() {
+        return node;
+    }
 }

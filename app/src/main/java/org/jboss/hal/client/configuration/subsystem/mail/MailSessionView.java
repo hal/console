@@ -43,6 +43,7 @@ import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.resources.IdBuilder;
@@ -53,9 +54,11 @@ import org.jboss.hal.spi.Footer;
 
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 import static org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter.MAIL_SESSION_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter.SELECTED_MAIL_SESSION_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter.SERVER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.pfIcon;
 
 /**
  * @author Claudio Miranda
@@ -67,11 +70,11 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
     private final Resources resources;
     private final VerticalNavigation navigation;
     private final Map<String, ModelNodeForm> forms;
-    private MailSessionPresenter presenter;
     private final DataTable<NamedNode> serversTable;
     private final Element header;
-    private String mailSessionName;
 
+    private MailSessionPresenter presenter;
+    private String mailSessionName;
     private List<NamedNode> serverTypeModels;
 
     @Inject
@@ -81,21 +84,23 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
             final Dispatcher dispatcher,
             final EventBus eventBus,
             final StatementContext statementContext,
-            final Resources resources
-            
-            ) {
+            final Resources resources) {
+
         this.resources = resources;
         this.navigation = new VerticalNavigation();
         this.forms = new HashMap<>();
 
-        TableButtonFactory tableButtonFactory = new TableButtonFactory(metadataProcessor, progress, dispatcher, eventBus, 
-                new MailSessionSelectionAwareContext(statementContext, this), resources);
+        TableButtonFactory tableButtonFactory = new TableButtonFactory(metadataProcessor, progress, dispatcher,
+                eventBus, new SelectionAwareStatementContext(statementContext, () -> presenter.getMailSessionName()),
+                resources);
+
         // ============================================
         // mail-session attributes
         Metadata mailSessionMetadata = metadataRegistry.lookup(MAIL_SESSION_TEMPLATE);
 
-        ModelNodeForm<ModelNode> mailSessionAttributesForm = new ModelNodeForm.Builder<>(Ids.MAIL_SESSION_ATTRIBUTES_FORM, mailSessionMetadata)
-                .onSave((form1, changedValues1) -> presenter.save(MAIL_SESSION_TEMPLATE, changedValues1))
+        ModelNodeForm<ModelNode> mailSessionAttributesForm = new ModelNodeForm.Builder<>(
+                Ids.MAIL_SESSION_ATTRIBUTES_FORM, mailSessionMetadata)
+                .onSave((form, changedValues) -> presenter.save(changedValues))
                 .build();
 
         Element navigationElement = new Elements.Builder()
@@ -104,45 +109,44 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
                 .add(mailSessionAttributesForm.asElement())
                 .end()
                 .build();
-        
+
         forms.put(Ids.MAIL_SESSION_ATTRIBUTES_FORM, mailSessionAttributesForm);
-        navigation.addPrimary(Ids.MAIL_SESSION_ATTRIBUTES_ENTRY, resources.constants().attributes(), fontAwesome("archive"), navigationElement);
+        navigation.addPrimary(Ids.MAIL_SESSION_ATTRIBUTES_ENTRY, resources.constants().attributes(),
+                fontAwesome("list-ul"), navigationElement);
         registerAttachable(mailSessionAttributesForm);
 
         // ============================================
         // server: smtp, pop, imap
-
         Metadata serverMetadata = metadataRegistry.lookup(SERVER_TEMPLATE);
 
-        AddressTemplate serverTemplate = MAIL_SESSION_TEMPLATE.append("server=*");
-        AddressTemplate addressTemplate = serverTemplate.replaceWildcards(MailSessionSelectionAwareContext.MAIL_SESSION);
+        AddressTemplate serverTemplate = SELECTED_MAIL_SESSION_TEMPLATE.append("server=*");
+        //noinspection ConstantConditions
         Options<NamedNode> tableOptions = new ModelNodeTable.Builder<NamedNode>(serverMetadata)
                 .column(new ColumnBuilder<NamedNode>(ModelDescriptionConstants.TYPE, resources.constants().type(),
                         (cell, type, row, meta) -> row.getName().toUpperCase()).build())
-                .column(new ColumnBuilder<NamedNode>("outbound-socket-binding-ref", "Outbound Socket Binding",
-                        (cell, type, row, meta) -> row.get("outbound-socket-binding-ref").asString()).build())
+                .column(new ColumnBuilder<NamedNode>(MailSession.OUTBOUND_SOCKET_BINDING_REF, "Outbound Socket Binding",
+                        (cell, type, row, meta) -> row.get(MailSession.OUTBOUND_SOCKET_BINDING_REF).asString()).build())
                 .button(resources.constants().add(), (event, api) -> presenter.launchAddNewServer())
                 .button(tableButtonFactory.remove(
                         ModelDescriptionConstants.SERVER,
-                        (api) -> api.selectedRow().getName(),
-                        addressTemplate,
+                        serverTemplate, (api) -> api.selectedRow().getName(),
                         () -> presenter.loadMailSession()))
                 .build();
         serversTable = new ModelNodeTable<>(Ids.MAIL_SESSION_SERVERS_TABLE, tableOptions);
         registerAttachable(serversTable);
 
-        ModelNodeForm<NamedNode> formServer = new ModelNodeForm.Builder<NamedNode>(IdBuilder.build(ModelDescriptionConstants.SERVER, "form"), serverMetadata)
+        ModelNodeForm<NamedNode> formServer = new ModelNodeForm.Builder<NamedNode>(
+                IdBuilder.build(ModelDescriptionConstants.SERVER, "form"), serverMetadata)
                 .include("outbound-socket-binding-ref", "username", "password", "ssl", "tls")
                 .unsorted()
                 .onSave((f, changedValues) -> {
-                    AddressTemplate fullyQualified = serverTemplate.replaceWildcards(mailSessionName, serversTable.api().selectedRow().getName());
-                    presenter.save(fullyQualified, changedValues);
+                    presenter.save(changedValues);
                 })
                 .build();
 
         registerAttachable(formServer);
         forms.put(Ids.MAIL_SESSION_SERVERS_FORM, formServer);
-        
+
         navigationElement = new Elements.Builder()
                 .div()
                 .p().textContent(serverMetadata.getDescription().getDescription()).end()
@@ -150,8 +154,7 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
                 .add(formServer.asElement())
                 .end()
                 .build();
-        navigation.addPrimary(Ids.MAIL_SESSION_SERVERS_ENTRY, Names.SERVER, fontAwesome("cube"), navigationElement);
-        
+        navigation.addPrimary(Ids.MAIL_SESSION_SERVERS_ENTRY, Names.SERVER, pfIcon("server"), navigationElement);
 
         // ============================================
         // main layout
@@ -169,13 +172,9 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
         header = layoutBuilder.referenceFor(HEADER_ELEMENT);
         initElement(root);
     }
-    
-    public String getMailSessionName() {
-        return mailSessionName;
-    }
 
-    @SuppressWarnings("unchecked")
     @Override
+    @SuppressWarnings("unchecked")
     public void attach() {
         super.attach();
         ModelNodeForm form = forms.get(Ids.MAIL_SESSION_SERVERS_FORM);
@@ -187,8 +186,8 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
         this.presenter = presenter;
 
         ModelNodeForm form = forms.get(Ids.MAIL_SESSION_SERVERS_FORM);
-        form.getFormItem("outbound-socket-binding-ref").registerSuggestHandler(
-                new TypeaheadProvider().from(presenter.getSocketBindindResourceAddress()));
+        form.getFormItem(MailSession.OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
+                new TypeaheadProvider().from(presenter.getSocketBindingResourceAddress()));
     }
 
     @Override
@@ -202,33 +201,18 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
     }
 
     @Override
-    public void setMailSessionName(String name) {
-        this.mailSessionName = name;
-        header.setTextContent(resources.constants().mailSession() + ": " + name);
-    }
-
-    public boolean serverTypeExists(String serverType) {
-        boolean exists = false;
-        for (NamedNode node: serverTypeModels) {
-            if (node.getName().equals(serverType)) {
-                exists = true;
-                break;
-            }
-        }
-        return exists;
-    }
-
     @SuppressWarnings("unchecked")
-    @Override
-    public void update(final ModelNode mailSessionData) {
+    public void update(final MailSession mailSession) {
         ModelNodeForm<ModelNode> formAttributes = forms.get(Ids.MAIL_SESSION_ATTRIBUTES_FORM);
-        formAttributes.view(mailSessionData);
-        
+        formAttributes.view(mailSession.asModelNode());
+
         // clean the table model and refresh the UI state
         serversTable.api().clear().refresh(RESET);
-        if (mailSessionData.hasDefined(ModelDescriptionConstants.SERVER)) {
+        serversTable.api().button(0).enable(mailSession.getServers().size() != 3);
+        if (mailSession.hasDefined(ModelDescriptionConstants.SERVER)) {
             // convert the list result from ModelNode to NamedNode
-            serverTypeModels = asNamedNodes(mailSessionData.get(ModelDescriptionConstants.SERVER).asPropertyList());
+            serverTypeModels = asNamedNodes(
+                    mailSession.asModelNode().get(ModelDescriptionConstants.SERVER).asPropertyList());
             // update the table model and refresh the UI state
             serversTable.api().clear().add(serverTypeModels).refresh(RESET);
         }
@@ -236,5 +220,4 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
         ModelNodeForm<ModelNode> form = forms.get(Ids.MAIL_SESSION_SERVERS_FORM);
         form.clear();
     }
-
 }

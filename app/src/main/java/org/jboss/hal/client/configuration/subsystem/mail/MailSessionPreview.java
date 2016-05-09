@@ -15,43 +15,54 @@
  */
 package org.jboss.hal.client.configuration.subsystem.mail;
 
-import org.jboss.hal.core.finder.PreviewContent;
-import org.jboss.hal.resources.CSS;
-import org.jboss.hal.resources.Resources;
+import java.util.List;
 
-import static org.jboss.hal.resources.CSS.key;
-import static org.jboss.hal.resources.CSS.listGroup;
-import static org.jboss.hal.resources.CSS.listGroupItem;
+import com.google.common.base.Joiner;
+import org.jboss.hal.core.finder.PreviewAttributes;
+import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 
 /**
  * @author Claudio Miranda
  */
-public class MailSessionPreview extends PreviewContent {
+class MailSessionPreview extends PreviewContent {
 
-    public MailSessionPreview(final MailSession mailSession, final Resources resources) {
+    MailSessionPreview(final MailSession mailSession, final Resources resources) {
         super(mailSession.getName());
 
-        previewBuilder().h(2).textContent(resources.constants().settings()).end();
-        previewBuilder().ul().css(listGroup);
-
-        append("JNDI", mailSession.getJndi());
-        append("From", mailSession.getFrom());
-        append("SMTP Socket Binding", mailSession.getSmtp());
-        append("IMAP Socket Binding", mailSession.getImap());
-        append("POP Socket Binding", mailSession.getPop());
-        previewBuilder().end();
-    }
-
-    private void append(String label, String value) {
-        if (value != null) {
-            previewBuilder().li().css(listGroupItem)
-                    .span().css(key).textContent(label).end()
-                    .span().css(CSS.value).textContent(value);
-            if (value.length() > 15) {
-                previewBuilder().title(value);
-            }
-            previewBuilder().end().end();
+        List<String> servers = mailSession.getServers();
+        if (servers.isEmpty()) {
+            previewBuilder().p().textContent(resources.constants().noConfiguredMailServers()).end();
+        } else {
+            previewBuilder().p()
+                    .innerHtml(resources.messages().configuredMailServer(Joiner.on(", ").join(servers)))
+                    .end();
         }
-    }
 
+        PreviewAttributes<MailSession> attributes = new PreviewAttributes<>(mailSession,
+                resources.constants().main_attributes());
+        attributes.append(ModelDescriptionConstants.JNDI_NAME);
+        if (mailSession.hasServer(MailSession.SMTP)) {
+            attributes.append(model -> {
+                return new String[]{MailSession.SMTP.toUpperCase() + " " + Names.SOCKET_BINDING,
+                        model.getServerSocketBinding(MailSession.SMTP)};
+            });
+        }
+        if (mailSession.hasServer(MailSession.IMAP)) {
+            attributes.append(model -> {
+                return new String[]{MailSession.IMAP.toUpperCase() + " " + Names.SOCKET_BINDING,
+                        model.getServerSocketBinding(MailSession.IMAP)};
+            });
+        }
+        if (mailSession.hasServer(MailSession.POP3)) {
+            attributes.append(model -> {
+                return new String[]{MailSession.POP3.toUpperCase() + " " + Names.SOCKET_BINDING,
+                        model.getServerSocketBinding(MailSession.POP3)};
+            });
+        }
+        attributes.end();
+        previewBuilder().addAll(attributes);
+    }
 }

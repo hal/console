@@ -70,8 +70,7 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
 
                 .button(tableButtonFactory.remove(
                         Names.PATH,
-                        (api) -> api.selectedRow().getName(),
-                        PathsPresenter.ROOT_TEMPLATE,
+                        PathsPresenter.ROOT_TEMPLATE, (api) -> api.selectedRow().getName(),
                         () -> presenter.loadPaths()))
 
                 .build();

@@ -40,6 +40,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String accessType();
     String action();
     String add();
+    String allMailServersExist();
     String allSingletonsExist();
     String assign();
     String assignedContentDesc();
@@ -191,6 +192,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String next();
     String no();
     String noAttributes();
+    String noConfiguredMailServers();
     String noDetails();
     String noDeploymentsUploaded();
     String noItems();
