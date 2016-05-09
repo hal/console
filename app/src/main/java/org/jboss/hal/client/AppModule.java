@@ -70,7 +70,6 @@ public class AppModule extends AbstractTemplatedPresenterModule {
 
         DefaultModule defaultModule = new DefaultModule.Builder()
                 .placeManager(HalPlaceManager.class)
-                // .tokenFormatter(RouteTokenFormatter.class)
                 .build();
         install(defaultModule);
 

@@ -44,6 +44,7 @@
         <gwt.version>2.8.0-SNAPSHOT</gwt.version>
         <gwtp.version>1.5.3</gwtp.version>
         <jboss.dmr.version>1.3.0.Final</jboss.dmr.version>
+        <jdom.version>2.0.2</jdom.version>
         <junit.version>4.12</junit.version>
         <mockito.version>2.0.31-beta</mockito.version>
         <nodejs.version>v4.2.1</nodejs.version>
@@ -168,6 +169,11 @@
                 <groupId>com.google.auto.service</groupId>
                 <artifactId>auto-service</artifactId>
                 <version>${auto-service.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jdom</groupId>
+                <artifactId>jdom</artifactId>
+                <version>${jdom.version}</version>
             </dependency>
 
             <!-- Test -->
