@@ -29,8 +29,6 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
-import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
-
 /**
  * @author Harald Pehl
  */
@@ -39,9 +37,9 @@ import static org.jboss.hal.client.configuration.subsystem.logging.AddressTempla
 public abstract class LoggingView extends PatternFlyViewImpl implements LoggingPresenter.MyView {
 
     // @formatter:off
-    // public static LoggingView create(MetadataRegistry metadataRegistry) {
-    //     return new Mbui_LoggingView(metadataRegistry);
-    // }
+    public static LoggingView create(MetadataRegistry metadataRegistry) {
+        return new Mbui_LoggingView(metadataRegistry);
+    }
 
     abstract MetadataRegistry metadataRegistry();
     // @formatter:on
@@ -68,6 +66,7 @@ public abstract class LoggingView extends PatternFlyViewImpl implements LoggingP
     @PostConstruct
     @SuppressWarnings({"HardCodedStringLiteral", "ConstantConditions"})
     void init() {
+/*
         rootLoggerForm.setSaveCallback((form, changedValues) ->
                 presenter.saveResource(ROOT_LOGGER_TEMPLATE, "Root Logger", null, changedValues));
         loggerForm.setSaveCallback((form, changedValues) -> {
@@ -106,6 +105,7 @@ public abstract class LoggingView extends PatternFlyViewImpl implements LoggingP
                         loggerTable.api().selectedRow().getName(), changedValues);
             }
         });
+*/
     }
 
     @Override

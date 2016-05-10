@@ -15,13 +15,13 @@
  */
 package org.jboss.hal.meta.subsystem;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -50,7 +50,7 @@ public class Subsystems {
         add(new SubsystemMetadata(JCA, "JCA", null, NameTokens.JCA, null, false));
         add(new SubsystemMetadata(JMX, "JMX", null, NameTokens.JMX, null, false));
         add(new SubsystemMetadata(JPA, "JPA", null, NameTokens.JPA, null, false));
-        add(new SubsystemMetadata(LOGGING, "Logging", null, NameTokens.LOGGING, null, false));
+        add(new SubsystemMetadata(LOGGING, "Logging", null, NameTokens.LOGGING, null, true));
         add(new SubsystemMetadata(MAIL, "Mail", null, null, ModelDescriptionConstants.MAIL_SESSION, true));
         add(new SubsystemMetadata(MESSAGING_ACTIVEMQ, "Messaging", "ActiveMQ", null,
                 ModelDescriptionConstants.MESSAGING_SERVER, true));

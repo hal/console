@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -45,7 +46,6 @@ import com.google.common.collect.ImmutableMap;
 import org.jboss.auto.AbstractProcessor;
 import org.jboss.hal.processor.TemplateNames;
 import org.jboss.hal.processor.TypeSimplifier;
-import org.jboss.hal.spi.GinModule;
 import org.jboss.hal.spi.MbuiView;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
@@ -55,19 +55,23 @@ import org.jdom2.input.SAXBuilder;
  * @author Harald Pehl
  */
 @AutoService(Processor.class)
-@SuppressWarnings("HardCodedStringLiteral")
 @SupportedAnnotationTypes("org.jboss.hal.spi.MbuiView")
+@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class MbuiViewProcessor extends AbstractProcessor {
 
-    static final String MBUI_VIEW_TEMPLATE = "MbuiView.ftl";
+    private static final String TEMPLATE = "MbuiView.ftl";
 
     public MbuiViewProcessor() {
-        super(MbuiViewProcessor.class, TemplateNames.TEMPLATES);
+        this(MbuiViewProcessor.class, TemplateNames.TEMPLATES);
+    }
+
+    protected MbuiViewProcessor(final Class resourceLoaderClass, final String templates) {
+        super(resourceLoaderClass, templates);
     }
 
     @Override
     protected boolean onProcess(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
-        for (Element e : roundEnv.getElementsAnnotatedWith(GinModule.class)) {
+        for (Element e : roundEnv.getElementsAnnotatedWith(MbuiView.class)) {
             TypeElement type = (TypeElement) e;
             MbuiView mbuiView = type.getAnnotation(MbuiView.class);
             validateType(type, mbuiView);
@@ -79,8 +83,8 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
     // ------------------------------------------------------ validation
 
-    private void validateType(final TypeElement type, final MbuiView templated) {
-        if (templated == null) {
+    private void validateType(final TypeElement type, final MbuiView mbuiView) {
+        if (mbuiView == null) {
             // This shouldn't happen unless the compilation environment is buggy,
             // but it has happened in the past and can crash the compiler.
             error(type, "Annotation processor for @%s was invoked with a type that does not have that " +
@@ -130,8 +134,8 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
     // ------------------------------------------------------ processing
 
-    private void processType(final TypeElement type, final MbuiView mbuiView) {
-        String subclass = TypeSimplifier.simpleNameOf(generatedClassName(type, "Templated_", ""));
+    protected void processType(final TypeElement type, final MbuiView mbuiView) {
+        String subclass = TypeSimplifier.simpleNameOf(generatedClassName(type, "Mbui_", ""));
         String createMethod = verifyCreateMethod(type);
         MbuiViewContext context = new MbuiViewContext(TypeSimplifier.packageNameOf(type),
                 TypeSimplifier.classNameOf(type), subclass, createMethod);
@@ -152,12 +156,12 @@ public class MbuiViewProcessor extends AbstractProcessor {
         context.setAbstractProperties(abstractProperties);
 
         // generate code
-        code(MBUI_VIEW_TEMPLATE, context.getPackage(), context.getSubclass(),
+        code(TEMPLATE, context.getPackage(), context.getSubclass(),
                 () -> ImmutableMap.of("context", context));
         info("Generated MBUI view implementation [%s] for [%s]", context.getSubclass(), context.getBase());
     }
 
-    private String generatedClassName(TypeElement type, String prefix, String suffix) {
+    String generatedClassName(TypeElement type, String prefix, String suffix) {
         String name = type.getSimpleName().toString();
         while (type.getEnclosingElement() instanceof TypeElement) {
             type = (TypeElement) type.getEnclosingElement();
@@ -168,7 +172,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
         return pkg + dot + prefix + name + suffix;
     }
 
-    private String verifyCreateMethod(TypeElement type) {
+    String verifyCreateMethod(TypeElement type) {
         Optional<ExecutableElement> createMethod = ElementFilter.methodsIn(type.getEnclosedElements())
                 .stream()
                 .filter(method -> method.getModifiers().contains(Modifier.STATIC) &&
@@ -187,7 +191,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
         String mbuiXml = Strings.isNullOrEmpty(mbuiView.value())
                 ? type.getSimpleName().toString() + ".xml"
                 : mbuiView.value();
-        String fq = TypeSimplifier.packageNameOf(type).replace('.', '/') + File.pathSeparator + mbuiXml;
+        String fq = TypeSimplifier.packageNameOf(type).replace('.', '/') + File.separator + mbuiXml;
 
         try {
             FileObject file = processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH, "", fq);
@@ -202,7 +206,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
     }
 
     private List<String> processMbuiElements(final TypeElement type, final Document document) {
-        return null;
+        return Collections.emptyList();
     }
 
     private List<PostConstructInfo> processPostConstruct(TypeElement type) {
@@ -237,7 +241,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
         return postConstructs;
     }
 
-    private List<AbstractPropertyInfo> processAbstractProperties(final TypeElement type) {
+    List<AbstractPropertyInfo> processAbstractProperties(final TypeElement type) {
         List<AbstractPropertyInfo> abstractProperties = new ArrayList<>();
 
         ElementFilter.methodsIn(type.getEnclosedElements()).stream()
