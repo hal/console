@@ -308,11 +308,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         // only finder tokens of the same type please
         PlaceRequest current = placeManager.getCurrentPlaceRequest();
         if (context.getToken().equals(current.getNameToken())) {
-            PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(context.getToken());
-            if (!context.getPath().isEmpty()) {
-                builder.with("path", context.getPath().toString());
-            }
-            PlaceRequest update = builder.build();
+            PlaceRequest update = context.toPlaceRequest();
             if (!update.equals(current)) {
                 logger.debug("Update history: {}", "#" + context.getToken() +
                         (context.getPath().isEmpty() ? "" : ";path=" + context.getPath()));

@@ -168,26 +168,12 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         return "#" + tokenFormatter().toHistoryToken(singletonList(placeRequest));
     }
 
-    String historyToken(String token, FinderPath path) {
-        PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(token);
-        if (!path.isEmpty()) {
-            builder.with("path", path.toString());
-        }
-        PlaceRequest placeRequest = builder.build();
-        return "#" + tokenFormatter().toHistoryToken(singletonList(placeRequest));
-    }
-
     @Override
     public void updateBack(final FinderContext finderContext) {
-        String token = finderContext.getToken();
-        if (token != null) {
-            String historyToken = historyToken(token, finderContext.getPath());
-            backLink.setAttribute("href", historyToken); //NON-NLS
-            Element link = tlc.get(token);
-            if (link != null) {
-                link.setAttribute("href", historyToken); //NON-NLS
-            }
-        }
+        PlaceRequest placeRequest = finderContext.getToken() != null
+                ? finderContext.toPlaceRequest()
+                : new PlaceRequest.Builder().nameToken(NameTokens.HOMEPAGE).build();
+        backLink.setOnclick(event -> presenter.goTo(placeRequest));
     }
 
     @Override
@@ -295,9 +281,8 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
             }
             builder.span().css(key);
             if (context.getToken() != null) {
-                builder.a(historyToken(context.getToken(), currentPath))
-                        .textContent(segment.getBreadcrumbKey())
-                        .end();
+                String href = "#" + tokenFormatter().toHistoryToken(singletonList(context.toPlaceRequest()));
+                builder.a(href).textContent(segment.getBreadcrumbKey()).end();
             } else {
                 builder.textContent(segment.getBreadcrumbKey());
             }

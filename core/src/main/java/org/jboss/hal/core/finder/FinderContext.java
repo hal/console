@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.core.finder;
 
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
 /**
  * Holds state as the user navigates using the finder.
  *
@@ -49,5 +51,13 @@ public class FinderContext {
 
     public FinderPath getPath() {
         return path;
+    }
+
+    public PlaceRequest toPlaceRequest() {
+        PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(token);
+        if (!path.isEmpty()) {
+            builder.with("path", path.toString());
+        }
+        return builder.build();
     }
 }
