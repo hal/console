@@ -17,8 +17,11 @@ package org.jboss.hal.client.configuration.subsystem.logging;
 
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates;
 import org.jboss.hal.core.finder.Finder;
@@ -37,14 +40,15 @@ import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE_DEPTH;
-import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 /**
  * @author Harald Pehl
@@ -52,13 +56,13 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 public class LoggingPresenter extends SubsystemPresenter<LoggingPresenter.MyView, LoggingPresenter.MyProxy> {
 
     // @formatter:off
-    // @ProxyCodeSplit
-    // @NameToken(NameTokens.LOGGING)
-    // @Requires({ROOT_LOGGER_ADDRESS, LOGGER_ADDRESS,
-    //         ASYNC_HANDLER_ADDRESS, CONSOLE_HANDLER_ADDRESS, CUSTOM_HANDLER_ADDRESS, FILE_HANDLER_ADDRESS,
-    //         PERIODIC_ROTATING_FILE_HANDLER_ADDRESS, PERIODIC_SIZE_ROTATING_FILE_HANDLER_ADDRESS,
-    //         SIZE_ROTATING_FILE_HANDLER_ADDRESS, SYSLOG_HANDLER_ADDRESS,
-    //         CUSTOM_FORMATTER_ADDRESS, PATTERN_FORMATTER_ADDRESS})
+    @ProxyCodeSplit
+    @NameToken(NameTokens.LOGGING)
+    @Requires({ROOT_LOGGER_ADDRESS, LOGGER_ADDRESS,
+            ASYNC_HANDLER_ADDRESS, CONSOLE_HANDLER_ADDRESS, CUSTOM_HANDLER_ADDRESS, FILE_HANDLER_ADDRESS,
+            PERIODIC_ROTATING_FILE_HANDLER_ADDRESS, PERIODIC_SIZE_ROTATING_FILE_HANDLER_ADDRESS,
+            SIZE_ROTATING_FILE_HANDLER_ADDRESS, SYSLOG_HANDLER_ADDRESS,
+            CUSTOM_FORMATTER_ADDRESS, PATTERN_FORMATTER_ADDRESS})
     public interface MyProxy extends ProxyPlace<LoggingPresenter> {}
 
     public interface MyView extends PatternFlyView, HasVerticalNavigation, HasPresenter<LoggingPresenter> {
@@ -85,7 +89,7 @@ public class LoggingPresenter extends SubsystemPresenter<LoggingPresenter.MyView
     private final OperationFactory operationFactory;
     private final Resources resources;
 
-    // @Inject
+    @Inject
     public LoggingPresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy proxy,
@@ -126,20 +130,20 @@ public class LoggingPresenter extends SubsystemPresenter<LoggingPresenter.MyView
                 .build();
         dispatcher.execute(operation, result -> {
             // @formatter:off
-            getView().updateRootLogger(result.get(ROOT_LOGGER_TEMPLATE.lastKey()).get(ROOT_LOGGER_TEMPLATE.lastValue()));
-            getView().updateLogger(asNamedNodes(result.get(LOGGER_TEMPLATE.lastKey()).asPropertyList()));
-
-            getView().updateAsyncHandler(asNamedNodes(result.get(ASYNC_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
-            getView().updateConsoleHandler(asNamedNodes(result.get(CONSOLE_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
-            getView().updateCustomHandler(asNamedNodes(result.get(CUSTOM_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
-            getView().updateFileHandler(asNamedNodes(result.get(FILE_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
-            getView().updatePeriodicHandler(asNamedNodes(result.get(PERIODIC_ROTATING_FILE_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
-            getView().updatePeriodicSizeHandler(asNamedNodes(result.get(PERIODIC_SIZE_ROTATING_FILE_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
-            getView().updateSizeHandlerHandler(asNamedNodes(result.get(SIZE_ROTATING_FILE_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
-            getView().updateSyslogHandler(asNamedNodes(result.get(SYSLOG_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
-
-            getView().updateCustomFormatter(asNamedNodes(result.get(CUSTOM_FORMATTER_TEMPLATE.lastKey()).asPropertyList()));
-            getView().updatePatternFormatter(asNamedNodes(result.get(PATTERN_FORMATTER_TEMPLATE.lastKey()).asPropertyList()));
+            // getView().updateRootLogger(result.get(ROOT_LOGGER_TEMPLATE.lastKey()).get(ROOT_LOGGER_TEMPLATE.lastValue()));
+            // getView().updateLogger(asNamedNodes(result.get(LOGGER_TEMPLATE.lastKey()).asPropertyList()));
+            //
+            // getView().updateAsyncHandler(asNamedNodes(result.get(ASYNC_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
+            // getView().updateConsoleHandler(asNamedNodes(result.get(CONSOLE_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
+            // getView().updateCustomHandler(asNamedNodes(result.get(CUSTOM_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
+            // getView().updateFileHandler(asNamedNodes(result.get(FILE_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
+            // getView().updatePeriodicHandler(asNamedNodes(result.get(PERIODIC_ROTATING_FILE_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
+            // getView().updatePeriodicSizeHandler(asNamedNodes(result.get(PERIODIC_SIZE_ROTATING_FILE_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
+            // getView().updateSizeHandlerHandler(asNamedNodes(result.get(SIZE_ROTATING_FILE_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
+            // getView().updateSyslogHandler(asNamedNodes(result.get(SYSLOG_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
+            //
+            // getView().updateCustomFormatter(asNamedNodes(result.get(CUSTOM_FORMATTER_TEMPLATE.lastKey()).asPropertyList()));
+            // getView().updatePatternFormatter(asNamedNodes(result.get(PATTERN_FORMATTER_TEMPLATE.lastKey()).asPropertyList()));
             // @formatter:on
         });
     }
