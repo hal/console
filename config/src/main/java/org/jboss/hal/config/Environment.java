@@ -15,9 +15,9 @@
  */
 package org.jboss.hal.config;
 
-import org.jboss.hal.config.semver.Version;
-
 import java.util.List;
+
+import org.jboss.hal.config.semver.Version;
 
 /**
  * Instance holding information about the console and its environment.
@@ -53,4 +53,8 @@ public interface Environment {
     Version getManagementVersion();
 
     void setManagementVersion(String major, String micro, String minor);
+
+    AccessControlProvider getAccessControlProvider();
+
+    void setAccessControlProvider(AccessControlProvider accessControlProvider);
 }

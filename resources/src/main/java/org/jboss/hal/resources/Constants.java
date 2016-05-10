@@ -37,6 +37,8 @@ package org.jboss.hal.resources;
 public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     //@formatter:off
+    String aboutEnvironment();
+    String accessControlProvider();
     String accessType();
     String action();
     String add();
@@ -59,6 +61,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String close();
     String connection();
     String connectToServer();
+    String consoleVersion();
     String content();
     String contentRepository();
     String copied();
@@ -181,9 +184,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String macroEditor();
     String macroPlaybackError();
     String macroPlaybackSuccessful();
-    String mailSession();
-    String mailServerTypeAlreadyExists();
-    String main_attributes();
+    String mainAttributes();
+    String managementVersion();
     String message();
     String metadataError();
     String modelBrowser();
@@ -202,17 +204,23 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String nothingSelected();
 
     String ok();
+    String operationMode();
     String operations();
     String output();
 
     String pin();
     String ping();
+    String platform();
     String play();
     String pool();
+    String productName();
+    String productVersion();
 
     String recordingStarted();
     String recordingStopped();
     String refresh();
+    String releaseName();
+    String releaseVersion();
     String remove();
     String removeResource();
     String rename();
@@ -228,6 +236,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String sameOrigin();
     String save();
     String security();
+    String serverName();
     String settings();
     String showAll();
     String start();

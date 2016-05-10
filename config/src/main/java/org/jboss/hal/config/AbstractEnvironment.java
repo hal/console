@@ -15,21 +15,21 @@
  */
 package org.jboss.hal.config;
 
+import java.util.List;
+
 import com.google.common.base.Joiner;
 import org.jboss.hal.config.rebind.EnvironmentGenerator;
 import org.jboss.hal.config.semver.Version;
 
-import java.util.List;
-
+import static org.jboss.hal.config.InstanceInfo.WILDFLY;
 import static org.jboss.hal.config.OperationMode.DOMAIN;
 import static org.jboss.hal.config.OperationMode.STANDALONE;
-import static org.jboss.hal.config.InstanceInfo.WILDFLY;
 
 /**
  * A base implementation for the environment.
  *
- * @see EnvironmentGenerator
  * @author Harald Pehl
+ * @see EnvironmentGenerator
  */
 @SuppressWarnings("unused")
 public abstract class AbstractEnvironment implements Environment {
@@ -39,6 +39,7 @@ public abstract class AbstractEnvironment implements Environment {
     private final InstanceInfo instanceInfo;
     private OperationMode operationMode;
     private Version managementVersion;
+    private AccessControlProvider accessControlProvider;
 
     protected AbstractEnvironment(final String halVersion, final List<String> locales) {
         this.halVersion = Version.valueOf(halVersion);
@@ -46,6 +47,7 @@ public abstract class AbstractEnvironment implements Environment {
         this.instanceInfo = WILDFLY;
         this.operationMode = STANDALONE;
         this.managementVersion = Version.forIntegers(0, 0, 0);
+        this.accessControlProvider = AccessControlProvider.SIMPLE;
     }
 
     @Override
@@ -96,7 +98,18 @@ public abstract class AbstractEnvironment implements Environment {
     }
 
     @Override
+    public AccessControlProvider getAccessControlProvider() {
+        return accessControlProvider;
+    }
+
+    @Override
+    public void setAccessControlProvider(final AccessControlProvider accessControlProvider) {
+        this.accessControlProvider = accessControlProvider;
+    }
+
+    @Override
     public String toString() {
-        return "Environment{HAL " + halVersion + ", " + instanceInfo + ", management version " + managementVersion + '}';
+        return "Environment(HAL " + halVersion + ", " + instanceInfo + ", management version " + managementVersion +
+                ", " + accessControlProvider.name().toLowerCase() + " provider)";
     }
 }

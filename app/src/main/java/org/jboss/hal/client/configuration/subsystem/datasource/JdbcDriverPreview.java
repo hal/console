@@ -47,7 +47,7 @@ class JdbcDriverPreview extends PreviewContent {
 
         LabelBuilder labelBuilder = new LabelBuilder();
         PreviewAttributes<JdbcDriver> attributes = new PreviewAttributes<>(driver,
-                resources.constants().main_attributes())
+                resources.constants().mainAttributes())
 
                 .append(model -> {
                     return new String[]{labelBuilder.label("driver-classes"), //NON-NLS

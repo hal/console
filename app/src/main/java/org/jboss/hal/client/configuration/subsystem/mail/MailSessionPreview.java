@@ -42,7 +42,7 @@ class MailSessionPreview extends PreviewContent {
         }
 
         PreviewAttributes<MailSession> attributes = new PreviewAttributes<>(mailSession,
-                resources.constants().main_attributes());
+                resources.constants().mainAttributes());
         attributes.append(ModelDescriptionConstants.JNDI_NAME);
         if (mailSession.hasServer(MailSession.SMTP)) {
             attributes.append(model -> {

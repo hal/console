@@ -130,13 +130,13 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     public void update(Environment environment, Endpoints endpoints, User user) {
         if (environment.getInstanceInfo() == WILDFLY) {
             setLogo(new String[]{
-                    environment.getInstanceInfo().description().substring(0, 4),
-                    environment.getInstanceInfo().description().substring(4),
+                    environment.getInstanceInfo().platform().substring(0, 4),
+                    environment.getInstanceInfo().platform().substring(4),
             });
         } else if (environment.getInstanceInfo() == InstanceInfo.EAP) {
             setLogo(new String[]{
-                    environment.getInstanceInfo().description().substring(0, 13),
-                    environment.getInstanceInfo().description().substring(13).trim(),
+                    environment.getInstanceInfo().platform().substring(0, 13),
+                    environment.getInstanceInfo().platform().substring(13).trim(),
             });
         } else {
             setLogo(new String[]{HAL, MANAGEMENT_CONSOLE});

@@ -105,5 +105,8 @@ public interface Ids {
 
     String UNASSIGNED_CONTENT_COLUMN = "unassigned-content";
 
+    String VERSION_INFO = "version-info";
+    String VERSION_INFO_FORM = IdBuilder.build(VERSION_INFO, "form");
+
     String WEB_SETTINGS_COLUMN = "settings";
 }
