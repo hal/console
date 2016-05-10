@@ -53,8 +53,10 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
         super.onReveal();
         if (getView() instanceof HasVerticalNavigation) {
             VerticalNavigation navigation = ((HasVerticalNavigation) getView()).getVerticalNavigation();
-            navigation.on();
-            Scheduler.get().scheduleDeferred(navigation::showInitial);
+            if (navigation != null) {
+                navigation.on();
+                Scheduler.get().scheduleDeferred(navigation::showInitial);
+            }
         }
     }
 
@@ -68,7 +70,10 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
     protected void onHide() {
         super.onHide();
         if (getView() instanceof HasVerticalNavigation) {
-            ((HasVerticalNavigation) getView()).getVerticalNavigation().off();
+            VerticalNavigation navigation = ((HasVerticalNavigation) getView()).getVerticalNavigation();
+            if (navigation != null) {
+                navigation.off();
+            }
         }
     }
 
