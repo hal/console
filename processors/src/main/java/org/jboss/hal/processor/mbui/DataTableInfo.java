@@ -22,6 +22,7 @@ public class DataTableInfo extends MbuiElementInfo {
 
     private final String typeParameter;
     private final MetadataInfo metadata;
+    private FormInfo formRef;
 
     public DataTableInfo(final String name, final String selector, String typeParameter, MetadataInfo metadata) {
         super(name, selector);
@@ -35,5 +36,13 @@ public class DataTableInfo extends MbuiElementInfo {
 
     public MetadataInfo getMetadata() {
         return metadata;
+    }
+
+    public FormInfo getFormRef() {
+        return formRef;
+    }
+
+    public void setFormRef(final FormInfo formRef) {
+        this.formRef = formRef;
     }
 }

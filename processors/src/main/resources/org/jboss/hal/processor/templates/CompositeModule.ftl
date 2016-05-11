@@ -9,8 +9,8 @@ import javax.annotation.Generated;
 import com.google.gwt.inject.client.AbstractGinModule;
 
 /*
-* WARNING! This class is generated. Do not modify.
-*/
+ * WARNING! This class is generated. Do not modify.
+ */
 @Generated("${generatedWith}")
 public class ${className} extends AbstractGinModule {
 

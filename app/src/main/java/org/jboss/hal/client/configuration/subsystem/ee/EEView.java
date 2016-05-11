@@ -95,9 +95,8 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
         Metadata eeMetadata = metadataRegistry.lookup(AddressTemplates.EE_SUBSYSTEM_TEMPLATE);
 
         ModelNodeForm<ModelNode> eeAttributesForm = new ModelNodeForm.Builder<>(EE_ATTRIBUTES_FORM, eeMetadata)
-                .onSave((form1, changedValues1) -> presenter
-                        .save(AddressTemplates.EE_SUBSYSTEM_TEMPLATE, changedValues1,
-                                resources.constants().deploymentAttributes()))
+                .onSave((f, changedValues) -> presenter.save(AddressTemplates.EE_SUBSYSTEM_TEMPLATE, changedValues,
+                        resources.constants().deploymentAttributes()))
                 .build();
         forms.put(EE_ATTRIBUTES_FORM, eeAttributesForm);
         registerAttachable(eeAttributesForm);

@@ -11,8 +11,8 @@ import com.google.gwt.inject.client.AbstractGinModule;
 import org.jboss.hal.spi.GinModule;
 
 /*
-* WARNING! This class is generated. Do not modify.
-*/
+ * WARNING! This class is generated. Do not modify.
+ */
 @GinModule
 @Generated("${generatedWith}")
 public class ${className} extends AbstractGinModule {

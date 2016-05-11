@@ -16,6 +16,7 @@
 package org.jboss.hal.core.mvp;
 
 import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
 
 /**
@@ -26,10 +27,14 @@ import org.jboss.hal.resources.Resources;
 public abstract class MbuiViewImpl extends PatternFlyViewImpl {
 
     protected final MetadataRegistry metadataRegistry;
+    protected final StatementContext statementContext;
     protected final Resources resources;
 
-    protected MbuiViewImpl(final MetadataRegistry metadataRegistry, final Resources resources) {
+    protected MbuiViewImpl(final MetadataRegistry metadataRegistry,
+            final StatementContext statementContext,
+            Resources resources) {
         this.metadataRegistry = metadataRegistry;
+        this.statementContext = statementContext;
         this.resources = resources;
     }
 }

@@ -60,7 +60,7 @@ public class PathsView extends PatternFlyViewImpl implements PathsPresenter.MyVi
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
 
                 .column(ModelDescriptionConstants.NAME, resources.constants().name(),
-                        (cell, type, row, meta) -> row.get(ModelDescriptionConstants.NAME).asString())
+                        (cell, type, row, meta) -> row.getName())
 
                 .button(tableButtonFactory.add(
                         IdBuilder.build(Ids.PATHS_TABLE, "add"),

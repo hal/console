@@ -26,20 +26,29 @@ import org.jboss.hal.core.mvp.MbuiViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
+
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.ASYNC_HANDLER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.CONSOLE_HANDLER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.FILE_HANDLER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.ROOT_LOGGER_TEMPLATE;
 
 /**
  * @author Harald Pehl
  */
 @MbuiView
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "DuplicateStringLiteralInspection"})
 public abstract class LoggingView extends MbuiViewImpl implements LoggingPresenter.MyView {
 
     // @formatter:off
-    public static LoggingView create(final MetadataRegistry metadataRegistry, final Resources resources) {
-        return new Mbui_LoggingView(metadataRegistry, resources);
+    public static LoggingView create(final MetadataRegistry metadataRegistry,
+            final StatementContext statementContext,
+            final Resources resources) {
+        return new Mbui_LoggingView(metadataRegistry, statementContext, resources);
     }
     // @formatter:on
 
@@ -62,14 +71,14 @@ public abstract class LoggingView extends MbuiViewImpl implements LoggingPresent
     @MbuiElement("logging-formatter-pattern-form") Form<NamedNode> patternFormatterForm;
 
     protected LoggingView(final MetadataRegistry metadataRegistry,
+            final StatementContext statementContext,
             final Resources resources) {
-        super(metadataRegistry, resources);
+        super(metadataRegistry, statementContext, resources);
     }
 
     @PostConstruct
     @SuppressWarnings({"HardCodedStringLiteral", "ConstantConditions"})
     void init() {
-/*
         rootLoggerForm.setSaveCallback((form, changedValues) ->
                 presenter.saveResource(ROOT_LOGGER_TEMPLATE, "Root Logger", null, changedValues));
         loggerForm.setSaveCallback((form, changedValues) -> {
@@ -108,7 +117,6 @@ public abstract class LoggingView extends MbuiViewImpl implements LoggingPresent
                         loggerTable.api().selectedRow().getName(), changedValues);
             }
         });
-*/
     }
 
     @Override

@@ -7,15 +7,17 @@ import javax.inject.Inject;
 import javax.annotation.Generated;
 
 import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
 
 /*
-* WARNING! This class is generated. Do not modify.
-*/
+ * WARNING! This class is generated. Do not modify.
+ */
 @Generated("org.jboss.hal.processor.mbui.MbuiViewGinProcessor")
 public class ${context.subclass} implements Provider<${context.base}> {
 
     private final MetadataRegistry metadataRegistry;
+    private final StatementContext statementContext;
     private final Resources resources;
     <#if (context.abstractProperties?size > 0)>
     <#list context.abstractProperties as abstractProperty>
@@ -23,8 +25,9 @@ public class ${context.subclass} implements Provider<${context.base}> {
     </#list>
 
     @Inject
-    public ${context.subclass}(MetadataRegistry metadataRegistry, Resources resources, <#list context.abstractProperties as abstractProperty>${abstractProperty.type} ${abstractProperty.field}<#if abstractProperty_has_next>, </#if></#list>) {
+    public ${context.subclass}(MetadataRegistry metadataRegistry, StatementContext statementContext, Resources resources, <#list context.abstractProperties as abstractProperty>${abstractProperty.type} ${abstractProperty.field}<#if abstractProperty_has_next>, </#if></#list>) {
         this.metadataRegistry = metadataRegistry;
+        this.statementContext = statementContext;
         this.resources = resources;
         <#list context.abstractProperties as abstractProperty>
         this.${abstractProperty.field} = ${abstractProperty.field};
@@ -33,14 +36,15 @@ public class ${context.subclass} implements Provider<${context.base}> {
     <#else>
 
     @Inject
-    public ${context.subclass}(MetadataRegistry metadataRegistry, Resources resources) {
+    public ${context.subclass}(MetadataRegistry metadataRegistry, StatementContext statementContext, Resources resources) {
         this.metadataRegistry = metadataRegistry;
+    this.statementContext = statementContext;
         this.resources = resources;
     }
     </#if>
 
     @Override
     public ${context.base} get() {
-        return ${context.base}.${context.createMethod}(metadataRegistry, resources<#list context.abstractProperties as abstractProperty>, ${abstractProperty.field}</#list>);
+        return ${context.base}.${context.createMethod}(metadataRegistry, statementContext, resources<#list context.abstractProperties as abstractProperty>, ${abstractProperty.field}</#list>);
     }
 }

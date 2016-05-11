@@ -20,7 +20,7 @@
             Root Logger
         -->
         <item id="logging-root-logger-item" title="Root Logger" icon="fa fa-sitemap">
-            <metadata template="/{selected.profile}/subsystem=logging/root-logger=ROOT">
+            <metadata address="/{selected.profile}/subsystem=logging/root-logger=ROOT">
                 <h1>Root Logger</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <form id="logging-root-logger-form">
@@ -38,7 +38,7 @@
             Categories / Logger
         -->
         <item id="logging-categories-item" title="Categories" icon="fa fa-folder-open-o">
-            <metadata template="/{selected.profile}/subsystem=logging/logger=*">
+            <metadata address="/{selected.profile}/subsystem=logging/logger=*">
                 <h1>Categories</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <table id="logging-categories-table" form-ref="logging-categories-form">
@@ -79,7 +79,7 @@
                 Console Handler
             -->
             <sub-item id="logging-handler-console-tab" title="Console Handler">
-                <metadata template="/{selected.profile}/subsystem=logging/console-handler=*">
+                <metadata address="/{selected.profile}/subsystem=logging/console-handler=*">
                     <h1>Console Handler</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
                     <table id="logging-handler-console-table" form-ref="logging-handler-console-form">
@@ -146,7 +146,7 @@
                 TODO Add support for custom form item 'file'
             -->
             <sub-item id="logging-handler-file-tab" title="File Handler">
-                <metadata template="/{selected.profile}/subsystem=logging/file-handler=*">
+                <metadata address="/{selected.profile}/subsystem=logging/file-handler=*">
                     <h1>File Handler</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
                     <table id="logging-handler-file-table" form-ref="logging-handler-file-form">
@@ -192,7 +192,7 @@
                 Async Handler
             -->
             <sub-item id="logging-handler-async-tab" title="Async Handler">
-                <metadata template="/{selected.profile}/subsystem=logging/async-handler=*">
+                <metadata address="/{selected.profile}/subsystem=logging/async-handler=*">
                     <h1>Async Handler</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
                     <table id="logging-handler-async-table" form-ref="logging-handler-async-form">
@@ -265,7 +265,7 @@
                 Pattern Formatter
             -->
             <sub-item id="logging-formatter-pattern" title="Pattern Formatter">
-                <metadata template="/{selected.profile}/subsystem=logging/pattern-formatter=*">
+                <metadata address="/{selected.profile}/subsystem=logging/pattern-formatter=*">
                     <h1>Pattern Formatter</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
                     <table id="logging-formatter-pattern-table" form-ref="logging-formatter-pattern-form">
@@ -301,7 +301,7 @@
                 Custom Formatter
             -->
             <sub-item id="logging-formatter-custom" title="Pattern Formatter">
-                <metadata template="/{selected.profile}/subsystem=logging/custom-formatter=*">
+                <metadata address="/{selected.profile}/subsystem=logging/custom-formatter=*">
                     <h1>Custom Formatter</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
                     <table id="logging-formatter-custom-table" form-ref="logging-formatter-custom-form">

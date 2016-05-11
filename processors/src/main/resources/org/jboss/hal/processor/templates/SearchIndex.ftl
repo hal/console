@@ -14,8 +14,8 @@ import javax.annotation.Generated;
 import static java.util.Arrays.asList;
 
 /*
-* WARNING! This class is generated. Do not modify.
-*/
+ * WARNING! This class is generated. Do not modify.
+ */
 @Generated("${generatedWith}")
 public class ${className} implements org.jboss.hal.meta.search.SearchIndex {
 

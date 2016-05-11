@@ -12,8 +12,8 @@ import com.google.gwt.inject.client.AsyncProvider;
 import org.jboss.hal.core.finder.ColumnRegistry;
 
 /*
-* WARNING! This class is generated. Do not modify.
-*/
+ * WARNING! This class is generated. Do not modify.
+ */
 @Generated("${generatedWith}")
 public class ${className} {
 

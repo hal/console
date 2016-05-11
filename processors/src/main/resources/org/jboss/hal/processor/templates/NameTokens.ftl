@@ -10,8 +10,8 @@ import java.util.HashSet;
 import javax.annotation.Generated;
 
 /*
-* WARNING! This class is generated. Do not modify.
-*/
+ * WARNING! This class is generated. Do not modify.
+ */
 @Generated("${generatedWith}")
 public class ${className} implements org.jboss.hal.meta.token.NameTokens {
 

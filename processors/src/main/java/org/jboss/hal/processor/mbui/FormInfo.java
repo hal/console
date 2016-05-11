@@ -15,18 +15,49 @@
  */
 package org.jboss.hal.processor.mbui;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 /**
  * @author Harald Pehl
  */
 public class FormInfo extends MbuiElementInfo {
 
+    public static class Attribute {
+
+        private final String name;
+        private final List<String> suggestHandlerTemplates;
+
+        public Attribute(final String name) {
+            this.name = name;
+            this.suggestHandlerTemplates = new ArrayList<>();
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public List<String> getSuggestHandlerTemplates() {
+            return suggestHandlerTemplates;
+        }
+
+        void addSuggestHandlerTemplate(String template) {
+            suggestHandlerTemplates.add(template);
+        }
+    }
+
+
     private final String typeParameter;
     private final MetadataInfo metadata;
+    private final List<Attribute> attributes;
 
     public FormInfo(final String name, final String selector, String typeParameter, MetadataInfo metadata) {
         super(name, selector);
         this.typeParameter = typeParameter;
         this.metadata = metadata;
+        this.attributes = new ArrayList<>();
     }
 
     public String getTypeParameter() {
@@ -35,5 +66,18 @@ public class FormInfo extends MbuiElementInfo {
 
     public MetadataInfo getMetadata() {
         return metadata;
+    }
+
+    public List<Attribute> getAttributes() {
+        return attributes;
+    }
+
+    public List<Attribute> getSuggestHandlerAttributes() {
+        return attributes.stream().filter(attribute -> !attribute.getSuggestHandlerTemplates().isEmpty())
+                .collect(toList());
+    }
+
+    void addAttribute(Attribute attribute) {
+        attributes.add(attribute);
     }
 }

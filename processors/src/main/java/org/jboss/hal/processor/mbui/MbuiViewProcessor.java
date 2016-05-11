@@ -259,14 +259,14 @@ public class MbuiViewProcessor extends AbstractProcessor {
     private void processMetadata(final TypeElement type, final Document document, final MbuiViewContext context) {
         XPathExpression<org.jdom2.Element> expression = xpath.compile("//metadata", Filters.element());
         List<org.jdom2.Element> elements = expression.evaluate(document);
-        elements.forEach(element -> {
-            String template = element.getAttributeValue("template");
+        for (org.jdom2.Element element : elements) {
+            String template = element.getAttributeValue("address");
             if (template == null) {
-                error(type, "Missing template attribute in metadata element");
+                error(type, "Missing address attribute in metadata element");
             } else {
                 context.addMetadata(template);
             }
-        });
+        }
     }
 
 
@@ -371,6 +371,25 @@ public class MbuiViewProcessor extends AbstractProcessor {
         MetadataInfo metadata = findMetadata(field, element, context);
         FormInfo formInfo = new FormInfo(field.getSimpleName().toString(), selector, getTypeParameter(field), metadata);
         context.addFormInfo(formInfo);
+
+        org.jdom2.Element attributesContainer = element.getChild("attributes");
+        if (attributesContainer != null) {
+            for (org.jdom2.Element attributeElement : attributesContainer.getChildren("attribute")) {
+                String name = attributeElement.getAttributeValue("name");
+                FormInfo.Attribute attribute = new FormInfo.Attribute(name);
+                org.jdom2.Element suggestHandler = attributeElement.getChild("suggest-handler");
+                if (suggestHandler != null) {
+                    org.jdom2.Element templatesContainer = suggestHandler.getChild("templates");
+                    if (templatesContainer != null) {
+                        for (org.jdom2.Element templateElement : templatesContainer.getChildren("template")) {
+                            String address = templateElement.getAttributeValue("address");
+                            attribute.addSuggestHandlerTemplate(address);
+                        }
+                    }
+                }
+                formInfo.addAttribute(attribute);
+            }
+        }
     }
 
     private MetadataInfo findMetadata(final VariableElement field, final org.jdom2.Element element,
@@ -383,10 +402,11 @@ public class MbuiViewProcessor extends AbstractProcessor {
                     "Missing metadata ancestor. Please make sure the mapped XML element has a \"<%s/>\" ancestor element.",
                     XmlTags.METADATA);
         } else {
-            metadataInfo = context.getMetadataInfo(metadataElement.getAttributeValue("template"));
+            metadataInfo = context.getMetadataInfo(metadataElement.getAttributeValue("address"));
             if (metadataInfo == null) {
                 error(field,
-                        "No metadata found. Please make sure the mapped XML element has a \"<%s/>\" ancestor element.");
+                        "No metadata found. Please make sure the mapped XML element has a \"<%s/>\" ancestor element.",
+                        XmlTags.METADATA);
             }
         }
         return metadataInfo;
@@ -404,7 +424,16 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
     private void processCrossReferences(final TypeElement type, final Document document,
             final MbuiViewContext context) {
-
+        // table-form bindings
+        XPathExpression<org.jdom2.Element> expression = xpath.compile("//table[@form-ref]", Filters.element());
+        List<org.jdom2.Element> elements = expression.evaluate(document);
+        for (org.jdom2.Element element : elements) {
+            DataTableInfo tableInfo = context.getElement(element.getAttributeValue("id"));
+            FormInfo formInfo = context.getElement(element.getAttributeValue("form-ref"));
+            if (tableInfo != null && formInfo != null) {
+                tableInfo.setFormRef(formInfo);
+            }
+        }
     }
 
 
