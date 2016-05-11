@@ -3,10 +3,11 @@ package ${context.package};
 
 import com.google.inject.Provider;
 
-<#if (context.abstractProperties?size > 0)>
 import javax.inject.Inject;
-</#if>
 import javax.annotation.Generated;
+
+import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.resources.Resources;
 
 /*
 * WARNING! This class is generated. Do not modify.
@@ -14,21 +15,32 @@ import javax.annotation.Generated;
 @Generated("org.jboss.hal.processor.mbui.MbuiViewGinProcessor")
 public class ${context.subclass} implements Provider<${context.base}> {
 
+    private final MetadataRegistry metadataRegistry;
+    private final Resources resources;
     <#if (context.abstractProperties?size > 0)>
     <#list context.abstractProperties as abstractProperty>
     private final ${abstractProperty.type} ${abstractProperty.field};
     </#list>
 
     @Inject
-    public ${context.subclass}(<#list context.abstractProperties as abstractProperty>${abstractProperty.type} ${abstractProperty.field}<#if abstractProperty_has_next>, </#if></#list>) {
+    public ${context.subclass}(MetadataRegistry metadataRegistry, Resources resources, <#list context.abstractProperties as abstractProperty>${abstractProperty.type} ${abstractProperty.field}<#if abstractProperty_has_next>, </#if></#list>) {
+        this.metadataRegistry = metadataRegistry;
+        this.resources = resources;
         <#list context.abstractProperties as abstractProperty>
         this.${abstractProperty.field} = ${abstractProperty.field};
         </#list>
     }
+    <#else>
 
+    @Inject
+    public ${context.subclass}(MetadataRegistry metadataRegistry, Resources resources) {
+        this.metadataRegistry = metadataRegistry;
+        this.resources = resources;
+    }
     </#if>
+
     @Override
     public ${context.base} get() {
-        return ${context.base}.${context.createMethod}(<#list context.abstractProperties as abstractProperty>${abstractProperty.field}<#if abstractProperty_has_next>, </#if></#list>);
+        return ${context.base}.${context.createMethod}(metadataRegistry, resources<#list context.abstractProperties as abstractProperty>, ${abstractProperty.field}</#list>);
     }
 }

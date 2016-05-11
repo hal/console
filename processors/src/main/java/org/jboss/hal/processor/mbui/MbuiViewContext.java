@@ -15,7 +15,11 @@
  */
 package org.jboss.hal.processor.mbui;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MbuiViewContext {
 
@@ -24,15 +28,29 @@ public class MbuiViewContext {
     private final String subclass;
     private final String createMethod;
 
-    private List<String> mbuiElements;
-    private List<PostConstructInfo> postConstructs;
-    private List<AbstractPropertyInfo> abstractProperties;
+    private final Map<String, MetadataInfo> metadataInfos;
+    private final Map<String, MbuiElementInfo> elements;
+    private VerticalNavigationInfo verticalNavigation;
+    private final List<DataTableInfo> dataTables;
+    private final List<FormInfo> forms;
+    private final List<MbuiElementInfo> attachables;
+    private final List<AbstractPropertyInfo> abstractProperties;
+    private final List<PostConstructInfo> postConstructs;
 
     public MbuiViewContext(final String pkg, final String base, final String subclass, final String createMethod) {
         this.pkg = pkg;
         this.base = base;
         this.subclass = subclass;
         this.createMethod = createMethod;
+
+        this.metadataInfos = new HashMap<>();
+        this.elements = new HashMap<>();
+        this.verticalNavigation = null;
+        this.dataTables = new ArrayList<>();
+        this.forms = new ArrayList<>();
+        this.attachables = new ArrayList<>();
+        this.abstractProperties = new ArrayList<>();
+        this.postConstructs = new ArrayList<>();
     }
 
     @Override
@@ -56,27 +74,69 @@ public class MbuiViewContext {
         return subclass;
     }
 
-    public List<String> getMbuiElements() {
-        return mbuiElements;
+    public MetadataInfo getMetadataInfo(String template) {
+        return metadataInfos.get(template);
     }
 
-    public void setMbuiElements(final List<String> mbuiElements) {
-        this.mbuiElements = mbuiElements;
+    public Collection<MetadataInfo> getMetadataInfos() {
+        return metadataInfos.values();
     }
 
-    public List<PostConstructInfo> getPostConstructs() {
-        return postConstructs;
+    void addMetadata(String template) {
+        metadataInfos.computeIfAbsent(template, MetadataInfo::new);
     }
 
-    public void setPostConstructs(final List<PostConstructInfo> postConstructs) {
-        this.postConstructs = postConstructs;
+    @SuppressWarnings("unchecked")
+    <T extends MbuiElementInfo> T getElement(String selector) {
+        return (T) elements.get(selector);
+    }
+
+    public VerticalNavigationInfo getVerticalNavigation() {
+        return verticalNavigation;
+    }
+
+    void setVerticalNavigation(final VerticalNavigationInfo verticalNavigation) {
+        this.verticalNavigation = verticalNavigation;
+        this.elements.put(verticalNavigation.getSelector(), verticalNavigation);
+    }
+
+    public List<DataTableInfo> getDataTables() {
+        return dataTables;
+    }
+
+    void addDataTableInfo(DataTableInfo dataTableInfo) {
+        dataTables.add(dataTableInfo);
+        attachables.add(dataTableInfo);
+        elements.put(dataTableInfo.getSelector(), dataTableInfo);
+    }
+
+    public List<FormInfo> getForms() {
+        return forms;
+    }
+
+    void addFormInfo(FormInfo formInfo) {
+        forms.add(formInfo);
+        attachables.add(formInfo);
+        elements.put(formInfo.getSelector(), formInfo);
+    }
+
+    public List<MbuiElementInfo> getAttachables() {
+        return attachables;
     }
 
     public List<AbstractPropertyInfo> getAbstractProperties() {
         return abstractProperties;
     }
 
-    public void setAbstractProperties(final List<AbstractPropertyInfo> abstractProperties) {
-        this.abstractProperties = abstractProperties;
+    void addAbstractProperty(AbstractPropertyInfo abstractPropertyInfo) {
+        this.abstractProperties.add(abstractPropertyInfo);
+    }
+
+    public List<PostConstructInfo> getPostConstructs() {
+        return postConstructs;
+    }
+
+    void addPostConstruct(PostConstructInfo postConstructInfo) {
+        postConstructs.add(postConstructInfo);
     }
 }

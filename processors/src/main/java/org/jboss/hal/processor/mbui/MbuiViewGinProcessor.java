@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.processor.mbui;
 
-import java.util.List;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.TypeElement;
@@ -47,8 +46,7 @@ public class MbuiViewGinProcessor extends MbuiViewProcessor {
         MbuiViewContext context = new MbuiViewContext(TypeSimplifier.packageNameOf(type),
                 TypeSimplifier.classNameOf(type), subclass, createMethod);
 
-        List<AbstractPropertyInfo> abstractProperties = processAbstractProperties(type);
-        context.setAbstractProperties(abstractProperties);
+        processAbstractProperties(type, context);
 
         code(TEMPLATE, context.getPackage(), context.getSubclass(),
                 () -> ImmutableMap.of("context", context));

@@ -36,6 +36,16 @@
     <dependencies>
         <dependency>
             <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-ballroom</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
             <artifactId>hal-spi</artifactId>
         </dependency>
         <dependency>
@@ -63,6 +73,10 @@
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
         </dependency>
     </dependencies>
 </project>

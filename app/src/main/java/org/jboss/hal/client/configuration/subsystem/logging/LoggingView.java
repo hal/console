@@ -22,10 +22,11 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.MbuiViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
@@ -34,14 +35,12 @@ import org.jboss.hal.spi.MbuiView;
  */
 @MbuiView
 @SuppressWarnings("WeakerAccess")
-public abstract class LoggingView extends PatternFlyViewImpl implements LoggingPresenter.MyView {
+public abstract class LoggingView extends MbuiViewImpl implements LoggingPresenter.MyView {
 
     // @formatter:off
-    public static LoggingView create(MetadataRegistry metadataRegistry) {
-        return new Mbui_LoggingView(metadataRegistry);
+    public static LoggingView create(final MetadataRegistry metadataRegistry, final Resources resources) {
+        return new Mbui_LoggingView(metadataRegistry, resources);
     }
-
-    abstract MetadataRegistry metadataRegistry();
     // @formatter:on
 
 
@@ -62,6 +61,10 @@ public abstract class LoggingView extends PatternFlyViewImpl implements LoggingP
     @MbuiElement("logging-formatter-pattern-table") DataTable<NamedNode> patternFormatterTable;
     @MbuiElement("logging-formatter-pattern-form") Form<NamedNode> patternFormatterForm;
 
+    protected LoggingView(final MetadataRegistry metadataRegistry,
+            final Resources resources) {
+        super(metadataRegistry, resources);
+    }
 
     @PostConstruct
     @SuppressWarnings({"HardCodedStringLiteral", "ConstantConditions"})

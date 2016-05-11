@@ -19,20 +19,24 @@ import java.beans.Introspector;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
@@ -40,16 +44,29 @@ import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
 import com.google.auto.common.MoreElements;
+import com.google.auto.common.MoreTypes;
 import com.google.auto.service.AutoService;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import org.jboss.auto.AbstractProcessor;
+import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.DataTable;
+import org.jboss.hal.core.mvp.MbuiViewImpl;
 import org.jboss.hal.processor.TemplateNames;
 import org.jboss.hal.processor.TypeSimplifier;
+import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
+import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
+
+import static org.jboss.hal.processor.mbui.ElementType.DataTable;
+import static org.jboss.hal.processor.mbui.ElementType.Form;
+import static org.jboss.hal.processor.mbui.ElementType.VerticalNavigation;
 
 /**
  * @author Harald Pehl
@@ -60,6 +77,8 @@ import org.jdom2.input.SAXBuilder;
 public class MbuiViewProcessor extends AbstractProcessor {
 
     private static final String TEMPLATE = "MbuiView.ftl";
+
+    private XPathFactory xpath;
 
     public MbuiViewProcessor() {
         this(MbuiViewProcessor.class, TemplateNames.TEMPLATES);
@@ -81,7 +100,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
     }
 
 
-    // ------------------------------------------------------ validation
+    // ------------------------------------------------------ general validation
 
     private void validateType(final TypeElement type, final MbuiView mbuiView) {
         if (mbuiView == null) {
@@ -92,6 +111,9 @@ public class MbuiViewProcessor extends AbstractProcessor {
         }
         if (type.getKind() != ElementKind.CLASS) {
             error(type, "@%s only applies to classes", MbuiView.class.getSimpleName());
+        }
+        if (!isAssignable(type, MbuiViewImpl.class)) {
+            error(type, "Missing base class %s", MbuiViewImpl.class.getSimpleName());
         }
         if (ancestorIsMbuiView(type)) {
             error(type, "One @%s class may not extend another", MbuiView.class.getSimpleName());
@@ -140,20 +162,23 @@ public class MbuiViewProcessor extends AbstractProcessor {
         MbuiViewContext context = new MbuiViewContext(TypeSimplifier.packageNameOf(type),
                 TypeSimplifier.classNameOf(type), subclass, createMethod);
 
-        // parse the mbui xml
+        // parse and validate the mbui xml
+        xpath = XPathFactory.instance();
         Document document = parseXml(type, mbuiView);
+        validateDocument(type, document);
 
-        // find and verify all @MbuiElement members
-        List<String> mbuiElements = processMbuiElements(type, document);
-        context.setMbuiElements(mbuiElements);
+        // first process the metadata elements
+        processMetadata(type, document, context);
 
-        // find and verify all @PostConstruct methods
-        List<PostConstructInfo> postConstructs = processPostConstruct(type);
-        context.setPostConstructs(postConstructs);
+        // then find and verify all @MbuiElement members
+        processMbuiElements(type, document, context);
+        processCrossReferences(type, document, context);
 
         // init parameters and abstract properties
-        List<AbstractPropertyInfo> abstractProperties = processAbstractProperties(type);
-        context.setAbstractProperties(abstractProperties);
+        processAbstractProperties(type, context);
+
+        // find and verify all @PostConstruct methods
+        processPostConstruct(type, context);
 
         // generate code
         code(TEMPLATE, context.getPackage(), context.getSubclass(),
@@ -187,6 +212,9 @@ public class MbuiViewProcessor extends AbstractProcessor {
         }
     }
 
+
+    // ------------------------------------------------------ XML processing
+
     private Document parseXml(final TypeElement type, final MbuiView mbuiView) {
         String mbuiXml = Strings.isNullOrEmpty(mbuiView.value())
                 ? type.getSimpleName().toString() + ".xml"
@@ -196,6 +224,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
         try {
             FileObject file = processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH, "", fq);
             return new SAXBuilder().build(file.openReader(true));
+
         } catch (IOException e) {
             error(type, "Cannot find MBUI xml \"%s\". " +
                     "Please make sure the file exists and resides in the source path.", fq);
@@ -205,45 +234,183 @@ public class MbuiViewProcessor extends AbstractProcessor {
         return null;
     }
 
-    private List<String> processMbuiElements(final TypeElement type, final Document document) {
-        return Collections.emptyList();
-    }
-
-    private List<PostConstructInfo> processPostConstruct(TypeElement type) {
-        List<PostConstructInfo> postConstructs = new ArrayList<>();
-
-        ElementFilter.methodsIn(type.getEnclosedElements()).stream()
-                .filter(method -> MoreElements.isAnnotationPresent(method, PostConstruct.class))
-                .forEach(method -> {
-
-                    // verify method
-                    if (method.getModifiers().contains(Modifier.PRIVATE)) {
-                        error(method, "@%s method must not be private", PostConstruct.class.getSimpleName());
-                    }
-                    if (method.getModifiers().contains(Modifier.STATIC)) {
-                        error(method, "@%s method must not be static", PostConstruct.class.getSimpleName());
-                    }
-                    if (!method.getReturnType().equals(typeUtils.getNoType(TypeKind.VOID))) {
-                        error(method, "@%s method must return void", PostConstruct.class.getSimpleName());
-                    }
-                    if (!method.getParameters().isEmpty()) {
-                        error(method, "@%s method must not have parameters",
-                                PostConstruct.class.getSimpleName());
-                    }
-
-                    postConstructs.add(new PostConstructInfo(method.getSimpleName().toString()));
-                });
-
-        if (postConstructs.size() > 1) {
-            warning(type, "%d methods annotated with @%s found. Order is not guaranteed!", postConstructs.size(),
-                    PostConstruct.class.getSimpleName());
+    private void validateDocument(final TypeElement type, final Document document) {
+        // verify root element
+        org.jdom2.Element root = document.getRootElement();
+        if (!root.getName().equals(XmlTags.VIEW)) {
+            error(type, "Invalid root element in MBUI xml. Allowed: \"%s\", found: \"%s\".", XmlTags.VIEW,
+                    root.getName());
         }
-        return postConstructs;
+
+        // verify first child
+        List<org.jdom2.Element> children = root.getChildren();
+        if (children.isEmpty()) {
+            error(type, "No children found in MBUI xml.");
+        } else if (children.size() > 1) {
+            error(type, "Only one child allowed in MBUI xml.");
+        }
+        org.jdom2.Element child = children.get(0);
+        if (!(child.getName().equals(XmlTags.VERTICAL_NAVIGATION) || child.getName().equals(XmlTags.METADATA))) {
+            error(type, "Invalid child of root element in MBUI xml. Allowed: \"%s\" or \"%s\", found: \"%s\".",
+                    XmlTags.VERTICAL_NAVIGATION, XmlTags.METADATA, child.getName());
+        }
     }
 
-    List<AbstractPropertyInfo> processAbstractProperties(final TypeElement type) {
-        List<AbstractPropertyInfo> abstractProperties = new ArrayList<>();
+    private void processMetadata(final TypeElement type, final Document document, final MbuiViewContext context) {
+        XPathExpression<org.jdom2.Element> expression = xpath.compile("//metadata", Filters.element());
+        List<org.jdom2.Element> elements = expression.evaluate(document);
+        elements.forEach(element -> {
+            String template = element.getAttributeValue("template");
+            if (template == null) {
+                error(type, "Missing template attribute in metadata element");
+            } else {
+                context.addMetadata(template);
+            }
+        });
+    }
 
+
+    // ------------------------------------------------------ process @MbuiElement
+
+    private void processMbuiElements(final TypeElement type, final Document document, final MbuiViewContext context) {
+        ElementFilter.fieldsIn(type.getEnclosedElements()).stream()
+                .filter(field -> MoreElements.isAnnotationPresent(field, MbuiElement.class))
+                .forEach(field -> {
+
+                    // verify the field
+                    if (field.getModifiers().contains(Modifier.PRIVATE)) {
+                        error(field, "@%s member must not be private", MbuiElement.class.getSimpleName());
+                    }
+                    if (field.getModifiers().contains(Modifier.STATIC)) {
+                        error(field, "@%s member must not be static", MbuiElement.class.getSimpleName());
+                    }
+
+                    // verify the selector
+                    String selector = getSelector(field);
+                    org.jdom2.Element element = verifySelector(selector, field, document);
+
+                    // delegate to specific processors based on element type
+                    ElementType elementType = getMbuiElementType(field.asType());
+                    if (elementType == null) {
+                        error(field, "Unsupported type %s. Please choose one of %s", field.asType(),
+                                EnumSet.allOf(ElementType.class));
+                    } else {
+                        switch (elementType) {
+                            case VerticalNavigation:
+                                processVerticalNavigation(field, document, element, selector, context);
+                                break;
+                            case DataTable:
+                                processDataTable(field, document, element, selector, context);
+                                break;
+                            case Form:
+                                processForm(field, document, element, selector, context);
+                                break;
+                        }
+                    }
+                });
+    }
+
+    private ElementType getMbuiElementType(TypeMirror dataElementType) {
+        if (isAssignable(dataElementType, VerticalNavigation.class)) {
+            return VerticalNavigation;
+        } else if (isAssignable(dataElementType, Form.class)) {
+            return Form;
+        } else if (isAssignable(dataElementType, DataTable.class)) {
+            return DataTable;
+        } else {
+            return null;
+        }
+    }
+
+    private String getSelector(Element element) {
+        String selector = null;
+
+        //noinspection Guava
+        com.google.common.base.Optional<AnnotationMirror> annotationMirror = MoreElements
+                .getAnnotationMirror(element, MbuiElement.class);
+        if (annotationMirror.isPresent()) {
+            Map<? extends ExecutableElement, ? extends AnnotationValue> values = elementUtils
+                    .getElementValuesWithDefaults(annotationMirror.get());
+            if (!values.isEmpty()) {
+                selector = String.valueOf(values.values().iterator().next().getValue());
+            }
+        }
+        return Strings.emptyToNull(selector) == null ? element.getSimpleName().toString() : selector;
+    }
+
+    private org.jdom2.Element verifySelector(String selector, Element element, Document document) {
+        XPathExpression<org.jdom2.Element> expression = xpath.compile("//*[@id='" + selector + "']", Filters.element());
+        List<org.jdom2.Element> elements = expression.evaluate(document);
+        if (elements.isEmpty()) {
+            error(element,
+                    "Cannot find a matching element in the MBUI xml with id \"%s\".", selector);
+        } else if (elements.size() > 1) {
+            error(element,
+                    "Found %d matching elements in the MBUI xml with id \"%s\". Id must be unique.",
+                    elements.size(), selector);
+        }
+        return elements.get(0);
+    }
+
+    private void processVerticalNavigation(final VariableElement field, final Document document,
+            final org.jdom2.Element element, final String selector, final MbuiViewContext context) {
+        VerticalNavigationInfo navigationInfo = new VerticalNavigationInfo(field.getSimpleName().toString(), selector);
+        context.setVerticalNavigation(navigationInfo);
+    }
+
+    private void processDataTable(final VariableElement field, final Document document, final org.jdom2.Element element,
+            final String selector, final MbuiViewContext context) {
+        MetadataInfo metadata = findMetadata(field, element, context);
+        DataTableInfo tableInfo = new DataTableInfo(field.getSimpleName().toString(), selector, getTypeParameter(field),
+                metadata);
+        context.addDataTableInfo(tableInfo);
+    }
+
+    private void processForm(final VariableElement field, final Document document, final org.jdom2.Element element,
+            final String selector, final MbuiViewContext context) {
+        MetadataInfo metadata = findMetadata(field, element, context);
+        FormInfo formInfo = new FormInfo(field.getSimpleName().toString(), selector, getTypeParameter(field), metadata);
+        context.addFormInfo(formInfo);
+    }
+
+    private MetadataInfo findMetadata(final VariableElement field, final org.jdom2.Element element,
+            final MbuiViewContext context) {
+        MetadataInfo metadataInfo = null;
+        XPathExpression<org.jdom2.Element> expression = xpath.compile("ancestor::metadata", Filters.element());
+        org.jdom2.Element metadataElement = expression.evaluateFirst(element);
+        if (metadataElement == null) {
+            error(field,
+                    "Missing metadata ancestor. Please make sure the mapped XML element has a \"<%s/>\" ancestor element.",
+                    XmlTags.METADATA);
+        } else {
+            metadataInfo = context.getMetadataInfo(metadataElement.getAttributeValue("template"));
+            if (metadataInfo == null) {
+                error(field,
+                        "No metadata found. Please make sure the mapped XML element has a \"<%s/>\" ancestor element.");
+            }
+        }
+        return metadataInfo;
+    }
+
+    private String getTypeParameter(final VariableElement field) {
+        String typeArgument = "org.jboss.hal.dmr.ModelNode";
+        DeclaredType declaredType = MoreTypes.asDeclared(field.asType());
+        List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
+        if (!typeArguments.isEmpty()) {
+            typeArgument = MoreTypes.asTypeElement(typeUtils, typeArguments.get(0)).getQualifiedName().toString();
+        }
+        return typeArgument;
+    }
+
+    private void processCrossReferences(final TypeElement type, final Document document,
+            final MbuiViewContext context) {
+
+    }
+
+
+    // ------------------------------------------------------ abstract properties
+
+    void processAbstractProperties(final TypeElement type, final MbuiViewContext context) {
         ElementFilter.methodsIn(type.getEnclosedElements()).stream()
                 .filter(method -> method.getModifiers().contains(Modifier.ABSTRACT))
                 .forEach(method -> {
@@ -262,10 +429,8 @@ public class MbuiViewProcessor extends AbstractProcessor {
                     String methodName = method.getSimpleName().toString();
                     String fieldName = (isGetter(method)) ? nameWithoutPrefix(methodName) : methodName;
                     String modifier = getModifier(method);
-                    abstractProperties.add(new AbstractPropertyInfo(typeName, fieldName, methodName, modifier));
+                    context.addAbstractProperty(new AbstractPropertyInfo(typeName, fieldName, methodName, modifier));
                 });
-
-        return abstractProperties;
     }
 
     private boolean isGetter(ExecutableElement method) {
@@ -296,5 +461,37 @@ public class MbuiViewProcessor extends AbstractProcessor {
             modifier = "protected";
         }
         return modifier;
+    }
+
+
+    // ------------------------------------------------------ process @PostConstruct
+
+    private void processPostConstruct(TypeElement type, final MbuiViewContext context) {
+        ElementFilter.methodsIn(type.getEnclosedElements()).stream()
+                .filter(method -> MoreElements.isAnnotationPresent(method, PostConstruct.class))
+                .forEach(method -> {
+
+                    // verify method
+                    if (method.getModifiers().contains(Modifier.PRIVATE)) {
+                        error(method, "@%s method must not be private", PostConstruct.class.getSimpleName());
+                    }
+                    if (method.getModifiers().contains(Modifier.STATIC)) {
+                        error(method, "@%s method must not be static", PostConstruct.class.getSimpleName());
+                    }
+                    if (!method.getReturnType().equals(typeUtils.getNoType(TypeKind.VOID))) {
+                        error(method, "@%s method must return void", PostConstruct.class.getSimpleName());
+                    }
+                    if (!method.getParameters().isEmpty()) {
+                        error(method, "@%s method must not have parameters",
+                                PostConstruct.class.getSimpleName());
+                    }
+
+                    context.addPostConstruct(new PostConstructInfo(method.getSimpleName().toString()));
+                });
+
+        if (context.getPostConstructs().size() > 1) {
+            warning(type, "%d methods annotated with @%s found. Order is not guaranteed!",
+                    context.getPostConstructs().size(), PostConstruct.class.getSimpleName());
+        }
     }
 }
