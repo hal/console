@@ -36,6 +36,8 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.DmrPayloadProcessor;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.resources.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
@@ -113,6 +115,9 @@ public class Typeahead implements SuggestHandler, Attachable {
 
     /**
      * Builder which uses the provided operation together with the result processor to suggest items.
+     * <p>
+     * TODO Replace operation with address templates. The actual operation should be created on demand, so that the
+     * most recent statement context is used.
      */
     public static class OperationBuilder extends GenericBuilder<OperationBuilder> {
 
@@ -187,6 +192,7 @@ public class Typeahead implements SuggestHandler, Attachable {
 
 
     static final String WHITESPACE = "\\s+";
+    private static final Logger logger = LoggerFactory.getLogger(Typeahead.class);
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String CLOSE = "close";
     private static final String CHANGE_EVENT = "typeahead:change";
@@ -248,6 +254,15 @@ public class Typeahead implements SuggestHandler, Attachable {
             settings.accepts = accepts;
             settings.beforeSend = (xhr, sttngs) ->
                     xhr.setRequestHeader(HEADER_MANAGEMENT_CLIENT_NAME, HEADER_MANAGEMENT_CLIENT_VALUE);
+            settings.error = (xhr, textStatus, errorThrown) -> {
+                String details = errorThrown;
+                ModelNode node = ModelNode.fromBase64(xhr.getResponseText());
+                if (node.isFailure()) {
+                    details = node.getFailureDescription();
+                }
+                logger.error("Unable to process typeahead operation on form item {}: {}", //NON-NLS
+                        formItem().getId(EDITING), details);
+            };
             settings.contentType = APPLICATION_DMR_ENCODED;
             settings.data = builder.operation.toBase64String();
             settings.dataType = "text"; //NON-NLS

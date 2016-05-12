@@ -51,9 +51,16 @@ public class AjaxSettings {
         void beforeSend(JsXMLHttpRequest xhr, AjaxSettings settings);
     }
 
+    @JsFunction
+    @FunctionalInterface
+    public interface ErrorCallback {
+        void onError(JsXMLHttpRequest xhr, String textStatus, String errorThrown);
+    }
+
 
     public Accepts accepts;
     public BeforeSend beforeSend;
+    public ErrorCallback error;
     public String contentType;
     public String data;
     public String dataType;
