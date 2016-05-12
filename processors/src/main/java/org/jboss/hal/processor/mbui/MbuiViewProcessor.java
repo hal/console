@@ -172,6 +172,8 @@ public class MbuiViewProcessor extends AbstractProcessor {
         MbuiViewContext context = new MbuiViewContext(TypeSimplifier.packageNameOf(type),
                 TypeSimplifier.classNameOf(type), subclass, createMethod);
 
+        // order is important! do not rearrange unless you know what you're doing!
+
         // parse and validate the MBUI XML
         xpath = XPathFactory.instance();
         Document document = parseXml(type, mbuiView);
@@ -370,10 +372,12 @@ public class MbuiViewProcessor extends AbstractProcessor {
         context.setVerticalNavigation(navigationInfo);
 
         XPathExpression<org.jdom2.Element> expression = xpath.compile("item", Filters.element());
-        expression.evaluate(element).forEach(itemElement -> navigationInfo.addItem(createItem(field, itemElement, 0)));
+        expression.evaluate(element)
+                .forEach(itemElement -> navigationInfo.addItem(createItem(field, itemElement, context, 0)));
     }
 
-    private VerticalNavigationInfo.Item createItem(final VariableElement field, org.jdom2.Element element, int level) {
+    private VerticalNavigationInfo.Item createItem(final VariableElement field, org.jdom2.Element element,
+            final MbuiViewContext context, int level) {
         String id = element.getAttributeValue("id");
         String title = element.getAttributeValue("title");
         String icon = element.getAttributeValue("icon");
@@ -391,25 +395,31 @@ public class MbuiViewProcessor extends AbstractProcessor {
             if (level > 0) {
                 error(field, "Invalid nesting in vertical-navigation: sub items cannot have sub items.");
             }
-            subItems.forEach(subItemElement -> item.addSubItem(createItem(field, subItemElement, level + 1)));
+            subItems.forEach(subItemElement -> item.addSubItem(createItem(field, subItemElement, context, level + 1)));
 
         } else {
+            MetadataInfo metadataInfo = null;
             org.jdom2.Element contentElement = element;
             if (element.getChild(XmlTags.METADATA) != null) {
                 contentElement = element.getChild(XmlTags.METADATA);
+                metadataInfo = context.getMetadataInfo(contentElement.getAttributeValue("address"));
             }
-            StringBuilder html = new StringBuilder();
+            StringBuilder htmlBuilder = new StringBuilder();
             for (org.jdom2.Element childElement : contentElement.getChildren()) {
                 if (XmlTags.TABLE.equals(childElement.getName()) || XmlTags.FORM.equals(childElement.getName())) {
-                    if (html.length() != 0) {
-                        item.addContent(new VerticalNavigationInfo.Html(html.toString()));
-                        html.setLength(0);
+                    if (htmlBuilder.length() != 0) {
+                        String html = htmlBuilder.toString();
+                        htmlBuilder.setLength(0);
+                        if (metadataInfo != null) {
+                            html = html.replace("metadata", metadataInfo.getName());
+                        }
+                        item.addContent(VerticalNavigationInfo.Content.html(html));
                     }
-                    item.addContent(new VerticalNavigationInfo.Reference(childElement.getAttributeValue("id")));
+                    item.addContent(VerticalNavigationInfo.Content.reference(childElement.getAttributeValue("id")));
 
                 } else {
                     // do not directly add the html, but collect it until a table or form is about to be processed
-                    html.append(JAVA_STRING_ESCAPER.escape(xmlAsString(childElement)));
+                    htmlBuilder.append(JAVA_STRING_ESCAPER.escape(xmlAsString(childElement)));
                 }
             }
         }
@@ -546,7 +556,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
                     parentItemElement = parentItemExpression.evaluateFirst(element);
                 }
                 VerticalNavigationInfo.Item parentItem = navigation.getItem(parentItemElement.getAttributeValue("id"));
-                VerticalNavigationInfo.Reference reference = parentItem.findReference(id);
+                VerticalNavigationInfo.Content reference = parentItem.findReference(id);
                 if (reference != null) {
                     reference.setReference(elementInfo.getName());
                 }

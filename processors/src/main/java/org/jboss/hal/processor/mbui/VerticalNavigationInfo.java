@@ -28,66 +28,49 @@ import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
  */
 public class VerticalNavigationInfo extends MbuiElementInfo {
 
-    public abstract static class Content {
+    public static class Content {
 
-        public abstract boolean isHtml();
+        private static int counter = 0;
 
-        public abstract boolean isReference();
-
-        public abstract String getData();
-    }
-
-
-    public static class Html extends Content {
-
-        private final String html;
-        private Map<String, String> handlebars;
-
-        Html(final String html) {
-            this.html = html;
-            this.handlebars = Handlebars.parse(html);
+        static Content reference(String reference) {
+            return new Content(reference, null);
         }
 
-        @Override
-        public boolean isHtml() {
-            return true;
+        static Content html(String html) {
+            return new Content(null, html);
         }
-
-        @Override
-        public boolean isReference() {
-            return false;
-        }
-
-        @Override
-        public String getData() {
-            return html;
-        }
-    }
-
-
-    public static class Reference extends Content {
 
         private String reference;
+        private final String name;
+        private final String html;
+        private final Map<String, String> handlebars;
 
-        Reference(final String reference) {this.reference = reference;}
-
-        @Override
-        public boolean isHtml() {
-            return false;
+        private Content(final String reference, final String html) {
+            this.reference = reference;
+            this.name = "html" + counter; //NON-NLS
+            this.html = html;
+            this.handlebars = Handlebars.parse(html);
+            counter++;
         }
 
-        @Override
-        public boolean isReference() {
-            return true;
+        public String getReference() {
+            return reference;
         }
 
-        void setReference(final String reference) {
+        public void setReference(final String reference) {
             this.reference = reference;
         }
 
-        @Override
-        public String getData() {
-            return reference;
+        public String getName() {
+            return name;
+        }
+
+        public String getHtml() {
+            return html;
+        }
+
+        public Map<String, String> getHandlebars() {
+            return handlebars;
         }
     }
 
@@ -136,10 +119,10 @@ public class VerticalNavigationInfo extends MbuiElementInfo {
             this.content.add(content);
         }
 
-        Reference findReference(final String id) {
+        Content findReference(final String id) {
             for (Content c : content) {
-                if (c instanceof Reference && ((Reference) c).reference.equals(id)) {
-                    return (Reference) c;
+                if (id.equals(c.getReference())) {
+                    return c;
                 }
             }
             return null;

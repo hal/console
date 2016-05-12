@@ -1,13 +1,16 @@
 <#-- @ftlvariable name="context" type="org.jboss.hal.processor.mbui.MbuiViewContext" -->
 package ${context.package};
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.Generated;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.TemplateUtil;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.typeahead.TypeaheadProvider;
@@ -34,15 +37,24 @@ final class ${context.subclass} extends ${context.base} {
     <#list context.abstractProperties as abstractProperty>
     private final ${abstractProperty.type} ${abstractProperty.field};
     </#list>
+    <#list context.metadataInfos as metadataInfo>
+    private final Metadata ${metadataInfo.name};
+    </#list>
+    <#if context.verticalNavigation??>
+    private final Map<String, Element> handlebarElements;
+    </#if>
 
     ${context.subclass}(MetadataRegistry metadataRegistry, StatementContext statementContext, Resources resources<#list context.abstractProperties as abstractProperty>, ${abstractProperty.type} ${abstractProperty.field}</#list>) {
         super(metadataRegistry, statementContext, resources);
+
         <#list context.abstractProperties as abstractProperty>
         this.${abstractProperty.field} = ${abstractProperty.field};
         </#list>
-
+        <#if context.verticalNavigation??>
+        this.handlebarElements = new HashMap<>();
+        </#if>
         <#list context.metadataInfos as metadataInfo>
-        Metadata ${metadataInfo.name} = metadataRegistry.lookup(AddressTemplate.of("${metadataInfo.template}"));
+        this.${metadataInfo.name} = metadataRegistry.lookup(AddressTemplate.of("${metadataInfo.template}"));
         </#list>
 
         <#list context.forms as form>
@@ -90,31 +102,49 @@ final class ${context.subclass} extends ${context.base} {
         ${context.verticalNavigation.name} = new VerticalNavigation();
             <#list context.verticalNavigation.items as primaryItem>
                 <#if primaryItem.content?has_content>
-        Element ${primaryItem.name}Element = new Elements.Builder()
+        Elements.Builder ${primaryItem.name}Builder = new Elements.Builder()
             .div()
                     <#list primaryItem.content as content>
-                        <#if content.html>
-                .div().innerHtml(SafeHtmlUtils.fromSafeConstant("${content.data}")).end()
-                        <#elseif content.reference>
-                .add(${content.data})
+                        <#if content.html??>
+                .div()
+                    .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
+                    .rememberAs("${content.name}")
+                .end()
+                        <#elseif content.reference??>
+                .add(${content.reference})
                         </#if>
                     </#list>
-            .end().build();
+            .end();
+        Element ${primaryItem.name}Element = ${primaryItem.name}Builder.build();
+                    <#list primaryItem.content as content>
+                        <#if content.html??>
+        handlebarElements.put("${content.name}", ${primaryItem.name}Builder.referenceFor("${content.name}"));
+                        </#if>
+                    </#list>
         ${context.verticalNavigation.name}.addPrimary("${primaryItem.id}", ${primaryItem.title}<#if primaryItem.icon??>, "${primaryItem.icon}"</#if>, ${primaryItem.name}Element);
                 <#elseif primaryItem.subItems?has_content>
         ${context.verticalNavigation.name}.addPrimary("${primaryItem.id}", ${primaryItem.title}<#if primaryItem.icon??>, "${primaryItem.icon}"</#if>);
                     <#list primaryItem.subItems as subItem>
                         <#if subItem.content?has_content>
-        Element ${subItem.name}Element = new Elements.Builder()
+        Elements.Builder ${subItem.name}Builder = new Elements.Builder()
             .div()
                             <#list subItem.content as content>
-                                <#if content.html>
-                .div().innerHtml(SafeHtmlUtils.fromSafeConstant("${content.data}")).end()
-                                <#elseif content.reference>
-                .add(${content.data})
+                                <#if content.html??>
+                .div()
+                    .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
+                    .rememberAs("${content.name}")
+                .end()
+                                <#elseif content.reference??>
+                .add(${content.reference})
                                 </#if>
                             </#list>
-            .end().build();
+            .end();
+        Element ${subItem.name}Element = ${subItem.name}Builder.build();
+                            <#list subItem.content as content>
+                                <#if content.html??>
+        handlebarElements.put("${content.name}", ${subItem.name}Builder.referenceFor("${content.name}"));
+                                </#if>
+                            </#list>
         ${context.verticalNavigation.name}.addSecondary("${primaryItem.id}", "${subItem.id}", ${subItem.title}, ${subItem.name}Element);
                         </#if>
                     </#list>
@@ -149,10 +179,32 @@ final class ${context.subclass} extends ${context.base} {
     @Override
     public void attach() {
         super.attach();
+
         <#list context.dataTables as table>
             <#if table.formRef??>
         ${table.name}.api().bindForm(${table.formRef.name});
             </#if>
         </#list>
+
+        <#if context.verticalNavigation??>
+            <#list context.verticalNavigation.items as primaryItem>
+                <#list primaryItem.content as content>
+                    <#if content.html??>
+                        <#list content.handlebars?keys as handlebar>
+        TemplateUtil.replaceHandlebar(handlebarElements.get("${content.name}"), "${handlebar}", String.valueOf(${content.handlebars?values[handlebar_index]}));
+                        </#list>
+                    </#if>
+                </#list>
+                <#list primaryItem.subItems as subItem>
+                    <#list subItem.content as content>
+                        <#if content.html??>
+                            <#list content.handlebars?keys as handlebar>
+        TemplateUtil.replaceHandlebar(handlebarElements.get("${content.name}"), "${handlebar}", String.valueOf(${content.handlebars?values[handlebar_index]}));
+                            </#list>
+                        </#if>
+                    </#list>
+                </#list>
+            </#list>
+        </#if>
     }
 }

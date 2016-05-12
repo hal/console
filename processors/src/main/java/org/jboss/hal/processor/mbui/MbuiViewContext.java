@@ -74,16 +74,16 @@ public class MbuiViewContext {
         return subclass;
     }
 
-    public MetadataInfo getMetadataInfo(String template) {
-        return metadataInfos.get(template);
+    public MetadataInfo getMetadataInfo(String address) {
+        return metadataInfos.get(address);
     }
 
     public Collection<MetadataInfo> getMetadataInfos() {
         return metadataInfos.values();
     }
 
-    void addMetadata(String template) {
-        metadataInfos.computeIfAbsent(template, MetadataInfo::new);
+    void addMetadata(String address) {
+        metadataInfos.computeIfAbsent(address, MetadataInfo::new);
     }
 
     @SuppressWarnings("unchecked")
