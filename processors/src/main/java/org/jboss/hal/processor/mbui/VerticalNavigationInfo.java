@@ -15,12 +15,179 @@
  */
 package org.jboss.hal.processor.mbui;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.google.common.base.CaseFormat.LOWER_CAMEL;
+import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
+
 /**
  * @author Harald Pehl
  */
 public class VerticalNavigationInfo extends MbuiElementInfo {
 
-    public VerticalNavigationInfo(final String name, final String selector) {
+    public abstract static class Content {
+
+        public abstract boolean isHtml();
+
+        public abstract boolean isReference();
+
+        public abstract String getData();
+    }
+
+
+    public static class Html extends Content {
+
+        private final String html;
+        private Map<String, String> handlebars;
+
+        Html(final String html) {
+            this.html = html;
+            this.handlebars = Handlebars.parse(html);
+        }
+
+        @Override
+        public boolean isHtml() {
+            return true;
+        }
+
+        @Override
+        public boolean isReference() {
+            return false;
+        }
+
+        @Override
+        public String getData() {
+            return html;
+        }
+    }
+
+
+    public static class Reference extends Content {
+
+        private String reference;
+
+        Reference(final String reference) {this.reference = reference;}
+
+        @Override
+        public boolean isHtml() {
+            return false;
+        }
+
+        @Override
+        public boolean isReference() {
+            return true;
+        }
+
+        void setReference(final String reference) {
+            this.reference = reference;
+        }
+
+        @Override
+        public String getData() {
+            return reference;
+        }
+    }
+
+
+    public static class Item {
+
+        private final String id;
+        private final String name;
+        private final String title;
+        private final String icon;
+        private final List<Content> content;
+        private final List<Item> subItems;
+        private final Map<String, Item> subItemsById;
+
+        Item(final String id, final String title, final String icon) {
+            this.id = id;
+            this.name = LOWER_HYPHEN.to(LOWER_CAMEL, id);
+            this.title = Handlebars.templateSafeValue(title); // title can be a simple value or an expression
+            this.icon = icon;
+            this.content = new ArrayList<>();
+            this.subItems = new ArrayList<>();
+            this.subItemsById = new HashMap<>();
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getIcon() {
+            return icon;
+        }
+
+        public List<Content> getContent() {
+            return content;
+        }
+
+        void addContent(Content content) {
+            this.content.add(content);
+        }
+
+        Reference findReference(final String id) {
+            for (Content c : content) {
+                if (c instanceof Reference && ((Reference) c).reference.equals(id)) {
+                    return (Reference) c;
+                }
+            }
+            return null;
+        }
+
+        public List<Item> getSubItems() {
+            return subItems;
+        }
+
+        void addSubItem(Item subItem) {
+            subItems.add(subItem);
+            subItemsById.put(subItem.getId(), subItem);
+        }
+
+        Item getItem(String id) {
+            return subItemsById.get(id);
+        }
+    }
+
+
+    private final List<Item> items;
+    private final Map<String, Item> itemsById;
+
+    VerticalNavigationInfo(final String name, final String selector) {
         super(name, selector);
+        this.items = new ArrayList<>();
+        this.itemsById = new HashMap<>();
+    }
+
+    public List<Item> getItems() {
+        return items;
+    }
+
+    void addItem(Item item) {
+        items.add(item);
+        itemsById.put(item.getId(), item);
+    }
+
+    Item getItem(String id) {
+        Item item = itemsById.get(id);
+        if (item == null) {
+            for (Item itm : items) {
+                Item subItem = itm.getItem(id);
+                if (subItem != null) {
+                    return subItem;
+                }
+            }
+        }
+        return item;
     }
 }

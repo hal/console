@@ -5,7 +5,9 @@ import java.util.List;
 import javax.annotation.Generated;
 
 import com.google.common.collect.Lists;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.typeahead.TypeaheadProvider;
@@ -42,10 +44,6 @@ final class ${context.subclass} extends ${context.base} {
         <#list context.metadataInfos as metadataInfo>
         Metadata ${metadataInfo.name} = metadataRegistry.lookup(AddressTemplate.of("${metadataInfo.template}"));
         </#list>
-
-        <#if context.verticalNavigation??>
-        ${context.verticalNavigation.name} = new VerticalNavigation();
-        </#if>
 
         <#list context.forms as form>
         ${form.name} = new ModelNodeForm.Builder<${form.typeParameter}>("${form.selector}", ${form.metadata.name})
@@ -88,15 +86,48 @@ final class ${context.subclass} extends ${context.base} {
         registerAttachable(${attachable.name});
         </#list>
 
-        // @formatter:off
+        <#if context.verticalNavigation??>
+        ${context.verticalNavigation.name} = new VerticalNavigation();
+            <#list context.verticalNavigation.items as primaryItem>
+                <#if primaryItem.content?has_content>
+        Element ${primaryItem.name}Element = new Elements.Builder()
+            .div()
+                    <#list primaryItem.content as content>
+                        <#if content.html>
+                .div().innerHtml(SafeHtmlUtils.fromSafeConstant("${content.data}")).end()
+                        <#elseif content.reference>
+                .add(${content.data})
+                        </#if>
+                    </#list>
+            .end().build();
+        ${context.verticalNavigation.name}.addPrimary("${primaryItem.id}", ${primaryItem.title}<#if primaryItem.icon??>, "${primaryItem.icon}"</#if>, ${primaryItem.name}Element);
+                <#elseif primaryItem.subItems?has_content>
+        ${context.verticalNavigation.name}.addPrimary("${primaryItem.id}", ${primaryItem.title}<#if primaryItem.icon??>, "${primaryItem.icon}"</#if>);
+                    <#list primaryItem.subItems as subItem>
+                        <#if subItem.content?has_content>
+        Element ${subItem.name}Element = new Elements.Builder()
+            .div()
+                            <#list subItem.content as content>
+                                <#if content.html>
+                .div().innerHtml(SafeHtmlUtils.fromSafeConstant("${content.data}")).end()
+                                <#elseif content.reference>
+                .add(${content.data})
+                                </#if>
+                            </#list>
+            .end().build();
+        ${context.verticalNavigation.name}.addSecondary("${primaryItem.id}", "${subItem.id}", ${subItem.title}, ${subItem.name}Element);
+                        </#if>
+                    </#list>
+                </#if>
+            </#list>
+        </#if>
+
         LayoutBuilder layoutBuilder = new LayoutBuilder()
             .row()
                 .column()
-                    .h(1).textContent("Generated MBUI View").end()
-                    .p().textContent("Not yet implemented.").end()
+                    .addAll(${context.verticalNavigation.name}.panes())
                 .end()
             .end();
-        // @formatter:on
 
         Element root = layoutBuilder.build();
         initElement(root);

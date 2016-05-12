@@ -55,7 +55,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
  * }
  * </pre>
  */
-// TODO Rename this to NestedResultProcessor and change the JSON as stated above
 class NestedResultProcessor extends AbstractResultProcessor<NestedResultProcessor.Result>
         implements ResultProcessor {
 

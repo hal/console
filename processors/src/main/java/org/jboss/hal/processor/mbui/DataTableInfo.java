@@ -29,7 +29,7 @@ public class DataTableInfo extends MbuiElementInfo {
         private final String title;
         private final String value;
 
-        public Column(final String name, final String title, final String value) {
+        Column(final String name, final String title, final String value) {
             this.name = name;
             this.title = Handlebars.templateSafeValue(title); // title can be a simple value or an expression
             this.value = Handlebars.stripHandlebar(value); // value has to be an expression
@@ -66,7 +66,7 @@ public class DataTableInfo extends MbuiElementInfo {
     private FormInfo formRef;
     private final List<Column> columns;
 
-    public DataTableInfo(final String name, final String selector, String typeParameter, MetadataInfo metadata) {
+    DataTableInfo(final String name, final String selector, String typeParameter, MetadataInfo metadata) {
         super(name, selector);
         this.typeParameter = typeParameter;
         this.metadata = metadata;

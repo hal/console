@@ -49,6 +49,8 @@ import com.google.auto.common.MoreTypes;
 import com.google.auto.service.AutoService;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.escape.Escaper;
+import com.google.common.escape.Escapers;
 import org.jboss.auto.AbstractProcessor;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
@@ -80,6 +82,11 @@ import static org.jboss.hal.processor.mbui.ElementType.VerticalNavigation;
 public class MbuiViewProcessor extends AbstractProcessor {
 
     private static final String TEMPLATE = "MbuiView.ftl";
+    private static final Escaper JAVA_STRING_ESCAPER = Escapers.builder()
+            .addEscape('"', "\\\"")
+            .addEscape('\n', "")
+            .addEscape('\r', "")
+            .build();
 
     private XPathFactory xpath;
 
@@ -175,7 +182,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
         // then find and verify all @MbuiElement members
         processMbuiElements(type, document, context);
-        processCrossReferences(type, document, context);
+        processCrossReferences(document, context);
 
         // init parameters and abstract properties
         processAbstractProperties(type, context);
@@ -261,8 +268,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
     private void processMetadata(final TypeElement type, final Document document, final MbuiViewContext context) {
         XPathExpression<org.jdom2.Element> expression = xpath.compile("//metadata", Filters.element());
-        List<org.jdom2.Element> elements = expression.evaluate(document);
-        for (org.jdom2.Element element : elements) {
+        for (org.jdom2.Element element : expression.evaluate(document)) {
             String template = element.getAttributeValue("address");
             if (template == null) {
                 error(type, "Missing address attribute in metadata element \"%s\"", xmlAsString(element));
@@ -300,13 +306,13 @@ public class MbuiViewProcessor extends AbstractProcessor {
                     } else {
                         switch (elementType) {
                             case VerticalNavigation:
-                                processVerticalNavigation(field, document, element, selector, context);
+                                processVerticalNavigation(field, element, selector, context);
                                 break;
                             case DataTable:
-                                processDataTables(field, document, element, selector, context);
+                                processDataTables(field, element, selector, context);
                                 break;
                             case Form:
-                                processForms(field, document, element, selector, context);
+                                processForms(field, element, selector, context);
                                 break;
                         }
                     }
@@ -355,14 +361,63 @@ public class MbuiViewProcessor extends AbstractProcessor {
         }
     }
 
-    private void processVerticalNavigation(final VariableElement field, final Document document,
-            final org.jdom2.Element element, final String selector, final MbuiViewContext context) {
+
+    // ------------------------------------------------------ process navigation, tables and forms
+
+    private void processVerticalNavigation(final VariableElement field, final org.jdom2.Element element,
+            final String selector, final MbuiViewContext context) {
         VerticalNavigationInfo navigationInfo = new VerticalNavigationInfo(field.getSimpleName().toString(), selector);
         context.setVerticalNavigation(navigationInfo);
+
+        XPathExpression<org.jdom2.Element> expression = xpath.compile("item", Filters.element());
+        expression.evaluate(element).forEach(itemElement -> navigationInfo.addItem(createItem(field, itemElement, 0)));
     }
 
-    private void processDataTables(final VariableElement field, final Document document,
-            final org.jdom2.Element element, final String selector, final MbuiViewContext context) {
+    private VerticalNavigationInfo.Item createItem(final VariableElement field, org.jdom2.Element element, int level) {
+        String id = element.getAttributeValue("id");
+        String title = element.getAttributeValue("title");
+        String icon = element.getAttributeValue("icon");
+
+        if (id == null) {
+            error(field, "Invalid item \"%s\" in vertical-navigation: id is mandatory.", xmlAsString(element));
+        }
+        if (title == null) {
+            error(field, "Invalid item \"%s\" in vertical-navigation: title is mandatory.", xmlAsString(element));
+        }
+        VerticalNavigationInfo.Item item = new VerticalNavigationInfo.Item(id, title, icon);
+
+        List<org.jdom2.Element> subItems = element.getChildren("sub-item");
+        if (!subItems.isEmpty()) {
+            if (level > 0) {
+                error(field, "Invalid nesting in vertical-navigation: sub items cannot have sub items.");
+            }
+            subItems.forEach(subItemElement -> item.addSubItem(createItem(field, subItemElement, level + 1)));
+
+        } else {
+            org.jdom2.Element contentElement = element;
+            if (element.getChild(XmlTags.METADATA) != null) {
+                contentElement = element.getChild(XmlTags.METADATA);
+            }
+            StringBuilder html = new StringBuilder();
+            for (org.jdom2.Element childElement : contentElement.getChildren()) {
+                if (XmlTags.TABLE.equals(childElement.getName()) || XmlTags.FORM.equals(childElement.getName())) {
+                    if (html.length() != 0) {
+                        item.addContent(new VerticalNavigationInfo.Html(html.toString()));
+                        html.setLength(0);
+                    }
+                    item.addContent(new VerticalNavigationInfo.Reference(childElement.getAttributeValue("id")));
+
+                } else {
+                    // do not directly add the html, but collect it until a table or form is about to be processed
+                    html.append(JAVA_STRING_ESCAPER.escape(xmlAsString(childElement)));
+                }
+            }
+        }
+        return item;
+    }
+
+    private void processDataTables(final VariableElement field, final org.jdom2.Element element, final String selector,
+            final MbuiViewContext context) {
         MetadataInfo metadata = findMetadata(field, element, context);
         DataTableInfo tableInfo = new DataTableInfo(field.getSimpleName().toString(), selector, getTypeParameter(field),
                 metadata);
@@ -376,18 +431,18 @@ public class MbuiViewProcessor extends AbstractProcessor {
                 String value = columnElement.getAttributeValue("value");
 
                 if (name == null) {
-                    error(field, "Name is missing for column \"%s\" in data-table#%s",
+                    error(field, "Invalid column \"%s\" in data-table#%s: name is mandatory.",
                             xmlAsString(columnElement), selector);
                 }
                 if (value != null) {
                     if (!Handlebars.isExpression(value)) {
                         error(field,
-                                "Invalid column \"%s\" in data-table#%s: Value has to be an expression.",
+                                "Invalid column \"%s\" in data-table#%s: value has to be an expression.",
                                 xmlAsString(columnElement), selector);
                     }
                     if (title == null) {
                         error(field,
-                                "Invalid column \"%s\" in data-table#%s: If value is given, title is mandatory.",
+                                "Invalid column \"%s\" in data-table#%s: if value is given, title is mandatory.",
                                 xmlAsString(columnElement), selector);
                     }
                 }
@@ -397,8 +452,8 @@ public class MbuiViewProcessor extends AbstractProcessor {
         }
     }
 
-    private void processForms(final VariableElement field, final Document document, final org.jdom2.Element element,
-            final String selector, final MbuiViewContext context) {
+    private void processForms(final VariableElement field, final org.jdom2.Element element, final String selector,
+            final MbuiViewContext context) {
         MetadataInfo metadata = findMetadata(field, element, context);
         FormInfo formInfo = new FormInfo(field.getSimpleName().toString(), selector, getTypeParameter(field), metadata);
         context.addFormInfo(formInfo);
@@ -408,8 +463,8 @@ public class MbuiViewProcessor extends AbstractProcessor {
             for (org.jdom2.Element attributeElement : attributesContainer.getChildren("attribute")) {
                 String name = attributeElement.getAttributeValue("name");
                 if (name == null) {
-                    error(field, "Name is missing for attribute \"%s\" in form#%s", xmlAsString(attributeElement),
-                            selector);
+                    error(field, "Invalid attribute \"%s\" in form#%s: name is mandatory.",
+                            xmlAsString(attributeElement), selector);
                 }
 
                 FormInfo.Attribute attribute = new FormInfo.Attribute(name);
@@ -456,16 +511,45 @@ public class MbuiViewProcessor extends AbstractProcessor {
         return typeArgument;
     }
 
-    private void processCrossReferences(final TypeElement type, final Document document,
-            final MbuiViewContext context) {
+    private void processCrossReferences(final Document document, final MbuiViewContext context) {
         // table-form bindings
         XPathExpression<org.jdom2.Element> expression = xpath.compile("//table[@form-ref]", Filters.element());
-        List<org.jdom2.Element> elements = expression.evaluate(document);
-        for (org.jdom2.Element element : elements) {
+        for (org.jdom2.Element element : expression.evaluate(document)) {
             DataTableInfo tableInfo = context.getElement(element.getAttributeValue("id"));
             FormInfo formInfo = context.getElement(element.getAttributeValue("form-ref"));
             if (tableInfo != null && formInfo != null) {
                 tableInfo.setFormRef(formInfo);
+            }
+        }
+
+        VerticalNavigationInfo navigation = context.getVerticalNavigation();
+        if (navigation != null) {
+            resolveItemReferences(navigation, "//item//table", document, context);
+            resolveItemReferences(navigation, "//item//form", document, context);
+        }
+    }
+
+    private void resolveItemReferences(final VerticalNavigationInfo navigation, final String xpath,
+            final Document document, final MbuiViewContext context) {
+
+        XPathExpression<org.jdom2.Element> expression = this.xpath.compile(xpath, Filters.element());
+        for (org.jdom2.Element element : expression.evaluate(document)) {
+            String id = element.getAttributeValue("id");
+            MbuiElementInfo elementInfo = context.getElement(id);
+            if (elementInfo != null) {
+                // find parent (sub)item
+                XPathExpression<org.jdom2.Element> parentItemExpression = this.xpath.compile("ancestor::sub-item",
+                        Filters.element());
+                org.jdom2.Element parentItemElement = parentItemExpression.evaluateFirst(element);
+                if (parentItemElement == null) {
+                    parentItemExpression = this.xpath.compile("ancestor::item", Filters.element());
+                    parentItemElement = parentItemExpression.evaluateFirst(element);
+                }
+                VerticalNavigationInfo.Item parentItem = navigation.getItem(parentItemElement.getAttributeValue("id"));
+                VerticalNavigationInfo.Reference reference = parentItem.findReference(id);
+                if (reference != null) {
+                    reference.setReference(elementInfo.getName());
+                }
             }
         }
     }

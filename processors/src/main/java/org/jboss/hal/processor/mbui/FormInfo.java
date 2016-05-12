@@ -30,7 +30,7 @@ public class FormInfo extends MbuiElementInfo {
         private final String name;
         private final List<String> suggestHandlerTemplates;
 
-        public Attribute(final String name) {
+        Attribute(final String name) {
             this.name = name;
             this.suggestHandlerTemplates = new ArrayList<>();
         }
@@ -53,7 +53,7 @@ public class FormInfo extends MbuiElementInfo {
     private final MetadataInfo metadata;
     private final List<Attribute> attributes;
 
-    public FormInfo(final String name, final String selector, String typeParameter, MetadataInfo metadata) {
+    FormInfo(final String name, final String selector, String typeParameter, MetadataInfo metadata) {
         super(name, selector);
         this.typeParameter = typeParameter;
         this.metadata = metadata;

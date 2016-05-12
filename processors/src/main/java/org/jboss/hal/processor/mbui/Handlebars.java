@@ -15,12 +15,45 @@
  */
 package org.jboss.hal.processor.mbui;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * @author Harald Pehl
  */
 final class Handlebars {
 
+    private final static Pattern PATTERN = Pattern.compile("\\{\\{(.*?)\\}\\}");
+
     private Handlebars() {}
+
+    static Map<String, String> parse(String input) {
+        if (input != null) {
+            Map<String, String> matches = new HashMap<>();
+            Matcher matcher = PATTERN.matcher(input);
+            while (matcher.find()) {
+                String match = matcher.group();
+                validate(match);
+                matches.put(match, stripHandlebar(match));
+            }
+            return matches;
+        }
+        return Collections.emptyMap();
+    }
+
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    private static void validate(final String pattern) {
+        if (!isExpression(pattern)) {
+            throw new IllegalArgumentException("Invalid handlebar pattern: " + pattern);
+        }
+        if (pattern.lastIndexOf("{{") != 0 || pattern.indexOf("}}") != pattern.length() - 2) {
+            throw new IllegalArgumentException("Invalid handlebar pattern: " + pattern);
+        }
+    }
+
 
     static boolean isExpression(String value) {
         return value != null && value.startsWith("{{") && value.endsWith("}}");

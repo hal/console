@@ -25,7 +25,7 @@ public class AbstractPropertyInfo {
     private final String method;
     private final String modifier;
 
-    public AbstractPropertyInfo(final String type, final String field, final String method, String modifier) {
+    AbstractPropertyInfo(final String type, final String field, final String method, String modifier) {
         this.type = type;
         this.field = field;
         this.method = method;

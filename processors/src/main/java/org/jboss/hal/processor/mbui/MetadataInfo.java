@@ -25,7 +25,7 @@ public class MetadataInfo {
     private final String name;
     private final String template;
 
-    public MetadataInfo(final String template) {
+    MetadataInfo(final String template) {
         this.name = "metadata" + counter; //NON-NLS
         this.template = template;
         counter++;

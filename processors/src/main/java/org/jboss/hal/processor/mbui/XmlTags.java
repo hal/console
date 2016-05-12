@@ -20,7 +20,9 @@ package org.jboss.hal.processor.mbui;
  */
 public interface XmlTags {
 
-    String VIEW = "view";
-    String VERTICAL_NAVIGATION = "vertical-navigation";
+    String FORM = "form";
     String METADATA = "metadata";
+    String TABLE = "table";
+    String VERTICAL_NAVIGATION = "vertical-navigation";
+    String VIEW = "view";
 }

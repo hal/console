@@ -23,7 +23,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mvp.HasPresenter;
@@ -49,6 +48,8 @@ import org.jboss.hal.spi.Requires;
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE_DEPTH;
+import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
+import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
 /**
  * @author Harald Pehl
@@ -120,7 +121,7 @@ public class LoggingPresenter extends SubsystemPresenter<LoggingPresenter.MyView
     @Override
     protected FinderPath finderPath() {
         return FinderPath
-                .subsystemPath(statementContext.selectedProfile(), AddressTemplates.EE_SUBSYSTEM_TEMPLATE.lastValue());
+                .subsystemPath(statementContext.selectedProfile(), LOGGING_SUBSYSTEM_TEMPLATE.lastValue());
     }
 
     private void loadData() {
@@ -130,20 +131,20 @@ public class LoggingPresenter extends SubsystemPresenter<LoggingPresenter.MyView
                 .build();
         dispatcher.execute(operation, result -> {
             // @formatter:off
-            // getView().updateRootLogger(result.get(ROOT_LOGGER_TEMPLATE.lastKey()).get(ROOT_LOGGER_TEMPLATE.lastValue()));
-            // getView().updateLogger(asNamedNodes(result.get(LOGGER_TEMPLATE.lastKey()).asPropertyList()));
-            //
-            // getView().updateAsyncHandler(asNamedNodes(result.get(ASYNC_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
-            // getView().updateConsoleHandler(asNamedNodes(result.get(CONSOLE_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
-            // getView().updateCustomHandler(asNamedNodes(result.get(CUSTOM_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
-            // getView().updateFileHandler(asNamedNodes(result.get(FILE_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
-            // getView().updatePeriodicHandler(asNamedNodes(result.get(PERIODIC_ROTATING_FILE_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
-            // getView().updatePeriodicSizeHandler(asNamedNodes(result.get(PERIODIC_SIZE_ROTATING_FILE_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
-            // getView().updateSizeHandlerHandler(asNamedNodes(result.get(SIZE_ROTATING_FILE_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
-            // getView().updateSyslogHandler(asNamedNodes(result.get(SYSLOG_HANDLER_TEMPLATE.lastKey()).asPropertyList()));
-            //
-            // getView().updateCustomFormatter(asNamedNodes(result.get(CUSTOM_FORMATTER_TEMPLATE.lastKey()).asPropertyList()));
-            // getView().updatePatternFormatter(asNamedNodes(result.get(PATTERN_FORMATTER_TEMPLATE.lastKey()).asPropertyList()));
+            getView().updateRootLogger(result.get(ROOT_LOGGER_TEMPLATE.lastKey()).get(ROOT_LOGGER_TEMPLATE.lastValue()));
+            getView().updateLogger(asNamedNodes(failSafePropertyList(result, LOGGER_TEMPLATE.lastKey())));
+
+            getView().updateAsyncHandler(asNamedNodes(failSafePropertyList(result, ASYNC_HANDLER_TEMPLATE.lastKey())));
+            getView().updateConsoleHandler(asNamedNodes(failSafePropertyList(result, CONSOLE_HANDLER_TEMPLATE.lastKey())));
+            getView().updateCustomHandler(asNamedNodes(failSafePropertyList(result, CUSTOM_HANDLER_TEMPLATE.lastKey())));
+            getView().updateFileHandler(asNamedNodes(failSafePropertyList(result, FILE_HANDLER_TEMPLATE.lastKey())));
+            getView().updatePeriodicHandler(asNamedNodes(failSafePropertyList(result, PERIODIC_ROTATING_FILE_HANDLER_TEMPLATE.lastKey())));
+            getView().updatePeriodicSizeHandler(asNamedNodes(failSafePropertyList(result, PERIODIC_SIZE_ROTATING_FILE_HANDLER_TEMPLATE.lastKey())));
+            getView().updateSizeHandlerHandler(asNamedNodes(failSafePropertyList(result, SIZE_ROTATING_FILE_HANDLER_TEMPLATE.lastKey())));
+            getView().updateSyslogHandler(asNamedNodes(failSafePropertyList(result, SYSLOG_HANDLER_TEMPLATE.lastKey())));
+
+            getView().updateCustomFormatter(asNamedNodes(failSafePropertyList(result, CUSTOM_FORMATTER_TEMPLATE.lastKey())));
+            getView().updatePatternFormatter(asNamedNodes(failSafePropertyList(result, PATTERN_FORMATTER_TEMPLATE.lastKey())));
             // @formatter:on
         });
     }

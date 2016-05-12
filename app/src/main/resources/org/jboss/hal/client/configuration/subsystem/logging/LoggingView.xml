@@ -26,7 +26,22 @@
                 <form id="logging-root-logger-form">
                     <attributes>
                         <attribute name="filter-spec"/>
-                        <attribute name="handlers"/>
+                        <attribute name="handlers">
+                            <suggest-handler>
+                                <templates>
+                                    <!-- @formatter:off -->
+                                    <template address="/{selected.profile}/subsystem=logging/async-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/console-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/custom-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/size-rotating-file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/syslog-handler=*"/>
+                                    <!-- @formatter:on -->
+                                </templates>
+                            </suggest-handler>
+                        </attribute>
                         <attribute name="level"/>
                     </attributes>
                 </form>
@@ -37,7 +52,7 @@
         <!--
             Categories / Logger
         -->
-        <item id="logging-categories-item" title="Categories" icon="fa fa-folder-open-o">
+        <item id="logging-categories-item" title="Categories" icon="pficon pficon-repository">
             <metadata address="/{selected.profile}/subsystem=logging/logger=*">
                 <h1>Categories</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
@@ -260,7 +275,7 @@
         </item>
 
 
-        <item id="logging-formatter-item" title="Formatter" icon="fa fa-pencil">
+        <item id="logging-formatter-item" title="Formatter" icon="fa fa-paint-brush">
             <!--
                 Pattern Formatter
             -->
@@ -302,7 +317,7 @@
             <!--
                 Custom Formatter
             -->
-            <sub-item id="logging-formatter-custom" title="Pattern Formatter">
+            <sub-item id="logging-formatter-custom" title="Custom Formatter">
                 <metadata address="/{selected.profile}/subsystem=logging/custom-formatter=*">
                     <h1>Custom Formatter</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
