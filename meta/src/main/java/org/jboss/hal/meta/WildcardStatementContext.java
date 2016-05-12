@@ -17,14 +17,19 @@ package org.jboss.hal.meta;
 
 import org.jboss.hal.config.Environment;
 
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
+
 /**
- * A statement context which resolves the {@code selected.*} tuples to wildcards if they are not yet defined.
+ * A statement context which resolves the {@code selected.*} tuples to wildcards.
  *
  * @author Harald Pehl
  */
-public class WildcardWhenUndefinedContext extends FilteringStatementContext implements StatementContext {
+public class WildcardStatementContext extends FilteringStatementContext implements StatementContext {
 
-    public WildcardWhenUndefinedContext(final StatementContext delegate, Environment environment) {
+    public WildcardStatementContext(final StatementContext delegate, Environment environment) {
         super(delegate, new Filter() {
             @Override
             public String filter(final String key) {
@@ -33,14 +38,13 @@ public class WildcardWhenUndefinedContext extends FilteringStatementContext impl
 
             @Override
             public String[] filterTuple(final String tuple) {
-                String[] resolved = delegate.resolveTuple(tuple);
-                if (resolved == null) {
+                if (!environment.isStandalone()) {
                     Tuple t = Tuple.from(tuple);
-                    if (t != null && !environment.isStandalone()) {
-                        resolved = new String[]{t.resource(), "*"};
+                    if (t == SELECTED_GROUP || t == SELECTED_HOST || t == SELECTED_PROFILE || t == SELECTED_SERVER) {
+                        return new String[]{t.resource(), "*"};
                     }
                 }
-                return resolved;
+                return delegate.resolveTuple(tuple);
             }
         });
     }
