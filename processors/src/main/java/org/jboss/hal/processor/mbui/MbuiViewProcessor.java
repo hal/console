@@ -18,6 +18,7 @@ package org.jboss.hal.processor.mbui;
 import java.beans.Introspector;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.util.EnumSet;
 import java.util.List;
@@ -61,6 +62,8 @@ import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
@@ -162,7 +165,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
         MbuiViewContext context = new MbuiViewContext(TypeSimplifier.packageNameOf(type),
                 TypeSimplifier.classNameOf(type), subclass, createMethod);
 
-        // parse and validate the mbui xml
+        // parse and validate the MBUI XML
         xpath = XPathFactory.instance();
         Document document = parseXml(type, mbuiView);
         validateDocument(type, document);
@@ -226,10 +229,10 @@ public class MbuiViewProcessor extends AbstractProcessor {
             return new SAXBuilder().build(file.openReader(true));
 
         } catch (IOException e) {
-            error(type, "Cannot find MBUI xml \"%s\". " +
+            error(type, "Cannot find MBUI XML \"%s\". " +
                     "Please make sure the file exists and resides in the source path.", fq);
         } catch (JDOMException e) {
-            error(type, "Cannot parse MBUI xml \"%s\". Please verify that the file contains valid XML.", fq);
+            error(type, "Cannot parse MBUI XML \"%s\". Please verify that the file contains valid XML.", fq);
         }
         return null;
     }
@@ -238,20 +241,20 @@ public class MbuiViewProcessor extends AbstractProcessor {
         // verify root element
         org.jdom2.Element root = document.getRootElement();
         if (!root.getName().equals(XmlTags.VIEW)) {
-            error(type, "Invalid root element in MBUI xml. Allowed: \"%s\", found: \"%s\".", XmlTags.VIEW,
+            error(type, "Invalid root element in MBUI XML. Allowed: \"%s\", found: \"%s\".", XmlTags.VIEW,
                     root.getName());
         }
 
         // verify first child
         List<org.jdom2.Element> children = root.getChildren();
         if (children.isEmpty()) {
-            error(type, "No children found in MBUI xml.");
+            error(type, "No children found in MBUI XML.");
         } else if (children.size() > 1) {
-            error(type, "Only one child allowed in MBUI xml.");
+            error(type, "Only one child allowed in MBUI XML.");
         }
         org.jdom2.Element child = children.get(0);
         if (!(child.getName().equals(XmlTags.VERTICAL_NAVIGATION) || child.getName().equals(XmlTags.METADATA))) {
-            error(type, "Invalid child of root element in MBUI xml. Allowed: \"%s\" or \"%s\", found: \"%s\".",
+            error(type, "Invalid child of root element in MBUI XML. Allowed: \"%s\" or \"%s\", found: \"%s\".",
                     XmlTags.VERTICAL_NAVIGATION, XmlTags.METADATA, child.getName());
         }
     }
@@ -262,7 +265,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
         for (org.jdom2.Element element : elements) {
             String template = element.getAttributeValue("address");
             if (template == null) {
-                error(type, "Missing address attribute in metadata element");
+                error(type, "Missing address attribute in metadata element \"%s\"", xmlAsString(element));
             } else {
                 context.addMetadata(template);
             }
@@ -300,26 +303,14 @@ public class MbuiViewProcessor extends AbstractProcessor {
                                 processVerticalNavigation(field, document, element, selector, context);
                                 break;
                             case DataTable:
-                                processDataTable(field, document, element, selector, context);
+                                processDataTables(field, document, element, selector, context);
                                 break;
                             case Form:
-                                processForm(field, document, element, selector, context);
+                                processForms(field, document, element, selector, context);
                                 break;
                         }
                     }
                 });
-    }
-
-    private ElementType getMbuiElementType(TypeMirror dataElementType) {
-        if (isAssignable(dataElementType, VerticalNavigation.class)) {
-            return VerticalNavigation;
-        } else if (isAssignable(dataElementType, Form.class)) {
-            return Form;
-        } else if (isAssignable(dataElementType, DataTable.class)) {
-            return DataTable;
-        } else {
-            return null;
-        }
     }
 
     private String getSelector(Element element) {
@@ -343,13 +334,25 @@ public class MbuiViewProcessor extends AbstractProcessor {
         List<org.jdom2.Element> elements = expression.evaluate(document);
         if (elements.isEmpty()) {
             error(element,
-                    "Cannot find a matching element in the MBUI xml with id \"%s\".", selector);
+                    "Cannot find a matching element in the MBUI XML with id \"%s\".", selector);
         } else if (elements.size() > 1) {
             error(element,
-                    "Found %d matching elements in the MBUI xml with id \"%s\". Id must be unique.",
+                    "Found %d matching elements in the MBUI XML with id \"%s\". Id must be unique.",
                     elements.size(), selector);
         }
         return elements.get(0);
+    }
+
+    private ElementType getMbuiElementType(TypeMirror dataElementType) {
+        if (isAssignable(dataElementType, VerticalNavigation.class)) {
+            return VerticalNavigation;
+        } else if (isAssignable(dataElementType, Form.class)) {
+            return Form;
+        } else if (isAssignable(dataElementType, DataTable.class)) {
+            return DataTable;
+        } else {
+            return null;
+        }
     }
 
     private void processVerticalNavigation(final VariableElement field, final Document document,
@@ -358,15 +361,43 @@ public class MbuiViewProcessor extends AbstractProcessor {
         context.setVerticalNavigation(navigationInfo);
     }
 
-    private void processDataTable(final VariableElement field, final Document document, final org.jdom2.Element element,
-            final String selector, final MbuiViewContext context) {
+    private void processDataTables(final VariableElement field, final Document document,
+            final org.jdom2.Element element, final String selector, final MbuiViewContext context) {
         MetadataInfo metadata = findMetadata(field, element, context);
         DataTableInfo tableInfo = new DataTableInfo(field.getSimpleName().toString(), selector, getTypeParameter(field),
                 metadata);
         context.addDataTableInfo(tableInfo);
+
+        org.jdom2.Element columnsContainer = element.getChild("columns");
+        if (columnsContainer != null) {
+            for (org.jdom2.Element columnElement : columnsContainer.getChildren("column")) {
+                String name = columnElement.getAttributeValue("name");
+                String title = columnElement.getAttributeValue("title");
+                String value = columnElement.getAttributeValue("value");
+
+                if (name == null) {
+                    error(field, "Name is missing for column \"%s\" in data-table#%s",
+                            xmlAsString(columnElement), selector);
+                }
+                if (value != null) {
+                    if (!Handlebars.isExpression(value)) {
+                        error(field,
+                                "Invalid column \"%s\" in data-table#%s: Value has to be an expression.",
+                                xmlAsString(columnElement), selector);
+                    }
+                    if (title == null) {
+                        error(field,
+                                "Invalid column \"%s\" in data-table#%s: If value is given, title is mandatory.",
+                                xmlAsString(columnElement), selector);
+                    }
+                }
+                DataTableInfo.Column column = new DataTableInfo.Column(name, title, value);
+                tableInfo.addColumn(column);
+            }
+        }
     }
 
-    private void processForm(final VariableElement field, final Document document, final org.jdom2.Element element,
+    private void processForms(final VariableElement field, final Document document, final org.jdom2.Element element,
             final String selector, final MbuiViewContext context) {
         MetadataInfo metadata = findMetadata(field, element, context);
         FormInfo formInfo = new FormInfo(field.getSimpleName().toString(), selector, getTypeParameter(field), metadata);
@@ -376,6 +407,11 @@ public class MbuiViewProcessor extends AbstractProcessor {
         if (attributesContainer != null) {
             for (org.jdom2.Element attributeElement : attributesContainer.getChildren("attribute")) {
                 String name = attributeElement.getAttributeValue("name");
+                if (name == null) {
+                    error(field, "Name is missing for attribute \"%s\" in form#%s", xmlAsString(attributeElement),
+                            selector);
+                }
+
                 FormInfo.Attribute attribute = new FormInfo.Attribute(name);
                 org.jdom2.Element suggestHandler = attributeElement.getChild("suggest-handler");
                 if (suggestHandler != null) {
@@ -398,15 +434,13 @@ public class MbuiViewProcessor extends AbstractProcessor {
         XPathExpression<org.jdom2.Element> expression = xpath.compile("ancestor::metadata", Filters.element());
         org.jdom2.Element metadataElement = expression.evaluateFirst(element);
         if (metadataElement == null) {
-            error(field,
-                    "Missing metadata ancestor. Please make sure the mapped XML element has a \"<%s/>\" ancestor element.",
-                    XmlTags.METADATA);
+            error(field, "Missing metadata ancestor for %s#%s. Please make sure the there's a <%s/> ancestor element.",
+                    element.getName(), element.getAttributeValue("id"), XmlTags.METADATA);
         } else {
             metadataInfo = context.getMetadataInfo(metadataElement.getAttributeValue("address"));
             if (metadataInfo == null) {
-                error(field,
-                        "No metadata found. Please make sure the mapped XML element has a \"<%s/>\" ancestor element.",
-                        XmlTags.METADATA);
+                error(field, "No metadata found for %s#%s. Please make sure there's a <%s/> ancestor element.",
+                        element.getName(), element.getAttributeValue("id"), XmlTags.METADATA);
             }
         }
         return metadataInfo;
@@ -522,5 +556,20 @@ public class MbuiViewProcessor extends AbstractProcessor {
             warning(type, "%d methods annotated with @%s found. Order is not guaranteed!",
                     context.getPostConstructs().size(), PostConstruct.class.getSimpleName());
         }
+    }
+
+
+    // ------------------------------------------------------ helper methods
+
+    private String xmlAsString(org.jdom2.Element element) {
+        String asString;
+        StringWriter writer = new StringWriter();
+        try {
+            new XMLOutputter(Format.getCompactFormat()).output(element, writer);
+            asString = writer.toString();
+        } catch (IOException e) {
+            asString = "<" + element + "/>";
+        }
+        return asString;
     }
 }

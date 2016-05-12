@@ -283,7 +283,9 @@
                                     scope="selected"/>
                         </actions>
                         <columns>
-                            <column name="name" title="{{resources.constants().name()}}"/>
+                            <!-- log formatter resources do not a name attribute,
+                            so we need to provide a value which calls NamedNode.getName() -->
+                            <column name="name" title="{{resources.constants().name()}}" value="{{row.getName()}}"/>
                             <column name="pattern"/>
                         </columns>
                     </table>
@@ -319,7 +321,9 @@
                                     scope="selected"/>
                         </actions>
                         <columns>
-                            <column name="name" title="{{resources.constants().name()}}"/>
+                            <!-- log formatter resources do not a name attribute,
+                            so we need to provide a value which calls NamedNode.getName() -->
+                            <column name="name" title="{{resources.constants().name()}}" value="{{row.getName()}}"/>
                         </columns>
                     </table>
                     <form id="logging-formatter-custom-form">

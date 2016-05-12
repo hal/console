@@ -55,9 +55,13 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         }
 
         public Builder<T> column(@NonNls String attribute) {
+            return column(attribute, null);
+        }
+
+        public Builder<T> column(@NonNls String attribute, String title) {
             Property attributeDescription = metadata.getDescription().findAttribute(ATTRIBUTES, attribute);
             if (attributeDescription != null) {
-                Column<T> column = columnFactory.createColumn(attributeDescription);
+                Column<T> column = columnFactory.createColumn(attributeDescription, title);
                 return column(column);
             } else {
                 logger.error("No attribute description for column '{}' found in resource description\n{}", //NON-NLS

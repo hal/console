@@ -15,19 +15,62 @@
  */
 package org.jboss.hal.processor.mbui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Harald Pehl
  */
 public class DataTableInfo extends MbuiElementInfo {
 
+    public static class Column {
+
+        private final String name;
+        private final String title;
+        private final String value;
+
+        public Column(final String name, final String title, final String value) {
+            this.name = name;
+            this.title = Handlebars.templateSafeValue(title); // title can be a simple value or an expression
+            this.value = Handlebars.stripHandlebar(value); // value has to be an expression
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public boolean isSimple() {
+            return title == null && value == null;
+        }
+
+        public boolean isSimpleWithTitle() {
+            return title != null && value == null;
+        }
+
+        public boolean isHasValue() {
+            return value != null;
+        }
+    }
+
+
     private final String typeParameter;
     private final MetadataInfo metadata;
     private FormInfo formRef;
+    private final List<Column> columns;
 
     public DataTableInfo(final String name, final String selector, String typeParameter, MetadataInfo metadata) {
         super(name, selector);
         this.typeParameter = typeParameter;
         this.metadata = metadata;
+        this.columns = new ArrayList<>();
     }
 
     public String getTypeParameter() {
@@ -42,7 +85,24 @@ public class DataTableInfo extends MbuiElementInfo {
         return formRef;
     }
 
-    public void setFormRef(final FormInfo formRef) {
+    void setFormRef(final FormInfo formRef) {
         this.formRef = formRef;
+    }
+
+    public List<Column> getColumns() {
+        return columns;
+    }
+
+    public boolean isOnlySimpleColumns() {
+        for (Column column : columns) {
+            if (!column.isSimple()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    void addColumn(Column column) {
+        columns.add(column);
     }
 }

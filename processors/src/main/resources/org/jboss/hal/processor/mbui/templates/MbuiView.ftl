@@ -67,6 +67,19 @@ final class ${context.subclass} extends ${context.base} {
 
         <#list context.dataTables as table>
         Options<${table.typeParameter}> ${table.name}Options = new ModelNodeTable.Builder<${table.typeParameter}>(${table.metadata.name})
+            <#if table.onlySimpleColumns>
+            .columns(<#list table.columns as column>"${column.name}"<#if column_has_next>, </#if></#list>)
+            <#else>
+                <#list table.columns as column>
+                    <#if column.simple>
+            .column("${column.name}")
+                    <#elseif column.simpleWithTitle>
+            .column("${column.name}", ${column.title})
+                    <#elseif column.hasValue>
+            .column("${column.name}", ${column.title}, (cell, type, row, meta) -> ${column.value})
+                    </#if>
+                </#list>
+            </#if>
             .build();
         ${table.name} = new ModelNodeTable<>("${table.selector}", ${table.name}Options);
         </#list>
