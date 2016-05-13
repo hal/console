@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.mvp;
+package org.jboss.hal.core.mbui;
 
-import org.jboss.hal.meta.MetadataRegistry;
-import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.resources.Resources;
+import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 
 /**
  * Base class for views generated using {@code @MbuiView}.
@@ -26,15 +24,9 @@ import org.jboss.hal.resources.Resources;
  */
 public abstract class MbuiViewImpl extends PatternFlyViewImpl {
 
-    protected final MetadataRegistry metadataRegistry;
-    protected final StatementContext statementContext;
-    protected final Resources resources;
+    protected final MbuiContext mbuiContext;
 
-    protected MbuiViewImpl(final MetadataRegistry metadataRegistry,
-            final StatementContext statementContext,
-            Resources resources) {
-        this.metadataRegistry = metadataRegistry;
-        this.statementContext = statementContext;
-        this.resources = resources;
+    protected MbuiViewImpl(final MbuiContext mbuiContext) {
+        this.mbuiContext = mbuiContext;
     }
 }

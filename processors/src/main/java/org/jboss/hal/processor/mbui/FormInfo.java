@@ -51,12 +51,19 @@ public class FormInfo extends MbuiElementInfo {
 
     private final String typeParameter;
     private final MetadataInfo metadata;
+    private final String title;
+    private final boolean autoSave;
+    private final String nameResolver;
     private final List<Attribute> attributes;
 
-    FormInfo(final String name, final String selector, String typeParameter, MetadataInfo metadata) {
+    FormInfo(final String name, final String selector, final String typeParameter, final MetadataInfo metadata,
+            final String title, final boolean autoSave, final String nameResolver) {
         super(name, selector);
         this.typeParameter = typeParameter;
         this.metadata = metadata;
+        this.title = Handlebars.templateSafeValue(title); // title can be a simple value or an expression
+        this.autoSave = autoSave;
+        this.nameResolver = Handlebars.stripHandlebar(nameResolver); // name resolver has to be an expression
         this.attributes = new ArrayList<>();
     }
 
@@ -66,6 +73,18 @@ public class FormInfo extends MbuiElementInfo {
 
     public MetadataInfo getMetadata() {
         return metadata;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public boolean isAutoSave() {
+        return autoSave;
+    }
+
+    public String getNameResolver() {
+        return nameResolver;
     }
 
     public List<Attribute> getAttributes() {

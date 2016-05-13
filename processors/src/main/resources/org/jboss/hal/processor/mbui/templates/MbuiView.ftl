@@ -17,14 +17,16 @@ import org.jboss.hal.ballroom.typeahead.TypeaheadProvider;
 <#if context.verticalNavigation??>
 import org.jboss.hal.ballroom.VerticalNavigation;
 </#if>
+import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.MetadataRegistry;
-import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.Arrays.asList;
 
@@ -44,33 +46,53 @@ final class ${context.subclass} extends ${context.base} {
     private final Map<String, Element> handlebarElements;
     </#if>
 
-    ${context.subclass}(MetadataRegistry metadataRegistry, StatementContext statementContext, Resources resources<#list context.abstractProperties as abstractProperty>, ${abstractProperty.type} ${abstractProperty.field}</#list>) {
-        super(metadataRegistry, statementContext, resources);
+    ${context.subclass}(MbuiContext mbuiContext<#list context.abstractProperties as abstractProperty>, ${abstractProperty.type} ${abstractProperty.field}</#list>) {
+        super(mbuiContext);
 
         <#list context.abstractProperties as abstractProperty>
         this.${abstractProperty.field} = ${abstractProperty.field};
         </#list>
+        <#list context.metadataInfos as metadataInfo>
+        AddressTemplate ${metadataInfo.name}Template = AddressTemplate.of("${metadataInfo.template}");
+        this.${metadataInfo.name} = mbuiContext.metadataRegistry().lookup(${metadataInfo.name}Template);
+        </#list>
         <#if context.verticalNavigation??>
         this.handlebarElements = new HashMap<>();
         </#if>
-        <#list context.metadataInfos as metadataInfo>
-        this.${metadataInfo.name} = metadataRegistry.lookup(AddressTemplate.of("${metadataInfo.template}"));
-        </#list>
 
         <#list context.forms as form>
         ${form.name} = new ModelNodeForm.Builder<${form.typeParameter}>("${form.selector}", ${form.metadata.name})
             <#if form.attributes?has_content>
             .include(<#list form.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>)
             </#if>
+            <#if form.autoSave>
+                <#if form.nameResolver??>
+            .onSave((form, changedValues) -> {
+                ResourceAddress address = ${form.metadata.name}Template.resolve(mbuiContext.statementContext(), ${form.nameResolver});
+                Composite composite = mbuiContext.operationFactory().fromChangeSet(address, changedValues);
+                mbuiContext.dispatcher().execute(composite, (CompositeResult result) -> {
+                    MessageEvent.fire(mbuiContext.eventBus(), Message.success(mbuiContext.resources().messages().modifyResourceSuccess(${form.title}, ${form.nameResolver})));
+                });
+            })
+                <#else>
+            .onSave((form, changedValues) -> {
+                ResourceAddress address = ${form.metadata.name}Template.resolve(mbuiContext.statementContext());
+                Composite composite = mbuiContext.operationFactory().fromChangeSet(address, changedValues);
+                mbuiContext.dispatcher().execute(composite, (CompositeResult result) -> {
+                    MessageEvent.fire(mbuiContext.eventBus(), Message.success(mbuiContext.resources().messages().modifySingleResourceSuccess(${form.title})));
+                });
+            })
+                </#if>
+            </#if>
             .build();
             <#list form.suggestHandlerAttributes as attribute>
                 <#if attribute.suggestHandlerTemplates?size == 1>
-        ResourceAddress ${form.name}Address = AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}").resolve(statementContext);
+        ResourceAddress ${form.name}Address = AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}").resolve(mbuiContext.statementContext());
                 <#else>
                 </#if>
         List<AddressTemplate> ${form.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
                 AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
-        List<ResourceAddress> ${form.name}Address = Lists.transform(${form.name}Templates, template -> template.resolve(statementContext));
+        List<ResourceAddress> ${form.name}Address = Lists.transform(${form.name}Templates, template -> template.resolve(mbuiContext.statementContext()));
         ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(new TypeaheadProvider().from(${form.name}Address));
             </#list>
         </#list>

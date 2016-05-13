@@ -23,7 +23,7 @@
             <metadata address="/{selected.profile}/subsystem=logging/root-logger=ROOT">
                 <h1>Root Logger</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <form id="logging-root-logger-form">
+                <form id="logging-root-logger-form" title="Root Logger" auto-save="true">
                     <attributes>
                         <attribute name="filter-spec"/>
                         <attribute name="handlers">
@@ -63,7 +63,22 @@
                                 <attributes>
                                     <attribute name="name" unbound="true"/>
                                     <attribute name="filter-spec"/>
-                                    <attribute name="handlers"/>
+                                    <attribute name="handlers">
+                                        <suggest-handler>
+                                            <templates>
+                                                <!-- @formatter:off -->
+                                                <template address="/{selected.profile}/subsystem=logging/async-handler=*"/>
+                                                <template address="/{selected.profile}/subsystem=logging/console-handler=*"/>
+                                                <template address="/{selected.profile}/subsystem=logging/custom-handler=*"/>
+                                                <template address="/{selected.profile}/subsystem=logging/file-handler=*"/>
+                                                <template address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*"/>
+                                                <template address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*"/>
+                                                <template address="/{selected.profile}/subsystem=logging/size-rotating-file-handler=*"/>
+                                                <template address="/{selected.profile}/subsystem=logging/syslog-handler=*"/>
+                                                <!-- @formatter:on -->
+                                            </templates>
+                                        </suggest-handler>
+                                    </attribute>
                                     <attribute name="level"/>
                                     <attribute name="use-parent-handlers"/>
                                 </attributes>
@@ -76,11 +91,27 @@
                         <column name="level"/>
                     </columns>
                 </table>
-                <form id="logging-categories-form">
+                <form id="logging-categories-form" title="Category" auto-save="true"
+                      name-resolver="{{form.getModel().getName()}}">
                     <attributes>
                         <attribute name="category"/>
                         <attribute name="filter-spec"/>
-                        <attribute name="handlers"/>
+                        <attribute name="handlers">
+                            <suggest-handler>
+                                <templates>
+                                    <!-- @formatter:off -->
+                                    <template address="/{selected.profile}/subsystem=logging/async-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/console-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/custom-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/size-rotating-file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/syslog-handler=*"/>
+                                    <!-- @formatter:on -->
+                                </templates>
+                            </suggest-handler>
+                        </attribute>
                         <attribute name="level"/>
                         <attribute name="use-parent-handlers"/>
                     </attributes>
@@ -127,11 +158,12 @@
                                     scope="selected"/>
                         </actions>
                         <columns>
-                            <column name="name" title="{{resources.constants().name()}}"/>
+                            <column name="name" title="{{mbuiContext.resources().constants().name()}}"/>
                             <column name="level"/>
                         </columns>
                     </table>
-                    <form id="logging-handler-console-form">
+                    <form id="logging-handler-console-form" auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="autoflush"/>
                             <attribute name="enabled"/>
@@ -173,12 +205,13 @@
                                     scope="selected"/>
                         </actions>
                         <columns>
-                            <column name="name" title="{{resources.constants().name()}}"/>
+                            <column name="name" title="{{mbuiContext.resources().constants().name()}}"/>
                             <column name="level"/>
                         </columns>
                     </table>
-                    <form id="logging-handler-file-form">
+                    <form id="logging-handler-file-form" auto-save="true" name-resolver="{{form.getModel().getName()}}">
                         <attributes>
+                            <attribute name="file"/>
                             <attribute name="append"/>
                             <attribute name="autoflush"/>
                             <attribute name="enabled"/>
@@ -242,11 +275,12 @@
                                     scope="selected"/>
                         </actions>
                         <columns>
-                            <column name="name" title="{{resources.constants().name()}}"/>
+                            <column name="name" title="{{mbuiContext.resources().constants().name()}}"/>
                             <column name="level"/>
                         </columns>
                     </table>
-                    <form id="logging-handler-async-form">
+                    <form id="logging-handler-async-form" auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="level"/>
                             <attribute name="subhandlers">
@@ -300,11 +334,13 @@
                         <columns>
                             <!-- log formatter resources do not a name attribute,
                             so we need to provide a value which calls NamedNode.getName() -->
-                            <column name="name" title="{{resources.constants().name()}}" value="{{row.getName()}}"/>
+                            <column name="name" title="{{mbuiContext.resources().constants().name()}}"
+                                    value="{{row.getName()}}"/>
                             <column name="pattern"/>
                         </columns>
                     </table>
-                    <form id="logging-formatter-pattern-form">
+                    <form id="logging-formatter-pattern-form" auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="color-map"/>
                             <attribute name="pattern"/>
@@ -338,10 +374,12 @@
                         <columns>
                             <!-- log formatter resources do not a name attribute,
                             so we need to provide a value which calls NamedNode.getName() -->
-                            <column name="name" title="{{resources.constants().name()}}" value="{{row.getName()}}"/>
+                            <column name="name" title="{{mbuiContext.resources().constants().name()}}"
+                                    value="{{row.getName()}}"/>
                         </columns>
                     </table>
-                    <form id="logging-formatter-custom-form">
+                    <form id="logging-formatter-custom-form" auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="class"/>
                             <attribute name="module"/>

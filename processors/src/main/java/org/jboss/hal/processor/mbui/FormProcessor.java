@@ -18,6 +18,8 @@ package org.jboss.hal.processor.mbui;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Types;
 
+import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jdom2.Element;
 import org.jdom2.xpath.XPathFactory;
 
@@ -36,8 +38,27 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
     @Override
     public void process(final VariableElement field, final Element element, final String selector,
             final MbuiViewContext context) {
+        String title = element.getAttributeValue("title");
+        boolean autoSave = Boolean.parseBoolean(element.getAttributeValue("auto-save"));
+        String nameResolver = element.getAttributeValue("name-resolver");
         MetadataInfo metadata = findMetadata(field, element, context);
-        FormInfo formInfo = new FormInfo(field.getSimpleName().toString(), selector, getTypeParameter(field), metadata);
+        AddressTemplate template = AddressTemplate.of(metadata.getTemplate());
+
+        if (autoSave) {
+            if (title == null) {
+                title = new LabelBuilder().label(template.lastKey());
+            }
+            if ("*".equals(template.lastValue()) && nameResolver == null) {
+                processor.error(field, "Auto save is enabled for form#%s and related metadata address ends in \"*\", " +
+                        "but no name resolver is is provided.", selector);
+            }
+            if (nameResolver != null && !Handlebars.isExpression(nameResolver)) {
+                processor.error(field, "Name resolver in form#%s has to be an expression.", selector);
+            }
+        }
+
+        FormInfo formInfo = new FormInfo(field.getSimpleName().toString(), selector, getTypeParameter(field), metadata,
+                title, autoSave, nameResolver);
         context.addFormInfo(formInfo);
 
         org.jdom2.Element attributesContainer = element.getChild("attributes");

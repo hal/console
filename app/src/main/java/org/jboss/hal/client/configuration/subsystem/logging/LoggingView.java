@@ -16,44 +16,29 @@
 package org.jboss.hal.client.configuration.subsystem.logging;
 
 import java.util.List;
-import javax.annotation.PostConstruct;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.core.mvp.MbuiViewImpl;
+import org.jboss.hal.core.mbui.MbuiContext;
+import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.meta.MetadataRegistry;
-import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
-
-import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.ASYNC_HANDLER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.CONSOLE_HANDLER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.FILE_HANDLER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.ROOT_LOGGER_TEMPLATE;
 
 /**
  * @author Harald Pehl
  */
 @MbuiView
-@SuppressWarnings({"WeakerAccess", "DuplicateStringLiteralInspection"})
+@SuppressWarnings("DuplicateStringLiteralInspection")
 public abstract class LoggingView extends MbuiViewImpl implements LoggingPresenter.MyView {
 
-    // @formatter:off
-    public static LoggingView create(final MetadataRegistry metadataRegistry,
-            final StatementContext statementContext,
-            final Resources resources) {
-        return new Mbui_LoggingView(metadataRegistry, statementContext, resources);
+    public static LoggingView create(final MbuiContext mbuiContext) {
+        return new Mbui_LoggingView(mbuiContext);
     }
-    // @formatter:on
 
-
-    private LoggingPresenter presenter;
 
     @MbuiElement("logging-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("logging-root-logger-form") Form<ModelNode> rootLoggerForm;
@@ -70,53 +55,10 @@ public abstract class LoggingView extends MbuiViewImpl implements LoggingPresent
     @MbuiElement("logging-formatter-pattern-table") DataTable<NamedNode> patternFormatterTable;
     @MbuiElement("logging-formatter-pattern-form") Form<NamedNode> patternFormatterForm;
 
-    protected LoggingView(final MetadataRegistry metadataRegistry,
-            final StatementContext statementContext,
-            final Resources resources) {
-        super(metadataRegistry, statementContext, resources);
-    }
+    protected LoggingPresenter presenter;
 
-    @PostConstruct
-    @SuppressWarnings({"HardCodedStringLiteral", "ConstantConditions"})
-    void init() {
-        rootLoggerForm.setSaveCallback((form, changedValues) ->
-                presenter.saveResource(ROOT_LOGGER_TEMPLATE, "Root Logger", null, changedValues));
-        loggerForm.setSaveCallback((form, changedValues) -> {
-            if (loggerTable.api().hasSelection()) {
-                presenter.saveResource(LOGGER_TEMPLATE, "Category",
-                        loggerTable.api().selectedRow().getName(), changedValues);
-            }
-        });
-        asyncHandlerForm.setSaveCallback((form, changedValues) -> {
-            if (asyncHandlerTable.api().hasSelection()) {
-                presenter.saveResource(ASYNC_HANDLER_TEMPLATE, "Async Handler",
-                        loggerTable.api().selectedRow().getName(), changedValues);
-            }
-        });
-        consoleHandlerForm.setSaveCallback((form, changedValues) -> {
-            if (consoleHandlerTable.api().hasSelection()) {
-                presenter.saveResource(CONSOLE_HANDLER_TEMPLATE, "Console Handler",
-                        loggerTable.api().selectedRow().getName(), changedValues);
-            }
-        });
-        fileHandlerForm.setSaveCallback((form, changedValues) -> {
-            if (fileHandlerTable.api().hasSelection()) {
-                presenter.saveResource(FILE_HANDLER_TEMPLATE, "File Handler",
-                        loggerTable.api().selectedRow().getName(), changedValues);
-            }
-        });
-        customFormatterForm.setSaveCallback((form, changedValues) -> {
-            if (customFormatterTable.api().hasSelection()) {
-                presenter.saveResource(FILE_HANDLER_TEMPLATE, "Custom Formatter",
-                        loggerTable.api().selectedRow().getName(), changedValues);
-            }
-        });
-        patternFormatterForm.setSaveCallback((form, changedValues) -> {
-            if (patternFormatterTable.api().hasSelection()) {
-                presenter.saveResource(FILE_HANDLER_TEMPLATE, "Pattern Formatter",
-                        loggerTable.api().selectedRow().getName(), changedValues);
-            }
-        });
+    LoggingView(final MbuiContext mbuiContext) {
+        super(mbuiContext);
     }
 
     @Override

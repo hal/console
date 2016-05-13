@@ -16,7 +16,6 @@
 package org.jboss.hal.client.configuration.subsystem.logging;
 
 import java.util.List;
-import java.util.Map;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -31,18 +30,12 @@ import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.core.mvp.SubsystemPresenter;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.OperationFactory;
-import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
@@ -146,20 +139,6 @@ public class LoggingPresenter extends SubsystemPresenter<LoggingPresenter.MyView
             getView().updateCustomFormatter(asNamedNodes(failSafePropertyList(result, CUSTOM_FORMATTER_TEMPLATE.lastKey())));
             getView().updatePatternFormatter(asNamedNodes(failSafePropertyList(result, PATTERN_FORMATTER_TEMPLATE.lastKey())));
             // @formatter:on
-        });
-    }
-
-    void saveResource(AddressTemplate template, String type, String name, Map<String, Object> changedValues) {
-        ResourceAddress address = template.resolve(statementContext, name);
-        Composite composite = operationFactory.fromChangeSet(address, changedValues);
-        dispatcher.execute(composite, (CompositeResult result) -> {
-            if (name == null) {
-                MessageEvent
-                        .fire(getEventBus(), Message.success(resources.messages().modifySingleResourceSuccess(type)));
-            } else {
-                MessageEvent
-                        .fire(getEventBus(), Message.success(resources.messages().modifyResourceSuccess(type, name)));
-            }
         });
     }
 }

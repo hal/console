@@ -6,9 +6,7 @@ import com.google.inject.Provider;
 import javax.inject.Inject;
 import javax.annotation.Generated;
 
-import org.jboss.hal.meta.MetadataRegistry;
-import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.resources.Resources;
+import org.jboss.hal.core.mbui.MbuiContext;
 
 /*
  * WARNING! This class is generated. Do not modify.
@@ -16,19 +14,15 @@ import org.jboss.hal.resources.Resources;
 @Generated("org.jboss.hal.processor.mbui.MbuiViewGinProcessor")
 public class ${context.subclass} implements Provider<${context.base}> {
 
-    private final MetadataRegistry metadataRegistry;
-    private final StatementContext statementContext;
-    private final Resources resources;
+    private final MbuiContext mbuiContext;
     <#if (context.abstractProperties?size > 0)>
     <#list context.abstractProperties as abstractProperty>
     private final ${abstractProperty.type} ${abstractProperty.field};
     </#list>
 
     @Inject
-    public ${context.subclass}(MetadataRegistry metadataRegistry, StatementContext statementContext, Resources resources, <#list context.abstractProperties as abstractProperty>${abstractProperty.type} ${abstractProperty.field}<#if abstractProperty_has_next>, </#if></#list>) {
-        this.metadataRegistry = metadataRegistry;
-        this.statementContext = statementContext;
-        this.resources = resources;
+    public ${context.subclass}(MbuiContext mbuiContext<#list context.abstractProperties as abstractProperty>, ${abstractProperty.type} ${abstractProperty.field}</#list>) {
+        this.mbuiContext = mbuiContext;
         <#list context.abstractProperties as abstractProperty>
         this.${abstractProperty.field} = ${abstractProperty.field};
         </#list>
@@ -36,15 +30,13 @@ public class ${context.subclass} implements Provider<${context.base}> {
     <#else>
 
     @Inject
-    public ${context.subclass}(MetadataRegistry metadataRegistry, StatementContext statementContext, Resources resources) {
-        this.metadataRegistry = metadataRegistry;
-    this.statementContext = statementContext;
-        this.resources = resources;
+    public ${context.subclass}(MbuiContext mbuiContext) {
+        this.mbuiContext = mbuiContext;
     }
     </#if>
 
     @Override
     public ${context.base} get() {
-        return ${context.base}.${context.createMethod}(metadataRegistry, statementContext, resources<#list context.abstractProperties as abstractProperty>, ${abstractProperty.field}</#list>);
+        return ${context.base}.${context.createMethod}(mbuiContext<#list context.abstractProperties as abstractProperty>, ${abstractProperty.field}</#list>);
     }
 }

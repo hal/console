@@ -49,7 +49,7 @@ import org.jboss.auto.AbstractProcessor;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.core.mvp.MbuiViewImpl;
+import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.processor.TemplateNames;
 import org.jboss.hal.processor.TypeSimplifier;
 import org.jboss.hal.spi.MbuiElement;
