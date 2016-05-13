@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.processor.mbui;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
@@ -26,6 +27,8 @@ import org.jdom2.Element;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
+
+import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 
 /**
  * @author Harald Pehl
@@ -72,5 +75,33 @@ abstract class AbstractMbuiElementProcessor implements MbuiElementProcessor {
             typeArgument = MoreTypes.asTypeElement(typeUtils, typeArguments.get(0)).getQualifiedName().toString();
         }
         return typeArgument;
+    }
+
+    List<Attribute> processAttributes(final VariableElement field, org.jdom2.Element attributesContainer) {
+        int position = 0;
+        List<Attribute> attributes = new ArrayList<>();
+
+        for (org.jdom2.Element attributeElement : attributesContainer.getChildren("attribute")) {
+            String name = attributeElement.getAttributeValue("name");
+            boolean unbound = Boolean.parseBoolean(attributeElement.getAttributeValue("unbound"));
+            if (name == null) {
+                processor.error(field, "Invalid attribute \"%s\": name is mandatory.", xmlAsString(attributeElement));
+            }
+
+            Attribute attribute = new Attribute(name, position, unbound);
+            org.jdom2.Element suggestHandler = attributeElement.getChild("suggest-handler");
+            if (suggestHandler != null) {
+                org.jdom2.Element templatesContainer = suggestHandler.getChild("templates");
+                if (templatesContainer != null) {
+                    for (org.jdom2.Element templateElement : templatesContainer.getChildren("template")) {
+                        String address = templateElement.getAttributeValue("address");
+                        attribute.addSuggestHandlerTemplate(address);
+                    }
+                }
+            }
+            attributes.add(attribute);
+            position++;
+        }
+        return attributes;
     }
 }

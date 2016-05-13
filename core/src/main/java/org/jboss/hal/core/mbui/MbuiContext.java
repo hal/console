@@ -18,7 +18,6 @@ package org.jboss.hal.core.mbui;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
-import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.OperationFactory;
@@ -39,21 +38,19 @@ public class MbuiContext {
     private final Dispatcher dispatcher;
     private final OperationFactory operationFactory;
     private final TableButtonFactory tableButtonFactory;
-    private final DialogFactory dialogFactory;
     private final Resources resources;
 
     @Inject
     public MbuiContext(final EventBus eventBus, final MetadataRegistry metadataRegistry,
             final StatementContext statementContext, final Dispatcher dispatcher,
             final OperationFactory operationFactory, final TableButtonFactory tableButtonFactory,
-            final DialogFactory dialogFactory, final Resources resources) {
+            final Resources resources) {
         this.eventBus = eventBus;
         this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
         this.operationFactory = operationFactory;
         this.tableButtonFactory = tableButtonFactory;
-        this.dialogFactory = dialogFactory;
         this.resources = resources;
     }
 
@@ -79,10 +76,6 @@ public class MbuiContext {
 
     public TableButtonFactory tableButtonFactory() {
         return tableButtonFactory;
-    }
-
-    public DialogFactory dialogFactory() {
-        return dialogFactory;
     }
 
     public Resources resources() {

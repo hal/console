@@ -15,8 +15,10 @@
  */
 package org.jboss.hal.core.mbui.dialog;
 
+import java.util.Collections;
 import java.util.Map;
 
+import com.google.common.collect.Iterables;
 import com.google.gwt.core.client.GWT;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.Dialog.Size;
@@ -59,11 +61,20 @@ public class AddResourceDialog {
      * the add operation. Clicking on the add button will call the specified callback.
      */
     public AddResourceDialog(final String id, final String title, final Metadata metadata, final Callback callback) {
+        this(id, title, metadata, Collections.emptyList(), callback);
+    }
+
+    public AddResourceDialog(final String id, final String title, final Metadata metadata,
+            final Iterable<String> attributes, final Callback callback) {
 
         ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(id, metadata)
                 .addFromRequestProperties()
                 .unboundFormItem(new NameItem(), 0)
                 .onSave((f, changedValues) -> saveForm(callback, changedValues, form.getModel()));
+
+        if (!Iterables.isEmpty(attributes)) {
+            formBuilder.include(attributes).unsorted();
+        }
 
         init(title, formBuilder.build());
     }
@@ -93,6 +104,10 @@ public class AddResourceDialog {
             final ModelNode model) {
         String name = String.valueOf(changedValues.remove(NAME));
         callback.onAdd(name, model);
+    }
+
+    public Form<ModelNode> getForm() {
+        return form;
     }
 
     public void show() {

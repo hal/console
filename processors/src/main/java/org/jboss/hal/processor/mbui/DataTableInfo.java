@@ -18,10 +18,118 @@ package org.jboss.hal.processor.mbui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.hal.ballroom.table.Button;
+
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+
 /**
  * @author Harald Pehl
  */
 public class DataTableInfo extends MbuiElementInfo {
+
+    @SuppressWarnings("HardCodedStringLiteral")
+    public enum HandlerRef {
+        ADD_RESOURCE("add-resource", "add()"), REMOVE_RESOURCE("remove-resource", "remove()");
+
+        static HandlerRef referenceFor(String value) {
+            for (HandlerRef ref : HandlerRef.values()) {
+                if (ref.getRef().equals(value)) {
+                    return ref;
+                }
+            }
+            return null;
+        }
+
+        private final String ref;
+        private final String i18n;
+
+        HandlerRef(final String ref, final String i18n) {
+            this.ref = ref;
+            this.i18n = i18n;
+        }
+
+        public String getRef() {
+            return ref;
+        }
+
+        public String getI18n() {
+            return i18n;
+        }
+    }
+
+
+    public static class Action {
+
+        private final String handler;
+        private final HandlerRef handlerRef;
+        private final String title;
+        private final Button.Scope scope;
+        private final String nameResolver;
+        private final List<Attribute> attributes;
+
+        public Action(final String handler, final String title, final String scope, final String nameResolver) {
+            this.handler = Handlebars.stripHandlebar(handler);
+            this.handlerRef = HandlerRef.referenceFor(handler);
+            this.title = Handlebars.templateSafeValue(title); // title can be a simple value or an expression
+            this.scope = scope != null ? Button.Scope.valueOf(scope.toUpperCase()) : null;
+            this.nameResolver = Handlebars.stripHandlebar(nameResolver); // name resolver has to be an expression
+            this.attributes = new ArrayList<>();
+        }
+
+        public String getHandler() {
+            return handler;
+        }
+
+        public boolean isKnownHandler() {
+            return handlerRef != null;
+        }
+
+        public HandlerRef getHandlerRef() {
+            return handlerRef;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public Button.Scope getScope() {
+            return scope;
+        }
+
+        public String getNameResolver() {
+            return nameResolver;
+        }
+
+        public List<Attribute> getAttributes() {
+            return attributes;
+        }
+
+        public boolean isHasUnboundAttributes() {
+            return !attributes.stream().filter(Attribute::isUnbound).collect(toList()).isEmpty();
+        }
+
+        public List<Attribute> getBoundAttributes() {
+            return attributes.stream().collect(groupingBy(Attribute::isUnbound)).getOrDefault(true, emptyList());
+        }
+
+        public List<Attribute> getUnboundAttributes() {
+            return attributes.stream().collect(groupingBy(Attribute::isUnbound)).getOrDefault(false, emptyList());
+        }
+
+        public boolean isHasAttributesWithSuggestionHandlers() {
+            return !attributes.stream()
+                    .filter(attribute -> !attribute.getSuggestHandlerTemplates().isEmpty())
+                    .collect(toList())
+                    .isEmpty();
+        }
+
+        void addAttribute(Attribute attribute) {
+            attributes.add(attribute);
+        }
+    }
+
 
     public static class Column {
 
@@ -63,14 +171,19 @@ public class DataTableInfo extends MbuiElementInfo {
 
     private final String typeParameter;
     private final MetadataInfo metadata;
+    private final String title;
     private FormInfo formRef;
     private final List<Column> columns;
+    private final List<Action> actions;
 
-    DataTableInfo(final String name, final String selector, String typeParameter, MetadataInfo metadata) {
+    DataTableInfo(final String name, final String selector, String typeParameter, MetadataInfo metadata,
+            final String title) {
         super(name, selector);
         this.typeParameter = typeParameter;
         this.metadata = metadata;
+        this.title = Handlebars.templateSafeValue(title); // title can be a simple value or an expression
         this.columns = new ArrayList<>();
+        this.actions = new ArrayList<>();
     }
 
     public String getTypeParameter() {
@@ -79,6 +192,10 @@ public class DataTableInfo extends MbuiElementInfo {
 
     public MetadataInfo getMetadata() {
         return metadata;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     public FormInfo getFormRef() {
@@ -104,5 +221,13 @@ public class DataTableInfo extends MbuiElementInfo {
 
     void addColumn(Column column) {
         columns.add(column);
+    }
+
+    public List<Action> getActions() {
+        return actions;
+    }
+
+    void addAction(Action action) {
+        actions.add(action);
     }
 }

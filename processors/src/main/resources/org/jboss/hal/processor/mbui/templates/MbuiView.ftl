@@ -11,6 +11,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.TemplateUtil;
+import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.typeahead.TypeaheadProvider;
@@ -25,6 +26,7 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
@@ -71,6 +73,7 @@ final class ${context.subclass} extends ${context.base} {
                 ResourceAddress address = ${form.metadata.name}Template.resolve(mbuiContext.statementContext(), ${form.nameResolver});
                 Composite composite = mbuiContext.operationFactory().fromChangeSet(address, changedValues);
                 mbuiContext.dispatcher().execute(composite, (CompositeResult result) -> {
+                    presenter.reload();
                     MessageEvent.fire(mbuiContext.eventBus(), Message.success(mbuiContext.resources().messages().modifyResourceSuccess(${form.title}, ${form.nameResolver})));
                 });
             })
@@ -79,6 +82,7 @@ final class ${context.subclass} extends ${context.base} {
                 ResourceAddress address = ${form.metadata.name}Template.resolve(mbuiContext.statementContext());
                 Composite composite = mbuiContext.operationFactory().fromChangeSet(address, changedValues);
                 mbuiContext.dispatcher().execute(composite, (CompositeResult result) -> {
+                    presenter.reload();
                     MessageEvent.fire(mbuiContext.eventBus(), Message.success(mbuiContext.resources().messages().modifySingleResourceSuccess(${form.title})));
                 });
             })
@@ -99,6 +103,47 @@ final class ${context.subclass} extends ${context.base} {
 
         <#list context.dataTables as table>
         Options<${table.typeParameter}> ${table.name}Options = new ModelNodeTable.Builder<${table.typeParameter}>(${table.metadata.name})
+            <#list table.actions as action>
+                <#if action.knownHandler>
+                    <#switch action.handlerRef>
+                        <#case "ADD_RESOURCE">
+                            <#if action.attributes?has_content>
+                                <#if action.hasAttributesWithSuggestionHandlers || action.hasUnboundAttributes>
+            .button(mbuiContext.resources().constants().add(), (event, api) -> {
+                ModelNodeForm<${table.typeParameter}> form = new ModelNodeForm.Builder<${table.typeParameter}>(IdBuilder.build("${table.selector}", "form", "add"), ${table.metadata.name})
+                    .addFromRequestProperties()
+                    .unsorted()
+                                    <#if action.hasUnboundAttributes>
+                                        <#list action.unboundAttributes as unboundAttribute>
+                                        </#list>
+                                    <#else>
+                                    </#if>
+                    .build();
+            })
+                                <#else>
+            .button(mbuiContext.tableButtonFactory().add(IdBuilder.build("${table.selector}", "add"), ${table.title},
+                ${table.metadata.name}Template,
+                () -> presenter.reload())),
+                                    <#list action.attributes as attribute>
+                "${attribute.name}"<#if attribute_has_next>, </#if>
+                                    </#list>
+                                </#if>
+                            <#else>
+            .button(mbuiContext.tableButtonFactory().add(IdBuilder.build("${table.selector}", "add"), ${table.title},
+                ${table.metadata.name}Template,
+                () -> presenter.reload()))
+                            </#if>
+                            <#break>
+                        <#case "REMOVE_RESOURCE">
+            .button(mbuiContext.tableButtonFactory().remove(${table.title}, ${table.metadata.name}Template,
+                (api) -> ${action.nameResolver},
+                () -> presenter.reload()))
+                            <#break>
+                    </#switch>
+                <#else>
+            .button(${action.title}, <#if action.scope??>Button.Scope.${action.scope}, </#if>(event, api) -> ${action.handler})
+                </#if>
+            </#list>
             <#if table.onlySimpleColumns>
             .columns(<#list table.columns as column>"${column.name}"<#if column_has_next>, </#if></#list>)
             <#else>

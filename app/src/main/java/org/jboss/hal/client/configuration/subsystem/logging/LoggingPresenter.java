@@ -22,20 +22,19 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import elemental.client.Browser;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
-import org.jboss.hal.core.mvp.HasPresenter;
+import org.jboss.hal.core.mbui.MbuiPresenter;
+import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
-import org.jboss.hal.core.mvp.PatternFlyView;
-import org.jboss.hal.core.mvp.SubsystemPresenter;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
@@ -47,7 +46,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 /**
  * @author Harald Pehl
  */
-public class LoggingPresenter extends SubsystemPresenter<LoggingPresenter.MyView, LoggingPresenter.MyProxy> {
+public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, LoggingPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -59,7 +58,7 @@ public class LoggingPresenter extends SubsystemPresenter<LoggingPresenter.MyView
             CUSTOM_FORMATTER_ADDRESS, PATTERN_FORMATTER_ADDRESS})
     public interface MyProxy extends ProxyPlace<LoggingPresenter> {}
 
-    public interface MyView extends PatternFlyView, HasVerticalNavigation, HasPresenter<LoggingPresenter> {
+    public interface MyView extends MbuiView<LoggingPresenter>, HasVerticalNavigation {
         void updateRootLogger(ModelNode modelNode);
         void updateLogger(List<NamedNode> items);
 
@@ -80,8 +79,6 @@ public class LoggingPresenter extends SubsystemPresenter<LoggingPresenter.MyView
 
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
-    private final OperationFactory operationFactory;
-    private final Resources resources;
 
     @Inject
     public LoggingPresenter(final EventBus eventBus,
@@ -89,14 +86,10 @@ public class LoggingPresenter extends SubsystemPresenter<LoggingPresenter.MyView
             final MyProxy proxy,
             final Finder finder,
             final StatementContext statementContext,
-            final Dispatcher dispatcher,
-            final OperationFactory operationFactory,
-            final Resources resources) {
+            final Dispatcher dispatcher) {
         super(eventBus, view, proxy, finder);
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
-        this.operationFactory = operationFactory;
-        this.resources = resources;
     }
 
     @Override
@@ -108,7 +101,7 @@ public class LoggingPresenter extends SubsystemPresenter<LoggingPresenter.MyView
     @Override
     protected void onReset() {
         super.onReset();
-        loadData();
+        reload();
     }
 
     @Override
@@ -117,7 +110,8 @@ public class LoggingPresenter extends SubsystemPresenter<LoggingPresenter.MyView
                 .subsystemPath(statementContext.selectedProfile(), LOGGING_SUBSYSTEM_TEMPLATE.lastValue());
     }
 
-    private void loadData() {
+    @Override
+    protected void reload() {
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
                 LOGGING_SUBSYSTEM_TEMPLATE.resolve(statementContext))
                 .param(RECURSIVE_DEPTH, 2)
@@ -140,5 +134,9 @@ public class LoggingPresenter extends SubsystemPresenter<LoggingPresenter.MyView
             getView().updatePatternFormatter(asNamedNodes(failSafePropertyList(result, PATTERN_FORMATTER_TEMPLATE.lastKey())));
             // @formatter:on
         });
+    }
+
+    void launchAddFileHandlerDialog() {
+        Browser.getWindow().alert(Names.NYI);
     }
 }

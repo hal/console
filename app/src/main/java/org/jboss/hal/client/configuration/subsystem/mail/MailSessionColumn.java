@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.mail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -25,7 +26,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -34,10 +34,7 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mbui.dialog.NameItem;
-import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -97,15 +94,9 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
         addColumnAction(columnActionFactory.add(IdBuilder.build(Ids.MAIL_SESSION, ADD), Names.MAIL_SESSION,
                 column -> {
                     Metadata metadata = metadataRegistry.lookup(MailSessionPresenter.MAIL_SESSION_TEMPLATE);
-                    Form<ModelNode> form = new ModelNodeForm.Builder<>(
-                            IdBuilder.build(Ids.MAIL_SESSION, ADD, "form"), metadata)
-                            .addFromRequestProperties()
-                            .unboundFormItem(new NameItem(), 0)
-                            .include(ModelDescriptionConstants.JNDI_NAME, "from", "debug")
-                            .unsorted()
-                            .build();
-                    AddResourceDialog dialog = new AddResourceDialog(
-                            resources.messages().addResourceTitle(Names.MAIL_SESSION), form,
+                    AddResourceDialog dialog = new AddResourceDialog(IdBuilder.build(Ids.MAIL_SESSION, ADD, "form"),
+                            resources.messages().addResourceTitle(Names.MAIL_SESSION), metadata,
+                            Arrays.asList(ModelDescriptionConstants.JNDI_NAME, "from", "debug"), //NON-NLS
                             (name, modelNode) -> {
                                 if (modelNode != null) {
                                     ResourceAddress address = MailSessionPresenter.MAIL_SESSION_TEMPLATE

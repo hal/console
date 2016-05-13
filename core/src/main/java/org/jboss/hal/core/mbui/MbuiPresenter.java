@@ -15,24 +15,21 @@
  */
 package org.jboss.hal.core.mbui;
 
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.mvp.SubsystemPresenter;
 
 /**
- * Base class for views generated using {@code @MbuiView}.
- *
  * @author Harald Pehl
  */
-public abstract class MbuiViewImpl<P extends MbuiPresenter> extends PatternFlyViewImpl implements MbuiView<P> {
+public abstract class MbuiPresenter<V extends MbuiView, Proxy_ extends ProxyPlace<?>>
+        extends SubsystemPresenter<V, Proxy_> {
 
-    protected final MbuiContext mbuiContext;
-    protected P presenter;
-
-    protected MbuiViewImpl(final MbuiContext mbuiContext) {
-        this.mbuiContext = mbuiContext;
+    protected MbuiPresenter(final EventBus eventBus, final V view,
+            final Proxy_ proxy_, final Finder finder) {
+        super(eventBus, view, proxy_, finder);
     }
 
-    @Override
-    public void setPresenter(final P presenter) {
-        this.presenter = presenter;
-    }
+    protected abstract void reload();
 }

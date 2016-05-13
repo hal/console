@@ -15,24 +15,11 @@
  */
 package org.jboss.hal.core.mbui;
 
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.HasPresenter;
+import org.jboss.hal.core.mvp.PatternFlyView;
 
 /**
- * Base class for views generated using {@code @MbuiView}.
- *
  * @author Harald Pehl
  */
-public abstract class MbuiViewImpl<P extends MbuiPresenter> extends PatternFlyViewImpl implements MbuiView<P> {
-
-    protected final MbuiContext mbuiContext;
-    protected P presenter;
-
-    protected MbuiViewImpl(final MbuiContext mbuiContext) {
-        this.mbuiContext = mbuiContext;
-    }
-
-    @Override
-    public void setPresenter(final P presenter) {
-        this.presenter = presenter;
-    }
+public interface MbuiView<P extends MbuiPresenter> extends HasPresenter<P>, PatternFlyView {
 }

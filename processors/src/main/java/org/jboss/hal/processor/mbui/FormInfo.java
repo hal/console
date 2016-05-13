@@ -25,29 +25,6 @@ import static java.util.stream.Collectors.toList;
  */
 public class FormInfo extends MbuiElementInfo {
 
-    public static class Attribute {
-
-        private final String name;
-        private final List<String> suggestHandlerTemplates;
-
-        Attribute(final String name) {
-            this.name = name;
-            this.suggestHandlerTemplates = new ArrayList<>();
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public List<String> getSuggestHandlerTemplates() {
-            return suggestHandlerTemplates;
-        }
-
-        void addSuggestHandlerTemplate(String template) {
-            suggestHandlerTemplates.add(template);
-        }
-    }
-
 
     private final String typeParameter;
     private final MetadataInfo metadata;

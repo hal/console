@@ -23,8 +23,6 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jdom2.Element;
 import org.jdom2.xpath.XPathFactory;
 
-import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
-
 /**
  * @author Harald Pehl
  */
@@ -48,12 +46,12 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
             if (title == null) {
                 title = new LabelBuilder().label(template.lastKey());
             }
+            if (nameResolver != null && !Handlebars.isExpression(nameResolver)) {
+                processor.error(field, "Name resolver in form#%s has to be an expression.", selector);
+            }
             if ("*".equals(template.lastValue()) && nameResolver == null) {
                 processor.error(field, "Auto save is enabled for form#%s and related metadata address ends in \"*\", " +
                         "but no name resolver is is provided.", selector);
-            }
-            if (nameResolver != null && !Handlebars.isExpression(nameResolver)) {
-                processor.error(field, "Name resolver in form#%s has to be an expression.", selector);
             }
         }
 
@@ -63,26 +61,7 @@ class FormProcessor extends AbstractMbuiElementProcessor implements MbuiElementP
 
         org.jdom2.Element attributesContainer = element.getChild("attributes");
         if (attributesContainer != null) {
-            for (org.jdom2.Element attributeElement : attributesContainer.getChildren("attribute")) {
-                String name = attributeElement.getAttributeValue("name");
-                if (name == null) {
-                    processor.error(field, "Invalid attribute \"%s\" in form#%s: name is mandatory.",
-                            xmlAsString(attributeElement), selector);
-                }
-
-                FormInfo.Attribute attribute = new FormInfo.Attribute(name);
-                org.jdom2.Element suggestHandler = attributeElement.getChild("suggest-handler");
-                if (suggestHandler != null) {
-                    org.jdom2.Element templatesContainer = suggestHandler.getChild("templates");
-                    if (templatesContainer != null) {
-                        for (org.jdom2.Element templateElement : templatesContainer.getChildren("template")) {
-                            String address = templateElement.getAttributeValue("address");
-                            attribute.addSuggestHandlerTemplate(address);
-                        }
-                    }
-                }
-                formInfo.addAttribute(attribute);
-            }
+            processAttributes(field, attributesContainer).forEach(formInfo::addAttribute);
         }
     }
 }

@@ -28,7 +28,6 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
@@ -36,13 +35,11 @@ import org.jboss.hal.ballroom.typeahead.TypeaheadProvider;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.core.mvp.SubsystemPresenter;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -204,20 +201,10 @@ public class MailSessionPresenter
                 }
 
                 Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE);
-                Form<ModelNode> form = new ModelNodeForm.Builder<>(
-                        IdBuilder.build(ModelDescriptionConstants.SERVER, ModelDescriptionConstants.ADD, "form"),
-                        metadata)
-                        .unboundFormItem(serverTypeItem, 0)
-                        .include(MailSession.OUTBOUND_SOCKET_BINDING_REF, "username", "password", "ssl", "tls")
-                        .addFromRequestProperties()
-                        .unsorted()
-                        .build();
-
-                form.getFormItem(MailSession.OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
-                        new TypeaheadProvider().from(socketBindingResourceAddress));
-
                 AddResourceDialog dialog = new AddResourceDialog(
-                        resources.messages().addResourceTitle(Names.SERVER), form,
+                        IdBuilder.build(ModelDescriptionConstants.SERVER, ModelDescriptionConstants.ADD, "form"),
+                        resources.messages().addResourceTitle(Names.SERVER), metadata,
+                        asList(MailSession.OUTBOUND_SOCKET_BINDING_REF, "username", "password", "ssl", "tls"), //NON-NLS
                         (name, modelNode) -> {
 
                             String serverType = serverTypeItem.getValue().toLowerCase();
@@ -235,6 +222,8 @@ public class MailSessionPresenter
                                 loadMailSession();
                             });
                         });
+                dialog.getForm().getFormItem(MailSession.OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
+                        new TypeaheadProvider().from(socketBindingResourceAddress));
                 dialog.show();
             }
         });

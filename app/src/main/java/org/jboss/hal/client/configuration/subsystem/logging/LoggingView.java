@@ -32,8 +32,8 @@ import org.jboss.hal.spi.MbuiView;
  * @author Harald Pehl
  */
 @MbuiView
-@SuppressWarnings("DuplicateStringLiteralInspection")
-public abstract class LoggingView extends MbuiViewImpl implements LoggingPresenter.MyView {
+@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral"})
+public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> implements LoggingPresenter.MyView {
 
     public static LoggingView create(final MbuiContext mbuiContext) {
         return new Mbui_LoggingView(mbuiContext);
@@ -55,15 +55,8 @@ public abstract class LoggingView extends MbuiViewImpl implements LoggingPresent
     @MbuiElement("logging-formatter-pattern-table") DataTable<NamedNode> patternFormatterTable;
     @MbuiElement("logging-formatter-pattern-form") Form<NamedNode> patternFormatterForm;
 
-    protected LoggingPresenter presenter;
-
     LoggingView(final MbuiContext mbuiContext) {
         super(mbuiContext);
-    }
-
-    @Override
-    public void setPresenter(final LoggingPresenter presenter) {
-        this.presenter = presenter;
     }
 
     @Override
@@ -83,11 +76,13 @@ public abstract class LoggingView extends MbuiViewImpl implements LoggingPresent
 
     @Override
     public void updateAsyncHandler(final List<NamedNode> items) {
+        navigation.updateBadge("logging-handler-async-item", items.size());
         asyncHandlerTable.api().clear().add(items).refresh(RefreshMode.RESET);
     }
 
     @Override
     public void updateConsoleHandler(final List<NamedNode> items) {
+        navigation.updateBadge("logging-handler-console-item", items.size());
         consoleHandlerTable.api().clear().add(items).refresh(RefreshMode.RESET);
     }
 
@@ -97,6 +92,7 @@ public abstract class LoggingView extends MbuiViewImpl implements LoggingPresent
 
     @Override
     public void updateFileHandler(final List<NamedNode> items) {
+        navigation.updateBadge("logging-handler-file-item", items.size());
         fileHandlerTable.api().clear().add(items).refresh(RefreshMode.RESET);
     }
 
@@ -122,11 +118,13 @@ public abstract class LoggingView extends MbuiViewImpl implements LoggingPresent
 
     @Override
     public void updateCustomFormatter(final List<NamedNode> items) {
+        navigation.updateBadge("logging-formatter-custom-item", items.size());
         customFormatterTable.api().clear().add(items).refresh(RefreshMode.RESET);
     }
 
     @Override
     public void updatePatternFormatter(final List<NamedNode> items) {
+        navigation.updateBadge("logging-formatter-pattern-item", items.size());
         patternFormatterTable.api().clear().add(items).refresh(RefreshMode.RESET);
     }
 }
