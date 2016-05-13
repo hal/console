@@ -72,18 +72,21 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     @Override
     public void updateLogger(final List<NamedNode> items) {
         loggerTable.api().clear().add(items).refresh(RefreshMode.RESET);
+        loggerForm.clear();
     }
 
     @Override
     public void updateAsyncHandler(final List<NamedNode> items) {
         navigation.updateBadge("logging-handler-async-item", items.size());
         asyncHandlerTable.api().clear().add(items).refresh(RefreshMode.RESET);
+        asyncHandlerForm.clear();
     }
 
     @Override
     public void updateConsoleHandler(final List<NamedNode> items) {
         navigation.updateBadge("logging-handler-console-item", items.size());
         consoleHandlerTable.api().clear().add(items).refresh(RefreshMode.RESET);
+        consoleHandlerForm.clear();
     }
 
     @Override
@@ -94,6 +97,7 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     public void updateFileHandler(final List<NamedNode> items) {
         navigation.updateBadge("logging-handler-file-item", items.size());
         fileHandlerTable.api().clear().add(items).refresh(RefreshMode.RESET);
+        fileHandlerForm.clear();
     }
 
     @Override
@@ -120,11 +124,13 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     public void updateCustomFormatter(final List<NamedNode> items) {
         navigation.updateBadge("logging-formatter-custom-item", items.size());
         customFormatterTable.api().clear().add(items).refresh(RefreshMode.RESET);
+        customFormatterForm.clear();
     }
 
     @Override
     public void updatePatternFormatter(final List<NamedNode> items) {
         navigation.updateBadge("logging-formatter-pattern-item", items.size());
         patternFormatterTable.api().clear().add(items).refresh(RefreshMode.RESET);
+        patternFormatterForm.clear();
     }
 }

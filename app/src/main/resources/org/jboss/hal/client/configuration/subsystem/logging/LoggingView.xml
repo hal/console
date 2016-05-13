@@ -60,7 +60,6 @@
                     <actions>
                         <action handler-ref="add-resource">
                             <attributes>
-                                <attribute name="name" unbound="true"/>
                                 <attribute name="filter-spec"/>
                                 <attribute name="handlers">
                                     <suggest-handler>
@@ -131,7 +130,6 @@
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
-                                    <attribute name="name" unbound="true"/>
                                     <attribute name="autoflush"/>
                                     <attribute name="enabled"/>
                                     <attribute name="encoding"/>
@@ -244,7 +242,6 @@
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
-                                    <attribute name="name" unbound="true"/>
                                     <attribute name="level"/>
                                     <attribute name="subhandlers">
                                         <suggest-handler>

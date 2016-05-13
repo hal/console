@@ -25,7 +25,6 @@ import static java.util.stream.Collectors.toList;
  */
 public class FormInfo extends MbuiElementInfo {
 
-
     private final String typeParameter;
     private final MetadataInfo metadata;
     private final String title;

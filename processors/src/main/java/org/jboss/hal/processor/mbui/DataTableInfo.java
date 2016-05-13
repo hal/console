@@ -20,8 +20,6 @@ import java.util.List;
 
 import org.jboss.hal.ballroom.table.Button;
 
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -106,23 +104,14 @@ public class DataTableInfo extends MbuiElementInfo {
             return attributes;
         }
 
-        public boolean isHasUnboundAttributes() {
-            return !attributes.stream().filter(Attribute::isUnbound).collect(toList()).isEmpty();
-        }
-
-        public List<Attribute> getBoundAttributes() {
-            return attributes.stream().collect(groupingBy(Attribute::isUnbound)).getOrDefault(true, emptyList());
-        }
-
-        public List<Attribute> getUnboundAttributes() {
-            return attributes.stream().collect(groupingBy(Attribute::isUnbound)).getOrDefault(false, emptyList());
-        }
-
         public boolean isHasAttributesWithSuggestionHandlers() {
-            return !attributes.stream()
+            return !getSuggestHandlerAttributes().isEmpty();
+        }
+
+        public List<Attribute> getSuggestHandlerAttributes() {
+            return attributes.stream()
                     .filter(attribute -> !attribute.getSuggestHandlerTemplates().isEmpty())
-                    .collect(toList())
-                    .isEmpty();
+                    .collect(toList());
         }
 
         void addAttribute(Attribute attribute) {

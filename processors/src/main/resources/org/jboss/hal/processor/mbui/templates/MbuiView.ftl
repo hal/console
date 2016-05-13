@@ -11,7 +11,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.TemplateUtil;
-import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.typeahead.TypeaheadProvider;
@@ -19,10 +18,12 @@ import org.jboss.hal.ballroom.typeahead.TypeaheadProvider;
 import org.jboss.hal.ballroom.VerticalNavigation;
 </#if>
 import org.jboss.hal.core.mbui.MbuiContext;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
+import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
@@ -31,6 +32,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.Arrays.asList;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 
 /*
  * WARNING! This class is generated. Do not modify.
@@ -95,7 +97,7 @@ final class ${context.subclass} extends ${context.base} {
                 <#else>
                 </#if>
         List<AddressTemplate> ${form.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
-                AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
+            AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
         List<ResourceAddress> ${form.name}Address = Lists.transform(${form.name}Templates, template -> template.resolve(mbuiContext.statementContext()));
         ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(new TypeaheadProvider().from(${form.name}Address));
             </#list>
@@ -108,17 +110,33 @@ final class ${context.subclass} extends ${context.base} {
                     <#switch action.handlerRef>
                         <#case "ADD_RESOURCE">
                             <#if action.attributes?has_content>
-                                <#if action.hasAttributesWithSuggestionHandlers || action.hasUnboundAttributes>
+                                <#if action.hasAttributesWithSuggestionHandlers>
             .button(mbuiContext.resources().constants().add(), (event, api) -> {
-                ModelNodeForm<${table.typeParameter}> form = new ModelNodeForm.Builder<${table.typeParameter}>(IdBuilder.build("${table.selector}", "form", "add"), ${table.metadata.name})
-                    .addFromRequestProperties()
-                    .unsorted()
-                                    <#if action.hasUnboundAttributes>
-                                        <#list action.unboundAttributes as unboundAttribute>
-                                        </#list>
-                                    <#else>
-                                    </#if>
-                    .build();
+                AddResourceDialog dialog = new AddResourceDialog(
+                    IdBuilder.build("${table.selector}", "add"),
+                    mbuiContext.resources().messages().addResourceTitle(${table.title}),
+                    ${table.metadata.name},
+                    asList(<#list action.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>),
+                    (name, modelNode) -> {
+                        ResourceAddress address = ${table.metadata.name}Template.resolve(mbuiContext.statementContext(), name);
+                        Operation operation = new Operation.Builder(ADD, address).payload(modelNode).build();
+                        mbuiContext.dispatcher().execute(operation, result -> {
+                            presenter.reload();
+                            MessageEvent.fire(mbuiContext.eventBus(), Message.success(
+                                mbuiContext.resources().messages().addResourceSuccess(${table.title}, name)));
+                        });
+                    });
+                                    <#list action.suggestHandlerAttributes as attribute>
+                                        <#if attribute.suggestHandlerTemplates?size == 1>
+                    ResourceAddress ${table.name}Address = AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}").resolve(mbuiContext.statementContext());
+                                        <#else>
+                                        </#if>
+                    List<AddressTemplate> ${table.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
+                        AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
+                    List<ResourceAddress> ${table.name}Address = Lists.transform(${table.name}Templates, template -> template.resolve(mbuiContext.statementContext()));
+                    dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(new TypeaheadProvider().from(${table.name}Address));
+                                    </#list>
+                    dialog.show();
             })
                                 <#else>
             .button(mbuiContext.tableButtonFactory().add(IdBuilder.build("${table.selector}", "add"), ${table.title},

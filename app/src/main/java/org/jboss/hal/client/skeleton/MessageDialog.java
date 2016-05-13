@@ -50,7 +50,8 @@ public class MessageDialog {
                 .span().css(pullRight, timestamp).textContent(message.getTimestamp()).end()
                 .end();
         if (message.getDetails() != null) {
-            elementBuilder.start("pre").innerHtml(SafeHtmlUtils.fromString(message.getDetails())).end();
+            elementBuilder.start("pre").css(messageDetailsPre).innerHtml(SafeHtmlUtils.fromString(message.getDetails()))
+                    .end();
         }
 
         dialog = new Dialog.Builder(CONSTANTS.message())

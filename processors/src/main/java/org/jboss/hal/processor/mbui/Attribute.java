@@ -25,13 +25,11 @@ public class Attribute {
 
     private final String name;
     private final int position;
-    private final boolean unbound;
     private final List<String> suggestHandlerTemplates;
 
-    Attribute(final String name, final int position, final boolean unbound) {
+    Attribute(final String name, final int position) {
         this.name = name;
         this.position = position;
-        this.unbound = unbound;
         this.suggestHandlerTemplates = new ArrayList<>();
     }
 
@@ -41,10 +39,6 @@ public class Attribute {
 
     public int getPosition() {
         return position;
-    }
-
-    public boolean isUnbound() {
-        return unbound;
     }
 
     public List<String> getSuggestHandlerTemplates() {

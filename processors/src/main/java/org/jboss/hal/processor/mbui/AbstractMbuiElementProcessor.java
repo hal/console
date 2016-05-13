@@ -83,12 +83,11 @@ abstract class AbstractMbuiElementProcessor implements MbuiElementProcessor {
 
         for (org.jdom2.Element attributeElement : attributesContainer.getChildren("attribute")) {
             String name = attributeElement.getAttributeValue("name");
-            boolean unbound = Boolean.parseBoolean(attributeElement.getAttributeValue("unbound"));
             if (name == null) {
                 processor.error(field, "Invalid attribute \"%s\": name is mandatory.", xmlAsString(attributeElement));
             }
 
-            Attribute attribute = new Attribute(name, position, unbound);
+            Attribute attribute = new Attribute(name, position);
             org.jdom2.Element suggestHandler = attributeElement.getChild("suggest-handler");
             if (suggestHandler != null) {
                 org.jdom2.Element templatesContainer = suggestHandler.getChild("templates");
