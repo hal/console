@@ -281,8 +281,13 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
             }
             builder.span().css(key);
             if (context.getToken() != null) {
-                String href = "#" + tokenFormatter().toHistoryToken(singletonList(context.toPlaceRequest()));
-                builder.a(href).textContent(segment.getBreadcrumbKey()).end();
+                PlaceRequest keyRequest = new PlaceRequest.Builder()
+                        .nameToken(context.getToken())
+                        .with("path", currentPath.toString())
+                        .build();
+                builder.a().css(clickable).on(click, event -> presenter.goTo(keyRequest))
+                        .textContent(segment.getBreadcrumbKey())
+                        .end();
             } else {
                 builder.textContent(segment.getBreadcrumbKey());
             }
