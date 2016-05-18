@@ -190,7 +190,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String metadataError();
     String modelBrowser();
 
-    String name();
     String next();
     String no();
     String noAttributes();

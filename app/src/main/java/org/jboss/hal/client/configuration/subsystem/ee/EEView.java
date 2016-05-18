@@ -262,7 +262,7 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
 
         String baseId = IdBuilder.build(EE, "service", template.lastKey());
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
-                .column(NAME, resources.constants().name(), (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, t, row, meta) -> row.getName())
 
                 .button(tableButtonFactory.add(
                         IdBuilder.build(baseId, "add"), type,

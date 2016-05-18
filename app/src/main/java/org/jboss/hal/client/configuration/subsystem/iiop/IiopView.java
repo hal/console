@@ -13,40 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration;
-
-import java.util.List;
+package org.jboss.hal.client.configuration.subsystem.iiop;
 
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
-import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
-
-import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 
 /**
  * @author Harald Pehl
  */
 @MbuiView
-public abstract class PathsView extends MbuiViewImpl<PathsPresenter> implements PathsPresenter.MyView {
+public abstract class IiopView extends MbuiViewImpl<IiopPresenter> implements IiopPresenter.MyView {
 
-    public static PathsView create(final MbuiContext mbuiContext) {
-        return new Mbui_PathsView(mbuiContext);
+    public static IiopView create(final MbuiContext mbuiContext) {
+        return new Mbui_IiopView(mbuiContext);
     }
 
-    @MbuiElement("path-table") DataTable<NamedNode> table;
-    @MbuiElement("path-form") Form<NamedNode> form;
+    @MbuiElement("iiop-openjdk-form") Form<ModelNode> form;
 
-    PathsView(final MbuiContext mbuiContext) {
+    IiopView(final MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 
     @Override
-    public void update(final List<NamedNode> paths) {
-        table.api().clear().add(paths).refresh(RESET);
-        form.clear(); // TODO restore selection, set selection to newly created item or clear selection after remove
+    public void update(final ModelNode modelNode) {
+        form.view(modelNode);
+    }
+
+    @Override
+    public void clear() {
+        form.clear();
     }
 }

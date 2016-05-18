@@ -122,7 +122,6 @@ class DataTableProcessor extends AbstractMbuiElementProcessor implements MbuiEle
         if (columnsContainer != null) {
             for (org.jdom2.Element columnElement : columnsContainer.getChildren("column")) {
                 String name = columnElement.getAttributeValue("name");
-                String columnTitle = columnElement.getAttributeValue("title");
                 String value = columnElement.getAttributeValue("value");
 
                 if (name == null) {
@@ -135,13 +134,8 @@ class DataTableProcessor extends AbstractMbuiElementProcessor implements MbuiEle
                                 "Invalid column \"%s\" in data-table#%s: value has to be an expression.",
                                 xmlAsString(columnElement), selector);
                     }
-                    if (columnTitle == null) {
-                        processor.error(field,
-                                "Invalid column \"%s\" in data-table#%s: if value is given, title is mandatory.",
-                                xmlAsString(columnElement), selector);
-                    }
                 }
-                DataTableInfo.Column column = new DataTableInfo.Column(name, columnTitle, value);
+                DataTableInfo.Column column = new DataTableInfo.Column(name, value);
                 tableInfo.addColumn(column);
             }
         }

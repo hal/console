@@ -19,8 +19,6 @@ import java.util.List;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Types;
 
-import com.google.common.escape.Escaper;
-import com.google.common.escape.Escapers;
 import org.jdom2.Element;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
@@ -33,12 +31,6 @@ import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
  */
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 class VerticalNavigationProcessor extends AbstractMbuiElementProcessor implements MbuiElementProcessor {
-
-    private static final Escaper JAVA_STRING_ESCAPER = Escapers.builder()
-            .addEscape('"', "\\\"")
-            .addEscape('\n', "")
-            .addEscape('\r', "")
-            .build();
 
     VerticalNavigationProcessor(final MbuiViewProcessor processor, final Types typeUtils,
             final XPathFactory xPathFactory) {
@@ -72,6 +64,7 @@ class VerticalNavigationProcessor extends AbstractMbuiElementProcessor implement
         }
         VerticalNavigationInfo.Item item = new VerticalNavigationInfo.Item(id, title, icon);
 
+        // nested sub-items or metadata?
         List<Element> subItems = element.getChildren("sub-item");
         if (!subItems.isEmpty()) {
             if (level > 0) {
@@ -80,30 +73,7 @@ class VerticalNavigationProcessor extends AbstractMbuiElementProcessor implement
             subItems.forEach(subItemElement -> item.addSubItem(createItem(field, subItemElement, context, level + 1)));
 
         } else {
-            MetadataInfo metadataInfo = null;
-            org.jdom2.Element contentElement = element;
-            if (element.getChild(XmlTags.METADATA) != null) {
-                contentElement = element.getChild(XmlTags.METADATA);
-                metadataInfo = context.getMetadataInfo(contentElement.getAttributeValue("address"));
-            }
-            StringBuilder htmlBuilder = new StringBuilder();
-            for (org.jdom2.Element childElement : contentElement.getChildren()) {
-                if (XmlTags.TABLE.equals(childElement.getName()) || XmlTags.FORM.equals(childElement.getName())) {
-                    if (htmlBuilder.length() != 0) {
-                        String html = htmlBuilder.toString();
-                        htmlBuilder.setLength(0);
-                        if (metadataInfo != null) {
-                            html = html.replace("metadata", metadataInfo.getName());
-                        }
-                        item.addContent(VerticalNavigationInfo.Content.html(html));
-                    }
-                    item.addContent(VerticalNavigationInfo.Content.reference(childElement.getAttributeValue("id")));
-
-                } else {
-                    // do not directly add the html, but collect it until a table or form is about to be processed
-                    htmlBuilder.append(JAVA_STRING_ESCAPER.escape(xmlAsString(childElement)));
-                }
-            }
+            Content.parse(element, context).forEach(item::addContent);
         }
         return item;
     }

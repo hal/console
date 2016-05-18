@@ -153,7 +153,7 @@
                                     name-resolver="{{api.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
-                            <column name="name" title="{{mbuiContext.resources().constants().name()}}"/>
+                            <column name="name"/>
                             <column name="level"/>
                         </columns>
                     </table>
@@ -200,7 +200,7 @@
                                     name-resolver="{{api.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
-                            <column name="name" title="{{mbuiContext.resources().constants().name()}}"/>
+                            <column name="name"/>
                             <column name="level"/>
                         </columns>
                     </table>
@@ -267,7 +267,7 @@
                                     name-resolver="{{api.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
-                            <column name="name" title="{{mbuiContext.resources().constants().name()}}"/>
+                            <column name="name"/>
                             <column name="level"/>
                         </columns>
                     </table>
@@ -297,6 +297,7 @@
                     </form>
                 </metadata>
             </sub-item>
+
             <!-- TODO Add sub items for periodic, periodic-size, size, custom and syslog handlers -->
         </item>
 
@@ -318,8 +319,7 @@
                         <columns>
                             <!-- log formatter resources do not have a name attribute,
                             so we need to provide a value which calls NamedNode.getName() -->
-                            <column name="name" title="{{mbuiContext.resources().constants().name()}}"
-                                    value="{{row.getName()}}"/>
+                            <column name="name" value="{{row.getName()}}"/>
                             <column name="pattern"/>
                         </columns>
                     </table>
@@ -350,8 +350,7 @@
                         <columns>
                             <!-- log formatter resources do have not a name attribute,
                             so we need to provide a value which calls NamedNode.getName() -->
-                            <column name="name" title="{{mbuiContext.resources().constants().name()}}"
-                                    value="{{row.getName()}}"/>
+                            <column name="name" value="{{row.getName()}}"/>
                         </columns>
                     </table>
                     <form id="logging-formatter-custom-form" auto-save="true"

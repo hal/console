@@ -15,58 +15,27 @@
  */
 package org.jboss.hal.client.configuration;
 
-import javax.inject.Inject;
-
-import elemental.dom.Element;
-import org.jboss.hal.ballroom.LayoutBuilder;
-import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.mbui.MbuiContext;
+import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.MetadataRegistry;
-
-import static org.jboss.hal.resources.Ids.PATHS_FORM;
-import static org.jboss.hal.resources.Names.INTERFACE;
+import org.jboss.hal.spi.MbuiElement;
+import org.jboss.hal.spi.MbuiView;
 
 /**
  * @author Harald Pehl
  */
-public class InterfaceView extends PatternFlyViewImpl implements InterfacePresenter.MyView {
+@MbuiView
+public abstract class InterfaceView extends MbuiViewImpl<InterfacePresenter> implements InterfacePresenter.MyView {
 
-    private final ModelNodeForm<ModelNode> form;
-//    private final Dialog dialog;
-    private InterfacePresenter presenter;
-
-    @Inject
-    public InterfaceView(MetadataRegistry metadataRegistry) {
-
-        Metadata metadata = metadataRegistry.lookup(InterfacePresenter.ROOT_TEMPLATE);
-//        new Dialog.Builder(resources.messages())
-
-        form = new ModelNodeForm.Builder<>(PATHS_FORM, metadata)
-                .exclude("resolved-address")
-                .onSave((form, changedValues) -> presenter.saveInterface(changedValues))
-                .build();
-
-        // @formatter:off
-        Element element = new LayoutBuilder()
-            .row()
-                .column()
-                    .header(INTERFACE).end()
-                    .add(form.asElement())
-                .end()
-            .end()
-        .build();
-        // @formatter:on
-
-        registerAttachable(form);
-        initElement(element);
-
+    public static InterfaceView create(final MbuiContext mbuiContext) {
+        return new Mbui_InterfaceView(mbuiContext);
     }
 
-    @Override
-    public void setPresenter(final InterfacePresenter presenter) {
-        this.presenter = presenter;
+    @MbuiElement("interface-form") Form<ModelNode> form;
+
+    InterfaceView(final MbuiContext mbuiContext) {
+        super(mbuiContext);
     }
 
     @Override

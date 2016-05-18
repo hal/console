@@ -28,53 +28,6 @@ import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
  */
 public class VerticalNavigationInfo extends MbuiElementInfo {
 
-    public static class Content {
-
-        private static int counter = 0;
-
-        static Content reference(String reference) {
-            return new Content(reference, null);
-        }
-
-        static Content html(String html) {
-            return new Content(null, html);
-        }
-
-        private String reference;
-        private final String name;
-        private final String html;
-        private final Map<String, String> handlebars;
-
-        private Content(final String reference, final String html) {
-            this.reference = reference;
-            this.name = "html" + counter; //NON-NLS
-            this.html = html;
-            this.handlebars = Handlebars.parse(html);
-            counter++;
-        }
-
-        public String getReference() {
-            return reference;
-        }
-
-        public void setReference(final String reference) {
-            this.reference = reference;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getHtml() {
-            return html;
-        }
-
-        public Map<String, String> getHandlebars() {
-            return handlebars;
-        }
-    }
-
-
     public static class Item {
 
         private final String id;
@@ -111,23 +64,6 @@ public class VerticalNavigationInfo extends MbuiElementInfo {
             return icon;
         }
 
-        public List<Content> getContent() {
-            return content;
-        }
-
-        void addContent(Content content) {
-            this.content.add(content);
-        }
-
-        Content findReference(final String id) {
-            for (Content c : content) {
-                if (id.equals(c.getReference())) {
-                    return c;
-                }
-            }
-            return null;
-        }
-
         public List<Item> getSubItems() {
             return subItems;
         }
@@ -139,6 +75,23 @@ public class VerticalNavigationInfo extends MbuiElementInfo {
 
         Item getItem(String id) {
             return subItemsById.get(id);
+        }
+
+        public List<Content> getContent() {
+            return content;
+        }
+
+        void addContent(Content content) {
+            this.content.add(content);
+        }
+
+        Content findContent(final String id) {
+            for (Content c : content) {
+                if (id.equals(c.getReference())) {
+                    return c;
+                }
+            }
+            return null;
         }
     }
 

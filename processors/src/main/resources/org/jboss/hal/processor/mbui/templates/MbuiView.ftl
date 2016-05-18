@@ -46,9 +46,7 @@ final class ${context.subclass} extends ${context.base} {
     <#list context.metadataInfos as metadataInfo>
     private final Metadata ${metadataInfo.name};
     </#list>
-    <#if context.verticalNavigation??>
     private final Map<String, Element> handlebarElements;
-    </#if>
 
     ${context.subclass}(MbuiContext mbuiContext<#list context.abstractProperties as abstractProperty>, ${abstractProperty.type} ${abstractProperty.field}</#list>) {
         super(mbuiContext);
@@ -60,9 +58,7 @@ final class ${context.subclass} extends ${context.base} {
         AddressTemplate ${metadataInfo.name}Template = AddressTemplate.of("${metadataInfo.template}");
         this.${metadataInfo.name} = mbuiContext.metadataRegistry().lookup(${metadataInfo.name}Template);
         </#list>
-        <#if context.verticalNavigation??>
         this.handlebarElements = new HashMap<>();
-        </#if>
 
         <#list context.forms as form>
         ${form.name} = new ModelNodeForm.Builder<${form.typeParameter}>("${form.selector}", ${form.metadata.name})
@@ -89,6 +85,8 @@ final class ${context.subclass} extends ${context.base} {
                 });
             })
                 </#if>
+            <#elseif form.onSave??>
+            .onSave((form, changedValues) -> ${form.onSave})
             </#if>
             .build();
             <#list form.suggestHandlerAttributes as attribute>
@@ -141,9 +139,9 @@ final class ${context.subclass} extends ${context.base} {
                                 <#else>
             .button(mbuiContext.tableButtonFactory().add(IdBuilder.build("${table.selector}", "add"), ${table.title},
                 ${table.metadata.name}Template,
-                () -> presenter.reload())),
+                () -> presenter.reload(),
                                     <#list action.attributes as attribute>
-                "${attribute.name}"<#if attribute_has_next>, </#if>
+                "${attribute.name}"<#if attribute_has_next>, <#else>))</#if>
                                     </#list>
                                 </#if>
                             <#else>
@@ -166,12 +164,10 @@ final class ${context.subclass} extends ${context.base} {
             .columns(<#list table.columns as column>"${column.name}"<#if column_has_next>, </#if></#list>)
             <#else>
                 <#list table.columns as column>
-                    <#if column.simple>
+                    <#if column.value??>
+            .column("${column.name}", (cell, type, row, meta) -> ${column.value})
+                    <#else>
             .column("${column.name}")
-                    <#elseif column.simpleWithTitle>
-            .column("${column.name}", ${column.title})
-                    <#elseif column.hasValue>
-            .column("${column.name}", ${column.title}, (cell, type, row, meta) -> ${column.value})
                     </#if>
                 </#list>
             </#if>
@@ -235,7 +231,6 @@ final class ${context.subclass} extends ${context.base} {
                     </#list>
                 </#if>
             </#list>
-        </#if>
 
         LayoutBuilder layoutBuilder = new LayoutBuilder()
             .row()
@@ -243,6 +238,38 @@ final class ${context.subclass} extends ${context.base} {
                     .addAll(${context.verticalNavigation.name}.panes())
                 .end()
             .end();
+        <#else>
+            <#if context.content?has_content>
+        LayoutBuilder layoutBuilder = new LayoutBuilder()
+            .row()
+                .column()
+                <#list context.content as content>
+                    <#if content.html??>
+                    .div()
+                        .innerHtml(SafeHtmlUtils.fromSafeConstant("${content.html}"))
+                        .rememberAs("${content.name}")
+                    .end()
+                    <#elseif content.reference??>
+                    .add(${content.reference})
+                    </#if>
+                </#list>
+                .end()
+            .end();
+                <#list context.content as content>
+                    <#if content.html??>
+            handlebarElements.put("${content.name}", layoutBuilder.referenceFor("${content.name}"));
+                    </#if>
+                </#list>
+            <#else>
+        LayoutBuilder layoutBuilder = new LayoutBuilder()
+            .row()
+                .column()
+                    .h(1).textContent("${context.base}").end()
+                    .p().textContent(org.jboss.hal.resources.Names.NYI).end()
+                .end()
+            .end();
+            </#if>
+        </#if>
 
         Element root = layoutBuilder.build();
         initElement(root);
@@ -289,6 +316,14 @@ final class ${context.subclass} extends ${context.base} {
                         </#if>
                     </#list>
                 </#list>
+            </#list>
+        <#else>
+            <#list context.content as content>
+                <#if content.html??>
+                    <#list content.handlebars?keys as handlebar>
+        TemplateUtil.replaceHandlebar(handlebarElements.get("${content.name}"), "${handlebar}", String.valueOf(${content.handlebars?values[handlebar_index]}));
+                    </#list>
+                </#if>
             </#list>
         </#if>
     }

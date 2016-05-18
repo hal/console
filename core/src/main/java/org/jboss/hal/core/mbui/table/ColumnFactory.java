@@ -32,9 +32,9 @@ class ColumnFactory {
         labelBuilder = new LabelBuilder();
     }
 
-    <T extends ModelNode> Column<T> createColumn(final Property attributeDescription, final String title) {
+    <T extends ModelNode> Column<T> createColumn(final Property attributeDescription) {
         String name = attributeDescription.getName();
-        String resolvedTitle = title != null ? title : labelBuilder.label(attributeDescription);
+        String title = labelBuilder.label(attributeDescription);
 
         // TODO Think about other column types depending on ModelType
         Column.RenderCallback<T, Object> render = (cell, type, row, meta) -> {
@@ -43,6 +43,6 @@ class ColumnFactory {
             }
             return null;
         };
-        return new ColumnBuilder<>(name, resolvedTitle, render).build();
+        return new ColumnBuilder<>(name, title, render).build();
     }
 }

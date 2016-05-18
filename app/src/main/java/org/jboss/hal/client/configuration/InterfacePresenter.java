@@ -23,11 +23,11 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
-import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mbui.MbuiPresenter;
+import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
@@ -53,8 +53,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
  * @author Harald Pehl
  */
 @SuppressWarnings("SpellCheckingInspection")
-public class InterfacePresenter extends
-        ApplicationPresenter<InterfacePresenter.MyView, InterfacePresenter.MyProxy> {
+public class InterfacePresenter extends MbuiPresenter<InterfacePresenter.MyView, InterfacePresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -62,7 +61,7 @@ public class InterfacePresenter extends
     @NameToken(NameTokens.INTERFACE)
     public interface MyProxy extends ProxyPlace<InterfacePresenter> {}
 
-    public interface MyView extends PatternFlyView, HasPresenter<InterfacePresenter> {
+    public interface MyView extends MbuiView<InterfacePresenter> {
         void update(ModelNode interfce);
     }
     // @formatter:on
@@ -105,31 +104,27 @@ public class InterfacePresenter extends
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        loadInterface();
-    }
-
-    @Override
     protected FinderPath finderPath() {
         return new FinderPath()
                 .append(CONFIGURATION, Names.INTERFACES.toLowerCase(), Names.CONFIGURATION, Names.INTERFACES)
                 .append(INTERFACE, interfce, Names.INTERFACE);
     }
 
-    private void loadInterface() {
+    @Override
+    protected void reload() {
         ResourceAddress address = ROOT_TEMPLATE.resolve(statementContext, interfce);
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address).build();
         dispatcher.execute(operation, result -> getView().update(result));
     }
 
-    void saveInterface(final Map<String, Object> changedValues) {
+    @SuppressWarnings("UnusedParameters")
+    void saveInterface(final Form<ModelNode> form, final Map<String, Object> changedValues) {
         Composite composite = operationFactory
                 .fromChangeSet(ROOT_TEMPLATE.resolve(statementContext, interfce), changedValues);
         dispatcher.execute(composite, (CompositeResult result) -> {
             MessageEvent.fire(getEventBus(),
-                    Message.success(resources.messages().modifyResourceSuccess(Names.PATH, interfce)));
-            loadInterface();
+                    Message.success(resources.messages().modifyResourceSuccess(Names.INTERFACE, interfce)));
+            reload();
         });
     }
 }

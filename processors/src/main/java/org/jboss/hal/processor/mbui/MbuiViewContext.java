@@ -28,9 +28,12 @@ public class MbuiViewContext {
     private final String subclass;
     private final String createMethod;
 
+    // the root element is either a vertical navigation or a list of content (mix of HTML, forms and/or tables)
+    private VerticalNavigationInfo verticalNavigation;
+    private final List<Content> content;
+
     private final Map<String, MetadataInfo> metadataInfos;
     private final Map<String, MbuiElementInfo> elements;
-    private VerticalNavigationInfo verticalNavigation;
     private final List<DataTableInfo> dataTables;
     private final List<FormInfo> forms;
     private final List<MbuiElementInfo> attachables;
@@ -43,9 +46,10 @@ public class MbuiViewContext {
         this.subclass = subclass;
         this.createMethod = createMethod;
 
+        this.verticalNavigation = null;
+        this.content = new ArrayList<>();
         this.metadataInfos = new HashMap<>();
         this.elements = new HashMap<>();
-        this.verticalNavigation = null;
         this.dataTables = new ArrayList<>();
         this.forms = new ArrayList<>();
         this.attachables = new ArrayList<>();
@@ -74,6 +78,32 @@ public class MbuiViewContext {
         return subclass;
     }
 
+    public VerticalNavigationInfo getVerticalNavigation() {
+        return verticalNavigation;
+    }
+
+    void setVerticalNavigation(final VerticalNavigationInfo verticalNavigation) {
+        this.verticalNavigation = verticalNavigation;
+        this.elements.put(verticalNavigation.getSelector(), verticalNavigation);
+    }
+
+    public List<Content> getContent() {
+        return content;
+    }
+
+    void addContent(Content content) {
+        this.content.add(content);
+    }
+
+    Content findContent(final String id) {
+        for (Content c : content) {
+            if (id.equals(c.getReference())) {
+                return c;
+            }
+        }
+        return null;
+    }
+
     public MetadataInfo getMetadataInfo(String address) {
         return metadataInfos.get(address);
     }
@@ -91,13 +121,8 @@ public class MbuiViewContext {
         return (T) elements.get(selector);
     }
 
-    public VerticalNavigationInfo getVerticalNavigation() {
-        return verticalNavigation;
-    }
-
-    void setVerticalNavigation(final VerticalNavigationInfo verticalNavigation) {
-        this.verticalNavigation = verticalNavigation;
-        this.elements.put(verticalNavigation.getSelector(), verticalNavigation);
+    Collection<MbuiElementInfo> getElements() {
+        return elements.values();
     }
 
     public List<DataTableInfo> getDataTables() {

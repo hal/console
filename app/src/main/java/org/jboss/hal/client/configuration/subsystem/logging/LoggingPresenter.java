@@ -99,12 +99,6 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        reload();
-    }
-
-    @Override
     protected FinderPath finderPath() {
         return FinderPath
                 .subsystemPath(statementContext.selectedProfile(), LOGGING_SUBSYSTEM_TEMPLATE.lastValue());

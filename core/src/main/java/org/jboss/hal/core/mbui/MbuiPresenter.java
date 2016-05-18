@@ -31,5 +31,11 @@ public abstract class MbuiPresenter<V extends MbuiView, Proxy_ extends ProxyPlac
         super(eventBus, view, proxy_, finder);
     }
 
+    @Override
+    protected void onReset() {
+        super.onReset();
+        reload();
+    }
+
     protected abstract void reload();
 }

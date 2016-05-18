@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration.subsystem;
+package org.jboss.hal.client.configuration.subsystem.iiop;
 
-import java.util.Map;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -24,15 +23,11 @@ import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
-import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.PatternFlyView;
-import org.jboss.hal.core.mvp.SubsystemPresenter;
+import org.jboss.hal.core.mbui.MbuiPresenter;
+import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
@@ -43,12 +38,11 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.resources.Names.IIOP_OPENJDK;
 
 /**
  * @author Harald Pehl
  */
-public class IiopPresenter extends SubsystemPresenter<IiopPresenter.MyView, IiopPresenter.MyProxy> {
+public class IiopPresenter extends MbuiPresenter<IiopPresenter.MyView, IiopPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyStandard
@@ -56,7 +50,7 @@ public class IiopPresenter extends SubsystemPresenter<IiopPresenter.MyView, Iiop
     @NameToken(NameTokens.IIOP)
     public interface MyProxy extends ProxyPlace<IiopPresenter> {}
 
-    public interface MyView extends PatternFlyView, HasPresenter<IiopPresenter> {
+    public interface MyView extends MbuiView<IiopPresenter> {
         void update(ModelNode modelNode);
         void clear();
     }
@@ -64,11 +58,10 @@ public class IiopPresenter extends SubsystemPresenter<IiopPresenter.MyView, Iiop
 
 
     static final String ROOT_ADDRESS = "/{selected.profile}/subsystem=iiop-openjdk";
-    static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
+    private static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
 
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
-    private final OperationFactory operationFactory;
     private final Resources resources;
 
     @Inject
@@ -78,12 +71,10 @@ public class IiopPresenter extends SubsystemPresenter<IiopPresenter.MyView, Iiop
             final Finder finder,
             final StatementContext statementContext,
             final Dispatcher dispatcher,
-            final OperationFactory operationFactory,
             final Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
-        this.operationFactory = operationFactory;
         this.resources = resources;
     }
 
@@ -94,17 +85,12 @@ public class IiopPresenter extends SubsystemPresenter<IiopPresenter.MyView, Iiop
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        load();
-    }
-
-    @Override
     protected FinderPath finderPath() {
         return FinderPath.subsystemPath(statementContext.selectedProfile(), ROOT_TEMPLATE.lastValue());
     }
 
-    private void load() {
+    @Override
+    protected void reload() {
         ResourceAddress address = ROOT_TEMPLATE.resolve(statementContext);
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
                 .build();
@@ -115,14 +101,5 @@ public class IiopPresenter extends SubsystemPresenter<IiopPresenter.MyView, Iiop
                             resources.messages().unknownResource(address.toString(), failure)));
                     getView().clear();
                 });
-    }
-
-    public void save(final Map<String, Object> changedValues) {
-        Composite composite = operationFactory.fromChangeSet(ROOT_TEMPLATE.resolve(statementContext), changedValues);
-        dispatcher.execute(composite, (CompositeResult result) -> {
-            MessageEvent.fire(getEventBus(),
-                    Message.success(resources.messages().modifySingleResourceSuccess(IIOP_OPENJDK)));
-            load();
-        });
     }
 }

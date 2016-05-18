@@ -172,6 +172,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
         // then find and verify all @MbuiElement members
         processMbuiElements(type, document, context);
+        processRoot(document, context);
         processCrossReferences(document, context);
 
         // init parameters and abstract properties
@@ -355,6 +356,16 @@ public class MbuiViewProcessor extends AbstractProcessor {
     }
 
 
+    // ------------------------------------------------------ process root
+
+    private void processRoot(final Document document, final MbuiViewContext context) {
+        // if the root is not a vertical navigation we need to parse its content.
+        if (!XmlTags.VERTICAL_NAVIGATION.equals(document.getRootElement().getName())) {
+            Content.parse(document.getRootElement(), context).forEach(context::addContent);
+        }
+    }
+
+
     // ------------------------------------------------------ process references
 
     private void processCrossReferences(final Document document, final MbuiViewContext context) {
@@ -368,8 +379,16 @@ public class MbuiViewProcessor extends AbstractProcessor {
             }
         }
 
+        // content references
         VerticalNavigationInfo navigation = context.getVerticalNavigation();
-        if (navigation != null) {
+        if (navigation == null) {
+            for (MbuiElementInfo elementInfo : context.getElements()) {
+                Content reference = context.findContent(elementInfo.getSelector());
+                if (reference != null) {
+                    reference.setReference(elementInfo.getName());
+                }
+            }
+        } else {
             resolveItemReferences(navigation, "//item//table", document, context);
             resolveItemReferences(navigation, "//item//form", document, context);
         }
@@ -392,7 +411,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
                     parentItemElement = parentItemExpression.evaluateFirst(element);
                 }
                 VerticalNavigationInfo.Item parentItem = navigation.getItem(parentItemElement.getAttributeValue("id"));
-                VerticalNavigationInfo.Content reference = parentItem.findReference(id);
+                Content reference = parentItem.findContent(id);
                 if (reference != null) {
                     reference.setReference(elementInfo.getName());
                 }
