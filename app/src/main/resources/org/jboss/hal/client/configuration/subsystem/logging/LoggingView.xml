@@ -25,7 +25,7 @@
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <form id="logging-root-logger-form" title="Root Logger" auto-save="true">
                     <attributes>
-                        <attribute name="filter-spec"/>
+                        <attribute name="level"/>
                         <attribute name="handlers">
                             <suggest-handler>
                                 <templates>
@@ -42,7 +42,7 @@
                                 </templates>
                             </suggest-handler>
                         </attribute>
-                        <attribute name="level"/>
+                        <attribute name="filter-spec"/>
                     </attributes>
                 </form>
             </metadata>
@@ -60,7 +60,7 @@
                     <actions>
                         <action handler-ref="add-resource">
                             <attributes>
-                                <attribute name="filter-spec"/>
+                                <attribute name="level"/>
                                 <attribute name="handlers">
                                     <suggest-handler>
                                         <templates>
@@ -77,7 +77,6 @@
                                         </templates>
                                     </suggest-handler>
                                 </attribute>
-                                <attribute name="level"/>
                                 <attribute name="use-parent-handlers"/>
                             </attributes>
                         </action>
@@ -93,7 +92,7 @@
                       name-resolver="{{form.getModel().getName()}}">
                     <attributes>
                         <attribute name="category"/>
-                        <attribute name="filter-spec"/>
+                        <attribute name="level"/>
                         <attribute name="handlers">
                             <suggest-handler>
                                 <templates>
@@ -110,8 +109,8 @@
                                 </templates>
                             </suggest-handler>
                         </attribute>
-                        <attribute name="level"/>
                         <attribute name="use-parent-handlers"/>
+                        <attribute name="filter-spec"/>
                     </attributes>
                 </form>
             </metadata>
@@ -130,23 +129,9 @@
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
-                                    <attribute name="autoflush"/>
-                                    <attribute name="enabled"/>
-                                    <attribute name="encoding"/>
-                                    <attribute name="filter-spec"/>
-                                    <attribute name="formatter"/>
-                                    <attribute name="named-formatter">
-                                        <suggest-handler>
-                                            <templates>
-                                                <!-- @formatter:off -->
-                                                <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
-                                                <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
-                                                <!-- @formatter:on -->
-                                            </templates>
-                                        </suggest-handler>
-                                    </attribute>
                                     <attribute name="level"/>
                                     <attribute name="target"/>
+                                    <attribute name="formatter"/>
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
@@ -155,15 +140,15 @@
                         <columns>
                             <column name="name"/>
                             <column name="level"/>
+                            <column name="target"/>
                         </columns>
                     </table>
                     <form id="logging-handler-console-form" auto-save="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
+                            <attribute name="level"/>
+                            <attribute name="target"/>
                             <attribute name="autoflush"/>
-                            <attribute name="enabled"/>
-                            <attribute name="encoding"/>
-                            <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="named-formatter">
                                 <suggest-handler>
@@ -175,8 +160,9 @@
                                     </templates>
                                 </suggest-handler>
                             </attribute>
-                            <attribute name="level"/>
-                            <attribute name="target"/>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="filter-spec"/>
                         </attributes>
                     </form>
                 </metadata>
@@ -185,7 +171,6 @@
 
             <!--
                 File Handler
-                TODO Add support for custom form item 'file'
             -->
             <sub-item id="logging-handler-file-item" title="File Handler">
                 <metadata address="/{selected.profile}/subsystem=logging/file-handler=*">
@@ -196,21 +181,8 @@
                             <action handler-ref="add-resource">
                                 <attributes>
                                     <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
-                                    <attribute name="append"/>
-                                    <attribute name="autoflush"/>
-                                    <attribute name="encoding"/>
-                                    <attribute name="formatter"/>
-                                    <attribute name="named-formatter">
-                                        <suggest-handler>
-                                            <templates>
-                                                <!-- @formatter:off -->
-                                                <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
-                                                <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
-                                                <!-- @formatter:on -->
-                                            </templates>
-                                        </suggest-handler>
-                                    </attribute>
                                     <attribute name="level"/>
+                                    <attribute name="formatter"/>
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
@@ -219,16 +191,15 @@
                         <columns>
                             <column name="name"/>
                             <column name="level"/>
+                            <column name="file" value="{{getFilename(row)}}"/>
                         </columns>
                     </table>
                     <form id="logging-handler-file-form" auto-save="true" name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                            <attribute name="level"/>
                             <attribute name="append"/>
                             <attribute name="autoflush"/>
-                            <attribute name="enabled"/>
-                            <attribute name="encoding"/>
-                            <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="named-formatter">
                                 <suggest-handler>
@@ -240,7 +211,184 @@
                                     </templates>
                                 </suggest-handler>
                             </attribute>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="filter-spec"/>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+
+            <!--
+                Periodic Rotating File Handler
+            -->
+            <sub-item id="logging-handler-periodic-rotating-file-item" title="Periodic Handler">
+                <metadata address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*">
+                    <h1>Periodic Handler</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="logging-handler-periodic-rotating-file-table"
+                           form-ref="logging-handler-periodic-rotating-file-form">
+                        <actions>
+                            <action handler-ref="add-resource">
+                                <attributes>
+                                    <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                                    <attribute name="suffix"/>
+                                    <attribute name="level"/>
+                                    <attribute name="formatter"/>
+                                </attributes>
+                            </action>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name"/>
+                            <column name="level"/>
+                            <column name="file" value="{{getFilename(row)}}"/>
+                        </columns>
+                    </table>
+                    <form id="logging-handler-periodic-rotating-file-form" auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                        <attributes>
+                            <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                            <attribute name="suffix"/>
                             <attribute name="level"/>
+                            <attribute name="append"/>
+                            <attribute name="autoflush"/>
+                            <attribute name="formatter"/>
+                            <attribute name="named-formatter">
+                                <suggest-handler>
+                                    <templates>
+                                        <!-- @formatter:off -->
+                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        <!-- @formatter:on -->
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="filter-spec"/>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+
+            <!--
+                Periodic Size Rotating File Handler
+            -->
+            <sub-item id="logging-handler-periodic-size-rotating-file-item" title="Periodic Size Handler">
+                <metadata address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*">
+                    <h1>Periodic Size Handler</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="logging-handler-periodic-size-rotating-file-table"
+                           form-ref="logging-handler-periodic-size-rotating-file-form">
+                        <actions>
+                            <action handler-ref="add-resource">
+                                <attributes>
+                                    <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                                    <attribute name="suffix"/>
+                                    <attribute name="level"/>
+                                    <attribute name="formatter"/>
+                                    <attribute name="rotate-size"/>
+                                    <attribute name="max-backup-index"/>
+                                </attributes>
+                            </action>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name"/>
+                            <column name="level"/>
+                            <column name="file" value="{{getFilename(row)}}"/>
+                        </columns>
+                    </table>
+                    <form id="logging-handler-periodic-size-rotating-file-form" auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                        <attributes>
+                            <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                            <attribute name="suffix"/>
+                            <attribute name="level"/>
+                            <attribute name="rotate-size"/>
+                            <attribute name="rotate-on-boot"/>
+                            <attribute name="max-backup-index"/>
+                            <attribute name="append"/>
+                            <attribute name="autoflush"/>
+                            <attribute name="formatter"/>
+                            <attribute name="named-formatter">
+                                <suggest-handler>
+                                    <templates>
+                                        <!-- @formatter:off -->
+                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        <!-- @formatter:on -->
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="filter-spec"/>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+
+            <!--
+                Size Rotating File Handler
+            -->
+            <sub-item id="logging-handler-size-rotating-file-item" title="Size Handler">
+                <metadata address="/{selected.profile}/subsystem=logging/size-rotating-file-handler=*">
+                    <h1>Size Handler</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="logging-handler-size-rotating-file-table"
+                           form-ref="logging-handler-size-rotating-file-form">
+                        <actions>
+                            <action handler-ref="add-resource">
+                                <attributes>
+                                    <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                                    <attribute name="suffix"/>
+                                    <attribute name="level"/>
+                                    <attribute name="formatter"/>
+                                    <attribute name="rotate-size"/>
+                                    <attribute name="max-backup-index"/>
+                                </attributes>
+                            </action>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name"/>
+                            <column name="level"/>
+                            <column name="file" value="{{getFilename(row)}}"/>
+                        </columns>
+                    </table>
+                    <form id="logging-handler-size-rotating-file-form" auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                        <attributes>
+                            <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                            <attribute name="suffix"/>
+                            <attribute name="level"/>
+                            <attribute name="rotate-size"/>
+                            <attribute name="rotate-on-boot"/>
+                            <attribute name="max-backup-index"/>
+                            <attribute name="append"/>
+                            <attribute name="autoflush"/>
+                            <attribute name="formatter"/>
+                            <attribute name="named-formatter">
+                                <suggest-handler>
+                                    <templates>
+                                        <!-- @formatter:off -->
+                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        <!-- @formatter:on -->
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="filter-spec"/>
                         </attributes>
                     </form>
                 </metadata>
@@ -276,7 +424,6 @@
                                     </attribute>
                                     <attribute name="queue-length"/>
                                     <attribute name="overflow-action"/>
-                                    <attribute name="filter-spec"/>
                                 </attributes>
                             </action>
                             <action handler-ref="remove-resource" scope="selected"
@@ -314,7 +461,104 @@
                 </metadata>
             </sub-item>
 
-            <!-- TODO Add sub items for periodic, periodic-size, size, custom and syslog handlers -->
+
+            <!--
+                Custom Handler
+            -->
+            <sub-item id="logging-handler-custom-item" title="Custom Handler">
+                <metadata address="/{selected.profile}/subsystem=logging/custom-handler=*">
+                    <h1>Custom Handler</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="logging-handler-custom-table" form-ref="logging-handler-custom-form">
+                        <actions>
+                            <action handler-ref="add-resource">
+                                <attributes>
+                                    <attribute name="level"/>
+                                    <attribute name="module"/>
+                                    <attribute name="class"/>
+                                    <attribute name="formatter"/>
+                                </attributes>
+                            </action>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name"/>
+                            <column name="level"/>
+                        </columns>
+                    </table>
+                    <form id="logging-handler-custom-form" auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                        <attributes>
+                            <attribute name="level"/>
+                            <attribute name="module"/>
+                            <attribute name="class"/>
+                            <attribute name="properties"/>
+                            <attribute name="formatter"/>
+                            <attribute name="named-formatter">
+                                <suggest-handler>
+                                    <templates>
+                                        <!-- @formatter:off -->
+                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        <!-- @formatter:on -->
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="filter-spec"/>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+
+            <!--
+                Syslog Handler
+            -->
+            <sub-item id="logging-handler-syslog-item" title="Syslog Handler">
+                <metadata address="/{selected.profile}/subsystem=logging/syslog-handler=*">
+                    <h1>Syslog Handler</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="logging-handler-syslog-table" form-ref="logging-handler-syslog-form">
+                        <actions>
+                            <action handler-ref="add-resource">
+                                <attributes>
+                                    <attribute name="level"/>
+                                    <attribute name="syslog-format"/>
+                                    <attribute name="hostname"/>
+                                    <attribute name="server-address"/>
+                                    <attribute name="port"/>
+                                    <attribute name="app-name"/>
+                                    <attribute name="facility"/>
+                                </attributes>
+                            </action>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <!-- syslog handlers do have not a name attribute,
+                            so we need to provide a value using NamedNode.getName() -->
+                            <column name="name" value="{{row.getName()}}"/>
+                            <column name="level"/>
+                        </columns>
+                    </table>
+                    <form id="logging-handler-syslog-form" auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                        <attributes>
+                            <attribute name="level"/>
+                            <attribute name="syslog-format"/>
+                            <attribute name="hostname"/>
+                            <attribute name="server-address"/>
+                            <attribute name="port"/>
+                            <attribute name="app-name"/>
+                            <attribute name="facility"/>
+                            <attribute name="enabled"/>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
         </item>
 
 
@@ -364,8 +608,8 @@
                                     name-resolver="{{api.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
-                            <!-- log formatter resources do have not a name attribute,
-                            so we need to provide a value which calls NamedNode.getName() -->
+                            <!-- custom formatter do have not a name attribute,
+                            so we need to provide a value using NamedNode.getName() -->
                             <column name="name" value="{{row.getName()}}"/>
                         </columns>
                     </table>
