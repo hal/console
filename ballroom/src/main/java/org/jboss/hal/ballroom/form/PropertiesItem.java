@@ -71,7 +71,7 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
     }
 
     @Override
-    void assembleUI() {
+    protected void assembleUI() {
         super.assembleUI();
 
         valueElement.getClassList().add(properties);

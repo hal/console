@@ -93,7 +93,7 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
         if (applicationPath != null) {
             // try to connect segments with existing columns from the finder
             for (FinderSegment segment : applicationPath) {
-                FinderColumn column = finder.getColumn(segment.getKey());
+                FinderColumn<?> column = finder.getColumn(segment.getKey());
                 if (column != null) {
                     //noinspection unchecked
                     segment.connect(column);

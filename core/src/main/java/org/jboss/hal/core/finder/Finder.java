@@ -298,7 +298,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 break;
             }
             String key = columnElement.getId();
-            FinderColumn column = columns.get(key);
+            FinderColumn<?> column = columns.get(key);
             context.getPath().append(column);
         }
         eventBus.fireEvent(new FinderContextEvent(context));

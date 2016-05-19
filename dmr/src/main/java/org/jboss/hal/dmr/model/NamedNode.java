@@ -68,7 +68,7 @@ public class NamedNode extends ModelNode {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" + name + ")";
+        return "NamedNode(" + name + ")";
     }
 
     public String getName() {

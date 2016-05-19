@@ -73,6 +73,15 @@ public class FormInfo extends MbuiElementInfo {
         return attributes;
     }
 
+    public boolean isHasAttributesWithProvider() {
+        for (Attribute attribute : attributes) {
+            if (attribute.getProvider() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public List<Attribute> getSuggestHandlerAttributes() {
         return attributes.stream().filter(attribute -> !attribute.getSuggestHandlerTemplates().isEmpty())
                 .collect(toList());

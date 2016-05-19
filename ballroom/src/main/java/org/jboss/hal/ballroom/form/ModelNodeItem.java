@@ -15,15 +15,10 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.ModelNode;
 
 /**
- * Provider to create form items based on attributes descriptions from a {@link org.jboss.hal.meta.description.ResourceDescription}.
- *
  * @author Harald Pehl
  */
-@FunctionalInterface
-public interface FormItemProvider<T> {
-
-    FormItem<T> createFrom(Property attributeDescription);
+public interface ModelNodeItem extends FormItem<ModelNode> {
 }

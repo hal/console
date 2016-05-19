@@ -104,7 +104,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     // ------------------------------------------------------ initialization
 
     @SuppressWarnings("unchecked")
-    AbstractFormItem(String name, String label, String hint, InputElement.Context<?> context) {
+    protected AbstractFormItem(String name, String label, String hint, InputElement.Context<?> context) {
         this.inputElement = newInputElement(context);
 
         this.label = label;
@@ -199,7 +199,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
      * Assembles the <strong>initial</strong> widgets / containers at creation time based on the default values of this
      * form item.
      */
-    void assembleUI() {
+    protected void assembleUI() {
         if (hint != null) {
             showInputAddon(hint);
         } else {
@@ -403,6 +403,16 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     @Override
+    public String getId(final Form.State state) {
+        if (state == EDITING) {
+            return inputElement.getId();
+        } else if (state == READONLY) {
+            return valueElement.getId();
+        }
+        return null;
+    }
+
+    @Override
     public void setId(String id) {
         String editId = IdBuilder.build(id, EDITING.name().toLowerCase());
         String readonlyId = IdBuilder.build(id, READONLY.name().toLowerCase());
@@ -413,16 +423,6 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
         asElement(EDITING).getDataset().setAt(FORM_ITEM_GROUP, editId); //NON-NLS
         asElement(READONLY).getDataset().setAt(FORM_ITEM_GROUP, readonlyId); //NON-NLS
-    }
-
-    @Override
-    public String getId(final Form.State state) {
-        if (state == EDITING) {
-            return inputElement.getId();
-        } else if (state == READONLY) {
-            return valueElement.getId();
-        }
-        return null;
     }
 
     @Override
@@ -481,7 +481,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     @Override
-    public final boolean validate() {
+    public boolean validate() {
         if (requiresValidation()) {
             for (FormItemValidation<T> validationHandler : validationHandlers) {
                 ValidationResult result = validationHandler.validate(getValue());
@@ -707,7 +707,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     @Override
-    public final boolean isRequired() {
+    public boolean isRequired() {
         return required;
     }
 

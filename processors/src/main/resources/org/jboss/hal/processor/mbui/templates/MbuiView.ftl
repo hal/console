@@ -63,7 +63,18 @@ final class ${context.subclass} extends ${context.base} {
         <#list context.forms as form>
         ${form.name} = new ModelNodeForm.Builder<${form.typeParameter}>("${form.selector}", ${form.metadata.name})
             <#if form.attributes?has_content>
+                <#if form.hasAttributesWithProvider>
+                    <#list form.attributes as attribute>
+                        <#if attribute.provider??>
+            .customFormItem("${attribute.name}", ${attribute.provider})
+                        <#else>
+            .include("${attribute.name}")
+                        </#if>
+                    </#list>
+                <#else>
             .include(<#list form.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>)
+                </#if>
+            .unsorted()
             </#if>
             <#if form.autoSave>
                 <#if form.nameResolver??>
@@ -108,7 +119,48 @@ final class ${context.subclass} extends ${context.base} {
                     <#switch action.handlerRef>
                         <#case "ADD_RESOURCE">
                             <#if action.attributes?has_content>
-                                <#if action.hasAttributesWithSuggestionHandlers>
+                                <#if action.hasAttributesWithProvider>
+            .button(mbuiContext.resources().constants().add(), (event, api) -> {
+                ModelNodeForm form = new ModelNodeForm.Builder(IdBuilder.build("${table.selector}", "add"),
+                    ${table.metadata.name})
+                    .addFromRequestProperties()
+                    .unboundFormItem(new org.jboss.hal.core.mbui.dialog.NameItem(), 0)
+                                    <#list action.attributes as attribute>
+                                        <#if attribute.provider??>
+                    .customFormItem("${attribute.name}", ${attribute.provider})
+                                        <#else>
+                    .include("${attribute.name}")
+                                        </#if>
+                                    </#list>
+                    .unsorted()
+                    .build();
+                                    <#if action.hasAttributesWithSuggestionHandlers>
+                                        <#list action.suggestHandlerAttributes as attribute>
+                                            <#if attribute.suggestHandlerTemplates?size == 1>
+                ResourceAddress ${table.name}Address = AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}").resolve(mbuiContext.statementContext());
+                                            <#else>
+                List<AddressTemplate> ${table.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
+                        AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
+                List<ResourceAddress> ${table.name}Address = Lists.transform(${table.name}Templates, template -> template.resolve(mbuiContext.statementContext()));
+                                            </#if>
+                form.getFormItem("${attribute.name}").registerSuggestHandler(new TypeaheadProvider().from(${table.name}Address));
+                                        </#list>
+                                    </#if>
+                AddResourceDialog dialog = new AddResourceDialog(
+                    mbuiContext.resources().messages().addResourceTitle(${table.title}),
+                    form,
+                    (name, modelNode) -> {
+                        ResourceAddress address = ${table.metadata.name}Template.resolve(mbuiContext.statementContext(), name);
+                        Operation operation = new Operation.Builder(ADD, address).payload(modelNode).build();
+                        mbuiContext.dispatcher().execute(operation, result -> {
+                            presenter.reload();
+                            MessageEvent.fire(mbuiContext.eventBus(), Message.success(
+                            mbuiContext.resources().messages().addResourceSuccess(${table.title}, name)));
+                        });
+                    });
+                dialog.show();
+            })
+                                <#elseif action.hasAttributesWithSuggestionHandlers>
             .button(mbuiContext.resources().constants().add(), (event, api) -> {
                 AddResourceDialog dialog = new AddResourceDialog(
                     IdBuilder.build("${table.selector}", "add"),
@@ -126,15 +178,15 @@ final class ${context.subclass} extends ${context.base} {
                     });
                                     <#list action.suggestHandlerAttributes as attribute>
                                         <#if attribute.suggestHandlerTemplates?size == 1>
-                    ResourceAddress ${table.name}Address = AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}").resolve(mbuiContext.statementContext());
+                ResourceAddress ${table.name}Address = AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}").resolve(mbuiContext.statementContext());
                                         <#else>
+                List<AddressTemplate> ${table.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
+                    AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
+                List<ResourceAddress> ${table.name}Address = Lists.transform(${table.name}Templates, template -> template.resolve(mbuiContext.statementContext()));
                                         </#if>
-                    List<AddressTemplate> ${table.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
-                        AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
-                    List<ResourceAddress> ${table.name}Address = Lists.transform(${table.name}Templates, template -> template.resolve(mbuiContext.statementContext()));
-                    dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(new TypeaheadProvider().from(${table.name}Address));
+                dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(new TypeaheadProvider().from(${table.name}Address));
                                     </#list>
-                    dialog.show();
+                dialog.show();
             })
                                 <#else>
             .button(mbuiContext.tableButtonFactory().add(IdBuilder.build("${table.selector}", "add"), ${table.title},

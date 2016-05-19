@@ -22,7 +22,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import elemental.client.Browser;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.MbuiPresenter;
@@ -34,7 +33,6 @@ import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
@@ -128,9 +126,5 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
             getView().updatePatternFormatter(asNamedNodes(failSafePropertyList(result, PATTERN_FORMATTER_TEMPLATE.lastKey())));
             // @formatter:on
         });
-    }
-
-    void launchAddFileHandlerDialog() {
-        Browser.getWindow().alert(Names.NYI);
     }
 }

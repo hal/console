@@ -193,9 +193,26 @@
                     <p>{{metadata.getDescription().getDescription()}}</p>
                     <table id="logging-handler-file-table" form-ref="logging-handler-file-form">
                         <actions>
-                            <!-- custom handler since required attribute 'file' is of type OBJECT -->
-                            <action handler="{{presenter.launchAddFileHandlerDialog()}}"
-                                    title="{{mbuiContext.resources().constants().add()}}"/>
+                            <action handler-ref="add-resource">
+                                <attributes>
+                                    <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                                    <attribute name="append"/>
+                                    <attribute name="autoflush"/>
+                                    <attribute name="encoding"/>
+                                    <attribute name="formatter"/>
+                                    <attribute name="named-formatter">
+                                        <suggest-handler>
+                                            <templates>
+                                                <!-- @formatter:off -->
+                                                <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
+                                                <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                                <!-- @formatter:on -->
+                                            </templates>
+                                        </suggest-handler>
+                                    </attribute>
+                                    <attribute name="level"/>
+                                </attributes>
+                            </action>
                             <action handler-ref="remove-resource" scope="selected"
                                     name-resolver="{{api.selectedRow().getName()}}"/>
                         </actions>
@@ -206,7 +223,7 @@
                     </table>
                     <form id="logging-handler-file-form" auto-save="true" name-resolver="{{form.getModel().getName()}}">
                         <attributes>
-                            <attribute name="file"/>
+                            <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
                             <attribute name="append"/>
                             <attribute name="autoflush"/>
                             <attribute name="enabled"/>
@@ -224,7 +241,6 @@
                                 </suggest-handler>
                             </attribute>
                             <attribute name="level"/>
-                            <attribute name="target"/>
                         </attributes>
                     </form>
                 </metadata>

@@ -18,8 +18,8 @@ package org.jboss.hal.client.bootstrap.endpoint;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PORT;
 
 /**
  * @author Harald Pehl
@@ -35,10 +35,6 @@ public class Endpoint extends NamedNode {
 
     Endpoint(ModelNode endpoint) {
         super(endpoint);
-    }
-
-    public String getName() {
-        return get(NAME).asString();
     }
 
     public boolean isSelected() {

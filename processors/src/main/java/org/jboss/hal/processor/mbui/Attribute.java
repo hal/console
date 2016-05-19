@@ -24,17 +24,23 @@ import java.util.List;
 public class Attribute {
 
     private final String name;
+    private final String provider;
     private final int position;
     private final List<String> suggestHandlerTemplates;
 
-    Attribute(final String name, final int position) {
+    Attribute(final String name, final String provider, final int position) {
         this.name = name;
+        this.provider = Handlebars.stripHandlebar(provider);
         this.position = position;
         this.suggestHandlerTemplates = new ArrayList<>();
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getProvider() {
+        return provider;
     }
 
     public int getPosition() {

@@ -104,6 +104,15 @@ public class DataTableInfo extends MbuiElementInfo {
             return attributes;
         }
 
+        public boolean isHasAttributesWithProvider() {
+            for (Attribute attribute : attributes) {
+                if (attribute.getProvider() != null) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public boolean isHasAttributesWithSuggestionHandlers() {
             return !getSuggestHandlerAttributes().isEmpty();
         }

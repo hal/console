@@ -93,6 +93,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         private Metadata metadata;
         final LinkedHashSet<String> includes;
         final Set<String> excludes;
+        FormItemProvider defaultFormItemProvider;
         final Map<String, FormItemProvider> providers;
         final List<UnboundFormItem> unboundFormItems;
         boolean viewOnly;
@@ -114,6 +115,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             this.metadata = metadata;
             this.includes = new LinkedHashSet<>();
             this.excludes = new HashSet<>();
+            this.defaultFormItemProvider = new DefaultFormItemProvider(metadata.getCapabilities());
             this.providers = new HashMap<>();
             this.unboundFormItems = new ArrayList<>();
             this.viewOnly = false;
@@ -188,7 +190,13 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             return this;
         }
 
+        public Builder<T> defaultFormItemProvider(FormItemProvider formItemProvider) {
+            this.defaultFormItemProvider = formItemProvider;
+            return this;
+        }
+
         public Builder<T> customFormItem(@NonNls final String attribute, final FormItemProvider provider) {
+            includes.add(attribute);
             providers.put(attribute, provider);
             return this;
         }
@@ -310,7 +318,6 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         int index = 0;
         LabelBuilder labelBuilder = new LabelBuilder();
         HelpTextBuilder helpTextBuilder = new HelpTextBuilder();
-        FormItemProvider formItemProvider = new DefaultFormItemProvider(builder.metadata.getCapabilities());
         for (Property property : properties) {
 
             // any unbound form items for the current index?
@@ -330,7 +337,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             if (builder.providers.containsKey(name)) {
                 formItem = builder.providers.get(name).createFrom(property);
             } else {
-                formItem = formItemProvider.createFrom(property);
+                formItem = builder.defaultFormItemProvider.createFrom(property);
             }
             if (formItem != null) {
                 addFormItem(formItem);
