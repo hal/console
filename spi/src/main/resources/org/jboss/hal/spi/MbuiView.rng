@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
 <grammar xmlns="http://relaxng.org/ns/structure/1.0"
          xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
@@ -31,8 +46,8 @@
             <attribute name="id">
                 <data type="ID"/>
             </attribute>
-            <attribute name="icon"/>
             <attribute name="title"/>
+            <attribute name="icon"/>
             <choice>
                 <ref name="metadata"/>
                 <oneOrMore>
@@ -45,7 +60,7 @@
     <define name="subItem">
         <element name="sub-item">
             <attribute name="id">
-                <data type="NCName"/>
+                <data type="ID"/>
             </attribute>
             <attribute name="title"/>
             <ref name="metadata"/>
@@ -55,99 +70,116 @@
     <define name="metadata">
         <element name="metadata">
             <attribute name="address"/>
-            <element name="h1">
-                <text/>
-            </element>
-            <element name="p">
-                <text/>
-            </element>
-            <optional>
-                <element name="table">
-                    <attribute name="form-ref">
-                        <data type="NCName"/>
-                    </attribute>
-                    <attribute name="id">
-                        <data type="NCName"/>
-                    </attribute>
-                    <optional>
-                        <attribute name="title">
-                            <data type="NCName"/>
-                        </attribute>
-                    </optional>
-                    <element name="actions">
-                        <oneOrMore>
-                            <element name="action">
-                                <attribute name="handler-ref">
-                                    <data type="NCName"/>
-                                </attribute>
-                                <optional>
-                                    <attribute name="name-resolver"/>
-                                </optional>
-                                <optional>
-                                    <attribute name="scope">
-                                        <data type="NCName"/>
-                                    </attribute>
-                                </optional>
-                                <optional>
-                                    <ref name="attributes"/>
-                                </optional>
-                            </element>
-                        </oneOrMore>
+            <mixed>
+                <optional>
+                    <element name="h1">
+                        <text/>
                     </element>
-                    <element name="columns">
+                </optional>
+                <optional>
+                    <element name="p">
+                        <text/>
+                    </element>
+                </optional>
+                <optional>
+                    <ref name="table"/>
+                </optional>
+                <optional>
+                    <ref name="form"/>
+                </optional>
+            </mixed>
+        </element>
+    </define>
+
+    <define name="table">
+        <element name="table">
+            <attribute name="id">
+                <data type="ID"/>
+            </attribute>
+            <optional>
+                <attribute name="form-ref">
+                    <data type="IDREF"/>
+                </attribute>
+                <attribute name="title"/>
+                <element name="actions">
+                    <oneOrMore>
+                        <ref name="action"/>
+                    </oneOrMore>
+                </element>
+            </optional>
+            <element name="columns">
+                <oneOrMore>
+                    <ref name="column"/>
+                </oneOrMore>
+            </element>
+        </element>
+    </define>
+
+    <define name="action">
+        <element name="action">
+            <choice>
+                <attribute name="handler-ref"/>
+                <attribute name="handler"/>
+            </choice>
+            <optional>
+                <attribute name="name-resolver"/>
+                <attribute name="scope"/>
+                <ref name="attributes"/>
+            </optional>
+        </element>
+    </define>
+
+    <define name="column">
+        <element name="column">
+            <attribute name="name"/>
+            <optional>
+                <attribute name="value"/>
+            </optional>
+        </element>
+    </define>
+
+    <define name="form">
+        <element name="form">
+            <attribute name="id">
+                <data type="ID"/>
+            </attribute>
+            <optional>
+                <attribute name="title"/>
+                <attribute name="name-resolver"/>
+                <choice>
+                    <attribute name="auto-save">
+                        <data type="boolean"/>
+                    </attribute>
+                    <attribute name="on-save"/>
+                </choice>
+                <ref name="attributes"/>
+            </optional>
+        </element>
+    </define>
+
+    <define name="attributes">
+        <element name="attributes">
+            <oneOrMore>
+                <ref name="attribute"/>
+            </oneOrMore>
+        </element>
+    </define>
+
+    <define name="attribute">
+        <element name="attribute">
+            <attribute name="name"/>
+            <optional>
+                <attribute name="provider"/>
+                <element name="suggest-handler">
+                    <element name="templates">
                         <oneOrMore>
-                            <element name="column">
-                                <attribute name="name">
-                                    <data type="NCName"/>
-                                </attribute>
-                                <optional>
-                                    <attribute name="value"/>
-                                </optional>
+                            <element name="template">
+                                <attribute name="address"/>
                             </element>
                         </oneOrMore>
                     </element>
                 </element>
             </optional>
-            <element name="form">
-                <attribute name="auto-save">
-                    <data type="boolean"/>
-                </attribute>
-                <attribute name="id">
-                    <data type="NCName"/>
-                </attribute>
-                <optional>
-                    <attribute name="name-resolver"/>
-                </optional>
-                <optional>
-                    <attribute name="title"/>
-                </optional>
-                <ref name="attributes"/>
-            </element>
-        </element>
-    </define>
-    <define name="attributes">
-        <element name="attributes">
-            <oneOrMore>
-                <element name="attribute">
-                    <attribute name="name">
-                        <data type="NCName"/>
-                    </attribute>
-                    <optional>
-                        <attribute name="provider"/>
-                    </optional>
-                    <optional>
-                        <element name="suggest-handler">
-                            <element name="templates">
-                                <oneOrMore>
-                                    <element name="template">
-                                        <attribute name="address"/>
-                                    </element>
-                                </oneOrMore>
-                            </element>
-                        </element>
-                    </optional>
-                </element>
-            </oneOrMore>
         </element>
     </define>
 </grammar>
