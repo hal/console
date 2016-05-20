@@ -252,8 +252,10 @@ public class Typeahead implements SuggestHandler, Attachable {
             xhrFields.withCredentials = true;
 
             settings.accepts = accepts;
-            settings.beforeSend = (xhr, sttngs) ->
-                    xhr.setRequestHeader(HEADER_MANAGEMENT_CLIENT_NAME, HEADER_MANAGEMENT_CLIENT_VALUE);
+            settings.beforeSend = (xhr, sttngs) -> {
+                // TODO Use this callback to create the actual operations from the provided AddressTemplates
+                xhr.setRequestHeader(HEADER_MANAGEMENT_CLIENT_NAME, HEADER_MANAGEMENT_CLIENT_VALUE);
+            };
             settings.error = (xhr, textStatus, errorThrown) -> {
                 String details = errorThrown;
                 ModelNode node = ModelNode.fromBase64(xhr.getResponseText());

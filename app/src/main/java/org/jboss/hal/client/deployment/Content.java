@@ -52,6 +52,6 @@ public class Content extends NamedNode {
 
     @Override
     public String toString() {
-        return "Content{" + getName() + ", assigned to " + assignments + "}";
+        return "Content(" + getName() + ", assigned to " + assignments + ")";
     }
 }

@@ -40,7 +40,6 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
         return new Mbui_LoggingView(mbuiContext);
     }
 
-
     @MbuiElement("logging-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("logging-root-logger-form") Form<ModelNode> rootLoggerForm;
     @MbuiElement("logging-categories-table") DataTable<NamedNode> loggerTable;
@@ -156,6 +155,9 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
         patternFormatterForm.clear();
     }
 
+    /**
+     * Helper method to build the filename using the nested ({@code relative-to/path}) attributes.
+     */
     String getFilename(NamedNode node) {
         String filename = Names.NOT_AVAILABLE;
         if (node.hasDefined("file") && node.get("file").hasDefined("path")) {

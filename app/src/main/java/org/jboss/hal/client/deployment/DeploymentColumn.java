@@ -137,8 +137,7 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
                                     resources.messages().removeResourceConfirmationTitle(item.getName()),
                                     resources.messages().removeResourceConfirmationQuestion(item.getName()),
                                     () -> {
-                                        ResourceAddress address = new ResourceAddress()
-                                                .add(DEPLOYMENT, item.getName());
+                                        ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, item.getName());
                                         Operation operation = new Operation.Builder(REMOVE, address).build();
                                         dispatcher.execute(operation, result -> refresh(CLEAR_SELECTION));
                                         return true;

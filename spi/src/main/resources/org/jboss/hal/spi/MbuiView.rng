@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+         xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+         datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+
+    <a:documentation>RELAX NG schema for MBUI XML</a:documentation>
+    <start>
+        <element name="view">
+            <choice>
+                <ref name="verticalNavigation"/>
+                <oneOrMore>
+                    <ref name="metadata"/>
+                </oneOrMore>
+            </choice>
+        </element>
+    </start>
+
+    <define name="verticalNavigation">
+        <element name="vertical-navigation">
+            <attribute name="id">
+                <data type="ID"/>
+            </attribute>
+            <oneOrMore>
+                <ref name="item"/>
+            </oneOrMore>
+        </element>
+    </define>
+
+    <define name="item">
+        <element name="item">
+            <attribute name="id">
+                <data type="ID"/>
+            </attribute>
+            <attribute name="icon"/>
+            <attribute name="title"/>
+            <choice>
+                <ref name="metadata"/>
+                <oneOrMore>
+                    <ref name="subItem"/>
+                </oneOrMore>
+            </choice>
+        </element>
+    </define>
+
+    <define name="subItem">
+        <element name="sub-item">
+            <attribute name="id">
+                <data type="NCName"/>
+            </attribute>
+            <attribute name="title"/>
+            <ref name="metadata"/>
+        </element>
+    </define>
+
+    <define name="metadata">
+        <element name="metadata">
+            <attribute name="address"/>
+            <element name="h1">
+                <text/>
+            </element>
+            <element name="p">
+                <text/>
+            </element>
+            <optional>
+                <element name="table">
+                    <attribute name="form-ref">
+                        <data type="NCName"/>
+                    </attribute>
+                    <attribute name="id">
+                        <data type="NCName"/>
+                    </attribute>
+                    <optional>
+                        <attribute name="title">
+                            <data type="NCName"/>
+                        </attribute>
+                    </optional>
+                    <element name="actions">
+                        <oneOrMore>
+                            <element name="action">
+                                <attribute name="handler-ref">
+                                    <data type="NCName"/>
+                                </attribute>
+                                <optional>
+                                    <attribute name="name-resolver"/>
+                                </optional>
+                                <optional>
+                                    <attribute name="scope">
+                                        <data type="NCName"/>
+                                    </attribute>
+                                </optional>
+                                <optional>
+                                    <ref name="attributes"/>
+                                </optional>
+                            </element>
+                        </oneOrMore>
+                    </element>
+                    <element name="columns">
+                        <oneOrMore>
+                            <element name="column">
+                                <attribute name="name">
+                                    <data type="NCName"/>
+                                </attribute>
+                                <optional>
+                                    <attribute name="value"/>
+                                </optional>
+                            </element>
+                        </oneOrMore>
+                    </element>
+                </element>
+            </optional>
+            <element name="form">
+                <attribute name="auto-save">
+                    <data type="boolean"/>
+                </attribute>
+                <attribute name="id">
+                    <data type="NCName"/>
+                </attribute>
+                <optional>
+                    <attribute name="name-resolver"/>
+                </optional>
+                <optional>
+                    <attribute name="title"/>
+                </optional>
+                <ref name="attributes"/>
+            </element>
+        </element>
+    </define>
+    <define name="attributes">
+        <element name="attributes">
+            <oneOrMore>
+                <element name="attribute">
+                    <attribute name="name">
+                        <data type="NCName"/>
+                    </attribute>
+                    <optional>
+                        <attribute name="provider"/>
+                    </optional>
+                    <optional>
+                        <element name="suggest-handler">
+                            <element name="templates">
+                                <oneOrMore>
+                                    <element name="template">
+                                        <attribute name="address"/>
+                                    </element>
+                                </oneOrMore>
+                            </element>
+                        </element>
+                    </optional>
+                </element>
+            </oneOrMore>
+        </element>
+    </define>
+</grammar>
