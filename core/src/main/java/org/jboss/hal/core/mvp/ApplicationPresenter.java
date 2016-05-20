@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.core.mvp;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -51,7 +52,11 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
     protected void onReveal() {
         super.onReveal();
         if (getView() instanceof HasVerticalNavigation) {
-            ((HasVerticalNavigation) getView()).getVerticalNavigation().on();
+            VerticalNavigation navigation = ((HasVerticalNavigation) getView()).getVerticalNavigation();
+            if (navigation != null) {
+                navigation.on();
+                Scheduler.get().scheduleDeferred(navigation::showInitial);
+            }
         }
     }
 
@@ -65,7 +70,10 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
     protected void onHide() {
         super.onHide();
         if (getView() instanceof HasVerticalNavigation) {
-            ((HasVerticalNavigation) getView()).getVerticalNavigation().off();
+            VerticalNavigation navigation = ((HasVerticalNavigation) getView()).getVerticalNavigation();
+            if (navigation != null) {
+                navigation.off();
+            }
         }
     }
 
@@ -80,6 +88,7 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
      */
     protected abstract FinderPath finderPath();
 
+    @SuppressWarnings("unchecked")
     private void updateBreadcrumb() {
         FinderPath applicationPath = finderPath();
         if (applicationPath != null) {
@@ -87,7 +96,6 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
             for (FinderSegment segment : applicationPath) {
                 FinderColumn column = finder.getColumn(segment.getKey());
                 if (column != null) {
-                    //noinspection unchecked
                     segment.connect(column);
                 } else {
                     //noinspection HardCodedStringLiteral

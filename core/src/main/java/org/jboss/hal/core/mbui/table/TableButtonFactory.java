@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.core.mbui.table;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -27,8 +29,6 @@ import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.table.Api;
 import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mbui.dialog.NameItem;
-import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -44,6 +44,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 
+import static java.util.Arrays.asList;
 import static org.jboss.hal.ballroom.table.Button.Scope.SELECTED_SINGLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
@@ -107,15 +108,15 @@ public class TableButtonFactory {
 
             @Override
             public void onMetadata(final Metadata metadata) {
-                ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(
-                        IdBuilder.build(id, "add", "form"), metadata)
-                        .addFromRequestProperties()
-                        .unboundFormItem(new NameItem(), 0);
+                List<String> attributes = new ArrayList<>();
                 if (firstAttribute != null) {
-                    builder.include(firstAttribute, otherAttributes);
+                    attributes.add(firstAttribute);
                 }
-                AddResourceDialog dialog = new AddResourceDialog(
-                        resources.messages().addResourceTitle(type), builder.build(), addResourceCallback);
+                if (otherAttributes != null) {
+                    attributes.addAll(asList(otherAttributes));
+                }
+                AddResourceDialog dialog = new AddResourceDialog(IdBuilder.build(id, "add", "form"),
+                        resources.messages().addResourceTitle(type), metadata, attributes, addResourceCallback);
                 dialog.show();
             }
         };
@@ -127,7 +128,7 @@ public class TableButtonFactory {
     }
 
     @SuppressWarnings("Guava")
-    public <T> Button<T> remove(String type, Function<Api<T>, String> nameFunction, AddressTemplate addressTemplate,
+    public <T> Button<T> remove(String type, AddressTemplate addressTemplate, Function<Api<T>, String> nameFunction,
             ScheduledCommand afterRemove) {
         Button<T> button = new Button<>();
         button.text = resources.constants().remove();

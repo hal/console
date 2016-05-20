@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent</artifactId>
-        <version>0.1.1</version>
+        <version>0.2.0</version>
     </parent>
 
     <artifactId>hal-parent-with-dependencies</artifactId>
@@ -34,16 +34,18 @@
 
     <properties>
         <annotations.version>15.0</annotations.version>
-        <apt-tools.version>0.0.2</apt-tools.version>
+        <apt-tools.version>0.0.3</apt-tools.version>
         <auto-service.version>1.0-rc2</auto-service.version>
         <circuit.version>0.1.6</circuit.version>
-        <elemento.version>0.2.1</elemento.version>
+        <elemento.version>0.2.2</elemento.version>
         <flow.version>0.0.3</flow.version>
         <gin.version>2.1.2</gin.version>
         <guava.version>20.0-hal</guava.version>
         <gwt.version>2.8.0-SNAPSHOT</gwt.version>
         <gwtp.version>1.5.3</gwtp.version>
+        <jaxen.version>1.1.6</jaxen.version>
         <jboss.dmr.version>1.3.0.Final</jboss.dmr.version>
+        <jdom.version>2.0.2</jdom.version>
         <junit.version>4.12</junit.version>
         <mockito.version>2.0.31-beta</mockito.version>
         <nodejs.version>v4.2.1</nodejs.version>
@@ -169,7 +171,16 @@
                 <artifactId>auto-service</artifactId>
                 <version>${auto-service.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.jdom</groupId>
+                <artifactId>jdom</artifactId>
+                <version>${jdom.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jaxen</groupId>
+                <artifactId>jaxen</artifactId>
+                <version>${jaxen.version}</version>
+            </dependency>
             <!-- Test -->
             <dependency>
                 <groupId>junit</groupId>

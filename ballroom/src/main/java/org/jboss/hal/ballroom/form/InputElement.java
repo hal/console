@@ -30,7 +30,7 @@ public abstract class InputElement<T>
     /**
      * Helper class to pass data from subclasses of AbstractFormItem to newInputElement().
      */
-    static class Context<C> {
+    public static class Context<C> {
 
         private final C data;
 
@@ -42,7 +42,7 @@ public abstract class InputElement<T>
     }
 
 
-    static final Context<Void> EMPTY_CONTEXT = new Context<>(null);
+    public static final Context<Void> EMPTY_CONTEXT = new Context<>(null);
 
     private boolean attached;
 

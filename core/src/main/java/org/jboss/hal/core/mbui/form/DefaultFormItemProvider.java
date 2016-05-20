@@ -32,11 +32,13 @@ import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.ballroom.form.SwitchItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
-import org.jboss.hal.ballroom.typeahead.TypeaheadProvider;
+import org.jboss.hal.ballroom.typeahead.Typeahead;
+import org.jboss.hal.core.CoreStatementContext;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 
 import static java.util.Collections.emptyList;
@@ -51,10 +53,12 @@ class DefaultFormItemProvider implements FormItemProvider {
 
     private final Capabilities capabilities;
     private final LabelBuilder labelBuilder;
+    private final StatementContext statementContext;
 
     DefaultFormItemProvider(final Capabilities capabilities) {
         this.capabilities = capabilities;
         this.labelBuilder = new LabelBuilder();
+        this.statementContext = CoreStatementContext.INSTANCE;
     }
 
     @Override
@@ -200,7 +204,7 @@ class DefaultFormItemProvider implements FormItemProvider {
         if (modelNode.hasDefined(CAPABILITY_REFERENCE)) {
             String reference = modelNode.get(CAPABILITY_REFERENCE).asString();
             if (capabilities.contains(reference)) {
-                SuggestHandler suggestHandler = new TypeaheadProvider().from(capabilities.lookup(reference));
+                SuggestHandler suggestHandler = new Typeahead(capabilities.lookup(reference), statementContext);
                 formItem.registerSuggestHandler(suggestHandler);
             }
         }

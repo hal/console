@@ -109,13 +109,21 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
     }
 
     @Override
+    protected void onReveal() {
+        super.onReveal();
+    }
+
+    @Override
     protected void onReset() {
         super.onReset();
         getView().selectTlc(placeManager.getCurrentPlaceRequest().getNameToken());
     }
 
     void goTo(final String token) {
-        PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token).build();
+        goTo(new PlaceRequest.Builder().nameToken(token).build());
+    }
+
+    void goTo(PlaceRequest placeRequest) {
         placeManager.revealPlace(placeRequest);
     }
 

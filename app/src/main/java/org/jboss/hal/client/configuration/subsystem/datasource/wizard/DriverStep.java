@@ -61,7 +61,7 @@ class DriverStep extends WizardStep<Context, State> {
         this.nameItem = form.getFormItem(DRIVER_NAME);
 
         if (!this.drivers.isEmpty()) {
-            this.suggestHandler = new Typeahead.StaticBuilder(this.drivers.keySet()).build();
+            this.suggestHandler = new Typeahead(this.drivers.keySet());
             nameItem.registerSuggestHandler(suggestHandler);
         }
         registerAttachable(form);

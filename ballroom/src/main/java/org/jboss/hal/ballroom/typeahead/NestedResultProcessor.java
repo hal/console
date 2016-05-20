@@ -29,9 +29,7 @@ import elemental.js.util.JsArrayOf;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +53,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
  * }
  * </pre>
  */
-// TODO Rename this to NestedResultProcessor and change the JSON as stated above
 class NestedResultProcessor extends AbstractResultProcessor<NestedResultProcessor.Result>
         implements ResultProcessor {
 
@@ -81,10 +78,10 @@ class NestedResultProcessor extends AbstractResultProcessor<NestedResultProcesso
     static final String VALUE = "value";
     private static final Logger logger = LoggerFactory.getLogger(NestedResultProcessor.class);
 
-    private final Operation operation;
+    private final boolean composite;
 
-    NestedResultProcessor(final Operation operation) {
-        this.operation = operation;
+    NestedResultProcessor(final boolean composite) {
+        this.composite = composite;
     }
 
     @Override
@@ -93,7 +90,7 @@ class NestedResultProcessor extends AbstractResultProcessor<NestedResultProcesso
 
         // first collect all addresses from the result
         List<ResourceAddress> addresses = new ArrayList<>();
-        if (operation instanceof Composite) {
+        if (composite) {
             CompositeResult compositeResult = new CompositeResult(result);
             for (ModelNode step : compositeResult) {
                 if (!step.isFailure()) {
@@ -123,7 +120,7 @@ class NestedResultProcessor extends AbstractResultProcessor<NestedResultProcesso
             while (iterator.hasNext()) {
                 if (iterator.next().asList().size() != length) {
                     //noinspection HardCodedStringLiteral
-                    logger.error("Different address types in result processor for operation {}", operation);
+                    logger.error("Different address types in result processor");
                     return Collections.emptyList();
                 }
             }

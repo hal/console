@@ -1,16 +1,16 @@
 #!/bin/bash
 
-# Script to build, deploy and push HAL.Next to branch 'gh-pages'
+# Script to build, deploy and push HAL.next to branch 'gh-pages'
 
 ROOT=$PWD
 BRANCH=$(git symbolic-ref -q HEAD)
 BRANCH=${BRANCH##refs/heads/}
 BRANCH=${BRANCH:-HEAD}
 
-#if ! git diff --no-ext-diff --quiet --exit-code; then
-#    echo "Cannot publish to gh-pages. You have uncommitted changes in the current branch."
-#    exit -1
-#fi
+if ! git diff --no-ext-diff --quiet --exit-code; then
+    echo "Cannot publish to gh-pages. You have uncommitted changes in the current branch."
+    exit -1
+fi
 
 source "$ROOT/spinner.sh"
 
@@ -30,7 +30,9 @@ mv app/target/hal-app-*/hal /tmp/
 git checkout gh-pages > /dev/null 2>&1
 git reset --hard origin/gh-pages > /dev/null 2>&1
 rm -rf *.png *.gif *.ico *.txt *.html *.js
-rm -rf css deferredjs fonts img js
+rm -rf css deferredjs fonts img js previews
+git commit -am "Prepare update" > /dev/null 2>&1
+git push -f origin gh-pages > /dev/null 2>&1
 mv /tmp/hal/* .
 date > .build
 git add --all > /dev/null 2>&1

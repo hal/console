@@ -36,7 +36,7 @@ class ColumnFactory {
         String name = attributeDescription.getName();
         String title = labelBuilder.label(attributeDescription);
 
-        // TODO Think about other columns type depending on ModelType
+        // TODO Think about other column types depending on ModelType
         Column.RenderCallback<T, Object> render = (cell, type, row, meta) -> {
             if (row.hasDefined(name)) {
                 return row.get(name).asString();

@@ -38,9 +38,13 @@ public interface Names {
     String INTERFACES = "Interfaces";
     String JDBC_DRIVER = "JDBC Driver";
     String JDBC_DRIVERS = "JDBC Drivers";
+    String JNDI = "JNDI";
+    String MAIL = "Mail";
+    String MAIL_SESSION = "Mail Session";
     String MANAGEMENT_CONSOLE = "Management Console";
     String MANAGEMENT_MODEL = "Management Model";
     String MODULE = "Module";
+    String NAME = "Name";
     String NOT_AVAILABLE = "n/a";
     String NOT_SUPPORTED = "not supported";
     String NYI = "not yet implemented";

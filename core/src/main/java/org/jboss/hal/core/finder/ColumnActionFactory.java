@@ -15,14 +15,14 @@
  */
 package org.jboss.hal.core.finder;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mbui.dialog.NameItem;
-import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -39,6 +39,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jetbrains.annotations.NonNls;
 
+import static java.util.Arrays.asList;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.resources.CSS.fontAwesome;
@@ -112,15 +113,15 @@ public class ColumnActionFactory {
 
         return add(id, type, column -> {
             Metadata metadata = metadataRegistry.lookup(template);
-            ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(
-                    IdBuilder.build(id, "form"), metadata)
-                    .addFromRequestProperties()
-                    .unboundFormItem(new NameItem(), 0);
+            List<String> attributes = new ArrayList<>();
             if (firstAttribute != null) {
-                builder.include(firstAttribute, otherAttributes);
+                attributes.add(firstAttribute);
             }
-            AddResourceDialog dialog = new AddResourceDialog(
-                    resources.messages().addResourceTitle(type), builder.build(),
+            if (otherAttributes != null) {
+                attributes.addAll(asList(otherAttributes));
+            }
+            AddResourceDialog dialog = new AddResourceDialog(IdBuilder.build(id, "form"),
+                    resources.messages().addResourceTitle(type), metadata,  attributes,
                     new ColumnAddResourceCallback<>(column, type, template));
             dialog.show();
         });

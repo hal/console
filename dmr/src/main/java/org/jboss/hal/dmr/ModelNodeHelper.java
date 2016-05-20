@@ -15,14 +15,15 @@
  */
 package org.jboss.hal.dmr;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Provider;
 import org.jboss.hal.dmr.model.NamedNode;
-
-import java.util.List;
 
 /**
  * Static helper methods for dealing with {@link ModelNode}s.
@@ -63,6 +64,24 @@ public final class ModelNodeHelper {
         return undefined;
     }
 
+    public static List<ModelNode> failSafeList(final ModelNode modelNode, final String path) {
+        ModelNode result = failSafeGet(modelNode, path);
+        return result.isDefined() ? result.asList() : Collections.emptyList();
+    }
+
+    public static List<Property> failSafePropertyList(final ModelNode modelNode, final String path) {
+        ModelNode result = failSafeGet(modelNode, path);
+        return result.isDefined() ? result.asPropertyList() : Collections.emptyList();
+    }
+
+    /**
+     * Turns a list of properties into a list of named model nodes which contains a {@link
+     * ModelDescriptionConstants#NAME} key with the properties name.
+     */
+    public static List<NamedNode> asNamedNodes(List<Property> properties) {
+        return Lists.transform(properties, NamedNode::new);
+    }
+
     public static <T> T getOrDefault(final ModelNode modelNode, String attribute,
             Provider<T> provider, T defaultValue) {
         T result = defaultValue;
@@ -74,13 +93,5 @@ public final class ModelNodeHelper {
             }
         }
         return result;
-    }
-
-    /**
-     * Turns a list of properties into a list of named model nodes which contains a {@link
-     * ModelDescriptionConstants#NAME} key with the properties name.
-     */
-    public static List<NamedNode> asNamedNodes(List<Property> properties) {
-        return Lists.transform(properties, NamedNode::new);
     }
 }

@@ -14,7 +14,6 @@ import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.core.mbui.ResourceDescriptionBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.junit.Assert;
@@ -216,7 +215,7 @@ public class ModelNodeFormTest {
 
     @Test
     public void excludeAttributes() {
-        ModelNodeForm<ModelNode> form = builder("includeAttributes", attributes)
+        ModelNodeForm<ModelNode> form = builder("excludeAttributes", attributes)
                 .exclude("foo", "bar")
                 .build();
         Iterable<FormItem> formItems = form.getFormItems();
@@ -231,10 +230,7 @@ public class ModelNodeFormTest {
 
     private ModelNodeForm.Builder<ModelNode> builder(final String id, final ResourceDescription description) {
         return new ModelNodeForm.Builder<>(id, metadata(description))
-                .customFormItem("foo", (property) -> new TestableFormItem("foo"))
-                .customFormItem("bar", (property) -> new TestableFormItem("bar"))
-                .customFormItem("baz", (property) -> new TestableFormItem("baz"))
-                .customFormItem("qux", (property) -> new TestableFormItem("qux"));
+                .defaultFormItemProvider((property) -> new TestableFormItem(property.getName()));
     }
 
     private Metadata metadata() {
@@ -242,6 +238,6 @@ public class ModelNodeFormTest {
     }
 
     private Metadata metadata(ResourceDescription description) {
-        return new Metadata(RWX, description, new Capabilities(StatementContext.NOOP));
+        return new Metadata(RWX, description, new Capabilities());
     }
 }

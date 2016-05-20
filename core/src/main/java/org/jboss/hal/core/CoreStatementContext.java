@@ -34,6 +34,12 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
  */
 public class CoreStatementContext implements StatementContext, ProfileSelectionHandler {
 
+    /**
+     * Please use this constant only in cases where no DI is available.
+     */
+    @Inject
+    public static CoreStatementContext INSTANCE;
+
     private final Environment environment;
     private final Map<Tuple, String> context;
 

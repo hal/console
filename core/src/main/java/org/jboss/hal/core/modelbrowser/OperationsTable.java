@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
+import java.util.List;
+
 import com.google.common.collect.Ordering;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -24,12 +26,14 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import java.util.List;
-
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.operationParameter;
+import static org.jboss.hal.resources.CSS.table;
+import static org.jboss.hal.resources.CSS.tableBordered;
+import static org.jboss.hal.resources.CSS.tableStriped;
 import static org.jboss.hal.resources.UIConstants.NBSP;
 
 /**
@@ -47,7 +51,7 @@ class OperationsTable implements IsElement {
                 .css(table, tableBordered, tableStriped, CSS.operations)
                 .thead()
                 .tr()
-                .th().textContent(resources.constants().name()).end()
+                .th().textContent(Names.NAME).end()
                 .th().textContent(resources.constants().input()).end()
                 .th().textContent(resources.constants().output()).end()
                 .end()

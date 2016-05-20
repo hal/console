@@ -46,6 +46,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
@@ -143,7 +145,12 @@ public class ContentColumn extends FinderColumn<Content> {
                                             ResourceAddress address = new ResourceAddress()
                                                     .add(DEPLOYMENT, item.getName());
                                             Operation operation = new Operation.Builder(REMOVE, address).build();
-                                            dispatcher.execute(operation, result -> refresh(CLEAR_SELECTION));
+                                            dispatcher.execute(operation, result -> {
+                                                MessageEvent.fire(eventBus, Message.success(resources.messages()
+                                                        .removeResourceSuccess(resources.constants().content(),
+                                                                item.getName())));
+                                                refresh(CLEAR_SELECTION);
+                                            });
                                             return true;
                                         }).show();
                             }));
@@ -156,7 +163,7 @@ public class ContentColumn extends FinderColumn<Content> {
         });
 
         if (JsHelper.supportsAdvancedUpload()) {
-            setOnDrop(event ->  DeploymentFunctions.upload(this, dispatcher, eventBus, progress, resources,
+            setOnDrop(event -> DeploymentFunctions.upload(this, dispatcher, eventBus, progress, resources,
                     event.dataTransfer.files));
         }
     }

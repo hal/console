@@ -23,7 +23,7 @@ import org.jboss.hal.dmr.Property;
  * @author Harald Pehl
  */
 @FunctionalInterface
-public interface FormItemProvider {
+public interface FormItemProvider<T> {
 
-    FormItem<?> createFrom(Property attributeDescription);
+    FormItem<T> createFrom(Property attributeDescription);
 }

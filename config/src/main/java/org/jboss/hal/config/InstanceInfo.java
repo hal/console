@@ -29,17 +29,17 @@ public enum InstanceInfo {
     private String releaseName;
     private String releaseVersion;
     private String serverName;
-    private String description;
+    private String platform;
 
     InstanceInfo(final String productName, final String productVersion,
             final String releaseName, final String releaseVersion,
-            final String serverName, final String description) {
+            final String serverName, final String platform) {
         this.productName = productName;
         this.productVersion = productVersion;
         this.releaseName = releaseName;
         this.releaseVersion = releaseVersion;
         this.serverName = serverName;
-        this.description = description;
+        this.platform = platform;
     }
 
     public String productName() {
@@ -62,8 +62,8 @@ public enum InstanceInfo {
         return serverName;
     }
 
-    public String description() {
-        return description;
+    public String platform() {
+        return platform;
     }
 
     public void update(final String productName, final String productVersion,

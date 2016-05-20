@@ -15,17 +15,20 @@
  */
 package org.jboss.hal.dmr.model;
 
-import com.google.common.base.Strings;
-import org.jboss.hal.dmr.ModelNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import com.google.common.base.Strings;
+import org.jboss.hal.dmr.ModelNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINE_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 
 /**
  * @author Harald Pehl
@@ -103,6 +106,8 @@ public class OperationFactory {
             valueNode.clear();
             Map map = (Map) value;
             for (Object k : map.keySet()) { valueNode.add(String.valueOf(k), String.valueOf(map.get(k))); }
+        } else if (ModelNode.class == type) {
+            valueNode.set((ModelNode) value);
         } else {
             valueNode = null;
         }

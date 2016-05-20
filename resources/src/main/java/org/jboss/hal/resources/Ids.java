@@ -81,6 +81,12 @@ public interface Ids {
     String MACRO_EDITOR = "macro-editor";
     String MACRO_LIST = "macro-list";
     String MACRO_OPTIONS = "macro-options";
+    String MAIL_SESSION = "mail-session";
+    String MAIL_SESSION_ATTRIBUTES_ENTRY = "mail-session-attributes-entry";
+    String MAIL_SESSION_ATTRIBUTES_FORM = "mail-session-attributes-form";
+    String MAIL_SESSION_SERVERS_ENTRY = "mail-session-servers-entry";
+    String MAIL_SESSION_SERVERS_FORM = "mail-session-servers-form";
+    String MAIL_SESSION_SERVERS_TABLE = "mail-session-servers-table";
     String MODEL_BROWSER = "model-browser";
 
     String PATHS_FORM = "paths-form";
@@ -98,6 +104,9 @@ public interface Ids {
     String TLC_RUNTIME = "tlc-runtime";
 
     String UNASSIGNED_CONTENT_COLUMN = "unassigned-content";
+
+    String VERSION_INFO = "version-info";
+    String VERSION_INFO_FORM = IdBuilder.build(VERSION_INFO, "form");
 
     String WEB_SETTINGS_COLUMN = "settings";
 }

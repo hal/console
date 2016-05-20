@@ -15,32 +15,30 @@
  */
 package org.jboss.hal.meta;
 
-import org.jboss.hal.config.Environment;
+import javax.inject.Provider;
 
 /**
- * A statement context which resolves the {@code selected.*} tuples to wildcards if they are not yet defined.
+ * A filtering statement context which resolves the key {@code selection} to the specified selection provider.
  *
  * @author Harald Pehl
  */
-public class WildcardWhenUndefinedContext extends FilteringStatementContext implements StatementContext {
+public class SelectionAwareStatementContext extends FilteringStatementContext implements StatementContext {
 
-    public WildcardWhenUndefinedContext(final StatementContext delegate, Environment environment) {
+    public static final String SELECTION_KEY = "selection";
+
+    public SelectionAwareStatementContext(final StatementContext delegate, final Provider<String> selectionProvider) {
         super(delegate, new Filter() {
             @Override
             public String filter(final String key) {
+                if (SELECTION_KEY.equals(key)) {
+                    return selectionProvider.get();
+                }
                 return null;
             }
 
             @Override
             public String[] filterTuple(final String tuple) {
-                String[] resolved = delegate.resolveTuple(tuple);
-                if (resolved == null) {
-                    Tuple t = Tuple.from(tuple);
-                    if (t != null && !environment.isStandalone()) {
-                        resolved = new String[]{t.resource(), "*"};
-                    }
-                }
-                return resolved;
+                return null;
             }
         });
     }

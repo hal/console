@@ -15,6 +15,9 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import elemental.client.Browser;
@@ -24,14 +27,13 @@ import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.resources.CSS;
 
-import java.util.Collections;
-import java.util.List;
-
-import static org.jboss.hal.resources.IdBuilder.build;
-import static org.jboss.hal.resources.IdBuilder.uniqueId;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.formControl;
+import static org.jboss.hal.resources.CSS.tagManagerContainer;
+import static org.jboss.hal.resources.CSS.tags;
+import static org.jboss.hal.resources.IdBuilder.build;
+import static org.jboss.hal.resources.IdBuilder.uniqueId;
 
 /**
  * @author Harald Pehl
@@ -62,7 +64,7 @@ public class ListItem extends AbstractFormItem<List<String>> {
     }
 
     @Override
-    void assembleUI() {
+    protected void assembleUI() {
         super.assembleUI();
 
         inputGroupContainer.getClassList().add(tags);

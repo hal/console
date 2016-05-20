@@ -143,6 +143,7 @@ public interface CSS {
     String macroEditor = "macro-editor";
     String macroList = "macro-list";
     String messageDetails = "message-details";
+    String messageDetailsPre = "message-details-pre";
     String modal = "modal";
     String modalBody = "modal-body";
     String modalContent = "modal-content";

@@ -15,11 +15,11 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import org.jboss.hal.ballroom.form.InputElement.Context;
-import org.jboss.hal.ballroom.form.SelectBoxBridge.Single;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jboss.hal.ballroom.form.InputElement.Context;
+import org.jboss.hal.ballroom.form.SelectBoxBridge.Single;
 
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -90,7 +90,9 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
     @Override
     void markDefaultValue(final boolean on, final String defaultValue) {
         super.markDefaultValue(on, defaultValue);
-        Single.element(selectBox.asElement()).refresh();
+        if (selectBox.isAttached()) {
+            Single.element(selectBox.asElement()).refresh();
+        }
     }
 
 

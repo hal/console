@@ -22,8 +22,8 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * Combination of the two resources {@code server-config} and {@code server}. Make sure to check the status before
- * reading server related attributes.
+ * Combination of the two resources {@code server-config} and {@code server}. Make sure to check {@link #isStarted()}
+ * before reading server related attributes.
  *
  * @author Harald Pehl
  */
@@ -32,7 +32,7 @@ public class Server extends NamedNode {
     /**
      * Status as defined by {@code server-config.status}
      */
-    public enum Status {
+    public enum ServerConfigStatus {
         STARTED, STOPPED, UNDEFINED
     }
 
@@ -40,7 +40,7 @@ public class Server extends NamedNode {
     /**
      * State as defined by {@code server.server-state}
      */
-    public enum State {
+    public enum ServerState {
         STARTING, RUNNING, RESTART_REQUIRED, RELOAD_REQUIRED, UNDEFINED
     }
 
@@ -48,14 +48,14 @@ public class Server extends NamedNode {
     private static final String STANDALONE_SERVER = "standalone.server";
     private static final String STANDALONE_HOST = "standalone.host";
     public static final Server STANDALONE = new Server(STANDALONE_SERVER, STANDALONE_HOST,
-            Status.STARTED, State.RUNNING);
+            ServerConfigStatus.STARTED, ServerState.RUNNING);
 
 
-    private Server(String server, String host, Status status, State state) {
+    private Server(String server, String host, ServerConfigStatus serverConfigStatus, ServerState serverState) {
         super(server, new ModelNode());
         get(HOST).set(host);
-        get(STATUS).set(status.name().toLowerCase());
-        get(SERVER_STATE).set(state.name());
+        get(STATUS).set(serverConfigStatus.name().toLowerCase());
+        get(SERVER_STATE).set(serverState.name());
     }
 
     public Server(final ModelNode node) {
@@ -79,12 +79,11 @@ public class Server extends NamedNode {
     /**
      * @return the status as defined by {@code server-config.status}
      */
-    @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
-    public Status getStatus() {
+    public ServerConfigStatus getServerConfigStatus() {
         if (hasDefined(STATUS)) {
-            return Status.valueOf(get(STATUS).asString().toUpperCase());
+            return ServerConfigStatus.valueOf(get(STATUS).asString().toUpperCase());
         }
-        return Status.UNDEFINED;
+        return ServerConfigStatus.UNDEFINED;
     }
 
     /**
@@ -92,18 +91,17 @@ public class Server extends NamedNode {
      * or "suspend-state".
      */
     public boolean isStarted() {
-        return getStatus() == Status.STARTED;
+        return getServerConfigStatus() == ServerConfigStatus.STARTED;
     }
 
     /**
      * @return the state as defined by {@code server.server-status}
      */
-    @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
-    public State getState() {
+    public ServerState getServerState() {
         if (hasDefined(SERVER_STATE)) {
-            return State.valueOf(get(SERVER_STATE).asString());
+            return ServerState.valueOf(get(SERVER_STATE).asString());
         }
-        return State.UNDEFINED;
+        return ServerState.UNDEFINED;
     }
 
     public boolean isStandalone() {

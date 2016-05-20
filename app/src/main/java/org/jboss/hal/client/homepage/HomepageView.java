@@ -15,6 +15,10 @@
  */
 package org.jboss.hal.client.homepage;
 
+import java.util.Arrays;
+import java.util.Collections;
+import javax.inject.Inject;
+
 import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 import elemental.client.Browser;
 import elemental.dom.Document;
@@ -27,13 +31,11 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.Collections;
-
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.config.InstanceInfo.WILDFLY;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.clickable;
+import static org.jboss.hal.resources.CSS.eapHomeRow;
+import static org.jboss.hal.resources.CSS.eapHomeTitle;
 
 /**
  * @author Harald Pehl
@@ -66,7 +68,7 @@ public class HomepageView extends PatternFlyViewImpl implements HomepagePresente
         if (community) {
             header = new Elements.Builder()
                     .div().css(eapHomeTitle)
-                    .h(1).textContent(env.getInstanceInfo().description()).end()
+                    .h(1).textContent(env.getInstanceInfo().platform()).end()
                     .end().build();
         } else {
             // @formatter:off
@@ -80,7 +82,7 @@ public class HomepageView extends PatternFlyViewImpl implements HomepagePresente
                             .textContent(resources.constants().homepageTakeATour())
                         .end()
                     .end()
-                    .h(1).textContent(env.getInstanceInfo().description()).end()
+                    .h(1).textContent(env.getInstanceInfo().platform()).end()
                 .end().build();
             // @formatter:on
         }

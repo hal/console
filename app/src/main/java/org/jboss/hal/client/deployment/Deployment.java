@@ -96,7 +96,7 @@ public class Deployment extends Content {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Deployment{").append(getName());
+        builder.append("Deployment(").append(getName());
         if (!isStandalone()) {
             builder.append("@").append(referenceServer.getHost()).append("/").append(referenceServer.getName());
         }
@@ -104,7 +104,7 @@ public class Deployment extends Content {
                 .append((isEnabled() ? ENABLED : DISABLED))
                 .append(", ")
                 .append(getStatus());
-        builder.append("}");
+        builder.append(")");
         return builder.toString();
     }
 

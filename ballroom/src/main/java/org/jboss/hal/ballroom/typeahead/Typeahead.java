@@ -16,7 +16,11 @@
 package org.jboss.hal.ballroom.typeahead;
 
 import java.util.Collection;
+import java.util.List;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Iterables;
 import com.google.gwt.core.client.GWT;
 import elemental.client.Browser;
 import elemental.dom.Element;
@@ -33,15 +37,21 @@ import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.DmrPayloadProcessor;
+import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.singleton;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
-import static org.jboss.hal.ballroom.typeahead.Typeahead.StaticBuilder.ID;
-import static org.jboss.hal.ballroom.typeahead.Typeahead.StaticBuilder.ITEM;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.APPLICATION_DMR_ENCODED;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HEADER_MANAGEMENT_CLIENT_NAME;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HEADER_MANAGEMENT_CLIENT_VALUE;
@@ -50,92 +60,10 @@ import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
 /**
  * A suggest handler implementation based on <a href="https://twitter.github.io/typeahead.js/">typeahead.js</a> ready
  * to be used with form items.
- * <p>
- * Choose one of the nested builders or {@link TypeaheadProvider} to create an instance.
  *
  * @see <a href="https://twitter.github.io/typeahead.js/">https://twitter.github.io/typeahead.js/</a>
  */
 public class Typeahead implements SuggestHandler, Attachable {
-
-    private static abstract class GenericBuilder<B extends GenericBuilder<B>> {
-
-        final Identifier identifier;
-        Templates.SuggestionTemplate suggestion;
-        Display display;
-        DataTokenizer dataTokenizer;
-
-        protected GenericBuilder(final Identifier identifier) {this.identifier = identifier;}
-
-        public B suggestion(Templates.SuggestionTemplate suggestion) {
-            this.suggestion = suggestion;
-            return that();
-        }
-
-        public B display(Display display) {
-            this.display = display;
-            return that();
-        }
-
-        public B dataTokenizer(DataTokenizer dataTokenizer) {
-            this.dataTokenizer = dataTokenizer;
-            return that();
-        }
-
-        protected abstract B that();
-    }
-
-
-    /**
-     * Builder which uses a list of static items for the suggestions.
-     */
-    public static class StaticBuilder extends GenericBuilder<StaticBuilder> {
-
-        static final String ID = "id";
-        static final String ITEM = "item";
-
-        private final Collection<String> items;
-
-        public StaticBuilder(final Collection<String> items) {
-            super(data -> String.valueOf(data.getNumber(ID)));
-            this.items = items;
-        }
-
-        public Typeahead build() {
-            return new Typeahead(this);
-        }
-
-        @Override
-        protected StaticBuilder that() {
-            return this;
-        }
-    }
-
-
-    /**
-     * Builder which uses the provided operation together with the result processor to suggest items.
-     */
-    public static class OperationBuilder extends GenericBuilder<OperationBuilder> {
-
-        private final Operation operation;
-        private final ResultProcessor resultProcessor;
-
-        public OperationBuilder(final Operation operation, final ResultProcessor resultProcessor,
-                final Identifier identifier) {
-            super(identifier);
-            this.operation = operation;
-            this.resultProcessor = resultProcessor;
-        }
-
-        @Override
-        protected OperationBuilder that() {
-            return this;
-        }
-
-        public Typeahead build() {
-            return new Typeahead(this);
-        }
-    }
-
 
     @JsFunction
     @FunctionalInterface
@@ -187,54 +115,107 @@ public class Typeahead implements SuggestHandler, Attachable {
 
 
     static final String WHITESPACE = "\\s+";
-    private static final Constants CONSTANTS = GWT.create(Constants.class);
-    private static final String CLOSE = "close";
+
     private static final String CHANGE_EVENT = "typeahead:change";
-    private static final String SELECT_EVENT = "typeahead:select";
+    private static final String CLOSE = "close";
+    private static final String ID = "id";
+    private static final String ITEM = "item";
     private static final String VAL = "val";
+
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
+    private static final Logger logger = LoggerFactory.getLogger(Typeahead.class);
 
     private final Options options;
     private final Bloodhound bloodhound;
     private final Dataset dataset;
     private FormItem formItem;
 
-    private Typeahead(final StaticBuilder builder) {
+
+    // ------------------------------------------------------ static items
+
+    /**
+     * Creates a typeahead instance based on a list of static items.
+     */
+    public Typeahead(final Collection<String> items) {
         options = initOptions();
 
         int index = 0;
-        JsArrayOf<JsJsonObject> items = JsArrayOf.create();
-        for (String item : builder.items) {
+        JsArrayOf<JsJsonObject> jsItems = JsArrayOf.create();
+        for (String item : items) {
             JsJsonObject object = JsJsonObject.create();
             object.put(ID, index);
             object.put(ITEM, item);
-            items.push(object);
+            jsItems.push(object);
             index++;
         }
 
         Bloodhound.Options bloodhoundOptions = new Bloodhound.Options();
-        bloodhoundOptions.datumTokenizer = builder.dataTokenizer == null
-                ? data -> data.getString(ITEM).split(WHITESPACE)
-                : builder.dataTokenizer;
+        bloodhoundOptions.datumTokenizer = data -> data.getString(ITEM).split(WHITESPACE);
         bloodhoundOptions.queryTokenizer = query -> query.split(WHITESPACE);
-        bloodhoundOptions.identify = builder.identifier;
-        bloodhoundOptions.local = items;
+        bloodhoundOptions.identify = data -> String.valueOf(data.getNumber(ID));
+        bloodhoundOptions.local = jsItems;
         bloodhound = new Bloodhound(bloodhoundOptions);
 
         dataset = new Dataset();
         dataset.async = false;
-        dataset.display = builder.display == null ? data -> data.getString(ITEM) : builder.display;
+        dataset.display = data -> data.getString(ITEM);
         dataset.source = (query, syncCallback, asyncCallback) -> {
             if (SHOW_ALL_VALUE.equals(query)) {
-                syncCallback.sync(items);
+                syncCallback.sync(jsItems);
             } else {
                 bloodhound.search(query, syncCallback, asyncCallback);
             }
         };
-        dataset.templates = initTemplates(builder);
+        dataset.templates = initTemplates();
     }
 
-    private Typeahead(final OperationBuilder builder) {
-        this.options = initOptions();
+
+    // ------------------------------------------------------ address templates
+
+    /**
+     * Creates a typeahead instance based one ore multiple address templates.
+     */
+    public Typeahead(final AddressTemplate template, final StatementContext statementContext) {
+        this(singleton(template), statementContext);
+    }
+
+    public Typeahead(final Iterable<AddressTemplate> templates, final StatementContext statementContext) {
+        verifyTemplates(templates);
+
+        ResultProcessor resultProcessor;
+        Identifier identifier;
+        DataTokenizer dataTokenizer;
+        Display display;
+        Templates.SuggestionTemplate suggestionTemplate;
+
+        int numberOfTemplates = Iterables.size(templates);
+        if (numberOfTemplates == 1) {
+            AddressTemplate template = templates.iterator().next();
+            int wildcards = Iterables.size(Splitter.on('*').split(template.toString())) - 1;
+            if (wildcards == 0 || (wildcards == 1 &&  "*".equals(template.lastValue()))) {
+                resultProcessor = new NamesResultProcessor();
+                identifier = data -> data.getString(NAME);
+                dataTokenizer = data -> data.getString(NAME).split(WHITESPACE);
+                display = data -> data.getString(NAME);
+                suggestionTemplate = null;
+
+            } else {
+                resultProcessor = new NestedResultProcessor(false);
+                identifier = new NestedIdentifier();
+                dataTokenizer = new NestedTokenizer();
+                display = data -> data.getString(NAME);
+                suggestionTemplate = new NestedSuggestionTemplate();
+            }
+
+        } else {
+            resultProcessor = new NestedResultProcessor(true);
+            identifier = new NestedIdentifier();
+            dataTokenizer = new NestedTokenizer();
+            display = data -> data.getString(NAME);
+            suggestionTemplate = new NestedSuggestionTemplate();
+        }
+
+        options = initOptions();
 
         RemoteOptions remoteOptions = new RemoteOptions();
         remoteOptions.url = Endpoints.INSTANCE.dmr();
@@ -246,60 +227,101 @@ public class Typeahead implements SuggestHandler, Attachable {
             xhrFields.withCredentials = true;
 
             settings.accepts = accepts;
-            settings.beforeSend = (xhr, sttngs) ->
-                    xhr.setRequestHeader(HEADER_MANAGEMENT_CLIENT_NAME, HEADER_MANAGEMENT_CLIENT_VALUE);
+            settings.beforeSend = (xhr, sttngs) -> {
+                //noinspection Guava
+                List<Operation> operations = FluentIterable.from(templates)
+                        .transform(template -> template.resolve(statementContext))
+                        .transform(address -> operation(address, numberOfTemplates))
+                        .toList();
+
+                Operation operation = operations.size() == 1 ? operations.get(0) : new Composite(operations);
+                sttngs.data = operation.toBase64String();
+                xhr.setRequestHeader(HEADER_MANAGEMENT_CLIENT_NAME, HEADER_MANAGEMENT_CLIENT_VALUE);
+            };
+            settings.error = (xhr, textStatus, errorThrown) -> {
+                String details = errorThrown;
+                ModelNode node = ModelNode.fromBase64(xhr.getResponseText());
+                if (node.isFailure()) {
+                    details = node.getFailureDescription();
+                }
+                logger.error("Unable to process typeahead operation on form item {}: {}", //NON-NLS
+                        formItem().getId(EDITING), details);
+            };
             settings.contentType = APPLICATION_DMR_ENCODED;
-            settings.data = builder.operation.toBase64String();
             settings.dataType = "text"; //NON-NLS
             settings.method = POST.name();
             settings.xhrFields = xhrFields;
             return settings;
         };
+
         remoteOptions.transform = response -> {
             DmrPayloadProcessor payloadProcessor = new DmrPayloadProcessor();
             ModelNode payload = payloadProcessor.processPayload(POST, APPLICATION_DMR_ENCODED, response);
             if (!payload.isFailure()) {
                 String query = Bridge.select(formItemSelector()).getValue();
                 ModelNode result = payload.get(RESULT);
-                return builder.resultProcessor.process(query, result);
+                return resultProcessor.process(query, result);
             }
             return JsArrayOf.create();
         };
 
         Bloodhound.Options bloodhoundOptions = new Bloodhound.Options();
-        bloodhoundOptions.datumTokenizer = builder.dataTokenizer == null
-                ? data -> builder.identifier.identify(data).split(WHITESPACE)
-                : builder.dataTokenizer;
+        bloodhoundOptions.datumTokenizer = dataTokenizer;
         bloodhoundOptions.queryTokenizer = query -> query.split(WHITESPACE);
-        bloodhoundOptions.identify = builder.identifier;
+        bloodhoundOptions.identify = identifier;
         bloodhoundOptions.sufficient = Integer.MAX_VALUE; // we'd like to always have fresh results from the backend
         bloodhoundOptions.remote = remoteOptions;
         bloodhound = new Bloodhound(bloodhoundOptions);
 
         dataset = new Dataset();
         dataset.async = true;
-        dataset.display = builder.display == null ? builder.identifier::identify : builder.display;
+        dataset.display = display;
         dataset.limit = Integer.MAX_VALUE;
         dataset.source = bloodhound::search;
-        dataset.templates = initTemplates(builder);
+        dataset.templates = initTemplates();
+        dataset.templates.suggestion = suggestionTemplate;
     }
 
-    private Options initOptions() {
-        Options options = new Options();
-        options.highlight = true;
-        options.minLength = 1;
-        return options;
+    private Operation operation(ResourceAddress address, int numberOfTemplates) {
+        Operation operation;
+
+        int wildcards = 0;
+        if (address.isDefined()) {
+            for (Property property : address.asPropertyList()) {
+                if ("*".equals(property.getValue().asString())) {
+                    wildcards++;
+                }
+            }
+        }
+
+        if (numberOfTemplates == 1 &&
+                (wildcards == 0 || (wildcards == 1 && "*".equals(address.lastValue())))) {
+            ResourceAddress parent = address.getParent();
+            String childName = address.lastName();
+            operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, parent)
+                    .param(CHILD_TYPE, childName).build();
+
+        } else {
+            // The address is something like /foo=*/bar=*
+            // Would be nice if we could use
+            // /foo=*:read-children-names(child-type=bar)
+            // but it returns an empty list, so we're using
+            // /foo=*/bar=*:read-resource
+            // which makes parsing the response more complicated
+            operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
+                    .param(ATTRIBUTES_ONLY, true)
+                    .param(INCLUDE_ALIASES, false)
+                    .param(INCLUDE_DEFAULTS, false)
+                    .param(INCLUDE_RUNTIME, false)
+                    .param(PROXIES, false)
+                    .build();
+        }
+
+        return operation;
     }
 
-    private <B extends GenericBuilder<B>> Templates initTemplates(GenericBuilder<B> builder) {
-        Templates templates = new Templates();
-        templates.suggestion = builder.suggestion;
-        //noinspection HardCodedStringLiteral
-        templates.notFound = context -> "<div class=\"empty-message\">" +
-                "<span class=\"pficon pficon-warning-triangle-o\"></span>" + CONSTANTS.noItems() +
-                "</div>";
-        return templates;
-    }
+
+    // ------------------------------------------------------ public API
 
     @Override
     public void setFormItem(FormItem formItem) {
@@ -329,6 +351,32 @@ public class Typeahead implements SuggestHandler, Attachable {
         if (bloodhound != null) {
             bloodhound.clearRemoteCache();
         }
+    }
+
+
+    // ------------------------------------------------------ helper methods
+
+    private void verifyTemplates(final Iterable<AddressTemplate> templates) {
+        if (Iterables.isEmpty(templates)) {
+            throw new IllegalArgumentException(
+                    "Templates must not be empty in Typeahead(List<AddressTemplate>, StatementContext)");
+        }
+    }
+
+    private Options initOptions() {
+        Options options = new Options();
+        options.highlight = true;
+        options.minLength = 1;
+        return options;
+    }
+
+    private Templates initTemplates() {
+        Templates templates = new Templates();
+        //noinspection HardCodedStringLiteral
+        templates.notFound = context -> "<div class=\"empty-message\">" +
+                "<span class=\"pficon pficon-warning-triangle-o\"></span>" + CONSTANTS.noItems() +
+                "</div>";
+        return templates;
     }
 
     private FormItem formItem() {

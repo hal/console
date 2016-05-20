@@ -25,6 +25,7 @@ import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.form.DefaultMapping;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.ballroom.form.ModelNodeItem;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
@@ -77,6 +78,9 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                                 id(form), name);
                         continue;
                     }
+
+                } else if (formItem instanceof ModelNodeItem) {
+                    formItem.setValue(value);
 
                 } else {
                     ModelType descriptionType = attributeDescription.get(TYPE).asType();
@@ -155,75 +159,81 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                 }
                 ModelType type = attributeDescription.get(TYPE).asType();
                 Object value = formItem.getValue();
-                switch (type) {
-                    case BOOLEAN:
-                        model.get(name).set((Boolean) value);
-                        break;
 
-                    case BIG_INTEGER:
-                    case INT:
-                    case LONG:
-                        Long longValue = (Long) value;
-                        if (longValue == null) {
-                            failSafeRemove(model, name);
-                        } else {
-                            if (type == BIG_INTEGER) {
-                                model.get(name).set(BigInteger.valueOf(longValue));
-                            } else if (type == INT) {
-                                model.get(name).set(longValue.intValue());
+                if (formItem instanceof ModelNodeItem) {
+                    model.get(name).set(((ModelNodeItem) formItem).getValue());
+
+                } else {
+                    switch (type) {
+                        case BOOLEAN:
+                            model.get(name).set((Boolean) value);
+                            break;
+
+                        case BIG_INTEGER:
+                        case INT:
+                        case LONG:
+                            Long longValue = (Long) value;
+                            if (longValue == null) {
+                                failSafeRemove(model, name);
                             } else {
-                                model.get(name).set(longValue);
+                                if (type == BIG_INTEGER) {
+                                    model.get(name).set(BigInteger.valueOf(longValue));
+                                } else if (type == INT) {
+                                    model.get(name).set(longValue.intValue());
+                                } else {
+                                    model.get(name).set(longValue);
+                                }
                             }
-                        }
-                        break;
+                            break;
 
-                    case LIST:
-                        List<String> list = (List<String>) value;
-                        if (list.isEmpty()) {
-                            failSafeRemove(model, name);
-                        } else {
-                            ModelNode listNode = new ModelNode();
-                            for (String s : list) {
-                                listNode.add(s);
+                        case LIST:
+                            List<String> list = (List<String>) value;
+                            if (list.isEmpty()) {
+                                failSafeRemove(model, name);
+                            } else {
+                                ModelNode listNode = new ModelNode();
+                                for (String s : list) {
+                                    listNode.add(s);
+                                }
+                                model.get(name).set(listNode);
                             }
-                            model.get(name).set(listNode);
-                        }
-                        break;
+                            break;
 
-                    case OBJECT:
-                        Map<String, String> map = (Map<String, String>) value;
-                        if (map.isEmpty()) {
-                            failSafeRemove(model, name);
-                        } else {
-                            ModelNode mapNode = new ModelNode();
-                            for (Map.Entry<String, String> entry : map.entrySet()) {
-                                mapNode.get(entry.getKey()).set(entry.getValue());
+                        case OBJECT:
+                            Map<String, String> map = (Map<String, String>) value;
+                            if (map.isEmpty()) {
+                                failSafeRemove(model, name);
+                            } else {
+                                ModelNode mapNode = new ModelNode();
+                                for (Map.Entry<String, String> entry : map.entrySet()) {
+                                    mapNode.get(entry.getKey()).set(entry.getValue());
+                                }
+                                model.get(name).set(mapNode);
                             }
-                            model.get(name).set(mapNode);
-                        }
-                        break;
+                            break;
 
-                    case STRING:
-                        String stringValue = String.valueOf(value);
-                        if (Strings.isNullOrEmpty(stringValue)) {
-                            failSafeRemove(model, name);
-                        } else {
-                            model.get(name).set(stringValue);
-                        }
-                        break;
+                        case STRING:
+                            String stringValue = String.valueOf(value);
+                            if (Strings.isNullOrEmpty(stringValue)) {
+                                failSafeRemove(model, name);
+                            } else {
+                                model.get(name).set(stringValue);
+                            }
+                            break;
 
-                    // unsupported types
-                    case BIG_DECIMAL:
-                    case BYTES:
-                    case DOUBLE:
-                    case EXPRESSION:
-                    case PROPERTY:
-                    case TYPE:
-                    case UNDEFINED:
-                        //noinspection HardCodedStringLiteral
-                        logger.warn("{}: persisting form field '{}' to type '{}' not implemented", id(form), name,
-                                type);
-                        break;
+                        // unsupported types
+                        case BIG_DECIMAL:
+                        case BYTES:
+                        case DOUBLE:
+                        case EXPRESSION:
+                        case PROPERTY:
+                        case TYPE:
+                        case UNDEFINED:
+                            //noinspection HardCodedStringLiteral
+                            logger.warn("{}: persisting form field '{}' to type '{}' not implemented", id(form), name,
+                                    type);
+                            break;
+                    }
                 }
             }
         }

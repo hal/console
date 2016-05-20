@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.Scheduler;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LayoutBuilder;
@@ -96,13 +95,8 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
         Metadata eeMetadata = metadataRegistry.lookup(AddressTemplates.EE_SUBSYSTEM_TEMPLATE);
 
         ModelNodeForm<ModelNode> eeAttributesForm = new ModelNodeForm.Builder<>(EE_ATTRIBUTES_FORM, eeMetadata)
-                .include("annotation-property-replacement",
-                        "ear-subdeployments-isolated",
-                        "jboss-descriptor-property-replacement",
-                        "spec-descriptor-property-replacement")
-                .onSave((f, changedValues) -> presenter
-                        .save(AddressTemplates.EE_SUBSYSTEM_TEMPLATE, changedValues,
-                                resources.constants().deploymentAttributes()))
+                .onSave((f, changedValues) -> presenter.save(AddressTemplates.EE_SUBSYSTEM_TEMPLATE, changedValues,
+                        resources.constants().deploymentAttributes()))
                 .build();
         forms.put(EE_ATTRIBUTES_FORM, eeAttributesForm);
         registerAttachable(eeAttributesForm);
@@ -144,12 +138,6 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
 
         ModelNodeForm<ModelNode> defaultBindingsForm = new ModelNodeForm.Builder<>(EE_DEFAULT_BINDINGS_FORM,
                 defaultBindingsMetadata)
-                .include("context-service",
-                        "datasource",
-                        "jms-connection-factory",
-                        "managed-executor-service",
-                        "managed-scheduled-executor-service",
-                        "managed-thread-factory")
                 .onSave((form, changedValues) -> presenter.save(AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE,
                         changedValues, DEFAULT_BINDINGS_NAME))
                 .build();
@@ -222,11 +210,6 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
     }
 
     @Override
-    public void reveal() {
-        Scheduler.get().scheduleDeferred(() -> navigation.show(EE_ATTRIBUTES_ENTRY));
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public void update(final ModelNode eeData) {
         // update the attributes - deployments tab
@@ -242,7 +225,7 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
 
         // update the default-bindings tab
         if (eeData.hasDefined(SERVICE)) {
-            ModelNode defaultBindings = eeData.get(SERVICE).get(DEFAULT_BINDINGS_NAME);
+            ModelNode defaultBindings = eeData.get(SERVICE).get(ModelDescriptionConstants.DEFAULT_BINDINGS);
             Form<ModelNode> formDefaultBindings = forms.get(EE_DEFAULT_BINDINGS_FORM);
             formDefaultBindings.view(defaultBindings);
         }
@@ -279,7 +262,7 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
 
         String baseId = IdBuilder.build(EE, "service", template.lastKey());
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
-                .column(NAME, resources.constants().name(), (cell, t, row, meta) -> row.getName())
+                .column(NAME, (cell, t, row, meta) -> row.getName())
 
                 .button(tableButtonFactory.add(
                         IdBuilder.build(baseId, "add"), type,
@@ -288,8 +271,7 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
 
                 .button(tableButtonFactory.remove(
                         type,
-                        (api) -> api.selectedRow().getName(),
-                        template,
+                        template, (api) -> api.selectedRow().getName(),
                         () -> presenter.loadEESubsystem()))
 
                 .build();

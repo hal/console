@@ -35,8 +35,13 @@
 
 package org.jboss.hal.client.bootstrap.functions;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.inject.Inject;
+
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
+import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
 import org.jboss.hal.dmr.ModelNode;
@@ -44,10 +49,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
+import org.jboss.hal.dmr.model.ResourceAddress;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.model.ResourceAddress.ROOT;
@@ -79,12 +81,15 @@ public class ReadEnvironment implements BootstrapFunction {
                 .param(INCLUDE_RUNTIME, true)
                 .build());
         ops.add(new Operation.Builder("whoami", ROOT).param("verbose", true).build());
+        ResourceAddress address = new ResourceAddress().add("core-service", "management")
+                .add("access", "authorization");
+        ops.add(new Operation.Builder(READ_ATTRIBUTE_OPERATION, address).param(NAME, "provider").build());
 
         dispatcher.executeInFunction(control, new Composite(ops),
                 (CompositeResult result) -> {
                     // server info
                     logger.debug("{}: Parse root resource", name());
-                    ModelNode node = result.step("step-1").get(RESULT);
+                    ModelNode node = result.step(0).get(RESULT);
                     environment.setInstanceInfo(node.get("product-name").asString(),
                             node.get("product-version").asString(),
                             node.get("release-codename").asString(), node.get("release-version").asString(),
@@ -100,7 +105,7 @@ public class ReadEnvironment implements BootstrapFunction {
 
                     // user info
                     logger.debug("{}: Parse whoami data", name());
-                    ModelNode whoami = result.step("step-2").get(RESULT);
+                    ModelNode whoami = result.step(1).get(RESULT);
                     String username = whoami.get("identity").get("username").asString();
                     user.setName(username);
                     if (whoami.hasDefined("mapped-roles")) {
@@ -110,6 +115,11 @@ public class ReadEnvironment implements BootstrapFunction {
                             user.addRole(roleName);
                         }
                     }
+
+                    // access control provider
+                    AccessControlProvider accessControlProvider = AccessControlProvider
+                            .valueOf(result.step(2).get(RESULT).asString().toUpperCase());
+                    environment.setAccessControlProvider(accessControlProvider);
 
                     logDone();
                     control.proceed();

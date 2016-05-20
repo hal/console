@@ -25,18 +25,22 @@ import org.jboss.hal.client.accesscontrol.AccessControlView;
 import org.jboss.hal.client.configuration.ConfigurationPresenter;
 import org.jboss.hal.client.configuration.ConfigurationView;
 import org.jboss.hal.client.configuration.InterfacePresenter;
-import org.jboss.hal.client.configuration.InterfaceView;
+import org.jboss.hal.client.configuration.Mbui_InterfaceView_Provider;
+import org.jboss.hal.client.configuration.Mbui_PathsView_Provider;
 import org.jboss.hal.client.configuration.PathsPresenter;
-import org.jboss.hal.client.configuration.PathsView;
 import org.jboss.hal.client.configuration.subsystem.GenericSubsystemPresenter;
 import org.jboss.hal.client.configuration.subsystem.GenericSubsystemView;
-import org.jboss.hal.client.configuration.subsystem.IiopPresenter;
-import org.jboss.hal.client.configuration.subsystem.IiopView;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourcePresenter;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceView;
 import org.jboss.hal.client.configuration.subsystem.ee.EEPresenter;
 import org.jboss.hal.client.configuration.subsystem.ee.EEView;
+import org.jboss.hal.client.configuration.subsystem.iiop.IiopPresenter;
+import org.jboss.hal.client.configuration.subsystem.iiop.Mbui_IiopView_Provider;
+import org.jboss.hal.client.configuration.subsystem.logging.LoggingPresenter;
+import org.jboss.hal.client.configuration.subsystem.logging.Mbui_LoggingView_Provider;
+import org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter;
+import org.jboss.hal.client.configuration.subsystem.mail.MailSessionView;
 import org.jboss.hal.client.deployment.DeploymentPresenter;
 import org.jboss.hal.client.deployment.DeploymentView;
 import org.jboss.hal.client.homepage.HomepagePresenter;
@@ -70,7 +74,6 @@ public class AppModule extends AbstractTemplatedPresenterModule {
 
         DefaultModule defaultModule = new DefaultModule.Builder()
                 .placeManager(HalPlaceManager.class)
-                // .tokenFormatter(RouteTokenFormatter.class)
                 .build();
         install(defaultModule);
 
@@ -137,15 +140,20 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 HomepageView.class,
                 HomepagePresenter.MyProxy.class);
 
-        bindPresenter(IiopPresenter.class,
+        bindTemplatedPresenter(IiopPresenter.class,
                 IiopPresenter.MyView.class,
-                IiopView.class,
+                Mbui_IiopView_Provider.class,
                 IiopPresenter.MyProxy.class);
 
-        bindPresenter(InterfacePresenter.class,
+        bindTemplatedPresenter(InterfacePresenter.class,
                 InterfacePresenter.MyView.class,
-                InterfaceView.class,
+                Mbui_InterfaceView_Provider.class,
                 InterfacePresenter.MyProxy.class);
+
+        bindTemplatedPresenter(LoggingPresenter.class,
+                LoggingPresenter.MyView.class,
+                Mbui_LoggingView_Provider.class,
+                LoggingPresenter.MyProxy.class);
 
         bindPresenter(MacroEditorPresenter.class,
                 MacroEditorPresenter.MyView.class,
@@ -157,9 +165,14 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 ModelBrowserView.class,
                 ModelBrowserPresenter.MyProxy.class);
 
-        bindPresenter(PathsPresenter.class,
+        bindPresenter(MailSessionPresenter.class,
+                MailSessionPresenter.MyView.class,
+                MailSessionView.class,
+                MailSessionPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(PathsPresenter.class,
                 PathsPresenter.MyView.class,
-                PathsView.class,
+                Mbui_PathsView_Provider.class,
                 PathsPresenter.MyProxy.class);
 
         bindPresenter(PatchingPresenter.class,

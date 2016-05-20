@@ -20,12 +20,7 @@ import java.util.Map;
 
 import org.jboss.hal.ballroom.typeahead.NestedResultProcessor.Result;
 import org.jboss.hal.dmr.ExternalModelNode;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.StatementContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -89,10 +84,7 @@ public class SingleOperationTwoWildcardsTest {
 
     @Before
     public void setUp() throws Exception {
-        ResourceAddress address = AddressTemplate.of("/socket-binding-group=*/socket-binding=*")
-                .resolve(StatementContext.NOOP);
-        Operation operation = new Operation.Builder(ModelDescriptionConstants.READ_RESOURCE_OPERATION, address).build();
-        resultProcessor = new NestedResultProcessor(operation);
+        resultProcessor = new NestedResultProcessor(false);
         result = ExternalModelNode
                 .read(NamesResultProcessorTest.class.getResourceAsStream("single_operation_two_wildcards.dmr"));
     }

@@ -15,13 +15,17 @@
  */
 package org.jboss.hal.ballroom.table;
 
-import org.jboss.hal.ballroom.table.Button.ActionHandler;
-import org.jboss.hal.ballroom.table.Button.Scope;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jboss.hal.resources.CSS.*;
+import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.table.Button.ActionHandler;
+import org.jboss.hal.ballroom.table.Button.Scope;
+
+import static org.jboss.hal.resources.CSS.btn;
+import static org.jboss.hal.resources.CSS.btnDefault;
+import static org.jboss.hal.resources.CSS.btnGroup;
+import static org.jboss.hal.resources.CSS.pullRight;
 
 /**
  * Generic builder for data table {@linkplain Options options} used as a base class for the different option builders.
@@ -82,6 +86,10 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     public B button(Button<T> button) {
         buttons.add(button);
         return that();
+    }
+
+    public B column(String name, Column.RenderCallback<T, ?> render) {
+        return column(new ColumnBuilder<>(name, new LabelBuilder().label(name), render).build());
     }
 
     public B column(String name, String title, Column.RenderCallback<T, ?> render) {

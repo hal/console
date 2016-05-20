@@ -65,7 +65,7 @@ class DataSourcePreview extends PreviewContent {
             attributes.remove(2);
         }
         PreviewAttributes<DataSource> previewAttributes = new PreviewAttributes<>(dataSource,
-                resources.constants().main_attributes(), attributes).end();
+                resources.constants().mainAttributes(), attributes).end();
         previewBuilder().addAll(previewAttributes);
     }
 }

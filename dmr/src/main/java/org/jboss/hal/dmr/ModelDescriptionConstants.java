@@ -216,6 +216,7 @@ public interface ModelDescriptionConstants {
     String SERVER_GROUPS = "server-groups";
     String SERVER_OPERATIONS = "server-operations";
     String SERVER_STATE = "server-state";
+    String SERVER_TYPE = "server-type";
     String SERVICE = "service";
     String SOCKET_BINDING = "socket-binding";
     String SOCKET_BINDING_GROUP = "socket-binding-group";

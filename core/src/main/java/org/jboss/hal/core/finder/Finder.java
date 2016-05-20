@@ -41,6 +41,7 @@ import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.core.finder.ColumnRegistry.LookupCallback;
+import org.jboss.hal.core.finder.FinderColumn.RefreshMode;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
@@ -297,7 +298,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 break;
             }
             String key = columnElement.getId();
-            FinderColumn column = columns.get(key);
+            FinderColumn<?> column = columns.get(key);
             context.getPath().append(column);
         }
         eventBus.fireEvent(new FinderContextEvent(context));
@@ -307,12 +308,10 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         // only finder tokens of the same type please
         PlaceRequest current = placeManager.getCurrentPlaceRequest();
         if (context.getToken().equals(current.getNameToken())) {
-            PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(context.getToken());
-            if (!context.getPath().isEmpty()) {
-                builder.with("path", context.getPath().toString());
-            }
-            PlaceRequest update = builder.build();
+            PlaceRequest update = context.toPlaceRequest();
             if (!update.equals(current)) {
+                logger.debug("Update history: {}", "#" + context.getToken() +
+                        (context.getPath().isEmpty() ? "" : ";path=" + context.getPath()));
                 placeManager.updateHistory(update, true);
             }
         }
@@ -358,6 +357,10 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             preview.attach();
             preview.onReset();
         }
+    }
+
+    private void clearPreview() {
+        Elements.removeChildrenFrom(previewColumn);
     }
 
     void showInitialPreview() {
@@ -410,6 +413,10 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 reduceAll();
 
             } else {
+                // clear the preview right away, otherwise the previous (wrong) preview would be visible until all
+                // select functions have been finished
+                clearPreview();
+
                 // Find the last common column between the new and the current path
                 String match = null;
                 FinderPath newPath = path.reversed();
@@ -436,7 +443,8 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             HTMLCollection columns = root.getChildren();
             for (FinderSegment segment : path) {
                 Element column = index < columns.getLength() ? (Element) columns.item(index) : null;
-                functions[index] = new SelectFunction(segment, column);
+                functions[index] = new SelectFunction(new FinderSegment(segment.getKey(), segment.getValue()),
+                        column); // work with a copy of segment!
                 index++;
             }
             new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), new Outcome<FunctionContext>() {
@@ -448,7 +456,6 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                     } else if (!context.emptyStack()) {
                         FinderColumn column = context.pop();
                         processLastColumnSelection(column);
-                        updateHistory();
                     }
                 }
 
@@ -456,17 +463,11 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 public void onSuccess(final FunctionContext context) {
                     FinderColumn column = context.pop();
                     processLastColumnSelection(column);
-                    updateHistory();
                 }
 
                 private void processLastColumnSelection(FinderColumn column) {
                     selectColumn(column.getId());
-                    FinderRow row = column.selectedRow();
-                    if (row != null) {
-                        row.asElement().scrollIntoView(false);
-                        row.appendNextColumn();
-                        row.showPreview();
-                    }
+                    column.refresh(RefreshMode.RESTORE_SELECTION);
                 }
             }, functions);
         }
