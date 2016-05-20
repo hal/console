@@ -22,164 +22,226 @@
     <start>
         <element name="view">
             <choice>
-                <ref name="verticalNavigation"/>
+                <ref name="vertical-navigation-definition"/>
                 <oneOrMore>
-                    <ref name="metadata"/>
+                    <ref name="metadata-definition"/>
                 </oneOrMore>
             </choice>
         </element>
     </start>
 
-    <define name="verticalNavigation">
+    <define name="vertical-navigation-definition">
         <element name="vertical-navigation">
             <attribute name="id">
-                <data type="ID"/>
+                <data type="NCName"/>
             </attribute>
             <oneOrMore>
-                <ref name="item"/>
+                <ref name="item-definition"/>
             </oneOrMore>
         </element>
     </define>
 
-    <define name="item">
+    <define name="item-definition">
         <element name="item">
             <attribute name="id">
-                <data type="ID"/>
+                <data type="NCName"/>
             </attribute>
-            <attribute name="title"/>
-            <attribute name="icon"/>
+            <attribute name="title">
+                <ref name="token-or-code"/>
+            </attribute>
+            <attribute name="icon">
+                <data type="token"/>
+            </attribute>
             <choice>
-                <ref name="metadata"/>
+                <ref name="metadata-definition"/>
                 <oneOrMore>
-                    <ref name="subItem"/>
+                    <ref name="sub-item-definition"/>
                 </oneOrMore>
             </choice>
         </element>
     </define>
 
-    <define name="subItem">
+    <define name="sub-item-definition">
         <element name="sub-item">
             <attribute name="id">
-                <data type="ID"/>
+                <data type="NCName"/>
             </attribute>
-            <attribute name="title"/>
-            <ref name="metadata"/>
+            <attribute name="title">
+                <ref name="token-or-code"/>
+            </attribute>
+            <ref name="metadata-definition"/>
         </element>
     </define>
 
-    <define name="metadata">
+    <define name="metadata-definition">
         <element name="metadata">
-            <attribute name="address"/>
-            <mixed>
-                <optional>
+            <attribute name="address">
+                <data type="token"/>
+            </attribute>
+            <interleave>
+                <zeroOrMore>
                     <element name="h1">
                         <text/>
                     </element>
-                </optional>
-                <optional>
+                </zeroOrMore>
+                <zeroOrMore>
                     <element name="p">
                         <text/>
                     </element>
+                </zeroOrMore>
+                <optional>
+                    <ref name="table-definition"/>
                 </optional>
                 <optional>
-                    <ref name="table"/>
+                    <ref name="form-definition"/>
                 </optional>
-                <optional>
-                    <ref name="form"/>
-                </optional>
-            </mixed>
+            </interleave>
         </element>
     </define>
 
-    <define name="table">
+    <define name="table-definition">
         <element name="table">
             <attribute name="id">
-                <data type="ID"/>
+                <data type="NCName"/>
             </attribute>
             <optional>
                 <attribute name="form-ref">
-                    <data type="IDREF"/>
+                    <data type="NCName"/>
                 </attribute>
-                <attribute name="title"/>
+            </optional>
+            <optional>
+                <attribute name="title">
+                    <ref name="token-or-code"/>
+                </attribute>
+            </optional>
+            <optional>
                 <element name="actions">
                     <oneOrMore>
-                        <ref name="action"/>
+                        <ref name="action-definition"/>
                     </oneOrMore>
                 </element>
             </optional>
             <element name="columns">
                 <oneOrMore>
-                    <ref name="column"/>
+                    <ref name="column-definition"/>
                 </oneOrMore>
             </element>
         </element>
     </define>
 
-    <define name="action">
+    <define name="action-definition">
         <element name="action">
             <choice>
-                <attribute name="handler-ref"/>
-                <attribute name="handler"/>
+                <attribute name="handler-ref">
+                    <choice>
+                        <value>add-resource</value>
+                        <value>remove-resource</value>
+                    </choice>
+                </attribute>
+                <attribute name="handler">
+                    <ref name="code"/>
+                </attribute>
             </choice>
             <optional>
-                <attribute name="name-resolver"/>
-                <attribute name="scope"/>
-                <ref name="attributes"/>
+                <attribute name="name-resolver">
+                    <ref name="code"/>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="scope">
+                    <value>selected</value>
+                </attribute>
+            </optional>
+            <optional>
+                <ref name="attributes-definition"/>
             </optional>
         </element>
     </define>
 
-    <define name="column">
+    <define name="column-definition">
         <element name="column">
             <attribute name="name"/>
             <optional>
-                <attribute name="value"/>
+                <attribute name="value">
+                    <ref name="code"/>
+                </attribute>
             </optional>
         </element>
     </define>
 
-    <define name="form">
+    <define name="form-definition">
         <element name="form">
             <attribute name="id">
-                <data type="ID"/>
+                <data type="NCName"/>
             </attribute>
             <optional>
-                <attribute name="title"/>
-                <attribute name="name-resolver"/>
+                <attribute name="title">
+                    <ref name="token-or-code"/>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="name-resolver">
+                    <ref name="code"/>
+                </attribute>
+            </optional>
+            <optional>
                 <choice>
                     <attribute name="auto-save">
                         <data type="boolean"/>
                     </attribute>
                     <attribute name="on-save"/>
                 </choice>
-                <ref name="attributes"/>
+            </optional>
+            <optional>
+                <ref name="attributes-definition"/>
             </optional>
         </element>
     </define>
 
-    <define name="attributes">
+    <define name="attributes-definition">
         <element name="attributes">
             <oneOrMore>
-                <ref name="attribute"/>
+                <ref name="attribute-definition"/>
             </oneOrMore>
         </element>
     </define>
 
-    <define name="attribute">
+    <define name="attribute-definition">
         <element name="attribute">
-            <attribute name="name"/>
+            <attribute name="name">
+                <data type="token"/>
+            </attribute>
             <optional>
-                <attribute name="provider"/>
+                <attribute name="provider">
+                    <ref name="code"/>
+                </attribute>
+            </optional>
+            <optional>
                 <element name="suggest-handler">
                     <element name="templates">
                         <oneOrMore>
                             <element name="template">
-                                <attribute name="address"/>
+                                <attribute name="address">
+                                    <data type="token"/>
+                                </attribute>
                             </element>
                         </oneOrMore>
                     </element>
                 </element>
             </optional>
         </element>
+    </define>
+
+    <define name="code">
+        <data type="token">
+            <param name="pattern">\{\{.*\}\}</param>
+        </data>
+    </define>
+
+    <define name="token-or-code">
+        <choice>
+            <data type="token"/>
+            <ref name="code"/>
+        </choice>
     </define>
 </grammar>
