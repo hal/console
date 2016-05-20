@@ -29,11 +29,10 @@ import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
-import org.jboss.hal.ballroom.typeahead.TypeaheadProvider;
+import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
@@ -127,8 +126,8 @@ public class UnderTheBridgeView extends PatternFlyViewImpl implements UnderTheBr
                     forms.get(forms.size() - 1).asElement());
         }
 
-        ResourceAddress address = AddressTemplate.of("/profile=full-ha/subsystem=*").resolve(statementContext);
-        SuggestHandler suggestHandler = new TypeaheadProvider().from(address);
+        SuggestHandler suggestHandler = new Typeahead(AddressTemplate.of("/profile=full-ha/subsystem=*"),
+                statementContext);
         for (ModelNodeForm<ModelNode> form : forms) {
             for (FormItem item : form.getFormItems()) {
                 if (item.getName().contains("-suggestion")) {

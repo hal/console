@@ -6,14 +6,13 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
 
-import com.google.common.collect.Lists;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.TemplateUtil;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.LayoutBuilder;
-import org.jboss.hal.ballroom.typeahead.TypeaheadProvider;
+import org.jboss.hal.ballroom.typeahead.Typeahead;
 <#if context.verticalNavigation??>
 import org.jboss.hal.ballroom.VerticalNavigation;
 </#if>
@@ -48,6 +47,7 @@ final class ${context.subclass} extends ${context.base} {
     </#list>
     private final Map<String, Element> handlebarElements;
 
+    @SuppressWarnings("unchecked")
     ${context.subclass}(MbuiContext mbuiContext<#list context.abstractProperties as abstractProperty>, ${abstractProperty.type} ${abstractProperty.field}</#list>) {
         super(mbuiContext);
 
@@ -102,13 +102,14 @@ final class ${context.subclass} extends ${context.base} {
             .build();
             <#list form.suggestHandlerAttributes as attribute>
                 <#if attribute.suggestHandlerTemplates?size == 1>
-        ResourceAddress ${form.name}Address = AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}").resolve(mbuiContext.statementContext());
+        ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(new Typeahead(
+            AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}"), mbuiContext.statementContext()));
                 <#else>
-                </#if>
         List<AddressTemplate> ${form.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
             AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
-        List<ResourceAddress> ${form.name}Address = Lists.transform(${form.name}Templates, template -> template.resolve(mbuiContext.statementContext()));
-        ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(new TypeaheadProvider().from(${form.name}Address));
+        ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(new Typeahead(
+            ${form.name}Templates, mbuiContext.statementContext()));
+                </#if>
             </#list>
         </#list>
 
@@ -137,13 +138,14 @@ final class ${context.subclass} extends ${context.base} {
                                     <#if action.hasAttributesWithSuggestionHandlers>
                                         <#list action.suggestHandlerAttributes as attribute>
                                             <#if attribute.suggestHandlerTemplates?size == 1>
-                ResourceAddress ${table.name}Address = AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}").resolve(mbuiContext.statementContext());
+                form.getFormItem("${attribute.name}").registerSuggestHandler(new Typeahead(
+                    AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}", mbuiContext.statementContext()));
                                             <#else>
                 List<AddressTemplate> ${table.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
-                        AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
-                List<ResourceAddress> ${table.name}Address = Lists.transform(${table.name}Templates, template -> template.resolve(mbuiContext.statementContext()));
+                    AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
+                form.getFormItem("${attribute.name}").registerSuggestHandler(new Typeahead(
+                    ${table.name}Templates, mbuiContext.statementContext()));
                                             </#if>
-                form.getFormItem("${attribute.name}").registerSuggestHandler(new TypeaheadProvider().from(${table.name}Address));
                                         </#list>
                                     </#if>
                 AddResourceDialog dialog = new AddResourceDialog(
@@ -178,13 +180,14 @@ final class ${context.subclass} extends ${context.base} {
                     });
                                     <#list action.suggestHandlerAttributes as attribute>
                                         <#if attribute.suggestHandlerTemplates?size == 1>
-                ResourceAddress ${table.name}Address = AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}").resolve(mbuiContext.statementContext());
+                dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(new Typeahead(
+                    AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}"), mbuiContext.statementContext()));
                                         <#else>
                 List<AddressTemplate> ${table.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
                     AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
-                List<ResourceAddress> ${table.name}Address = Lists.transform(${table.name}Templates, template -> template.resolve(mbuiContext.statementContext()));
+                dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(new Typeahead(
+                    ${table.name}Templates, mbuiContext.statementContext()));
                                         </#if>
-                dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(new TypeaheadProvider().from(${table.name}Address));
                                     </#list>
                 dialog.show();
             })

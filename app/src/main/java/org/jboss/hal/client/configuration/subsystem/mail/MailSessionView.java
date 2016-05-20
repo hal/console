@@ -30,7 +30,7 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
-import org.jboss.hal.ballroom.typeahead.TypeaheadProvider;
+import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
@@ -55,6 +55,7 @@ import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 import static org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter.MAIL_SESSION_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter.SELECTED_MAIL_SESSION_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter.SERVER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter.SOCKET_BINDING_TEMPLATE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -67,6 +68,7 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
     private final VerticalNavigation navigation;
     private final Map<String, ModelNodeForm> forms;
     private final DataTable<NamedNode> serversTable;
+    private final StatementContext statementContext;
 
     private MailSessionPresenter presenter;
 
@@ -79,6 +81,7 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
             final StatementContext statementContext,
             final Resources resources) {
 
+        this.statementContext = statementContext;
         this.navigation = new VerticalNavigation();
         this.forms = new HashMap<>();
 
@@ -178,7 +181,7 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
 
         ModelNodeForm form = forms.get(Ids.MAIL_SESSION_SERVERS_FORM);
         form.getFormItem(MailSession.OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
-                new TypeaheadProvider().from(presenter.getSocketBindingResourceAddress()));
+                new Typeahead(SOCKET_BINDING_TEMPLATE, statementContext));
     }
 
     @Override

@@ -260,12 +260,12 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void updateBreadcrumb(final FinderContext context) {
         clearBreadcrumb();
         FinderPath currentPath = new FinderPath();
 
         for (Iterator<FinderSegment> iterator = context.getPath().iterator(); iterator.hasNext(); ) {
-            //noinspection unchecked
             FinderSegment<Object> segment = iterator.next();
             if (segment.getKey() == null || segment.getValue() == null) {
                 // we need to ignore half filled segments which occur when removing items from a column

@@ -18,31 +18,23 @@ package org.jboss.hal.meta.capabilitiy;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import javax.inject.Inject;
 
-import com.google.common.collect.FluentIterable;
-import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.StatementContext;
 
 /**
  * @author Harald Pehl
  */
 public class Capabilities {
 
-    private final StatementContext statementContext;
     private final Map<String, Capability> registry;
 
-    @Inject
-    public Capabilities(StatementContext statementContext) {
-        this.statementContext = statementContext;
+    public Capabilities() {
         this.registry = new HashMap<>();
     }
 
-    public Iterable<ResourceAddress> lookup(final String name) {
+    public Iterable<AddressTemplate> lookup(final String name) {
         if (contains(name)) {
-            return FluentIterable.from(registry.get(name).getTemplates())
-                    .transform(template -> template.resolve(statementContext));
+            return registry.get(name).getTemplates();
         }
         return Collections.emptyList();
     }

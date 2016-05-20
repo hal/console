@@ -88,14 +88,14 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
      */
     protected abstract FinderPath finderPath();
 
+    @SuppressWarnings("unchecked")
     private void updateBreadcrumb() {
         FinderPath applicationPath = finderPath();
         if (applicationPath != null) {
             // try to connect segments with existing columns from the finder
             for (FinderSegment segment : applicationPath) {
-                FinderColumn<?> column = finder.getColumn(segment.getKey());
+                FinderColumn column = finder.getColumn(segment.getKey());
                 if (column != null) {
-                    //noinspection unchecked
                     segment.connect(column);
                 } else {
                     //noinspection HardCodedStringLiteral

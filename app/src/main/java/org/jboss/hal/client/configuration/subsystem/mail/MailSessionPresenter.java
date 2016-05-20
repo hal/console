@@ -31,7 +31,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
-import org.jboss.hal.ballroom.typeahead.TypeaheadProvider;
+import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
@@ -81,7 +81,7 @@ public class MailSessionPresenter
             .of("/{selected.profile}/subsystem=mail/mail-session={selection}");
     static final AddressTemplate SERVER_TEMPLATE = AddressTemplate.of(SERVER_ADDRESS);
 
-    private static final AddressTemplate SOCKET_BINDING_TEMPLATE = AddressTemplate
+    static final AddressTemplate SOCKET_BINDING_TEMPLATE = AddressTemplate
             .of("/socket-binding-group=*/remote-destination-outbound-socket-binding=*");
 
 
@@ -101,7 +101,6 @@ public class MailSessionPresenter
     private final StatementContext statementContext;
     private final MetadataRegistry metadataRegistry;
     private final OperationFactory operationFactory;
-    private ResourceAddress socketBindingResourceAddress;
     private String mailSessionName;
 
     @Inject
@@ -125,7 +124,6 @@ public class MailSessionPresenter
     @Override
     protected void onBind() {
         super.onBind();
-        socketBindingResourceAddress = SOCKET_BINDING_TEMPLATE.resolve(statementContext);
         getView().setPresenter(this);
     }
 
@@ -223,16 +221,11 @@ public class MailSessionPresenter
                             });
                         });
                 dialog.getForm().getFormItem(MailSession.OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
-                        new TypeaheadProvider().from(socketBindingResourceAddress));
+                        new Typeahead(SOCKET_BINDING_TEMPLATE, statementContext));
                 dialog.show();
             }
         });
     }
-
-    ResourceAddress getSocketBindingResourceAddress() {
-        return socketBindingResourceAddress;
-    }
-
     String getMailSessionName() {
         return mailSessionName;
     }

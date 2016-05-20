@@ -19,13 +19,7 @@ import java.util.List;
 
 import org.jboss.hal.ballroom.typeahead.NestedResultProcessor.Result;
 import org.jboss.hal.dmr.ExternalModelNode;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.StatementContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,15 +36,7 @@ public class CompositeOperationOneWildcardTest {
 
     @Before
     public void setUp() throws Exception {
-        ResourceAddress address1 = AddressTemplate.of("/profile=full/subsystem=datasources/data-source=*")
-                .resolve(StatementContext.NOOP);
-        Operation operation1 = new Operation.Builder(ModelDescriptionConstants.READ_RESOURCE_OPERATION, address1)
-                .build();
-        ResourceAddress address2 = AddressTemplate.of("/profile=ha/subsystem=datasources/data-source=*")
-                .resolve(StatementContext.NOOP);
-        Operation operation2 = new Operation.Builder(ModelDescriptionConstants.READ_RESOURCE_OPERATION, address2)
-                .build();
-        resultProcessor = new NestedResultProcessor(new Composite(operation1, operation2));
+        resultProcessor = new NestedResultProcessor(true);
         result = ExternalModelNode
                 .read(NamesResultProcessorTest.class.getResourceAsStream("composite_operation_one_wildcard.dmr"));
     }
