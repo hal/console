@@ -91,7 +91,7 @@ public class Server extends NamedNode {
      * or "suspend-state".
      */
     public boolean isStarted() {
-        return getServerConfigStatus() == ServerConfigStatus.STARTED;
+        return getServerConfigStatus() == ServerConfigStatus.STARTED || getServerState() == ServerState.RUNNING;
     }
 
     /**
@@ -99,7 +99,7 @@ public class Server extends NamedNode {
      */
     public ServerState getServerState() {
         if (hasDefined(SERVER_STATE)) {
-            return ServerState.valueOf(get(SERVER_STATE).asString());
+            return ServerState.valueOf(get(SERVER_STATE).asString().toUpperCase());
         }
         return ServerState.UNDEFINED;
     }

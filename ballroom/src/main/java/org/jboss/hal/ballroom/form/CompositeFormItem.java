@@ -119,6 +119,13 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     }
 
     @Override
+    public void attach() {
+        for (FormItem formItem : formItems) {
+            formItem.attach();
+        }
+    }
+
+    @Override
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<ModelNode> valueChangeHandler) {
         return null; // not supported
     }

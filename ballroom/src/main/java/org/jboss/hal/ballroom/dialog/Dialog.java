@@ -15,19 +15,6 @@
  */
 package org.jboss.hal.ballroom.dialog;
 
-import com.google.common.collect.Iterables;
-import com.google.gwt.core.client.GWT;
-import elemental.client.Browser;
-import elemental.dom.Element;
-import elemental.html.ButtonElement;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.resources.IdBuilder;
-import org.jboss.hal.ballroom.PatternFly;
-import org.jboss.hal.ballroom.dialog.Modal.ModalOptions;
-import org.jboss.hal.resources.Constants;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,10 +24,25 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import com.google.common.collect.Iterables;
+import com.google.gwt.core.client.GWT;
+import elemental.client.Browser;
+import elemental.dom.Element;
+import elemental.html.ButtonElement;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.PatternFly;
+import org.jboss.hal.ballroom.dialog.Modal.ModalOptions;
+import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.IdBuilder;
+
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.dialog.Modal.$;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.UIConstants.*;
+import static org.jboss.hal.resources.UIConstants.HIDDEN;
+import static org.jboss.hal.resources.UIConstants.ROLE;
+import static org.jboss.hal.resources.UIConstants.TABINDEX;
 
 /**
  * A modal dialog with optional secondary and primary buttons. Only one dialog can be open at a time. The buttons can
@@ -375,7 +377,7 @@ public class Dialog implements IsElement {
         }
         $(SELECTOR_ID).modal(ModalOptions.create(closeOnEsc));
         $(SELECTOR_ID).modal("show");
-        PatternFly.initComponents();
+        PatternFly.initComponents(SELECTOR_ID);
         for (Attachable attachable : attachables) {
             attachable.attach();
         }

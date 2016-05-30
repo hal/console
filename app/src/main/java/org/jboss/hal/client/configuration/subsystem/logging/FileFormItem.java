@@ -22,6 +22,7 @@ import org.jboss.hal.ballroom.form.CompositeFormItem;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.resources.IdBuilder;
 
 import static java.util.Arrays.asList;
 
@@ -34,18 +35,23 @@ public class FileFormItem extends CompositeFormItem {
     private static final String PATH = "path";
     private static final String RELATIVE_TO = "relative-to";
 
+    private final LoggingView view;
     private FormItem<String> path;
     private FormItem<String> relativeTo;
 
-    FileFormItem() {
+    FileFormItem(LoggingView view) {
         super(FILE);
+        this.view = view;
     }
 
     @Override
     protected List<FormItem> createFormItems() {
         path = new TextBoxItem(PATH, new LabelBuilder().label(PATH));
         path.setRequired(true);
+        path.setId(IdBuilder.uniqueId());
         relativeTo = new TextBoxItem(RELATIVE_TO, new LabelBuilder().label(RELATIVE_TO));
+        relativeTo.setId(IdBuilder.uniqueId());
+        relativeTo.registerSuggestHandler(new PathTypeahead(() -> view.getPresenter().pathOperation()));
         return asList(path, relativeTo);
     }
 

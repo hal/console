@@ -69,6 +69,10 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
         super(mbuiContext);
     }
 
+    LoggingPresenter getPresenter() {
+        return presenter;
+    }
+
     @Override
     public VerticalNavigation getVerticalNavigation() {
         return navigation;

@@ -28,6 +28,9 @@ import org.jboss.hal.spi.MbuiView;
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 
 /**
+ * TODO Add support for static suggestion handler for form field 'relative-to'
+ * TODO Add support for adding a validation handler fdr form-item 'name'
+ *
  * @author Harald Pehl
  */
 @MbuiView

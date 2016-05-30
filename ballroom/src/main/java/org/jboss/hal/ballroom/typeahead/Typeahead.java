@@ -17,6 +17,7 @@ package org.jboss.hal.ballroom.typeahead;
 
 import java.util.Collection;
 import java.util.List;
+import javax.inject.Provider;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.FluentIterable;
@@ -35,6 +36,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
+import org.jboss.hal.ballroom.typeahead.Templates.SuggestionTemplate;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
@@ -114,7 +116,7 @@ public class Typeahead implements SuggestHandler, Attachable {
     }
 
 
-    static final String WHITESPACE = "\\s+";
+    public static final String WHITESPACE = "\\s+";
 
     private static final String CHANGE_EVENT = "typeahead:change";
     private static final String CLOSE = "close";
@@ -131,7 +133,7 @@ public class Typeahead implements SuggestHandler, Attachable {
     private FormItem formItem;
 
 
-    // ------------------------------------------------------ static items
+    // ------------------------------------------------------ new instance based on static items
 
     /**
      * Creates a typeahead instance based on a list of static items.
@@ -170,7 +172,7 @@ public class Typeahead implements SuggestHandler, Attachable {
     }
 
 
-    // ------------------------------------------------------ address templates
+    // ------------------------------------------------------ new instance based on address templates
 
     /**
      * Creates a typeahead instance based one ore multiple address templates.
@@ -186,13 +188,13 @@ public class Typeahead implements SuggestHandler, Attachable {
         Identifier identifier;
         DataTokenizer dataTokenizer;
         Display display;
-        Templates.SuggestionTemplate suggestionTemplate;
+        SuggestionTemplate suggestionTemplate;
 
         int numberOfTemplates = Iterables.size(templates);
         if (numberOfTemplates == 1) {
             AddressTemplate template = templates.iterator().next();
             int wildcards = Iterables.size(Splitter.on('*').split(template.toString())) - 1;
-            if (wildcards == 0 || (wildcards == 1 &&  "*".equals(template.lastValue()))) {
+            if (wildcards == 0 || (wildcards == 1 && "*".equals(template.lastValue()))) {
                 resultProcessor = new NamesResultProcessor();
                 identifier = data -> data.getString(NAME);
                 dataTokenizer = data -> data.getString(NAME).split(WHITESPACE);
@@ -216,70 +218,17 @@ public class Typeahead implements SuggestHandler, Attachable {
         }
 
         options = initOptions();
+        bloodhound = initBloodhound(identifier, dataTokenizer, resultProcessor, () -> {
+                    //noinspection Guava
+                    List<Operation> operations = FluentIterable.from(templates)
+                            .transform(template -> template.resolve(statementContext))
+                            .transform(address -> operation(address, numberOfTemplates))
+                            .toList();
 
-        RemoteOptions remoteOptions = new RemoteOptions();
-        remoteOptions.url = Endpoints.INSTANCE.dmr();
-        remoteOptions.prepare = (query, settings) -> {
-            AjaxSettings.Accepts accepts = new AjaxSettings.Accepts();
-            accepts.text = APPLICATION_DMR_ENCODED;
-
-            AjaxSettings.XHRFields xhrFields = new AjaxSettings.XHRFields();
-            xhrFields.withCredentials = true;
-
-            settings.accepts = accepts;
-            settings.beforeSend = (xhr, sttngs) -> {
-                //noinspection Guava
-                List<Operation> operations = FluentIterable.from(templates)
-                        .transform(template -> template.resolve(statementContext))
-                        .transform(address -> operation(address, numberOfTemplates))
-                        .toList();
-
-                Operation operation = operations.size() == 1 ? operations.get(0) : new Composite(operations);
-                sttngs.data = operation.toBase64String();
-                xhr.setRequestHeader(HEADER_MANAGEMENT_CLIENT_NAME, HEADER_MANAGEMENT_CLIENT_VALUE);
-            };
-            settings.error = (xhr, textStatus, errorThrown) -> {
-                String details = errorThrown;
-                ModelNode node = ModelNode.fromBase64(xhr.getResponseText());
-                if (node.isFailure()) {
-                    details = node.getFailureDescription();
+                    return operations.size() == 1 ? operations.get(0) : new Composite(operations);
                 }
-                logger.error("Unable to process typeahead operation on form item {}: {}", //NON-NLS
-                        formItem().getId(EDITING), details);
-            };
-            settings.contentType = APPLICATION_DMR_ENCODED;
-            settings.dataType = "text"; //NON-NLS
-            settings.method = POST.name();
-            settings.xhrFields = xhrFields;
-            return settings;
-        };
-
-        remoteOptions.transform = response -> {
-            DmrPayloadProcessor payloadProcessor = new DmrPayloadProcessor();
-            ModelNode payload = payloadProcessor.processPayload(POST, APPLICATION_DMR_ENCODED, response);
-            if (!payload.isFailure()) {
-                String query = Bridge.select(formItemSelector()).getValue();
-                ModelNode result = payload.get(RESULT);
-                return resultProcessor.process(query, result);
-            }
-            return JsArrayOf.create();
-        };
-
-        Bloodhound.Options bloodhoundOptions = new Bloodhound.Options();
-        bloodhoundOptions.datumTokenizer = dataTokenizer;
-        bloodhoundOptions.queryTokenizer = query -> query.split(WHITESPACE);
-        bloodhoundOptions.identify = identifier;
-        bloodhoundOptions.sufficient = Integer.MAX_VALUE; // we'd like to always have fresh results from the backend
-        bloodhoundOptions.remote = remoteOptions;
-        bloodhound = new Bloodhound(bloodhoundOptions);
-
-        dataset = new Dataset();
-        dataset.async = true;
-        dataset.display = display;
-        dataset.limit = Integer.MAX_VALUE;
-        dataset.source = bloodhound::search;
-        dataset.templates = initTemplates();
-        dataset.templates.suggestion = suggestionTemplate;
+        );
+        dataset = initDataset(display, suggestionTemplate);
     }
 
     private Operation operation(ResourceAddress address, int numberOfTemplates) {
@@ -318,6 +267,18 @@ public class Typeahead implements SuggestHandler, Attachable {
         }
 
         return operation;
+    }
+
+
+    // ------------------------------------------------------ new instance based on custom implementations
+
+    protected Typeahead(final Identifier identifier, final DataTokenizer dataTokenizer,
+            final ResultProcessor resultProcessor, final Display display, final SuggestionTemplate suggestionTemplate,
+            final Provider<Operation> operation) {
+
+        options = initOptions();
+        bloodhound = initBloodhound(identifier, dataTokenizer, resultProcessor, operation);
+        dataset = initDataset(display, suggestionTemplate);
     }
 
 
@@ -363,22 +324,6 @@ public class Typeahead implements SuggestHandler, Attachable {
         }
     }
 
-    private Options initOptions() {
-        Options options = new Options();
-        options.highlight = true;
-        options.minLength = 1;
-        return options;
-    }
-
-    private Templates initTemplates() {
-        Templates templates = new Templates();
-        //noinspection HardCodedStringLiteral
-        templates.notFound = context -> "<div class=\"empty-message\">" +
-                "<span class=\"pficon pficon-warning-triangle-o\"></span>" + CONSTANTS.noItems() +
-                "</div>";
-        return templates;
-    }
-
     private FormItem formItem() {
         if (formItem == null) {
             throw new IllegalStateException(
@@ -389,5 +334,85 @@ public class Typeahead implements SuggestHandler, Attachable {
 
     private String formItemSelector() {
         return "#" + formItem().getId(EDITING);
+    }
+
+    private Options initOptions() {
+        Options options = new Options();
+        options.highlight = true;
+        options.minLength = 1;
+        return options;
+    }
+
+    private Bloodhound initBloodhound(final Identifier identifier, final DataTokenizer dataTokenizer,
+            final ResultProcessor resultProcessor, final Provider<Operation> operation) {
+
+        RemoteOptions remoteOptions = new RemoteOptions();
+        remoteOptions.url = Endpoints.INSTANCE.dmr();
+        remoteOptions.prepare = (query, settings) -> {
+            AjaxSettings.Accepts accepts = new AjaxSettings.Accepts();
+            accepts.text = APPLICATION_DMR_ENCODED;
+
+            AjaxSettings.XHRFields xhrFields = new AjaxSettings.XHRFields();
+            xhrFields.withCredentials = true;
+
+            settings.accepts = accepts;
+            settings.beforeSend = (xhr, sttngs) -> {
+                sttngs.data = operation.get().toBase64String();
+                xhr.setRequestHeader(HEADER_MANAGEMENT_CLIENT_NAME, HEADER_MANAGEMENT_CLIENT_VALUE);
+            };
+            settings.error = (xhr, textStatus, errorThrown) -> {
+                String details = errorThrown;
+                ModelNode node = ModelNode.fromBase64(xhr.getResponseText());
+                if (node.isFailure()) {
+                    details = node.getFailureDescription();
+                }
+                logger.error("Unable to process typeahead operation on form item {}: {}", //NON-NLS
+                        formItem().getId(EDITING), details);
+            };
+            settings.contentType = APPLICATION_DMR_ENCODED;
+            settings.dataType = "text"; //NON-NLS
+            settings.method = POST.name();
+            settings.xhrFields = xhrFields;
+            return settings;
+        };
+
+        remoteOptions.transform = response -> {
+            DmrPayloadProcessor payloadProcessor = new DmrPayloadProcessor();
+            ModelNode payload = payloadProcessor.processPayload(POST, APPLICATION_DMR_ENCODED, response);
+            if (!payload.isFailure()) {
+                String query = Bridge.select(formItemSelector()).getValue();
+                ModelNode result = payload.get(RESULT);
+                return resultProcessor.process(query, result);
+            }
+            return JsArrayOf.create();
+        };
+
+        Bloodhound.Options bloodhoundOptions = new Bloodhound.Options();
+        bloodhoundOptions.datumTokenizer = dataTokenizer;
+        bloodhoundOptions.queryTokenizer = query -> query.split(WHITESPACE);
+        bloodhoundOptions.identify = identifier;
+        bloodhoundOptions.sufficient = Integer.MAX_VALUE; // we'd like to always have fresh results from the backend
+        bloodhoundOptions.remote = remoteOptions;
+        return new Bloodhound(bloodhoundOptions);
+    }
+
+    private Dataset initDataset(final Display display, final SuggestionTemplate suggestionTemplate) {
+        Dataset dataset = new Dataset();
+        dataset.async = true;
+        dataset.display = display;
+        dataset.limit = Integer.MAX_VALUE;
+        dataset.source = bloodhound::search;
+        dataset.templates = initTemplates();
+        dataset.templates.suggestion = suggestionTemplate;
+        return dataset;
+    }
+
+    private Templates initTemplates() {
+        Templates templates = new Templates();
+        //noinspection HardCodedStringLiteral
+        templates.notFound = context -> "<div class=\"empty-message\">" +
+                "<span class=\"pficon pficon-warning-triangle-o\"></span>" + CONSTANTS.noItems() +
+                "</div>";
+        return templates;
     }
 }

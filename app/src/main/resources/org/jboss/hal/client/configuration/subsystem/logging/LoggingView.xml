@@ -181,7 +181,8 @@
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
-                                    <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                                    <attribute name="file"
+                                               provider="{{(attributeDescription) -> new FileFormItem(this)}}"/>
                                     <attribute name="level"/>
                                     <attribute name="formatter"/>
                                 </attributes>
@@ -197,7 +198,8 @@
                     </table>
                     <form id="logging-handler-file-form" auto-save="true" name-resolver="{{form.getModel().getName()}}">
                         <attributes>
-                            <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                            <attribute name="file"
+                                       provider="{{(attributeDescription) -> new FileFormItem(this)}}"/>
                             <attribute name="level"/>
                             <attribute name="append"/>
                             <attribute name="autoflush"/>
@@ -233,7 +235,8 @@
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
-                                    <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                                    <attribute name="file"
+                                               provider="{{(attributeDescription) -> new FileFormItem(this)}}"/>
                                     <attribute name="suffix"/>
                                     <attribute name="level"/>
                                     <attribute name="formatter"/>
@@ -251,7 +254,8 @@
                     <form id="logging-handler-periodic-rotating-file-form" auto-save="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
-                            <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                            <attribute name="file"
+                                       provider="{{(attributeDescription) -> new FileFormItem(this)}}"/>
                             <attribute name="suffix"/>
                             <attribute name="level"/>
                             <attribute name="append"/>
@@ -288,7 +292,8 @@
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
-                                    <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                                    <attribute name="file"
+                                               provider="{{(attributeDescription) -> new FileFormItem(this)}}"/>
                                     <attribute name="suffix"/>
                                     <attribute name="level"/>
                                     <attribute name="formatter"/>
@@ -308,7 +313,8 @@
                     <form id="logging-handler-periodic-size-rotating-file-form" auto-save="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
-                            <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                            <attribute name="file"
+                                       provider="{{(attributeDescription) -> new FileFormItem(this)}}"/>
                             <attribute name="suffix"/>
                             <attribute name="level"/>
                             <attribute name="rotate-size"/>
@@ -348,7 +354,8 @@
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
-                                    <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                                    <attribute name="file"
+                                               provider="{{(attributeDescription) -> new FileFormItem(this)}}"/>
                                     <attribute name="suffix"/>
                                     <attribute name="level"/>
                                     <attribute name="formatter"/>
@@ -368,7 +375,8 @@
                     <form id="logging-handler-size-rotating-file-form" auto-save="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
-                            <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
+                            <attribute name="file"
+                                       provider="{{(attributeDescription) -> new FileFormItem(this)}}"/>
                             <attribute name="suffix"/>
                             <attribute name="level"/>
                             <attribute name="rotate-size"/>
