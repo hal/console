@@ -19,7 +19,6 @@ import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.ColumnRegistry;
 import org.jboss.hal.core.finder.Finder;
@@ -27,6 +26,7 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
+import org.jboss.hal.core.subsystem.Subsystems;
 import org.jboss.hal.core.ui.UIRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.spi.Footer;
@@ -45,6 +45,7 @@ public class CoreModule extends AbstractGinModule {
         bind(ModelBrowser.class);
         bind(ItemActionFactory.class).in(Singleton.class);
         bind(StatementContext.class).to(CoreStatementContext.class).asEagerSingleton(); // to register the event
+        bind(Subsystems.class).in(Singleton.class);
         bind(TableButtonFactory.class).in(Singleton.class);
         bind(UIRegistry.class).in(Singleton.class);
 

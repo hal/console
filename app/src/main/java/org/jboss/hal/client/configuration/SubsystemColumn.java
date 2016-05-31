@@ -43,8 +43,8 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.subsystem.SubsystemMetadata;
-import org.jboss.hal.meta.subsystem.Subsystems;
+import org.jboss.hal.core.subsystem.SubsystemMetadata;
+import org.jboss.hal.core.subsystem.Subsystems;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -165,16 +165,20 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 .useFirstActionAsBreadcrumbHandler()
 
                 .onPreview(item -> {
-                    String camelCase = LOWER_HYPHEN.to(LOWER_CAMEL, item.getName());
-                    ExternalTextResource resource = resources.preview(camelCase);
-                    if (resource != null) {
-                        return new PreviewContent(item.getTitle(), resource);
-
+                    if (item.getPreviewContent() != null) {
+                        return item.getPreviewContent();
                     } else {
-                        ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, item.getName());
-                        Operation operation = new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION, address)
-                                .build();
-                        return new ResourceDescriptionPreview(item.getTitle(), dispatcher, operation);
+                        String camelCase = LOWER_HYPHEN.to(LOWER_CAMEL, item.getName());
+                        ExternalTextResource resource = resources.preview(camelCase);
+                        if (resource != null) {
+                            return new PreviewContent(item.getTitle(), resource);
+
+                        } else {
+                            ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, item.getName());
+                            Operation operation = new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION, address)
+                                    .build();
+                            return new ResourceDescriptionPreview(item.getTitle(), dispatcher, operation);
+                        }
                     }
                 }));
 

@@ -308,12 +308,6 @@ public class Typeahead implements SuggestHandler, Attachable {
         Elements.setVisible(menu, false);
     }
 
-    public void clearRemoteCache() {
-        if (bloodhound != null) {
-            bloodhound.clearRemoteCache();
-        }
-    }
-
 
     // ------------------------------------------------------ helper methods
 
@@ -348,6 +342,7 @@ public class Typeahead implements SuggestHandler, Attachable {
 
         RemoteOptions remoteOptions = new RemoteOptions();
         remoteOptions.url = Endpoints.INSTANCE.dmr();
+        remoteOptions.cache = false;
         remoteOptions.prepare = (query, settings) -> {
             AjaxSettings.Accepts accepts = new AjaxSettings.Accepts();
             accepts.text = APPLICATION_DMR_ENCODED;

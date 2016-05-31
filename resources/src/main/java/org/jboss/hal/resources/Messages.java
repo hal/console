@@ -44,6 +44,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String addResourceSuccess(String type, String name);
     String addResourceTitle(String text);
 
+    String blacklist(String blacklist);
+
     SafeHtml configuredMailServer(String servers);
     String connectedTo(String url);
 

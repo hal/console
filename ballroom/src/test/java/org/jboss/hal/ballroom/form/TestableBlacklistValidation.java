@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration.subsystem.logging;
-
-import javax.inject.Provider;
-
-import org.jboss.hal.ballroom.typeahead.NamesResultProcessor;
-import org.jboss.hal.ballroom.typeahead.Typeahead;
-import org.jboss.hal.dmr.model.Operation;
-
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+package org.jboss.hal.ballroom.form;
 
 /**
  * @author Harald Pehl
  */
-class PathTypeahead extends Typeahead {
+public class TestableBlacklistValidation extends BlacklistValidation {
 
-    protected PathTypeahead(final Provider<Operation> operation) {
-        super(data -> data.getString(NAME), data -> data.getString(NAME).split(WHITESPACE), new NamesResultProcessor(),
-                data -> data.getString(NAME), null, operation);
+    public TestableBlacklistValidation(final String first, final String... rest) {
+        super(first, rest);
+    }
+
+    public TestableBlacklistValidation(final Iterable<String> blacklist) {
+        super(blacklist);
+    }
+
+    @Override
+    protected String errorMessage() {
+        return "error"; //NON-NLS
     }
 }

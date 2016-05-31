@@ -100,8 +100,13 @@ final class ${context.subclass} extends ${context.base} {
             .onSave((form, changedValues) -> ${form.onSave})
             </#if>
             .build();
+            <#list form.validationHandlerAttributes as attribute>
+        ${form.name}.getFormItem("${attribute.name}").addValidationHandler(${attribute.validationHandler});
+            </#list>
             <#list form.suggestHandlerAttributes as attribute>
-                <#if attribute.suggestHandlerTemplates?size == 1>
+                <#if attribute.suggestHandler??>
+        ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(${attribute.suggestHandler});
+                <#elseif attribute.suggestHandlerTemplates?size == 1>
         ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(new Typeahead(
             AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}"), mbuiContext.statementContext()));
                 <#else>
@@ -135,19 +140,22 @@ final class ${context.subclass} extends ${context.base} {
                                     </#list>
                     .unsorted()
                     .build();
-                                    <#if action.hasAttributesWithSuggestionHandlers>
-                                        <#list action.suggestHandlerAttributes as attribute>
-                                            <#if attribute.suggestHandlerTemplates?size == 1>
+                                    <#list action.validationHandlerAttributes as attribute>
+                form.getFormItem("${attribute.name}").addValidationHandler(${attribute.validationHandler});
+                                    </#list>
+                                    <#list action.suggestHandlerAttributes as attribute>
+                                        <#if attribute.suggestHandler??>
+                form.getFormItem("${attribute.name}").registerSuggestHandler(${attribute.suggestHandler});
+                                        <#elseif attribute.suggestHandlerTemplates?size == 1>
                 form.getFormItem("${attribute.name}").registerSuggestHandler(new Typeahead(
                     AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}", mbuiContext.statementContext()));
-                                            <#else>
+                                        <#else>
                 List<AddressTemplate> ${table.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
                     AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
                 form.getFormItem("${attribute.name}").registerSuggestHandler(new Typeahead(
                     ${table.name}Templates, mbuiContext.statementContext()));
-                                            </#if>
-                                        </#list>
-                                    </#if>
+                                        </#if>
+                                    </#list>
                 AddResourceDialog dialog = new AddResourceDialog(
                     mbuiContext.resources().messages().addResourceTitle(${table.title}),
                     form,
@@ -162,7 +170,7 @@ final class ${context.subclass} extends ${context.base} {
                     });
                 dialog.show();
             })
-                                <#elseif action.hasAttributesWithSuggestionHandlers>
+                                <#elseif action.hasAttributesWithValidationsHandler || action.hasAttributesWithSuggestionHandler>
             .button(mbuiContext.resources().constants().add(), (event, api) -> {
                 AddResourceDialog dialog = new AddResourceDialog(
                     IdBuilder.build("${table.selector}", "add"),
@@ -178,8 +186,13 @@ final class ${context.subclass} extends ${context.base} {
                                 mbuiContext.resources().messages().addResourceSuccess(${table.title}, name)));
                         });
                     });
+                                    <#list action.validationHandlerAttributes as attribute>
+                dialog.getForm().getFormItem("${attribute.name}").addValidationHandler(${attribute.validationHandler});
+                                    </#list>
                                     <#list action.suggestHandlerAttributes as attribute>
-                                        <#if attribute.suggestHandlerTemplates?size == 1>
+                                        <#if attribute.suggestHandler??>
+                dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(${attribute.suggestHandler});
+                                        <#elseif attribute.suggestHandlerTemplates?size == 1>
                 dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(new Typeahead(
                     AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}"), mbuiContext.statementContext()));
                                         <#else>

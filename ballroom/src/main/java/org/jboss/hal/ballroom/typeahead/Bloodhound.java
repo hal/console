@@ -29,6 +29,7 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
  * @author Harald Pehl
  * @see <a href="https://github.com/twitter/typeahead.js/blob/master/doc/bloodhound.md#api">https://github.com/twitter/typeahead.js/blob/master/doc/bloodhound.md#api</a>
  */
+@SuppressWarnings("WeakerAccess")
 @JsType(isNative = true, namespace = GLOBAL)
 public class Bloodhound {
 
@@ -46,9 +47,8 @@ public class Bloodhound {
 
 
     @JsConstructor
+    @SuppressWarnings("UnusedParameters")
     public Bloodhound(Options options) {}
 
     public native void search(String query, SyncCallback syncCallback, AsyncCallback asyncCallback);
-
-    public native void clearRemoteCache();
 }
