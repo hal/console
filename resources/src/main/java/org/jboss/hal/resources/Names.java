@@ -38,6 +38,7 @@ public interface Names {
     String JDBC_DRIVER = "JDBC Driver";
     String JDBC_DRIVERS = "JDBC Drivers";
     String LOGGING = "Logging";
+    String LOGGING_PROFILE = "Logging Profile";
     String LOGGING_PROFILES = "Logging Profiles";
     String MAIL_SESSION = "Mail Session";
     String MANAGEMENT_CONSOLE = "Management Console";

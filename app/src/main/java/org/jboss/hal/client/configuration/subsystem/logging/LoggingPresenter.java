@@ -36,7 +36,6 @@ import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
@@ -53,7 +52,7 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(NameTokens.LOGGING)
+    @NameToken(NameTokens.LOGGING_CONFIGURATION)
     @Requires({LOGGING_SUBSYSTEM_ADDRESS, ROOT_LOGGER_ADDRESS, LOGGER_ADDRESS,
             ASYNC_HANDLER_ADDRESS, CONSOLE_HANDLER_ADDRESS, CUSTOM_HANDLER_ADDRESS, FILE_HANDLER_ADDRESS,
             PERIODIC_ROTATING_FILE_HANDLER_ADDRESS, PERIODIC_SIZE_ROTATING_FILE_HANDLER_ADDRESS,
@@ -110,7 +109,7 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
     protected FinderPath finderPath() {
         return FinderPath
                 .subsystemPath(statementContext.selectedProfile(), LOGGING_SUBSYSTEM_TEMPLATE.lastValue())
-                .append(Ids.LOGGING_COLUMN, ModelDescriptionConstants.CONFIGURATION,
+                .append(ModelDescriptionConstants.LOGGING, ModelDescriptionConstants.CONFIGURATION,
                         Names.LOGGING, Names.CONFIGURATION);
     }
 

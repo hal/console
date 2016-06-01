@@ -26,17 +26,18 @@ import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
 import static java.util.Arrays.asList;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LOGGING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LOGGING_PROFILE;
 
 /**
  * @author Harald Pehl
  */
-@AsyncColumn(Ids.LOGGING_COLUMN)
+@AsyncColumn(LOGGING)
 public class LoggingColumn extends StaticItemColumn {
 
     @Inject
@@ -47,14 +48,14 @@ public class LoggingColumn extends StaticItemColumn {
             final Places places,
             final Resources resources) {
 
-        super(finder, Ids.LOGGING_COLUMN, Names.LOGGING, asList(
+        super(finder, LOGGING, Names.LOGGING, asList(
                 new StaticItem.Builder(Names.CONFIGURATION)
                         .placeRequestAction(resources.constants().view(), placeManager,
-                                places.selectedProfile(NameTokens.LOGGING).build())
+                                places.selectedProfile(NameTokens.LOGGING_CONFIGURATION).build())
                         .onPreview(new LoggingPreview(statementContext, dispatcher, resources))
                         .build(),
                 new StaticItem.Builder(Names.LOGGING_PROFILES)
-                        // .nextColumn(ModelDescriptionConstants.JDBC_DRIVER)
+                        .nextColumn(LOGGING_PROFILE)
                         .onPreview(new PreviewContent(Names.LOGGING_PROFILES, resources.previews().loggingProfiles()))
                         .build()
         ));

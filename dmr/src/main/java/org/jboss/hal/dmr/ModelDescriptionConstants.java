@@ -136,6 +136,7 @@ public interface ModelDescriptionConstants {
     String LOCAL = "local";
     String LOCALE = "locale";
     String LOGGING = "logging";
+    String LOGGING_PROFILE = "logging-profile";
 
     String MAIL = "mail";
     String MAIL_SESSION = "mail-session";

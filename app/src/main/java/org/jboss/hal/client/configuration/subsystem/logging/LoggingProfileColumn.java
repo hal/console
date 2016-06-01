@@ -15,44 +15,86 @@
  */
 package org.jboss.hal.client.configuration.subsystem.logging;
 
+import java.util.Arrays;
 import java.util.List;
+import javax.inject.Inject;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.core.finder.FinderContext;
+import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
-import org.jboss.hal.core.finder.ItemsProvider;
+import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.resources.Ids;
+import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
+import org.jboss.hal.spi.Requires;
+
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGING_PROFILE_ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LOGGING_PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE_DEPTH;
 
 /**
  * @author Harald Pehl
  */
-@AsyncColumn(Ids.LOGGING_PROFILE_COLUMN)
+@AsyncColumn(LOGGING_PROFILE)
+@Requires(LOGGING_PROFILE_ADDRESS)
 public class LoggingProfileColumn extends FinderColumn<NamedNode> {
 
+    @Inject
     public LoggingProfileColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
-            final EventBus eventBus,
+            final Places places,
             final Dispatcher dispatcher,
             final StatementContext statementContext) {
 
-        super(new FinderColumn.Builder<NamedNode>(finder, Ids.LOGGING_PROFILE_COLUMN, Names.LOGGING_PROFILES)
+        super(new FinderColumn.Builder<NamedNode>(finder, LOGGING_PROFILE, Names.LOGGING_PROFILES)
 
-                .itemsProvider(new ItemsProvider<NamedNode>() {
-                    @Override
-                    public void get(final FinderContext context, final AsyncCallback<List<NamedNode>> callback) {
+                .columnAction(columnActionFactory.add(
+                        IdBuilder.build(LOGGING_PROFILE, "add"),
+                        Names.LOGGING_PROFILE,
+                        AddressTemplates.LOGGING_PROFILE_TEMPLATE))
 
-                    }
+                .itemsProvider((context, callback) -> {
+                    ResourceAddress address = AddressTemplates.LOGGING_SUBSYSTEM_TEMPLATE.resolve(statementContext);
+                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
+                            .param(CHILD_TYPE, LOGGING_PROFILE)
+                            .param(RECURSIVE_DEPTH, 1)
+                            .build();
+                    dispatcher.execute(operation, result -> {
+                        callback.onSuccess(ModelNodeHelper.asNamedNodes(result.asPropertyList()));
+                    });
                 })
         );
+
+        setItemRenderer(item -> new ItemDisplay<NamedNode>() {
+            @Override
+            public String getTitle() {
+                return item.getName();
+            }
+
+            @Override
+            public List<ItemAction<NamedNode>> actions() {
+                PlaceRequest placeRequest = places.selectedProfile(NameTokens.LOGGING_PROFILE)
+                        .with(ModelDescriptionConstants.PROFILE, item.getName())
+                        .build();
+                return Arrays.asList(itemActionFactory.view(placeRequest),
+                        itemActionFactory.remove(Names.LOGGING_PROFILE, item.getName(),
+                                AddressTemplates.LOGGING_PROFILE_TEMPLATE, LoggingProfileColumn.this));
+            }
+        });
     }
 }
