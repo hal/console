@@ -29,12 +29,15 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
@@ -51,7 +54,7 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.LOGGING)
-    @Requires({ROOT_LOGGER_ADDRESS, LOGGER_ADDRESS,
+    @Requires({LOGGING_SUBSYSTEM_ADDRESS, ROOT_LOGGER_ADDRESS, LOGGER_ADDRESS,
             ASYNC_HANDLER_ADDRESS, CONSOLE_HANDLER_ADDRESS, CUSTOM_HANDLER_ADDRESS, FILE_HANDLER_ADDRESS,
             PERIODIC_ROTATING_FILE_HANDLER_ADDRESS, PERIODIC_SIZE_ROTATING_FILE_HANDLER_ADDRESS,
             SIZE_ROTATING_FILE_HANDLER_ADDRESS, SYSLOG_HANDLER_ADDRESS,
@@ -59,6 +62,8 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
     public interface MyProxy extends ProxyPlace<LoggingPresenter> {}
 
     public interface MyView extends MbuiView<LoggingPresenter>, HasVerticalNavigation {
+        void updateLoggingConfig(ModelNode modelNode);
+
         void updateRootLogger(ModelNode modelNode);
         void updateLogger(List<NamedNode> items);
 
@@ -104,7 +109,9 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
     @Override
     protected FinderPath finderPath() {
         return FinderPath
-                .subsystemPath(statementContext.selectedProfile(), LOGGING_SUBSYSTEM_TEMPLATE.lastValue());
+                .subsystemPath(statementContext.selectedProfile(), LOGGING_SUBSYSTEM_TEMPLATE.lastValue())
+                .append(Ids.LOGGING_COLUMN, ModelDescriptionConstants.CONFIGURATION,
+                        Names.LOGGING, Names.CONFIGURATION);
     }
 
     @Override
@@ -115,6 +122,8 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
                 .build();
         dispatcher.execute(operation, result -> {
             // @formatter:off
+            getView().updateLoggingConfig(result);
+
             getView().updateRootLogger(result.get(ROOT_LOGGER_TEMPLATE.lastKey()).get(ROOT_LOGGER_TEMPLATE.lastValue()));
             getView().updateLogger(asNamedNodes(failSafePropertyList(result, LOGGER_TEMPLATE.lastKey())));
 

@@ -18,7 +18,7 @@ package org.jboss.hal.core.finder;
 import java.util.List;
 
 /**
- * The finder column for {@link StaticItem}.
+ * Finder column for {@link StaticItem}.
  *
  * @author Harald Pehl
  */

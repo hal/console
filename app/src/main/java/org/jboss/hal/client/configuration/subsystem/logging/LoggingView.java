@@ -41,6 +41,7 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     }
 
     @MbuiElement("logging-vertical-navigation") VerticalNavigation navigation;
+    @MbuiElement("logging-config-form") Form<ModelNode> loggingConfigForm;
     @MbuiElement("logging-root-logger-form") Form<ModelNode> rootLoggerForm;
     @MbuiElement("logging-categories-table") DataTable<NamedNode> loggerTable;
     @MbuiElement("logging-categories-form") Form<NamedNode> loggerForm;
@@ -76,6 +77,11 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     @Override
     public VerticalNavigation getVerticalNavigation() {
         return navigation;
+    }
+
+    @Override
+    public void updateLoggingConfig(final ModelNode modelNode) {
+        loggingConfigForm.view(modelNode);
     }
 
     @Override

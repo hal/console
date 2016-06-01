@@ -26,6 +26,7 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.subsystem.Subsystems;
 import org.jboss.hal.core.ui.UIRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -43,7 +44,7 @@ public class CoreModule extends AbstractGinModule {
         bind(ItemActionFactory.class).in(Singleton.class);
         bind(MbuiContext.class).in(Singleton.class);
         bind(ModelBrowser.class);
-        bind(ItemActionFactory.class).in(Singleton.class);
+        bind(Places.class).in(Singleton.class);
         bind(StatementContext.class).to(CoreStatementContext.class).asEagerSingleton(); // to register the event
         bind(Subsystems.class).in(Singleton.class);
         bind(TableButtonFactory.class).in(Singleton.class);

@@ -19,6 +19,8 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
 
+import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
@@ -81,7 +83,8 @@ public class Server extends NamedNode {
      */
     public ServerConfigStatus getServerConfigStatus() {
         if (hasDefined(STATUS)) {
-            return ServerConfigStatus.valueOf(get(STATUS).asString().toUpperCase());
+            String enumValue = LOWER_HYPHEN.to(UPPER_UNDERSCORE, get(STATUS).asString());
+            return ServerConfigStatus.valueOf(enumValue);
         }
         return ServerConfigStatus.UNDEFINED;
     }
@@ -99,7 +102,8 @@ public class Server extends NamedNode {
      */
     public ServerState getServerState() {
         if (hasDefined(SERVER_STATE)) {
-            return ServerState.valueOf(get(SERVER_STATE).asString().toUpperCase());
+            String enumValue = LOWER_HYPHEN.to(UPPER_UNDERSCORE, get(SERVER_STATE).asString());
+            return ServerState.valueOf(enumValue);
         }
         return ServerState.UNDEFINED;
     }

@@ -18,6 +18,18 @@
 <view>
     <vertical-navigation id="logging-vertical-navigation">
         <!--
+            Logging Configuration
+        -->
+        <item id="logging-config-item" title="Configuration" icon="fa fa-list-ul">
+            <metadata address="/{selected.profile}/subsystem=logging">
+                <h1>Configuration</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <form id="logging-config-form" title="Logging Configuration" auto-save="true"/>
+            </metadata>
+        </item>
+
+
+        <!--
             Root Logger
         -->
         <item id="logging-root-logger-item" title="Root Logger" icon="fa fa-sitemap">

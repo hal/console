@@ -43,8 +43,7 @@ class ContentPreview extends PreviewContent {
             previewBuilder().end();
         }
 
-        PreviewAttributes<Content> attributes = new PreviewAttributes<>(content,
-                resources.constants().mainAttributes())
+        PreviewAttributes<Content> attributes = new PreviewAttributes<>(content)
                 .append(NAME)
                 .append(RUNTIME_NAME)
                 .end();

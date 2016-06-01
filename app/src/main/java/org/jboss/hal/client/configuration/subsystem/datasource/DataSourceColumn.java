@@ -41,6 +41,7 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -91,6 +92,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             final Environment environment,
             final @Footer Provider<Progress> progress,
             final Resources resources,
+            final Places places,
             final DataSourceTemplates templates,
             final Finder finder,
             final ColumnActionFactory columnActionFactory,
@@ -175,10 +177,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
             @Override
             public List<ItemAction<DataSource>> actions() {
-                String profile = environment.isStandalone() ? STANDALONE : statementContext.selectedProfile();
-                PlaceRequest.Builder builder = new PlaceRequest.Builder()
-                        .nameToken(NameTokens.DATA_SOURCE)
-                        .with(PROFILE, profile)
+                PlaceRequest.Builder builder = places.selectedProfile(NameTokens.DATA_SOURCE)
                         .with(NAME, dataSource.getName());
                 if (dataSource.isXa()) {
                     builder.with(DataSourcePresenter.XA_PARAM, String.valueOf(true));

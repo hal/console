@@ -16,15 +16,19 @@
 package org.jboss.hal.core.finder;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.google.gwt.core.client.GWT;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.CSS;
-import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.IdBuilder;
 
 import static org.jboss.hal.resources.CSS.key;
 import static org.jboss.hal.resources.CSS.listGroup;
@@ -44,18 +48,32 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
     }
 
 
+    private static final String LABEL = "label";
+    private static final String VALUE = "value";
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
+
     private final T model;
     private final LabelBuilder labelBuilder;
     private final Elements.Builder builder;
+    private final Map<String, PreviewAttributeFunction<T>> functions;
+
+    public PreviewAttributes(final T model) {
+        this(model, CONSTANTS.mainAttributes(), Collections.emptyList());
+    }
 
     public PreviewAttributes(final T model, final String header) {
         this(model, header, Collections.emptyList());
     }
 
-    public PreviewAttributes(final T model, final String header, final List<String> attributes) {
+    public PreviewAttributes(final T model, final List<String> attributes) {
+        this(model, CONSTANTS.mainAttributes(), attributes);
+    }
+
+    private PreviewAttributes(final T model, final String header, final List<String> attributes) {
         this.model = model;
         this.labelBuilder = new LabelBuilder();
         this.builder = new Elements.Builder().h(2).textContent(header).end();
+        this.functions = new HashMap<>();
 
         builder.ul().css(listGroup);
         for (String attribute : attributes) {
@@ -64,31 +82,47 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
     }
 
     public PreviewAttributes<T> append(final String attribute) {
-        String label = labelBuilder.label(attribute);
-        String value = model.hasDefined(attribute) ? model.get(attribute).asString() : Names.NOT_AVAILABLE;
-        append(label, value);
+        append(model -> new String[]{
+                labelBuilder.label(attribute),
+                model.hasDefined(attribute) ? model.get(attribute).asString() : ""
+        });
         return this;
     }
 
     public PreviewAttributes<T> append(final PreviewAttributeFunction<T> function) {
-        String[] labelValue = function.labelValue(model);
-        append(labelValue[0], labelValue[1]);
-        return this;
-    }
+        String id = IdBuilder.uniqueId();
+        String labelId = IdBuilder.build(id, LABEL);
+        String valueId = IdBuilder.build(id, VALUE);
+        functions.put(id, function);
 
-    private void append(String label, String value) {
+        String[] labelValue = function.labelValue(model);
         builder.li().css(listGroupItem)
-                .span().css(key).textContent(label).end()
-                .span().css(CSS.value).textContent(value);
-        if (value.length() > 15) {
-            builder.title(value);
+                .span().rememberAs(labelId).css(key).textContent(labelValue[0]).end()
+                .span().rememberAs(valueId).css(CSS.value).textContent(labelValue[1]);
+        if (labelValue[1].length() > 15) {
+            builder.title(labelValue[1]);
         }
         builder.end().end();
+        return this;
     }
 
     public PreviewAttributes<T> end() {
         builder.end();
         return this;
+    }
+
+    public void refresh(T model) {
+        for (Map.Entry<String, PreviewAttributeFunction<T>> entry : functions.entrySet()) {
+            String id = entry.getKey();
+            String labelId = IdBuilder.build(id, LABEL);
+            String valueId = IdBuilder.build(id, VALUE);
+
+            PreviewAttributeFunction<T> function = entry.getValue();
+            String[] labelValue = function.labelValue(model);
+
+            builder.referenceFor(labelId).setTextContent(labelValue[0]);
+            builder.referenceFor(valueId).setTextContent(labelValue[1]);
+        }
     }
 
     @Override

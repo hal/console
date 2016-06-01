@@ -34,12 +34,11 @@ public interface Names {
     String HAL = "HAL";
     String HOSTS = "Hosts";
     String INTERFACE = "Interface";
-    String IIOP_OPENJDK = "IIOP (OpenJDK)";
     String INTERFACES = "Interfaces";
     String JDBC_DRIVER = "JDBC Driver";
     String JDBC_DRIVERS = "JDBC Drivers";
-    String JNDI = "JNDI";
-    String MAIL = "Mail";
+    String LOGGING = "Logging";
+    String LOGGING_PROFILES = "Logging Profiles";
     String MAIL_SESSION = "Mail Session";
     String MANAGEMENT_CONSOLE = "Management Console";
     String MANAGEMENT_MODEL = "Management Model";

@@ -41,6 +41,15 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/subsystems/ee.html")
     ExternalTextResource ee();
 
+    @Source("previews/subsystems/logging.html")
+    ExternalTextResource logging();
+
+    @Source("previews/subsystems/logging-configuration.html")
+    ExternalTextResource loggingConfiguration();
+
+    @Source("previews/subsystems/logging-profiles.html")
+    ExternalTextResource loggingProfiles();
+
     @Source("previews/subsystems/mail.html")
     ExternalTextResource mail();
 
