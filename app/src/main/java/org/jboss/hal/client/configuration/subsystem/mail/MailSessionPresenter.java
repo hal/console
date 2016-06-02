@@ -46,14 +46,12 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.IdBuilder;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
@@ -61,6 +59,9 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
+import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_SESSION_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.SERVER_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
@@ -68,22 +69,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 public class MailSessionPresenter
         extends SubsystemPresenter<MailSessionPresenter.MyView, MailSessionPresenter.MyProxy> {
-
-    static final String MAIL_ADDRESS = "/{selected.profile}/subsystem=mail";
-    static final String MAIL_SESSION_ADDRESS = "/{selected.profile}/subsystem=mail/mail-session=*";
-    // The server address is set to smtp, because the address is a singleton, so it does not load the wildcard.
-    // The attributes for imap, smtp and pop3 are the same
-    static final String SERVER_ADDRESS = "/{selected.profile}/subsystem=mail/mail-session=*/server=smtp";
-
-    static final AddressTemplate MAIL_TEMPLATE = AddressTemplate.of(MAIL_ADDRESS);
-    static final AddressTemplate MAIL_SESSION_TEMPLATE = AddressTemplate.of(MAIL_SESSION_ADDRESS);
-    static final AddressTemplate SELECTED_MAIL_SESSION_TEMPLATE = AddressTemplate
-            .of("/{selected.profile}/subsystem=mail/mail-session={selection}");
-    static final AddressTemplate SERVER_TEMPLATE = AddressTemplate.of(SERVER_ADDRESS);
-
-    static final AddressTemplate SOCKET_BINDING_TEMPLATE = AddressTemplate
-            .of("/socket-binding-group=*/remote-destination-outbound-socket-binding=*");
-
 
     // @formatter:off
     @ProxyCodeSplit
@@ -143,11 +128,11 @@ public class MailSessionPresenter
     protected FinderPath finderPath() {
         return FinderPath
                 .subsystemPath(statementContext.selectedProfile(), ModelDescriptionConstants.MAIL)
-                .append(Ids.MAIL_SESSION, mailSessionName, Names.MAIL_SESSION, mailSessionName);
+                .append(ModelDescriptionConstants.MAIL_SESSION, mailSessionName, Names.MAIL_SESSION, mailSessionName);
     }
 
     void loadMailSession() {
-        ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
+        ResourceAddress address = AddressTemplates.SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
                 .param(RECURSIVE, true)
                 .build();
@@ -157,7 +142,7 @@ public class MailSessionPresenter
     }
 
     void save(final Map<String, Object> changedValues) {
-        ResourceAddress resourceAddress = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
+        ResourceAddress resourceAddress = AddressTemplates.SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
         Composite composite = operationFactory.fromChangeSet(resourceAddress, changedValues);
 
         dispatcher.execute(composite, (CompositeResult result) -> {
@@ -170,7 +155,7 @@ public class MailSessionPresenter
     void launchAddNewServer() {
         SortedSet<String> availableServers = new TreeSet<>(asList(MailSession.SMTP.toUpperCase(),
                 MailSession.IMAP.toUpperCase(), MailSession.POP3.toUpperCase()));
-        ResourceAddress selectedSessionAddress = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
+        ResourceAddress selectedSessionAddress = AddressTemplates.SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
         Operation serverNamesOp = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, selectedSessionAddress)
                 .param(CHILD_TYPE, MailSession.SERVER)
                 .build();
@@ -198,7 +183,7 @@ public class MailSessionPresenter
                     serverTypeItem.setRequired(true);
                 }
 
-                Metadata metadata = metadataRegistry.lookup(SERVER_TEMPLATE);
+                Metadata metadata = metadataRegistry.lookup(AddressTemplates.SERVER_TEMPLATE);
                 AddResourceDialog dialog = new AddResourceDialog(
                         IdBuilder.build(ModelDescriptionConstants.SERVER, ModelDescriptionConstants.ADD, "form"),
                         resources.messages().addResourceTitle(Names.SERVER), metadata,
@@ -206,7 +191,7 @@ public class MailSessionPresenter
                         (name, modelNode) -> {
 
                             String serverType = serverTypeItem.getValue().toLowerCase();
-                            ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE
+                            ResourceAddress address = AddressTemplates.SELECTED_MAIL_SESSION_TEMPLATE
                                     .append(ModelDescriptionConstants.SERVER + "=" + serverType)
                                     .resolve(statementContext);
                             Operation operation = new Operation.Builder(ModelDescriptionConstants.ADD, address)
@@ -221,7 +206,7 @@ public class MailSessionPresenter
                             });
                         });
                 dialog.getForm().getFormItem(MailSession.OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
-                        new Typeahead(SOCKET_BINDING_TEMPLATE, statementContext));
+                        new Typeahead(AddressTemplates.SOCKET_BINDING_TEMPLATE, statementContext));
                 dialog.show();
             }
         });

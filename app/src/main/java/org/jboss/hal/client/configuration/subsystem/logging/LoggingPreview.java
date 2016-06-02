@@ -17,32 +17,44 @@ package org.jboss.hal.client.configuration.subsystem.logging;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.FluentIterable;
+import com.google.gwt.resources.client.ExternalTextResource;
+import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.ROOT_LOGGER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LEVEL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
+import static org.jboss.hal.resources.Names.ROOT_LOGGER;
 
 /**
+ * Used for both logging configuration and logging profiles.
+ *
  * @author Harald Pehl
  */
 public class LoggingPreview extends PreviewContent {
 
-    private static final String HANDLERS = "handlers";
+    private final Dispatcher dispatcher;
+    private final Operation operation;
+    private final PreviewAttributes<ModelNode> attributes;
+    private final Element undefined;
 
-    public LoggingPreview(StatementContext statementContext, Dispatcher dispatcher, Resources resources) {
-        super(Names.CONFIGURATION, resources.previews().loggingConfiguration());
+    public LoggingPreview(Dispatcher dispatcher, Resources resources,
+            String header, ExternalTextResource description, Operation operation) {
+        super(header, description);
+        this.dispatcher = dispatcher;
+        this.operation = operation;
 
         LabelBuilder labelBuilder = new LabelBuilder();
-        PreviewAttributes<ModelNode> attributes = new PreviewAttributes<>(new ModelNode(), "Root Logger") //NON-NLS
-                .append("level") //NON-NLS
+        attributes = new PreviewAttributes<>(new ModelNode(), Names.ROOT_LOGGER)
+                .append(LEVEL)
                 .append(model -> {
                     String handlers = "";
                     if (model.hasDefined(HANDLERS)) {
@@ -51,13 +63,34 @@ public class LoggingPreview extends PreviewContent {
                                 .transform(ModelNode::asString)
                                 .join(Joiner.on(", "));
                     }
-                    return new String[]{labelBuilder.label(HANDLERS), handlers };
+                    return new String[]{labelBuilder.label(HANDLERS), handlers};
                 })
                 .end();
         previewBuilder().addAll(attributes);
 
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
-                ROOT_LOGGER_TEMPLATE.resolve(statementContext)).build();
-        dispatcher.execute(operation, attributes::refresh);
+        previewBuilder().div().rememberAs(UNDEFINED)
+                .h(2).textContent(ROOT_LOGGER).end()
+                .p().textContent(resources.constants().noRootLoggerDescription()).end()
+                .end();
+        undefined = previewBuilder().referenceFor(UNDEFINED);
+        Elements.setVisible(undefined, false);
+    }
+
+    @Override
+    public void onReset() {
+        dispatcher.execute(operation,
+                (model) -> {
+                    for (Element element : attributes.asElements()) {
+                        Elements.setVisible(element, true);
+                    }
+                    Elements.setVisible(undefined, false);
+                    attributes.refresh(model);
+                },
+                (operation1, failure) -> {
+                    for (Element element : attributes.asElements()) {
+                        Elements.setVisible(element, false);
+                    }
+                    Elements.setVisible(undefined, true);
+                });
     }
 }

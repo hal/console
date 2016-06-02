@@ -77,7 +77,6 @@ public interface Ids {
     String MACRO_EDITOR = "macro-editor";
     String MACRO_LIST = "macro-list";
     String MACRO_OPTIONS = "macro-options";
-    String MAIL_SESSION = "mail-session";
     String MAIL_SESSION_ATTRIBUTES_ENTRY = "mail-session-attributes-entry";
     String MAIL_SESSION_ATTRIBUTES_FORM = "mail-session-attributes-form";
     String MAIL_SESSION_SERVERS_ENTRY = "mail-session-servers-entry";

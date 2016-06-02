@@ -26,15 +26,14 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.IdBuilder;
 
 import static java.util.Arrays.asList;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
 
 /**
  * @author Harald Pehl
  */
 public class FileFormItem extends CompositeFormItem {
-
-    private static final String FILE = "file";
-    private static final String PATH = "path";
-    private static final String RELATIVE_TO = "relative-to";
 
     private FormItem<String> path;
     private FormItem<String> relativeTo;

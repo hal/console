@@ -34,17 +34,17 @@ public class MbuiContext {
 
     private final EventBus eventBus;
     private final MetadataRegistry metadataRegistry;
-    private final StatementContext statementContext;
     private final Dispatcher dispatcher;
     private final OperationFactory operationFactory;
     private final TableButtonFactory tableButtonFactory;
     private final Resources resources;
+    private StatementContext statementContext;
 
     @Inject
     public MbuiContext(final EventBus eventBus, final MetadataRegistry metadataRegistry,
-            final StatementContext statementContext, final Dispatcher dispatcher,
-            final OperationFactory operationFactory, final TableButtonFactory tableButtonFactory,
-            final Resources resources) {
+            final Dispatcher dispatcher, final OperationFactory operationFactory,
+            final TableButtonFactory tableButtonFactory, final Resources resources,
+            final StatementContext statementContext) {
         this.eventBus = eventBus;
         this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
@@ -52,6 +52,7 @@ public class MbuiContext {
         this.operationFactory = operationFactory;
         this.tableButtonFactory = tableButtonFactory;
         this.resources = resources;
+        this.statementContext = statementContext;
     }
 
     public EventBus eventBus() {
@@ -80,5 +81,10 @@ public class MbuiContext {
 
     public Resources resources() {
         return resources;
+    }
+
+    public MbuiContext updateStatementContext(final StatementContext statementContext) {
+        this.statementContext = statementContext;
+        return this;
     }
 }

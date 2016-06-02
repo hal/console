@@ -43,6 +43,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String activeRoles(String roles);
     String addResourceSuccess(String type, String name);
     String addResourceTitle(String text);
+    String addSingleResourceSuccess(String type);
 
     String blacklist(String blacklist);
 

@@ -22,56 +22,45 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.typeahead.Typeahead;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.client.configuration.PathsTypeahead;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
-import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.Resources;
-import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE_DEPTH;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
 /**
  * @author Harald Pehl
  */
-public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, LoggingPresenter.MyProxy> {
+public class LoggingProfilePresenter extends MbuiPresenter<LoggingProfilePresenter.MyView, LoggingProfilePresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(NameTokens.LOGGING_CONFIGURATION)
-    @Requires({LOGGING_SUBSYSTEM_ADDRESS, ROOT_LOGGER_ADDRESS, LOGGER_ADDRESS,
-            ASYNC_HANDLER_ADDRESS, CONSOLE_HANDLER_ADDRESS, CUSTOM_HANDLER_ADDRESS, FILE_HANDLER_ADDRESS,
-            PERIODIC_ROTATING_FILE_HANDLER_ADDRESS, PERIODIC_SIZE_ROTATING_FILE_HANDLER_ADDRESS,
-            SIZE_ROTATING_FILE_HANDLER_ADDRESS, SYSLOG_HANDLER_ADDRESS,
-            CUSTOM_FORMATTER_ADDRESS, PATTERN_FORMATTER_ADDRESS})
-    public interface MyProxy extends ProxyPlace<LoggingPresenter> {}
+    @NameToken(NameTokens.LOGGING_PROFILE)
+    @Requires(LOGGING_PROFILE_ADDRESS)
+    public interface MyProxy extends ProxyPlace<LoggingProfilePresenter> {}
 
-    public interface MyView extends MbuiView<LoggingPresenter>, HasVerticalNavigation {
-        void updateLoggingConfig(ModelNode modelNode);
-
+    public interface MyView extends MbuiView<LoggingProfilePresenter>, HasVerticalNavigation {
         void updateRootLogger(ModelNode modelNode);
         void noRootLogger();
         void updateLogger(List<NamedNode> items);
@@ -92,27 +81,22 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
 
 
     private final Environment environment;
-    private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
-    private final Resources resources;
+    private String loggingProfile;
 
     @Inject
-    public LoggingPresenter(final EventBus eventBus,
+    public LoggingProfilePresenter(final EventBus eventBus,
             final MyView view,
-            final MyProxy proxy,
+            final MyProxy myProxy,
             final Finder finder,
             final Environment environment,
-            final MetadataRegistry metadataRegistry,
             final StatementContext statementContext,
-            final Dispatcher dispatcher,
-            final Resources resources) {
-        super(eventBus, view, proxy, finder);
+            final Dispatcher dispatcher) {
+        super(eventBus, view, myProxy, finder);
         this.environment = environment;
-        this.metadataRegistry = metadataRegistry;
-        this.statementContext = statementContext;
+        this.statementContext = new SelectionAwareStatementContext(statementContext, () -> loggingProfile);
         this.dispatcher = dispatcher;
-        this.resources = resources;
     }
 
     @Override
@@ -122,23 +106,27 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
     }
 
     @Override
+    public void prepareFromRequest(final PlaceRequest request) {
+        super.prepareFromRequest(request);
+        loggingProfile = request.getParameter(NAME, null);
+    }
+
+    @Override
     protected FinderPath finderPath() {
         return FinderPath
-                .subsystemPath(statementContext.selectedProfile(), ModelDescriptionConstants.LOGGING)
-                .append(ModelDescriptionConstants.LOGGING, ModelDescriptionConstants.CONFIGURATION,
-                        Names.LOGGING, Names.CONFIGURATION);
+                .subsystemPath(statementContext.selectedProfile(), LOGGING_SUBSYSTEM_TEMPLATE.lastValue())
+                .append(ModelDescriptionConstants.LOGGING_PROFILE, loggingProfile,
+                        Names.LOGGING_PROFILE, loggingProfile);
     }
 
     @Override
     protected void reload() {
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
-                LOGGING_SUBSYSTEM_TEMPLATE.resolve(statementContext))
+        ResourceAddress address = SELECTED_LOGGING_PROFILE_TEMPLATE.resolve(statementContext);
+        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
                 .param(RECURSIVE_DEPTH, 2)
                 .build();
         dispatcher.execute(operation, result -> {
             // @formatter:off
-            getView().updateLoggingConfig(result);
-
             if (result.hasDefined(ROOT_LOGGER_TEMPLATE.lastKey())) {
                 getView().updateRootLogger(result.get(ROOT_LOGGER_TEMPLATE.lastKey()).get(ROOT_LOGGER_TEMPLATE.lastValue()));
             } else {
@@ -159,35 +147,10 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
             getView().updatePatternFormatter(asNamedNodes(failSafePropertyList(result, PATTERN_FORMATTER_TEMPLATE.lastKey())));
             // @formatter:on
         });
-
         PathsTypeahead.updateOperation(environment, dispatcher, statementContext);
     }
 
     void addRootLogger() {
-        Metadata metadata = metadataRegistry.lookup(ROOT_LOGGER_TEMPLATE);
 
-        Form<ModelNode> form = new ModelNodeForm.Builder<>("logging-root-logger-add", metadata)
-                .addFromRequestProperties()
-                .include(LEVEL, HANDLERS)
-                .build();
-        AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.ROOT_LOGGER), form,
-                (name, model) -> {
-                    Operation operation = new Operation.Builder(ADD, ROOT_LOGGER_TEMPLATE.resolve(statementContext))
-                            .payload(model)
-                            .build();
-                    dispatcher.execute(operation, result -> {
-                        MessageEvent.fire(getEventBus(),
-                                Message.success(resources.messages().addSingleResourceSuccess(Names.ROOT_LOGGER)));
-                        reload();
-                    });
-                });
-
-        Typeahead typeahead = new Typeahead(
-                asList(ASYNC_HANDLER_TEMPLATE, CONSOLE_HANDLER_TEMPLATE, CUSTOM_HANDLER_TEMPLATE, FILE_HANDLER_TEMPLATE,
-                        PERIODIC_ROTATING_FILE_HANDLER_TEMPLATE, PERIODIC_SIZE_ROTATING_FILE_HANDLER_TEMPLATE,
-                        SIZE_ROTATING_FILE_HANDLER_TEMPLATE, SYSLOG_HANDLER_TEMPLATE),
-                statementContext);
-        dialog.getForm().getFormItem(HANDLERS).registerSuggestHandler(typeahead);
-        dialog.show();
     }
 }

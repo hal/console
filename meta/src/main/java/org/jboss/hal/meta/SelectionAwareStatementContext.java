@@ -25,6 +25,7 @@ import javax.inject.Provider;
 public class SelectionAwareStatementContext extends FilteringStatementContext implements StatementContext {
 
     public static final String SELECTION_KEY = "selection";
+    public static final String SELECTION_EXPRESSION = "{" + SELECTION_KEY + "}";
 
     public SelectionAwareStatementContext(final StatementContext delegate, final Provider<String> selectionProvider) {
         super(delegate, new Filter() {

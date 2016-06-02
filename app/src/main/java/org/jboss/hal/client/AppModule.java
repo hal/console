@@ -38,6 +38,8 @@ import org.jboss.hal.client.configuration.subsystem.ee.EEView;
 import org.jboss.hal.client.configuration.subsystem.iiop.IiopPresenter;
 import org.jboss.hal.client.configuration.subsystem.iiop.Mbui_IiopView_Provider;
 import org.jboss.hal.client.configuration.subsystem.logging.LoggingPresenter;
+import org.jboss.hal.client.configuration.subsystem.logging.LoggingProfilePresenter;
+import org.jboss.hal.client.configuration.subsystem.logging.Mbui_LoggingProfileView_Provider;
 import org.jboss.hal.client.configuration.subsystem.logging.Mbui_LoggingView_Provider;
 import org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter;
 import org.jboss.hal.client.configuration.subsystem.mail.MailSessionView;
@@ -154,6 +156,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 LoggingPresenter.MyView.class,
                 Mbui_LoggingView_Provider.class,
                 LoggingPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(LoggingProfilePresenter.class,
+                LoggingProfilePresenter.MyView.class,
+                Mbui_LoggingProfileView_Provider.class,
+                LoggingProfilePresenter.MyProxy.class);
 
         bindPresenter(MacroEditorPresenter.class,
                 MacroEditorPresenter.MyView.class,

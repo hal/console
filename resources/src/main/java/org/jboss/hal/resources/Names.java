@@ -49,11 +49,11 @@ public interface Names {
     String NOT_SUPPORTED = "not supported";
     String NYI = "not yet implemented";
     String PATCHING = "Patching";
-    String PATH = "Path";
     String PATHS = "Paths";
     String PROFILE = "Profile";
     String PROFILES = "Profiles";
     String RESOURCE = "Resource";
+    String ROOT_LOGGER = "Root Logger";
     String RUNTIME = "Runtime";
     String SERVER = "Server";
     String SERVER_GROUPS = "Server Groups";

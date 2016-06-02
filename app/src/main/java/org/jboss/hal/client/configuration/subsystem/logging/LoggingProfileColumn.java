@@ -27,7 +27,6 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
@@ -37,14 +36,13 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGING_PROFILE_ADDRESS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.LOGGING_PROFILE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE_DEPTH;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGING_PROFILE_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
@@ -59,7 +57,8 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
             final ItemActionFactory itemActionFactory,
             final Places places,
             final Dispatcher dispatcher,
-            final StatementContext statementContext) {
+            final StatementContext statementContext,
+            final Resources resources) {
 
         super(new FinderColumn.Builder<NamedNode>(finder, LOGGING_PROFILE, Names.LOGGING_PROFILES)
 
@@ -78,6 +77,15 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
                         callback.onSuccess(ModelNodeHelper.asNamedNodes(result.asPropertyList()));
                     });
                 })
+
+                .onPreview(item -> new LoggingPreview(dispatcher, resources,
+                        item.getName(), resources.previews().loggingProfiles(),
+                        new Operation.Builder(READ_RESOURCE_OPERATION,
+                                LOGGING_PROFILE_TEMPLATE.append("root-logger=ROOT")
+                                        .resolve(statementContext, item.getName()))
+                                .build()))
+
+                .useFirstActionAsBreadcrumbHandler()
         );
 
         setItemRenderer(item -> new ItemDisplay<NamedNode>() {
@@ -89,7 +97,7 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
             @Override
             public List<ItemAction<NamedNode>> actions() {
                 PlaceRequest placeRequest = places.selectedProfile(NameTokens.LOGGING_PROFILE)
-                        .with(ModelDescriptionConstants.PROFILE, item.getName())
+                        .with(NAME, item.getName())
                         .build();
                 return Arrays.asList(itemActionFactory.view(placeRequest),
                         itemActionFactory.remove(Names.LOGGING_PROFILE, item.getName(),

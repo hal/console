@@ -99,12 +99,14 @@ public interface ModelDescriptionConstants {
 
     String FAILED = "failed";
     String FAILURE_DESCRIPTION = "failure-description";
+    String FILE = "file";
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
 
     String GLOBAL_MODULES = "global-modules";
     String GRACEFUL_SHUTDOWN_TIMEOUT = "graceful-shutdown-timeout";
     String GROUP = "group";
 
+    String HANDLERS = "handlers";
     String HASH = "hash";
     String HEAD_COMMENT_ALLOWED = "head-comment-allowed";
     String HOST = "host";
@@ -131,6 +133,7 @@ public interface ModelDescriptionConstants {
     String JNDI_NAME = "jndi-name";
     String JPA = "jpa";
 
+    String LEVEL = "level";
     String LIST_ADD = "list-add";
     String LIST_REMOVE = "list-remove";
     String LOCAL = "local";
@@ -171,6 +174,7 @@ public interface ModelDescriptionConstants {
     String OUTCOME = "outcome";
 
     String PASSWORD = "password";
+    String PATH = "path";
     String PORT = "port";
     String PROFILE = "profile";
     String PROXIES = "proxies";

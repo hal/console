@@ -18,12 +18,14 @@ package org.jboss.hal.client.configuration.subsystem.logging;
 import javax.inject.Inject;
 
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
@@ -31,8 +33,10 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
 import static java.util.Arrays.asList;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.ROOT_LOGGER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LOGGING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LOGGING_PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
 /**
  * @author Harald Pehl
@@ -50,9 +54,15 @@ public class LoggingColumn extends StaticItemColumn {
 
         super(finder, LOGGING, Names.LOGGING, asList(
                 new StaticItem.Builder(Names.CONFIGURATION)
-                        .placeRequestAction(resources.constants().view(), placeManager,
-                                places.selectedProfile(NameTokens.LOGGING_CONFIGURATION).build())
-                        .onPreview(new LoggingPreview(statementContext, dispatcher, resources))
+                        .action(resources.constants().view(), item -> {
+                            PlaceRequest placeRequest = places.selectedProfile(NameTokens.LOGGING_CONFIGURATION)
+                                    .build();
+                            placeManager.revealPlace(placeRequest);
+                        })
+                        .onPreview(new LoggingPreview(dispatcher, resources, Names.CONFIGURATION,
+                                resources.previews().loggingConfiguration(),
+                                new Operation.Builder(READ_RESOURCE_OPERATION,
+                                        ROOT_LOGGER_TEMPLATE.resolve(statementContext)).build()))
                         .build(),
                 new StaticItem.Builder(Names.LOGGING_PROFILES)
                         .nextColumn(LOGGING_PROFILE)

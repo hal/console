@@ -17,6 +17,8 @@ package org.jboss.hal.client.configuration.subsystem.logging;
 
 import org.jboss.hal.meta.AddressTemplate;
 
+import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_EXPRESSION;
+
 /**
  * @author Harald Pehl
  */
@@ -39,6 +41,7 @@ public interface AddressTemplates {
     String PATTERN_FORMATTER_ADDRESS = LOGGING_SUBSYSTEM_ADDRESS + "/pattern-formatter=*";
 
     String LOGGING_PROFILE_ADDRESS = LOGGING_SUBSYSTEM_ADDRESS + "/logging-profile=*";
+    String SELECTED_LOGGING_PROFILE_ADDRESS = LOGGING_SUBSYSTEM_ADDRESS + "/logging-profile=" + SELECTION_EXPRESSION;
 
     AddressTemplate LOGGING_SUBSYSTEM_TEMPLATE = AddressTemplate.of(LOGGING_SUBSYSTEM_ADDRESS);
     AddressTemplate ROOT_LOGGER_TEMPLATE = AddressTemplate.of(ROOT_LOGGER_ADDRESS);
@@ -57,4 +60,5 @@ public interface AddressTemplates {
     AddressTemplate PATTERN_FORMATTER_TEMPLATE = AddressTemplate.of(PATTERN_FORMATTER_ADDRESS);
 
     AddressTemplate LOGGING_PROFILE_TEMPLATE = AddressTemplate.of(LOGGING_PROFILE_ADDRESS);
+    AddressTemplate SELECTED_LOGGING_PROFILE_TEMPLATE = AddressTemplate.of(SELECTED_LOGGING_PROFILE_ADDRESS);
 }

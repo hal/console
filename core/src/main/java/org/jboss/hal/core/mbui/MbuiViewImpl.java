@@ -16,6 +16,7 @@
 package org.jboss.hal.core.mbui;
 
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.meta.StatementContext;
 
 /**
  * Base class for views generated using {@code @MbuiView}.
@@ -29,6 +30,11 @@ public abstract class MbuiViewImpl<P extends MbuiPresenter> extends PatternFlyVi
 
     protected MbuiViewImpl(final MbuiContext mbuiContext) {
         this.mbuiContext = mbuiContext;
+    }
+
+    protected MbuiViewImpl(final MbuiContext mbuiContext, final StatementContext statementContext) {
+        this.mbuiContext = mbuiContext;
+        this.mbuiContext.updateStatementContext(statementContext);
     }
 
     @Override

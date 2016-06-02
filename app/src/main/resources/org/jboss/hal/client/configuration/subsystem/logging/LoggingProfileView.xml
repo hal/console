@@ -16,41 +16,29 @@
   ~ limitations under the License.
   -->
 <view>
-    <vertical-navigation id="logging-vertical-navigation">
-        <!--
-            Logging Configuration
-        -->
-        <item id="logging-config-item" title="Configuration" icon="fa fa-list-ul">
-            <metadata address="/{selected.profile}/subsystem=logging">
-                <h1>Configuration</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
-                <form id="logging-config-form" title="Logging Configuration" auto-save="true"/>
-            </metadata>
-        </item>
-
-
+    <vertical-navigation id="logging-profile-vertical-navigation">
         <!--
             Root Logger
         -->
-        <item id="logging-root-logger-item" title="Root Logger" icon="fa fa-sitemap">
-            <metadata address="/{selected.profile}/subsystem=logging/root-logger=ROOT">
-                <h1 id="logging-root-logger-header">Root Logger</h1>
-                <p id="logging-root-logger-description">{{metadata.getDescription().getDescription()}}</p>
-                <form id="logging-root-logger-form" title="Root Logger" auto-save="true">
+        <item id="logging-profile-root-logger-item" title="Root Logger" icon="fa fa-sitemap">
+            <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/root-logger=ROOT">
+                <h1 id="logging-profile-root-logger-header">Root Logger</h1>
+                <p id="logging-profile-root-logger-description">{{metadata.getDescription().getDescription()}}</p>
+                <form id="logging-profile-root-logger-form" title="Root Logger" auto-save="true">
                     <attributes>
                         <attribute name="level"/>
                         <attribute name="handlers">
                             <suggest-handler>
                                 <templates>
                                     <!-- @formatter:off -->
-                                    <template address="/{selected.profile}/subsystem=logging/async-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/console-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/custom-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/file-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/size-rotating-file-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/syslog-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/async-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/console-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-rotating-file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-size-rotating-file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/size-rotating-file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/syslog-handler=*"/>
                                     <!-- @formatter:on -->
                                 </templates>
                             </suggest-handler>
@@ -65,11 +53,11 @@
         <!--
             Categories / Logger
         -->
-        <item id="logging-categories-item" title="Categories" icon="pficon pficon-repository">
-            <metadata address="/{selected.profile}/subsystem=logging/logger=*">
+        <item id="logging-profile-categories-item" title="Categories" icon="pficon pficon-repository">
+            <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/logger=*">
                 <h1>Categories</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="logging-categories-table" title="Category" form-ref="logging-categories-form">
+                <table id="logging-profile-categories-table" title="Category" form-ref="logging-profile-categories-form">
                     <actions>
                         <action handler-ref="add-resource">
                             <attributes>
@@ -78,14 +66,14 @@
                                     <suggest-handler>
                                         <templates>
                                             <!-- @formatter:off -->
-                                            <template address="/{selected.profile}/subsystem=logging/async-handler=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/console-handler=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/custom-handler=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/file-handler=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/size-rotating-file-handler=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/syslog-handler=*"/>
+                                            <template address="/{selected.profile}/subsystem=logging/logging-profile=*/async-handler=*"/>
+                                            <template address="/{selected.profile}/subsystem=logging/logging-profile=*/console-handler=*"/>
+                                            <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-handler=*"/>
+                                            <template address="/{selected.profile}/subsystem=logging/logging-profile=*/file-handler=*"/>
+                                            <template address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-rotating-file-handler=*"/>
+                                            <template address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-size-rotating-file-handler=*"/>
+                                            <template address="/{selected.profile}/subsystem=logging/logging-profile=*/size-rotating-file-handler=*"/>
+                                            <template address="/{selected.profile}/subsystem=logging/logging-profile=*/syslog-handler=*"/>
                                             <!-- @formatter:on -->
                                         </templates>
                                     </suggest-handler>
@@ -101,7 +89,7 @@
                         <column name="level"/>
                     </columns>
                 </table>
-                <form id="logging-categories-form" title="Category" auto-save="true"
+                <form id="logging-profile-categories-form" title="Category" auto-save="true"
                       name-resolver="{{form.getModel().getName()}}">
                     <attributes>
                         <attribute name="category"/>
@@ -110,14 +98,14 @@
                             <suggest-handler>
                                 <templates>
                                     <!-- @formatter:off -->
-                                    <template address="/{selected.profile}/subsystem=logging/async-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/console-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/custom-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/file-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/size-rotating-file-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/syslog-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/async-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/console-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-rotating-file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-size-rotating-file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/size-rotating-file-handler=*"/>
+                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/syslog-handler=*"/>
                                     <!-- @formatter:on -->
                                 </templates>
                             </suggest-handler>
@@ -130,15 +118,15 @@
         </item>
 
 
-        <item id="logging-handler-item" title="Handler" icon="fa fa-cogs">
+        <item id="logging-profile-handler-item" title="Handler" icon="fa fa-cogs">
             <!--
                 Console Handler
             -->
-            <sub-item id="logging-handler-console-item" title="Console Handler">
-                <metadata address="/{selected.profile}/subsystem=logging/console-handler=*">
+            <sub-item id="logging-profile-handler-console-item" title="Console Handler">
+                <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/console-handler=*">
                     <h1>Console Handler</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="logging-handler-console-table" form-ref="logging-handler-console-form">
+                    <table id="logging-profile-handler-console-table" form-ref="logging-profilehandler-console-form">
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
@@ -156,7 +144,7 @@
                             <column name="target"/>
                         </columns>
                     </table>
-                    <form id="logging-handler-console-form" auto-save="true"
+                    <form id="logging-profile-handler-console-form" auto-save="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="level"/>
@@ -167,8 +155,8 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -185,11 +173,11 @@
             <!--
                 File Handler
             -->
-            <sub-item id="logging-handler-file-item" title="File Handler">
-                <metadata address="/{selected.profile}/subsystem=logging/file-handler=*">
+            <sub-item id="logging-profile-handler-file-item" title="File Handler">
+                <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/file-handler=*">
                     <h1>File Handler</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="logging-handler-file-table" form-ref="logging-handler-file-form">
+                    <table id="logging-profile-handler-file-table" form-ref="logging-profilehandler-file-form">
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
@@ -207,7 +195,8 @@
                             <column name="file" value="{{Logging.getFilename(row)}}"/>
                         </columns>
                     </table>
-                    <form id="logging-handler-file-form" auto-save="true" name-resolver="{{form.getModel().getName()}}">
+                    <form id="logging-profile-handler-file-form" auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
                             <attribute name="level"/>
@@ -218,8 +207,8 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -236,12 +225,13 @@
             <!--
                 Periodic Rotating File Handler
             -->
-            <sub-item id="logging-handler-periodic-rotating-file-item" title="Periodic Handler">
-                <metadata address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*">
+            <sub-item id="logging-profile-handler-periodic-rotating-file-item" title="Periodic Handler">
+                <metadata
+                        address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-rotating-file-handler=*">
                     <h1>Periodic Handler</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="logging-handler-periodic-rotating-file-table"
-                           form-ref="logging-handler-periodic-rotating-file-form">
+                    <table id="logging-profile-handler-periodic-rotating-file-table"
+                           form-ref="logging-profilehandler-periodic-rotating-file-form">
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
@@ -260,7 +250,7 @@
                             <column name="file" value="{{Logging.getFilename(row)}}"/>
                         </columns>
                     </table>
-                    <form id="logging-handler-periodic-rotating-file-form" auto-save="true"
+                    <form id="logging-profile-handler-periodic-rotating-file-form" auto-save="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
@@ -273,8 +263,8 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -291,12 +281,13 @@
             <!--
                 Periodic Size Rotating File Handler
             -->
-            <sub-item id="logging-handler-periodic-size-rotating-file-item" title="Periodic Size Handler">
-                <metadata address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*">
+            <sub-item id="logging-profile-handler-periodic-size-rotating-file-item" title="Periodic Size Handler">
+                <metadata
+                        address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-size-rotating-file-handler=*">
                     <h1>Periodic Size Handler</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="logging-handler-periodic-size-rotating-file-table"
-                           form-ref="logging-handler-periodic-size-rotating-file-form">
+                    <table id="logging-profile-handler-periodic-size-rotating-file-table"
+                           form-ref="logging-profilehandler-periodic-size-rotating-file-form">
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
@@ -317,7 +308,7 @@
                             <column name="file" value="{{Logging.getFilename(row)}}"/>
                         </columns>
                     </table>
-                    <form id="logging-handler-periodic-size-rotating-file-form" auto-save="true"
+                    <form id="logging-profile-handler-periodic-size-rotating-file-form" auto-save="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
@@ -333,8 +324,8 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -351,12 +342,13 @@
             <!--
                 Size Rotating File Handler
             -->
-            <sub-item id="logging-handler-size-rotating-file-item" title="Size Handler">
-                <metadata address="/{selected.profile}/subsystem=logging/size-rotating-file-handler=*">
+            <sub-item id="logging-profile-handler-size-rotating-file-item" title="Size Handler">
+                <metadata
+                        address="/{selected.profile}/subsystem=logging/logging-profile=*/size-rotating-file-handler=*">
                     <h1>Size Handler</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="logging-handler-size-rotating-file-table"
-                           form-ref="logging-handler-size-rotating-file-form">
+                    <table id="logging-profile-handler-size-rotating-file-table"
+                           form-ref="logging-profilehandler-size-rotating-file-form">
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
@@ -377,7 +369,7 @@
                             <column name="file" value="{{Logging.getFilename(row)}}"/>
                         </columns>
                     </table>
-                    <form id="logging-handler-size-rotating-file-form" auto-save="true"
+                    <form id="logging-profile-handler-size-rotating-file-form" auto-save="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
@@ -393,8 +385,8 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -411,11 +403,11 @@
             <!--
                 Async Handler
             -->
-            <sub-item id="logging-handler-async-item" title="Async Handler">
-                <metadata address="/{selected.profile}/subsystem=logging/async-handler=*">
+            <sub-item id="logging-profile-handler-async-item" title="Async Handler">
+                <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/async-handler=*">
                     <h1>Async Handler</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="logging-handler-async-table" form-ref="logging-handler-async-form">
+                    <table id="logging-profile-handler-async-table" form-ref="logging-profilehandler-async-form">
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
@@ -424,13 +416,13 @@
                                         <suggest-handler>
                                             <templates>
                                                 <!-- @formatter:off -->
-                                                <template address="/{selected.profile}/subsystem=logging/console-handler=*"/>
-                                                <template address="/{selected.profile}/subsystem=logging/custom-handler=*"/>
-                                                <template address="/{selected.profile}/subsystem=logging/file-handler=*"/>
-                                                <template address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*"/>
-                                                <template address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*"/>
-                                                <template address="/{selected.profile}/subsystem=logging/size-rotating-file-handler=*"/>
-                                                <template address="/{selected.profile}/subsystem=logging/syslog-handler=*"/>
+                                                <template address="/{selected.profile}/subsystem=logging/logging-profile=*/console-handler=*"/>
+                                                <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-handler=*"/>
+                                                <template address="/{selected.profile}/subsystem=logging/logging-profile=*/file-handler=*"/>
+                                                <template address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-rotating-file-handler=*"/>
+                                                <template address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-size-rotating-file-handler=*"/>
+                                                <template address="/{selected.profile}/subsystem=logging/logging-profile=*/size-rotating-file-handler=*"/>
+                                                <template address="/{selected.profile}/subsystem=logging/logging-profile=*/syslog-handler=*"/>
                                                 <!-- @formatter:on -->
                                             </templates>
                                         </suggest-handler>
@@ -447,7 +439,7 @@
                             <column name="level"/>
                         </columns>
                     </table>
-                    <form id="logging-handler-async-form" auto-save="true"
+                    <form id="logging-profile-handler-async-form" auto-save="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="level"/>
@@ -455,13 +447,13 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/console-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/custom-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/file-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/periodic-rotating-file-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/periodic-size-rotating-file-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/size-rotating-file-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/syslog-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/console-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-rotating-file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-size-rotating-file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/size-rotating-file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/syslog-handler=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -478,11 +470,11 @@
             <!--
                 Custom Handler
             -->
-            <sub-item id="logging-handler-custom-item" title="Custom Handler">
-                <metadata address="/{selected.profile}/subsystem=logging/custom-handler=*">
+            <sub-item id="logging-profile-handler-custom-item" title="Custom Handler">
+                <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-handler=*">
                     <h1>Custom Handler</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="logging-handler-custom-table" form-ref="logging-handler-custom-form">
+                    <table id="logging-profile-handler-custom-table" form-ref="logging-profilehandler-custom-form">
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
@@ -500,7 +492,7 @@
                             <column name="level"/>
                         </columns>
                     </table>
-                    <form id="logging-handler-custom-form" auto-save="true"
+                    <form id="logging-profile-handler-custom-form" auto-save="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="level"/>
@@ -512,8 +504,8 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -530,11 +522,11 @@
             <!--
                 Syslog Handler
             -->
-            <sub-item id="logging-handler-syslog-item" title="Syslog Handler">
-                <metadata address="/{selected.profile}/subsystem=logging/syslog-handler=*">
+            <sub-item id="logging-profile-handler-syslog-item" title="Syslog Handler">
+                <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/syslog-handler=*">
                     <h1>Syslog Handler</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="logging-handler-syslog-table" form-ref="logging-handler-syslog-form">
+                    <table id="logging-profile-handler-syslog-table" form-ref="logging-profilehandler-syslog-form">
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
@@ -557,7 +549,7 @@
                             <column name="level"/>
                         </columns>
                     </table>
-                    <form id="logging-handler-syslog-form" auto-save="true"
+                    <form id="logging-profile-handler-syslog-form" auto-save="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="level"/>
@@ -575,15 +567,16 @@
         </item>
 
 
-        <item id="logging-formatter-item" title="Formatter" icon="fa fa-paint-brush">
+        <item id="logging-profile-formatter-item" title="Formatter" icon="fa fa-paint-brush">
             <!--
                 Pattern Formatter
             -->
-            <sub-item id="logging-formatter-pattern-item" title="Pattern Formatter">
-                <metadata address="/{selected.profile}/subsystem=logging/pattern-formatter=*">
+            <sub-item id="logging-profile-formatter-pattern-item" title="Pattern Formatter">
+                <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/pattern-formatter=*">
                     <h1>Pattern Formatter</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="logging-formatter-pattern-table" form-ref="logging-formatter-pattern-form">
+                    <table id="logging-profile-formatter-pattern-table"
+                           form-ref="logging-profileformatter-pattern-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
@@ -596,7 +589,7 @@
                             <column name="pattern"/>
                         </columns>
                     </table>
-                    <form id="logging-formatter-pattern-form" auto-save="true"
+                    <form id="logging-profile-formatter-pattern-form" auto-save="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="color-map"/>
@@ -610,11 +603,11 @@
             <!--
                 Custom Formatter
             -->
-            <sub-item id="logging-formatter-custom-item" title="Custom Formatter">
-                <metadata address="/{selected.profile}/subsystem=logging/custom-formatter=*">
+            <sub-item id="logging-profile-formatter-custom-item" title="Custom Formatter">
+                <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-formatter=*">
                     <h1>Custom Formatter</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="logging-formatter-custom-table" form-ref="logging-formatter-custom-form">
+                    <table id="logging-profile-formatter-custom-table" form-ref="logging-profileformatter-custom-form">
                         <actions>
                             <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
@@ -626,7 +619,7 @@
                             <column name="name" value="{{row.getName()}}"/>
                         </columns>
                     </table>
-                    <form id="logging-formatter-custom-form" auto-save="true"
+                    <form id="logging-profile-formatter-custom-form" auto-save="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
                             <attribute name="class"/>
