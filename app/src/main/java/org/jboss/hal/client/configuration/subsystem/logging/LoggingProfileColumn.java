@@ -26,9 +26,7 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
-import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
@@ -44,6 +42,7 @@ import org.jboss.hal.spi.Requires;
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGING_PROFILE_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGING_PROFILE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 /**
  * @author Harald Pehl
@@ -56,7 +55,6 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
     public LoggingProfileColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
-            final ItemMonitor itemMonitor,
             final Places places,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
@@ -75,9 +73,7 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
                             .param(CHILD_TYPE, LOGGING_PROFILE)
                             .param(RECURSIVE_DEPTH, 1)
                             .build();
-                    dispatcher.execute(operation, result -> {
-                        callback.onSuccess(ModelNodeHelper.asNamedNodes(result.asPropertyList()));
-                    });
+                    dispatcher.execute(operation, result -> callback.onSuccess(asNamedNodes(result.asPropertyList())));
                 })
 
                 .onPreview(item -> new LoggingPreview(dispatcher, resources,

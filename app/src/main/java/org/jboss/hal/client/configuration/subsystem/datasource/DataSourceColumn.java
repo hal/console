@@ -263,7 +263,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         Operation operation = new Operation.Builder("disable", address).build();
         dispatcher.execute(operation, result -> {
             MessageEvent.fire(eventBus,
-                    Message.success(resources.constants().databaseDisabled()));
+                    Message.success(resources.messages().databaseDisabled(dataSource.getName())));
             refresh(RefreshMode.RESTORE_SELECTION);
         });
     }
@@ -273,7 +273,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         Operation operation = new Operation.Builder("enable", address).build();
         dispatcher.execute(operation, result -> {
             MessageEvent.fire(eventBus,
-                    Message.success(resources.constants().databaseEnabled()));
+                    Message.success(resources.messages().databaseEnabled(dataSource.getName())));
             refresh(RefreshMode.RESTORE_SELECTION);
         });
     }

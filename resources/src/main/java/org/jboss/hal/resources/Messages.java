@@ -50,6 +50,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml configuredMailServer(String servers);
     String connectedTo(String url);
 
+    String databaseDisabled(String name);
+    String databaseEnabled(String name);
     String deploymentAdded(@PluralCount int count);
     String deploymentDisabled(String name);
     String deploymentEnabled(String name);
