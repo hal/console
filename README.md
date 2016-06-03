@@ -58,6 +58,8 @@ The `standalone` module contains an executable jar which launches a local web se
 1. `java -jar standalone/target/hal-standalone-<version>.jar`
 1. Open http://localhost:9090
 
+If you don't want to or cannot build locally you can download a somewhat recent version of `hal-standalone.jar` from https://repository.jboss.org/nexus/index.html#nexus-search;quick~hal-standalone. 
+
 ### Local / SuperDevMode
 
 Useful during development as it provides browser refresh after code changes. 
