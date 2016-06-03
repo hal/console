@@ -44,6 +44,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 import org.jboss.hal.spi.Message;
@@ -51,10 +52,10 @@ import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGING_PROFILE_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.SELECTED_LOGGING_PROFILE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LEVEL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.resources.CSS.marginTop20;
 
@@ -122,7 +123,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         noRootLogger = new EmptyState.Builder(mbuiContext.resources().constants().noRootLogger())
                 .description(mbuiContext.resources().constants().noRootLoggerDescription())
                 .icon("fa fa-sitemap")
-                .primaryAction(mbuiContext.resources().constants().add(), event -> presenter.addRootLogger())
+                .primaryAction(mbuiContext.resources().constants().add(), event -> addRootLogger())
                 .build();
         noRootLogger.asElement().getClassList().add(marginTop20);
 
@@ -160,6 +161,33 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         Elements.setVisible(Browser.getDocument().getElementById("logging-profile-root-logger-description"), visible);
         Elements.setVisible(rootLoggerForm.asElement(), visible);
         Elements.setVisible(noRootLogger.asElement(), !visible);
+    }
+
+    private void addRootLogger() {
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("root-logger=ROOT"));
+
+        Form<ModelNode> form = new ModelNodeForm.Builder<>("logging-profile-root-logger-add", metadata)
+                .addFromRequestProperties()
+                .include(LEVEL, HANDLERS)
+                .build();
+        AddResourceDialog dialog = new AddResourceDialog(
+                mbuiContext.resources().messages().addResourceTitle(Names.ROOT_LOGGER), form,
+                (name, model) -> {
+                    ResourceAddress address = SELECTED_LOGGING_PROFILE_TEMPLATE.append("root-logger=ROOT")
+                            .resolve(selectionAwareStatementContext);
+                    Operation operation = new Operation.Builder(ADD, address)
+                            .payload(model)
+                            .build();
+                    mbuiContext.dispatcher().execute(operation, result -> {
+                        MessageEvent.fire(mbuiContext.eventBus(),
+                                Message.success(mbuiContext.resources().messages()
+                                        .addSingleResourceSuccess(Names.ROOT_LOGGER)));
+                        presenter.reload();
+                    });
+                });
+
+        dialog.getForm().getFormItem(HANDLERS).registerSuggestHandler(suggestHandlers);
+        dialog.show();
     }
 
 

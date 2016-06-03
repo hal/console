@@ -153,8 +153,4 @@ public class LoggingProfilePresenter extends MbuiPresenter<LoggingProfilePresent
         });
         PathsTypeahead.updateOperation(environment, dispatcher, statementContext);
     }
-
-    void addRootLogger() {
-
-    }
 }
