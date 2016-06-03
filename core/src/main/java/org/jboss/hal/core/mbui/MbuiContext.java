@@ -38,7 +38,7 @@ public class MbuiContext {
     private final OperationFactory operationFactory;
     private final TableButtonFactory tableButtonFactory;
     private final Resources resources;
-    private StatementContext statementContext;
+    private final StatementContext statementContext;
 
     @Inject
     public MbuiContext(final EventBus eventBus, final MetadataRegistry metadataRegistry,
@@ -52,7 +52,6 @@ public class MbuiContext {
         this.operationFactory = operationFactory;
         this.tableButtonFactory = tableButtonFactory;
         this.resources = resources;
-        this.statementContext = statementContext;
     }
 
     public EventBus eventBus() {
@@ -81,10 +80,5 @@ public class MbuiContext {
 
     public Resources resources() {
         return resources;
-    }
-
-    public MbuiContext updateStatementContext(final StatementContext statementContext) {
-        this.statementContext = statementContext;
-        return this;
     }
 }

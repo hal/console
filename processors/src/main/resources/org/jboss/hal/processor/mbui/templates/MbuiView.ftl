@@ -79,22 +79,13 @@ final class ${context.subclass} extends ${context.base} {
             <#if form.autoSave>
                 <#if form.nameResolver??>
             .onSave((form, changedValues) -> {
-                ResourceAddress address = ${form.metadata.name}Template.resolve(mbuiContext.statementContext(), ${form.nameResolver});
-                Composite composite = mbuiContext.operationFactory().fromChangeSet(address, changedValues);
-                mbuiContext.dispatcher().execute(composite, (CompositeResult result) -> {
-                    presenter.reload();
-                    MessageEvent.fire(mbuiContext.eventBus(), Message.success(mbuiContext.resources().messages().modifyResourceSuccess(${form.title}, ${form.nameResolver})));
+                String name = ${form.nameResolver};
+                saveForm(changedValues, ${form.metadata.name}Template.resolve(mbuiContext.statementContext(), name),
+                    ${form.title}, name);
                 });
             })
                 <#else>
-            .onSave((form, changedValues) -> {
-                ResourceAddress address = ${form.metadata.name}Template.resolve(mbuiContext.statementContext());
-                Composite composite = mbuiContext.operationFactory().fromChangeSet(address, changedValues);
-                mbuiContext.dispatcher().execute(composite, (CompositeResult result) -> {
-                    presenter.reload();
-                    MessageEvent.fire(mbuiContext.eventBus(), Message.success(mbuiContext.resources().messages().modifySingleResourceSuccess(${form.title})));
-                });
-            })
+            .onSave((form, changedValues) -> saveForm(changedValues, ${form.metadata.name}Template.resolve(mbuiContext.statementContext()), ${form.title}))
                 </#if>
             <#elseif form.onSave??>
             .onSave((form, changedValues) -> ${form.onSave})

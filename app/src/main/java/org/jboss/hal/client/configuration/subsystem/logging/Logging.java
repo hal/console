@@ -24,6 +24,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
 
 /**
+ * Common code used by both the general logging configuration and the logging profile configuration.
+ *
  * @author Harald Pehl
  */
 final class Logging {

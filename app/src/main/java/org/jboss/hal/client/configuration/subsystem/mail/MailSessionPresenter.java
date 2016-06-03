@@ -155,7 +155,8 @@ public class MailSessionPresenter
     void launchAddNewServer() {
         SortedSet<String> availableServers = new TreeSet<>(asList(MailSession.SMTP.toUpperCase(),
                 MailSession.IMAP.toUpperCase(), MailSession.POP3.toUpperCase()));
-        ResourceAddress selectedSessionAddress = AddressTemplates.SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
+        ResourceAddress selectedSessionAddress = AddressTemplates.SELECTED_MAIL_SESSION_TEMPLATE
+                .resolve(statementContext);
         Operation serverNamesOp = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, selectedSessionAddress)
                 .param(CHILD_TYPE, MailSession.SERVER)
                 .build();
@@ -211,6 +212,7 @@ public class MailSessionPresenter
             }
         });
     }
+
     String getMailSessionName() {
         return mailSessionName;
     }

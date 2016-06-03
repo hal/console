@@ -22,35 +22,28 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.client.configuration.PathsTypeahead;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
-import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE_DEPTH;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
@@ -161,33 +154,5 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
         });
 
         PathsTypeahead.updateOperation(environment, dispatcher, statementContext);
-    }
-
-    void addRootLogger() {
-        Metadata metadata = metadataRegistry.lookup(ROOT_LOGGER_TEMPLATE);
-
-        Form<ModelNode> form = new ModelNodeForm.Builder<>("logging-root-logger-add", metadata)
-                .addFromRequestProperties()
-                .include(LEVEL, HANDLERS)
-                .build();
-        AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.ROOT_LOGGER), form,
-                (name, model) -> {
-                    Operation operation = new Operation.Builder(ADD, ROOT_LOGGER_TEMPLATE.resolve(statementContext))
-                            .payload(model)
-                            .build();
-                    dispatcher.execute(operation, result -> {
-                        MessageEvent.fire(getEventBus(),
-                                Message.success(resources.messages().addSingleResourceSuccess(Names.ROOT_LOGGER)));
-                        reload();
-                    });
-                });
-
-        Typeahead typeahead = new Typeahead(
-                asList(ASYNC_HANDLER_TEMPLATE, CONSOLE_HANDLER_TEMPLATE, CUSTOM_HANDLER_TEMPLATE, FILE_HANDLER_TEMPLATE,
-                        PERIODIC_ROTATING_FILE_HANDLER_TEMPLATE, PERIODIC_SIZE_ROTATING_FILE_HANDLER_TEMPLATE,
-                        SIZE_ROTATING_FILE_HANDLER_TEMPLATE, SYSLOG_HANDLER_TEMPLATE),
-                statementContext);
-        dialog.getForm().getFormItem(HANDLERS).registerSuggestHandler(typeahead);
-        dialog.show();
     }
 }

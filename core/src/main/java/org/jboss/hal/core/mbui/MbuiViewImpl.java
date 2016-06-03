@@ -15,8 +15,14 @@
  */
 package org.jboss.hal.core.mbui;
 
+import java.util.Map;
+
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
-import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.CompositeResult;
+import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 
 /**
  * Base class for views generated using {@code @MbuiView}.
@@ -32,13 +38,28 @@ public abstract class MbuiViewImpl<P extends MbuiPresenter> extends PatternFlyVi
         this.mbuiContext = mbuiContext;
     }
 
-    protected MbuiViewImpl(final MbuiContext mbuiContext, final StatementContext statementContext) {
-        this.mbuiContext = mbuiContext;
-        this.mbuiContext.updateStatementContext(statementContext);
-    }
-
     @Override
     public void setPresenter(final P presenter) {
         this.presenter = presenter;
+    }
+
+    protected void saveSingletonForm(final Map<String, Object> changedValues, final ResourceAddress address,
+            final String type) {
+        Composite composite = mbuiContext.operationFactory().fromChangeSet(address, changedValues);
+        mbuiContext.dispatcher().execute(composite, (CompositeResult result) -> {
+            presenter.reload();
+            MessageEvent.fire(mbuiContext.eventBus(),
+                    Message.success(mbuiContext.resources().messages().modifySingleResourceSuccess(type)));
+        });
+    }
+
+    protected void saveForm(final Map<String, Object> changedValues, final ResourceAddress address,
+            final String type, final String name) {
+        Composite composite = mbuiContext.operationFactory().fromChangeSet(address, changedValues);
+        mbuiContext.dispatcher().execute(composite, (CompositeResult result) -> {
+            presenter.reload();
+            MessageEvent.fire(mbuiContext.eventBus(),
+                    Message.success(mbuiContext.resources().messages().modifyResourceSuccess(type, name)));
+        });
     }
 }

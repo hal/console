@@ -24,25 +24,10 @@
             <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/root-logger=ROOT">
                 <h1 id="logging-profile-root-logger-header">Root Logger</h1>
                 <p id="logging-profile-root-logger-description">{{metadata.getDescription().getDescription()}}</p>
-                <form id="logging-profile-root-logger-form" title="Root Logger" auto-save="true">
+                <form id="logging-profile-root-logger-form" on-save="{{saveRootLogger(changedValues)}}">
                     <attributes>
                         <attribute name="level"/>
-                        <attribute name="handlers">
-                            <suggest-handler>
-                                <templates>
-                                    <!-- @formatter:off -->
-                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/async-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/console-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/file-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-rotating-file-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-size-rotating-file-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/size-rotating-file-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/syslog-handler=*"/>
-                                    <!-- @formatter:on -->
-                                </templates>
-                            </suggest-handler>
-                        </attribute>
+                        <attribute name="handlers"/>
                         <attribute name="filter-spec"/>
                     </attributes>
                 </form>
@@ -57,59 +42,23 @@
             <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/logger=*">
                 <h1>Categories</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="logging-profile-categories-table" title="Category" form-ref="logging-profile-categories-form">
+                <table id="logging-profile-categories-table" title="Category"
+                       form-ref="logging-profile-categories-form">
                     <actions>
-                        <action handler-ref="add-resource">
-                            <attributes>
-                                <attribute name="level"/>
-                                <attribute name="handlers">
-                                    <suggest-handler>
-                                        <templates>
-                                            <!-- @formatter:off -->
-                                            <template address="/{selected.profile}/subsystem=logging/logging-profile=*/async-handler=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/logging-profile=*/console-handler=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-handler=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/logging-profile=*/file-handler=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-rotating-file-handler=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-size-rotating-file-handler=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/logging-profile=*/size-rotating-file-handler=*"/>
-                                            <template address="/{selected.profile}/subsystem=logging/logging-profile=*/syslog-handler=*"/>
-                                            <!-- @formatter:on -->
-                                        </templates>
-                                    </suggest-handler>
-                                </attribute>
-                                <attribute name="use-parent-handlers"/>
-                            </attributes>
-                        </action>
-                        <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{api.selectedRow().getName()}}"/>
+                        <action title="{{mbuiContext.resources().constants().add()}}" handler="{{addLogger()}}"/>
+                        <action title="{{mbuiContext.resources().constants().remove()}}" handler="{{removeLogger(api)}}"
+                                scope="selected"/>
                     </actions>
                     <columns>
                         <column name="category"/>
                         <column name="level"/>
                     </columns>
                 </table>
-                <form id="logging-profile-categories-form" title="Category" auto-save="true"
-                      name-resolver="{{form.getModel().getName()}}">
+                <form id="logging-profile-categories-form" on-save="{{saveLogger(form, changedValues)}}">
                     <attributes>
                         <attribute name="category"/>
                         <attribute name="level"/>
-                        <attribute name="handlers">
-                            <suggest-handler>
-                                <templates>
-                                    <!-- @formatter:off -->
-                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/async-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/console-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/file-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-rotating-file-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-size-rotating-file-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/size-rotating-file-handler=*"/>
-                                    <template address="/{selected.profile}/subsystem=logging/logging-profile=*/syslog-handler=*"/>
-                                    <!-- @formatter:on -->
-                                </templates>
-                            </suggest-handler>
-                        </attribute>
+                        <attribute name="handlers"/>
                         <attribute name="use-parent-handlers"/>
                         <attribute name="filter-spec"/>
                     </attributes>
@@ -126,17 +75,12 @@
                 <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/console-handler=*">
                     <h1>Console Handler</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="logging-profile-handler-console-table" form-ref="logging-profilehandler-console-form">
+                    <table id="logging-profile-handler-console-table" form-ref="logging-profile-handler-console-form">
                         <actions>
-                            <action handler-ref="add-resource">
-                                <attributes>
-                                    <attribute name="level"/>
-                                    <attribute name="target"/>
-                                    <attribute name="formatter"/>
-                                </attributes>
-                            </action>
-                            <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                            <action title="{{mbuiContext.resources().constants().add()}}"
+                                    handler="{{addConsoleHandler()}}"/>
+                            <action title="{{mbuiContext.resources().constants().remove()}}"
+                                    handler="{{removeConsoleHandler(api)}}" scope="selected"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -144,8 +88,8 @@
                             <column name="target"/>
                         </columns>
                     </table>
-                    <form id="logging-profile-handler-console-form" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                    <form id="logging-profile-handler-console-form"
+                          on-save="{{saveConsoleHandler(form, changedValues)}}">
                         <attributes>
                             <attribute name="level"/>
                             <attribute name="target"/>
@@ -155,8 +99,8 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -177,17 +121,12 @@
                 <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/file-handler=*">
                     <h1>File Handler</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="logging-profile-handler-file-table" form-ref="logging-profilehandler-file-form">
+                    <table id="logging-profile-handler-file-table" form-ref="logging-profile-handler-file-form">
                         <actions>
-                            <action handler-ref="add-resource">
-                                <attributes>
-                                    <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
-                                    <attribute name="level"/>
-                                    <attribute name="formatter"/>
-                                </attributes>
-                            </action>
-                            <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                            <action title="{{mbuiContext.resources().constants().add()}}"
+                                    handler="{{addFileHandler()}}"/>
+                            <action title="{{mbuiContext.resources().constants().remove()}}"
+                                    handler="{{removeFileHandler(api)}}" scope="selected"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -195,8 +134,7 @@
                             <column name="file" value="{{Logging.getFilename(row)}}"/>
                         </columns>
                     </table>
-                    <form id="logging-profile-handler-file-form" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                    <form id="logging-profile-handler-file-form" on-save="{{saveFileHandler(form, changedValues)}}">
                         <attributes>
                             <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
                             <attribute name="level"/>
@@ -207,8 +145,8 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -231,18 +169,12 @@
                     <h1>Periodic Handler</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
                     <table id="logging-profile-handler-periodic-rotating-file-table"
-                           form-ref="logging-profilehandler-periodic-rotating-file-form">
+                           form-ref="logging-profile-handler-periodic-rotating-file-form">
                         <actions>
-                            <action handler-ref="add-resource">
-                                <attributes>
-                                    <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
-                                    <attribute name="suffix"/>
-                                    <attribute name="level"/>
-                                    <attribute name="formatter"/>
-                                </attributes>
-                            </action>
-                            <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                            <action title="{{mbuiContext.resources().constants().add()}}"
+                                    handler="{{addPeriodicHandler()}}"/>
+                            <action title="{{mbuiContext.resources().constants().remove()}}"
+                                    handler="{{removePeriodicHandler(api)}}" scope="selected"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -250,8 +182,8 @@
                             <column name="file" value="{{Logging.getFilename(row)}}"/>
                         </columns>
                     </table>
-                    <form id="logging-profile-handler-periodic-rotating-file-form" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                    <form id="logging-profile-handler-periodic-rotating-file-form"
+                          on-save="{{savePeriodicHandler(form, changedValues)}}">
                         <attributes>
                             <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
                             <attribute name="suffix"/>
@@ -263,8 +195,8 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -287,20 +219,12 @@
                     <h1>Periodic Size Handler</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
                     <table id="logging-profile-handler-periodic-size-rotating-file-table"
-                           form-ref="logging-profilehandler-periodic-size-rotating-file-form">
+                           form-ref="logging-profile-handler-periodic-size-rotating-file-form">
                         <actions>
-                            <action handler-ref="add-resource">
-                                <attributes>
-                                    <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
-                                    <attribute name="suffix"/>
-                                    <attribute name="level"/>
-                                    <attribute name="formatter"/>
-                                    <attribute name="rotate-size"/>
-                                    <attribute name="max-backup-index"/>
-                                </attributes>
-                            </action>
-                            <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                            <action title="{{mbuiContext.resources().constants().add()}}"
+                                    handler="{{addPeriodicSizeHandler()}}"/>
+                            <action title="{{mbuiContext.resources().constants().remove()}}"
+                                    handler="{{removePeriodicSizeHandler(api)}}" scope="selected"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -308,8 +232,8 @@
                             <column name="file" value="{{Logging.getFilename(row)}}"/>
                         </columns>
                     </table>
-                    <form id="logging-profile-handler-periodic-size-rotating-file-form" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                    <form id="logging-profile-handler-periodic-size-rotating-file-form"
+                          on-save="{{savePeriodicSizeHandler(form, changedValues)}}">
                         <attributes>
                             <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
                             <attribute name="suffix"/>
@@ -324,8 +248,8 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -348,20 +272,12 @@
                     <h1>Size Handler</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
                     <table id="logging-profile-handler-size-rotating-file-table"
-                           form-ref="logging-profilehandler-size-rotating-file-form">
+                           form-ref="logging-profile-handler-size-rotating-file-form">
                         <actions>
-                            <action handler-ref="add-resource">
-                                <attributes>
-                                    <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
-                                    <attribute name="suffix"/>
-                                    <attribute name="level"/>
-                                    <attribute name="formatter"/>
-                                    <attribute name="rotate-size"/>
-                                    <attribute name="max-backup-index"/>
-                                </attributes>
-                            </action>
-                            <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                            <action title="{{mbuiContext.resources().constants().add()}}"
+                                    handler="{{addSizeHandler()}}"/>
+                            <action title="{{mbuiContext.resources().constants().remove()}}"
+                                    handler="{{removeSizeHandler(api)}}" scope="selected"/>
                         </actions>
                         <columns>
                             <column name="name"/>
@@ -369,8 +285,8 @@
                             <column name="file" value="{{Logging.getFilename(row)}}"/>
                         </columns>
                     </table>
-                    <form id="logging-profile-handler-size-rotating-file-form" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                    <form id="logging-profile-handler-size-rotating-file-form"
+                          on-save="{{saveSizeHandler(form, changedValues)}}">
                         <attributes>
                             <attribute name="file" provider="{{(attributeDescription) -> new FileFormItem()}}"/>
                             <attribute name="suffix"/>
@@ -385,8 +301,8 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -407,53 +323,32 @@
                 <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/async-handler=*">
                     <h1>Async Handler</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="logging-profile-handler-async-table" form-ref="logging-profilehandler-async-form">
+                    <table id="logging-profile-handler-async-table" form-ref="logging-profile-handler-async-form">
                         <actions>
-                            <action handler-ref="add-resource">
-                                <attributes>
-                                    <attribute name="level"/>
-                                    <attribute name="subhandlers">
-                                        <suggest-handler>
-                                            <templates>
-                                                <!-- @formatter:off -->
-                                                <template address="/{selected.profile}/subsystem=logging/logging-profile=*/console-handler=*"/>
-                                                <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-handler=*"/>
-                                                <template address="/{selected.profile}/subsystem=logging/logging-profile=*/file-handler=*"/>
-                                                <template address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-rotating-file-handler=*"/>
-                                                <template address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-size-rotating-file-handler=*"/>
-                                                <template address="/{selected.profile}/subsystem=logging/logging-profile=*/size-rotating-file-handler=*"/>
-                                                <template address="/{selected.profile}/subsystem=logging/logging-profile=*/syslog-handler=*"/>
-                                                <!-- @formatter:on -->
-                                            </templates>
-                                        </suggest-handler>
-                                    </attribute>
-                                    <attribute name="queue-length"/>
-                                    <attribute name="overflow-action"/>
-                                </attributes>
-                            </action>
-                            <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                            <action title="{{mbuiContext.resources().constants().add()}}"
+                                    handler="{{addAsyncHandler(}}"/>
+                            <action title="{{mbuiContext.resources().constants().remove()}}"
+                                    handler="{{removeAsyncHandler(api)}}" scope="selected"/>
                         </actions>
                         <columns>
                             <column name="name"/>
                             <column name="level"/>
                         </columns>
                     </table>
-                    <form id="logging-profile-handler-async-form" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                    <form id="logging-profile-handler-async-form" on-save="{{saveAsyncHandler(form, changedValues)}}">
                         <attributes>
                             <attribute name="level"/>
                             <attribute name="subhandlers">
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/console-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/file-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-rotating-file-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/periodic-size-rotating-file-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/size-rotating-file-handler=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/syslog-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/console-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/periodic-rotating-file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/periodic-size-rotating-file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/size-rotating-file-handler=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/syslog-handler=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -474,26 +369,19 @@
                 <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-handler=*">
                     <h1>Custom Handler</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="logging-profile-handler-custom-table" form-ref="logging-profilehandler-custom-form">
+                    <table id="logging-profile-handler-custom-table" form-ref="logging-profile-handler-custom-form">
                         <actions>
-                            <action handler-ref="add-resource">
-                                <attributes>
-                                    <attribute name="level"/>
-                                    <attribute name="module"/>
-                                    <attribute name="class"/>
-                                    <attribute name="formatter"/>
-                                </attributes>
-                            </action>
-                            <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                            <action title="{{mbuiContext.resources().constants().add()}}"
+                                    handler="{{addCustomHandler()}}"/>
+                            <action title="{{mbuiContext.resources().constants().remove()}}"
+                                    handler="{{removeCustomHandler(api)}}" scope="selected"/>
                         </actions>
                         <columns>
                             <column name="name"/>
                             <column name="level"/>
                         </columns>
                     </table>
-                    <form id="logging-profile-handler-custom-form" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                    <form id="logging-profile-handler-custom-form" on-save="{{saveCustomHandler(form, changedValues)}}">
                         <attributes>
                             <attribute name="level"/>
                             <attribute name="module"/>
@@ -504,8 +392,8 @@
                                 <suggest-handler>
                                     <templates>
                                         <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/pattern-formatter=*"/>
-                                        <template address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/pattern-formatter=*"/>
+                                        <template address="/{selected.profile}/subsystem=logging/logging-profile={selection}/custom-formatter=*"/>
                                         <!-- @formatter:on -->
                                     </templates>
                                 </suggest-handler>
@@ -526,31 +414,22 @@
                 <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/syslog-handler=*">
                     <h1>Syslog Handler</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="logging-profile-handler-syslog-table" form-ref="logging-profilehandler-syslog-form">
+                    <table id="logging-profile-handler-syslog-table" form-ref="logging-profile-handler-syslog-form">
                         <actions>
-                            <action handler-ref="add-resource">
-                                <attributes>
-                                    <attribute name="level"/>
-                                    <attribute name="syslog-format"/>
-                                    <attribute name="hostname"/>
-                                    <attribute name="server-address"/>
-                                    <attribute name="port"/>
-                                    <attribute name="app-name"/>
-                                    <attribute name="facility"/>
-                                </attributes>
-                            </action>
-                            <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                            <action title="{{mbuiContext.resources().constants().add()}}"
+                                    handler="{{addSyslogHandler()}}"/>
+                            <action title="{{mbuiContext.resources().constants().remove()}}"
+                                    handler="{{removeSyslogHandler(api)}}" scope="selected"/>
                         </actions>
                         <columns>
-                            <!-- syslog handlers do have not a name attribute,
+                            <!-- syslog handlers don't have a name attribute,
                             so we need to provide a value using NamedNode.getName() -->
                             <column name="name" value="{{row.getName()}}"/>
                             <column name="level"/>
                         </columns>
                     </table>
-                    <form id="logging-profile-handler-syslog-form" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                    <form id="logging-profile-handler-syslog-form"
+                          on-save="{{saveSyslogHandlder(form, changedValues)}}">
                         <attributes>
                             <attribute name="level"/>
                             <attribute name="syslog-format"/>
@@ -576,21 +455,22 @@
                     <h1>Pattern Formatter</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
                     <table id="logging-profile-formatter-pattern-table"
-                           form-ref="logging-profileformatter-pattern-form">
+                           form-ref="logging-profile-formatter-pattern-form">
                         <actions>
-                            <action handler-ref="add-resource"/>
-                            <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                            <action title="{{mbuiContext.resources().constants().add()}}"
+                                    handler="{{addPatternFormatter()}}"/>
+                            <action title="{{mbuiContext.resources().constants().remove()}}"
+                                    handler="{{removePatternFormatter(api)}}" scope="selected"/>
                         </actions>
                         <columns>
-                            <!-- log formatter resources do not have a name attribute,
-                            so we need to provide a value which calls NamedNode.getName() -->
+                            <!-- log formatter don't have a name attribute,
+                            so we need to provide a value using NamedNode.getName() -->
                             <column name="name" value="{{row.getName()}}"/>
                             <column name="pattern"/>
                         </columns>
                     </table>
-                    <form id="logging-profile-formatter-pattern-form" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                    <form id="logging-profile-formatter-pattern-form"
+                          on-save="{{savePatternFormatter(form, changedValues)}}">
                         <attributes>
                             <attribute name="color-map"/>
                             <attribute name="pattern"/>
@@ -607,20 +487,21 @@
                 <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/custom-formatter=*">
                     <h1>Custom Formatter</h1>
                     <p>{{metadata.getDescription().getDescription()}}</p>
-                    <table id="logging-profile-formatter-custom-table" form-ref="logging-profileformatter-custom-form">
+                    <table id="logging-profile-formatter-custom-table" form-ref="logging-profile-formatter-custom-form">
                         <actions>
-                            <action handler-ref="add-resource"/>
-                            <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                            <action title="{{mbuiContext.resources().constants().add()}}"
+                                    handler="{{addCustomFormatter()}}"/>
+                            <action title="{{mbuiContext.resources().constants().remove()}}"
+                                    handler="{{removeCustomFormatter(api)}}" scope="selected"/>
                         </actions>
                         <columns>
-                            <!-- custom formatter do have not a name attribute,
+                            <!-- custom formatter don't have a name attribute,
                             so we need to provide a value using NamedNode.getName() -->
                             <column name="name" value="{{row.getName()}}"/>
                         </columns>
                     </table>
-                    <form id="logging-profile-formatter-custom-form" auto-save="true"
-                          name-resolver="{{form.getModel().getName()}}">
+                    <form id="logging-profile-formatter-custom-form"
+                          on-save="{{saveCustomFormatter(form, changedValues)}}">
                         <attributes>
                             <attribute name="class"/>
                             <attribute name="module"/>

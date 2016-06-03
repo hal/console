@@ -71,7 +71,7 @@ public class LoggingProfilePresenter extends MbuiPresenter<LoggingProfilePresent
         void updateFileHandler(List<NamedNode> items);
         void updatePeriodicHandler(List<NamedNode> items);
         void updatePeriodicSizeHandler(List<NamedNode> items);
-        void updateSizeHandlerHandler(List<NamedNode> items);
+        void updateSizeHandler(List<NamedNode> items);
         void updateSyslogHandler(List<NamedNode> items);
 
         void updateCustomFormatter(List<NamedNode> items);
@@ -111,6 +111,10 @@ public class LoggingProfilePresenter extends MbuiPresenter<LoggingProfilePresent
         loggingProfile = request.getParameter(NAME, null);
     }
 
+    String getLoggingProfile() {
+        return loggingProfile;
+    }
+
     @Override
     protected FinderPath finderPath() {
         return FinderPath
@@ -140,7 +144,7 @@ public class LoggingProfilePresenter extends MbuiPresenter<LoggingProfilePresent
             getView().updateFileHandler(asNamedNodes(failSafePropertyList(result, FILE_HANDLER_TEMPLATE.lastKey())));
             getView().updatePeriodicHandler(asNamedNodes(failSafePropertyList(result, PERIODIC_ROTATING_FILE_HANDLER_TEMPLATE.lastKey())));
             getView().updatePeriodicSizeHandler(asNamedNodes(failSafePropertyList(result, PERIODIC_SIZE_ROTATING_FILE_HANDLER_TEMPLATE.lastKey())));
-            getView().updateSizeHandlerHandler(asNamedNodes(failSafePropertyList(result, SIZE_ROTATING_FILE_HANDLER_TEMPLATE.lastKey())));
+            getView().updateSizeHandler(asNamedNodes(failSafePropertyList(result, SIZE_ROTATING_FILE_HANDLER_TEMPLATE.lastKey())));
             getView().updateSyslogHandler(asNamedNodes(failSafePropertyList(result, SYSLOG_HANDLER_TEMPLATE.lastKey())));
 
             getView().updateCustomFormatter(asNamedNodes(failSafePropertyList(result, CUSTOM_FORMATTER_TEMPLATE.lastKey())));
