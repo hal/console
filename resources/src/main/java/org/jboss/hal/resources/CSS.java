@@ -236,6 +236,7 @@ public interface CSS {
     String valueDropdown = "value-dropdown";
 
     String warningTriangleO = "warning-triangle-o";
+    String withProgress = "with-progress";
     String wizardHeader = "wizard-header";
     String wizardProgress = "wizard-progress";
     String wizardStep = "wizard-step";

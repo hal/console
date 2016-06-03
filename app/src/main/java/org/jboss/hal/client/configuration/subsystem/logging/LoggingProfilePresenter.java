@@ -119,7 +119,7 @@ public class LoggingProfilePresenter extends MbuiPresenter<LoggingProfilePresent
     protected FinderPath finderPath() {
         return FinderPath
                 .subsystemPath(statementContext.selectedProfile(), LOGGING_SUBSYSTEM_TEMPLATE.lastValue())
-                .append(ModelDescriptionConstants.LOGGING_PROFILE, loggingProfile,
+                .append(ModelDescriptionConstants.LOGGING_PROFILE, Logging.profileId(loggingProfile),
                         Names.LOGGING_PROFILE, loggingProfile);
     }
 

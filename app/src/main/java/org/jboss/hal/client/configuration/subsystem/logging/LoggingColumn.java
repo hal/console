@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
@@ -46,6 +47,7 @@ public class LoggingColumn extends StaticItemColumn {
 
     @Inject
     public LoggingColumn(final Finder finder,
+            final ItemMonitor itemMonitor,
             final StatementContext statementContext,
             final Dispatcher dispatcher,
             final PlaceManager placeManager,
@@ -54,11 +56,15 @@ public class LoggingColumn extends StaticItemColumn {
 
         super(finder, LOGGING, Names.LOGGING, asList(
                 new StaticItem.Builder(Names.CONFIGURATION)
-                        .action(resources.constants().view(), item -> {
-                            PlaceRequest placeRequest = places.selectedProfile(NameTokens.LOGGING_CONFIGURATION)
-                                    .build();
-                            placeManager.revealPlace(placeRequest);
-                        })
+                        .id(NameTokens.LOGGING_CONFIGURATION)
+                        .action(resources.constants().view(), item ->
+                                itemMonitor.monitorPlaceRequest(item.getId(), NameTokens.LOGGING_CONFIGURATION, () -> {
+                                    PlaceRequest placeRequest = places
+                                            .selectedProfile(NameTokens.LOGGING_CONFIGURATION)
+                                            .build();
+                                    placeManager.revealPlace(placeRequest);
+                                }).execute(item)
+                        )
                         .onPreview(new LoggingPreview(dispatcher, resources, Names.CONFIGURATION,
                                 resources.previews().loggingConfiguration(),
                                 new Operation.Builder(READ_RESOURCE_OPERATION,

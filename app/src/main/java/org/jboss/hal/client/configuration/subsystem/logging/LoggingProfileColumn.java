@@ -26,6 +26,7 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -55,6 +56,7 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
     public LoggingProfileColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
+            final ItemMonitor itemMonitor,
             final Places places,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
@@ -90,6 +92,11 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
 
         setItemRenderer(item -> new ItemDisplay<NamedNode>() {
             @Override
+            public String getId() {
+                return Logging.profileId(item.getName());
+            }
+
+            @Override
             public String getTitle() {
                 return item.getName();
             }
@@ -99,7 +106,8 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
                 PlaceRequest placeRequest = places.selectedProfile(NameTokens.LOGGING_PROFILE)
                         .with(NAME, item.getName())
                         .build();
-                return Arrays.asList(itemActionFactory.view(placeRequest),
+                return Arrays.asList(
+                        itemActionFactory.viewAndMonitor(Logging.profileId(item.getName()), placeRequest),
                         itemActionFactory.remove(Names.LOGGING_PROFILE, item.getName(),
                                 AddressTemplates.LOGGING_PROFILE_TEMPLATE, LoggingProfileColumn.this));
             }

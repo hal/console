@@ -190,7 +190,9 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         finder.reduceTo(column);
         finder.updateContext();
         finder.updateHistory();
-        appendNextColumn();
+        if (nextColumn != null) {
+            finder.appendColumn(nextColumn, null);
+        }
         // </keep>
         showPreview();
     }
@@ -207,12 +209,6 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
             root.getClassList().remove(active);
             Elements.setVisible(buttonContainer, false);
             Elements.setVisible(folderElement, true);
-        }
-    }
-
-    void appendNextColumn() {
-        if (nextColumn != null) {
-            finder.appendColumn(nextColumn, null);
         }
     }
 
