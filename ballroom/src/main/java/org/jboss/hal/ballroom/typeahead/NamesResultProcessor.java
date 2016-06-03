@@ -34,7 +34,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
  * }
  * </pre>
  */
-class NamesResultProcessor extends AbstractResultProcessor<String> implements ResultProcessor {
+public class NamesResultProcessor extends AbstractResultProcessor<String> implements ResultProcessor {
 
     @Override
     protected List<String> processToModel(final String query, final ModelNode result) {

@@ -54,7 +54,6 @@ class DeploymentPreview extends PreviewContent {
         previewBuilder().end(); // </div>
 
         PreviewAttributes<Deployment> attributes = new PreviewAttributes<>(deployment,
-                resources.constants().mainAttributes(),
                 asList(RUNTIME_NAME, "disabled-timestamp", "enabled-timestamp", STATUS)).end();
         previewBuilder().addAll(attributes);
     }

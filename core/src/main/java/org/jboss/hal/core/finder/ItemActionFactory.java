@@ -43,6 +43,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
  */
 public class ItemActionFactory {
 
+    private final ItemMonitor itemMonitor;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
@@ -50,11 +51,13 @@ public class ItemActionFactory {
     private final Resources resources;
 
     @Inject
-    public ItemActionFactory(StatementContext statementContext,
+    public ItemActionFactory(ItemMonitor itemMonitor,
+            StatementContext statementContext,
             Dispatcher dispatcher,
             EventBus eventBus,
             PlaceManager placeManager,
             Resources resources) {
+        this.itemMonitor = itemMonitor;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
         this.eventBus = eventBus;
@@ -80,6 +83,12 @@ public class ItemActionFactory {
 
     public <T> ItemAction<T> view(PlaceRequest placeRequest) {
         return new ItemAction<>(resources.constants().view(), item -> placeManager.revealPlace(placeRequest));
+    }
+
+    public <T> ItemAction<T> viewAndMonitor(String itemId, PlaceRequest placeRequest) {
+        return new ItemAction<>(resources.constants().view(),
+                itemMonitor.monitorPlaceRequest(itemId, placeRequest.getNameToken(),
+                        () -> placeManager.revealPlace(placeRequest)));
     }
 
     /**

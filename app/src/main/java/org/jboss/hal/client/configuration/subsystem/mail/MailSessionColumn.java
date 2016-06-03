@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.config.Environment;
@@ -34,6 +33,7 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -43,7 +43,6 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.IdBuilder;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
@@ -51,8 +50,8 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter.MAIL_SESSION_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter.MAIL_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_SESSION_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.itemText;
 import static org.jboss.hal.resources.CSS.subtitle;
@@ -73,6 +72,7 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
             final Dispatcher dispatcher,
             final StatementContext statementContext,
             final MetadataRegistry metadataRegistry,
+            final Places places,
             final Resources resources) {
 
         super(new Builder<MailSession>(finder, MAIL_SESSION, Names.MAIL_SESSION)
@@ -91,15 +91,15 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
             });
         });
 
-        addColumnAction(columnActionFactory.add(IdBuilder.build(Ids.MAIL_SESSION, ADD), Names.MAIL_SESSION,
+        addColumnAction(columnActionFactory.add(IdBuilder.build(MAIL_SESSION, ADD), Names.MAIL_SESSION,
                 column -> {
-                    Metadata metadata = metadataRegistry.lookup(MailSessionPresenter.MAIL_SESSION_TEMPLATE);
-                    AddResourceDialog dialog = new AddResourceDialog(IdBuilder.build(Ids.MAIL_SESSION, ADD, "form"),
+                    Metadata metadata = metadataRegistry.lookup(AddressTemplates.MAIL_SESSION_TEMPLATE);
+                    AddResourceDialog dialog = new AddResourceDialog(IdBuilder.build(MAIL_SESSION, ADD, "form"),
                             resources.messages().addResourceTitle(Names.MAIL_SESSION), metadata,
                             Arrays.asList(ModelDescriptionConstants.JNDI_NAME, "from", "debug"), //NON-NLS
                             (name, modelNode) -> {
                                 if (modelNode != null) {
-                                    ResourceAddress address = MailSessionPresenter.MAIL_SESSION_TEMPLATE
+                                    ResourceAddress address = AddressTemplates.MAIL_SESSION_TEMPLATE
                                             .resolve(statementContext, name);
                                     Operation operation = new Operation.Builder(ADD, address)
                                             .param(MAIL_SESSION, name)
@@ -146,17 +146,11 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
 
             @Override
             public List<ItemAction<MailSession>> actions() {
-                PlaceRequest.Builder builder = new PlaceRequest.Builder()
-                        .nameToken(NameTokens.MAIL_SESSION);
-                if (!environment.isStandalone()) {
-                    builder.with(PROFILE, statementContext.selectedProfile());
-                }
-                builder.with(NAME, mailSession.getName());
-
                 List<ItemAction<MailSession>> actions = new ArrayList<>();
-                actions.add(itemActionFactory.view(builder.build()));
+                actions.add(itemActionFactory.view(places.selectedProfile(NameTokens.MAIL_SESSION)
+                        .with(NAME, mailSession.getName()).build()));
                 actions.add(itemActionFactory
-                        .remove(Names.MAIL_SESSION, mailSession.getName(), MailSessionPresenter.MAIL_SESSION_TEMPLATE,
+                        .remove(Names.MAIL_SESSION, mailSession.getName(), AddressTemplates.MAIL_SESSION_TEMPLATE,
                                 MailSessionColumn.this));
                 return actions;
             }

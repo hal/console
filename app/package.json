@@ -1,16 +1,19 @@
 {
   "name": "org.jboss.hal.npm",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Node / NPM setup for HAL",
   "license": "LGPL",
   "private": true,
   "devDependencies": {
     "bower": "^1.7.9",
     "del": "^2.2.0",
+    "graceful-fs": "^4.1.4",
     "gulp": "^3.9.1",
     "gulp-copy": "0.0.2",
     "gulp-less": "^3.0.5",
     "gulp-cssnano": "^2.1.1",
-    "gulp-rename": "^1.2.2"
+    "gulp-rename": "^1.2.2",
+    "gulp-watch": "^4.3.6",
+    "vinyl-fs": "^2.4.3"
   }
 }

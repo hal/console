@@ -84,6 +84,10 @@ abstract class AbstractMbuiElementProcessor implements MbuiElementProcessor {
         for (org.jdom2.Element attributeElement : attributesContainer.getChildren("attribute")) {
             String name = attributeElement.getAttributeValue("name");
             String provider = attributeElement.getAttributeValue("provider");
+            String validationHandler = attributeElement.getAttributeValue("validation-handler");
+            String suggestHandlerAttribute = attributeElement.getAttributeValue("suggest-handler");
+            org.jdom2.Element suggestHandlerElement = attributeElement.getChild("suggest-handler");
+
             if (name == null) {
                 processor.error(field, "Invalid attribute \"%s\": name is mandatory.", xmlAsString(attributeElement));
             }
@@ -91,11 +95,23 @@ abstract class AbstractMbuiElementProcessor implements MbuiElementProcessor {
                 processor.error(field, "Provider for attribute \"%s\" has to be an expression.",
                         xmlAsString(attributeElement));
             }
+            if (validationHandler != null && !Handlebars.isExpression(validationHandler)) {
+                processor.error(field, "Validation handler for attribute \"%s\" has to be an expression.",
+                        xmlAsString(attributeElement));
+            }
+            if (suggestHandlerAttribute != null && !Handlebars.isExpression(suggestHandlerAttribute)) {
+                processor.error(field, "Suggestion handler for attribute \"%s\" has to be an expression.",
+                        xmlAsString(attributeElement));
+            }
+            if (suggestHandlerAttribute != null && suggestHandlerElement != null) {
+                processor.error(field, "Invalid suggest handler for attribute \"%s\": " +
+                                "Please specify suggest handler as attribute or child element, not both",
+                        xmlAsString(attributeElement));
+            }
 
-            Attribute attribute = new Attribute(name, provider, position);
-            org.jdom2.Element suggestHandler = attributeElement.getChild("suggest-handler");
-            if (suggestHandler != null) {
-                org.jdom2.Element templatesContainer = suggestHandler.getChild("templates");
+            Attribute attribute = new Attribute(name, provider, validationHandler, suggestHandlerAttribute, position);
+            if (suggestHandlerElement != null) {
+                org.jdom2.Element templatesContainer = suggestHandlerElement.getChild("templates");
                 if (templatesContainer != null) {
                     for (org.jdom2.Element templateElement : templatesContainer.getChildren("template")) {
                         String address = templateElement.getAttributeValue("address");

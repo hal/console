@@ -113,13 +113,24 @@ public class DataTableInfo extends MbuiElementInfo {
             return false;
         }
 
-        public boolean isHasAttributesWithSuggestionHandlers() {
+        public boolean isHasAttributesWithValidationsHandler() {
+            return !getSuggestHandlerAttributes().isEmpty();
+        }
+
+        public List<Attribute> getValidationHandlerAttributes() {
+            return attributes.stream()
+                    .filter(attribute -> attribute.getValidationHandler() != null)
+                    .collect(toList());
+        }
+
+        public boolean isHasAttributesWithSuggestionHandler() {
             return !getSuggestHandlerAttributes().isEmpty();
         }
 
         public List<Attribute> getSuggestHandlerAttributes() {
             return attributes.stream()
-                    .filter(attribute -> !attribute.getSuggestHandlerTemplates().isEmpty())
+                    .filter(attribute ->
+                            attribute.getSuggestHandler() != null || !attribute.getSuggestHandlerTemplates().isEmpty())
                     .collect(toList());
         }
 

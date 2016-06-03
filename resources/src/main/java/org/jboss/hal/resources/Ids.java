@@ -44,9 +44,7 @@ public interface Ids {
 
     String DATA_SOURCE_DRIVER_COLUMN = "data-source-driver";
     String DEPLOYMENT_BROWSE_BY_COLUMN = "deployment-browse-by";
-    String DEPLOYMENT_SERVER_GROUPS_COLUMN = "deployment-server-groups";
     String DOMAIN_BROWSE_BY = "domain-browse-by";
-    String DOMAIN_SERVER_GROUPS_COLUMN = "domain-server-groups";
     String DRAG_AND_DROP_DEPLOYMENT = "drag-and-drop-deployment";
 
     String EE_ATTRIBUTES_ENTRY = "ee-attributes-entry";
@@ -76,21 +74,15 @@ public interface Ids {
     String HOMEPAGE_RUNTIME_SERVER_SECTION = "homepage-runtime-server-section";
     String HOMEPAGE_RUNTIME_SERVER_GROUP_SECTION = "homepage-runtime-server-group-section";
 
-    String IIOP_FORM = "iiop-form";
-
     String MACRO_EDITOR = "macro-editor";
     String MACRO_LIST = "macro-list";
     String MACRO_OPTIONS = "macro-options";
-    String MAIL_SESSION = "mail-session";
     String MAIL_SESSION_ATTRIBUTES_ENTRY = "mail-session-attributes-entry";
     String MAIL_SESSION_ATTRIBUTES_FORM = "mail-session-attributes-form";
     String MAIL_SESSION_SERVERS_ENTRY = "mail-session-servers-entry";
     String MAIL_SESSION_SERVERS_FORM = "mail-session-servers-form";
     String MAIL_SESSION_SERVERS_TABLE = "mail-session-servers-table";
     String MODEL_BROWSER = "model-browser";
-
-    String PATHS_FORM = "paths-form";
-    String PATHS_TABLE = "paths-table";
 
     String ROOT_CONTAINER = "hal-root-container";
 
@@ -102,8 +94,6 @@ public interface Ids {
     String TLC_HOMEPAGE = "tlc-homepage";
     String TLC_PATCHING = "tlc-patching";
     String TLC_RUNTIME = "tlc-runtime";
-
-    String UNASSIGNED_CONTENT_COLUMN = "unassigned-content";
 
     String VERSION_INFO = "version-info";
     String VERSION_INFO_FORM = IdBuilder.build(VERSION_INFO, "form");

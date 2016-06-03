@@ -243,12 +243,6 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                 throw new IllegalStateException(ILLEGAL_COMBINATION + formId() + ": viewOnly && addOnly");
             }
 
-            List<Property> attributes = metadata.getDescription().getAttributes(attributePath);
-            if (addOnly && attributes.isEmpty()) {
-                throw new IllegalStateException("No attributes found for " + formId() + " using path " + attributePath +
-                        " and resource description " + metadata.getDescription());
-            }
-
             if (!excludes.isEmpty()) {
                 List<Property> requiredAttributes = metadata.getDescription().getRequiredAttributes(attributePath);
                 for (Property attribute : requiredAttributes) {

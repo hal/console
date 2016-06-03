@@ -153,6 +153,11 @@
                 </attribute>
             </optional>
             <optional>
+                <attribute name="address">
+                    <data type="token"/>
+                </attribute>
+            </optional>
+            <optional>
                 <ref name="attributes-definition"/>
             </optional>
         </element>
@@ -182,6 +187,11 @@
             <optional>
                 <attribute name="name-resolver">
                     <ref name="code"/>
+                </attribute>
+            </optional>
+            <optional>
+                <attribute name="address">
+                    <data type="token"/>
                 </attribute>
             </optional>
             <optional>

@@ -34,17 +34,17 @@ public class MbuiContext {
 
     private final EventBus eventBus;
     private final MetadataRegistry metadataRegistry;
-    private final StatementContext statementContext;
     private final Dispatcher dispatcher;
     private final OperationFactory operationFactory;
     private final TableButtonFactory tableButtonFactory;
     private final Resources resources;
+    private final StatementContext statementContext;
 
     @Inject
     public MbuiContext(final EventBus eventBus, final MetadataRegistry metadataRegistry,
-            final StatementContext statementContext, final Dispatcher dispatcher,
-            final OperationFactory operationFactory, final TableButtonFactory tableButtonFactory,
-            final Resources resources) {
+            final Dispatcher dispatcher, final OperationFactory operationFactory,
+            final TableButtonFactory tableButtonFactory, final Resources resources,
+            final StatementContext statementContext) {
         this.eventBus = eventBus;
         this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;

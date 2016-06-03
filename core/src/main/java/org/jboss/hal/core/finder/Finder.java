@@ -141,6 +141,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     private final Map<String, PreviewContent> initialPreviewsByToken;
     private final Element root;
     private final Element previewColumn;
+    private int timeoutHandle = -1;
 
 
     // ------------------------------------------------------ ui
@@ -354,7 +355,6 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             for (Element element : preview.asElements()) {
                 previewColumn.appendChild(element);
             }
-            preview.attach();
             preview.onReset();
         }
     }
@@ -371,7 +371,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     }
 
 
-    // ------------------------------------------------------ public interface
+    // ------------------------------------------------------ public API
 
     /**
      * Resets the finder to its initial state by showing the initial column and preview.

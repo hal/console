@@ -16,7 +16,6 @@
 package org.jboss.hal.core.finder;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.resources.client.ExternalTextResource;
@@ -29,7 +28,6 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.core.Strings;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
@@ -42,7 +40,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Harald Pehl
  */
-public class PreviewContent implements HasElements, SecurityContextAware, Attachable {
+public class PreviewContent implements HasElements, SecurityContextAware {
 
     protected static final String CONTENT_ELEMENT = "contentRepository";
 
@@ -149,17 +147,6 @@ public class PreviewContent implements HasElements, SecurityContextAware, Attach
         return builder.end();
     }
 
-    protected void registerAttachable(Attachable first, Attachable... rest) {
-        attachables.add(first);
-        if (rest != null) {
-            Collections.addAll(attachables, rest);
-        }
-    }
-
-    protected <A extends Attachable> void registerAttachables(List<A> attachables) {
-        this.attachables.addAll(attachables);
-    }
-
     protected Elements.Builder previewBuilder() {
         return builder;
     }
@@ -167,18 +154,6 @@ public class PreviewContent implements HasElements, SecurityContextAware, Attach
     @Override
     public Iterable<Element> asElements() {
         return builder.elements();
-    }
-
-    @Override
-    public void attach() {
-        //noinspection Duplicates
-        if (!attached) {
-            PatternFly.initComponents();
-            for (Attachable attachable : attachables) {
-                attachable.attach();
-            }
-            attached = true;
-        }
     }
 
     public void onReset() {

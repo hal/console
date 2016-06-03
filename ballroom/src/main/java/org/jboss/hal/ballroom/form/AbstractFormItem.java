@@ -315,12 +315,10 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
             ((Attachable) suggestHandler).attach();
         }
         if (suggestHandler instanceof Typeahead) {
-            Typeahead typeahead = (Typeahead) suggestHandler;
             Typeahead.Bridge.select("#" + getId(EDITING)).onChange(event -> {
                 String value = ((elemental.html.InputElement) event.getTarget()).getValue();
                 onSuggest(value);
             });
-            typeahead.clearRemoteCache();
         }
     }
 

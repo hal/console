@@ -29,11 +29,19 @@ import static jsinterop.annotations.JsPackage.GLOBAL;
 public class PatternFly {
 
     /**
-     * Same as {@code initComponents(false)}
+     * Same as {@code initComponents(false, null)}
      */
     @JsOverlay
     public static void initComponents() {
-        initComponents(false);
+        initComponents(false, null);
+    }
+
+    /**
+     * Same as {@code initComponents(false, parent)}
+     */
+    @JsOverlay
+    public static void initComponents(final String parent) {
+        initComponents(false, parent);
     }
 
     /**
@@ -43,18 +51,35 @@ public class PatternFly {
      */
     @JsOverlay
     public static void initComponents(boolean scheduled) {
+        initComponents(scheduled, null);
+    }
+
+    /**
+     * Initializes JavaScript based PatternFly components below a given parent selector.
+     *
+     * @param parent a parent selector
+     * @param scheduled whether to run the initialization using {@code Scheduler.get().scheduleDeferred()}
+     */
+    @JsOverlay
+    public static void initComponents(boolean scheduled, final String parent) {
         if (scheduled) {
-            Scheduler.get().scheduleDeferred(PatternFly::init);
+            Scheduler.get().scheduleDeferred(() -> init(parent));
         } else {
-            init();
+            init(parent);
         }
     }
 
     @JsOverlay
-    private static void init() {
-        $("." + CSS.bootstrapSwitch).bootstrapSwitch();
-        $("." + CSS.selectpicker).selectpicker(SelectBoxBridge.Defaults.get());
-        Tooltip.select("[data-toggle=tooltip]").init(); //NON-NLS
+    private static void init(String parent) {
+        if (parent == null) {
+            $("." + CSS.bootstrapSwitch).bootstrapSwitch();
+            $("." + CSS.selectpicker).selectpicker(SelectBoxBridge.Defaults.get());
+            Tooltip.select("[data-toggle=tooltip]").init(); //NON-NLS
+        } else {
+            $(parent + " ." + CSS.bootstrapSwitch).bootstrapSwitch();
+            $(parent + " ." + CSS.selectpicker).selectpicker(SelectBoxBridge.Defaults.get());
+            Tooltip.select(parent + " [data-toggle=tooltip]").init(); //NON-NLS
+        }
     }
 
     @JsMethod(namespace = GLOBAL)

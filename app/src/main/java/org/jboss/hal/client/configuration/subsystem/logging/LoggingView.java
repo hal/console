@@ -16,18 +16,36 @@
 package org.jboss.hal.client.configuration.subsystem.logging;
 
 import java.util.List;
+import javax.annotation.PostConstruct;
 
+import elemental.client.Browser;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.DataTable;
+import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
+
+import static java.util.Arrays.asList;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LEVEL;
+import static org.jboss.hal.resources.CSS.marginTop20;
 
 /**
  * @author Harald Pehl
@@ -36,11 +54,14 @@ import org.jboss.hal.spi.MbuiView;
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
 public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> implements LoggingPresenter.MyView {
 
+    // ------------------------------------------------------ initialization
+
     public static LoggingView create(final MbuiContext mbuiContext) {
         return new Mbui_LoggingView(mbuiContext);
     }
 
     @MbuiElement("logging-vertical-navigation") VerticalNavigation navigation;
+    @MbuiElement("logging-config-form") Form<ModelNode> loggingConfigForm;
     @MbuiElement("logging-root-logger-form") Form<ModelNode> rootLoggerForm;
     @MbuiElement("logging-categories-table") DataTable<NamedNode> loggerTable;
     @MbuiElement("logging-categories-form") Form<NamedNode> loggerForm;
@@ -65,25 +86,97 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     @MbuiElement("logging-formatter-pattern-table") DataTable<NamedNode> patternFormatterTable;
     @MbuiElement("logging-formatter-pattern-form") Form<NamedNode> patternFormatterForm;
 
+    EmptyState noRootLogger;
+
     LoggingView(final MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 
-    @Override
-    public VerticalNavigation getVerticalNavigation() {
-        return navigation;
+    @PostConstruct
+    void init() {
+        noRootLogger = new EmptyState.Builder(mbuiContext.resources().constants().noRootLogger())
+                .description(mbuiContext.resources().constants().noRootLoggerDescription())
+                .icon("fa fa-sitemap")
+                .primaryAction(mbuiContext.resources().constants().add(), event -> addRootLogger())
+                .build();
+        noRootLogger.asElement().getClassList().add(marginTop20);
+
+        // hack which relies on the element hierarchy given in the template. will break if you change that hierarchy.
+        rootLoggerForm.asElement().getParentElement().appendChild(noRootLogger.asElement());
+        rootLoggerVisibility(true);
     }
+
+
+    // ------------------------------------------------------ logging configuration
+
+    @Override
+    public void updateLoggingConfig(final ModelNode modelNode) {
+        loggingConfigForm.view(modelNode);
+    }
+
+
+    // ------------------------------------------------------ root logger
 
     @Override
     public void updateRootLogger(final ModelNode modelNode) {
+        rootLoggerVisibility(true);
         rootLoggerForm.view(modelNode);
     }
+
+    @Override
+    public void noRootLogger() {
+        rootLoggerVisibility(false);
+    }
+
+    private void rootLoggerVisibility(final boolean visible) {
+        Elements.setVisible(Browser.getDocument().getElementById("logging-root-logger-header"), visible);
+        Elements.setVisible(Browser.getDocument().getElementById("logging-root-logger-description"), visible);
+        Elements.setVisible(rootLoggerForm.asElement(), visible);
+        Elements.setVisible(noRootLogger.asElement(), !visible);
+    }
+
+    private void addRootLogger() {
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(ROOT_LOGGER_TEMPLATE);
+
+        Form<ModelNode> form = new ModelNodeForm.Builder<>("logging-root-logger-add", metadata)
+                .addFromRequestProperties()
+                .include(LEVEL, HANDLERS)
+                .build();
+        AddResourceDialog dialog = new AddResourceDialog(
+                mbuiContext.resources().messages().addResourceTitle(Names.ROOT_LOGGER), form,
+                (name, model) -> {
+                    Operation operation = new Operation.Builder(ADD,
+                            ROOT_LOGGER_TEMPLATE.resolve(mbuiContext.statementContext()))
+                            .payload(model)
+                            .build();
+                    mbuiContext.dispatcher().execute(operation, result -> {
+                        MessageEvent.fire(mbuiContext.eventBus(),
+                                Message.success(mbuiContext.resources().messages()
+                                        .addSingleResourceSuccess(Names.ROOT_LOGGER)));
+                        presenter.reload();
+                    });
+                });
+
+        Typeahead typeahead = new Typeahead(
+                asList(ASYNC_HANDLER_TEMPLATE, CONSOLE_HANDLER_TEMPLATE, CUSTOM_HANDLER_TEMPLATE, FILE_HANDLER_TEMPLATE,
+                        PERIODIC_ROTATING_FILE_HANDLER_TEMPLATE, PERIODIC_SIZE_ROTATING_FILE_HANDLER_TEMPLATE,
+                        SIZE_ROTATING_FILE_HANDLER_TEMPLATE, SYSLOG_HANDLER_TEMPLATE),
+                mbuiContext.statementContext());
+        dialog.getForm().getFormItem(HANDLERS).registerSuggestHandler(typeahead);
+        dialog.show();
+    }
+
+
+    // ------------------------------------------------------ logger / categories
 
     @Override
     public void updateLogger(final List<NamedNode> items) {
         loggerTable.api().clear().add(items).refresh(RefreshMode.RESET);
         loggerForm.clear();
     }
+
+
+    // ------------------------------------------------------ handler
 
     @Override
     public void updateConsoleHandler(final List<NamedNode> items) {
@@ -141,6 +234,9 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
         syslogHandlerForm.clear();
     }
 
+
+    // ------------------------------------------------------ formatter
+
     @Override
     public void updateCustomFormatter(final List<NamedNode> items) {
         navigation.updateBadge("logging-formatter-custom-item", items.size());
@@ -155,19 +251,16 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
         patternFormatterForm.clear();
     }
 
-    /**
-     * Helper method to build the filename using the nested ({@code relative-to/path}) attributes.
-     */
-    String getFilename(NamedNode node) {
-        String filename = Names.NOT_AVAILABLE;
-        if (node.hasDefined("file") && node.get("file").hasDefined("path")) {
-            ModelNode file = node.get("file");
-            if (file.hasDefined("relative-to")) {
-                filename = file.get("relative-to").asString() + "/" + file.get("path").asString();
-            } else {
-                filename = file.get("path").asString();
-            }
-        }
-        return filename;
+
+    // ------------------------------------------------------ view / mbui contract
+
+    LoggingPresenter getPresenter() {
+        return presenter;
     }
+
+    @Override
+    public VerticalNavigation getVerticalNavigation() {
+        return navigation;
+    }
+
 }

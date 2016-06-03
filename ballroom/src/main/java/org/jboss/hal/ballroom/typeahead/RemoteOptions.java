@@ -49,6 +49,7 @@ public class RemoteOptions {
 
 
     public String url;
+    public boolean cache;
     public Preparator prepare;
     public Transformator transform;
 }

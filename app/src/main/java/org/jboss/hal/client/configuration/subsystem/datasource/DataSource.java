@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
@@ -31,7 +32,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
 public class DataSource extends NamedNode {
 
     static String id(String name, boolean xa) {
-        return IdBuilder.build(name, xa ? "xa" : "non-xa");
+        return IdBuilder.build(xa ? "xa" : "non-xa", ModelDescriptionConstants.DATA_SOURCE, name);
     }
 
     private final boolean xa;

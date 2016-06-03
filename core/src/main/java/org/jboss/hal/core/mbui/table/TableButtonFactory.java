@@ -58,8 +58,8 @@ public class TableButtonFactory {
     private final Provider<Progress> progress;
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
-    private final StatementContext statementContext;
     private final Resources resources;
+    private StatementContext statementContext;
 
     @Inject
     public TableButtonFactory(final MetadataProcessor metadataProcessor,

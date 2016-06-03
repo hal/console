@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.meta.subsystem;
+package org.jboss.hal.core.subsystem;
+
+import org.jboss.hal.core.finder.PreviewContent;
 
 /**
  * @author Harald Pehl
@@ -26,15 +28,22 @@ public class SubsystemMetadata {
     private final String token;
     private final String nextColumn;
     private final boolean builtIn;
+    private final PreviewContent previewContent;
 
     public SubsystemMetadata(final String name, final String title, final String subtitle, final String token,
             final String nextColumn, final boolean builtIn) {
+        this(name, title, subtitle, token, nextColumn, builtIn, null);
+    }
+
+    public SubsystemMetadata(final String name, final String title, final String subtitle, final String token,
+            final String nextColumn, final boolean builtIn, final PreviewContent previewContent) {
         this.name = name;
         this.title = title;
         this.subtitle = subtitle;
         this.token = token;
         this.nextColumn = nextColumn;
         this.builtIn = builtIn;
+        this.previewContent = previewContent;
     }
 
     @Override
@@ -64,5 +73,9 @@ public class SubsystemMetadata {
 
     public boolean isBuiltIn() {
         return builtIn;
+    }
+
+    public PreviewContent getPreviewContent() {
+        return previewContent;
     }
 }

@@ -52,10 +52,10 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
-import static org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter.MAIL_SESSION_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter.SELECTED_MAIL_SESSION_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter.SERVER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter.SOCKET_BINDING_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_SESSION_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.SELECTED_MAIL_SESSION_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.SERVER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.SOCKET_BINDING_TEMPLATE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;

@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-dependencies</artifactId>
-        <version>0.2.0</version>
+        <version>0.2.1</version>
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
@@ -100,6 +100,11 @@
             <artifactId>validation-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <classifier>sources</classifier>
+        </dependency>
+        <dependency>
             <groupId>ru.finam</groupId>
             <artifactId>slf4j-gwt</artifactId>
         </dependency>
@@ -117,16 +122,16 @@
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
+                <configuration>
+                    <nodeVersion>${node.version}</nodeVersion>
+                    <npmVersion>${npm.version}</npmVersion>
+                </configuration>
                 <executions>
                     <execution>
                         <id>install node and npm</id>
                         <goals>
                             <goal>install-node-and-npm</goal>
                         </goals>
-                        <configuration>
-                            <nodeVersion>${nodejs.version}</nodeVersion>
-                            <npmVersion>${npm.version}</npmVersion>
-                        </configuration>
                     </execution>
                     <execution>
                         <id>npm install</id>

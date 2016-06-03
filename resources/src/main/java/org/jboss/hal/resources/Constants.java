@@ -69,8 +69,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String custom();
 
     String data();
-    String databaseDisabled();
-    String databaseEnabled();
     String defaultValue();
     String deploymentAttributes();
     String deploymentFailed();
@@ -198,6 +196,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noDeploymentsUploaded();
     String noItems();
     String noMacros();
+    String noRootLogger();
+    String noRootLoggerDescription();
     String noRunningServers();
     String notANumber();
     String nothingSelected();

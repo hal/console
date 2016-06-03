@@ -60,20 +60,6 @@ public class ModelNodeFormTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void noAttributes() {
-        new ModelNodeForm.Builder("noAttributes", metadata())
-                .addOnly()
-                .build();
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void noRequestProperties() {
-        new ModelNodeForm.Builder("noRequestProperties", metadata())
-                .addFromRequestProperties()
-                .build();
-    }
-
-    @Test(expected = IllegalStateException.class)
     public void excludeRequiredAttributes() {
         new ModelNodeForm.Builder("viewAndCreateResource",
                 metadata(new ResourceDescriptionBuilder().requestProperties(ImmutableMap.of("foo", true))))

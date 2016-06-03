@@ -36,6 +36,9 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemsProvider;
 import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.core.subsystem.SubsystemMetadata;
+import org.jboss.hal.core.subsystem.Subsystems;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -43,8 +46,6 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.subsystem.SubsystemMetadata;
-import org.jboss.hal.meta.subsystem.Subsystems;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -53,11 +54,7 @@ import org.jboss.hal.spi.Column;
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
 import static java.util.Collections.singletonList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.itemText;
 import static org.jboss.hal.resources.CSS.subtitle;
 
@@ -85,14 +82,11 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
     private static final AddressTemplate SUBSYSTEM_TEMPLATE = AddressTemplate.of("{selected.profile}/subsystem=*");
 
-    private static PlaceRequest subsystemPlaceRequest(SubsystemMetadata metadata, StatementContext statementContext) {
+    private static PlaceRequest subsystemPlaceRequest(Places places, StatementContext statementContext,
+            SubsystemMetadata metadata) {
         PlaceRequest placeRequest = null;
         if (metadata.isBuiltIn() && metadata.getToken() != null) {
-            PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(metadata.getToken());
-            if (statementContext.selectedProfile() != null) {
-                builder.with(PROFILE, statementContext.selectedProfile());
-            }
-            placeRequest = builder.build();
+            placeRequest = places.selectedProfile(metadata.getToken()).build();
 
         } else if (!metadata.isBuiltIn()) {
             ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, metadata.getName());
@@ -108,6 +102,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
     public SubsystemColumn(final Finder finder,
             final Dispatcher dispatcher,
             final PlaceManager placeManager,
+            final Places places,
             final StatementContext statementContext,
             final Subsystems subsystems,
             final Resources resources) {
@@ -150,7 +145,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
                     @Override
                     public List<ItemAction<SubsystemMetadata>> actions() {
-                        final PlaceRequest placeRequest = subsystemPlaceRequest(item, statementContext);
+                        final PlaceRequest placeRequest = subsystemPlaceRequest(places, statementContext, item);
                         if (placeRequest != null) {
                             return singletonList(new ItemAction<>(resources.constants().view(),
                                     item -> placeManager.revealPlace(placeRequest)));
@@ -165,16 +160,20 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 .useFirstActionAsBreadcrumbHandler()
 
                 .onPreview(item -> {
-                    String camelCase = LOWER_HYPHEN.to(LOWER_CAMEL, item.getName());
-                    ExternalTextResource resource = resources.preview(camelCase);
-                    if (resource != null) {
-                        return new PreviewContent(item.getTitle(), resource);
-
+                    if (item.getPreviewContent() != null) {
+                        return item.getPreviewContent();
                     } else {
-                        ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, item.getName());
-                        Operation operation = new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION, address)
-                                .build();
-                        return new ResourceDescriptionPreview(item.getTitle(), dispatcher, operation);
+                        String camelCase = LOWER_HYPHEN.to(LOWER_CAMEL, item.getName());
+                        ExternalTextResource resource = resources.preview(camelCase);
+                        if (resource != null) {
+                            return new PreviewContent(item.getTitle(), resource);
+
+                        } else {
+                            ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, item.getName());
+                            Operation operation = new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION, address)
+                                    .build();
+                            return new ResourceDescriptionPreview(item.getTitle(), dispatcher, operation);
+                        }
                     }
                 }));
 
