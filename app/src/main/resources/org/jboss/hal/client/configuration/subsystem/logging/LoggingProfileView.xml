@@ -24,7 +24,7 @@
             <metadata address="/{selected.profile}/subsystem=logging/logging-profile=*/root-logger=ROOT">
                 <h1 id="logging-profile-root-logger-header">Root Logger</h1>
                 <p id="logging-profile-root-logger-description">{{metadata.getDescription().getDescription()}}</p>
-                <form id="logging-profile-root-logger-form" on-save="{{saveRootLogger(changedValues)}}">
+                <form id="logging-profile-root-logger-form" on-save="{{saveRootLogger(form, changedValues)}}">
                     <attributes>
                         <attribute name="level"/>
                         <attribute name="handlers"/>
@@ -326,7 +326,7 @@
                     <table id="logging-profile-handler-async-table" form-ref="logging-profile-handler-async-form">
                         <actions>
                             <action title="{{mbuiContext.resources().constants().add()}}"
-                                    handler="{{addAsyncHandler(}}"/>
+                                    handler="{{addAsyncHandler()}}"/>
                             <action title="{{mbuiContext.resources().constants().remove()}}"
                                     handler="{{removeAsyncHandler(api)}}" scope="selected"/>
                         </actions>
@@ -429,7 +429,7 @@
                         </columns>
                     </table>
                     <form id="logging-profile-handler-syslog-form"
-                          on-save="{{saveSyslogHandlder(form, changedValues)}}">
+                          on-save="{{saveSyslogHandler(form, changedValues)}}">
                         <attributes>
                             <attribute name="level"/>
                             <attribute name="syslog-format"/>

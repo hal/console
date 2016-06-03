@@ -138,7 +138,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     // ------------------------------------------------------ root logger
 
-    void saveRootLogger(Map<String, Object> changedValues) {
+    @SuppressWarnings("UnusedParameters")
+    void saveRootLogger(Form<ModelNode> form, Map<String, Object> changedValues) {
         saveSingletonForm(changedValues, SELECTED_LOGGING_PROFILE_TEMPLATE.append("root-logger=ROOT")
                 .resolve(selectionAwareStatementContext), "Root Logger");
     }
