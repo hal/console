@@ -79,11 +79,15 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                 .data(DATA_BREADCRUMB, display.getTitle())
                 .data(filter, display.getFilterData());
 
-        if (display.getMarker() != null) {
-            eb.css(display.getMarker().name().toLowerCase() + "-marker");
-        }
-        if (column.isPinnable()) {
-            eb.css(pinned ? CSS.pinned : CSS.unpinned);
+        if (display.getMarker() != null && column.isPinnable()) {
+            eb.css(display.getMarker().name().toLowerCase() + "-marker", pinned ? CSS.pinned : CSS.unpinned);
+        } else {
+            if (display.getMarker() != null) {
+                eb.css(display.getMarker().name().toLowerCase() + "-marker");
+            }
+            if (column.isPinnable()) {
+                eb.css(pinned ? CSS.pinned : CSS.unpinned);
+            }
         }
 
         Element icon = display.getIcon();

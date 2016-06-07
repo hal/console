@@ -23,7 +23,7 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.WildcardStatementContext;
+import org.jboss.hal.meta.ProfileWildcardStatementContext;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.processing.LookupResult.ALL_PRESENT;
@@ -36,10 +36,11 @@ import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESEN
  */
 class CreateRrdOperations {
 
+    static final int RRD_DEPTH = 2;
     private final StatementContext statementContext;
 
     CreateRrdOperations(final StatementContext statementContext, final Environment environment) {
-        this.statementContext = new WildcardStatementContext(statementContext, environment);
+        this.statementContext = new ProfileWildcardStatementContext(statementContext, environment);
     }
 
     public List<Operation> create(LookupResult lookupResult) {
@@ -64,7 +65,8 @@ class CreateRrdOperations {
                         break;
                 }
                 if (lookupResult.recursive()) {
-                    builder.param(RECURSIVE, true);
+                    // Workaround: Some browsers choke on too big payload size
+                    builder.param(RECURSIVE_DEPTH, RRD_DEPTH);
                 }
                 operations.add(builder.build());
             }

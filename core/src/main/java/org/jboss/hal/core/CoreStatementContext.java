@@ -21,7 +21,9 @@ import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.HostSelectionEvent.HostSelectionHandler;
 import org.jboss.hal.core.ProfileSelectionEvent.ProfileSelectionHandler;
+import org.jboss.hal.core.ServerSelectionEvent.ServerSelectionHandler;
 import org.jboss.hal.meta.StatementContext;
 
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
@@ -32,13 +34,15 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 /**
  * @author Harald Pehl
  */
-public class CoreStatementContext implements StatementContext, ProfileSelectionHandler {
+public class CoreStatementContext implements StatementContext,
+        ProfileSelectionHandler, HostSelectionHandler, ServerSelectionHandler {
 
     /**
      * Please use this constant only in cases where no DI is available.
      */
     @Inject
     public static CoreStatementContext INSTANCE;
+
 
     private final Environment environment;
     private final Map<Tuple, String> context;
@@ -54,6 +58,8 @@ public class CoreStatementContext implements StatementContext, ProfileSelectionH
         context.put(SELECTED_SERVER, null);
 
         eventBus.addHandler(ProfileSelectionEvent.getType(), this);
+        eventBus.addHandler(HostSelectionEvent.getType(), this);
+        eventBus.addHandler(ServerSelectionEvent.getType(), this);
     }
 
     public String resolve(final String key) {
@@ -76,12 +82,32 @@ public class CoreStatementContext implements StatementContext, ProfileSelectionH
     }
 
     @Override
+    public void onProfileSelected(final ProfileSelectionEvent event) {
+        context.put(SELECTED_PROFILE, event.getProfile());
+    }
+
+    @Override
+    public void onHostSelected(final HostSelectionEvent event) {
+        context.put(SELECTED_HOST, event.getHost());
+    }
+
+    @Override
+    public void onServerSelected(final ServerSelectionEvent event) {
+        context.put(SELECTED_SERVER, event.getServer());
+    }
+
+    @Override
     public String selectedProfile() {
         return environment.isStandalone() ? null : context.get(SELECTED_PROFILE);
     }
 
     @Override
-    public void onProfileSelected(final ProfileSelectionEvent event) {
-        context.put(SELECTED_PROFILE, event.getProfile());
+    public String selectedHost() {
+        return environment.isStandalone() ? null : context.get(SELECTED_HOST);
+    }
+
+    @Override
+    public String selectedServer() {
+        return environment.isStandalone() ? null : context.get(SELECTED_SERVER);
     }
 }

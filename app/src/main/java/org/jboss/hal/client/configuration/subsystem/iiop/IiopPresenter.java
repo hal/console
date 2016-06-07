@@ -21,6 +21,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.core.ProfileSelectionEvent;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.MbuiPresenter;
@@ -37,6 +39,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
 /**
@@ -84,6 +87,14 @@ public class IiopPresenter extends MbuiPresenter<IiopPresenter.MyView, IiopPrese
         getView().setPresenter(this);
     }
 
+    @Override
+    public void prepareFromRequest(final PlaceRequest request) {
+        super.prepareFromRequest(request);
+        String profile = request.getParameter(PROFILE, null);
+        if (profile != null) {
+            getEventBus().fireEvent(new ProfileSelectionEvent(profile));
+        }
+    }
     @Override
     protected FinderPath finderPath() {
         return FinderPath.subsystemPath(statementContext.selectedProfile(), ROOT_TEMPLATE.lastValue());

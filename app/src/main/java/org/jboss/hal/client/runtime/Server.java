@@ -19,9 +19,8 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
 
-import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
-import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 
 /**
  * Combination of the two resources {@code server-config} and {@code server}. Make sure to check {@link #isStarted()}
@@ -31,29 +30,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 public class Server extends NamedNode {
 
-    /**
-     * Status as defined by {@code server-config.status}
-     */
-    public enum ServerConfigStatus {
-        STARTED, STOPPED, UNDEFINED
-    }
-
-
-    /**
-     * State as defined by {@code server.server-state}
-     */
-    public enum ServerState {
-        STARTING, RUNNING, RESTART_REQUIRED, RELOAD_REQUIRED, UNDEFINED
-    }
-
-
     private static final String STANDALONE_SERVER = "standalone.server";
     private static final String STANDALONE_HOST = "standalone.host";
     public static final Server STANDALONE = new Server(STANDALONE_SERVER, STANDALONE_HOST,
-            ServerConfigStatus.STARTED, ServerState.RUNNING);
+            ServerConfigStatus.STARTED, RunningState.RUNNING);
 
 
-    private Server(String server, String host, ServerConfigStatus serverConfigStatus, ServerState serverState) {
+    private Server(String server, String host, ServerConfigStatus serverConfigStatus, RunningState serverState) {
         super(server, new ModelNode());
         get(HOST).set(host);
         get(STATUS).set(serverConfigStatus.name().toLowerCase());
@@ -64,10 +47,9 @@ public class Server extends NamedNode {
         super(node.get(NAME).asString(), node);
     }
 
-    @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
     public String getServerGroup() {
-        if (hasDefined("group")) { // first try to read from server-config
-            return get("group").asString();
+        if (hasDefined(GROUP)) { // first try to read from server-config
+            return get(GROUP).asString();
         } else if (hasDefined(SERVER_GROUP)) { // then from server
             return get(SERVER_GROUP).asString();
         }
@@ -82,11 +64,7 @@ public class Server extends NamedNode {
      * @return the status as defined by {@code server-config.status}
      */
     public ServerConfigStatus getServerConfigStatus() {
-        if (hasDefined(STATUS)) {
-            String enumValue = LOWER_HYPHEN.to(UPPER_UNDERSCORE, get(STATUS).asString());
-            return ServerConfigStatus.valueOf(enumValue);
-        }
-        return ServerConfigStatus.UNDEFINED;
+        return asEnumValue(this, STATUS, ServerConfigStatus::valueOf, ServerConfigStatus.UNDEFINED);
     }
 
     /**
@@ -94,18 +72,28 @@ public class Server extends NamedNode {
      * or "suspend-state".
      */
     public boolean isStarted() {
-        return getServerConfigStatus() == ServerConfigStatus.STARTED || getServerState() == ServerState.RUNNING;
+        return getServerConfigStatus() == ServerConfigStatus.STARTED || getServerState() == RunningState.RUNNING;
     }
 
     /**
      * @return the state as defined by {@code server.server-status}
      */
-    public ServerState getServerState() {
-        if (hasDefined(SERVER_STATE)) {
-            String enumValue = LOWER_HYPHEN.to(UPPER_UNDERSCORE, get(SERVER_STATE).asString());
-            return ServerState.valueOf(enumValue);
-        }
-        return ServerState.UNDEFINED;
+    public RunningState getServerState() {
+        return asEnumValue(this, SERVER_STATE, RunningState::valueOf, RunningState.UNDEFINED);
+    }
+
+    /**
+     * @return the state as defined by {@code server.suspend-state}
+     */
+    public SuspendState getSuspendState() {
+        return asEnumValue(this, SUSPEND_STATE, SuspendState::valueOf, SuspendState.UNDEFINED);
+    }
+
+    /**
+     * @return the state as defined by {@code server.running-mode}
+     */
+    public RunningMode getRunningMode() {
+        return asEnumValue(this, RUNNING_MODE, RunningMode::valueOf, RunningMode.UNDEFINED);
     }
 
     public boolean isStandalone() {

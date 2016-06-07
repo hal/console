@@ -15,30 +15,38 @@
  */
 package org.jboss.hal.client.runtime;
 
+import java.util.Arrays;
+import javax.inject.Inject;
+
 import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 
-import javax.inject.Inject;
-import java.util.Arrays;
-
 /**
  * @author Harald Pehl
  */
-@Column(Ids.DOMAIN_BROWSE_BY)
+@Column(Ids.DOMAIN_BROWSE_BY_COLUMN)
 public class BrowseByColumn extends StaticItemColumn {
 
     @Inject
     public BrowseByColumn(final Finder finder,
             final Resources resources) {
-        super(finder, Ids.DOMAIN_BROWSE_BY, resources.constants().browseBy(),
+        super(finder, Ids.DOMAIN_BROWSE_BY_COLUMN, resources.constants().browseBy(),
                 Arrays.asList(
-                        new StaticItem.Builder(Names.HOSTS).build(),
-                        new StaticItem.Builder(Names.SERVER_GROUPS).build()
+                        new StaticItem.Builder(Names.HOSTS)
+                                .nextColumn(ModelDescriptionConstants.HOST)
+                                .onPreview(new PreviewContent(Names.HOSTS, resources.previews().hosts()))
+                                .build(),
+                        new StaticItem.Builder(Names.SERVER_GROUPS)
+                                .onPreview(new PreviewContent(Names.SERVER_GROUPS,
+                                        resources.previews().runtimeServerGroups()))
+                                .build()
                 ));
     }
 }

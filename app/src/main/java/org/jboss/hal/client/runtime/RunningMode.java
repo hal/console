@@ -13,18 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core;
+package org.jboss.hal.client.runtime;
 
 /**
+ * Mode as defined by {@code host.running-mode}, {@code server.running-mode}
+ *
  * @author Harald Pehl
  */
-public final class ProfileSelection {
-
-    private final String profile;
-
-    public ProfileSelection(final String profile) {this.profile = profile;}
-
-    public String getProfile() {
-        return profile;
-    }
+public enum RunningMode {
+    NORMAL, ADMIN_ONLY, UNDEFINED
 }

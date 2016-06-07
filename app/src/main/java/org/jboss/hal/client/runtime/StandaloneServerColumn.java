@@ -13,29 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.mbui;
+package org.jboss.hal.client.runtime;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import javax.inject.Inject;
+
 import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.spi.Column;
 
 /**
  * @author Harald Pehl
  */
-public abstract class MbuiPresenter<V extends MbuiView, Proxy_ extends ProxyPlace<?>>
-        extends ApplicationPresenter<V, Proxy_> {
+@Column(Ids.STANDALONE_SERVER_COLUMN)
+public class StandaloneServerColumn extends FinderColumn<Server> {
 
-    protected MbuiPresenter(final EventBus eventBus, final V view,
-            final Proxy_ proxy_, final Finder finder) {
-        super(eventBus, view, proxy_, finder);
+    @Inject
+    public StandaloneServerColumn(final Finder finder) {
+        super(new Builder<>(finder, Ids.STANDALONE_SERVER_COLUMN, "Standalone Server")); //NON-NLS
     }
-
-    @Override
-    protected void onReset() {
-        super.onReset();
-        reload();
-    }
-
-    protected abstract void reload();
 }

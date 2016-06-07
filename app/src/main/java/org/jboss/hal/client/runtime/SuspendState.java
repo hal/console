@@ -15,22 +15,11 @@
  */
 package org.jboss.hal.client.runtime;
 
-import javax.inject.Inject;
-
-import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
-import org.jboss.hal.resources.Names;
-import org.jboss.hal.spi.Column;
-
 /**
+ * Suspend state defined by {@code host.suspend-state}
+ *
  * @author Harald Pehl
  */
-@Column(ModelDescriptionConstants.SERVER)
-public class ServerColumn extends FinderColumn<Server> {
-
-    @Inject
-    public ServerColumn(final Finder finder) {
-        super(new Builder<>(finder, ModelDescriptionConstants.SERVER, Names.SERVER));
-    }
+public enum SuspendState {
+    RUNNING, PRE_SUSPEND, SUSPENDING, SUSPENDED, UNDEFINED
 }

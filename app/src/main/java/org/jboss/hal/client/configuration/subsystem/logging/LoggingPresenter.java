@@ -22,8 +22,10 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.client.configuration.PathsTypeahead;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.ProfileSelectionEvent;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.MbuiPresenter;
@@ -34,14 +36,13 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE_DEPTH;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -85,10 +86,8 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
 
 
     private final Environment environment;
-    private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
-    private final Resources resources;
 
     @Inject
     public LoggingPresenter(final EventBus eventBus,
@@ -96,16 +95,12 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
             final MyProxy proxy,
             final Finder finder,
             final Environment environment,
-            final MetadataRegistry metadataRegistry,
             final StatementContext statementContext,
-            final Dispatcher dispatcher,
-            final Resources resources) {
+            final Dispatcher dispatcher) {
         super(eventBus, view, proxy, finder);
         this.environment = environment;
-        this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
-        this.resources = resources;
     }
 
     @Override
@@ -114,6 +109,14 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
         getView().setPresenter(this);
     }
 
+    @Override
+    public void prepareFromRequest(final PlaceRequest request) {
+        super.prepareFromRequest(request);
+        String profile = request.getParameter(PROFILE, null);
+        if (profile != null) {
+            getEventBus().fireEvent(new ProfileSelectionEvent(profile));
+        }
+    }
     @Override
     protected FinderPath finderPath() {
         return FinderPath

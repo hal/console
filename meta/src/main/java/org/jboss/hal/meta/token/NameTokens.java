@@ -32,6 +32,7 @@ public interface NameTokens {
     String EJB3 = ModelDescriptionConstants.EJB3;
     String GENERIC_SUBSYSTEM = "generic-subsystem";
     String HOMEPAGE = "home";
+    String HOST_CONFIGURATION = "host-configuration";
     String IIOP = ModelDescriptionConstants.IIOP_OPENJDK;
     String INTERFACE = "interface";
     String IO = ModelDescriptionConstants.IO;

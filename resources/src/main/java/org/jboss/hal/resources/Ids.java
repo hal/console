@@ -44,7 +44,7 @@ public interface Ids {
 
     String DATA_SOURCE_DRIVER_COLUMN = "data-source-driver";
     String DEPLOYMENT_BROWSE_BY_COLUMN = "deployment-browse-by";
-    String DOMAIN_BROWSE_BY = "domain-browse-by";
+    String DOMAIN_BROWSE_BY_COLUMN = "domain-browse-by";
     String DRAG_AND_DROP_DEPLOYMENT = "drag-and-drop-deployment";
 
     String EE_ATTRIBUTES_ENTRY = "ee-attributes-entry";
@@ -86,6 +86,7 @@ public interface Ids {
 
     String ROOT_CONTAINER = "hal-root-container";
 
+    String STANDALONE_SERVER_COLUMN = "standalone-server";
     String STORAGE_PREFIX = "org.jboss.hal";
 
     String TLC_ACCESS_CONTROL = "tlc-access-control";

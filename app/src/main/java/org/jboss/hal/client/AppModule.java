@@ -49,6 +49,8 @@ import org.jboss.hal.client.homepage.HomepagePresenter;
 import org.jboss.hal.client.homepage.HomepageView;
 import org.jboss.hal.client.patching.PatchingPresenter;
 import org.jboss.hal.client.patching.PatchingView;
+import org.jboss.hal.client.runtime.HostPresenter;
+import org.jboss.hal.client.runtime.Mbui_HostView_Provider;
 import org.jboss.hal.client.runtime.RuntimePresenter;
 import org.jboss.hal.client.runtime.RuntimeView;
 import org.jboss.hal.client.skeleton.FooterPresenter;
@@ -141,6 +143,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 HomepagePresenter.MyView.class,
                 HomepageView.class,
                 HomepagePresenter.MyProxy.class);
+
+        bindTemplatedPresenter(HostPresenter.class,
+                HostPresenter.MyView.class,
+                Mbui_HostView_Provider.class,
+                HostPresenter.MyProxy.class);
 
         bindTemplatedPresenter(IiopPresenter.class,
                 IiopPresenter.MyView.class,

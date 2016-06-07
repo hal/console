@@ -32,7 +32,7 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.PatternFlyView;
-import org.jboss.hal.core.mvp.SubsystemPresenter;
+import org.jboss.hal.core.mvp.ConfigurationSubsystemPresenter;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -59,7 +59,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Claudio Miranda
  */
-public class EEPresenter extends SubsystemPresenter<EEPresenter.MyView, EEPresenter.MyProxy> {
+public class EEPresenter extends ConfigurationSubsystemPresenter<EEPresenter.MyView, EEPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit

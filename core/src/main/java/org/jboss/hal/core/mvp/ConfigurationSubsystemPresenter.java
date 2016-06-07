@@ -29,10 +29,10 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
  *
  * @author Harald Pehl
  */
-public abstract class SubsystemPresenter<V extends PatternFlyView, Proxy_ extends ProxyPlace<?>>
+public abstract class ConfigurationSubsystemPresenter<V extends PatternFlyView, Proxy_ extends ProxyPlace<?>>
         extends ApplicationPresenter<V, Proxy_> {
 
-    protected SubsystemPresenter(final EventBus eventBus, final V view,
+    protected ConfigurationSubsystemPresenter(final EventBus eventBus, final V view,
             final Proxy_ proxy_, final Finder finder) {
         super(eventBus, view, proxy_, finder);
     }

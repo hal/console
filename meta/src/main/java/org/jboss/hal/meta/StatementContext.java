@@ -76,6 +76,16 @@ public interface StatementContext {
         public String selectedProfile() {
             return null;
         }
+
+        @Override
+        public String selectedHost() {
+            return null;
+        }
+
+        @Override
+        public String selectedServer() {
+            return null;
+        }
     };
 
 
@@ -90,4 +100,8 @@ public interface StatementContext {
     String[] resolveTuple(String tuple);
 
     String selectedProfile();
+
+    String selectedHost();
+
+    String selectedServer();
 }

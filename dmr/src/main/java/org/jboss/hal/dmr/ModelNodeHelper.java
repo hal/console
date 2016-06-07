@@ -18,12 +18,16 @@ package org.jboss.hal.dmr;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Provider;
 import org.jboss.hal.dmr.model.NamedNode;
+
+import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 
 /**
  * Static helper methods for dealing with {@link ModelNode}s.
@@ -93,5 +97,22 @@ public final class ModelNodeHelper {
             }
         }
         return result;
+    }
+
+    /**
+     * Looks for the specified attribute and tries to convert it to an enum constant using
+     * {@code LOWER_HYPHEN.to(UPPER_UNDERSCORE, modelNode.get(attribute).asString())}.
+     */
+    @SuppressWarnings("Guava")
+    public static <E extends Enum<E>> E asEnumValue(final ModelNode modelNode, final String attribute,
+            final Function<String, E> valueOf, final E defaultValue) {
+        E value = defaultValue;
+        if (modelNode.hasDefined(attribute)) {
+            String stringValue = LOWER_HYPHEN.to(UPPER_UNDERSCORE, modelNode.get(attribute).asString());
+            try {
+                value = valueOf.apply(stringValue);
+            } catch (IllegalArgumentException ignored) {}
+        }
+        return value;
     }
 }

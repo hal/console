@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.domain;
+package org.jboss.hal.client.runtime;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +22,6 @@ import com.google.common.collect.FluentIterable;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
-import org.jboss.hal.client.runtime.Server;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;

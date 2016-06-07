@@ -112,6 +112,7 @@ public interface ModelDescriptionConstants {
     String HOST = "host";
     String HOST_FAILURE_DESCRIPTION = "host-failure-description";
     String HOST_FAILURE_DESCRIPTIONS = "host-failure-descriptions";
+    String HOST_STATE = "host-state";
 
     String IGNORED = "ignored";
     String IIOP_OPENJDK = "iiop-openjdk";
@@ -132,6 +133,7 @@ public interface ModelDescriptionConstants {
     String JMX = "jmx";
     String JNDI_NAME = "jndi-name";
     String JPA = "jpa";
+    String JVM = "jvm";
 
     String LEVEL = "level";
     String LIST_ADD = "list-add";
@@ -208,6 +210,7 @@ public interface ModelDescriptionConstants {
     String RESOURCE_ADAPTERS = "resource-adapters";
     String RESULT = "result";
     String ROLES = "HEADER_ROLES";
+    String RUNNING_MODE = "running-mode";
     String RUNTIME = "runtime";
     String RUNTIME_NAME = "runtime-name";
 
@@ -235,6 +238,8 @@ public interface ModelDescriptionConstants {
     String SUBDEPLOYMENT = "subdeployment";
     String SUBSYSTEM = "subsystem";
     String SUCCESS = "success";
+    String SUSPEND_STATE = "suspend-state";
+    String SYSTEM_PROPERTY = "system-property";
 
     String TRANSACTIONS = "transactions";
     String TRIM_DESCRIPTIONS = "trim-descriptions";

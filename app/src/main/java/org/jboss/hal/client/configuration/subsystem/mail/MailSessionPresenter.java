@@ -38,7 +38,7 @@ import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.PatternFlyView;
-import org.jboss.hal.core.mvp.SubsystemPresenter;
+import org.jboss.hal.core.mvp.ConfigurationSubsystemPresenter;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
@@ -68,7 +68,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Claudio Miranda
  */
 public class MailSessionPresenter
-        extends SubsystemPresenter<MailSessionPresenter.MyView, MailSessionPresenter.MyProxy> {
+        extends ConfigurationSubsystemPresenter<MailSessionPresenter.MyView, MailSessionPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit

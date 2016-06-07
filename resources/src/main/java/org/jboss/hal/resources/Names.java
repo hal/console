@@ -29,9 +29,12 @@ public interface Names {
     String DATASOURCES_DRIVERS = "Datasources & Drivers";
     String DEPLOYMENT = "Deployment";
     String DEPLOYMENTS = "Deployments";
+    String DOMAIN_CONTROLLER = "Domain Controller";
     String EE = "EE";
     String GLOBAL_MODULES = "Global Modules";
     String HAL = "HAL";
+    String HOST = "Host";
+    String HOST_CONTROLLER = "Host Controller";
     String HOSTS = "Hosts";
     String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";

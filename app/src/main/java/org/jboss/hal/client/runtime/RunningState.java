@@ -15,22 +15,9 @@
  */
 package org.jboss.hal.client.runtime;
 
-import javax.inject.Inject;
-
-import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
-import org.jboss.hal.resources.Names;
-import org.jboss.hal.spi.Column;
-
 /**
- * @author Harald Pehl
+ * State as defined by {@code host.host-state}, {@code server.server-state}
  */
-@Column(ModelDescriptionConstants.SERVER)
-public class ServerColumn extends FinderColumn<Server> {
-
-    @Inject
-    public ServerColumn(final Finder finder) {
-        super(new Builder<>(finder, ModelDescriptionConstants.SERVER, Names.SERVER));
-    }
+public enum RunningState {
+    STARTING, RUNNING, RESTART_REQUIRED, RELOAD_REQUIRED, UNDEFINED
 }

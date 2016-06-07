@@ -17,19 +17,16 @@ package org.jboss.hal.meta;
 
 import org.jboss.hal.config.Environment;
 
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 
 /**
- * A statement context which resolves the {@code selected.*} tuples to wildcards.
+ * A statement context which resolves the {@code selected.profile} tuple to "*".
  *
  * @author Harald Pehl
  */
-public class WildcardStatementContext extends FilteringStatementContext implements StatementContext {
+public class ProfileWildcardStatementContext extends FilteringStatementContext implements StatementContext {
 
-    public WildcardStatementContext(final StatementContext delegate, Environment environment) {
+    public ProfileWildcardStatementContext(final StatementContext delegate, Environment environment) {
         super(delegate, new Filter() {
             @Override
             public String filter(final String key) {
@@ -40,7 +37,7 @@ public class WildcardStatementContext extends FilteringStatementContext implemen
             public String[] filterTuple(final String tuple) {
                 if (!environment.isStandalone()) {
                     Tuple t = Tuple.from(tuple);
-                    if (t == SELECTED_GROUP || t == SELECTED_HOST || t == SELECTED_PROFILE || t == SELECTED_SERVER) {
+                    if (t == SELECTED_PROFILE) {
                         return new String[]{t.resource(), "*"};
                     }
                 }

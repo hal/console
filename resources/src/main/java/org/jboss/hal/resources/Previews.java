@@ -41,6 +41,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/subsystems/ee.html")
     ExternalTextResource ee();
 
+    @Source("previews/runtime/hosts.html")
+    ExternalTextResource hosts();
+
     @Source("previews/subsystems/logging.html")
     ExternalTextResource logging();
 
@@ -79,6 +82,9 @@ public interface Previews extends ClientBundleWithLookup {
 
     @Source("previews/runtime/standalone.html")
     ExternalTextResource runtimeStandalone();
+
+    @Source("previews/runtime/server-groups.html")
+    ExternalTextResource runtimeServerGroups();
 
     @Source("previews/configuration/socket-bindings.html")
     ExternalTextResource socketBindings();

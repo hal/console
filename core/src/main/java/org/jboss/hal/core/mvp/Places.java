@@ -21,6 +21,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.meta.StatementContext;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 
 /**
@@ -51,6 +52,22 @@ public class Places {
                 throw new IllegalStateException("No selected profile");
             }
             builder.with(PROFILE, statementContext.selectedProfile());
+        }
+        return builder;
+    }
+
+    /**
+     * Returns a place request builder which adds a parameter for the selected host (when running domain mode).
+     *
+     * @throws IllegalStateException if there's no selected host and operation mode is domain.
+     */
+    public PlaceRequest.Builder selectedHost(final String token) throws IllegalStateException {
+        PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(token);
+        if (!environment.isStandalone()) {
+            if (statementContext.selectedHost() == null) {
+                throw new IllegalStateException("No selected host");
+            }
+            builder.with(HOST, statementContext.selectedHost());
         }
         return builder;
     }
