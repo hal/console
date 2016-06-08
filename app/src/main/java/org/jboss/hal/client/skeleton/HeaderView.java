@@ -24,7 +24,6 @@ import com.google.common.base.Joiner;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.gwtplatform.mvp.client.ViewImpl;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.Window;
@@ -54,7 +53,6 @@ import org.jboss.hal.spi.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.Collections.singletonList;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.skeleton.HeaderPresenter.MAX_BREADCRUMB_VALUE_LENGTH;
 import static org.jboss.hal.client.skeleton.HeaderPresenter.MESSAGE_TIMEOUT;
@@ -73,18 +71,20 @@ import static org.jboss.hal.resources.Names.NYI;
 public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyView, IsElement {
 
     // @formatter:off
-    public static HeaderView create(final TokenFormatter tokenFormatter, final Resources resources, final User user) {
-        return new Templated_HeaderView(tokenFormatter, resources, user);
+    public static HeaderView create(final Resources resources, final User user) {
+        return new Templated_HeaderView(resources, user);
     }
 
-    public abstract TokenFormatter tokenFormatter();
     public abstract Resources resources();
     public abstract User user();
     // @formatter:on
 
 
     private static final Logger logger = LoggerFactory.getLogger(HeaderView.class);
+    private static final PlaceRequest HOMEPAGE = new PlaceRequest.Builder().nameToken(NameTokens.HOMEPAGE).build();
 
+    private PlaceRequest backPlaceRequest;
+    private Map<String, PlaceRequest> tlcPlaceRequests;
     private Map<String, Element> tlc;
     private int messageTimeoutHandle;
     private HeaderPresenter presenter;
@@ -107,6 +107,19 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     void init() {
         Element root = asElement();
 
+        backPlaceRequest = HOMEPAGE;
+        backLink.setOnclick(event -> presenter.goTo(backPlaceRequest));
+
+        // @formatter:off
+        tlcPlaceRequests = new HashMap<>();
+        tlcPlaceRequests.put(NameTokens.HOMEPAGE,       new PlaceRequest.Builder().nameToken(NameTokens.HOMEPAGE).build());
+        tlcPlaceRequests.put(NameTokens.DEPLOYMENTS,    new PlaceRequest.Builder().nameToken(NameTokens.DEPLOYMENTS).build());
+        tlcPlaceRequests.put(NameTokens.CONFIGURATION,  new PlaceRequest.Builder().nameToken(NameTokens.CONFIGURATION).build());
+        tlcPlaceRequests.put(NameTokens.RUNTIME,        new PlaceRequest.Builder().nameToken(NameTokens.RUNTIME).build());
+        tlcPlaceRequests.put(NameTokens.ACCESS_CONTROL, new PlaceRequest.Builder().nameToken(NameTokens.ACCESS_CONTROL).build());
+        tlcPlaceRequests.put(NameTokens.PATCHING,       new PlaceRequest.Builder().nameToken(NameTokens.PATCHING).build());
+        // @formatter:on
+
         tlc = new HashMap<>();
         tlc.put(NameTokens.HOMEPAGE, root.querySelector("#" + Ids.TLC_HOMEPAGE));
         tlc.put(NameTokens.DEPLOYMENTS, root.querySelector("#" + Ids.TLC_DEPLOYMENTS));
@@ -114,6 +127,13 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         tlc.put(NameTokens.RUNTIME, root.querySelector("#" + Ids.TLC_RUNTIME));
         tlc.put(NameTokens.ACCESS_CONTROL, root.querySelector("#" + Ids.TLC_ACCESS_CONTROL));
         tlc.put(NameTokens.PATCHING, root.querySelector("#" + Ids.TLC_PATCHING));
+        for (Map.Entry<String, Element> entry : tlc.entrySet()) {
+            entry.getValue().setOnclick(event -> {
+                if (tlcPlaceRequests.containsKey(entry.getKey())) {
+                    presenter.goTo(tlcPlaceRequests.get(entry.getKey()));
+                }
+            });
+        }
 
         boolean su = user().isSuperuser() || user().isAdministrator();
         Elements.setVisible(accessControl, su);
@@ -163,17 +183,13 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     // ------------------------------------------------------ links and tokens
 
-    String historyToken(String token) {
-        PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token).build();
-        return "#" + tokenFormatter().toHistoryToken(singletonList(placeRequest));
-    }
-
     @Override
-    public void updateBack(final FinderContext finderContext) {
-        PlaceRequest placeRequest = finderContext.getToken() != null
-                ? finderContext.toPlaceRequest()
-                : new PlaceRequest.Builder().nameToken(NameTokens.HOMEPAGE).build();
-        backLink.setOnclick(event -> presenter.goTo(placeRequest));
+    public void updateLinks(final FinderContext finderContext) {
+        PlaceRequest placeRequest = finderContext.getToken() != null ? finderContext.toPlaceRequest() : HOMEPAGE;
+        backPlaceRequest = placeRequest;
+        if (tlcPlaceRequests.containsKey(finderContext.getToken())) {
+            tlcPlaceRequests.put(finderContext.getToken(), placeRequest);
+        }
     }
 
     @Override

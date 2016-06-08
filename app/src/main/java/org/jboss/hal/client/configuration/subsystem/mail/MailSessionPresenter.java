@@ -34,7 +34,7 @@ import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mvp.ConfigurationSubsystemPresenter;
+import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.PatternFlyView;
@@ -68,7 +68,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Claudio Miranda
  */
 public class MailSessionPresenter
-        extends ConfigurationSubsystemPresenter<MailSessionPresenter.MyView, MailSessionPresenter.MyProxy> {
+        extends ApplicationPresenter<MailSessionPresenter.MyView, MailSessionPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit

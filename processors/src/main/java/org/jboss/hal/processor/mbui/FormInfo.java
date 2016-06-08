@@ -31,10 +31,12 @@ public class FormInfo extends MbuiElementInfo {
     private final boolean autoSave;
     private final String onSave;
     private final String nameResolver;
+    private final boolean includeRuntime;
     private final List<Attribute> attributes;
 
     FormInfo(final String name, final String selector, final String typeParameter, final MetadataInfo metadata,
-            final String title, final boolean autoSave, final String onSave, final String nameResolver) {
+            final String title, final boolean autoSave, final String onSave, final String nameResolver,
+            final boolean includeRuntime) {
         super(name, selector);
         this.typeParameter = typeParameter;
         this.metadata = metadata;
@@ -42,6 +44,7 @@ public class FormInfo extends MbuiElementInfo {
         this.autoSave = autoSave;
         this.onSave = Handlebars.stripHandlebar(onSave); // name resolver has to be an expression
         this.nameResolver = Handlebars.stripHandlebar(nameResolver); // name resolver has to be an expression
+        this.includeRuntime = includeRuntime;
         this.attributes = new ArrayList<>();
     }
 
@@ -67,6 +70,10 @@ public class FormInfo extends MbuiElementInfo {
 
     public String getNameResolver() {
         return nameResolver;
+    }
+
+    public boolean isIncludeRuntime() {
+        return includeRuntime;
     }
 
     public List<Attribute> getAttributes() {

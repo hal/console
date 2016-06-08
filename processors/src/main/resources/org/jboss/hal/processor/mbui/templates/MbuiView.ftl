@@ -61,6 +61,9 @@ final class ${context.subclass} extends ${context.base} {
 
         <#list context.forms as form>
         ${form.name} = new ModelNodeForm.Builder<${form.typeParameter}>("${form.selector}", ${form.metadata.name})
+            <#if form.includeRuntime>
+            .includeRuntime()
+            </#if>
             <#if form.attributes?has_content>
                 <#if form.hasAttributesWithProvider>
                     <#list form.attributes as attribute>

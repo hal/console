@@ -25,9 +25,9 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
-import org.jboss.hal.core.mvp.ConfigurationSubsystemPresenter;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -57,7 +57,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
  * @author Harald Pehl
  */
 public class DataSourcePresenter extends
-        ConfigurationSubsystemPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy> {
+        ApplicationPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit

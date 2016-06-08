@@ -25,8 +25,8 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.ProfileSelectionEvent;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
-import org.jboss.hal.core.mvp.ConfigurationSubsystemPresenter;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
@@ -42,7 +42,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
  * @author Harald Pehl
  */
 public class GenericSubsystemPresenter
-        extends ConfigurationSubsystemPresenter<GenericSubsystemPresenter.MyView, GenericSubsystemPresenter.MyProxy> {
+        extends ApplicationPresenter<GenericSubsystemPresenter.MyView, GenericSubsystemPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyStandard

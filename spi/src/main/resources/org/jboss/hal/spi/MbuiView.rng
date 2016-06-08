@@ -203,6 +203,11 @@
                 </choice>
             </optional>
             <optional>
+                <attribute name="include-runtime">
+                    <data type="boolean"/>
+                </attribute>
+            </optional>
+            <optional>
                 <ref name="attributes-definition"/>
             </optional>
         </element>

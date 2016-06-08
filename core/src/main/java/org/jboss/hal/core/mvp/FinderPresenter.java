@@ -22,6 +22,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.HasFinder;
 import org.jboss.hal.core.finder.PreviewContent;
@@ -55,7 +56,7 @@ public abstract class FinderPresenter<V extends PatternFlyView, Proxy_ extends P
 
     @Override
     public void prepareFromRequest(final PlaceRequest request) {
-        path = request.getParameter("path", null);
+        path = request.getParameter(FinderContext.PATH_PARAM, null);
     }
 
     @Override

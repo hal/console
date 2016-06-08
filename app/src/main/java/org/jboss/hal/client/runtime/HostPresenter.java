@@ -22,8 +22,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.core.HostSelectionEvent;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.MbuiPresenter;
@@ -93,16 +91,6 @@ public class HostPresenter extends MbuiPresenter<HostPresenter.MyView, HostPrese
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
-    }
-
-    @Override
-    public void prepareFromRequest(final PlaceRequest request) {
-        super.prepareFromRequest(request);
-        String host = request.getParameter(HOST, null);
-        if (host != null) {
-            getEventBus().fireEvent(new HostSelectionEvent(host));
-        }
-
     }
 
     @Override

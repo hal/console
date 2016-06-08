@@ -25,7 +25,6 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.client.configuration.PathsTypeahead;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.core.ProfileSelectionEvent;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.MbuiPresenter;
@@ -45,7 +44,6 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE_DEPTH;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -110,10 +108,6 @@ public class LoggingProfilePresenter extends MbuiPresenter<LoggingProfilePresent
     @Override
     public void prepareFromRequest(final PlaceRequest request) {
         super.prepareFromRequest(request);
-        String profile = request.getParameter(PROFILE, null);
-        if (profile != null) {
-            getEventBus().fireEvent(new ProfileSelectionEvent(profile));
-        }
         loggingProfile = request.getParameter(NAME, null);
     }
 

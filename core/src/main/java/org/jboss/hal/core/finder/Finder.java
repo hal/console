@@ -47,6 +47,7 @@ import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.spi.Footer;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,7 +129,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     private static final int MAX_COLUMNS = 12;
     private static final String PREVIEW_COLUMN = "previewColumn";
-    private static final Logger logger = LoggerFactory.getLogger(Finder.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(Finder.class);
 
     private final EventBus eventBus;
     private final PlaceManager placeManager;
@@ -141,7 +142,6 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     private final Map<String, PreviewContent> initialPreviewsByToken;
     private final Element root;
     private final Element previewColumn;
-    private int timeoutHandle = -1;
 
 
     // ------------------------------------------------------ ui

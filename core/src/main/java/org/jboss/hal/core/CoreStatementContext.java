@@ -23,8 +23,12 @@ import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.HostSelectionEvent.HostSelectionHandler;
 import org.jboss.hal.core.ProfileSelectionEvent.ProfileSelectionHandler;
+import org.jboss.hal.core.ServerGroupSelectionEvent.ServerGroupSelectionHandler;
 import org.jboss.hal.core.ServerSelectionEvent.ServerSelectionHandler;
 import org.jboss.hal.meta.StatementContext;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
@@ -35,14 +39,14 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
  * @author Harald Pehl
  */
 public class CoreStatementContext implements StatementContext,
-        ProfileSelectionHandler, HostSelectionHandler, ServerSelectionHandler {
+        ProfileSelectionHandler, ServerGroupSelectionHandler, HostSelectionHandler, ServerSelectionHandler {
 
     /**
      * Please use this constant only in cases where no DI is available.
      */
-    @Inject
-    public static CoreStatementContext INSTANCE;
+    @Inject public static CoreStatementContext INSTANCE;
 
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(CoreStatementContext.class);
 
     private final Environment environment;
     private final Map<Tuple, String> context;
@@ -58,6 +62,7 @@ public class CoreStatementContext implements StatementContext,
         context.put(SELECTED_SERVER, null);
 
         eventBus.addHandler(ProfileSelectionEvent.getType(), this);
+        eventBus.addHandler(ServerGroupSelectionEvent.getType(), this);
         eventBus.addHandler(HostSelectionEvent.getType(), this);
         eventBus.addHandler(ServerSelectionEvent.getType(), this);
     }
@@ -84,16 +89,25 @@ public class CoreStatementContext implements StatementContext,
     @Override
     public void onProfileSelected(final ProfileSelectionEvent event) {
         context.put(SELECTED_PROFILE, event.getProfile());
+        logger.info("Selected profile {}", event.getProfile());
+    }
+
+    @Override
+    public void onServerGroupSelected(final ServerGroupSelectionEvent event) {
+        context.put(SELECTED_GROUP, event.getServerGroup());
+        logger.info("Selected server-group {}", event.getServerGroup());
     }
 
     @Override
     public void onHostSelected(final HostSelectionEvent event) {
         context.put(SELECTED_HOST, event.getHost());
+        logger.info("Selected host {}", event.getHost());
     }
 
     @Override
     public void onServerSelected(final ServerSelectionEvent event) {
         context.put(SELECTED_SERVER, event.getServer());
+        logger.info("Selected server {}", event.getServer());
     }
 
     @Override

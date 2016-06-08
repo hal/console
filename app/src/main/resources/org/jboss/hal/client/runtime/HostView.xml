@@ -21,7 +21,24 @@
             <metadata address="/{selected.host}">
                 <h1 id="host-configuration-title"/>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <form id="host-configuration-form" title="Host Configuration" auto-save="true"/>
+                <form id="host-configuration-form" title="Host Configuration" auto-save="true" include-runtime="true">
+                    <attributes>
+                        <attribute name="name"/>
+                        <attribute name="organization"/>
+                        <attribute name="directory-grouping"/>
+                        <attribute name="uuid"/>
+                        <attribute name="release-codename"/>
+                        <attribute name="release-version"/>
+                        <attribute name="product-name"/>
+                        <attribute name="product-version"/>
+                        <attribute name="management-major-version"/>
+                        <attribute name="management-minor-version"/>
+                        <attribute name="management-micro-version"/>
+                        <attribute name="running-mode"/>
+                        <attribute name="host-state"/>
+                        <attribute name="suspend-state"/>
+                    </attributes>
+                </form>
             </metadata>
         </item>
 
