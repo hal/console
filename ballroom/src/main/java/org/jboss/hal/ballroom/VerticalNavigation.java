@@ -16,9 +16,8 @@
 package org.jboss.hal.ballroom;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import jsinterop.annotations.JsMethod;
@@ -32,6 +31,7 @@ import org.jboss.hal.resources.UIConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.stream.Collectors.toList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
@@ -61,7 +61,7 @@ public class VerticalNavigation {
     static class Bridge {
 
         @JsMethod(namespace = GLOBAL, name = "$")
-        public native static VerticalNavigation.Bridge select();
+        public native static Bridge select();
 
         public native void setupVerticalNavigation(boolean handleItemSelections);
     }
@@ -114,6 +114,7 @@ public class VerticalNavigation {
     }
 
 
+    private static final int PRIMARY_VISIBLE_TEXT_LENGTH = 13;
     private static final String UL_ELEMENT = "ul-element";
     private static VerticalNavigation singleton = null;
     private static final Logger logger = LoggerFactory.getLogger(VerticalNavigation.class);
@@ -153,8 +154,7 @@ public class VerticalNavigation {
         if (rootContainer != null) {
             Browser.getDocument().getBody().insertBefore(root, rootContainer);
             rootContainer.getClassList().add(containerPfNavPfVertical);
-            //noinspection Guava
-            if (!FluentIterable.from(entries.values()).filter(entry -> !entry.primary).isEmpty()) {
+            if (!entries.values().stream().filter(entry -> !entry.primary).collect(toList()).isEmpty()) {
                 root.getClassList().add(navPfVerticalWithSecondaryNav);
                 rootContainer.getClassList().add(containerPfNavPfVerticalWithSecondary);
             }
@@ -231,7 +231,11 @@ public class VerticalNavigation {
                     if (iconClass != null) {
                         builder.span().css(iconClass).end();
                     }
-                    builder.span().css(listGroupItemValue).textContent(text).end()
+                    builder.span().css(listGroupItemValue).textContent(text);
+                    if (text.length() > PRIMARY_VISIBLE_TEXT_LENGTH){
+                        builder.title(text);
+                    }
+                    builder.end()
                 .end()
             .end();
         // @formatter:on
@@ -319,10 +323,9 @@ public class VerticalNavigation {
     public void show(String id) {
         Entry show = entries.get(id);
         if (show != null) {
-            //noinspection Guava
-            ImmutableList<Entry> otherEntriesOnSameLevel = FluentIterable.from(entries.values())
+            List<Entry> otherEntriesOnSameLevel = entries.values().stream()
                     .filter(entry -> entry.primary == show.primary && !entry.id.equals(id))
-                    .toList();
+                    .collect(toList());
             show.asElement().getClassList().add(active);
             for (Entry entry : otherEntriesOnSameLevel) {
                 entry.asElement().getClassList().remove(active);
@@ -365,7 +368,6 @@ public class VerticalNavigation {
      * elements to another container.
      */
     public HasElements panes() {
-        //noinspection Guava
-        return () -> FluentIterable.from(panes.values()).transform(Pane::asElement);
+        return () -> panes.values().stream().map(Pane::asElement).collect(toList());
     }
 }

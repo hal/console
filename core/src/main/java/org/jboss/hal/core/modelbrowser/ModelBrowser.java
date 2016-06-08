@@ -23,7 +23,6 @@ import java.util.Stack;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Sets;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
@@ -68,6 +67,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
+import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.js.JsHelper.asList;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
@@ -315,9 +315,9 @@ public class ModelBrowser implements HasElements {
             FilterInfo previousFilter = filterStack.pop();
             filter(filterStack.isEmpty() ? FilterInfo.ROOT : filterStack.peek());
 
-            List<OpenNodeFunction> functions = FluentIterable
-                    .from(previousFilter.parents)
-                    .transform(OpenNodeFunction::new).toList();
+            List<OpenNodeFunction> functions = previousFilter.parents.stream()
+                    .map(OpenNodeFunction::new)
+                    .collect(toList());
             Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
                 @Override
                 public void onFailure(final FunctionContext context) {

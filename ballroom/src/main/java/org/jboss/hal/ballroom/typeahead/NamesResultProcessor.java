@@ -17,13 +17,13 @@ package org.jboss.hal.ballroom.typeahead;
 
 import java.util.List;
 
-import com.google.common.collect.FluentIterable;
 import elemental.js.json.JsJsonObject;
 import elemental.js.util.JsArrayOf;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.dmr.ModelNode;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
@@ -38,12 +38,11 @@ public class NamesResultProcessor extends AbstractResultProcessor<String> implem
 
     @Override
     protected List<String> processToModel(final String query, final ModelNode result) {
-        //noinspection Guava
-        return FluentIterable.from(result.asList())
-                .transform(ModelNode::asString)
+        return result.asList().stream()
+                .map(ModelNode::asString)
                 .filter(name -> !isNullOrEmpty(query) &&
                         (SuggestHandler.SHOW_ALL_VALUE.equals(query) || name.contains(query)))
-                .toList();
+                .collect(toList());
     }
 
     @Override

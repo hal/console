@@ -15,7 +15,8 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
-import com.google.common.collect.Lists;
+import java.util.List;
+
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental.client.Browser;
 import elemental.dom.Element;
@@ -23,7 +24,6 @@ import elemental.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
@@ -39,12 +39,12 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import java.util.List;
-
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.table.Selector.Page.all;
 import static org.jboss.hal.core.modelbrowser.ReadChildren.uniqueId;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
@@ -146,7 +146,7 @@ class ChildrenPanel implements HasElements, Attachable {
                 .param(CHILD_TYPE, node.text)
                 .build();
         dispatcher.execute(operation, result -> {
-            List<String> names = Lists.transform(result.asList(), ModelNode::asString);
+            List<String> names = result.asList().stream().map(ModelNode::asString).collect(toList());
             table.api().clear().add(names).refresh(RefreshMode.RESET);
             registerLinkClickHandler();
             if (node.data.hasSingletons()) {

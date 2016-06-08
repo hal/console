@@ -19,7 +19,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
@@ -42,6 +41,8 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Harald Pehl
@@ -123,9 +124,8 @@ public class MacroEditorPresenter
     }
 
     void play(Macro macro) {
-        List<MacroOperationFunction> functions = Lists
-                .transform(macro.getOperations(),
-                        operation -> new MacroOperationFunction(dispatcher, operation));
+        List<MacroOperationFunction> functions = macro.getOperations().stream()
+                .map(operation -> new MacroOperationFunction(dispatcher, operation)).collect(toList());
         Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
             @Override
             public void onFailure(final FunctionContext context) {

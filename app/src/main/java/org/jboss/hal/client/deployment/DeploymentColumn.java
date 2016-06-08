@@ -20,7 +20,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.collect.Lists;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import org.jboss.gwt.flow.Async;
@@ -50,6 +49,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.Message.Level;
 import org.jboss.hal.spi.MessageEvent;
 
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -88,8 +88,9 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
                             .param(INCLUDE_RUNTIME, true)
                             .build();
                     dispatcher.execute(operation, result -> {
-                        List<Deployment> deployments = Lists.transform(result.asPropertyList(),
-                                property -> new Deployment(Server.STANDALONE, property.getValue()));
+                        List<Deployment> deployments = result.asPropertyList().stream()
+                                .map(property -> new Deployment(Server.STANDALONE, property.getValue()))
+                                .collect(toList());
                         callback.onSuccess(deployments);
                     });
                 })
@@ -184,6 +185,8 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
 
         // execute using Async to make use of the progress bar
         new Async<FunctionContext>(progress.get()).single(new FunctionContext(), outcome,
-                control -> dispatcher.executeInFunction(control, operation, result -> { control.proceed(); }));
+                control -> dispatcher.executeInFunction(control, operation, result -> {
+                    control.proceed();
+                }));
     }
 }

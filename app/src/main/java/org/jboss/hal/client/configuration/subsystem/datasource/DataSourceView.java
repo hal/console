@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -38,6 +37,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.datasource.Attribute.Scope.BOTH;
@@ -170,7 +170,6 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
     private DataSourcePresenter presenter;
 
     @Inject
-    @SuppressWarnings("Guava")
     public DataSourceView(MetadataRegistry metadataRegistry, Resources resources) {
         this.resources = resources;
 
@@ -192,9 +191,10 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
             List<Attribute> sectionAttributes = attributes.get(section);
 
             // non xa form and tab
-            List<String> nonXaNames = FluentIterable.from(sectionAttributes)
+            List<String> nonXaNames = sectionAttributes.stream()
                     .filter(attribute -> attribute.scope == BOTH || attribute.scope == NON_XA)
-                    .transform(attribute -> attribute.name).toList();
+                    .map(attribute -> attribute.name)
+                    .collect(toList());
             form = new ModelNodeForm.Builder<DataSource>(IdBuilder.build(DATA_SOURCE, "form", sectionId), nonXaMeta)
                     .include(nonXaNames)
                     .onSave(saveCallback)
@@ -203,9 +203,10 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
             nonXaTabs.add(IdBuilder.build(DATA_SOURCE, "tab", sectionId), section, form.asElement());
 
             // xa form and tab
-            List<String> xaNames = FluentIterable.from(sectionAttributes)
+            List<String> xaNames = sectionAttributes.stream()
                     .filter(attribute -> attribute.scope == BOTH || attribute.scope == XA)
-                    .transform(attribute -> attribute.name).toList();
+                    .map(attribute -> attribute.name)
+                    .collect(toList());
             form = new ModelNodeForm.Builder<DataSource>(IdBuilder.build(XA_DATA_SOURCE, "form", sectionId), xaMeta)
                     .include(xaNames)
                     .onSave(saveCallback)

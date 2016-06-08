@@ -18,12 +18,15 @@ package org.jboss.hal.meta.description;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.common.collect.FluentIterable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NILLABLE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRED;
 
 /**
  * Represents the result of a read-resource-description operation for one specific resource.
@@ -49,16 +52,17 @@ public class ResourceDescription extends ModelNode {
     }
 
     public List<Property> getRequiredAttributes(final String path) {
-        //noinspection Guava
-        return FluentIterable.from(getAttributes(path)).filter(property -> {
-            ModelNode attributeDescription = property.getValue();
-            if (attributeDescription.hasDefined(REQUIRED)) {
-                return attributeDescription.get(REQUIRED).asBoolean();
-            } else if (attributeDescription.hasDefined(NILLABLE)) {
-                return !attributeDescription.get(NILLABLE).asBoolean();
-            }
-            return false;
-        }).toList();
+        return getAttributes(path).stream()
+                .filter(property -> {
+                    ModelNode attributeDescription = property.getValue();
+                    if (attributeDescription.hasDefined(REQUIRED)) {
+                        return attributeDescription.get(REQUIRED).asBoolean();
+                    } else if (attributeDescription.hasDefined(NILLABLE)) {
+                        return !attributeDescription.get(NILLABLE).asBoolean();
+                    }
+                    return false;
+                })
+                .collect(toList());
     }
 
     public List<Property> getOperations() {

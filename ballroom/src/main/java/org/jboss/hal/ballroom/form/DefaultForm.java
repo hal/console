@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
@@ -46,6 +45,7 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Messages;
 
+import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Form.Operation.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
@@ -258,7 +258,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     // ------------------------------------------------------ form operations
 
     /**
-     * Executes the {@link org.jboss.hal.ballroom.form.Form.Operation#ADD} operation and calls {@link
+     * Executes the {@link Operation#ADD} operation and calls {@link
      * DataMapping#newModel(Object, Form)}.
      *
      * @param model the transient model
@@ -278,7 +278,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     }
 
     /**
-     * Executes the {@link org.jboss.hal.ballroom.form.Form.Operation#VIEW} operation and calls {@link
+     * Executes the {@link Operation#VIEW} operation and calls {@link
      * DataMapping#populateFormItems(Object, Form)}.
      *
      * @param model the model to view.
@@ -297,7 +297,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     }
 
     /**
-     * Removes the model reference, executes the {@link org.jboss.hal.ballroom.form.Form.Operation#CLEAR} operation and
+     * Removes the model reference, executes the {@link Operation#CLEAR} operation and
      * calls {@link DataMapping#clearFormItems(Form)}.
      */
     @Override
@@ -309,9 +309,9 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     }
 
     /**
-     * Executes the {@link org.jboss.hal.ballroom.form.Form.Operation#RESET} operation, calls {@link
+     * Executes the {@link Operation#RESET} operation, calls {@link
      * DataMapping#resetModel(Object, Form)} and finally calls the registered {@linkplain
-     * org.jboss.hal.ballroom.form.Form.ResetCallback reset callback} (if any).
+     * ResetCallback reset callback} (if any).
      */
     @Override
     public final void reset() {
@@ -332,7 +332,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     }
 
     /**
-     * Executes the {@link org.jboss.hal.ballroom.form.Form.Operation#EDIT} operation and calls {@link
+     * Executes the {@link Operation#EDIT} operation and calls {@link
      * DataMapping#populateFormItems(Object, Form)}.
      *
      * @param model the model to edit.
@@ -352,9 +352,9 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     }
 
     /**
-     * Upon successful validation, executes the {@link org.jboss.hal.ballroom.form.Form.Operation#SAVE} operation,
+     * Upon successful validation, executes the {@link Operation#SAVE} operation,
      * calls {@link DataMapping#persistModel(Object, Form)} and finally calls the registered {@linkplain
-     * org.jboss.hal.ballroom.form.Form.SaveCallback save callback} (if any).
+     * SaveCallback save callback} (if any).
      */
     @Override
     public final boolean save() {
@@ -388,8 +388,8 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     }
 
     /**
-     * Executes the {@link org.jboss.hal.ballroom.form.Form.Operation#CANCEL} operation and calls the registered
-     * {@linkplain org.jboss.hal.ballroom.form.Form.CancelCallback cancel callback} (if any).
+     * Executes the {@link Operation#CANCEL} operation and calls the registered
+     * {@linkplain CancelCallback cancel callback} (if any).
      */
     @Override
     public final void cancel() {
@@ -513,10 +513,9 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
 
     @Override
     public Iterable<FormItem> getBoundFormItems() {
-        //noinspection Guava
-        return FluentIterable.from(formItems.values())
+        return formItems.values().stream()
                 .filter(formItem -> !unboundItems.contains(formItem.getName()))
-                .toList();
+                .collect(toList());
     }
 
     @Override

@@ -15,12 +15,12 @@
  */
 package org.jboss.hal.dmr.macro;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import org.jboss.hal.dmr.model.Operation;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jboss.hal.dmr.model.Operation;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * @author Harald Pehl
@@ -88,7 +88,7 @@ public class Macro {
     }
 
     public String asCli() {
-        return Joiner.on('\n').join(Lists.transform(getOperations(), Operation::asCli));
+        return getOperations().stream().map(Operation::asCli).collect(joining("\n"));
     }
 
     public boolean hasOperations() {

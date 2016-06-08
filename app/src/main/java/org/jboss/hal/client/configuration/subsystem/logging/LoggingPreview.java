@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.client.configuration.subsystem.logging;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.FluentIterable;
 import com.google.gwt.resources.client.ExternalTextResource;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
@@ -29,6 +27,7 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LEVEL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
@@ -58,10 +57,9 @@ public class LoggingPreview extends PreviewContent {
                 .append(model -> {
                     String handlers = "";
                     if (model.hasDefined(HANDLERS)) {
-                        //noinspection Guava
-                        handlers = FluentIterable.from(model.get(HANDLERS).asList())
-                                .transform(ModelNode::asString)
-                                .join(Joiner.on(", "));
+                        handlers = model.get(HANDLERS).asList().stream()
+                                .map(ModelNode::asString)
+                                .collect(joining(", "));
                     }
                     return new String[]{labelBuilder.label(HANDLERS), handlers};
                 })

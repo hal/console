@@ -17,10 +17,10 @@ package org.jboss.hal.core.mbui.table;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.base.Function;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.gwt.flow.Progress;
@@ -127,7 +127,6 @@ public class TableButtonFactory {
         return button;
     }
 
-    @SuppressWarnings("Guava")
     public <T> Button<T> remove(String type, AddressTemplate addressTemplate, Function<Api<T>, String> nameFunction,
             ScheduledCommand afterRemove) {
         Button<T> button = new Button<>();

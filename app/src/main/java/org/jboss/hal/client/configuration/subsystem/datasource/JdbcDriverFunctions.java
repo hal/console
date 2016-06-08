@@ -21,8 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Lists;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
@@ -37,6 +35,7 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -72,10 +71,9 @@ class JdbcDriverFunctions {
             Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
                     .param(CHILD_TYPE, JDBC_DRIVER).build();
             dispatcher.executeInFunction(control, operation, result -> {
-                //noinspection Guava
-                List<JdbcDriver> drivers = FluentIterable.from(result.asPropertyList())
-                        .transform(JdbcDriver::new)
-                        .toList();
+                List<JdbcDriver> drivers = result.asPropertyList().stream()
+                        .map(JdbcDriver::new)
+                        .collect(toList());
                 control.getContext().set(CONFIGURATION_DRIVERS, drivers);
                 control.proceed();
             });
@@ -105,8 +103,9 @@ class JdbcDriverFunctions {
                 ResourceAddress address = new ResourceAddress().add(SUBSYSTEM, DATASOURCES);
                 Operation operation = new Operation.Builder("installed-drivers-list", address).build(); //NON-NLS
                 dispatcher.executeInFunction(control, operation, result -> {
-                    List<JdbcDriver> drivers = Lists.transform(result.asList(),
-                            modelNode -> new JdbcDriver(modelNode.get(DRIVER_NAME).asString(), modelNode));
+                    List<JdbcDriver> drivers = result.asList().stream()
+                            .map(modelNode -> new JdbcDriver(modelNode.get(DRIVER_NAME).asString(), modelNode))
+                            .collect(toList());
                     control.getContext().set(RUNTIME_DRIVERS, drivers);
                     control.proceed();
                 });
@@ -114,13 +113,12 @@ class JdbcDriverFunctions {
             } else {
                 List<Server> servers = control.getContext().get(TopologyFunctions.RUNNING_SERVERS);
                 if (servers != null && !servers.isEmpty()) {
-                    //noinspection Guava
-                    List<Operation> operations = FluentIterable.from(servers)
-                            .transform(server -> {
+                    List<Operation> operations = servers.stream()
+                            .map(server -> {
                                 ResourceAddress address = server.getServerAddress().add(SUBSYSTEM, DATASOURCES);
                                 return new Operation.Builder("installed-drivers-list", address).build(); //NON-NLS
                             })
-                            .toList();
+                            .collect(toList());
                     dispatcher.executeInFunction(control, new Composite(operations), (CompositeResult result) -> {
                         List<JdbcDriver> drivers = new ArrayList<>();
                         for (ModelNode step : result) {
@@ -144,8 +142,8 @@ class JdbcDriverFunctions {
 
 
     /**
-     * Combines and sorts the results form {@link JdbcDriverFunctions.ReadConfiguration} and {@link
-     * JdbcDriverFunctions.ReadRuntime} with a preference for runtime drivers over configuration drivers.
+     * Combines and sorts the results form {@link ReadConfiguration} and {@link
+     * ReadRuntime} with a preference for runtime drivers over configuration drivers.
      * <p>
      * Stores the result as {@code List<JdbcDriver>} under the key {@link JdbcDriverFunctions#DRIVERS} into the
      * context.

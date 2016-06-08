@@ -18,7 +18,6 @@ package org.jboss.hal.client.runtime;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.common.collect.FluentIterable;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
@@ -28,6 +27,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
@@ -81,11 +81,10 @@ public class TopologyFunctions {
                         .build();
 
                 dispatcher.executeInFunction(control, operation, result -> {
-                    //noinspection Guava
-                    List<Server> servers = FluentIterable.from(result.asList())
+                    List<Server> servers = result.asList().stream()
                             .filter(modelNode -> !modelNode.isFailure())
-                            .transform(modelNode -> new Server(modelNode.get(RESULT)))
-                            .toList();
+                            .map(modelNode -> new Server(modelNode.get(RESULT)))
+                            .collect(toList());
                     control.getContext().set(RUNNING_SERVERS, servers);
                     control.proceed();
                 });

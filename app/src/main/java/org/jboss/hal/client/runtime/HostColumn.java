@@ -21,11 +21,11 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import elemental.client.Browser;
 import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
+import elemental.html.SpanElement;
 import org.jboss.hal.core.HostSelectionEvent;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -42,6 +42,7 @@ import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Message.Level;
 import org.jboss.hal.spi.Requires;
 
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.RunningMode.ADMIN_ONLY;
 import static org.jboss.hal.client.runtime.RunningState.RELOAD_REQUIRED;
 import static org.jboss.hal.client.runtime.RunningState.RESTART_REQUIRED;
@@ -49,8 +50,7 @@ import static org.jboss.hal.client.runtime.SuspendState.PRE_SUSPEND;
 import static org.jboss.hal.client.runtime.SuspendState.SUSPENDED;
 import static org.jboss.hal.client.runtime.SuspendState.SUSPENDING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.CSS.itemText;
-import static org.jboss.hal.resources.CSS.subtitle;
+import static org.jboss.hal.resources.CSS.fontAwesome;
 
 /**
  * @author Harald Pehl
@@ -74,7 +74,8 @@ public class HostColumn extends FinderColumn<Host> {
                             .param(INCLUDE_RUNTIME, true)
                             .build();
                     dispatcher.execute(operation,
-                            result -> callback.onSuccess(Lists.transform(result.asPropertyList(), Host::new)));
+                            result -> callback.onSuccess(result.asPropertyList().stream()
+                                    .map(Host::new).collect(toList())));
                 })
 
                 .onItemSelect(host -> eventBus.fireEvent(new HostSelectionEvent(host.getName())))
@@ -93,20 +94,6 @@ public class HostColumn extends FinderColumn<Host> {
             @Override
             public String getTitle() {
                 return item.getName();
-            }
-
-            @Override
-            public Element asElement() {
-                // @formatter:off
-                return new Elements.Builder()
-                        .span().css(itemText)
-                            .span().textContent(item.getName()).end()
-                            .start("small")
-                                .css(subtitle)
-                                .textContent(item.isDomainController() ? Names.DOMAIN_CONTROLLER : Names.HOST_CONTROLLER)
-                            .end()
-                        .end().build();
-                // @formatter:on
             }
 
             @Override
@@ -130,6 +117,16 @@ public class HostColumn extends FinderColumn<Host> {
             @Override
             public String getTooltip() {
                 return item.getStatusText();
+            }
+
+            @Override
+            public Element getIcon() {
+                SpanElement icon = null;
+                if (item.isDomainController()) {
+                    icon = Browser.getDocument().createSpanElement();
+                    icon.setClassName(fontAwesome("star"));
+                }
+                return icon;
             }
 
             @Override

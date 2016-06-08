@@ -22,7 +22,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.inject.Inject;
 
-import com.google.common.collect.FluentIterable;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
@@ -35,10 +34,10 @@ import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mvp.ConfigurationSubsystemPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.PatternFlyView;
-import org.jboss.hal.core.mvp.ConfigurationSubsystemPresenter;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
@@ -59,6 +58,7 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_SESSION_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.SERVER_ADDRESS;
@@ -161,10 +161,9 @@ public class MailSessionPresenter
                 .param(CHILD_TYPE, MailSession.SERVER)
                 .build();
         dispatcher.execute(serverNamesOp, serversResult -> {
-            //noinspection Guava
-            Set<String> existingServers = FluentIterable.from(serversResult.asList())
-                    .transform(node -> node.asString().toUpperCase())
-                    .toSet();
+            Set<String> existingServers = serversResult.asList().stream()
+                    .map(node -> node.asString().toUpperCase())
+                    .collect(toSet());
             availableServers.removeAll(existingServers);
 
             if (availableServers.isEmpty()) {

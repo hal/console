@@ -21,7 +21,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.collect.Lists;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
@@ -60,6 +59,7 @@ import org.jboss.hal.spi.Message.Level;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
@@ -126,10 +126,10 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                     .param(CHILD_TYPE, XA_DATA_SOURCE).build();
             dispatcher.execute(new Composite(dataSourceOperation, xaDataSourceOperation), (CompositeResult result) -> {
                 List<DataSource> combined = new ArrayList<>();
-                combined.addAll(Lists.transform(result.step(0).get(RESULT).asPropertyList(),
-                        property -> new DataSource(property, false)));
-                combined.addAll(Lists.transform(result.step(1).get(RESULT).asPropertyList(),
-                        property -> new DataSource(property, true)));
+                combined.addAll(result.step(0).get(RESULT).asPropertyList().stream()
+                        .map(property -> new DataSource(property, false)).collect(toList()));
+                combined.addAll(result.step(1).get(RESULT).asPropertyList().stream()
+                        .map(property -> new DataSource(property, true)).collect(toList()));
                 callback.onSuccess(combined);
             });
         });
@@ -236,8 +236,8 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, dataSourceAddress)
                     .param(CHILD_TYPE, xa ? XA_DATA_SOURCE : DATA_SOURCE).build();
             dispatcher.executeInFunction(control, operation, result -> {
-                List<DataSource> dataSources = Lists.transform(result.asPropertyList(),
-                        property -> new DataSource(property, xa));
+                List<DataSource> dataSources = result.asPropertyList().stream()
+                        .map(property -> new DataSource(property, xa)).collect(toList());
                 control.getContext().set(DATASOURCES, dataSources);
                 control.proceed();
             });
