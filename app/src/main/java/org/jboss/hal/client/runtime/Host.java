@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import com.google.common.base.Joiner;
@@ -25,6 +26,9 @@ import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.resources.IdBuilder;
 
 import static org.jboss.hal.client.runtime.RunningMode.ADMIN_ONLY;
+import static org.jboss.hal.client.runtime.SuspendState.PRE_SUSPEND;
+import static org.jboss.hal.client.runtime.SuspendState.SUSPENDED;
+import static org.jboss.hal.client.runtime.SuspendState.SUSPENDING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST_STATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNNING_MODE;
@@ -71,7 +75,8 @@ public class Host extends NamedNode {
     }
 
     public boolean isRunning() {
-        return getHostState() == RunningState.RUNNING && getSuspendState() == SuspendState.RUNNING;
+        return getHostState() == RunningState.RUNNING &&
+                !EnumSet.of(PRE_SUSPEND, SUSPENDING, SUSPENDED).contains(getSuspendState());
     }
 
     public String getStatusText() {

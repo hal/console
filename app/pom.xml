@@ -33,6 +33,11 @@
 
     <properties>
         <gulp-task>prod</gulp-task>
+        <gwt.draftCompile>false</gwt.draftCompile>
+        <gwt.failOnError>true</gwt.failOnError>
+        <gwt.logLevel>INFO</gwt.logLevel>
+        <gwt.optimize>9</gwt.optimize>
+        <gwt.style>OBFUSCATED</gwt.style>
     </properties>
 
     <dependencies>
@@ -252,11 +257,14 @@
                         <devmodeArg>hal/dev.html</devmodeArg>
                         <devmodeArg>-incremental</devmodeArg>
                     </devmodeArgs>
-                    <draftCompile>true</draftCompile>
-                    <logLevel>INFO</logLevel>
+                    <draftCompile>${gwt.draftCompile}</draftCompile>
+                    <failOnError>${gwt.failOnError}</failOnError>
+                    <logLevel>${gwt.logLevel}</logLevel>
                     <moduleName>${gwt.module}</moduleName>
                     <moduleShortName>${gwt.shortName}</moduleShortName>
+                    <optimize>${gwt.optimize}</optimize>
                     <sourceLevel>1.8</sourceLevel>
+                    <style>${gwt.style}</style>
                 </configuration>
             </plugin>
         </plugins>
@@ -272,6 +280,11 @@
             <id>dev</id>
             <properties>
                 <gulp-task>dev</gulp-task>
+                <gwt.draftCompile>true</gwt.draftCompile>
+                <gwt.failOnError>false</gwt.failOnError>
+                <gwt.logLevel>INFO</gwt.logLevel>
+                <gwt.optimize>0</gwt.optimize>
+                <gwt.style>PRETTY</gwt.style>
             </properties>
             <build>
                 <plugins>
