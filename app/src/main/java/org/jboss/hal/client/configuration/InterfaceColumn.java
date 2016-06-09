@@ -18,7 +18,6 @@ package org.jboss.hal.client.configuration;
 import java.util.List;
 import javax.inject.Inject;
 
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -31,8 +30,9 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Names;
-import org.jboss.hal.spi.AsyncColumn;
+import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
@@ -40,7 +40,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 
-@AsyncColumn(value = ModelDescriptionConstants.INTERFACE)
+@Column(ModelDescriptionConstants.INTERFACE)
 @Requires(InterfacePresenter.ROOT_ADDRESS)
 public class InterfaceColumn extends FinderColumn<Property> {
 

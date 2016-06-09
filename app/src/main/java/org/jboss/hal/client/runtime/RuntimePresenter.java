@@ -23,10 +23,9 @@ import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.finder.HasFinder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.FinderPresenter;
-import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.FinderView;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -42,7 +41,7 @@ public class RuntimePresenter extends FinderPresenter<RuntimePresenter.MyView, R
     @NameToken(NameTokens.RUNTIME)
     public interface MyProxy extends ProxyPlace<RuntimePresenter> {}
 
-    public interface MyView extends PatternFlyView, HasFinder {}
+    public interface MyView extends FinderView {}
     // @formatter:on
 
 

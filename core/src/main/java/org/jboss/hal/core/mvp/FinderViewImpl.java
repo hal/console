@@ -16,12 +16,11 @@
 package org.jboss.hal.core.mvp;
 
 import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.finder.HasFinder;
 
 /**
  * @author Harald Pehl
  */
-public class FinderViewImpl extends PatternFlyViewImpl implements HasFinder {
+public class FinderViewImpl extends PatternFlyViewImpl implements FinderView {
 
     @Override
     public void setFinder(final Finder finder) {

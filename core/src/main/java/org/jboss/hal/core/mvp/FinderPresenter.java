@@ -24,7 +24,6 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderPath;
-import org.jboss.hal.core.finder.HasFinder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
@@ -33,7 +32,7 @@ import org.jboss.hal.spi.MessageEvent;
 /**
  * @author Harald Pehl
  */
-public abstract class FinderPresenter<V extends PatternFlyView, Proxy_ extends ProxyPlace<?>>
+public abstract class FinderPresenter<V extends FinderView, Proxy_ extends ProxyPlace<?>>
         extends PatternFlyPresenter<V, Proxy_>
         implements TopLevelCategory {
 
@@ -51,7 +50,7 @@ public abstract class FinderPresenter<V extends PatternFlyView, Proxy_ extends P
     @Override
     protected void onBind() {
         super.onBind();
-        if (getView() instanceof HasFinder) { ((HasFinder) getView()).setFinder(finder); }
+        getView().setFinder(finder);
     }
 
     @Override

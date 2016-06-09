@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.finder;
+package org.jboss.hal.core.mvp;
+
+import org.jboss.hal.core.finder.Finder;
 
 /**
- * Marker interface for views which have a finder as UI element.
- *
  * @author Harald Pehl
  */
-public interface HasFinder {
+public interface FinderView extends PatternFlyView {
 
     void setFinder(Finder Finder);
 }

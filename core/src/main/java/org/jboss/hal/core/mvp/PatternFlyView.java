@@ -28,8 +28,8 @@ public interface PatternFlyView extends HalView {
      * This method should be called <em>after</em> the view's elements are attached to the DOM. Typically this method
      * is called from {@link PatternFlyPresenter#onReveal()}.
      * <p>
-     * Please do <em>not</em> use {@link ViewImpl#onAttach()} to initialize Patternfly components. This works for
-     * widgets only, but not for elements!
+     * Do <em>not</em> use {@link ViewImpl#onAttach()} to initialize PatternFly components. This works for widgets
+     * only, but not for elements!
      */
     void attach();
 }

@@ -26,10 +26,9 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.finder.HasFinder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.FinderPresenter;
-import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.FinderView;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -46,7 +45,7 @@ public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyV
     @NameToken(NameTokens.DEPLOYMENTS)
     public interface MyProxy extends ProxyPlace<DeploymentPresenter> {}
 
-    public interface MyView extends PatternFlyView, HasFinder {}
+    public interface MyView extends FinderView {}
     // @formatter:on
 
 
