@@ -71,6 +71,7 @@ public interface CSS {
     String dataTable = "datatable";
     String defaultValue = "default-value";
     String disabled = "disabled";
+    String disabledCircleO = "disabled-circle-o";
     String dropdown = "dropdown";
     String dropdownKebabPf = "dropdown-kebab-pf";
     String dropdownMenu = "dropdown-menu";
@@ -101,6 +102,8 @@ public interface CSS {
     String formLinkLabel = "form-link-label";
     String formLinks = "form-links";
     String formSection = "form-section";
+
+    String grey = "grey";
 
     String hasError = "has-error";
     String hasFeedback = "has-feedback";
@@ -210,6 +213,7 @@ public interface CSS {
     String separator = "separator";
     String spinner = "spinner";
     String srOnly = "sr-only";
+    String stopCircleO = "stop-circle-o";
     String subtitle = "subtitle";
 
     String tabContent = "tab-content";

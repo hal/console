@@ -20,6 +20,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -43,7 +44,7 @@ class DataSourcePreview extends PreviewContent {
         previewBuilder().div();
         if (enabled) {
             previewBuilder().css(alert, alertSuccess)
-                    .span().css(pfIcon("ok")).end()
+                    .span().css(Icons.OK).end()
                     .span().innerHtml(resources.messages().resourceEnabled(type, dataSource.getName())).end()
                     .span().textContent(" ").end()
                     .a().css(clickable, alertLink).on(click, event -> column.disable(dataSource))
@@ -51,7 +52,7 @@ class DataSourcePreview extends PreviewContent {
 
         } else {
             previewBuilder().css(alert, alertInfo)
-                    .span().css(pfIcon("info")).end()
+                    .span().css(Icons.DISABLED).end()
                     .span().innerHtml(resources.messages().resourceDisabled(type, dataSource.getName())).end()
                     .span().textContent(" ").end()
                     .a().css(clickable, alertLink).on(click, event -> column.enable(dataSource))

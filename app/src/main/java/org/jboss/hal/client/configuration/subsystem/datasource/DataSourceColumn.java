@@ -49,13 +49,13 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.Message.Level;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
@@ -158,8 +158,8 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             }
 
             @Override
-            public Level getMarker() {
-                return dataSource.isEnabled() ? Level.SUCCESS : Level.INFO;
+            public Element getIcon() {
+                return dataSource.isEnabled() ? Icons.ok() : Icons.disabled();
             }
 
             @Override

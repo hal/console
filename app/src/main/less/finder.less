@@ -52,7 +52,7 @@
       }
 
       h1 {
-        flex: 1 0 auto;
+        flex: 1 1 auto;
         font-size: 13px;
         font-weight: 700;
         line-height: 1.67;
@@ -109,22 +109,6 @@
 
         &.active {
           background-color: @active-item-color;
-        }
-
-        &.error-marker, &.info-marker, &.success-marker, &.warning-marker {
-          border-left: 3px solid;
-        }
-        &.error-marker {
-          border-left-color: @brand-danger;
-        }
-        &.info-marker {
-          border-left-color: #8b8d8f;
-        }
-        &.success-marker {
-          border-left-color: @brand-success;
-        }
-        &.warning-marker {
-          border-left-color: @brand-warning;
         }
 
         &.with-progress {

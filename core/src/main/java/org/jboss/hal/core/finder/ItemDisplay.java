@@ -22,7 +22,6 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.HasTitle;
 import org.jboss.hal.resources.IdBuilder;
-import org.jboss.hal.spi.Message;
 
 /**
  * Controls the layout of a finder item. For simple items you only need to implement the {@link #getTitle()} method.
@@ -49,15 +48,6 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
      */
     default String getFilterData() {
         return getTitle();
-    }
-
-    /**
-     * Whether the item should be decorated with a colorful marker as left border.
-     *
-     * @return {@code null} by default
-     */
-    default Message.Level getMarker() {
-        return null;
     }
 
     /**

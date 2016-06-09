@@ -22,6 +22,7 @@ import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
+import elemental.dom.Element;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
@@ -39,6 +40,7 @@ import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -46,7 +48,6 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.Message.Level;
 import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.stream.Collectors.toList;
@@ -111,11 +112,11 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
             }
 
             @Override
-            public Level getMarker() {
+            public Element getIcon() {
                 if (item.getStatus() == Status.FAILED) {
-                    return Level.ERROR;
+                    return Icons.error();
                 } else {
-                    return item.isEnabled() ? Level.SUCCESS : Level.INFO;
+                    return item.isEnabled() ? Icons.ok() : Icons.disabled();
                 }
             }
 

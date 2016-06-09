@@ -23,9 +23,8 @@ import javax.inject.Inject;
 import com.google.common.base.Joiner;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.client.Browser;
 import elemental.dom.Element;
-import elemental.html.SpanElement;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.core.HostSelectionEvent;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -37,9 +36,9 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Column;
-import org.jboss.hal.spi.Message.Level;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.toList;
@@ -50,7 +49,8 @@ import static org.jboss.hal.client.runtime.SuspendState.PRE_SUSPEND;
 import static org.jboss.hal.client.runtime.SuspendState.SUSPENDED;
 import static org.jboss.hal.client.runtime.SuspendState.SUSPENDING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.itemText;
+import static org.jboss.hal.resources.CSS.subtitle;
 
 /**
  * @author Harald Pehl
@@ -97,21 +97,20 @@ public class HostColumn extends FinderColumn<Host> {
             }
 
             @Override
-            public String getFilterData() {
-                return Joiner.on(' ').join(item.getName(), item.isDomainController() ? "dc" : "hc");
+            public Element asElement() {
+                if (item.isDomainController()) {
+                    return new Elements.Builder()
+                            .span().css(itemText)
+                            .span().textContent(item.getName()).end()
+                            .start("small").css(subtitle).textContent(Names.DOMAIN_CONTROLLER).end()
+                            .end().build();
+                }
+                return null;
             }
 
             @Override
-            public Level getMarker() {
-                if (item.getRunningMode() == ADMIN_ONLY) {
-                    return Level.INFO;
-                } else if (EnumSet.of(PRE_SUSPEND, SUSPENDING, SUSPENDED).contains(item.getSuspendState()) ||
-                        EnumSet.of(RESTART_REQUIRED, RELOAD_REQUIRED).contains(item.getHostState())) {
-                    return Level.WARNING;
-                } else if (item.isRunning()) {
-                    return Level.SUCCESS;
-                }
-                return Level.ERROR;
+            public String getFilterData() {
+                return Joiner.on(' ').join(item.getName(), item.isDomainController() ? "dc" : "hc");
             }
 
             @Override
@@ -121,12 +120,15 @@ public class HostColumn extends FinderColumn<Host> {
 
             @Override
             public Element getIcon() {
-                SpanElement icon = null;
-                if (item.isDomainController()) {
-                    icon = Browser.getDocument().createSpanElement();
-                    icon.setClassName(fontAwesome("star"));
+                if (item.getRunningMode() == ADMIN_ONLY) {
+                    return Icons.disabled();
+                } else if (EnumSet.of(PRE_SUSPEND, SUSPENDING, SUSPENDED).contains(item.getSuspendState()) ||
+                        EnumSet.of(RESTART_REQUIRED, RELOAD_REQUIRED).contains(item.getHostState())) {
+                    return Icons.warning();
+                } else if (item.isRunning()) {
+                    return Icons.ok();
                 }
-                return icon;
+                return Icons.error();
             }
 
             @Override

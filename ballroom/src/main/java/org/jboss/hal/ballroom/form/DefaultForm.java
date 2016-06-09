@@ -42,6 +42,7 @@ import org.jboss.gwt.elemento.core.LazyElement;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Messages;
 
@@ -194,7 +195,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         // @formatter:off
         Elements.Builder errorPanelBuilder = new Elements.Builder()
             .div().css(alert, alertDanger).rememberAs("errorPanel")
-                .span().css(pfIcon(errorCircleO)).end()
+                .span().css(Icons.ERROR).end()
                 .span().rememberAs(ERROR_MESSAGE).end()
                 .ul().rememberAs(ERROR_MESSAGES).end()
             .end();
