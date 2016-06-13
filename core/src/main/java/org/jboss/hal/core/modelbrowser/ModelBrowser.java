@@ -134,7 +134,7 @@ public class ModelBrowser implements HasElements {
 
         @Override
         public void onError(final Throwable error) {
-            MessageEvent.fire(eventBus, Message.error(resources.constants().metadataError(), error.getMessage()));
+            MessageEvent.fire(eventBus, Message.error(resources.messages().metadataError(), error.getMessage()));
         }
     }
 
@@ -403,7 +403,7 @@ public class ModelBrowser implements HasElements {
     void add(final Node<Context> parent, final List<String> children) {
         if (parent.data.hasSingletons()) {
             if (parent.data.getSingletons().size() == children.size()) {
-                MessageEvent.fire(eventBus, Message.warning(resources.constants().allSingletonsExist()));
+                MessageEvent.fire(eventBus, Message.warning(resources.messages().allSingletonsExist()));
 
             } else if (parent.data.getSingletons().size() - children.size() == 1) {
                 // no need to show a wizard - find the missing singleton
@@ -557,8 +557,8 @@ public class ModelBrowser implements HasElements {
 
                 (operation, failure) -> {
                     emptyTree();
-                    MessageEvent.fire(eventBus, Message.error(resources.constants().unknownResource(),
-                            resources.messages().unknownResource(root.toString(), failure)));
+                    MessageEvent.fire(eventBus, Message.error(resources.messages().unknownResource(),
+                            resources.messages().unknownResourceDetails(root.toString(), failure)));
 
                     Browser.getWindow().setOnresize(event -> adjustHeight());
                     adjustHeight();
@@ -566,8 +566,8 @@ public class ModelBrowser implements HasElements {
 
                 (operation, exception) -> {
                     emptyTree();
-                    MessageEvent.fire(eventBus, Message.error(resources.constants().unknownResource(),
-                            resources.messages().unknownResource(root.toString(), exception.getMessage())));
+                    MessageEvent.fire(eventBus, Message.error(resources.messages().unknownResource(),
+                            resources.messages().unknownResourceDetails(root.toString(), exception.getMessage())));
 
                     Browser.getWindow().setOnresize(event -> adjustHeight());
                     adjustHeight();

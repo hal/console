@@ -300,12 +300,12 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             @Override
             public void onFailure(final FunctionContext context) {
                 MessageEvent.fire(eventBus,
-                        Message.error(resources.constants().testConnectionError(), context.getErrorMessage()));
+                        Message.error(resources.messages().testConnectionError(), context.getErrorMessage()));
             }
 
             @Override
             public void onSuccess(final FunctionContext context) {
-                MessageEvent.fire(eventBus, Message.success(resources.constants().testConnectionSuccess()));
+                MessageEvent.fire(eventBus, Message.success(resources.messages().testConnectionSuccess()));
             }
         };
 

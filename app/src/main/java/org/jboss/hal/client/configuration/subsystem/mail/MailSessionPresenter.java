@@ -167,7 +167,7 @@ public class MailSessionPresenter
             availableServers.removeAll(existingServers);
 
             if (availableServers.isEmpty()) {
-                MessageEvent.fire(getEventBus(), Message.error(resources.constants().allMailServersExist()));
+                MessageEvent.fire(getEventBus(), Message.error(resources.messages().allMailServersExist()));
 
             } else {
                 FormItem<String> serverTypeItem;

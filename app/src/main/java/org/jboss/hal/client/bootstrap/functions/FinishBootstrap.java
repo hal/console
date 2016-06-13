@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.bootstrap.functions;
 
+import javax.inject.Inject;
+
 import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -23,8 +25,6 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-
-import javax.inject.Inject;
 
 /**
  * @author Harald Pehl
@@ -50,7 +50,7 @@ public class FinishBootstrap implements BootstrapFunction {
         GWT.setUncaughtExceptionHandler(e -> {
             logger.error("Uncaught exception: {}", e.getMessage()); //NON-NLS
             placeManager.unlock();
-            eventBus.fireEvent(new MessageEvent(Message.error(resources.constants().unknownError(), e.getMessage())));
+            eventBus.fireEvent(new MessageEvent(Message.error(resources.messages().unknownError(), e.getMessage())));
         });
         control.proceed();
     }

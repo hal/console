@@ -410,7 +410,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                             finder.selectColumn(previousColumn.getId());
                             FinderRow selectedRow = previousColumn.selectedRow();
                             if (selectedRow != null) {
-                                selectedRow.showPreview();
+                                selectedRow.updatePreview();
                             }
                             finder.updateContext();
                             finder.updateHistory();
@@ -441,7 +441,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                                         if (column.activeElement() == null && column.hasVisibleElements()) {
                                             Element firstElement = column.nextVisibleElement(null);
                                             column.markSelected(firstElement.getId());
-                                            column.row(firstElement).showPreview();
+                                            column.row(firstElement).updatePreview();
                                         }
                                         finder.updateContext();
                                         finder.updateHistory();
@@ -857,6 +857,9 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
     }
 
+    /**
+     * Refreshes and selects and the specified item.
+     */
     public void refresh(String selectItemId) {
         refresh(() -> {
             FinderRow<T> row = rows.get(selectItemId);
@@ -883,6 +886,18 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                 }
             }
         });
+    }
+
+    /**
+     * Refreshes an existing item.
+     */
+    public void refreshItem(String itemId, T item) {
+        FinderRow<T> row = rows.get(itemId);
+        if (row != null) {
+            row.updateItem(item);
+            row.drawItem();
+            row.updatePreview();
+        }
     }
 
     @Override

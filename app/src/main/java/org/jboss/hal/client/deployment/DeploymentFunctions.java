@@ -250,7 +250,7 @@ public class DeploymentFunctions {
                 @Override
                 public void onFailure(final FunctionContext context) {
                     // Should not happen since UploadOrReplace functions proceed also for errors and exceptions!
-                    MessageEvent.fire(eventBus, Message.error(resources.constants().deploymentFailed()));
+                    MessageEvent.fire(eventBus, Message.error(resources.messages().deploymentFailed(files.getLength())));
                 }
 
                 @Override

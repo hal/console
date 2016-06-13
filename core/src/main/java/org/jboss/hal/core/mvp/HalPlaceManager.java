@@ -96,10 +96,10 @@ public class HalPlaceManager extends DefaultPlaceManager {
                 unlock();
                 revealDefaultPlace();
                 if (throwable == null) {
-                    getEventBus().fireEvent(new MessageEvent(Message.error(resources.constants().metadataError())));
+                    getEventBus().fireEvent(new MessageEvent(Message.error(resources.messages().metadataError())));
                 } else {
                     getEventBus().fireEvent(new MessageEvent(
-                            Message.error(resources.constants().metadataError(), throwable.getMessage())));
+                            Message.error(resources.messages().metadataError(), throwable.getMessage())));
                 }
             }
 

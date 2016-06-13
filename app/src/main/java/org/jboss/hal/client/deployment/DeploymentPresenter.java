@@ -58,7 +58,7 @@ public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyV
         }
 
         @Override
-        public void update() {
+        public void update(Object whatever) {
             if (environment.isStandalone()) {
                 Elements.setVisible(Browser.getDocument().getElementById(Ids.DRAG_AND_DROP_DEPLOYMENT),
                         JsHelper.supportsAdvancedUpload());

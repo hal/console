@@ -52,6 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.alert;
 import static org.jboss.hal.resources.CSS.alertInfo;
@@ -269,6 +270,8 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
     private static final Messages MESSAGES = GWT.create(Messages.class);
     private static final Logger logger = LoggerFactory.getLogger(ModelNodeForm.class);
 
+    private final Map<String, ModelNode> attributeMetadata;
+
     private ModelNodeForm(final Builder<T> builder) {
         super(builder.id,
                 builder.stateMachine(),
@@ -307,6 +310,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             properties.addAll(filteredProperties);
             Collections.sort(properties, (p1, p2) -> p1.getName().compareTo(p2.getName()));
         }
+        this.attributeMetadata = properties.stream().collect(toMap(Property::getName, Property::getValue));
 
         int index = 0;
         LabelBuilder labelBuilder = new LabelBuilder();
@@ -365,5 +369,16 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             Elements.removeChildrenFrom(asElement());
             asElement().appendChild(empty);
         }
+    }
+
+    @Override
+    protected Map<String, Object> getChangedValues() {
+        Map<String, Object> writableChanges = new HashMap<>(super.getChangedValues());
+        writableChanges.entrySet().removeIf(entry -> {
+            ModelNode metadata = attributeMetadata.get(entry.getKey());
+            return metadata != null && metadata.hasDefined(ACCESS_TYPE) && READ_ONLY
+                    .equals(metadata.get(ACCESS_TYPE).asString());
+        });
+        return writableChanges;
     }
 }

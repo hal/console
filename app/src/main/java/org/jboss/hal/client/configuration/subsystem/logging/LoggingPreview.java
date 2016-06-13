@@ -38,14 +38,14 @@ import static org.jboss.hal.resources.Names.ROOT_LOGGER;
  *
  * @author Harald Pehl
  */
-public class LoggingPreview extends PreviewContent {
+class LoggingPreview extends PreviewContent {
 
     private final Dispatcher dispatcher;
     private final Operation operation;
     private final PreviewAttributes<ModelNode> attributes;
     private final Element undefined;
 
-    public LoggingPreview(Dispatcher dispatcher, Resources resources,
+    LoggingPreview(Dispatcher dispatcher, Resources resources,
             String header, ExternalTextResource description, Operation operation) {
         super(header, description);
         this.dispatcher = dispatcher;
@@ -75,7 +75,7 @@ public class LoggingPreview extends PreviewContent {
     }
 
     @Override
-    public void update() {
+    public void update(Object whatever) {
         dispatcher.execute(operation,
                 (model) -> {
                     for (Element element : attributes.asElements()) {

@@ -38,14 +38,14 @@ import org.jboss.hal.spi.Column;
 @Column(Ids.DEPLOYMENT_BROWSE_BY_COLUMN)
 public class BrowseByColumn extends StaticItemColumn {
 
-    private static class ContentRepositoryPreview extends PreviewContent {
+    private static class ContentRepositoryPreview extends PreviewContent<StaticItem> {
 
         ContentRepositoryPreview(Resources resources) {
             super(resources.constants().contentRepository(), resources.previews().contentRepository());
         }
 
         @Override
-        public void update() {
+        public void update(StaticItem item) {
             Elements.setVisible(Browser.getDocument().getElementById(Ids.DRAG_AND_DROP_DEPLOYMENT),
                     JsHelper.supportsAdvancedUpload());
         }

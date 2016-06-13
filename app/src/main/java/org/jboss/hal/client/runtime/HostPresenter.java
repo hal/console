@@ -16,12 +16,14 @@
 package org.jboss.hal.client.runtime;
 
 import java.util.List;
+import java.util.Map;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.MbuiPresenter;
@@ -32,10 +34,17 @@ import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -72,19 +81,25 @@ public class HostPresenter extends MbuiPresenter<HostPresenter.MyView, HostPrese
     // @formatter:on
 
 
+    private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
+    private final Resources resources;
 
     @Inject
     public HostPresenter(final EventBus eventBus,
             final HostPresenter.MyView view,
             final HostPresenter.MyProxy proxy,
             final Finder finder,
+            final MetadataRegistry metadataRegistry,
             final StatementContext statementContext,
-            final Dispatcher dispatcher) {
+            final Dispatcher dispatcher,
+            final Resources resources) {
         super(eventBus, view, proxy, finder);
+        this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
+        this.resources = resources;
     }
 
     @Override
@@ -136,5 +151,27 @@ public class HostPresenter extends MbuiPresenter<HostPresenter.MyView, HostPrese
                     getView().updateSocketBindingGroups(asNamedNodes(result.step(4).get(RESULT).asPropertyList()));
                     getView().updateSystemProperties(asNamedNodes(result.step(5).get(RESULT).asPropertyList()));
                 });
+    }
+
+    void saveHost(Form<Host> form, Map<String, Object> changedValues) {
+        AddressTemplate template = AddressTemplate.of(HOST_ADDRESS);
+        if (changedValues.containsKey(NAME)) {
+            String newHost = String.valueOf(changedValues.get(NAME));
+            if (!newHost.equals(form.getModel().getName())) {
+                // If the host name has changed, we need to update the metadata registry:
+                // Copy the metadata of the existing (old) host name, so that also the metadata for the new host name will
+                // be found.
+                Metadata metadata = metadataRegistry.lookup(template);
+                metadataRegistry.add(new ResourceAddress().add(HOST, newHost), metadata);
+            }
+        }
+
+        ResourceAddress address = template.resolve(statementContext);
+        Composite composite = new OperationFactory().fromChangeSet(address, changedValues);
+        dispatcher.execute(composite, (CompositeResult result) -> {
+            reload();
+            MessageEvent.fire(getEventBus(),
+                    Message.success(resources.messages().modifySingleResourceSuccess("Host Configuration"))); //NON-NLS
+        });
     }
 }

@@ -91,7 +91,7 @@ public class ProfileColumn extends FinderColumn<ModelNode> {
                     dispatcher.execute(operation, result -> callback.onSuccess(result.asList()));
                 })
 
-                .onPreview(item -> new PreviewContent(item.asString()))
+                .onPreview(item -> new PreviewContent<>(item.asString()))
 
                 .onBreadcrumbItem((item, context) -> {
                     eventBus.fireEvent(new ProfileSelectionEvent(item.asString()));

@@ -19,5 +19,10 @@ package org.jboss.hal.client.runtime;
  * State as defined by {@code host.host-state}, {@code server.server-state}
  */
 public enum RunningState {
-    STARTING, RUNNING, RESTART_REQUIRED, RELOAD_REQUIRED, UNDEFINED
+    STARTING,
+    RUNNING,
+    RESTART_REQUIRED,
+    RELOAD_REQUIRED,
+    TIMEOUT, // artificial state used for display purpose w/o model counterpart
+    UNDEFINED
 }

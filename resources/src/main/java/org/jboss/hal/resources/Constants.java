@@ -43,8 +43,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String action();
     String add();
     String adminOnly();
-    String allMailServersExist();
-    String allSingletonsExist();
     String assign();
     String assignedContentDesc();
     String attribute();
@@ -72,12 +70,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String data();
     String defaultValue();
     String deploymentAttributes();
-    String deploymentFailed();
     String details();
     String disable();
     String disabled();
-    String dispatcherException();
-    String dispatcherFailed();
     String duplicateMacro();
 
     String edit();
@@ -183,12 +178,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String logout();
 
     String macroEditor();
-    String macroPlaybackError();
-    String macroPlaybackSuccessful();
     String mainAttributes();
     String managementVersion();
     String message();
-    String metadataError();
     String modelBrowser();
 
     String next();
@@ -198,7 +190,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noAttributes();
     String noConfiguredMailServers();
     String noDetails();
-    String noDeploymentsUploaded();
     String noItems();
     String noMacros();
     String noRootLogger();
@@ -220,8 +211,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String productName();
     String productVersion();
 
-    String recordingStarted();
-    String recordingStopped();
     String refresh();
     String releaseName();
     String releaseVersion();
@@ -247,6 +236,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String settings();
     String showAll();
     String start();
+    String starting();
     String startMacro();
     String statements();
     String stopMacro();
@@ -257,8 +247,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String tags();
     String testConnection();
-    String testConnectionError();
-    String testConnectionSuccess();
+    String timeout();
     String timeouts();
     String toggleDropdown();
     String toggleNavigation();
@@ -268,8 +257,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String unassign();
     String unassignedContentDesc();
-    String unknownError();
-    String unknownResource();
     String unknownState();
     String unpin();
 
@@ -279,5 +266,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String xaProperties();
 
     String yes();
+
     //@formatter:on
 }

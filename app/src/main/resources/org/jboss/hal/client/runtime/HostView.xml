@@ -21,7 +21,8 @@
             <metadata address="/{selected.host}">
                 <h1 id="host-configuration-title"/>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <form id="host-configuration-form" title="Host Configuration" auto-save="true" include-runtime="true">
+                <form id="host-configuration-form" title="Host Configuration"
+                      on-save="{{presenter.saveHost(form, changedValues)}}" include-runtime="true">
                     <attributes>
                         <attribute name="name"/>
                         <attribute name="organization"/>

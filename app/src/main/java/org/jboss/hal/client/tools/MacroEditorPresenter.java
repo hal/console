@@ -132,13 +132,13 @@ public class MacroEditorPresenter
                 getView().enableMacro(macro);
                 MessageEvent
                         .fire(getEventBus(),
-                                Message.error(resources.constants().macroPlaybackError(), context.getErrorMessage()));
+                                Message.error(resources.messages().macroPlaybackError(), context.getErrorMessage()));
             }
 
             @Override
             public void onSuccess(final FunctionContext context) {
                 getView().enableMacro(macro);
-                MessageEvent.fire(getEventBus(), Message.success(resources.constants().macroPlaybackSuccessful()));
+                MessageEvent.fire(getEventBus(), Message.success(resources.messages().macroPlaybackSuccessful()));
             }
         };
         getView().disableMacro(macro);

@@ -37,7 +37,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
@@ -68,9 +67,6 @@ import static org.jboss.hal.resources.CSS.withProgress;
 @Column(HOST)
 @Requires(value = "/host=*", recursive = false)
 public class HostColumn extends FinderColumn<Host> {
-
-    private final Resources resources;
-    private HostPreview preview;
 
     @Inject
     public HostColumn(final Finder finder,
@@ -107,7 +103,7 @@ public class HostColumn extends FinderColumn<Host> {
                                 // read the hosts from step 0
                                 Map<String, Host> hostsByName = result.step(0).get(RESULT).asPropertyList().stream()
                                         .map(Host::new)
-                                        .collect(toMap(NamedNode::getName, identity()));
+                                        .collect(toMap(Host::getAddressName, identity()));
 
                                 /*
                                  * read the addresses of the running servers from step 1, the address looks like
@@ -136,18 +132,17 @@ public class HostColumn extends FinderColumn<Host> {
                             });
                 })
 
-                .onItemSelect(host -> eventBus.fireEvent(new HostSelectionEvent(host.getName())))
+                .onItemSelect(host -> eventBus.fireEvent(new HostSelectionEvent(host.getAddressName())))
                 .pinnable()
                 .showCount()
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
         );
-        this.resources = resources;
 
         setItemRenderer(item -> new ItemDisplay<Host>() {
             @Override
             public String getId() {
-                return Host.id(item.getName());
+                return Host.id(item);
             }
 
             @Override
@@ -176,6 +171,8 @@ public class HostColumn extends FinderColumn<Host> {
             public String getTooltip() {
                 if (item.isAdminMode()) {
                     return resources.constants().adminOnly();
+                } else if (item.isStarting()) {
+                    return resources.constants().starting();
                 } else if (item.isSuspending()) {
                     return resources.constants().suspending();
                 } else if (item.needsReload()) {
@@ -184,6 +181,8 @@ public class HostColumn extends FinderColumn<Host> {
                     return resources.constants().needsRestart();
                 } else if (item.isRunning()) {
                     return resources.constants().running();
+                } else if (item.isTimeout()) {
+                    return resources.constants().timeout();
                 } else {
                     return resources.constants().unknownState();
                 }
@@ -191,12 +190,14 @@ public class HostColumn extends FinderColumn<Host> {
 
             @Override
             public Element getIcon() {
-                if (item.isAdminMode()) {
+                if (item.isAdminMode() || item.isStarting()) {
                     return Icons.disabled();
                 } else if (item.isSuspending() || item.needsReload() || item.needsRestart()) {
                     return Icons.warning();
                 } else if (item.isRunning()) {
                     return Icons.ok();
+                } else if (item.isTimeout()) {
+                    return Icons.error();
                 } else {
                     return Icons.error();
                 }
@@ -210,47 +211,66 @@ public class HostColumn extends FinderColumn<Host> {
             @Override
             public List<ItemAction<Host>> actions() {
                 PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(NameTokens.HOST_CONFIGURATION)
-                        .with(HOST, item.getName()).build();
+                        .with(HOST, item.getAddressName()).build();
                 List<ItemAction<Host>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.view(placeRequest));
                 actions.add(new ItemAction<>(resources.constants().reload(),
                         itm -> hostActions.reload(itm,
-                                () -> beforeReloadRestart(itm),
-                                () -> preview.pendingReload(itm),
-                                () -> afterReloadRestart(itm))));
+                                () -> beforeReload(itm),
+                                () -> refreshItem(Host.id(itm), itm),
+                                () -> afterReloadRestart(itm),
+                                () -> onTimeout(itm))));
                 actions.add(new ItemAction<>(resources.constants().restart(),
                         itm -> hostActions.restart(itm,
-                                () -> beforeReloadRestart(itm),
-                                () -> preview.pendingRestart(itm),
-                                () -> afterReloadRestart(itm))));
+                                () -> beforeRestart(itm),
+                                () -> refreshItem(Host.id(itm), itm),
+                                () -> afterReloadRestart(itm),
+                                () -> onTimeout(itm))));
                 // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or :take-snapshot
                 return actions;
             }
         });
 
-        setPreviewCallback(item -> {
-            preview = new HostPreview(this, hostActions, item, resources);
-            return preview;
-        });
+        setPreviewCallback(item -> new HostPreview(this, hostActions, item, resources));
     }
 
-    void beforeReloadRestart(Host host) {
+    void beforeReload(Host host) {
         if (!host.isDomainController()) {
-            Element element = Browser.getDocument().getElementById(Host.id(host.getName()));
-            if (element != null) {
-                element.getClassList().add(withProgress);
-            }
+            startProgress(host);
+        }
+    }
+
+    void beforeRestart(Host host) {
+        if (!host.isDomainController()) {
+            startProgress(host);
         }
     }
 
     void afterReloadRestart(Host host) {
         if (!host.isDomainController()) {
-            Element element = Browser.getDocument().getElementById(Host.id(host.getName()));
-            if (element != null) {
-                element.getClassList().remove(withProgress);
-            }
+            endProgress(host);
         }
-        preview.update();
         refresh(RESTORE_SELECTION);
+    }
+
+    void onTimeout(Host host) {
+        if (!host.isDomainController()) {
+            endProgress(host);
+        }
+        refreshItem(Host.id(host), host);
+    }
+
+    private void startProgress(final Host host) {
+        Element element = Browser.getDocument().getElementById(Host.id(host));
+        if (element != null) {
+            element.getClassList().add(withProgress);
+        }
+    }
+
+    private void endProgress(final Host host) {
+        Element element = Browser.getDocument().getElementById(Host.id(host));
+        if (element != null) {
+            element.getClassList().remove(withProgress);
+        }
     }
 }

@@ -176,7 +176,7 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
 
         } else {
             new MacroOptionsDialog(macros, capabilities, resources, options -> {
-                MessageEvent.fire(getEventBus(), Message.info(resources.constants().recordingStarted()));
+                MessageEvent.fire(getEventBus(), Message.info(resources.messages().recordingStarted()));
                 getEventBus().fireEvent(RecordingEvent.start(options));
                 getView().startRecording();
                 getView().steps(0);
@@ -198,7 +198,7 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
 
     @Override
     public void onMacroFinished(final MacroFinishedEvent event) {
-        MessageEvent.fire(getEventBus(), Message.info(resources.constants().recordingStopped()));
+        MessageEvent.fire(getEventBus(), Message.info(resources.messages().recordingStopped()));
 
         if (event.getOptions().openInEditor()) {
             PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(NameTokens.MACRO_EDITOR)

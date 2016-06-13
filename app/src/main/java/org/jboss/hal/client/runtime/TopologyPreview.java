@@ -16,14 +16,15 @@
 package org.jboss.hal.client.runtime;
 
 import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.resources.Names;
 
 /**
  * @author Harald Pehl
  */
-public class TopologyPreview extends PreviewContent {
+class TopologyPreview extends PreviewContent<StaticItem> {
 
-    public TopologyPreview() {
+    TopologyPreview() {
         super(Names.TOPOLOGY);
         previewBuilder().p().textContent("Bringing back the good old topology overview. Coming soon...").end();
     }

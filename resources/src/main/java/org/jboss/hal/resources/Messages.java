@@ -41,31 +41,33 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     //@formatter:off
     String activeRoles(String roles);
-    String addResourceSuccess(String type, String name);
+    SafeHtml addResourceSuccess(String type, String name);
     String addResourceTitle(String text);
-    String addSingleResourceSuccess(String type);
+    SafeHtml addSingleResourceSuccess(String type);
     SafeHtml adminOnly(String name);
+    SafeHtml allMailServersExist();
+    SafeHtml allSingletonsExist();
 
     String blacklist(String blacklist);
 
     SafeHtml configuredMailServer(String servers);
     String connectedTo(String url);
 
-    String databaseDisabled(String name);
-    String databaseEnabled(String name);
-    String deploymentAdded(@PluralCount int count);
-    String deploymentDisabled(String name);
-    String deploymentEnabled(String name);
-    String deploymentEnabledError(String name);
-    String deploymentFailed(@PluralCount int count);
-    String deploymentReplaced(@PluralCount int count);
+    SafeHtml databaseDisabled(String name);
+    SafeHtml databaseEnabled(String name);
+    SafeHtml deploymentAdded(@PluralCount int count);
+    SafeHtml deploymentDisabled(String name);
+    SafeHtml deploymentEnabled(String name);
+    SafeHtml deploymentEnabledError(String name);
+    SafeHtml deploymentFailed(@PluralCount int count);
+    SafeHtml deploymentReplaced(@PluralCount int count);
+    SafeHtml dispatcherException();
+    SafeHtml dispatcherFailed();
     String duplicateResource(String type);
 
     SafeHtml emptyModelNodeForm();
     SafeHtml endpointError(String url);
     SafeHtml endpointOk(String url);
-
-    SafeHtml goodbyeMessage();
 
     String homepagePatchingSubHeader(String name);
     String homepagePatchingStandaloneStepIntro(String name);
@@ -78,47 +80,57 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml listHint();
 
+    SafeHtml macroPlaybackError();
+    SafeHtml macroPlaybackSuccessful();
     String messages(@PluralCount int count);
-    String modifyResourceSuccess(String type, String name);
-    String modifySingleResourceSuccess(String type);
+    SafeHtml metadataError();
+    SafeHtml modifyResourceSuccess(String type, String name);
+    SafeHtml modifySingleResourceSuccess(String type);
 
     SafeHtml needsReload(String type, String name);
     SafeHtml needsRestart(String type, String name);
+    SafeHtml noDeploymentsUploaded();
     SafeHtml noMacrosDescription(String startMacro);
 
-    String pageNotFound(String invalidHistoryToken);
+    SafeHtml pageNotFound(String invalidHistoryToken);
     String patternMismatch(String pattern);
     SafeHtml propertiesHint();
 
     String recordedOperations(@PluralCount int count);
+    SafeHtml recordingStarted();
+    SafeHtml recordingStopped();
     String reload(String name);
-    SafeHtml reloadDomainControllerError();
-    String reloadHostError(String name);
+    SafeHtml reloadDomainControllerTimeout();
     SafeHtml reloadHostPending();
     SafeHtml reloadHostQuestion(String name);
-    String reloadHostSuccess(String name);
+    SafeHtml reloadHostSuccess(String name);
     String removeResourceConfirmationTitle(String name);
     SafeHtml removeResourceConfirmationQuestion(String name);
-    String removeResourceSuccess(String type, String name);
+    SafeHtml removeResourceSuccess(String type, String name);
     SafeHtml requiredHelp();
     SafeHtml requiredMarker();
-    String resourceNotFound(String type, String name);
+    SafeHtml resourceNotFound(String type, String name);
     SafeHtml resourceDisabled(String type, String name);
     SafeHtml resourceEnabled(String type, String name);
     String restart(String name);
-    SafeHtml restartDomainControllerError();
+    SafeHtml restartDomainControllerTimeout();
     SafeHtml restartDomainControllerQuestion(String name);
-    String restartHostControllerError();
     SafeHtml restartHostPending();
     SafeHtml restartHostControllerQuestion(String name);
-    String restartHostSuccessful(String name);
+    SafeHtml restartHostSuccessful(String name);
     SafeHtml running(String type, String name);
 
     SafeHtml suspending(String type, String name);
 
+    SafeHtml testConnectionError();
+    SafeHtml testConnectionSuccess();
+    SafeHtml timeout(String type, String name);
+
     String updateAvailable(String current, String update);
     String unit(String unit);
-    String unknownResource(String address, String reason);
+    SafeHtml unknownError();
+    SafeHtml unknownResource();
+    String unknownResourceDetails(String address, String reason);
     SafeHtml unknownState(String type, String name);
     //@formatter:on
 }

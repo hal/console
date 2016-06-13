@@ -134,12 +134,12 @@ public class Dispatcher implements RecordingHandler {
 
         this.failedCallback = (operation, failure) -> {
             logger.error("Dispatcher failed: {}, operation: {}", failure, operation);
-            eventBus.fireEvent(new MessageEvent(Message.error(resources.constants().dispatcherFailed(), failure)));
+            eventBus.fireEvent(new MessageEvent(Message.error(resources.messages().dispatcherFailed(), failure)));
         };
         this.exceptionCallback = (operation, t) -> {
             logger.error("Dispatcher exception: {}, operation {}", t.getMessage(), operation);
             eventBus.fireEvent(
-                    new MessageEvent(Message.error(resources.constants().dispatcherException(), t.getMessage())));
+                    new MessageEvent(Message.error(resources.messages().dispatcherException(), t.getMessage())));
         };
     }
 

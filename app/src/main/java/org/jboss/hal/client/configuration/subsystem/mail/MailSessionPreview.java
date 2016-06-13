@@ -27,7 +27,7 @@ import org.jboss.hal.resources.Resources;
 /**
  * @author Claudio Miranda
  */
-class MailSessionPreview extends PreviewContent {
+class MailSessionPreview extends PreviewContent<MailSession> {
 
     MailSessionPreview(final MailSession mailSession, final Resources resources) {
         super(mailSession.getName());

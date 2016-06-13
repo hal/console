@@ -378,11 +378,12 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         this.saveCallback = saveCallback;
     }
 
-    private Map<String, Object> getChangedValues() {
+    protected Map<String, Object> getChangedValues() {
         Map<String, Object> changed = new HashMap<>();
         for (Map.Entry<String, FormItem> entry : formItems.entrySet()) {
-            if (entry.getValue().isModified()) {
-                changed.put(entry.getKey(), entry.getValue().getValue());
+            FormItem formItem = entry.getValue();
+            if (formItem.isModified()) {
+                changed.put(entry.getKey(), formItem.getValue());
             }
         }
         return changed;

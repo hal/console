@@ -24,9 +24,13 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.resources.IdBuilder;
 
+import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static org.jboss.hal.client.runtime.RunningMode.ADMIN_ONLY;
 import static org.jboss.hal.client.runtime.RunningState.RELOAD_REQUIRED;
 import static org.jboss.hal.client.runtime.RunningState.RESTART_REQUIRED;
+import static org.jboss.hal.client.runtime.RunningState.STARTING;
+import static org.jboss.hal.client.runtime.RunningState.TIMEOUT;
 import static org.jboss.hal.client.runtime.SuspendState.PRE_SUSPEND;
 import static org.jboss.hal.client.runtime.SuspendState.SUSPENDED;
 import static org.jboss.hal.client.runtime.SuspendState.SUSPENDING;
@@ -37,24 +41,39 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_STATE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 
 /**
+ * For the host we need to distinguish between the address-name (the name which is part of the host address)
+ * and the model-node-name (the name which is part of the host model node).
+ * When the latter is changed, the former remains unchanged until a host reload was executed.
+ *
  * @author Harald Pehl
  */
 public class Host extends NamedNode {
+
+    static String id(final Host host) {
+        return id(host.getAddressName());
+    }
 
     static String id(final String name) {
         return IdBuilder.build("host", name);
     }
 
+    private final String addressName;
     private final List<String> runningServers;
 
     public Host(final ModelNode node) {
         super(node.get(NAME).asString(), node);
+        this.addressName = node.get(NAME).asString();
         this.runningServers = new ArrayList<>();
     }
 
     public Host(final Property property) {
-        super(property);
+        super(property.getValue().get(NAME).asString(), property.getValue());
+        this.addressName = property.getName();
         this.runningServers = new ArrayList<>();
+    }
+
+    public String getAddressName() {
+        return addressName;
     }
 
     public boolean isDomainController() {
@@ -63,6 +82,10 @@ public class Host extends NamedNode {
 
     public RunningState getHostState() {
         return asEnumValue(this, HOST_STATE, RunningState::valueOf, RunningState.UNDEFINED);
+    }
+
+    public void setHostState(RunningState state) {
+        get(HOST_STATE).set(UPPER_UNDERSCORE.to(LOWER_HYPHEN, state.name()));
     }
 
     /**
@@ -79,6 +102,10 @@ public class Host extends NamedNode {
         return asEnumValue(this, RUNNING_MODE, RunningMode::valueOf, RunningMode.UNDEFINED);
     }
 
+    public boolean isStarting() {
+        return getHostState() == STARTING;
+    }
+
     public boolean isRunning() {
         return getHostState() == RunningState.RUNNING &&
                 !EnumSet.of(PRE_SUSPEND, SUSPENDING, SUSPENDED).contains(getSuspendState());
@@ -90,6 +117,10 @@ public class Host extends NamedNode {
 
     public boolean isSuspending() {
         return EnumSet.of(PRE_SUSPEND, SUSPENDING, SUSPENDED).contains(getSuspendState());
+    }
+
+    public boolean isTimeout() {
+        return getHostState() == TIMEOUT;
     }
 
     public boolean needsRestart() {
@@ -110,5 +141,9 @@ public class Host extends NamedNode {
 
     public List<String> getRunningServers() {
         return runningServers;
+    }
+
+    public String getUuid() {
+        return get("uuid").asString();
     }
 }

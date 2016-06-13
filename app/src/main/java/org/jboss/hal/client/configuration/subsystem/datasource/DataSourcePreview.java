@@ -31,7 +31,7 @@ import static org.jboss.hal.resources.CSS.*;
 /**
  * @author Harald Pehl
  */
-class DataSourcePreview extends PreviewContent {
+class DataSourcePreview extends PreviewContent<DataSource> {
 
     private static final String DATASOURCE = "datasource";
     private static final String XA_DATASOURCE = "XA datasource";

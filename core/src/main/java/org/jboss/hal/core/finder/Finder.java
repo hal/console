@@ -352,10 +352,11 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     void showPreview(PreviewContent preview) {
         Elements.removeChildrenFrom(previewColumn);
         if (preview != null) {
-            for (Element element : preview.asElements()) {
+            //noinspection unchecked
+            Iterable<Element> elements = preview.asElements();
+            for (Element element : elements) {
                 previewColumn.appendChild(element);
             }
-            preview.update();
         }
     }
 

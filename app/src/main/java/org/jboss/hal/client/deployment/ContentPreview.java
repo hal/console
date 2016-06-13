@@ -25,7 +25,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
 /**
  * @author Harald Pehl
  */
-class ContentPreview extends PreviewContent {
+class ContentPreview extends PreviewContent<Content> {
 
     ContentPreview(final Content content, final Resources resources) {
         super(content.getName());

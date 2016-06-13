@@ -213,13 +213,13 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         // TODO Prevent showing two messages at once -> queue multiple messages
         switch (message.getLevel()) {
             case ERROR:
-                logger.error(message.getMessage());
+                logger.error(message.getMessage().asString());
                 break;
             case WARNING:
-                logger.warn(message.getMessage());
+                logger.warn(message.getMessage().asString());
                 break;
             case INFO:
-                logger.info(message.getMessage());
+                logger.info(message.getMessage().asString());
                 break;
         }
         Element body = Browser.getDocument().getBody();

@@ -67,7 +67,7 @@ import static org.jboss.hal.resources.CSS.subtitle;
 @Column(ModelDescriptionConstants.SUBSYSTEM)
 public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
-    private static class ResourceDescriptionPreview extends PreviewContent {
+    private static class ResourceDescriptionPreview extends PreviewContent<SubsystemMetadata> {
 
         ResourceDescriptionPreview(final String header, final Dispatcher dispatcher, final Operation operation) {
             super(header);

@@ -97,8 +97,8 @@ public class IiopPresenter extends MbuiPresenter<IiopPresenter.MyView, IiopPrese
         dispatcher.execute(operation,
                 result -> getView().update(result),
                 (o, failure) -> {
-                    MessageEvent.fire(getEventBus(), Message.error(resources.constants().unknownResource(),
-                            resources.messages().unknownResource(address.toString(), failure)));
+                    MessageEvent.fire(getEventBus(), Message.error(resources.messages().unknownResource(),
+                            resources.messages().unknownResourceDetails(address.toString(), failure)));
                     getView().clear();
                 });
     }

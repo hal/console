@@ -103,7 +103,7 @@ public class TableButtonFactory {
             @Override
             public void onError(final Throwable error) {
                 MessageEvent.fire(eventBus,
-                        Message.error(resources.constants().metadataError(), error.getMessage()));
+                        Message.error(resources.messages().metadataError(), error.getMessage()));
             }
 
             @Override

@@ -57,8 +57,8 @@ import static org.jboss.hal.dmr.dispatch.Dispatcher.NOOP_OPERATION_CALLBACK;
 public class HostActions {
 
     private static final int DIALOG_TIMEOUT = 111;
-    private static final int RELOAD_TIMEOUT = 8; // seconds
-    private static final int RESTART_TIMEOUT = 12; // seconds
+    private static final int RELOAD_TIMEOUT = 10; // seconds
+    private static final int RESTART_TIMEOUT = 15; // seconds
     private static final int SERVER_TIMEOUT = 4; // additional seconds per server
 
     private final EventBus eventBus;
@@ -85,7 +85,7 @@ public class HostActions {
 
     @SuppressWarnings("HardCodedStringLiteral")
     public void reload(final Host host, final ScheduledCommand beforeReload, final ScheduledCommand whileReloading,
-            final ScheduledCommand afterReload) {
+            final ScheduledCommand afterReload, final ScheduledCommand onTimeout) {
         Metadata hostMetadata = metadataRegistry.lookup(AddressTemplate.of("/{selected.host}"));
         ModelNode modelNode = ModelNodeHelper.failSafeGet(hostMetadata.getDescription(),
                 Joiner.on('.').join(OPERATIONS, RELOAD, REQUEST_PROPERTIES));
@@ -108,7 +108,7 @@ public class HostActions {
                             form.save();
                             boolean restartServers = form.getModel().get("restart-servers").asBoolean();
                             Operation operation = new Operation.Builder(RELOAD,
-                                    new ResourceAddress().add(HOST, host.getName()))
+                                    new ResourceAddress().add(HOST, host.getAddressName()))
                                     .param("restart-servers", restartServers)
                                     .build();
 
@@ -118,17 +118,17 @@ public class HostActions {
 
                                 if (host.isDomainController()) {
                                     domainControllerOperation(host, operation, reloadTimeout(host),
-                                            whileReloading, afterReload,
+                                            whileReloading, afterReload, onTimeout,
                                             resources.messages().reload(host.getName()),
                                             resources.messages().reloadHostPending(),
                                             resources.messages().reloadHostSuccess(host.getName()),
-                                            resources.messages().reloadDomainControllerError());
+                                            resources.messages().reloadDomainControllerTimeout());
 
                                 } else {
                                     hostControllerOperation(host, operation, reloadTimeout(host),
-                                            whileReloading, afterReload,
+                                            whileReloading, afterReload, onTimeout,
                                             resources.messages().reloadHostSuccess(host.getName()),
-                                            resources.messages().reloadHostError(host.getName()));
+                                            resources.messages().timeout(HOST, host.getName()));
                                 }
                             }, DIALOG_TIMEOUT);
                             return true;
@@ -144,8 +144,8 @@ public class HostActions {
 
     // ------------------------------------------------------ restart
 
-    public void restart(final Host host, final ScheduledCommand beforeRestart, final ScheduledCommand whileRestarting,
-            final ScheduledCommand afterRestart) {
+    public void restart(final Host host, final ScheduledCommand beforeRestart, final ScheduledCommand whileReloading,
+            final ScheduledCommand afterRestart, final ScheduledCommand onTimeout) {
         SafeHtml question = host.isDomainController()
                 ? resources.messages().restartDomainControllerQuestion(host.getName())
                 : resources.messages().restartHostControllerQuestion(host.getName());
@@ -157,22 +157,23 @@ public class HostActions {
                 if (beforeRestart != null) {
                     beforeRestart.execute();
                 }
-                Operation operation = new Operation.Builder(SHUTDOWN, new ResourceAddress().add(HOST, host.getName()))
+                Operation operation = new Operation.Builder(SHUTDOWN,
+                        new ResourceAddress().add(HOST, host.getAddressName()))
                         .param("restart", true)
                         .build();
                 if (host.isDomainController()) {
                     domainControllerOperation(host, operation, restartTimeout(host),
-                            whileRestarting, afterRestart,
+                            whileReloading, afterRestart, onTimeout,
                             resources.messages().restart(host.getName()),
                             resources.messages().restartHostPending(),
                             resources.messages().restartHostSuccessful(host.getName()),
-                            resources.messages().restartDomainControllerError());
+                            resources.messages().restartDomainControllerTimeout());
 
                 } else {
                     hostControllerOperation(host, operation, restartTimeout(host),
-                            whileRestarting, afterRestart,
+                            whileReloading, afterRestart, onTimeout,
                             resources.messages().restartHostSuccessful(host.getName()),
-                            resources.messages().restartHostControllerError());
+                            resources.messages().timeout(HOST, host.getName()));
                 }
             }, DIALOG_TIMEOUT);
             return true;
@@ -183,18 +184,22 @@ public class HostActions {
     // ------------------------------------------------------ helper methods
 
     private void domainControllerOperation(Host host, Operation operation, int timeout,
-            ScheduledCommand whileOperation, ScheduledCommand afterOperation,
-            String title, SafeHtml pendingMessage, String successMessage, SafeHtml timeoutMessage) {
+            ScheduledCommand whileOperation, ScheduledCommand afterOperation, ScheduledCommand onTimeout,
+            String title, SafeHtml pendingMessage, SafeHtml successMessage, SafeHtml timeoutMessage) {
         BlockingDialog pendingDialog = DialogFactory.longRunning(title, pendingMessage);
         pendingDialog.show();
+
+        // The 'host-state' attribute is not updated during the operation. So we change it manually.
+        host.setHostState(RunningState.STARTING);
 
         dispatcher.execute(operation, NOOP_OPERATION_CALLBACK, NOOP_FAILED_CALLBACK, NOOP_EXCEPTIONAL_CALLBACK);
         new TimeoutHandler(dispatcher, timeout).execute(ping(host), new TimeoutHandler.Callback() {
             @Override
             public void onSuccess() {
-                afterOperation.execute();
+                host.setHostState(RunningState.RUNNING);
                 pendingDialog.close();
                 MessageEvent.fire(eventBus, Message.success(successMessage));
+                afterOperation.execute();
             }
 
             @Override
@@ -204,21 +209,27 @@ public class HostActions {
 
             @Override
             public void onTimeout() {
-                afterOperation.execute();
+                host.setHostState(RunningState.TIMEOUT);
                 pendingDialog.close();
                 DialogFactory.blocking(title, timeoutMessage).show();
+                onTimeout.execute();
             }
         });
     }
 
     private void hostControllerOperation(Host host, Operation operation, int timeout,
-            ScheduledCommand whileOperation, ScheduledCommand afterOperation,
-            String successMessage, String timeoutMessage) {
+            ScheduledCommand whileOperation, ScheduledCommand afterOperation, ScheduledCommand onTimeout,
+            SafeHtml successMessage, SafeHtml timeoutMessage) {
+        // The 'host-state' attribute is not updated during the operation. So we change it manually.
+        host.setHostState(RunningState.STARTING);
+
         dispatcher.execute(operation, NOOP_OPERATION_CALLBACK, NOOP_FAILED_CALLBACK, NOOP_EXCEPTIONAL_CALLBACK);
         new TimeoutHandler(dispatcher, timeout).execute(ping(host), new TimeoutHandler.Callback() {
             @Override
             public void onSuccess() {
-                finish(Message.success(successMessage));
+                host.setHostState(RunningState.RUNNING);
+                MessageEvent.fire(eventBus, Message.success(successMessage));
+                afterOperation.execute();
             }
 
             @Override
@@ -228,12 +239,9 @@ public class HostActions {
 
             @Override
             public void onTimeout() {
-                finish(Message.error(timeoutMessage));
-            }
-
-            private void finish(Message message) {
-                afterOperation.execute();
-                MessageEvent.fire(eventBus, message);
+                host.setHostState(RunningState.TIMEOUT);
+                MessageEvent.fire(eventBus, Message.error(timeoutMessage));
+                onTimeout.execute();
             }
         });
     }
@@ -247,7 +255,8 @@ public class HostActions {
     }
 
     private Operation ping(Host host) {
-        ResourceAddress address = new ResourceAddress().add(HOST, host.getName());
+        ResourceAddress address = new ResourceAddress()
+                .add(HOST, host.getName()); // do not use host.getAddressName() here!
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address).build();
 
         if (host.hasRunningServers()) {

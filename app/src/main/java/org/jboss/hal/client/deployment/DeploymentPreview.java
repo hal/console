@@ -29,7 +29,7 @@ import static org.jboss.hal.resources.Names.DEPLOYMENT;
 /**
  * @author Harald Pehl
  */
-class DeploymentPreview extends PreviewContent {
+class DeploymentPreview extends PreviewContent<Deployment> {
 
     DeploymentPreview(final DeploymentColumn column, final Deployment deployment, final Resources resources) {
         super(deployment.getName());

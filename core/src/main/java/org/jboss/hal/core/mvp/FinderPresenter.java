@@ -65,7 +65,7 @@ public abstract class FinderPresenter<V extends FinderView, Proxy_ extends Proxy
             @Override
             public void onFailure(final Throwable caught) {
                 MessageEvent
-                        .fire(getEventBus(), Message.error(resources.constants().unknownError(), caught.getMessage()));
+                        .fire(getEventBus(), Message.error(resources.messages().unknownError(), caught.getMessage()));
             }
 
             @Override
