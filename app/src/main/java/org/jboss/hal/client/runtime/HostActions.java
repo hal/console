@@ -27,7 +27,6 @@ import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
@@ -62,7 +61,6 @@ public class HostActions {
     private static final int RESTART_TIMEOUT = 12; // seconds
     private static final int SERVER_TIMEOUT = 4; // additional seconds per server
 
-    private final Finder finder;
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
     private final MetadataRegistry metadataRegistry;
@@ -70,13 +68,11 @@ public class HostActions {
     private final Resources resources;
 
     @Inject
-    public HostActions(final Finder finder,
-            final EventBus eventBus,
+    public HostActions(final EventBus eventBus,
             final Dispatcher dispatcher,
             final MetadataRegistry metadataRegistry,
             final Capabilities capabilities,
             final Resources resources) {
-        this.finder = finder;
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
         this.metadataRegistry = metadataRegistry;
