@@ -24,7 +24,6 @@ import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -54,36 +53,20 @@ class HostPreview extends PreviewContent {
                 previewBuilder().span().innerHtml(resources.messages().needsReload(Names.HOST, host.getName())).end()
                         .span().textContent(" ").end()
                         .a().css(clickable, alertLink)
-                        .on(click, event -> hostActions.reload(host, host.isDomainController(),
-                                () -> {
-                                    if (!host.isDomainController()) {
-                                        hostColumn.startProgress(host);
-                                    }
-                                },
-                                () -> {
-                                    if (!host.isDomainController()) {
-                                        hostColumn.endProgress(host);
-                                    }
-                                    hostColumn.refresh(RESTORE_SELECTION);
-                                }))
+                        .on(click, event -> hostActions.reload(host,
+                                () -> hostColumn.beforeReloadRestart(host),
+                                () -> pendingReload(host),
+                                () -> hostColumn.afterReloadRestart(host)))
                         .textContent(resources.constants().reload()).end();
 
             } else if (host.needsRestart()) {
                 previewBuilder().span().innerHtml(resources.messages().needsRestart(Names.HOST, host.getName())).end()
                         .span().textContent(" ").end()
                         .a().css(clickable, alertLink)
-                        .on(click, event -> hostActions.restart(host, host.isDomainController(),
-                                () -> {
-                                    if (!host.isDomainController()) {
-                                        hostColumn.startProgress(host);
-                                    }
-                                },
-                                () -> {
-                                    if (!host.isDomainController()) {
-                                        hostColumn.endProgress(host);
-                                    }
-                                    hostColumn.refresh(RESTORE_SELECTION);
-                                }))
+                        .on(click, event -> hostActions.restart(host,
+                                () -> hostColumn.beforeReloadRestart(host),
+                                () -> pendingRestart(host),
+                                () -> hostColumn.afterReloadRestart(host)))
                         .textContent(resources.constants().restart()).end();
             }
 
@@ -113,5 +96,13 @@ class HostPreview extends PreviewContent {
                 })
                 .end();
         previewBuilder().addAll(attributes);
+    }
+
+    void pendingReload(final Host host) {
+
+    }
+
+    void pendingRestart(final Host host) {
+
     }
 }

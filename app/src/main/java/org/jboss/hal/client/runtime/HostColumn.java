@@ -69,6 +69,9 @@ import static org.jboss.hal.resources.CSS.withProgress;
 @Requires(value = "/host=*", recursive = false)
 public class HostColumn extends FinderColumn<Host> {
 
+    private final Resources resources;
+    private HostPreview preview;
+
     @Inject
     public HostColumn(final Finder finder,
             final Dispatcher dispatcher,
@@ -139,6 +142,7 @@ public class HostColumn extends FinderColumn<Host> {
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
         );
+        this.resources = resources;
 
         setItemRenderer(item -> new ItemDisplay<Host>() {
             @Override
@@ -210,50 +214,43 @@ public class HostColumn extends FinderColumn<Host> {
                 List<ItemAction<Host>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.view(placeRequest));
                 actions.add(new ItemAction<>(resources.constants().reload(),
-                        itm -> hostActions.reload(itm, item.isDomainController(),
-                                () -> {
-                                    if (!itm.isDomainController()) {
-                                        startProgress(itm);
-                                    }
-                                },
-                                () -> {
-                                    if (!itm.isDomainController()) {
-                                        endProgress(itm);
-                                    }
-                                    refresh(RESTORE_SELECTION);
-                                })));
+                        itm -> hostActions.reload(itm,
+                                () -> beforeReloadRestart(itm),
+                                () -> preview.pendingReload(itm),
+                                () -> afterReloadRestart(itm))));
                 actions.add(new ItemAction<>(resources.constants().restart(),
-                        itm -> hostActions.restart(itm, item.isDomainController(),
-                                () -> {
-                                    if (!itm.isDomainController()) {
-                                        startProgress(itm);
-                                    }
-                                },
-                                () -> {
-                                    if (!itm.isDomainController()) {
-                                        endProgress(itm);
-                                    }
-                                    refresh(RESTORE_SELECTION);
-                                })));
+                        itm -> hostActions.restart(itm,
+                                () -> beforeReloadRestart(itm),
+                                () -> preview.pendingRestart(itm),
+                                () -> afterReloadRestart(itm))));
                 // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or :take-snapshot
                 return actions;
             }
         });
 
-        setPreviewCallback(item -> new HostPreview(this, hostActions, item, resources));
+        setPreviewCallback(item -> {
+            preview = new HostPreview(this, hostActions, item, resources);
+            return preview;
+        });
     }
 
-    void startProgress(Host host) {
-        Element element = Browser.getDocument().getElementById(Host.id(host.getName()));
-        if (element != null) {
-            element.getClassList().add(withProgress);
+    void beforeReloadRestart(Host host) {
+        if (!host.isDomainController()) {
+            Element element = Browser.getDocument().getElementById(Host.id(host.getName()));
+            if (element != null) {
+                element.getClassList().add(withProgress);
+            }
         }
     }
 
-    void endProgress(Host host) {
-        Element element = Browser.getDocument().getElementById(Host.id(host.getName()));
-        if (element != null) {
-            element.getClassList().remove(withProgress);
+    void afterReloadRestart(Host host) {
+        if (!host.isDomainController()) {
+            Element element = Browser.getDocument().getElementById(Host.id(host.getName()));
+            if (element != null) {
+                element.getClassList().remove(withProgress);
+            }
         }
+        preview.update();
+        refresh(RESTORE_SELECTION);
     }
 }

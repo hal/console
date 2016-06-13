@@ -156,7 +156,7 @@ public class PreviewContent implements HasElements, SecurityContextAware {
         return builder.elements();
     }
 
-    public void onReset() {
+    public void update() {
 
     }
 

@@ -45,7 +45,7 @@ public class BrowseByColumn extends StaticItemColumn {
         }
 
         @Override
-        public void onReset() {
+        public void update() {
             Elements.setVisible(Browser.getDocument().getElementById(Ids.DRAG_AND_DROP_DEPLOYMENT),
                     JsHelper.supportsAdvancedUpload());
         }

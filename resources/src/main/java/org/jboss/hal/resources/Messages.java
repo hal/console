@@ -93,8 +93,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String recordedOperations(@PluralCount int count);
     String reload(String name);
     SafeHtml reloadDomainControllerError();
-    SafeHtml reloadDomainControllerPending();
     String reloadHostError(String name);
+    SafeHtml reloadHostPending();
     SafeHtml reloadHostQuestion(String name);
     String reloadHostSuccess(String name);
     String removeResourceConfirmationTitle(String name);
@@ -107,9 +107,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml resourceEnabled(String type, String name);
     String restart(String name);
     SafeHtml restartDomainControllerError();
-    SafeHtml restartDomainControllerPending();
     SafeHtml restartDomainControllerQuestion(String name);
     String restartHostControllerError();
+    SafeHtml restartHostPending();
     SafeHtml restartHostControllerQuestion(String name);
     String restartHostSuccessful(String name);
     SafeHtml running(String type, String name);

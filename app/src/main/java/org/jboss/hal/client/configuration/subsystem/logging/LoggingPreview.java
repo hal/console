@@ -75,7 +75,7 @@ public class LoggingPreview extends PreviewContent {
     }
 
     @Override
-    public void onReset() {
+    public void update() {
         dispatcher.execute(operation,
                 (model) -> {
                     for (Element element : attributes.asElements()) {
