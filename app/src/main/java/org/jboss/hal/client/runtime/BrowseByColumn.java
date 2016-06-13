@@ -39,6 +39,9 @@ public class BrowseByColumn extends StaticItemColumn {
             final Resources resources) {
         super(finder, Ids.DOMAIN_BROWSE_BY_COLUMN, resources.constants().browseBy(),
                 Arrays.asList(
+                        new StaticItem.Builder(Names.TOPOLOGY)
+                                .onPreview(new TopologyPreview())
+                                .build(),
                         new StaticItem.Builder(Names.HOSTS)
                                 .nextColumn(ModelDescriptionConstants.HOST)
                                 .onPreview(new PreviewContent(Names.HOSTS, resources.previews().hosts()))

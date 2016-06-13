@@ -59,11 +59,11 @@ import static org.jboss.hal.resources.UIConstants.ROLE;
 import static org.jboss.hal.resources.UIConstants.TABINDEX;
 
 /**
- * Describes and renders a column in a finder. A column has a unique id, a title, a number of optional column actions
+ * Describes a column in a finder. A column has an unique id, a title, a number of optional column actions
  * and an {@link ItemRenderer} which defines how the items of this column are rendered.
  * <p>
  * The idea is that columns are self-contained and don't need direct references to other columns. References are only
- * provided by id. The {@link ColumnRegistry} will then try to resolve the id against an existing column.
+ * provided by id. The {@link ColumnRegistry} will then resolve the id against an existing column.
  *
  * @param <T> The columns type.
  *

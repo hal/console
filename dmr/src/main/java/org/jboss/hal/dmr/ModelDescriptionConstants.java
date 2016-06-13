@@ -178,6 +178,7 @@ public interface ModelDescriptionConstants {
     String PASSWORD = "password";
     String PATH = "path";
     String PORT = "port";
+    String PROCESS_STATE = "process-state";
     String PROFILE = "profile";
     String PROXIES = "proxies";
 
@@ -201,6 +202,8 @@ public interface ModelDescriptionConstants {
     String REQUEST_PROPERTIES = "request-properties";
     String RECURSIVE = "recursive";
     String RECURSIVE_DEPTH = "recursive-depth";
+    String RELOAD = "reload";
+    String RELOAD_REQUIRED = "reload-required";
     String REPLY_PROPERTIES = "reply-properties";
     String REQUEST_CONTROLLER = "request-controller";
     String REQUIRED = "required";
@@ -208,6 +211,8 @@ public interface ModelDescriptionConstants {
     String RESPONSE = "response";
     String RESOURCE_ADAPTER = "resource-adapter";
     String RESOURCE_ADAPTERS = "resource-adapters";
+    String RESPONSE_HEADERS = "response-headers";
+    String RESTART_REQUIRED = "restart-required";
     String RESULT = "result";
     String ROLES = "HEADER_ROLES";
     String RUNNING_MODE = "running-mode";

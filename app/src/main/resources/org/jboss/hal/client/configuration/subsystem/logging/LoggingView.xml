@@ -551,7 +551,7 @@
                                     name-resolver="{{api.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
-                            <!-- syslog handlers do have not a name attribute,
+                            <!-- syslog handlers do not have a name attribute,
                             so we need to provide a value using NamedNode.getName() -->
                             <column name="name" value="{{row.getName()}}"/>
                             <column name="level"/>
@@ -621,7 +621,7 @@
                                     name-resolver="{{api.selectedRow().getName()}}"/>
                         </actions>
                         <columns>
-                            <!-- custom formatter do have not a name attribute,
+                            <!-- custom formatter do not have a name attribute,
                             so we need to provide a value using NamedNode.getName() -->
                             <column name="name" value="{{row.getName()}}"/>
                         </columns>

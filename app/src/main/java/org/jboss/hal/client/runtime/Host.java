@@ -19,13 +19,14 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-import com.google.common.base.Joiner;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.resources.IdBuilder;
 
 import static org.jboss.hal.client.runtime.RunningMode.ADMIN_ONLY;
+import static org.jboss.hal.client.runtime.RunningState.RELOAD_REQUIRED;
+import static org.jboss.hal.client.runtime.RunningState.RESTART_REQUIRED;
 import static org.jboss.hal.client.runtime.SuspendState.PRE_SUSPEND;
 import static org.jboss.hal.client.runtime.SuspendState.SUSPENDED;
 import static org.jboss.hal.client.runtime.SuspendState.SUSPENDING;
@@ -44,12 +45,16 @@ public class Host extends NamedNode {
         return IdBuilder.build("host", name);
     }
 
+    private final List<String> runningServers;
+
     public Host(final ModelNode node) {
         super(node.get(NAME).asString(), node);
+        this.runningServers = new ArrayList<>();
     }
 
     public Host(final Property property) {
         super(property);
+        this.runningServers = new ArrayList<>();
     }
 
     public boolean isDomainController() {
@@ -79,17 +84,31 @@ public class Host extends NamedNode {
                 !EnumSet.of(PRE_SUSPEND, SUSPENDING, SUSPENDED).contains(getSuspendState());
     }
 
-    public String getStatusText() {
-        List<String> status = new ArrayList<>();
-        if (getRunningMode() == ADMIN_ONLY) {
-            status.add(ADMIN_ONLY.name());
-        }
-        if (getSuspendState() != SuspendState.RUNNING && getSuspendState() != SuspendState.UNDEFINED) {
-            status.add(getSuspendState().name());
-        }
-        if (getHostState() != RunningState.UNDEFINED) {
-            status.add(getHostState().name());
-        }
-        return Joiner.on(", ").join(status);
+    public boolean isAdminMode() {
+        return getRunningMode() == ADMIN_ONLY;
+    }
+
+    public boolean isSuspending() {
+        return EnumSet.of(PRE_SUSPEND, SUSPENDING, SUSPENDED).contains(getSuspendState());
+    }
+
+    public boolean needsRestart() {
+        return getHostState() == RESTART_REQUIRED;
+    }
+
+    public boolean needsReload() {
+        return getHostState() == RELOAD_REQUIRED;
+    }
+
+    public boolean hasRunningServers() {
+        return !runningServers.isEmpty();
+    }
+
+    public void addRunningServer(String server) {
+        runningServers.add(server);
+    }
+
+    public List<String> getRunningServers() {
+        return runningServers;
     }
 }

@@ -35,11 +35,7 @@ import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.ALL_SERVICES;
 import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.NO_SERVICES;
 import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.RESOURCE_SERVICES;
 import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.UNKNOWN;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPRESSIONS_ALLOWED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NILLABLE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.UNIT;
-import static org.jboss.hal.dmr.dispatch.ProcessStateProcessor.RESTART_REQUIRED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * Class to build a help text from an attribute description. Besides the description itself includes information about

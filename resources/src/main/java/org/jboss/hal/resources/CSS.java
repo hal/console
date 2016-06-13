@@ -56,6 +56,7 @@ public interface CSS {
     String btnPrimary = "btn-primary";
 
     String caret = "caret";
+    String centerBlock = "center-block";
     String clearfix = "clearfix";
     String clickable = "clickable";
     String close = "close";
@@ -212,6 +213,7 @@ public interface CSS {
     String selectpicker = "selectpicker";
     String separator = "separator";
     String spinner = "spinner";
+    String spinnerLg = "spinner-lg";
     String srOnly = "sr-only";
     String stopCircleO = "stop-circle-o";
     String subtitle = "subtitle";

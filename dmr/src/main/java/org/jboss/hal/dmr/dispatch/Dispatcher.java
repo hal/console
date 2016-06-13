@@ -97,6 +97,10 @@ public class Dispatcher implements RecordingHandler {
     public static final String HEADER_MANAGEMENT_CLIENT_NAME = "X-Management-Client-Name";
     public static final String HEADER_MANAGEMENT_CLIENT_VALUE = "HAL";
 
+    public static OperationCallback NOOP_OPERATION_CALLBACK = (result) -> {};
+    public static FailedCallback NOOP_FAILED_CALLBACK = (op, failure) -> {};
+    public static ExceptionCallback NOOP_EXCEPTIONAL_CALLBACK = (op, exception) -> {};
+
     private static final String HEADER_ACCEPT = "Accept";
     private static final String HEADER_CONTENT_TYPE = "Content-Type";
 

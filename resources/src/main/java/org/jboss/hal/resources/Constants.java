@@ -42,6 +42,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String accessType();
     String action();
     String add();
+    String adminOnly();
     String allMailServersExist();
     String allSingletonsExist();
     String assign();
@@ -94,6 +95,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String finish();
     String formErrors();
     String formResetDesc();
+
+    String goodbye();
 
     String help();
     String hiddenColumns();
@@ -189,6 +192,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String modelBrowser();
 
     String next();
+    String needsReload();
+    String needsRestart();
     String no();
     String noAttributes();
     String noConfiguredMailServers();
@@ -220,17 +225,20 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String refresh();
     String releaseName();
     String releaseVersion();
+    String reload();
     String remove();
     String removeResource();
     String rename();
     String required();
     String requiredField();
     String reset();
+    String restart();
     String restartAllServices();
     String restartJvm();
     String restartNoServices();
     String restartResourceServices();
     String restricted();
+    String running();
 
     String sameOrigin();
     String save();
@@ -245,6 +253,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String storage();
     String summary();
     String supportsExpressions();
+    String suspending();
 
     String tags();
     String testConnection();
@@ -261,6 +270,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String unassignedContentDesc();
     String unknownError();
     String unknownResource();
+    String unknownState();
     String unpin();
 
     String validation();

@@ -15,19 +15,18 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
+import java.util.List;
+
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 
-import java.util.List;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Heiko Braun
  * @date 1/17/12
  */
 public class DomainProcessStateProcessor implements ProcessStateProcessor {
-
-    private static final String SERVER_GROUPS = "server-groups";
-    private static final String RESPONSE = "response";
 
     @Override
     public boolean accepts(ModelNode response) {
@@ -43,8 +42,8 @@ public class DomainProcessStateProcessor implements ProcessStateProcessor {
             ModelNode serverGroupValue = serverGroup.getValue();
 
             //  server group
-            if (serverGroupValue.hasDefined("host")) {
-                List<Property> hosts = serverGroupValue.get("host").asPropertyList();
+            if (serverGroupValue.hasDefined(HOST)) {
+                List<Property> hosts = serverGroupValue.get(HOST).asPropertyList();
                 for (Property host : hosts) {
                     // host
                     ModelNode hostValue = host.getValue();

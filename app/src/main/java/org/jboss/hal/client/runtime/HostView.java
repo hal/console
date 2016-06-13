@@ -17,6 +17,7 @@ package org.jboss.hal.client.runtime;
 
 import java.util.List;
 
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -68,8 +69,13 @@ public abstract class HostView extends MbuiViewImpl<HostPresenter> implements Ho
         hostConfigurationForm.view(host);
         Element element = Browser.getDocument().getElementById("host-configuration-title");
         if (element != null) {
-            element.setTextContent((host.isDomainController() ? Names.DOMAIN_CONTROLLER : Names.HOST_CONTROLLER) +
-                    " " + host.getName());
+            element.setInnerHTML(new SafeHtmlBuilder()
+                    .appendEscaped(host.isDomainController() ? Names.DOMAIN_CONTROLLER : Names.HOST_CONTROLLER)
+                    .appendEscaped(" ")
+                    .appendHtmlConstant("<code>")
+                    .appendEscaped(host.getName())
+                    .appendHtmlConstant("</code>")
+                    .toSafeHtml().asString());
         }
     }
 

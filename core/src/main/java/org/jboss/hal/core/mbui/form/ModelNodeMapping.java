@@ -145,11 +145,7 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
         for (FormItem formItem : form.getBoundFormItems()) {
             String name = formItem.getName();
 
-            if (model.hasDefined(name) && formItem.isUndefined()) {
-                // TODO Check default value
-                model.remove(name);
-
-            } else if (formItem.isModified()) {
+            if (formItem.isModified()) {
                 ModelNode attributeDescription = findAttribute(name);
                 if (attributeDescription == null) {
                     //noinspection HardCodedStringLiteral

@@ -98,7 +98,7 @@ public class Dialog implements IsElement {
     // ------------------------------------------------------ dialog builder
 
 
-    public static final class Builder {
+    public static class Builder {
 
         // mandatory attributes
         private final String title;
@@ -315,7 +315,7 @@ public class Dialog implements IsElement {
     private final Map<Integer, ButtonElement> buttons;
     private final List<Attachable> attachables;
 
-    private Dialog(final Builder builder) {
+    Dialog(final Builder builder) {
         reset();
         this.closeOnEsc = builder.closeOnEsc;
         this.buttons = new HashMap<>();
@@ -383,7 +383,10 @@ public class Dialog implements IsElement {
         }
     }
 
-    private void close() {
+    /**
+     * Please call this method only if the dialog neither have a close icons, esc handler nor a close button.
+     */
+    void close() {
         $(SELECTOR_ID).modal("hide");
     }
 

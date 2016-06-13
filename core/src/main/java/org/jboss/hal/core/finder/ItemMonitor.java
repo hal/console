@@ -40,7 +40,9 @@ public class ItemMonitor {
     private HandlerRegistration handlerRegistration;
 
     @Inject
-    public ItemMonitor(final EventBus eventBus) {this.eventBus = eventBus;}
+    public ItemMonitor(final EventBus eventBus) {
+        this.eventBus = eventBus;
+    }
 
     /**
      * Wraps and monitors an item action which triggers a place request.
@@ -56,12 +58,16 @@ public class ItemMonitor {
                     handlerRegistration = eventBus.addHandler(NavigationEvent.getType(), navigationEvent -> {
                         if (nameToken.equals(navigationEvent.getRequest().getNameToken())) {
                             handlerRegistration.removeHandler();
-                            Browser.getWindow().clearTimeout(timeoutHandle);
-                            element.getClassList().remove(withProgress);
+                            stopTimeout(element);
                         }
                     });
                 }, PROGRESS_TIMEOUT);
             }
         };
+    }
+
+    private void stopTimeout(Element element) {
+        Browser.getWindow().clearTimeout(timeoutHandle);
+        element.getClassList().remove(withProgress);
     }
 }

@@ -13,29 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.dmr.dispatch;
+package org.jboss.hal.client.runtime;
 
-import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.resources.Names;
 
 /**
- * @author Heiko Braun
- * @date 1/17/12
+ * @author Harald Pehl
  */
-public interface ProcessStateProcessor {
+public class TopologyPreview extends PreviewContent {
 
-    boolean accepts(ModelNode response);
-
-    ProcessState process(ModelNode response);
-
-    ProcessStateProcessor NOOP = new ProcessStateProcessor() {
-        @Override
-        public boolean accepts(final ModelNode response) {
-            return false;
-        }
-
-        @Override
-        public ProcessState process(final ModelNode response) {
-            return ProcessState.EMPTY;
-        }
-    };
+    public TopologyPreview() {
+        super(Names.TOPOLOGY);
+        previewBuilder().p().textContent("Bringing back the good old topology overview. Coming soon...").end();
+    }
 }

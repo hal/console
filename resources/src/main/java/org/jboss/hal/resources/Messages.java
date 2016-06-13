@@ -44,6 +44,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String addResourceSuccess(String type, String name);
     String addResourceTitle(String text);
     String addSingleResourceSuccess(String type);
+    SafeHtml adminOnly(String name);
 
     String blacklist(String blacklist);
 
@@ -64,6 +65,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml endpointError(String url);
     SafeHtml endpointOk(String url);
 
+    SafeHtml goodbyeMessage();
+
     String homepagePatchingSubHeader(String name);
     String homepagePatchingStandaloneStepIntro(String name);
     String homepagePatchingDomainStepIntro(String name);
@@ -79,6 +82,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String modifyResourceSuccess(String type, String name);
     String modifySingleResourceSuccess(String type);
 
+    SafeHtml needsReload(String type, String name);
+    SafeHtml needsRestart(String type, String name);
     SafeHtml noMacrosDescription(String startMacro);
 
     String pageNotFound(String invalidHistoryToken);
@@ -86,6 +91,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml propertiesHint();
 
     String recordedOperations(@PluralCount int count);
+    String reload(String name);
+    SafeHtml reloadDomainControllerError();
+    SafeHtml reloadDomainControllerPending();
+    String reloadHostError(String name);
+    SafeHtml reloadHostQuestion(String name);
+    String reloadHostSuccess(String name);
     String removeResourceConfirmationTitle(String name);
     SafeHtml removeResourceConfirmationQuestion(String name);
     String removeResourceSuccess(String type, String name);
@@ -94,9 +105,20 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String resourceNotFound(String type, String name);
     SafeHtml resourceDisabled(String type, String name);
     SafeHtml resourceEnabled(String type, String name);
+    String restart(String name);
+    SafeHtml restartDomainControllerError();
+    SafeHtml restartDomainControllerPending();
+    SafeHtml restartDomainControllerQuestion(String name);
+    String restartHostControllerError();
+    SafeHtml restartHostControllerQuestion(String name);
+    String restartHostSuccessful(String name);
+    SafeHtml running(String type, String name);
+
+    SafeHtml suspending(String type, String name);
 
     String updateAvailable(String current, String update);
     String unit(String unit);
     String unknownResource(String address, String reason);
+    SafeHtml unknownState(String type, String name);
     //@formatter:on
 }
