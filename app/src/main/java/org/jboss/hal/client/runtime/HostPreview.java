@@ -19,33 +19,20 @@ import com.google.common.base.Joiner;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.core.finder.PreviewAttributes;
-import org.jboss.hal.core.finder.PreviewContent;
-import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST_STATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNNING_MODE;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.resources.CSS.alertLink;
+import static org.jboss.hal.resources.CSS.clickable;
 
 /**
  * @author Harald Pehl
  */
-class HostPreview extends PreviewContent<Host> {
+class HostPreview extends RuntimePreview<Host> {
 
-    private static final String ALERT_CONTAINER = "alert-container-element";
-    private static final String ALERT_ICON = "alert-icon-element";
-    private static final String ALERT_TEXT = "alert-text-element";
-    private static final String RELOAD_LINK = "reload-link";
-    private static final String RESTART_LINK = "restart-link";
-
-    private final Resources resources;
-    private final Element alertContainer;
-    private final Element alertIcon;
-    private final Element alertText;
     private final Element reloadLink;
     private final Element restartLink;
     private final PreviewAttributes<Host> attributes;
@@ -53,8 +40,7 @@ class HostPreview extends PreviewContent<Host> {
     @SuppressWarnings("HardCodedStringLiteral")
     HostPreview(final HostColumn hostColumn, final HostActions hostActions, final Host host,
             final Resources resources) {
-        super(host.getName(), host.isDomainController() ? Names.DOMAIN_CONTROLLER : Names.HOST_CONTROLLER);
-        this.resources = resources;
+        super(host.getName(), host.isDomainController() ? Names.DOMAIN_CONTROLLER : Names.HOST_CONTROLLER, resources);
 
         // @formatter:off
         previewBuilder()
@@ -88,15 +74,15 @@ class HostPreview extends PreviewContent<Host> {
         restartLink = previewBuilder().referenceFor(RESTART_LINK);
 
         attributes = new PreviewAttributes<>(host,
-                asList("release-codename", "release-version", "product-name", "product-version",
+                asList(RELEASE_CODENAME, RELEASE_VERSION, PRODUCT_NAME, PRODUCT_VERSION,
                         HOST_STATE, RUNNING_MODE))
                 .append(model -> {
                     return new String[]{
                             "Management Version",
                             Joiner.on('.').join(
-                                    model.get("management-major-version"),
-                                    model.get("management-minor-version"),
-                                    model.get("management-micro-version"))
+                                    model.get(MANAGEMENT_MAJOR_VERSION),
+                                    model.get(MANAGEMENT_MINOR_VERSION),
+                                    model.get(MANAGEMENT_MICRO_VERSION))
                     };
                 })
                 .end();
@@ -108,42 +94,21 @@ class HostPreview extends PreviewContent<Host> {
     @Override
     public void update(final Host host) {
         if (host.isAdminMode()) {
-            alertContainer.setClassName(alert + " " + alertInfo);
-            alertIcon.setClassName(Icons.DISABLED);
-            alertText.setInnerHTML(resources.messages().adminOnly(host.getName()).asString());
-
+            adminOnly(HOST, host.getName());
         } else if (host.isStarting()) {
-            alertContainer.setClassName(alert + " " + alertInfo);
-            alertIcon.setClassName(Icons.DISABLED);
-            alertText.setInnerHTML(resources.messages().restartHostPending().asString());
-
-        } else if (host.isSuspending() || host.needsReload() || host.needsRestart()) {
-            alertContainer.setClassName(alert + " " + alertWarning);
-            alertIcon.setClassName(Icons.WARNING);
-            if (host.isSuspending()) {
-                alertText.setInnerHTML(resources.messages().suspending(HOST, host.getName()).asString());
-
-            } else if (host.needsReload()) {
-                alertText.setInnerHTML(resources.messages().needsReload(HOST, host.getName()).asString());
-
-            } else if (host.needsRestart()) {
-                alertText.setInnerHTML(resources.messages().needsRestart(HOST, host.getName()).asString());
-            }
-
+            starting(HOST, host.getName());
+        } else if (host.isSuspending()) {
+            suspending(HOST, host.getName());
+        } else if (host.needsReload()) {
+            needsReload(HOST, host.getName());
+        } else if (host.needsRestart()) {
+            needsRestart(HOST, host.getName());
         } else if (host.isRunning()) {
-            alertContainer.setClassName(alert + " " + alertSuccess);
-            alertIcon.setClassName(Icons.OK);
-            alertText.setInnerHTML(resources.messages().running(HOST, host.getName()).asString());
-
+            running(HOST, host.getName());
         } else if (host.isTimeout()) {
-            alertContainer.setClassName(alert + " " + alertDanger);
-            alertIcon.setClassName(Icons.ERROR);
-            alertText.setInnerHTML(resources.messages().timeout(HOST, host.getName()).asString());
-
+            timeout(HOST, host.getName());
         } else {
-            alertContainer.setClassName(alert + " " + alertDanger);
-            alertIcon.setClassName(Icons.ERROR);
-            alertText.setInnerHTML(resources.messages().unknownState(HOST, host.getName()).asString());
+            undefined(HOST, host.getName());
         }
 
         Elements.setVisible(reloadLink, host.needsReload());

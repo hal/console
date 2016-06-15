@@ -56,6 +56,8 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
     private final LabelBuilder labelBuilder;
     private final Elements.Builder builder;
     private final Map<String, PreviewAttributeFunction<T>> functions;
+    private final Map<String, Element> attributeElements;
+    private Element lastAttributeGroupItem;
 
     public PreviewAttributes(final T model) {
         this(model, CONSTANTS.mainAttributes(), Collections.emptyList());
@@ -74,6 +76,7 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
         this.labelBuilder = new LabelBuilder();
         this.builder = new Elements.Builder().h(2).textContent(header).end();
         this.functions = new HashMap<>();
+        this.attributeElements = new HashMap<>();
 
         builder.ul().css(listGroup);
         for (String attribute : attributes) {
@@ -86,6 +89,7 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
                 labelBuilder.label(attribute),
                 model.hasDefined(attribute) ? model.get(attribute).asString() : ""
         });
+        attributeElements.put(attribute, lastAttributeGroupItem);
         return this;
     }
 
@@ -96,13 +100,14 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
         functions.put(id, function);
 
         String[] labelValue = function.labelValue(model);
-        builder.li().css(listGroupItem)
+        builder.li().rememberAs(id).css(listGroupItem)
                 .span().rememberAs(labelId).css(key).textContent(labelValue[0]).end()
                 .span().rememberAs(valueId).css(CSS.value).textContent(labelValue[1]);
         if (labelValue[1].length() > 15) {
             builder.title(labelValue[1]);
         }
         builder.end().end();
+        lastAttributeGroupItem = builder.referenceFor(id);
         return this;
     }
 
@@ -123,6 +128,10 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
             builder.referenceFor(labelId).setTextContent(labelValue[0]);
             builder.referenceFor(valueId).setTextContent(labelValue[1]);
         }
+    }
+
+    public void setVisible(String attribute, boolean visible) {
+        Elements.setVisible(attributeElements.get(attribute), visible);
     }
 
     @Override

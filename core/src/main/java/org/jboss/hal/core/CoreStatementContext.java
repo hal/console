@@ -116,6 +116,11 @@ public class CoreStatementContext implements StatementContext,
     }
 
     @Override
+    public String selectedServerGroup() {
+        return environment.isStandalone() ? null : context.get(SELECTED_GROUP);
+    }
+
+    @Override
     public String selectedHost() {
         return environment.isStandalone() ? null : context.get(SELECTED_HOST);
     }

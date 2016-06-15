@@ -49,6 +49,7 @@ public interface NameTokens {
     String REMOTING = ModelDescriptionConstants.REMOTING;
     String REQUEST_CONTROLLER = ModelDescriptionConstants.REQUEST_CONTROLLER;
     String RUNTIME = "runtime";
+    String SERVER_CONFIGURATION = "server-configuration";
     String SOCKET_BINDING = ModelDescriptionConstants.SOCKET_BINDING;
     String SYSTEM_PROPERTIES = "system-properties";
     String TRANSACTIONS = ModelDescriptionConstants.TRANSACTIONS;

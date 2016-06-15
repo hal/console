@@ -34,6 +34,7 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -132,6 +133,7 @@ public class HostColumn extends FinderColumn<Host> {
                             });
                 })
 
+                // TODO Change the security context (host scoped roles!)
                 .onItemSelect(host -> eventBus.fireEvent(new HostSelectionEvent(host.getAddressName())))
                 .pinnable()
                 .showCount()
@@ -164,7 +166,9 @@ public class HostColumn extends FinderColumn<Host> {
 
             @Override
             public String getFilterData() {
-                return Joiner.on(' ').join(item.getName(), item.isDomainController() ? "dc" : "hc"); //NON-NLS
+                return Joiner.on(' ').join(item.getName(),
+                        item.isDomainController() ? "dc" : "hc", //NON-NLS
+                        ModelNodeHelper.asAttributeValue(item.getHostState()));
             }
 
             @Override

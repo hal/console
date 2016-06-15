@@ -78,6 +78,11 @@ public interface StatementContext {
         }
 
         @Override
+        public String selectedServerGroup() {
+            return null;
+        }
+
+        @Override
         public String selectedHost() {
             return null;
         }
@@ -100,6 +105,8 @@ public interface StatementContext {
     String[] resolveTuple(String tuple);
 
     String selectedProfile();
+
+    String selectedServerGroup();
 
     String selectedHost();
 

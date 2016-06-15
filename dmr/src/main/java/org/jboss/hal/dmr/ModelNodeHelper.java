@@ -114,4 +114,11 @@ public final class ModelNodeHelper {
         }
         return value;
     }
+
+    /**
+     * The reverse operation to {@link #asEnumValue(ModelNode, String, Function, Enum)}.
+     */
+    public static <E extends Enum<E>> String asAttributeValue(final E enumValue) {
+        return UPPER_UNDERSCORE.to(LOWER_HYPHEN, enumValue.name());
+    }
 }

@@ -135,6 +135,7 @@ public interface ModelDescriptionConstants {
     String JPA = "jpa";
     String JVM = "jvm";
 
+    String LAUNCH_TYPE = "launch-type";
     String LEVEL = "level";
     String LIST_ADD = "list-add";
     String LIST_REMOVE = "list-remove";
@@ -148,6 +149,9 @@ public interface ModelDescriptionConstants {
     String MANAGED_EXECUTOR_SERVICE = "managed-executor-service";
     String MANAGED_SCHEDULED_EXECUTOR_SERVICE = "managed-scheduled-executor-service";
     String MANAGED_THREAD_FACTORY = "managed-thread-factory";
+    String MANAGEMENT_MAJOR_VERSION = "management-major-version";
+    String MANAGEMENT_MICRO_VERSION = "management-micro-version";
+    String MANAGEMENT_MINOR_VERSION = "management-minor-version";
     String MASK = "mask";
     String MAX = "max";
     String MAX_LENGTH = "max-length";
@@ -179,7 +183,10 @@ public interface ModelDescriptionConstants {
     String PATH = "path";
     String PORT = "port";
     String PROCESS_STATE = "process-state";
+    String PRODUCT_NAME = "product-name";
+    String PRODUCT_VERSION = "product-version";
     String PROFILE = "profile";
+    String PROFILE_NAME = "profile-name";
     String PROXIES = "proxies";
 
     String QUERY = "query";
@@ -202,6 +209,8 @@ public interface ModelDescriptionConstants {
     String REQUEST_PROPERTIES = "request-properties";
     String RECURSIVE = "recursive";
     String RECURSIVE_DEPTH = "recursive-depth";
+    String RELEASE_CODENAME = "release-codename";
+    String RELEASE_VERSION = "release-version";
     String RELOAD = "reload";
     String RELOAD_REQUIRED = "reload-required";
     String REPLY_PROPERTIES = "reply-properties";
@@ -255,6 +264,7 @@ public interface ModelDescriptionConstants {
 
     String VALUE = "value";
     String VALUE_TYPE = "value-type";
+    String VERBOSE = "verbose";
 
     String WEBSERVICES = "webservices";
     String WHERE = "where";

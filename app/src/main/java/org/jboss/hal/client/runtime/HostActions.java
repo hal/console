@@ -84,8 +84,11 @@ public class HostActions {
     // ------------------------------------------------------ reload
 
     @SuppressWarnings("HardCodedStringLiteral")
-    public void reload(final Host host, final ScheduledCommand beforeReload, final ScheduledCommand whileReloading,
-            final ScheduledCommand afterReload, final ScheduledCommand onTimeout) {
+    public void reload(final Host host,
+            final ScheduledCommand beforeReload,
+            final ScheduledCommand whileReloading,
+            final ScheduledCommand afterReload,
+            final ScheduledCommand onTimeout) {
         Metadata hostMetadata = metadataRegistry.lookup(AddressTemplate.of("/{selected.host}"));
         ModelNode modelNode = ModelNodeHelper.failSafeGet(hostMetadata.getDescription(),
                 Joiner.on('.').join(OPERATIONS, RELOAD, REQUEST_PROPERTIES));
@@ -144,8 +147,11 @@ public class HostActions {
 
     // ------------------------------------------------------ restart
 
-    public void restart(final Host host, final ScheduledCommand beforeRestart, final ScheduledCommand whileReloading,
-            final ScheduledCommand afterRestart, final ScheduledCommand onTimeout) {
+    public void restart(final Host host,
+            final ScheduledCommand beforeRestart,
+            final ScheduledCommand whileReloading,
+            final ScheduledCommand afterRestart,
+            final ScheduledCommand onTimeout) {
         SafeHtml question = host.isDomainController()
                 ? resources.messages().restartDomainControllerQuestion(host.getName())
                 : resources.messages().restartHostControllerQuestion(host.getName());
@@ -165,7 +171,7 @@ public class HostActions {
                     domainControllerOperation(host, operation, restartTimeout(host),
                             whileReloading, afterRestart, onTimeout,
                             resources.messages().restart(host.getName()),
-                            resources.messages().restartHostPending(),
+                            resources.messages().restartPending(HOST, host.getName()),
                             resources.messages().restartHostSuccessful(host.getName()),
                             resources.messages().restartDomainControllerTimeout());
 

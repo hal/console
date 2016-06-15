@@ -15,10 +15,22 @@
  */
 package org.jboss.hal.client.runtime;
 
+import java.util.EnumSet;
+
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.resources.IdBuilder;
 
+import static org.jboss.hal.client.runtime.RunningMode.ADMIN_ONLY;
+import static org.jboss.hal.client.runtime.RunningState.RELOAD_REQUIRED;
+import static org.jboss.hal.client.runtime.RunningState.RESTART_REQUIRED;
+import static org.jboss.hal.client.runtime.RunningState.STARTING;
+import static org.jboss.hal.client.runtime.RunningState.TIMEOUT;
+import static org.jboss.hal.client.runtime.SuspendState.PRE_SUSPEND;
+import static org.jboss.hal.client.runtime.SuspendState.SUSPENDED;
+import static org.jboss.hal.client.runtime.SuspendState.SUSPENDING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 
@@ -35,6 +47,9 @@ public class Server extends NamedNode {
     public static final Server STANDALONE = new Server(STANDALONE_SERVER, STANDALONE_HOST,
             ServerConfigStatus.STARTED, RunningState.RUNNING);
 
+    static String id(final String name) {
+        return IdBuilder.build(SERVER, name);
+    }
 
     private Server(String server, String host, ServerConfigStatus serverConfigStatus, RunningState serverState) {
         super(server, new ModelNode());
@@ -45,6 +60,14 @@ public class Server extends NamedNode {
 
     public Server(final ModelNode node) {
         super(node.get(NAME).asString(), node);
+    }
+
+    public Server(final Property property) {
+        super(property);
+    }
+
+    public boolean isStandalone() {
+        return STANDALONE_SERVER.equals(getName()) && STANDALONE_HOST.equals(getHost());
     }
 
     public String getServerGroup() {
@@ -68,14 +91,6 @@ public class Server extends NamedNode {
     }
 
     /**
-     * If this method returns {@code true} it's safe to read the server related attributes like "host", "server-state"
-     * or "suspend-state".
-     */
-    public boolean isStarted() {
-        return getServerConfigStatus() == ServerConfigStatus.STARTED || getServerState() == RunningState.RUNNING;
-    }
-
-    /**
      * @return the state as defined by {@code server.server-status}
      */
     public RunningState getServerState() {
@@ -96,8 +111,44 @@ public class Server extends NamedNode {
         return asEnumValue(this, RUNNING_MODE, RunningMode::valueOf, RunningMode.UNDEFINED);
     }
 
-    public boolean isStandalone() {
-        return STANDALONE_SERVER.equals(getName()) && STANDALONE_HOST.equals(getHost());
+    /**
+     * If this method returns {@code true} it's safe to read the server related attributes like "host", "server-state"
+     * or "suspend-state".
+     */
+    public boolean isStarted() {
+        return getServerConfigStatus() == ServerConfigStatus.STARTED || getServerState() == RunningState.RUNNING;
+    }
+
+    public boolean isStarting() {
+        return getServerState() == STARTING;
+    }
+
+    public boolean isRunning() {
+        return getServerState() == RunningState.RUNNING && !isSuspending();
+    }
+
+    public boolean isAdminMode() {
+        return getRunningMode() == ADMIN_ONLY;
+    }
+
+    public boolean isSuspending() {
+        return EnumSet.of(PRE_SUSPEND, SUSPENDING, SUSPENDED).contains(getSuspendState());
+    }
+
+    public boolean isTimeout() {
+        return getServerState() == TIMEOUT;
+    }
+
+    public boolean isStopped() {
+        return getServerConfigStatus() == ServerConfigStatus.STOPPED || getServerConfigStatus() == ServerConfigStatus.DISABLED;
+    }
+
+    public boolean needsRestart() {
+        return getServerState() == RESTART_REQUIRED;
+    }
+
+    public boolean needsReload() {
+        return getServerState() == RELOAD_REQUIRED;
     }
 
     /**
@@ -116,5 +167,12 @@ public class Server extends NamedNode {
     public ResourceAddress getServerAddress() {
         return isStandalone() ? ResourceAddress.ROOT : new ResourceAddress().add(HOST, getHost())
                 .add(SERVER, getName());
+    }
+
+    /**
+     * Adds the {@code server} attributes to this instance. Existing attributes will be overwritten.
+     */
+    void addServerAttributes(final ModelNode modelNode) {
+        modelNode.asPropertyList().forEach(property -> get(property.getName()).set(property.getValue()));
     }
 }

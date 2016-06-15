@@ -20,12 +20,11 @@ import java.util.EnumSet;
 import java.util.List;
 
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.resources.IdBuilder;
 
-import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
-import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static org.jboss.hal.client.runtime.RunningMode.ADMIN_ONLY;
 import static org.jboss.hal.client.runtime.RunningState.RELOAD_REQUIRED;
 import static org.jboss.hal.client.runtime.RunningState.RESTART_REQUIRED;
@@ -34,10 +33,7 @@ import static org.jboss.hal.client.runtime.RunningState.TIMEOUT;
 import static org.jboss.hal.client.runtime.SuspendState.PRE_SUSPEND;
 import static org.jboss.hal.client.runtime.SuspendState.SUSPENDED;
 import static org.jboss.hal.client.runtime.SuspendState.SUSPENDING;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST_STATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNNING_MODE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 
 /**
@@ -54,7 +50,7 @@ public class Host extends NamedNode {
     }
 
     static String id(final String name) {
-        return IdBuilder.build("host", name);
+        return IdBuilder.build(HOST, name);
     }
 
     private final String addressName;
@@ -85,7 +81,7 @@ public class Host extends NamedNode {
     }
 
     public void setHostState(RunningState state) {
-        get(HOST_STATE).set(UPPER_UNDERSCORE.to(LOWER_HYPHEN, state.name()));
+        get(HOST_STATE).set(ModelNodeHelper.asAttributeValue(state));
     }
 
     /**
@@ -107,8 +103,7 @@ public class Host extends NamedNode {
     }
 
     public boolean isRunning() {
-        return getHostState() == RunningState.RUNNING &&
-                !EnumSet.of(PRE_SUSPEND, SUSPENDING, SUSPENDED).contains(getSuspendState());
+        return getHostState() == RunningState.RUNNING && !isSuspending();
     }
 
     public boolean isAdminMode() {

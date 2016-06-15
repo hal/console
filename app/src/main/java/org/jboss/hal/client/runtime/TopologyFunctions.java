@@ -62,7 +62,7 @@ public class TopologyFunctions {
         }
 
         @Override
-        @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
+        @SuppressWarnings("HardCodedStringLiteral")
         public void execute(final Control<FunctionContext> control) {
             if (environment.isStandalone()) {
                 List<Server> servers = Collections.emptyList();
@@ -72,12 +72,12 @@ public class TopologyFunctions {
             } else {
                 ResourceAddress address = new ResourceAddress().add(HOST, "*").add(SERVER, "*");
 
-                ModelNode select = new ModelNode().add(HOST).add("launch-type").add(NAME).add("profile-name")
-                        .add("running-mode").add(SERVER_GROUP).add("server-state").add("suspend-state").add("uuid");
+                ModelNode select = new ModelNode().add(HOST).add(LAUNCH_TYPE).add(NAME).add(PROFILE_NAME)
+                        .add(RUNNING_MODE).add(SERVER_GROUP).add(SERVER_STATE).add(SUSPEND_STATE).add("uuid");
 
                 Operation operation = new Operation.Builder(QUERY, address)
                         .param(SELECT, select)
-                        .param(WHERE, new ModelNode().set("profile-name", profile))
+                        .param(WHERE, new ModelNode().set(PROFILE_NAME, profile))
                         .build();
 
                 dispatcher.executeInFunction(control, operation, result -> {

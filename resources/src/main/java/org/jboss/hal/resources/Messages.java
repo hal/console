@@ -44,7 +44,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml addResourceSuccess(String type, String name);
     String addResourceTitle(String text);
     SafeHtml addSingleResourceSuccess(String type);
-    SafeHtml adminOnly(String name);
+    SafeHtml adminOnly(String type, String name);
     SafeHtml allMailServersExist();
     SafeHtml allSingletonsExist();
 
@@ -115,11 +115,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String restart(String name);
     SafeHtml restartDomainControllerTimeout();
     SafeHtml restartDomainControllerQuestion(String name);
-    SafeHtml restartHostPending();
     SafeHtml restartHostControllerQuestion(String name);
     SafeHtml restartHostSuccessful(String name);
+    SafeHtml restartPending(String type, String name);
     SafeHtml running(String type, String name);
 
+    SafeHtml stopped(String type, String name);
     SafeHtml suspending(String type, String name);
 
     SafeHtml testConnectionError();

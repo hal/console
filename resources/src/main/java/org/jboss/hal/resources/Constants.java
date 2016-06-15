@@ -64,6 +64,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String content();
     String contentRepository();
     String copied();
+    String copy();
     String copyToClipboard();
     String custom();
 
@@ -227,6 +228,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String restartNoServices();
     String restartResourceServices();
     String restricted();
+    String resume();
     String running();
 
     String sameOrigin();
@@ -239,10 +241,13 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String starting();
     String startMacro();
     String statements();
+    String stop();
     String stopMacro();
+    String stopped();
     String storage();
     String summary();
     String supportsExpressions();
+    String suspend();
     String suspending();
 
     String tags();

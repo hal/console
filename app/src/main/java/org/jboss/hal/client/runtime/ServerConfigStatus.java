@@ -19,5 +19,5 @@ package org.jboss.hal.client.runtime;
  * Status as defined by {@code server-config.status}
  */
 public enum ServerConfigStatus {
-    STARTED, STOPPED, UNDEFINED
+    STARTED, STOPPED, DISABLED, UNDEFINED
 }
