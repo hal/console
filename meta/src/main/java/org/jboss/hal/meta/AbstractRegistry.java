@@ -32,7 +32,7 @@ public abstract class AbstractRegistry<T> implements Registry<T> {
 
     protected AbstractRegistry(final StatementContext statementContext, final String type,
             final Environment environment) {
-        this.statementContext = new ProfileWildcardStatementContext(statementContext, environment);
+        this.statementContext = new ProfileAndServerGroupWildcardStatementContext(statementContext, environment);
         this.type = type;
     }
 

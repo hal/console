@@ -16,38 +16,32 @@
   ~ limitations under the License.
   -->
 <view>
-    <vertical-navigation id="host-navigation">
-        <item id="host-configuration-item" title="Configuration" icon="pficon pficon-cluster">
-            <metadata address="/{selected.host}">
-                <h1 id="host-configuration-title"/>
+    <vertical-navigation id="server-navigation">
+        <item id="server-configuration-item" title="Configuration" icon="pficon pficon-cluster">
+            <metadata address="/{selected.host}/{selected.server}">
+                <h1>Server Configuration</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <form id="host-configuration-form" title="Host Configuration"
-                      on-save="{{presenter.saveHost(form, changedValues)}}" include-runtime="true">
+                <form id="server-configuration-form" title="Server Configuration" auto-save="true"
+                      include-runtime="true">
                     <attributes>
                         <attribute name="name"/>
-                        <attribute name="organization"/>
-                        <attribute name="directory-grouping"/>
-                        <attribute name="uuid"/>
-                        <attribute name="release-codename"/>
-                        <attribute name="release-version"/>
-                        <attribute name="product-name"/>
-                        <attribute name="product-version"/>
-                        <attribute name="management-major-version"/>
-                        <attribute name="management-minor-version"/>
-                        <attribute name="management-micro-version"/>
-                        <attribute name="running-mode"/>
-                        <attribute name="host-state"/>
-                        <attribute name="suspend-state"/>
+                        <attribute name="group"/>
+                        <attribute name="auto-start"/>
+                        <attribute name="update-auto-start-with-server-status"/>
+                        <attribute name="socket-binding-group"/>
+                        <attribute name="socket-binding-port-offset"/>
+                        <attribute name="socket-binding-default-interface"/>
+                        <attribute name="status"/>
                     </attributes>
                 </form>
             </metadata>
         </item>
 
-        <item id="host-interface-item" title="Interfaces" icon="fa fa-exchange">
-            <metadata address="/{selected.host}/interface=*">
+        <item id="server-interface-item" title="Interfaces" icon="fa fa-exchange">
+            <metadata address="/{selected.host}/{selected.server}/interface=*">
                 <h1>Interfaces</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="host-interface-table" form-ref="host-interface-form">
+                <table id="server-interface-table" form-ref="server-interface-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
@@ -57,15 +51,15 @@
                         <column name="name"/>
                     </columns>
                 </table>
-                <form id="host-interface-form" auto-save="true" name-resolver="{{form.getModel().getName()}}"/>
+                <form id="server-interface-form" auto-save="true" name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
 
-        <item id="host-jvm-item" title="JVMs" icon="fa fa-coffee">
-            <metadata address="/{selected.host}/jvm=*">
+        <item id="server-jvm-item" title="JVMs" icon="fa fa-coffee">
+            <metadata address="/{selected.host}/{selected.server}/jvm=*">
                 <h1>JVMs</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="host-jvm-table" form-ref="host-jvm-form">
+                <table id="server-jvm-table" form-ref="server-jvm-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
@@ -75,15 +69,15 @@
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
-                <form id="host-jvm-form" auto-save="true" name-resolver="{{form.getModel().getName()}}"/>
+                <form id="server-jvm-form" auto-save="true" name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
 
-        <item id="host-path-item" title="Paths" icon="fa fa-folder-open">
-            <metadata address="/{selected.host}/path=*">
+        <item id="server-path-item" title="Paths" icon="fa fa-folder-open">
+            <metadata address="/{selected.host}/{selected.server}/path=*">
                 <h1>Paths</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="host-path-table" form-ref="host-path-form">
+                <table id="server-path-table" form-ref="server-path-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
@@ -94,34 +88,15 @@
                         <column name="path"/>
                     </columns>
                 </table>
-                <form id="host-path-form" auto-save="true" name-resolver="{{form.getModel().getName()}}"/>
+                <form id="server-path-form" auto-save="true" name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
 
-        <item id="host-socket-binding-group-item" title="Socket Binding Groups" icon="fa fa-object-group">
-            <metadata address="/{selected.host}/socket-binding-group=*">
-                <h1>Socket Binding Groups</h1>
-                <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="host-socket-binding-group-table" form-ref="host-socket-binding-group-form">
-                    <actions>
-                        <action handler-ref="add-resource"/>
-                        <action handler-ref="remove-resource" scope="selected"
-                                name-resolver="{{api.selectedRow().getName()}}"/>
-                    </actions>
-                    <columns>
-                        <column name="name"/>
-                    </columns>
-                </table>
-                <form id="host-socket-binding-group-form" auto-save="true"
-                      name-resolver="{{form.getModel().getName()}}"/>
-            </metadata>
-        </item>
-
-        <item id="host-system-property-item" title="System Properties" icon="fa fa-list-ul">
-            <metadata address="/{selected.host}/system-property=*">
+        <item id="server-system-property-item" title="System Properties" icon="fa fa-list-ul">
+            <metadata address="/{selected.host}/{selected.server}/system-property=*">
                 <h1>System Properties</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="host-system-property-table" form-ref="host-system-property-form">
+                <table id="server-system-property-table" form-ref="server-system-property-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
@@ -132,7 +107,7 @@
                         <column name="value"/>
                     </columns>
                 </table>
-                <form id="host-system-property-form" auto-save="true" name-resolver="{{form.getModel().getName()}}"/>
+                <form id="server-system-property-form" auto-save="true" name-resolver="{{form.getModel().getName()}}"/>
             </metadata>
         </item>
     </vertical-navigation>

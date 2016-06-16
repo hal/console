@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.runtime.group;
 
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.resources.IdBuilder;
@@ -27,8 +28,12 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
  */
 public class ServerGroup extends NamedNode {
 
-    static String id(final String name) {
+    public static String id(final String name) {
         return IdBuilder.build(SERVER_GROUP, name);
+    }
+
+    public ServerGroup(final ModelNode node) {
+        super(node);
     }
 
     public ServerGroup(final Property property) {

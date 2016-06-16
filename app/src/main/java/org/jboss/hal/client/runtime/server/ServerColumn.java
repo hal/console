@@ -224,9 +224,11 @@ public class ServerColumn extends FinderColumn<Server> {
             @Override
             public List<ItemAction<Server>> actions() {
                 PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(NameTokens.SERVER_CONFIGURATION)
-                        .with(SERVER, item.getName()).build();
+                        .with(HOST, item.getHost())
+                        .with(SERVER, item.getName())
+                        .build();
                 List<ItemAction<Server>> actions = new ArrayList<>();
-                actions.add(itemActionFactory.view(placeRequest));
+                actions.add(itemActionFactory.viewAndMonitor(Server.id(item.getName()), placeRequest));
                 if (!item.isStarted()) {
                     AddressTemplate template = AddressTemplate
                             .of("/host=" + item.getHost() + "/server-config=" + item.getName());
@@ -289,7 +291,7 @@ public class ServerColumn extends FinderColumn<Server> {
         setPreviewCallback(item -> new ServerPreview(this, serverActions, item, resources));
     }
 
-    private boolean browseByHosts(Finder finder) {
+    static boolean browseByHosts(Finder finder) {
         FinderSegment firstSegment = finder.getContext().getPath().iterator().next();
         return firstSegment.getValue().equals(IdBuilder.asId(Names.HOSTS));
     }

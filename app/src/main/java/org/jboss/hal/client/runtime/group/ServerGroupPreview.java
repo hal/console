@@ -15,16 +15,25 @@
  */
 package org.jboss.hal.client.runtime.group;
 
+import java.util.Arrays;
+
+import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.Resources;
 
 /**
  * @author Harald Pehl
  */
 class ServerGroupPreview extends PreviewContent<ServerGroup> {
 
-    ServerGroupPreview(final ServerGroup serverGroup, final Resources resources) {
+    ServerGroupPreview(final ServerGroup serverGroup) {
         super(serverGroup.getName(), Names.PROFILE + " " + serverGroup.getProfile());
+
+        //noinspection HardCodedStringLiteral
+        PreviewAttributes<ServerGroup> attributes = new PreviewAttributes<>(serverGroup,
+                Arrays.asList("profile", "socket-binding-group", "socket-binding-port-offset",
+                        "socket-binding-default-interface"))
+                .end();
+        previewBuilder().addAll(attributes);
     }
 }

@@ -17,16 +17,18 @@ package org.jboss.hal.meta;
 
 import org.jboss.hal.config.Environment;
 
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
 /**
- * A statement context which resolves the {@code selected.profile} tuple to "*".
+ * A statement context which resolves the {@code selected.profile} and {@code selected.group} tuple to "*".
  *
  * @author Harald Pehl
  */
-public class ProfileWildcardStatementContext extends FilteringStatementContext implements StatementContext {
+public class ProfileAndServerGroupWildcardStatementContext extends FilteringStatementContext
+        implements StatementContext {
 
-    public ProfileWildcardStatementContext(final StatementContext delegate, Environment environment) {
+    public ProfileAndServerGroupWildcardStatementContext(final StatementContext delegate, Environment environment) {
         super(delegate, new Filter() {
             @Override
             public String filter(final String key) {
@@ -37,7 +39,7 @@ public class ProfileWildcardStatementContext extends FilteringStatementContext i
             public String[] filterTuple(final String tuple) {
                 if (!environment.isStandalone()) {
                     Tuple t = Tuple.from(tuple);
-                    if (t == SELECTED_PROFILE) {
+                    if (t == SELECTED_PROFILE || t == SELECTED_GROUP) {
                         return new String[]{t.resource(), "*"};
                     }
                 }

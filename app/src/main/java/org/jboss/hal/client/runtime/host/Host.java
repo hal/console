@@ -48,11 +48,11 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  */
 public class Host extends NamedNode {
 
-    static String id(final Host host) {
+    public static String id(final Host host) {
         return id(host.getAddressName());
     }
 
-    static String id(final String name) {
+    public static String id(final String name) {
         return IdBuilder.build(HOST, name);
     }
 

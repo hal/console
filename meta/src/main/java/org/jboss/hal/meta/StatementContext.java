@@ -25,7 +25,7 @@ public interface StatementContext {
         SELECTED_PROFILE("selected.profile", PROFILE),
         SELECTED_GROUP("selected.group", SERVER_GROUP),
         SELECTED_HOST("selected.host", HOST),
-        SELECTED_SERVER("selected.server", SERVER);
+        SELECTED_SERVER("selected.server", SERVER_CONFIG);
 
         private final String tuple;
         private final String resource;

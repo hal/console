@@ -1,0 +1,96 @@
+@topology-angle: 45deg;
+@topology-height: 80px;
+@topology-width: 80px;
+
+.table-header-rotated {
+
+  td, th.row-header {
+    padding: 5px;
+  }
+
+  td {
+    border: 1px solid #d1d1d1;
+    cursor: pointer;
+    text-align: center;
+    vertical-align: middle;
+    width: @topology-width;
+
+    &.error {
+      background-color: rgba(204, 0, 0, .4);
+      &:hover {
+        color: #fff;
+        background-color: rgb(204, 0, 0);
+      }
+    }
+    &.warning {
+      background-color: rgba(249, 214, 122, .4);
+      &:hover {
+        background-color: rgb(249, 214, 122);
+      }
+    }
+    &.ok {
+      background-color: rgba(190, 225, 244, .4);
+      &:hover {
+        background-color: rgb(190, 225, 244);
+      }
+    }
+    &.empty {
+      background-color: rgba(190, 225, 244, .4);
+      cursor: inherit;
+    }
+  }
+
+  th.rotate {
+    cursor: pointer;
+    font-size: 12px;
+    height: @topology-height;
+    line-height: 0.8;
+    max-width: @topology-width;
+    min-width: @topology-width;
+    padding: 0;
+    position: relative;
+    vertical-align: bottom;
+    width: @topology-width;
+
+    > div {
+      border-left: 1px solid #d1d1d1;
+      border-top: 1px solid #d1d1d1;
+      height: 100%;
+      left: @topology-height * tan(@topology-angle) / 2;
+      overflow: hidden;
+      position: relative;
+      top: 0;
+      transform: skew(-@topology-angle, 0deg);
+
+      &:hover {
+        background-color: #d1d1d1;
+      }
+    }
+
+    &:last-child > div {
+      border-right: 1px solid #d1d1d1;
+    }
+
+    span {
+      display: inline-block;
+      bottom: 27px; // couldn't come up with a good formula. needs manual adjustment if @topology-width is changed
+      left: 5px; // couldn't come up with a good formula. needs manual adjustment if @topology-width is changed
+      position: absolute;
+      text-align: left;
+      transform: skew(@topology-angle, 0deg) rotate(360 - @topology-angle);
+      width: @topology-height / cos(@topology-angle) - @topology-width * cos(@topology-angle);
+    }
+  }
+
+  th.row-header {
+    border-bottom: 1px solid #d1d1d1;
+    border-left: 1px solid #d1d1d1;
+    border-top: 1px solid #d1d1d1;
+    cursor: pointer;
+    width: auto;
+
+    &:hover {
+      background-color: #d1d1d1;
+    }
+  }
+}

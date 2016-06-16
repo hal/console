@@ -27,7 +27,8 @@ import elemental.dom.Element;
 import static org.jboss.hal.resources.CSS.withProgress;
 
 /**
- * Class to monitor item actions and show a progress indicator if they take longer than a given timeout.
+ * Class to monitor item actions and show a progress indicator if they take longer than a given timeout. Relies on an
+ * unique item id implemented by {@link ItemDisplay#getId()} and specified in the column setup.
  *
  * @author Harald Pehl
  */

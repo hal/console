@@ -51,8 +51,12 @@ import org.jboss.hal.client.patching.PatchingPresenter;
 import org.jboss.hal.client.patching.PatchingView;
 import org.jboss.hal.client.runtime.RuntimePresenter;
 import org.jboss.hal.client.runtime.RuntimeView;
+import org.jboss.hal.client.runtime.group.Mbui_ServerGroupView_Provider;
+import org.jboss.hal.client.runtime.group.ServerGroupPresenter;
 import org.jboss.hal.client.runtime.host.HostPresenter;
 import org.jboss.hal.client.runtime.host.Mbui_HostView_Provider;
+import org.jboss.hal.client.runtime.server.Mbui_ServerView_Provider;
+import org.jboss.hal.client.runtime.server.ServerPresenter;
 import org.jboss.hal.client.skeleton.FooterPresenter;
 import org.jboss.hal.client.skeleton.HeaderPresenter;
 import org.jboss.hal.client.skeleton.Templated_FooterView_Provider;
@@ -198,6 +202,16 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 RuntimePresenter.MyView.class,
                 RuntimeView.class,
                 RuntimePresenter.MyProxy.class);
+
+        bindTemplatedPresenter(ServerPresenter.class,
+                ServerPresenter.MyView.class,
+                Mbui_ServerView_Provider.class,
+                ServerPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(ServerGroupPresenter.class,
+                ServerGroupPresenter.MyView.class,
+                Mbui_ServerGroupView_Provider.class,
+                ServerGroupPresenter.MyProxy.class);
 
         bindPresenter(UnderTheBridgePresenter.class,
                 UnderTheBridgePresenter.MyView.class,

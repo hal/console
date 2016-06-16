@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.client.configuration.subsystem.mail;
 
-import java.util.List;
-
 import com.google.common.base.Joiner;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
@@ -30,16 +28,9 @@ import org.jboss.hal.resources.Resources;
 class MailSessionPreview extends PreviewContent<MailSession> {
 
     MailSessionPreview(final MailSession mailSession, final Resources resources) {
-        super(mailSession.getName());
-
-        List<String> servers = mailSession.getServers();
-        if (servers.isEmpty()) {
-            previewBuilder().p().textContent(resources.constants().noConfiguredMailServers()).end();
-        } else {
-            previewBuilder().p()
-                    .innerHtml(resources.messages().configuredMailServer(Joiner.on(", ").join(servers)))
-                    .end();
-        }
+        super(mailSession.getName(), mailSession.getServers().isEmpty()
+                ? resources.constants().noConfiguredMailServers()
+                : resources.messages().configuredMailServer(Joiner.on(", ").join(mailSession.getServers())).asString());
 
         PreviewAttributes<MailSession> attributes = new PreviewAttributes<>(mailSession);
         attributes.append(ModelDescriptionConstants.JNDI_NAME);

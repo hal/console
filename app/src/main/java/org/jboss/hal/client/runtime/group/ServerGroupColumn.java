@@ -41,6 +41,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Requires;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
@@ -54,6 +56,8 @@ import static org.jboss.hal.resources.CSS.subtitle;
 @Column(SERVER_GROUP)
 @Requires(value = "/server-group=*", recursive = false)
 public class ServerGroupColumn extends FinderColumn<ServerGroup> {
+
+    private static final Logger logger = LoggerFactory.getLogger(ServerGroup.class);
 
     @Inject
     public ServerGroupColumn(final Finder finder,
@@ -83,7 +87,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
                     });
                 })
 
-                .onPreview(item -> new ServerGroupPreview(item, resources))
+                .onPreview(ServerGroupPreview::new)
                 .onItemSelect(serverGroup -> eventBus.fireEvent(new ServerGroupSelectionEvent(serverGroup.getName())))
                 .pinnable()
                 .showCount()

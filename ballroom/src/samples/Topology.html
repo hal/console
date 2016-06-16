@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<html class="layout-pf layout-pf-fixed transitions">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Topology</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="../../../app/src/main/resources/org/jboss/hal/public/css/hal.css" rel="stylesheet">
+
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.dataTables.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/typeahead.bundle.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/tagmanager.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/dataTables.buttons.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/dataTables.select.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jstree.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-select.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-switch.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/patternfly.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/ace.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/ZeroClipboard.min.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="finder row" style="height: 555px">
+        <div class="finder-column col-xs-2 col-sm-2 col-md-2 col-lg-2">
+            <header>
+                <h1 title="Browse By">Browse By</h1>
+            </header>
+            <ul>
+                <li class="active"><span class="item-text">Topology</span></li>
+                <li><span class="item-text">Hosts</span><span class="folder fa fa-angle-right"></span></li>
+                <li><span class="item-text">Server Groups</span><span class="folder fa fa-angle-right"></span></li>
+            </ul>
+        </div>
+        <div class="finder-preview col-xs-10 col-sm-10 col-md-10 col-lg-10">
+            <h1>Topology</h1>
+            <table class="table-header-rotated">
+                <thead>
+                <tr>
+                    <th>&nbsp;</th>
+                    <th class="rotate">
+                        <div><span>development</span></div>
+                    </th>
+                    <th class="rotate">
+                        <div><span>staging</span></div>
+                    </th>
+                    <th class="rotate">
+                        <div><span>qa</span></div>
+                    </th>
+                    <th class="rotate">
+                        <div><span>production</span></div>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th rowspan="2" class="row-header"><div><span>master</span></div></th>
+                    <td class="ok">server1</td>
+                    <td rowspan="2" class="ok">server2</td>
+                    <td rowspan="2" class="warning">server3</td>
+                    <td rowspan="2" class="ok">server5</td>
+                </tr>
+                <tr>
+                    <td class="ok">server4</td>
+                </tr>
+                <tr>
+                    <th rowspan="2" class="row-header"><div><span>slave1</span></div></th>
+                    <td rowspan="2" class="empty">&nbsp;</td>
+                    <td rowspan="2" class="ok">server6</td>
+                    <td class="error">server7</td>
+                    <td rowspan="2" class="empty">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td class="ok">server8</td>
+                </tr>
+                <tr>
+                    <th rowspan="3" class="row-header"><div><span>slave2</span></div></th>
+                    <td rowspan="3" class="ok">server9</td>
+                    <td rowspan="2" class="warning">server10-with-a-pretty-long-name</td>
+                    <td rowspan="3" class="empty">&nbsp;</td>
+                    <td class="ok">server11</td>
+                </tr>
+                <tr>
+                    <td class="warning">server12</td>
+                </tr>
+                <tr>
+                    <td class="ok">server13</td>
+                    <td class="ok">server14</td>
+                </tr>
+                </tbody>
+            </table>
+            <h2>Server <code>server7</code></h2>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <span class="key">Name</span>
+                    <span class="value">server7</span>
+                </li>
+                <li class="list-group-item">
+                    <span class="key">Foo</span>
+                    <span class="value">bar</span>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('[data-toggle=tooltip]').tooltip();
+    });
+</script>
+</body>
+</html>
