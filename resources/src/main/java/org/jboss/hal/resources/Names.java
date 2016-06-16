@@ -59,6 +59,7 @@ public interface Names {
     String ROOT_LOGGER = "Root Logger";
     String RUNTIME = "Runtime";
     String SERVER = "Server";
+    String SERVER_GROUP = "Server Group";
     String SERVER_GROUPS = "Server Groups";
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDINGS = "Socket Bindings";

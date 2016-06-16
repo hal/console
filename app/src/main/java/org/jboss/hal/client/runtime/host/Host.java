@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime;
+package org.jboss.hal.client.runtime.host;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import org.jboss.hal.client.runtime.RunningMode;
+import org.jboss.hal.client.runtime.RunningState;
+import org.jboss.hal.client.runtime.SuspendState;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime;
+package org.jboss.hal.client.runtime.server;
 
 /**
  * Status as defined by {@code server-config.status}

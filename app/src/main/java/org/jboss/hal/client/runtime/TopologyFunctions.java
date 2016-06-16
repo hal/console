@@ -21,6 +21,7 @@ import java.util.List;
 import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
+import org.jboss.hal.client.runtime.server.Server;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -83,7 +84,11 @@ public class TopologyFunctions {
                 dispatcher.executeInFunction(control, operation, result -> {
                     List<Server> servers = result.asList().stream()
                             .filter(modelNode -> !modelNode.isFailure())
-                            .map(modelNode -> new Server(modelNode.get(RESULT)))
+                            .map(modelNode -> {
+                                ResourceAddress adr = new ResourceAddress(modelNode.get(ADDRESS));
+                                String host = adr.getParent().lastValue();
+                                return new Server(host, modelNode.get(RESULT));
+                            })
                             .collect(toList());
                     control.getContext().set(RUNNING_SERVERS, servers);
                     control.proceed();

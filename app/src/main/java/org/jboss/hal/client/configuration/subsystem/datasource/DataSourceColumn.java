@@ -31,7 +31,7 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.client.configuration.subsystem.datasource.wizard.NewDataSourceWizard;
-import org.jboss.hal.client.runtime.Server;
+import org.jboss.hal.client.runtime.server.Server;
 import org.jboss.hal.client.runtime.TopologyFunctions;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;

@@ -35,6 +35,21 @@ public class ItemMonitor {
 
     private static final int PROGRESS_TIMEOUT = 333;
 
+    public static void startProgress(final String itemId) {
+        Element element = Browser.getDocument().getElementById(itemId);
+        if (element != null) {
+            element.getClassList().add(withProgress);
+        }
+    }
+
+    public static void stopProgress(final String itemId) {
+        Element element = Browser.getDocument().getElementById(itemId);
+        if (element != null) {
+            element.getClassList().remove(withProgress);
+        }
+    }
+
+
     private final EventBus eventBus;
     private int timeoutHandle = -1;
     private HandlerRegistration handlerRegistration;
@@ -51,23 +66,16 @@ public class ItemMonitor {
             final Scheduler.ScheduledCommand command) {
         return itm -> {
             command.execute();
-            Element element = Browser.getDocument().getElementById(itemId);
-            if (element != null) {
-                timeoutHandle = Browser.getWindow().setTimeout(() -> {
-                    element.getClassList().add(withProgress);
-                    handlerRegistration = eventBus.addHandler(NavigationEvent.getType(), navigationEvent -> {
-                        if (nameToken.equals(navigationEvent.getRequest().getNameToken())) {
-                            handlerRegistration.removeHandler();
-                            stopTimeout(element);
-                        }
-                    });
-                }, PROGRESS_TIMEOUT);
-            }
+            startProgress(itemId);
+            timeoutHandle = Browser.getWindow().setTimeout(() -> {
+                handlerRegistration = eventBus.addHandler(NavigationEvent.getType(), navigationEvent -> {
+                    if (nameToken.equals(navigationEvent.getRequest().getNameToken())) {
+                        handlerRegistration.removeHandler();
+                        Browser.getWindow().clearTimeout(timeoutHandle);
+                        stopProgress(itemId);
+                    }
+                });
+            }, PROGRESS_TIMEOUT);
         };
-    }
-
-    private void stopTimeout(Element element) {
-        Browser.getWindow().clearTimeout(timeoutHandle);
-        element.getClassList().remove(withProgress);
     }
 }

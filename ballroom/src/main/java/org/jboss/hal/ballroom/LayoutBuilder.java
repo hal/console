@@ -18,6 +18,9 @@ package org.jboss.hal.ballroom;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.resources.CSS;
 
+import static org.jboss.hal.resources.CSS.columnLg;
+import static org.jboss.hal.resources.CSS.columnMd;
+import static org.jboss.hal.resources.CSS.columnSm;
 import static org.jboss.hal.resources.CSS.offset;
 import static org.jboss.hal.resources.CSS.row;
 
@@ -65,6 +68,8 @@ public class LayoutBuilder extends Elements.CoreBuilder<LayoutBuilder> {
     }
 
     private String rowCss(int offset, int columns) {
-        return offset == 0 ? CSS.column(columns) : offset(offset) + " " + CSS.column(columns);
+        return offset == 0
+                ? CSS.column(columns, columnLg, columnMd, columnSm)
+                : offset(offset, columnLg, columnMd, columnSm) + " " + CSS.column(columns, columnLg, columnMd, columnSm);
     }
 }

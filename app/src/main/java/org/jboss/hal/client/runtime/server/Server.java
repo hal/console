@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime;
+package org.jboss.hal.client.runtime.server;
 
 import java.util.EnumSet;
 
+import org.jboss.hal.client.runtime.RunningMode;
+import org.jboss.hal.client.runtime.RunningState;
+import org.jboss.hal.client.runtime.SuspendState;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
@@ -44,26 +47,29 @@ public class Server extends NamedNode {
 
     private static final String STANDALONE_SERVER = "standalone.server";
     private static final String STANDALONE_HOST = "standalone.host";
-    public static final Server STANDALONE = new Server(STANDALONE_SERVER, STANDALONE_HOST,
+    public static final Server STANDALONE = new Server(STANDALONE_HOST, STANDALONE_SERVER,
             ServerConfigStatus.STARTED, RunningState.RUNNING);
 
     static String id(final String name) {
         return IdBuilder.build(SERVER, name);
     }
 
-    private Server(String server, String host, ServerConfigStatus serverConfigStatus, RunningState serverState) {
+    private Server(String host, String server, ServerConfigStatus serverConfigStatus,
+            RunningState serverState) {
         super(server, new ModelNode());
         get(HOST).set(host);
         get(STATUS).set(serverConfigStatus.name().toLowerCase());
         get(SERVER_STATE).set(serverState.name());
     }
 
-    public Server(final ModelNode node) {
+    public Server(final String host, final ModelNode node) {
         super(node.get(NAME).asString(), node);
+        get(HOST).set(host);
     }
 
-    public Server(final Property property) {
+    public Server(final String host, final Property property) {
         super(property);
+        get(HOST).set(host);
     }
 
     public boolean isStandalone() {

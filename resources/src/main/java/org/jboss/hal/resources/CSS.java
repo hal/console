@@ -15,7 +15,11 @@
  */
 package org.jboss.hal.resources;
 
+import java.util.Arrays;
+
 import org.jetbrains.annotations.NonNls;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * Contains common CSS classes from HAL, PatternFly & Bootstrap. The constants in this interface are not involved in
@@ -61,7 +65,10 @@ public interface CSS {
     String clickable = "clickable";
     String close = "close";
     String column = "col";
-    String columnMedium = "md";
+    String columnLg = "lg";
+    String columnMd = "md";
+    String columnSm = "sm";
+    String columnXs = "xs";
     String collapse = "collapse";
     String containerFluid = "container-fluid";
     String containerPfNavPfVertical = "container-pf-nav-pf-vertical";
@@ -247,12 +254,30 @@ public interface CSS {
     String wizardProgress = "wizard-progress";
     String wizardStep = "wizard-step";
 
-    static String column(int columns) {
-        return column + "-" + columnMedium + "-" + String.valueOf(columns);
+    static String column(int columns, String... sizes) {
+        if (sizes != null && sizes.length != 0) {
+            return Arrays.stream(sizes)
+                    .map(size -> column + "-" + size + "-" + String.valueOf(columns))
+                    .collect(joining(" "));
+        } else {
+            return column + "-" + columnXs + "-" + String.valueOf(columns) + " " +
+                    column + "-" + columnSm + "-" + String.valueOf(columns) + " " +
+                    column + "-" + columnMd + "-" + String.valueOf(columns) + " " +
+                    column + "-" + columnLg + "-" + String.valueOf(columns);
+        }
     }
 
-    static String offset(int columns) {
-        return column + "-" + columnMedium + "-" + offset + "-" + String.valueOf(columns);
+    static String offset(int columns, String... sizes) {
+        if (sizes != null && sizes.length != 0) {
+            return Arrays.stream(sizes)
+                    .map(size -> column + "-" + size + "-" + offset + "-" + String.valueOf(columns))
+                    .collect(joining(" "));
+        } else {
+            return column + "-" + columnXs + "-" + offset + "-" + String.valueOf(columns) + " " +
+                    column + "-" + columnSm + "-" + offset + "-" + String.valueOf(columns) + " " +
+                    column + "-" + columnMd + "-" + offset + "-" + String.valueOf(columns) + " " +
+                    column + "-" + columnLg + "-" + offset + "-" + String.valueOf(columns);
+        }
     }
 
     /**

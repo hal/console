@@ -13,23 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime;
+package org.jboss.hal.client.runtime.group;
 
-import javax.inject.Inject;
-
-import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.resources.Ids;
-import org.jboss.hal.spi.Column;
+import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 
 /**
  * @author Harald Pehl
  */
-@Column(Ids.STANDALONE_SERVER_COLUMN)
-public class StandaloneServerColumn extends FinderColumn<Server> {
+class ServerGroupPreview extends PreviewContent<ServerGroup> {
 
-    @Inject
-    public StandaloneServerColumn(final Finder finder) {
-        super(new Builder<>(finder, Ids.STANDALONE_SERVER_COLUMN, "Standalone Server")); //NON-NLS
+    ServerGroupPreview(final ServerGroup serverGroup, final Resources resources) {
+        super(serverGroup.getName(), Names.PROFILE + " " + serverGroup.getProfile());
     }
 }

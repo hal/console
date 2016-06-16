@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime;
+package org.jboss.hal.client.runtime.host;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import com.google.common.base.Joiner;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.core.HostSelectionEvent;
@@ -33,6 +32,7 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -55,12 +55,11 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static org.jboss.hal.client.runtime.ServerConfigStatus.STARTED;
+import static org.jboss.hal.client.runtime.server.ServerConfigStatus.STARTED;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.itemText;
 import static org.jboss.hal.resources.CSS.subtitle;
-import static org.jboss.hal.resources.CSS.withProgress;
 
 /**
  * @author Harald Pehl
@@ -79,7 +78,7 @@ public class HostColumn extends FinderColumn<Host> {
             final HostActions hostActions,
             final Resources resources) {
 
-        super(new Builder<Host>(finder, HOST, Names.HOSTS)
+        super(new Builder<Host>(finder, HOST, Names.HOST)
 
                 .columnAction(columnActionFactory.refresh(IdBuilder.build(HOST, "refresh")))
 
@@ -217,7 +216,7 @@ public class HostColumn extends FinderColumn<Host> {
                 PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(NameTokens.HOST_CONFIGURATION)
                         .with(HOST, item.getAddressName()).build();
                 List<ItemAction<Host>> actions = new ArrayList<>();
-                actions.add(itemActionFactory.view(placeRequest));
+                actions.add(itemActionFactory.viewAndMonitor(Host.id(item), placeRequest));
                 actions.add(new ItemAction<>(resources.constants().reload(),
                         itm -> hostActions.reload(itm,
                                 () -> beforeReload(itm),
@@ -240,41 +239,27 @@ public class HostColumn extends FinderColumn<Host> {
 
     void beforeReload(Host host) {
         if (!host.isDomainController()) {
-            startProgress(host);
+            ItemMonitor.startProgress(Host.id(host));
         }
     }
 
     void beforeRestart(Host host) {
         if (!host.isDomainController()) {
-            startProgress(host);
+            ItemMonitor.startProgress(Host.id(host));
         }
     }
 
     void afterReloadRestart(Host host) {
         if (!host.isDomainController()) {
-            endProgress(host);
+            ItemMonitor.stopProgress(Host.id(host));
         }
         refresh(RESTORE_SELECTION);
     }
 
     void onTimeout(Host host) {
         if (!host.isDomainController()) {
-            endProgress(host);
+            ItemMonitor.stopProgress(Host.id(host));
         }
         refreshItem(Host.id(host), host);
-    }
-
-    private void startProgress(final Host host) {
-        Element element = Browser.getDocument().getElementById(Host.id(host));
-        if (element != null) {
-            element.getClassList().add(withProgress);
-        }
-    }
-
-    private void endProgress(final Host host) {
-        Element element = Browser.getDocument().getElementById(Host.id(host));
-        if (element != null) {
-            element.getClassList().remove(withProgress);
-        }
     }
 }

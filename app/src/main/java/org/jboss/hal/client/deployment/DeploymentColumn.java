@@ -30,7 +30,7 @@ import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.client.deployment.Deployment.Status;
-import org.jboss.hal.client.runtime.Server;
+import org.jboss.hal.client.runtime.server.Server;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;

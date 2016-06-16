@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime;
+package org.jboss.hal.client.runtime.server;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +61,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Harald Pehl
  */
 @Column(SERVER)
-@Requires(value = {"/{selected.host}/server-config=*", "/{selected.host}/server=*"}, recursive = false)
+@Requires(value = {"/host=*/server-config=*", "/host=*/server=*"}, recursive = false)
 public class ServerColumn extends FinderColumn<Server> {
 
     @Inject
@@ -118,9 +118,9 @@ public class ServerColumn extends FinderColumn<Server> {
                 Map<String, Server> serverConfigsByName;
                 if (browseByHosts) {
                     serverConfigsByName = result.step(0).get(RESULT).asPropertyList().stream()
-                            .map(Server::new)
+                            .map(property -> new Server(statementContext.selectedHost(), property))
                             .collect(toMap(Server::getName, identity()));
-                    // set host and add server attributes
+                    // add server attributes
                     for (Property property : result.step(1).get(RESULT).asPropertyList()) {
                         Server serverConfig = serverConfigsByName.get(property.getName());
                         if (serverConfig != null) {
@@ -131,18 +131,20 @@ public class ServerColumn extends FinderColumn<Server> {
 
                 } else {
                     serverConfigsByName = result.step(0).get(RESULT).asList().stream()
-                            .map(modelNode -> new Server(modelNode.get(RESULT)))
+                            .filter(modelNode -> !modelNode.isFailure())
+                            .map(modelNode -> {
+                                ResourceAddress address = new ResourceAddress(modelNode.get(ADDRESS));
+                                String host = address.getParent().lastValue();
+                                return new Server(host, modelNode.get(RESULT));
+                            })
                             .collect(toMap(Server::getName, identity()));
-                    // set host and add server attributes
+                    // add server attributes
                     for (ModelNode modelNode : result.step(1).get(RESULT).asList()) {
                         if (!modelNode.isFailure()) {
-                            ResourceAddress address = new ResourceAddress(modelNode.get(ADDRESS));
-                            String host = address.getParent().lastValue();
                             ModelNode serverNode = modelNode.get(RESULT);
                             String name = serverNode.get(NAME).asString();
                             Server serverConfig = serverConfigsByName.get(name);
                             if (serverConfig != null) {
-                                serverConfig.get(HOST).set(host);
                                 serverConfig.addServerAttributes(serverNode);
                             }
                         }

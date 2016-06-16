@@ -47,6 +47,7 @@ public class BrowseByColumn extends StaticItemColumn {
                                 .onPreview(new PreviewContent(Names.HOSTS, resources.previews().hosts()))
                                 .build(),
                         new StaticItem.Builder(Names.SERVER_GROUPS)
+                                .nextColumn(ModelDescriptionConstants.SERVER_GROUP)
                                 .onPreview(new PreviewContent(Names.SERVER_GROUPS,
                                         resources.previews().runtimeServerGroups()))
                                 .build()

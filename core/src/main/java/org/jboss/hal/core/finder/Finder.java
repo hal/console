@@ -124,6 +124,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     /**
      * The maximum number of visible columns. If there are more columns, the first column is hidden when column
      * {@code MAX_VISIBLE_COLUMNS + 1} is shown.
+     * TODO Reduce this if the viewport gets smaller and change col-??-2 to col-??-3
      */
     private static final int MAX_VISIBLE_COLUMNS = 4;
 
@@ -349,10 +350,10 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         return columns.size();
     }
 
+    @SuppressWarnings("unchecked")
     void showPreview(PreviewContent preview) {
         Elements.removeChildrenFrom(previewColumn);
         if (preview != null) {
-            //noinspection unchecked
             Iterable<Element> elements = preview.asElements();
             for (Element element : elements) {
                 previewColumn.appendChild(element);
