@@ -38,6 +38,7 @@ public interface Names {
     String HOSTS = "Hosts";
     String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";
+    String IO = "IO";
     String JDBC_DRIVER = "JDBC Driver";
     String JDBC_DRIVERS = "JDBC Drivers";
     String LOGGING = "Logging";

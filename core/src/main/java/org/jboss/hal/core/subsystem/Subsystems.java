@@ -46,7 +46,7 @@ public class Subsystems {
         add(new SubsystemMetadata(EJB3, "EJB3", null, NameTokens.EJB3, null, false));
         add(new SubsystemMetadata(IIOP_OPENJDK, "IIOP", "OpenJDK", NameTokens.IIOP, null, true));
         add(new SubsystemMetadata(INFINISPAN, "Infinispan", null, null, Ids.CACHE_CONTAINER_COLUMN, true));
-        add(new SubsystemMetadata(IO, "IO", null, NameTokens.IO, null, false));
+        add(new SubsystemMetadata(IO, "IO", null, NameTokens.IO, null, true));
         add(new SubsystemMetadata(JCA, "JCA", null, NameTokens.JCA, null, false));
         add(new SubsystemMetadata(JMX, "JMX", null, NameTokens.JMX, null, false));
         add(new SubsystemMetadata(JPA, "JPA", null, NameTokens.JPA, null, false));
