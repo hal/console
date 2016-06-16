@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import com.google.common.base.Splitter;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.events.EventListener;
@@ -64,7 +65,9 @@ public class ButtonItem extends AbstractFormItem<Void> {
 
     @Override
     protected void assembleUI() {
-        inputContainer.getClassList().add(offset(labelColumns));
+        for (String cls : Splitter.on(' ').split(offset(labelColumns))) {
+            inputContainer.getClassList().add(cls);
+        }
         inputContainer.appendChild(inputElement().asElement());
         editingRoot.appendChild(inputContainer);
     }
