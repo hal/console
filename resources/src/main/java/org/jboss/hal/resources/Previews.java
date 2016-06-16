@@ -41,6 +41,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/subsystems/ee.html")
     ExternalTextResource ee();
 
+    @Source("previews/subsystems/io.html")
+    ExternalTextResource io();
+
     @Source("previews/runtime/hosts.html")
     ExternalTextResource hosts();
 
