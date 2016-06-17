@@ -23,6 +23,7 @@ import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -36,11 +37,12 @@ public class BrowseByColumn extends StaticItemColumn {
 
     @Inject
     public BrowseByColumn(final Finder finder,
+            final Dispatcher dispatcher,
             final Resources resources) {
         super(finder, Ids.DOMAIN_BROWSE_BY_COLUMN, resources.constants().browseBy(),
                 Arrays.asList(
                         new StaticItem.Builder(Names.TOPOLOGY)
-                                .onPreview(new TopologyPreview())
+                                .onPreview(new TopologyPreview(dispatcher, resources))
                                 .build(),
                         new StaticItem.Builder(Names.HOSTS)
                                 .nextColumn(ModelDescriptionConstants.HOST)
