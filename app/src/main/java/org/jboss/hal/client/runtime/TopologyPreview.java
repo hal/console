@@ -16,7 +16,6 @@
 package org.jboss.hal.client.runtime;
 
 import elemental.client.Browser;
-import elemental.dom.Element;
 import elemental.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.core.finder.PreviewContent;
@@ -28,7 +27,6 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.CSS;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -48,8 +46,8 @@ class TopologyPreview extends PreviewContent<StaticItem> {
         this.dispatcher = dispatcher;
 
         previewBuilder().table().rememberAs(TOPOLOGY_TABLE).end();
-        Element refresh = Browser.getDocument().getElementById(Ids.TOPOLOGY_REFRESH);
-        refresh.setOnclick(event -> update(null));
+        //Element refresh = Browser.getDocument().getElementById(Ids.TOPOLOGY_REFRESH);
+        //refresh.setOnclick(event -> update(null));
     }
 
     @Override

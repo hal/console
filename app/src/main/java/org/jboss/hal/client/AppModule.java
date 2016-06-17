@@ -47,6 +47,8 @@ import org.jboss.hal.client.configuration.subsystem.logging.Mbui_LoggingProfileV
 import org.jboss.hal.client.configuration.subsystem.logging.Mbui_LoggingView_Provider;
 import org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter;
 import org.jboss.hal.client.configuration.subsystem.mail.MailSessionView;
+import org.jboss.hal.client.configuration.subsystem.transactions.Mbui_TransactionView_Provider;
+import org.jboss.hal.client.configuration.subsystem.transactions.TransactionPresenter;
 import org.jboss.hal.client.deployment.DeploymentPresenter;
 import org.jboss.hal.client.deployment.DeploymentView;
 import org.jboss.hal.client.homepage.HomepagePresenter;
@@ -187,6 +189,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 LoggingProfilePresenter.MyView.class,
                 Mbui_LoggingProfileView_Provider.class,
                 LoggingProfilePresenter.MyProxy.class);
+
+        bindTemplatedPresenter(TransactionPresenter.class,
+                TransactionPresenter.MyView.class,
+                Mbui_TransactionView_Provider.class,
+                TransactionPresenter.MyProxy.class);
 
         bindPresenter(MacroEditorPresenter.class,
                 MacroEditorPresenter.MyView.class,
