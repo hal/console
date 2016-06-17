@@ -38,6 +38,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/subsystems/datasources-only.html")
     ExternalTextResource datasourcesOnly();
 
+    @Source("previews/subsystems/deployment-scanner.html")
+    ExternalTextResource deploymentScanner();
+
     @Source("previews/subsystems/ee.html")
     ExternalTextResource ee();
 
