@@ -53,8 +53,8 @@
         <div class="finder-preview topology col-xs-10 col-sm-10 col-md-10 col-lg-10">
             <h1>Topology</h1>
             <p>An overview of the hosts, server groups and servers defined in your domain with the server groups as columns and the hosts as rows. The servers are displayed according to their status:
-                <span class="status error">faulty or timed out</span>,
-                <span class="status warning">needs reload, restart or suspending</span>,
+                <span class="status error">error or timed out</span>,
+                <span class="status warning">needs reload / restart or suspending</span>,
                 <span class="status ok">up and running</span> and
                 <span class="status inactive">stopped or disabled</span>.</p>
             <p>Click on a host, server group or server to see additional information and execute operations on the selected resource.
@@ -80,55 +80,134 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <th rowspan="2" class="row-header">
+                    <th class="row-header">
                         <a class="name clickable"><span class="fa fa-star" title="Domain Controller"></span> master</a>
                     </th>
-                    <td class="ok with-progress"><a class="name clickable">server1</a></td>
-                    <td rowspan="2" class="ok">
-                        <div class="dropdown">
-                            <a class="name clickable dropdown-toggle" id="server2-dropdown" data-toggle="dropdown" aria-haspopup="true">server2</a>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="server2-dropdown">
-                                <li><a href="#">Action</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something else here</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#">Separated link</a></li>
-                            </ul>
+                    <td>
+                        <div class="servers">
+                            <div class="server ok with-progress">
+                                <a class="name clickable">server1</a>
+                            </div>
+                            <div class="server ok">
+                                <a class="name clickable">server4</a>
+                            </div>
                         </div>
                     </td>
-                    <td rowspan="2" class="warning"><a class="name clickable">server3</a></td>
-                    <td rowspan="2" class="ok"><a class="name clickable">server5</a></td>
-                </tr>
-                <tr>
-                    <td class="ok"><a class="name clickable">server4</a></td>
-                </tr>
-                <tr>
-                    <th rowspan="2" class="row-header"><a class="name clickable">slave1</a></th>
-                    <td rowspan="2" class="empty">&nbsp;</td>
-                    <td rowspan="2" class="ok"><a class="name clickable">server6</a></td>
-                    <td class="error with-progress"><a class="name clickable">server7</a></td>
-                    <td rowspan="2" class="empty">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td class="ok selected"><a class="name clickable">server8</a></td>
-                </tr>
-                <tr>
-                    <th rowspan="3" class="row-header">
-                        <a class="name clickable" title="slave2-lorem-ipsum-dolor-sit-amet-consectetur-adipiscing-elit-summus-dolor-plures-dies-manere-non-potest">slave2-lorem-ipsum-dolor-sit-amet-consectetur-adipiscing-elit-summus-dolor-plures-dies-manere-non-potest</a>
-                    </th>
-                    <td rowspan="3" class="error"><a class="name clickable">server9</a></td>
-                    <td rowspan="2" class="inactive with-progress">
-                        <a class="name clickable" title="server10-with-a-pretty-long-name">server10-with-a-pretty-long-name</a>
+                    <td>
+                        <div class="servers">
+                            <div class="server ok">
+                                <div class="dropdown">
+                                    <a class="name clickable dropdown-toggle" id="server2-dropdown" data-toggle="dropdown" aria-haspopup="true">server2</a>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="server2-dropdown">
+                                        <li><a href="#">Action</a></li>
+                                        <li><a href="#">Another action</a></li>
+                                        <li><a href="#">Something else here</a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li><a href="#">Separated link</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </td>
-                    <td rowspan="3" class="empty">&nbsp;</td>
-                    <td class="ok"><a class="name clickable">server11</></td>
+                    <td>
+                        <div class="servers">
+                            <div class="server warning">
+                                <a class="name clickable">server3</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="servers">
+                            <div class="server ok">
+                                <a class="name clickable">server5</a>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
-                    <td class="warning with-progress"><a class="name clickable">server12</a></td>
+                    <th class="row-header">
+                        <a class="name clickable">slave1</a>
+                    </th>
+                    <td class="empty">&nbsp;</td>
+                    <td>
+                        <div class="servers">
+                            <div class="server ok">
+                                <a class="name clickable">server6</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="servers">
+                            <div class="server error with-progress">
+                                <a class="name clickable">server7</a>
+                            </div>
+                            <div class="server ok selected">
+                                <a class="name clickable">server8</a>
+                            </div>
+                        </div>
+
+                    </td>
+                    <td class="empty">&nbsp;</td>
                 </tr>
                 <tr>
-                    <td class="ok"><a class="name clickable">server13</a></td>
-                    <td class="inactive"><a class="name clickable">server14</a></td>
+                    <th class="row-header">
+                        <a class="name clickable" title="slave2-which-contains-lots-of-servers-with-all-kind-of-states">slave2-which-contains-lots-of-servers-with-all-kind-of-states</a>
+                    </th>
+                    <td>
+                        <div class="servers">
+                            <div class="server error">
+                                <a class="name clickable">server9</a>
+                            </div>
+                            <div class="server ok">
+                                <a class="name clickable">server10</a>
+                            </div>
+                            <div class="server ok">
+                                <a class="name clickable">server11</a>
+                            </div>
+                            <div class="server ok">
+                                <a class="name clickable">server12</a>
+                            </div>
+                            <div class="server ok">
+                                <a class="name clickable">server13</a>
+                            </div>
+                            <div class="server inactive">
+                                <a class="name clickable">server14</a>
+                            </div>
+                            <div class="server ok">
+                                <a class="name clickable">server15</a>
+                            </div>
+                            <div class="server warning">
+                                <a class="name clickable">server16</a>
+                            </div>
+                            <div class="server ok">
+                                <a class="name clickable">server17</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="servers">
+                            <div class="server inactive with-progress">
+                                <a class="name clickable" title="server1-with-a-pretty-long-name-that-is-way-too-long">server1-with-a-pretty-long-name-that-is-way-too-long</a>
+                            </div>
+                            <div class="server ok">
+                                <a class="name clickable">server19</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="empty">&nbsp;</td>
+                    <td>
+                        <div class="servers">
+                            <div class="server ok">
+                                <a class="name clickable">server20</a>
+                            </div>
+                            <div class="server warning with-progress">
+                                <a class="name clickable">server21</a>
+                            </div>
+                            <div class="server ok">
+                                <a class="name clickable">server14</a>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -161,6 +240,10 @@
 <script>
     $(document).ready(function () {
         $('[data-toggle=tooltip]').tooltip();
+        // couldn't find another way to make the <div>s inside the <td>s 100% height
+        $(".topology .servers").each(function () {
+            $(this).height($(this).parent().height() + 1);
+        });
     });
 </script>
 </body>
