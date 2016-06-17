@@ -82,8 +82,7 @@ public class TableButtonFactory {
     }
 
     public <T extends ModelNode> Button<T> add(String id, String type, AddressTemplate template,
-            ScheduledCommand afterAdd,
-            @NonNls final String firstAttribute, @NonNls final String... otherAttributes) {
+            ScheduledCommand afterAdd, @NonNls final String firstAttribute, @NonNls final String... otherAttributes) {
 
         AddResourceDialog.Callback addResourceCallback = (name, model) -> {
             ResourceAddress address = template.resolve(statementContext, name);

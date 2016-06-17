@@ -54,6 +54,7 @@ public interface ModelDescriptionConstants {
     String ANY = "any";
     String ATTRIBUTES = "attributes";
     String ATTRIBUTES_ONLY = "attributes-only";
+    String AUTO_START = "auto-start";
 
     String BATCH_JBERET = "batch-jberet";
     String BYTES = "bytes";
@@ -241,7 +242,9 @@ public interface ModelDescriptionConstants {
     String SERVER_TYPE = "server-type";
     String SERVICE = "service";
     String SOCKET_BINDING = "socket-binding";
+    String SOCKET_BINDING_DEFAULT_INTERFACE = "socket-binding-default-interface";
     String SOCKET_BINDING_GROUP = "socket-binding-group";
+    String SOCKET_BINDING_PORT_OFFSET = "socket-binding-port-offset";
     String SHUTDOWN = "shutdown";
     String STANDALONE = "standalone";
     String START = "start";

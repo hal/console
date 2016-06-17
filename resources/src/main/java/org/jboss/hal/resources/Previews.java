@@ -38,6 +38,15 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/subsystems/datasources-only.html")
     ExternalTextResource datasourcesOnly();
 
+    @Source("previews/deployments/domain.html")
+    ExternalTextResource deploymentsDomain();
+
+    @Source("previews/deployments/server-groups.html")
+    ExternalTextResource deploymentsServerGroups();
+
+    @Source("previews/deployments/standalone.html")
+    ExternalTextResource deploymentsStandalone();
+
     @Source("previews/subsystems/ee.html")
     ExternalTextResource ee();
 
@@ -58,15 +67,6 @@ public interface Previews extends ClientBundleWithLookup {
 
     @Source("previews/subsystems/mail.html")
     ExternalTextResource mail();
-
-    @Source("previews/deployments/domain.html")
-    ExternalTextResource deploymentsDomain();
-
-    @Source("previews/deployments/server-groups.html")
-    ExternalTextResource deploymentsServerGroups();
-
-    @Source("previews/deployments/standalone.html")
-    ExternalTextResource deploymentsStandalone();
 
     @Source("previews/configuration/interfaces.html")
     ExternalTextResource interfaces();
@@ -97,4 +97,7 @@ public interface Previews extends ClientBundleWithLookup {
 
     @Source("previews/configuration/system-properties.html")
     ExternalTextResource systemProperties();
+
+    @Source("previews/runtime/topology.html")
+    ExternalTextResource topology();
 }

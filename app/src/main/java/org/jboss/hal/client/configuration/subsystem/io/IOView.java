@@ -50,6 +50,7 @@ public abstract class IOView extends MbuiViewImpl<IOPresenter> implements IOPres
         super(mbuiContext);
     }
 
+
     // ------------------------------------------------------ buffer pool
 
     @Override
@@ -69,10 +70,6 @@ public abstract class IOView extends MbuiViewImpl<IOPresenter> implements IOPres
 
 
     // ------------------------------------------------------ view / mbui contract
-
-    IOPresenter getPresenter() {
-        return presenter;
-    }
 
     @Override
     public VerticalNavigation getVerticalNavigation() {

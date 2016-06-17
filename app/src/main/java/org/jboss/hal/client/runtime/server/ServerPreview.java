@@ -115,7 +115,7 @@ public class ServerPreview extends RuntimePreview<Server> {
 
         //noinspection HardCodedStringLiteral
         attributes = new PreviewAttributes<>(server,
-                asList(HOST, GROUP, PROFILE_NAME, "auto-start", "socket-binding-port-offset", STATUS, RUNNING_MODE,
+                asList(HOST, GROUP, PROFILE_NAME, AUTO_START, SOCKET_BINDING_PORT_OFFSET, STATUS, RUNNING_MODE,
                         SERVER_STATE, SUSPEND_STATE))
                 .end();
         previewBuilder().addAll(attributes);

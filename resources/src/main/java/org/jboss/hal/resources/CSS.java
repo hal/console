@@ -121,6 +121,7 @@ public interface CSS {
     String hover = "hover";
 
     String in = "in";
+    String inactive = "inactive";
     String indicator = "indicator";
     String info = "info";
     String inputGroup = "input-group";
@@ -171,6 +172,7 @@ public interface CSS {
     String modelBrowserContent = "model-browser-content";
     String modelBrowserTree = "model-browser-tree";
 
+    String name = "name";
     String nav = "nav";
     String navbar = "navbar";
     String navPfPersistentSecondary = "nav-pf-persistent-secondary";
@@ -215,10 +217,13 @@ public interface CSS {
     String refresh = "refresh";
     String restricted = "restricted";
     String row = "row";
+    String rowHeader = "row-header";
 
     String secondaryVisiblePf = "secondary-visible-pf";
     String selectpicker = "selectpicker";
     String separator = "separator";
+    String server = "server";
+    String servers = "servers";
     String spinner = "spinner";
     String spinnerLg = "spinner-lg";
     String srOnly = "sr-only";
@@ -240,6 +245,7 @@ public interface CSS {
     String toastPfAction = "toast-pf-action";
     String toastPfMaxWidth = "toast-pf-max-width";
     String toastPfTopRight = "toast-pf-top-right";
+    String topology = "topology";
     String ttNested = "tt-nested";
 
     String unpin = "unpin";
@@ -248,6 +254,7 @@ public interface CSS {
     String value = "value";
     String valueDropdown = "value-dropdown";
 
+    String warning = "warning";
     String warningTriangleO = "warning-triangle-o";
     String withProgress = "with-progress";
     String wizardHeader = "wizard-header";

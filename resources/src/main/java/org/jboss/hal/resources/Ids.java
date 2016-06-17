@@ -95,6 +95,7 @@ public interface Ids {
     String TLC_HOMEPAGE = "tlc-homepage";
     String TLC_PATCHING = "tlc-patching";
     String TLC_RUNTIME = "tlc-runtime";
+    String TOPOLOGY_REFRESH = "topology-refresh";
 
     String VERSION_INFO = "version-info";
     String VERSION_INFO_FORM = IdBuilder.build(VERSION_INFO, "form");

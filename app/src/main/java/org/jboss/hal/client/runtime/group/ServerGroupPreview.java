@@ -21,6 +21,11 @@ import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Names;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_DEFAULT_INTERFACE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_PORT_OFFSET;
+
 /**
  * @author Harald Pehl
  */
@@ -31,8 +36,8 @@ class ServerGroupPreview extends PreviewContent<ServerGroup> {
 
         //noinspection HardCodedStringLiteral
         PreviewAttributes<ServerGroup> attributes = new PreviewAttributes<>(serverGroup,
-                Arrays.asList("profile", "socket-binding-group", "socket-binding-port-offset",
-                        "socket-binding-default-interface"))
+                Arrays.asList(PROFILE, SOCKET_BINDING_GROUP, SOCKET_BINDING_PORT_OFFSET,
+                        SOCKET_BINDING_DEFAULT_INTERFACE))
                 .end();
         previewBuilder().addAll(attributes);
     }
