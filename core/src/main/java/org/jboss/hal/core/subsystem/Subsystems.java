@@ -41,7 +41,7 @@ public class Subsystems {
         add(new SubsystemMetadata(DATASOURCES, Names.DATASOURCES_DRIVERS, null, null,
                 Ids.DATA_SOURCE_DRIVER_COLUMN, true));
         add(new SubsystemMetadata(DEPLOYMENT_SCANNER, "Deployment Scanners", null, NameTokens.DEPLOYMENT_SCANNERS,
-                null, false));
+                null, true));
         add(new SubsystemMetadata(EE, "EE", null, NameTokens.EE, null, true));
         add(new SubsystemMetadata(EJB3, "EJB3", null, NameTokens.EJB3, null, false));
         add(new SubsystemMetadata(IIOP_OPENJDK, "IIOP", "OpenJDK", NameTokens.IIOP, null, true));
