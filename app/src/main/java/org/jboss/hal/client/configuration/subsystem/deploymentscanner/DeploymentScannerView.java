@@ -17,7 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.deploymentscanner;
 
 import java.util.List;
 
-import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.DataTable;
@@ -40,7 +39,6 @@ public abstract class DeploymentScannerView extends MbuiViewImpl<DeploymentScann
         return new Mbui_DeploymentScannerView(mbuiContext);
     }
 
-    @MbuiElement("deploymentscanner-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("deploymentscanner-table") DataTable<NamedNode> deploymentscannerTable;
     @MbuiElement("deploymentscanner-form") Form<NamedNode> deploymentscannerForm;
 
@@ -56,15 +54,4 @@ public abstract class DeploymentScannerView extends MbuiViewImpl<DeploymentScann
         deploymentscannerForm.clear();
     }
 
-
-    // ------------------------------------------------------ view / mbui contract
-
-    DeploymentScannerPresenter getPresenter() {
-        return presenter;
-    }
-
-    @Override
-    public VerticalNavigation getVerticalNavigation() {
-        return navigation;
-    }
 }

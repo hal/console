@@ -28,7 +28,6 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
-import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
@@ -58,7 +57,7 @@ public class DeploymentScannerPresenter
     @Requires( {DEPLOYMENTSCANNER_SUBSYSTEM_ADDRESS, DEPLOYMENTSCANNER_ADDRESS})
     public interface MyProxy extends ProxyPlace<DeploymentScannerPresenter> {}
 
-    public interface MyView extends MbuiView<DeploymentScannerPresenter>, HasVerticalNavigation {
+    public interface MyView extends MbuiView<DeploymentScannerPresenter> {
         void updateScanners(List<NamedNode> items);
     }
     // @formatter:on
