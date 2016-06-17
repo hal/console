@@ -57,7 +57,7 @@
                 <span class="status warning">needs reload / restart or suspending</span>,
                 <span class="status ok">up and running</span> and
                 <span class="status inactive">stopped or disabled</span>.</p>
-            <p>Click on a host, server group or server to see additional information and execute operations on the selected resource.
+            <p>Click on a host, server group or server to see additional information or execute operations.
                 <a class="clickable pull-right"><i class="fa fa-refresh"></i> Refresh</a></p>
             <table>
                 <colgroup>
@@ -89,7 +89,7 @@
                                 <a class="name clickable">server1</a>
                             </div>
                             <div class="server ok">
-                                <a class="name clickable">server4</a>
+                                <a class="name clickable">server2</a>
                             </div>
                         </div>
                     </td>
@@ -97,13 +97,12 @@
                         <div class="servers">
                             <div class="server ok">
                                 <div class="dropdown">
-                                    <a class="name clickable dropdown-toggle" id="server2-dropdown" data-toggle="dropdown" aria-haspopup="true">server2</a>
-                                    <ul class="dropdown-menu" role="menu" aria-labelledby="server2-dropdown">
-                                        <li><a href="#">Action</a></li>
-                                        <li><a href="#">Another action</a></li>
-                                        <li><a href="#">Something else here</a></li>
-                                        <li role="separator" class="divider"></li>
-                                        <li><a href="#">Separated link</a></li>
+                                    <a class="name clickable dropdown-toggle" id="server3-dropdown" data-toggle="dropdown" aria-haspopup="true">server3</a>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="server3-dropdown">
+                                        <li><a href="#">Reload</a></li>
+                                        <li><a href="#">Restart</a></li>
+                                        <li><a href="#">Suspend</a></li>
+                                        <li><a href="#">Stop</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -112,7 +111,7 @@
                     <td>
                         <div class="servers">
                             <div class="server warning">
-                                <a class="name clickable">server3</a>
+                                <a class="name clickable">server4</a>
                             </div>
                         </div>
                     </td>
@@ -204,7 +203,34 @@
                                 <a class="name clickable">server21</a>
                             </div>
                             <div class="server ok">
-                                <a class="name clickable">server14</a>
+                                <a class="name clickable">server22</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="row-header">
+                        <a class="name clickable">slave3</a>
+                    </th>
+                    <td>
+                        <div class="servers">
+                            <div class="server inactive">
+                                <a class="name clickable">server23</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="servers">
+                            <div class="server inactive">
+                                <a class="name clickable">server24</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="empty">&nbsp;</td>
+                    <td>
+                        <div class="servers">
+                            <div class="server inactive">
+                                <a class="name clickable">server25</a>
                             </div>
                         </div>
                     </td>
@@ -240,7 +266,7 @@
 <script>
     $(document).ready(function () {
         $('[data-toggle=tooltip]').tooltip();
-        // couldn't find another way to make the <div>s inside the <td>s 100% height
+        // couldn't find another (CSS-only) way to make the <div class="servers"> inside the <td>s 100% height
         $(".topology .servers").each(function () {
             $(this).height($(this).parent().height() + 1);
         });
