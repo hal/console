@@ -50,75 +50,111 @@
                 <li><span class="item-text">Server Groups</span><span class="folder fa fa-angle-right"></span></li>
             </ul>
         </div>
-        <div class="finder-preview col-xs-10 col-sm-10 col-md-10 col-lg-10">
+        <div class="finder-preview topology col-xs-10 col-sm-10 col-md-10 col-lg-10">
             <h1>Topology</h1>
-            <table class="table-header-rotated">
+            <p>An overview of the hosts, server groups and servers defined in your domain with the server groups as columns and the hosts as rows. The servers are displayed according to their status:
+                <span class="status error">faulty or timed out</span>,
+                <span class="status warning">needs reload, restart or suspending</span>,
+                <span class="status ok">up and running</span> and
+                <span class="status inactive">stopped or disabled</span>.</p>
+            <p>Click on a host, server group or server to see additional information and execute operations on the selected resource.
+                <a class="clickable pull-right"><i class="fa fa-refresh"></i> Refresh</a></p>
+            <table>
+                <colgroup>
+                    <col width="20%"/>
+                    <col width="20%"/>
+                    <col width="20%"/>
+                    <col width="20%"/>
+                    <col width="20%"/>
+                </colgroup>
                 <thead>
                 <tr>
-                    <th>&nbsp;</th>
-                    <th class="rotate">
-                        <div><span>development</span></div>
+                    <th class="empty">Server Groups &rarr;<br/>Hosts &darr;</th>
+                    <th><a class="name clickable">development</a></th>
+                    <th><a class="name clickable">staging</a></th>
+                    <th>
+                        <a class="name clickable" title="qa-server-group-used-for-testing-our-applications">qa-server-group-used-for-testing-our-applications</a>
                     </th>
-                    <th class="rotate">
-                        <div><span>staging</span></div>
-                    </th>
-                    <th class="rotate">
-                        <div><span>qa</span></div>
-                    </th>
-                    <th class="rotate">
-                        <div><span>production</span></div>
-                    </th>
+                    <th><a class="name clickable">production</a></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <th rowspan="2" class="row-header"><div><span>master</span></div></th>
-                    <td class="ok">server1</td>
-                    <td rowspan="2" class="ok">server2</td>
-                    <td rowspan="2" class="warning">server3</td>
-                    <td rowspan="2" class="ok">server5</td>
+                    <th rowspan="2" class="row-header">
+                        <a class="name clickable"><span class="fa fa-star" title="Domain Controller"></span> master</a>
+                    </th>
+                    <td class="ok with-progress"><a class="name clickable">server1</a></td>
+                    <td rowspan="2" class="ok">
+                        <div class="dropdown">
+                            <a class="name clickable dropdown-toggle" id="server2-dropdown" data-toggle="dropdown" aria-haspopup="true">server2</a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="server2-dropdown">
+                                <li><a href="#">Action</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">Separated link</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                    <td rowspan="2" class="warning"><a class="name clickable">server3</a></td>
+                    <td rowspan="2" class="ok"><a class="name clickable">server5</a></td>
                 </tr>
                 <tr>
-                    <td class="ok">server4</td>
+                    <td class="ok"><a class="name clickable">server4</a></td>
                 </tr>
                 <tr>
-                    <th rowspan="2" class="row-header"><div><span>slave1</span></div></th>
+                    <th rowspan="2" class="row-header"><a class="name clickable">slave1</a></th>
                     <td rowspan="2" class="empty">&nbsp;</td>
-                    <td rowspan="2" class="ok">server6</td>
-                    <td class="error">server7</td>
+                    <td rowspan="2" class="ok"><a class="name clickable">server6</a></td>
+                    <td class="error with-progress"><a class="name clickable">server7</a></td>
                     <td rowspan="2" class="empty">&nbsp;</td>
                 </tr>
                 <tr>
-                    <td class="ok">server8</td>
+                    <td class="ok selected"><a class="name clickable">server8</a></td>
                 </tr>
                 <tr>
-                    <th rowspan="3" class="row-header"><div><span>slave2</span></div></th>
-                    <td rowspan="3" class="ok">server9</td>
-                    <td rowspan="2" class="warning">server10-with-a-pretty-long-name</td>
+                    <th rowspan="3" class="row-header">
+                        <a class="name clickable" title="slave2-lorem-ipsum-dolor-sit-amet-consectetur-adipiscing-elit-summus-dolor-plures-dies-manere-non-potest">slave2-lorem-ipsum-dolor-sit-amet-consectetur-adipiscing-elit-summus-dolor-plures-dies-manere-non-potest</a>
+                    </th>
+                    <td rowspan="3" class="error"><a class="name clickable">server9</a></td>
+                    <td rowspan="2" class="inactive with-progress">
+                        <a class="name clickable" title="server10-with-a-pretty-long-name">server10-with-a-pretty-long-name</a>
+                    </td>
                     <td rowspan="3" class="empty">&nbsp;</td>
-                    <td class="ok">server11</td>
+                    <td class="ok"><a class="name clickable">server11</></td>
                 </tr>
                 <tr>
-                    <td class="warning">server12</td>
+                    <td class="warning with-progress"><a class="name clickable">server12</a></td>
                 </tr>
                 <tr>
-                    <td class="ok">server13</td>
-                    <td class="ok">server14</td>
+                    <td class="ok"><a class="name clickable">server13</a></td>
+                    <td class="inactive"><a class="name clickable">server14</a></td>
                 </tr>
                 </tbody>
             </table>
-            <h2>Server <code>server7</code></h2>
+            <h2>Server</h2>
             <ul class="list-group">
                 <li class="list-group-item">
                     <span class="key">Name</span>
-                    <span class="value">server7</span>
+                    <span class="value">server8</span>
                 </li>
                 <li class="list-group-item">
-                    <span class="key">Foo</span>
-                    <span class="value">bar</span>
+                    <span class="key">Host</span>
+                    <span class="value">slave1</span>
+                </li>
+                <li class="list-group-item">
+                    <span class="key">Server Group</span>
+                    <span class="value">qa-server-group-used-for-testing-our-applications</span>
+                </li>
+                <li class="list-group-item">
+                    <span class="key">Socket Binding Port Offset</span>
+                    <span class="value">0</span>
+                </li>
+                <li class="list-group-item">
+                    <span class="key">Status</span>
+                    <span class="value">running</span>
                 </li>
             </ul>
-
         </div>
     </div>
 </div>
