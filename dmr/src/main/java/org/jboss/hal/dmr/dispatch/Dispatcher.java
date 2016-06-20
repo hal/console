@@ -30,6 +30,7 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.macro.Action;
 import org.jboss.hal.dmr.macro.Macro;
 import org.jboss.hal.dmr.macro.MacroFinishedEvent;
 import org.jboss.hal.dmr.macro.MacroOperationEvent;
@@ -366,12 +367,12 @@ public class Dispatcher implements RecordingHandler {
 
     @Override
     public void onRecording(final RecordingEvent event) {
-        if (event.getAction() == RecordingEvent.Action.START && macros.current() == null) {
+        if (event.getAction() == Action.START && macros.current() == null) {
             MacroOptions options = event.getOptions();
             String description = options.hasDefined(DESCRIPTION) ? options.get(DESCRIPTION).asString() : null;
             macros.startRecording(new Macro(options.getName(), description), options);
 
-        } else if (event.getAction() == RecordingEvent.Action.STOP && macros.current() != null) {
+        } else if (event.getAction() == Action.STOP && macros.current() != null) {
             Macro finished = macros.current();
             MacroOptions options = macros.currentOptions();
             macros.stopRecording();

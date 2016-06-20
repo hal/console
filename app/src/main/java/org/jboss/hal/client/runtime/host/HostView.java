@@ -26,6 +26,7 @@ import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
+import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;

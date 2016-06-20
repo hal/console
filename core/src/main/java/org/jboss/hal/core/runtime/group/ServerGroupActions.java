@@ -13,18 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.group;
+package org.jboss.hal.core.runtime.group;
 
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
+import org.jboss.hal.core.runtime.Action;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BLOCKING;
+import static org.jboss.hal.dmr.dispatch.Dispatcher.NOOP_EXCEPTIONAL_CALLBACK;
+import static org.jboss.hal.dmr.dispatch.Dispatcher.NOOP_FAILED_CALLBACK;
+import static org.jboss.hal.dmr.dispatch.Dispatcher.NOOP_OPERATION_CALLBACK;
 
 /**
  * @author Harald Pehl
@@ -50,51 +57,32 @@ public class ServerGroupActions {
         this.resources = resources;
     }
 
-    public void start(ServerGroup serverGroup,
-            final Scheduler.ScheduledCommand beforeStart,
-            final Scheduler.ScheduledCommand whileStarting,
-            final Scheduler.ScheduledCommand afterStart,
-            final Scheduler.ScheduledCommand onTimeout) {
+    public void reload(ServerGroup serverGroup, final Scheduler.ScheduledCommand whileReloading) {
         Browser.getWindow().alert(Names.NYI);
     }
 
-    public void stop(ServerGroup serverGroup,
-            final Scheduler.ScheduledCommand beforeStop,
-            final Scheduler.ScheduledCommand whileStopping,
-            final Scheduler.ScheduledCommand afterStop,
-            final Scheduler.ScheduledCommand onTimeout) {
+    public void restart(ServerGroup serverGroup, final Scheduler.ScheduledCommand whileRestarting) {
         Browser.getWindow().alert(Names.NYI);
     }
 
-    public void reload(ServerGroup serverGroup,
-            final Scheduler.ScheduledCommand beforeReload,
-            final Scheduler.ScheduledCommand whileReloading,
-            final Scheduler.ScheduledCommand afterReload,
-            final Scheduler.ScheduledCommand onTimeout) {
+    public void suspend(ServerGroup serverGroup, final Scheduler.ScheduledCommand whileSuspending) {
         Browser.getWindow().alert(Names.NYI);
     }
 
-    public void restart(ServerGroup serverGroup,
-            final Scheduler.ScheduledCommand beforeRestart,
-            final Scheduler.ScheduledCommand whileRestarting,
-            final Scheduler.ScheduledCommand afterRestart,
-            final Scheduler.ScheduledCommand onTimeout) {
+    public void resume(ServerGroup serverGroup, final Scheduler.ScheduledCommand whileResume) {
         Browser.getWindow().alert(Names.NYI);
     }
 
-    public void suspend(ServerGroup serverGroup,
-            final Scheduler.ScheduledCommand beforeSuspend,
-            final Scheduler.ScheduledCommand whileSuspending,
-            final Scheduler.ScheduledCommand afterSuspend,
-            final Scheduler.ScheduledCommand onTimeout) {
+    public void stop(ServerGroup serverGroup, final Scheduler.ScheduledCommand whileStopping) {
         Browser.getWindow().alert(Names.NYI);
     }
 
-    public void resume(ServerGroup serverGroup,
-            final Scheduler.ScheduledCommand beforeResume,
-            final Scheduler.ScheduledCommand whileResume,
-            final Scheduler.ScheduledCommand afterResume,
-            final Scheduler.ScheduledCommand onTimeout) {
-        Browser.getWindow().alert(Names.NYI);
+    public void start(ServerGroup serverGroup, final Scheduler.ScheduledCommand whileStarting) {
+
+        eventBus.fireEvent(new ServerGroupActionEvent(serverGroup, Action.START));
+        Operation operation = new Operation.Builder("start-servers", serverGroup.getAddress())
+                .param(BLOCKING, false)
+                .build();
+        dispatcher.execute(operation, NOOP_OPERATION_CALLBACK, NOOP_FAILED_CALLBACK, NOOP_EXCEPTIONAL_CALLBACK);
     }
 }

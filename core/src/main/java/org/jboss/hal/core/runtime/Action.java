@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime;
+package org.jboss.hal.core.runtime;
 
 /**
- * Suspend state defined by {@code host.suspend-state}
+ * Enum constants for operations on runtime resources such as server groups, hosts or servers. Not used in DMR
+ * operations, but for the various GWT events.
  *
  * @author Harald Pehl
  */
-public enum SuspendState {
-    RUNNING, PRE_SUSPEND, SUSPENDING, SUSPENDED, UNDEFINED
+public enum Action {
+    RELOAD, RESTART, SUSPEND, RESUME, START, STOP
 }

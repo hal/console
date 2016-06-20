@@ -20,6 +20,8 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.client.runtime.RuntimePreview;
 import org.jboss.hal.core.finder.PreviewAttributes;
+import org.jboss.hal.core.runtime.host.Host;
+import org.jboss.hal.core.runtime.host.HostActions;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -37,11 +39,13 @@ class HostPreview extends RuntimePreview<Host> {
     private final Element reloadLink;
     private final Element restartLink;
     private final PreviewAttributes<Host> attributes;
+    private final Resources resources;
 
     @SuppressWarnings("HardCodedStringLiteral")
     HostPreview(final HostColumn hostColumn, final HostActions hostActions, final Host host,
             final Resources resources) {
         super(host.getName(), host.isDomainController() ? Names.DOMAIN_CONTROLLER : Names.HOST_CONTROLLER, resources);
+        this.resources = resources;
 
         // @formatter:off
         previewBuilder()
@@ -50,19 +54,11 @@ class HostPreview extends RuntimePreview<Host> {
                 .span().rememberAs(ALERT_TEXT).end()
                 .span().textContent(" ").end()
                 .a().rememberAs(RELOAD_LINK).css(clickable, alertLink)
-                    .on(click, event -> hostActions.reload(host,
-                        () -> hostColumn.beforeReload(host),
-                        () -> hostColumn.refreshItem(Host.id(host), host),
-                        () -> hostColumn.afterReloadRestart(host),
-                        () -> hostColumn.onTimeout(host)))
+                    .on(click, event -> hostActions.reload(host, () -> hostColumn.refreshItem(Host.id(host), host)))
                     .textContent(resources.constants().reload())
                 .end()
                 .a().rememberAs(RESTART_LINK).css(clickable, alertLink)
-                    .on(click, event -> hostActions.restart(host,
-                        () -> hostColumn.beforeRestart(host),
-                        () -> hostColumn.refreshItem(Host.id(host), host),
-                        () -> hostColumn.afterReloadRestart(host),
-                        () -> hostColumn.onTimeout(host)))
+                    .on(click, event -> hostActions.restart(host, () -> hostColumn.refreshItem(Host.id(host), host)))
                     .textContent(resources.constants().restart())
                 .end()
             .end();
@@ -95,21 +91,23 @@ class HostPreview extends RuntimePreview<Host> {
     @Override
     public void update(final Host host) {
         if (host.isAdminMode()) {
-            adminOnly(HOST, host.getName());
+            adminOnly(resources.messages().hostAdminMode(host.getName()));
         } else if (host.isStarting()) {
-            starting(HOST, host.getName());
-        } else if (host.isSuspending()) {
-            suspending(HOST, host.getName());
+            starting(resources.messages().hostStarting(host.getName()));
         } else if (host.needsReload()) {
-            needsReload(HOST, host.getName());
+            needsReload(resources.messages().hostNeedsReload(host.getName()));
         } else if (host.needsRestart()) {
-            needsRestart(HOST, host.getName());
+            needsRestart(resources.messages().hostNeedsRestart(host.getName()));
         } else if (host.isRunning()) {
-            running(HOST, host.getName());
+            running(resources.messages().hostRunning(host.getName()));
         } else if (host.isTimeout()) {
-            timeout(HOST, host.getName());
+            if (host.isDomainController()) {
+                timeout(resources.messages().domainControllerTimeout(host.getName()));
+            } else {
+                timeout(resources.messages().hostControllerTimeout(host.getName()));
+            }
         } else {
-            undefined(HOST, host.getName());
+            undefined(resources.messages().hostUndefined(host.getName()));
         }
 
         Elements.setVisible(reloadLink, host.needsReload());

@@ -19,6 +19,7 @@ import java.util.Arrays;
 
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.resources.Names;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;

@@ -25,7 +25,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import elemental.dom.Element;
-import org.jboss.hal.core.ServerSelectionEvent;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -33,6 +32,9 @@ import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.runtime.server.Server;
+import org.jboss.hal.core.runtime.server.ServerActions;
+import org.jboss.hal.core.runtime.server.ServerSelectionEvent;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
@@ -238,51 +240,21 @@ public class ServerColumn extends FinderColumn<Server> {
                         itm -> copyServer(itm, browseByHosts(finder))));
                 if (!item.isStarted()) {
                     actions.add(new ItemAction<>(resources.constants().start(),
-                            itm -> serverActions.start(itm,
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ }
-                            )));
+                            itm -> serverActions.start(itm, () -> { /* noop */ })));
                 } else {
                     if (item.isSuspending()) {
                         actions.add(new ItemAction<>(resources.constants().resume(),
-                                itm -> serverActions.resume(itm,
-                                        () -> { /* noop */ },
-                                        () -> { /* noop */ },
-                                        () -> { /* noop */ },
-                                        () -> { /* noop */ }
-                                )));
+                                itm -> serverActions.resume(itm, () -> { /* noop */ })));
                     } else {
                         actions.add(new ItemAction<>(resources.constants().suspend(),
-                                itm -> serverActions.suspend(itm,
-                                        () -> { /* noop */ },
-                                        () -> { /* noop */ },
-                                        () -> { /* noop */ },
-                                        () -> { /* noop */ }
-                                )));
+                                itm -> serverActions.suspend(itm, () -> { /* noop */ })));
                     }
-                    actions.add(new ItemAction<>(resources.constants().stop(),
-                            itm -> serverActions.stop(itm,
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ }
-                            )));
                     actions.add(new ItemAction<>(resources.constants().reload(),
-                            itm -> serverActions.reload(itm,
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ }
-                            )));
+                            itm -> serverActions.reload(itm, () -> { /* noop */ })));
                     actions.add(new ItemAction<>(resources.constants().restart(),
-                            itm -> serverActions.restart(itm,
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ }
-                            )));
+                            itm -> serverActions.restart(itm, () -> { /* noop */ })));
+                    actions.add(new ItemAction<>(resources.constants().stop(),
+                            itm -> serverActions.stop(itm, () -> { /* noop */ })));
                 }
                 return actions;
             }

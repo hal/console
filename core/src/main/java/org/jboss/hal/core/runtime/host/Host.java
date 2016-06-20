@@ -13,29 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.host;
+package org.jboss.hal.core.runtime.host;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
-import org.jboss.hal.client.runtime.RunningMode;
-import org.jboss.hal.client.runtime.RunningState;
-import org.jboss.hal.client.runtime.SuspendState;
+import org.jboss.hal.core.runtime.RunningMode;
+import org.jboss.hal.core.runtime.RunningState;
+import org.jboss.hal.core.runtime.SuspendState;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.IdBuilder;
 
-import static org.jboss.hal.client.runtime.RunningMode.ADMIN_ONLY;
-import static org.jboss.hal.client.runtime.RunningState.RELOAD_REQUIRED;
-import static org.jboss.hal.client.runtime.RunningState.RESTART_REQUIRED;
-import static org.jboss.hal.client.runtime.RunningState.STARTING;
-import static org.jboss.hal.client.runtime.RunningState.TIMEOUT;
-import static org.jboss.hal.client.runtime.SuspendState.PRE_SUSPEND;
-import static org.jboss.hal.client.runtime.SuspendState.SUSPENDED;
-import static org.jboss.hal.client.runtime.SuspendState.SUSPENDING;
+import static org.jboss.hal.core.runtime.RunningMode.ADMIN_ONLY;
+import static org.jboss.hal.core.runtime.RunningState.RELOAD_REQUIRED;
+import static org.jboss.hal.core.runtime.RunningState.RESTART_REQUIRED;
+import static org.jboss.hal.core.runtime.RunningState.STARTING;
+import static org.jboss.hal.core.runtime.RunningState.TIMEOUT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 
@@ -106,15 +103,11 @@ public class Host extends NamedNode {
     }
 
     public boolean isRunning() {
-        return getHostState() == RunningState.RUNNING && !isSuspending();
+        return getHostState() == RunningState.RUNNING;
     }
 
     public boolean isAdminMode() {
         return getRunningMode() == ADMIN_ONLY;
-    }
-
-    public boolean isSuspending() {
-        return EnumSet.of(PRE_SUSPEND, SUSPENDING, SUSPENDED).contains(getSuspendState());
     }
 
     public boolean isTimeout() {
@@ -141,7 +134,7 @@ public class Host extends NamedNode {
         return runningServers;
     }
 
-    public String getUuid() {
-        return get("uuid").asString();
+    public ResourceAddress getAddress() {
+        return new ResourceAddress().add(HOST, getAddressName());
     }
 }

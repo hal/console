@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasValue;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandler;
 
 /**
  * @author Harald Pehl
@@ -62,7 +63,7 @@ public interface FormItem<T> extends Attachable, HasEnabled, Focusable, HasName,
 
     boolean supportsExpressions();
 
-    void addResolveExpressionHandler(ResolveExpressionEvent.Handler handler);
+    void addResolveExpressionHandler(ResolveExpressionHandler handler);
 
     String getLabel();
 

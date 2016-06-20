@@ -35,6 +35,7 @@ import elemental.html.ParagraphElement;
 import elemental.html.SpanElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandler;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
@@ -549,8 +550,8 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     @Override
-    public void addResolveExpressionHandler(ResolveExpressionEvent.Handler handler) {
-        eventBus.addHandler(ResolveExpressionEvent.TYPE, handler);
+    public void addResolveExpressionHandler(ResolveExpressionHandler handler) {
+        eventBus.addHandler(ResolveExpressionEvent.getType(), handler);
     }
 
     private boolean hasExpressionScheme(String value) {

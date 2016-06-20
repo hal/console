@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime;
+package org.jboss.hal.dmr.macro;
 
 /**
- * State as defined by {@code host.host-state}, {@code server.server-state}
+ * @author Harald Pehl
  */
-public enum RunningState {
-    STARTING,
-    RUNNING,
-    RESTART_REQUIRED,
-    RELOAD_REQUIRED,
-    TIMEOUT, // artificial state used for display purpose w/o model counterpart
-    UNDEFINED
+public enum Action {
+    START, STOP
 }

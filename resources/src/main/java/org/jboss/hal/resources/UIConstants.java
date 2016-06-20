@@ -31,9 +31,11 @@ public interface UIConstants {
     String HAS_POPUP = "haspopup";
     String HIDDEN = "hidden";
     String LABELLED_BY = "labelledby";
+    String MENU = "MENU";
     String NBSP = "&nbsp;";
     String OBJECT = "Object";
     String PLACEMENT = "placement";
+    String PRESENTATION = "presentation";
     String ROLE = "role";
     String TABINDEX = "tabindex";
     String TABLIST = "tablist";

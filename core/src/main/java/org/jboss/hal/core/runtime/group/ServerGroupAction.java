@@ -13,11 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.server;
+package org.jboss.hal.core.runtime.group;
+
+import com.gwtplatform.dispatch.annotation.GenEvent;
+import com.gwtplatform.dispatch.annotation.Order;
+import org.jboss.hal.core.runtime.Action;
 
 /**
- * Status as defined by {@code server-config.status}
+ * @author Harald Pehl
  */
-public enum ServerConfigStatus {
-    STARTED, STOPPED, DISABLED, UNDEFINED
+@GenEvent
+public class ServerGroupAction {
+
+    @Order(1) ServerGroup serverGroup;
+    @Order(2) Action action;
 }

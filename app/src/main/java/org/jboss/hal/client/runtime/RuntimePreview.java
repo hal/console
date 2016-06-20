@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.runtime;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental.dom.Element;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Icons;
@@ -27,7 +28,7 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public abstract class RuntimePreview<T> extends PreviewContent<T> {
 
-    protected final String ALERT_CONTAINER = "alert-container-element";
+    protected static final String ALERT_CONTAINER = "alert-container-element";
     protected static final String ALERT_ICON = "alert-icon-element";
     protected static final String ALERT_TEXT = "alert-text-element";
     protected static final String RELOAD_LINK = "reload-link";
@@ -43,48 +44,48 @@ public abstract class RuntimePreview<T> extends PreviewContent<T> {
         this.resources = resources;
     }
 
-    protected void adminOnly(String type, String name) {
+    protected void adminOnly(SafeHtml message) {
         alertContainer.setClassName(alert + " " + alertInfo);
         alertIcon.setClassName(Icons.STOPPED);
-        alertText.setInnerHTML(resources.messages().adminOnly(type, name).asString());
+        alertText.setInnerHTML(message.asString());
     }
 
-    protected void starting(String type, String name) {
+    protected void starting(SafeHtml message) {
         alertContainer.setClassName(alert + " " + alertInfo);
         alertIcon.setClassName(Icons.DISABLED);
-        alertText.setInnerHTML(resources.messages().restartPending(type, name).asString());
+        alertText.setInnerHTML(message.asString());
     }
 
-    protected void suspending(String type, String name) {
+    protected void suspending(SafeHtml message) {
         alertContainer.setClassName(alert + " " + alertWarning);
         alertIcon.setClassName(Icons.WARNING);
-        alertText.setInnerHTML(resources.messages().suspending(type, name).asString());
+        alertText.setInnerHTML(message.asString());
     }
 
-    protected void needsReload(String type, String name) {
+    protected void needsReload(SafeHtml message) {
         warning();
-        alertText.setInnerHTML(resources.messages().needsReload(type, name).asString());
+        alertText.setInnerHTML(message.asString());
     }
 
-    protected void needsRestart(String type, String name) {
+    protected void needsRestart(SafeHtml message) {
         warning();
-        alertText.setInnerHTML(resources.messages().needsRestart(type, name).asString());
+        alertText.setInnerHTML(message.asString());
     }
 
-    protected void running(String type, String name) {
+    protected void running(SafeHtml message) {
         alertContainer.setClassName(alert + " " + alertSuccess);
         alertIcon.setClassName(Icons.OK);
-        alertText.setInnerHTML(resources.messages().running(type, name).asString());
+        alertText.setInnerHTML(message.asString());
     }
 
-    protected void timeout(String type, String name ) {
+    protected void timeout(SafeHtml message) {
         error();
-        alertText.setInnerHTML(resources.messages().timeout(type, name).asString());
+        alertText.setInnerHTML(message.asString());
     }
 
-    protected void undefined(String type, String name) {
+    protected void undefined(SafeHtml message) {
         error();
-        alertText.setInnerHTML(resources.messages().unknownState(type, name).asString());
+        alertText.setInnerHTML(message.asString());
     }
 
     private void warning() {

@@ -25,7 +25,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.core.HostSelectionEvent;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -33,6 +32,14 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
+import org.jboss.hal.core.runtime.Action;
+import org.jboss.hal.core.runtime.host.Host;
+import org.jboss.hal.core.runtime.host.HostActionEvent;
+import org.jboss.hal.core.runtime.host.HostActionEvent.HostActionHandler;
+import org.jboss.hal.core.runtime.host.HostActions;
+import org.jboss.hal.core.runtime.host.HostResultEvent;
+import org.jboss.hal.core.runtime.host.HostResultEvent.HostResultHandler;
+import org.jboss.hal.core.runtime.host.HostSelectionEvent;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -55,8 +62,8 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static org.jboss.hal.client.runtime.server.ServerConfigStatus.STARTED;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
+import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STARTED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.itemText;
 import static org.jboss.hal.resources.CSS.subtitle;
@@ -66,7 +73,7 @@ import static org.jboss.hal.resources.CSS.subtitle;
  */
 @Column(HOST)
 @Requires(value = "/host=*", recursive = false)
-public class HostColumn extends FinderColumn<Host> {
+public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {
 
     @Inject
     public HostColumn(final Finder finder,
@@ -140,6 +147,9 @@ public class HostColumn extends FinderColumn<Host> {
                 .withFilter()
         );
 
+        eventBus.addHandler(HostActionEvent.getType(), this);
+        eventBus.addHandler(HostResultEvent.getType(), this);
+
         setItemRenderer(item -> new ItemDisplay<Host>() {
             @Override
             public String getId() {
@@ -176,8 +186,6 @@ public class HostColumn extends FinderColumn<Host> {
                     return resources.constants().adminOnly();
                 } else if (item.isStarting()) {
                     return resources.constants().starting();
-                } else if (item.isSuspending()) {
-                    return resources.constants().suspending();
                 } else if (item.needsReload()) {
                     return resources.constants().needsReload();
                 } else if (item.needsRestart()) {
@@ -195,7 +203,7 @@ public class HostColumn extends FinderColumn<Host> {
             public Element getIcon() {
                 if (item.isAdminMode() || item.isStarting()) {
                     return Icons.disabled();
-                } else if (item.isSuspending() || item.needsReload() || item.needsRestart()) {
+                } else if (item.needsReload() || item.needsRestart()) {
                     return Icons.warning();
                 } else if (item.isRunning()) {
                     return Icons.ok();
@@ -218,17 +226,9 @@ public class HostColumn extends FinderColumn<Host> {
                 List<ItemAction<Host>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.viewAndMonitor(Host.id(item), placeRequest));
                 actions.add(new ItemAction<>(resources.constants().reload(),
-                        itm -> hostActions.reload(itm,
-                                () -> beforeReload(itm),
-                                () -> refreshItem(Host.id(itm), itm),
-                                () -> afterReloadRestart(itm),
-                                () -> onTimeout(itm))));
+                        itm -> hostActions.reload(itm, () -> refreshItem(Host.id(itm), itm))));
                 actions.add(new ItemAction<>(resources.constants().restart(),
-                        itm -> hostActions.restart(itm,
-                                () -> beforeRestart(itm),
-                                () -> refreshItem(Host.id(itm), itm),
-                                () -> afterReloadRestart(itm),
-                                () -> onTimeout(itm))));
+                        itm -> hostActions.restart(itm, () -> refreshItem(Host.id(itm), itm))));
                 // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or :take-snapshot
                 return actions;
             }
@@ -237,29 +237,31 @@ public class HostColumn extends FinderColumn<Host> {
         setPreviewCallback(item -> new HostPreview(this, hostActions, item, resources));
     }
 
-    void beforeReload(Host host) {
-        if (!host.isDomainController()) {
+    @Override
+    public void onHostAction(final HostActionEvent event) {
+        Host host = event.getHost();
+        if ((event.getAction() == Action.RELOAD || event.getAction() == Action.RESTART) &&
+                !host.isDomainController()) {
             ItemMonitor.startProgress(Host.id(host));
         }
     }
 
-    void beforeRestart(Host host) {
-        if (!host.isDomainController()) {
-            ItemMonitor.startProgress(Host.id(host));
+    @Override
+    public void onHostResult(final HostResultEvent event) {
+        Host host = event.getHost();
+        switch (event.getResult()) {
+            case SUCCESS:
+                if (!host.isDomainController()) {
+                    ItemMonitor.stopProgress(Host.id(host));
+                }
+                refresh(RESTORE_SELECTION);
+                break;
+            case TIMEOUT:
+                if (!host.isDomainController()) {
+                    ItemMonitor.stopProgress(Host.id(host));
+                }
+                refreshItem(Host.id(host), host);
+                break;
         }
-    }
-
-    void afterReloadRestart(Host host) {
-        if (!host.isDomainController()) {
-            ItemMonitor.stopProgress(Host.id(host));
-        }
-        refresh(RESTORE_SELECTION);
-    }
-
-    void onTimeout(Host host) {
-        if (!host.isDomainController()) {
-            ItemMonitor.stopProgress(Host.id(host));
-        }
-        refreshItem(Host.id(host), host);
     }
 }

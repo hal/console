@@ -210,7 +210,7 @@ import elemental.dom.Element;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemValidation;
-import org.jboss.hal.ballroom.form.ResolveExpressionEvent;
+import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandler;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 
 /**
@@ -298,7 +298,7 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
-    public void addResolveExpressionHandler(final ResolveExpressionEvent.Handler handler) {
+    public void addResolveExpressionHandler(final ResolveExpressionHandler handler) {
 
     }
 

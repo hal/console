@@ -13,13 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime;
+package org.jboss.hal.core.runtime.group;
+
+import com.gwtplatform.dispatch.annotation.GenEvent;
+import com.gwtplatform.dispatch.annotation.Order;
+import org.jboss.hal.core.runtime.Result;
 
 /**
- * Mode as defined by {@code host.running-mode}, {@code server.running-mode}
- *
  * @author Harald Pehl
  */
-public enum RunningMode {
-    NORMAL, ADMIN_ONLY, UNDEFINED
+@GenEvent
+public class ServerGroupResult {
+
+    @Order(1) ServerGroup serverGroup;
+    @Order(2) Result result;
 }

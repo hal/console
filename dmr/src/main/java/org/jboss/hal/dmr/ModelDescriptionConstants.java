@@ -57,6 +57,7 @@ public interface ModelDescriptionConstants {
     String AUTO_START = "auto-start";
 
     String BATCH_JBERET = "batch-jberet";
+    String BLOCKING = "blocking";
     String BYTES = "bytes";
 
     String CAPABILITIES = "capabilities";

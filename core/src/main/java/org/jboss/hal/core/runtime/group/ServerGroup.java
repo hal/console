@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.group;
+package org.jboss.hal.core.runtime.group;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.IdBuilder;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
@@ -42,5 +43,9 @@ public class ServerGroup extends NamedNode {
 
     public String getProfile() {
         return get(PROFILE).asString();
+    }
+
+    public ResourceAddress getAddress() {
+        return new ResourceAddress().add(SERVER_GROUP, getName());
     }
 }

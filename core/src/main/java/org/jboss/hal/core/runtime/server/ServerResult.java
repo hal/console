@@ -13,24 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.server;
+package org.jboss.hal.core.runtime.server;
 
-import javax.inject.Inject;
-
-import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.resources.Ids;
-import org.jboss.hal.spi.Column;
+import com.gwtplatform.dispatch.annotation.GenEvent;
+import com.gwtplatform.dispatch.annotation.Order;
+import org.jboss.hal.core.runtime.Result;
 
 /**
  * @author Harald Pehl
  */
-@Column(Ids.STANDALONE_SERVER_COLUMN)
-public class StandaloneServerColumn extends FinderColumn<Server> {
+@GenEvent
+public class ServerResult {
 
-    @Inject
-    public StandaloneServerColumn(final Finder finder) {
-        super(new Builder<>(finder, Ids.STANDALONE_SERVER_COLUMN, "Standalone Server")); //NON-NLS
-    }
+    @Order(1) Server server;
+    @Order(2) Result result;
 }

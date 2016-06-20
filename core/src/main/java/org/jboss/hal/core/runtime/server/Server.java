@@ -13,27 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.server;
+package org.jboss.hal.core.runtime.server;
 
 import java.util.EnumSet;
 
-import org.jboss.hal.client.runtime.RunningMode;
-import org.jboss.hal.client.runtime.RunningState;
-import org.jboss.hal.client.runtime.SuspendState;
+import org.jboss.hal.core.runtime.RunningMode;
+import org.jboss.hal.core.runtime.RunningState;
+import org.jboss.hal.core.runtime.SuspendState;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.IdBuilder;
 
-import static org.jboss.hal.client.runtime.RunningMode.ADMIN_ONLY;
-import static org.jboss.hal.client.runtime.RunningState.RELOAD_REQUIRED;
-import static org.jboss.hal.client.runtime.RunningState.RESTART_REQUIRED;
-import static org.jboss.hal.client.runtime.RunningState.STARTING;
-import static org.jboss.hal.client.runtime.RunningState.TIMEOUT;
-import static org.jboss.hal.client.runtime.SuspendState.PRE_SUSPEND;
-import static org.jboss.hal.client.runtime.SuspendState.SUSPENDED;
-import static org.jboss.hal.client.runtime.SuspendState.SUSPENDING;
+import static org.jboss.hal.core.runtime.RunningMode.ADMIN_ONLY;
+import static org.jboss.hal.core.runtime.RunningState.RELOAD_REQUIRED;
+import static org.jboss.hal.core.runtime.RunningState.RESTART_REQUIRED;
+import static org.jboss.hal.core.runtime.RunningState.STARTING;
+import static org.jboss.hal.core.runtime.RunningState.TIMEOUT;
+import static org.jboss.hal.core.runtime.SuspendState.PRE_SUSPEND;
+import static org.jboss.hal.core.runtime.SuspendState.SUSPENDED;
+import static org.jboss.hal.core.runtime.SuspendState.SUSPENDING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 
@@ -47,10 +47,11 @@ public class Server extends NamedNode {
 
     private static final String STANDALONE_SERVER = "standalone.server";
     private static final String STANDALONE_HOST = "standalone.host";
+
     public static final Server STANDALONE = new Server(STANDALONE_HOST, STANDALONE_SERVER,
             ServerConfigStatus.STARTED, RunningState.RUNNING);
 
-    static String id(final String name) {
+    public static String id(final String name) {
         return IdBuilder.build(SERVER, name);
     }
 

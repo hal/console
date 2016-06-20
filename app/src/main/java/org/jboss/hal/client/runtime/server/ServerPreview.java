@@ -19,6 +19,8 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.client.runtime.RuntimePreview;
 import org.jboss.hal.core.finder.PreviewAttributes;
+import org.jboss.hal.core.runtime.server.Server;
+import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Resources;
 
@@ -57,48 +59,23 @@ public class ServerPreview extends RuntimePreview<Server> {
                 .span().rememberAs(ALERT_TEXT).end()
                 .span().textContent(" ").end()
                 .a().rememberAs(START_LINK).css(clickable, alertLink)
-                    .on(click, event -> serverActions.start(server,
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ }
-                    ))
+                    .on(click, event -> serverActions.start(server,() -> { /* noop */ }))
                     .textContent(resources.constants().start())
                 .end()
                 .a().rememberAs(STOP_LINK).css(clickable, alertLink)
-                    .on(click, event -> serverActions.stop(server,
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ }
-                    ))
+                    .on(click, event -> serverActions.stop(server,() -> { /* noop */ }))
                     .textContent(resources.constants().stop())
                 .end()
                 .a().rememberAs(RELOAD_LINK).css(clickable, alertLink)
-                    .on(click, event -> serverActions.reload(server,
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ }
-                    ))
+                    .on(click, event -> serverActions.reload(server,() -> { /* noop */ }))
                     .textContent(resources.constants().reload())
                 .end()
                 .a().rememberAs(RESTART_LINK).css(clickable, alertLink)
-                    .on(click, event -> serverActions.restart(server,
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ }
-                    ))
+                    .on(click, event -> serverActions.restart(server,() -> { /* noop */ }))
                     .textContent(resources.constants().restart())
                 .end()
                 .a().rememberAs(RESUME_LINK).css(clickable, alertLink)
-                    .on(click, event -> serverActions.resume(server,
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ },
-                                    () -> { /* noop */ }
-                    ))
+                    .on(click, event -> serverActions.resume(server,() -> { /* noop */ }))
                     .textContent(resources.constants().resume())
                 .end()
             .end();
@@ -126,25 +103,25 @@ public class ServerPreview extends RuntimePreview<Server> {
     @Override
     public void update(final Server server) {
         if (server.isAdminMode()) {
-            adminOnly(SERVER, server.getName());
+            adminOnly(resources.messages().serverAdminMode(server.getName()));
         } else if (server.isStarting()) {
-            starting(SERVER, server.getName());
+            starting(resources.messages().serverStarting(server.getName()));
         } else if (server.isSuspending()) {
-            suspending(SERVER, server.getName());
+            suspending(resources.messages().serverSuspended(server.getName()));
         } else if (server.needsReload()) {
-            needsReload(SERVER, server.getName());
+            needsReload(resources.messages().serverNeedsReload(server.getName()));
         } else if (server.needsRestart()) {
-            needsRestart(SERVER, server.getName());
+            needsRestart(resources.messages().serverNeedsRestart(server.getName()));
         } else if (server.isRunning()) {
-            running(SERVER, server.getName());
+            running(resources.messages().serverRunning(server.getName()));
         } else if (server.isTimeout()) {
-            timeout(SERVER, server.getName());
+            timeout(resources.messages().serverTimeout(server.getName()));
         } else if (server.isStopped()) {
             alertContainer.setClassName(alert + " " + alertInfo);
             alertIcon.setClassName(Icons.STOPPED);
-            alertText.setInnerHTML(resources.messages().stopped(SERVER, server.getName()).asString());
+            alertText.setInnerHTML(resources.messages().serverStopped(server.getName()).asString());
         } else {
-            undefined(SERVER, server.getName());
+            undefined(resources.messages().serverUndefined(server.getName()));
         }
 
         if (server.isSuspending()) {

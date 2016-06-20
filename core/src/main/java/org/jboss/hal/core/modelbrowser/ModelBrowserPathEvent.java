@@ -21,6 +21,7 @@ import com.google.gwt.event.shared.GwtEvent;
 /**
  * @author Harald Pehl
  */
+// No @GenEvent here due to naming conflicts
 public class ModelBrowserPathEvent extends GwtEvent<ModelBrowserPathEvent.ModelBrowserPathHandler> {
 
     public interface ModelBrowserPathHandler extends EventHandler {

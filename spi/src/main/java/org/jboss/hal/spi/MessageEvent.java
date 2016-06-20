@@ -22,6 +22,7 @@ import com.google.web.bindery.event.shared.EventBus;
 /**
  * @author Harald Pehl
  */
+// No @GenEvent here due to naming conflicts
 public class MessageEvent extends GwtEvent<MessageEvent.MessageHandler> {
 
     public interface MessageHandler extends EventHandler {

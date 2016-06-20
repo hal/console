@@ -21,9 +21,9 @@ import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.client.runtime.group.ServerGroupActions;
-import org.jboss.hal.client.runtime.host.HostActions;
-import org.jboss.hal.client.runtime.server.ServerActions;
+import org.jboss.hal.core.runtime.group.ServerGroupActions;
+import org.jboss.hal.core.runtime.host.HostActions;
+import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;

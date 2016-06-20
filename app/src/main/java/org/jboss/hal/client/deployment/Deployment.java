@@ -18,7 +18,7 @@ package org.jboss.hal.client.deployment;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.hal.client.runtime.server.Server;
+import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 

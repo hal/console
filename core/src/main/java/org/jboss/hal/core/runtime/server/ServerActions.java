@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.server;
+package org.jboss.hal.core.runtime.server;
 
 import javax.inject.Inject;
 
@@ -30,6 +30,8 @@ import org.jboss.hal.resources.Resources;
  * @author Harald Pehl
  */
 public class ServerActions {
+
+    public static final int SERVER_TIMEOUT = 4;
 
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
@@ -50,51 +52,27 @@ public class ServerActions {
         this.resources = resources;
     }
 
-    public void start(Server server,
-            final Scheduler.ScheduledCommand beforeStart,
-            final Scheduler.ScheduledCommand whileStarting,
-            final Scheduler.ScheduledCommand afterStart,
-            final Scheduler.ScheduledCommand onTimeout) {
+    public void start(Server server, final Scheduler.ScheduledCommand whileStarting) {
         Browser.getWindow().alert(Names.NYI);
     }
 
-    public void stop(Server server,
-            final Scheduler.ScheduledCommand beforeStop,
-            final Scheduler.ScheduledCommand whileStopping,
-            final Scheduler.ScheduledCommand afterStop,
-            final Scheduler.ScheduledCommand onTimeout) {
+    public void stop(Server server, final Scheduler.ScheduledCommand whileStopping) {
         Browser.getWindow().alert(Names.NYI);
     }
 
-    public void reload(Server server,
-            final Scheduler.ScheduledCommand beforeReload,
-            final Scheduler.ScheduledCommand whileReloading,
-            final Scheduler.ScheduledCommand afterReload,
-            final Scheduler.ScheduledCommand onTimeout) {
+    public void reload(Server server, final Scheduler.ScheduledCommand whileReloading) {
         Browser.getWindow().alert(Names.NYI);
     }
 
-    public void restart(Server server,
-            final Scheduler.ScheduledCommand beforeRestart,
-            final Scheduler.ScheduledCommand whileRestarting,
-            final Scheduler.ScheduledCommand afterRestart,
-            final Scheduler.ScheduledCommand onTimeout) {
+    public void restart(Server server, final Scheduler.ScheduledCommand whileRestarting) {
         Browser.getWindow().alert(Names.NYI);
     }
 
-    public void suspend(Server server,
-            final Scheduler.ScheduledCommand beforeSuspend,
-            final Scheduler.ScheduledCommand whileSuspending,
-            final Scheduler.ScheduledCommand afterSuspend,
-            final Scheduler.ScheduledCommand onTimeout) {
+    public void suspend(Server server, final Scheduler.ScheduledCommand whileSuspending) {
         Browser.getWindow().alert(Names.NYI);
     }
 
-    public void resume(Server server,
-            final Scheduler.ScheduledCommand beforeResume,
-            final Scheduler.ScheduledCommand whileResume,
-            final Scheduler.ScheduledCommand afterResume,
-            final Scheduler.ScheduledCommand onTimeout) {
+    public void resume(Server server, final Scheduler.ScheduledCommand whileResume) {
         Browser.getWindow().alert(Names.NYI);
     }
 }
