@@ -129,4 +129,12 @@ public interface Form<T> extends IsElement, Attachable {
     Iterable<FormItem> getFormItems();
 
     Iterable<FormItem> getBoundFormItems();
+
+    /**
+     * Makes it possible to validate the form as a whole or to check fields which depend on other fields.
+     * You can use each FormItem field to set its status as failed and the error message.
+     * 
+     * @param formValidation
+     */
+    void addFormValidation(FormValidation formValidation);
 }

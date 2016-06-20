@@ -124,6 +124,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         helpTexts.put(label, description);
     }
 
+    @Override
     public void addFormValidation(FormValidation formValidation) {
         formValidations.add(formValidation);
     }
