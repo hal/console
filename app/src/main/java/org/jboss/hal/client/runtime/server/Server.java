@@ -178,7 +178,7 @@ public class Server extends NamedNode {
     /**
      * Adds the {@code server} attributes to this instance. Existing attributes will be overwritten.
      */
-    void addServerAttributes(final ModelNode modelNode) {
+    public void addServerAttributes(final ModelNode modelNode) {
         modelNode.asPropertyList().forEach(property -> get(property.getName()).set(property.getValue()));
     }
 }

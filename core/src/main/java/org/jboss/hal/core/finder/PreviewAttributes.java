@@ -71,7 +71,7 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
         this(model, CONSTANTS.mainAttributes(), attributes);
     }
 
-    private PreviewAttributes(final T model, final String header, final List<String> attributes) {
+    public PreviewAttributes(final T model, final String header, final List<String> attributes) {
         this.model = model;
         this.labelBuilder = new LabelBuilder();
         this.builder = new Elements.Builder().h(2).textContent(header).end();

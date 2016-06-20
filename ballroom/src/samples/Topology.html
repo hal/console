@@ -50,16 +50,16 @@
                 <li><span class="item-text">Server Groups</span><span class="folder fa fa-angle-right"></span></li>
             </ul>
         </div>
-        <div class="finder-preview topology col-xs-10 col-sm-10 col-md-10 col-lg-10">
+        <div class="finder-preview col-xs-10 col-sm-10 col-md-10 col-lg-10">
             <h1>Topology</h1>
-            <p>An overview of the hosts, server groups and servers defined in your domain with the server groups as columns and the hosts as rows. The servers are displayed according to their status:
+            <p class="topology">An overview of the hosts, server groups and servers defined in your domain with the server groups as columns and the hosts as rows. The servers are displayed according to their status:
                 <span class="status error">error or timed out</span>,
                 <span class="status warning">needs reload / restart or suspending</span>,
                 <span class="status ok">up and running</span> and
                 <span class="status inactive">stopped or disabled</span>.</p>
-            <p>Click on a host, server group or server to see additional information or execute operations.
-                <a id="topology-refresh" class="clickable pull-right"><i class="fa fa-refresh"></i> Refresh</a></p>
-            <table>
+            <p>Click on a host, server group or server to see additional information or execute operations.</p>
+            <p><a class="clickable pull-right"><i class="fa fa-refresh margin-right-4"></i><span>Refresh</span></a></p>
+            <table class="topology">
                 <colgroup>
                     <col width="20%"/>
                     <col width="20%"/>
@@ -81,7 +81,7 @@
                 <tbody>
                 <tr>
                     <th class="row-header">
-                        <a class="name clickable"><span class="fa fa-star" title="Domain Controller"></span> master</a>
+                        <a class="name clickable"><span class="fa fa-star margin-right-4" title="Domain Controller"></span><span>master</span></a>
                     </th>
                     <td>
                         <div class="servers">

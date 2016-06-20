@@ -126,6 +126,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml testConnectionError();
     SafeHtml testConnectionSuccess();
     SafeHtml timeout(String type, String name);
+    SafeHtml topologyError();
 
     String updateAvailable(String current, String update);
     String unit(String unit);

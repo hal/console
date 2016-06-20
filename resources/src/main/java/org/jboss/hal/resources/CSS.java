@@ -90,6 +90,7 @@ public interface CSS {
     String eapHomeTitle = "eap-home-title";
     String editing = "editing";
     String editor = "editor";
+    String error = "error";
     String errorCircleO = "error-circle-o";
     String equals = "equals";
     String empty = "empty";
@@ -119,6 +120,7 @@ public interface CSS {
     String hiddenColumns = "hidden-columns";
     String hint = "hint";
     String hover = "hover";
+    String hostContainer = "host-container";
 
     String in = "in";
     String inactive = "inactive";
@@ -154,6 +156,7 @@ public interface CSS {
 
     String macroEditor = "macro-editor";
     String macroList = "macro-list";
+    String marginRight4 = "margin-right-4";
     String marginTop20 = "margin-top-20";
     String messageDetails = "message-details";
     String messageDetailsPre = "message-details-pre";
@@ -224,6 +227,7 @@ public interface CSS {
     String separator = "separator";
     String server = "server";
     String servers = "servers";
+    String serverGroupContainer = "server-group-container";
     String spinner = "spinner";
     String spinnerLg = "spinner-lg";
     String srOnly = "sr-only";

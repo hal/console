@@ -17,7 +17,13 @@ package org.jboss.hal.client.runtime;
 
 import java.util.Arrays;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
+import com.google.web.bindery.event.shared.EventBus;
+import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.client.runtime.group.ServerGroupActions;
+import org.jboss.hal.client.runtime.host.HostActions;
+import org.jboss.hal.client.runtime.server.ServerActions;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
@@ -28,6 +34,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
+import org.jboss.hal.spi.Footer;
 
 /**
  * @author Harald Pehl
@@ -37,12 +44,19 @@ public class BrowseByColumn extends StaticItemColumn {
 
     @Inject
     public BrowseByColumn(final Finder finder,
+            final @Footer Provider<Progress> progress,
+            final EventBus eventBus,
             final Dispatcher dispatcher,
+            final HostActions hostActions,
+            final ServerGroupActions serverGroupActions,
+            final ServerActions serverActions,
             final Resources resources) {
         super(finder, Ids.DOMAIN_BROWSE_BY_COLUMN, resources.constants().browseBy(),
                 Arrays.asList(
                         new StaticItem.Builder(Names.TOPOLOGY)
-                                .onPreview(new TopologyPreview(dispatcher, resources))
+                                .onPreview(
+                                        new TopologyPreview(dispatcher, progress, eventBus,
+                                                hostActions, serverGroupActions, serverActions, resources))
                                 .build(),
                         new StaticItem.Builder(Names.HOSTS)
                                 .nextColumn(ModelDescriptionConstants.HOST)
