@@ -142,7 +142,7 @@ public class ServerPresenter extends MbuiPresenter<ServerPresenter.MyView, Serve
                     getView().updateInterfaces(asNamedNodes(result.step(1).get(RESULT).asPropertyList()));
                     getView().updateJvms(asNamedNodes(result.step(2).get(RESULT).asPropertyList()));
                     getView().updatePaths(asNamedNodes(result.step(3).get(RESULT).asPropertyList()));
-                    getView().updateSystemProperties(asNamedNodes(result.step(5).get(RESULT).asPropertyList()));
+                    getView().updateSystemProperties(asNamedNodes(result.step(4).get(RESULT).asPropertyList()));
                 });
     }
 }

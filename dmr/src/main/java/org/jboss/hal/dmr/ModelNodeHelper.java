@@ -107,9 +107,10 @@ public final class ModelNodeHelper {
             final Function<String, E> valueOf, final E defaultValue) {
         E value = defaultValue;
         if (modelNode.hasDefined(attribute)) {
-            String stringValue = LOWER_HYPHEN.to(UPPER_UNDERSCORE, modelNode.get(attribute).asString());
+            String stringValue = modelNode.get(attribute).asString();
+            String converted = LOWER_HYPHEN.to(UPPER_UNDERSCORE, stringValue);
             try {
-                value = valueOf.apply(stringValue);
+                value = valueOf.apply(converted);
             } catch (IllegalArgumentException ignored) {}
         }
         return value;

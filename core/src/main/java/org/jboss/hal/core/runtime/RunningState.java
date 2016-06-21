@@ -21,8 +21,9 @@ package org.jboss.hal.core.runtime;
 public enum RunningState {
     STARTING,
     RUNNING,
+    STOPPED,
     RESTART_REQUIRED,
     RELOAD_REQUIRED,
-    TIMEOUT, // artificial state used for display purpose w/o model counterpart
+    TIMEOUT, // artificial state used in UI w/o model counterpart
     UNDEFINED
 }
