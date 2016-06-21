@@ -29,7 +29,7 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.client.runtime.TopologyFunctions;
+import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;

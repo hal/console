@@ -34,7 +34,7 @@ public abstract class RuntimePreview<T> extends PreviewContent<T> {
     protected static final String RELOAD_LINK = "reload-link";
     protected static final String RESTART_LINK = "restart-link";
 
-    protected  final Resources resources;
+    protected final Resources resources;
     protected Element alertContainer;
     protected Element alertIcon;
     protected Element alertText;

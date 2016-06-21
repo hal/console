@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.host;
+package org.jboss.hal.core.runtime.host;
 
 import java.util.List;
 import javax.inject.Inject;
@@ -27,11 +27,11 @@ import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.runtime.Action;
 import org.jboss.hal.core.runtime.Result;
 import org.jboss.hal.core.runtime.RunningState;
-import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.runtime.host.Host;
+import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -51,7 +51,6 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.runtime.server.ServerActions.SERVER_TIMEOUT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.NOOP_EXCEPTIONAL_CALLBACK;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.NOOP_FAILED_CALLBACK;
@@ -248,11 +247,11 @@ public class HostActions {
     }
 
     private int reloadTimeout(Host host) {
-        return RELOAD_TIMEOUT + host.getRunningServers().size() * SERVER_TIMEOUT;
+        return RELOAD_TIMEOUT + host.getRunningServers().size() * ServerActions.SERVER_TIMEOUT;
     }
 
     private int restartTimeout(Host host) {
-        return RESTART_TIMEOUT + host.getRunningServers().size() * SERVER_TIMEOUT;
+        return RESTART_TIMEOUT + host.getRunningServers().size() * ServerActions.SERVER_TIMEOUT;
     }
 
     private Operation ping(Host host) {

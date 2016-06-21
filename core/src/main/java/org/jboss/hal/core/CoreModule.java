@@ -28,6 +28,9 @@ import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.core.runtime.group.ServerGroupActions;
+import org.jboss.hal.core.runtime.host.HostActions;
+import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.core.subsystem.Subsystems;
 import org.jboss.hal.core.ui.UIRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -42,14 +45,14 @@ public class CoreModule extends AbstractGinModule {
         bind(ColumnRegistry.class).in(Singleton.class);
         bind(ColumnActionFactory.class).in(Singleton.class);
         bind(Finder.class).in(Singleton.class);
-        // bind(HostActions.class).in(Singleton.class);
+        bind(HostActions.class).in(Singleton.class);
         bind(ItemMonitor.class).in(Singleton.class);
         bind(ItemActionFactory.class).in(Singleton.class);
         bind(MbuiContext.class).in(Singleton.class);
         bind(ModelBrowser.class);
         bind(Places.class).in(Singleton.class);
-        // bind(ServerActions.class).in(Singleton.class);
-        // bind(ServerGroupActions.class).in(Singleton.class);
+        bind(ServerActions.class).in(Singleton.class);
+        bind(ServerGroupActions.class).in(Singleton.class);
         bind(StatementContext.class).to(CoreStatementContext.class).asEagerSingleton(); // to register the event
         bind(Subsystems.class).in(Singleton.class);
         bind(TableButtonFactory.class).in(Singleton.class);
