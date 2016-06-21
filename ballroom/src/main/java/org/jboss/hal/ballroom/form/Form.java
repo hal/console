@@ -136,5 +136,5 @@ public interface Form<T> extends IsElement, Attachable {
      * 
      * @param formValidation
      */
-    void addFormValidation(FormValidation formValidation);
+    void addFormValidation(FormValidation<T> formValidation);
 }

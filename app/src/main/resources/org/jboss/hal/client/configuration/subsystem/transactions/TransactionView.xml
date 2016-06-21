@@ -41,7 +41,7 @@
             <metadata address="/{selected.profile}/subsystem=transactions">
                 <h1>Process ID</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <form id="process-form" title="Process ID" auto-save="true">
+                <form id="process-form" title="Process ID" on-save="{{presenter.saveProcessForm(form, changedValues)}}">
                     <attributes>
                         <attribute name="process-id-uuid" />
                         <attribute name="process-id-socket-binding" />
