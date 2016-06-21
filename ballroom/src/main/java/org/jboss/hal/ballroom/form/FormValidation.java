@@ -21,7 +21,7 @@ package org.jboss.hal.ballroom.form;
  * @author Harald Pehl
  */
 @FunctionalInterface
-public interface FormValidation  {
+public interface FormValidation<T>  {
 
-    ValidationResult validate(Iterable<FormItem> formItems);
+    ValidationResult validate(Form<T> form);
 }
