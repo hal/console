@@ -176,6 +176,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String jdbcDriver();
 
     String loading();
+    String logFiles();
     String logout();
 
     String macroEditor();
@@ -183,6 +184,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String managementVersion();
     String message();
     String modelBrowser();
+    String monitor();
 
     String next();
     String needsReload();
@@ -271,6 +273,5 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String xaProperties();
 
     String yes();
-
     //@formatter:on
 }

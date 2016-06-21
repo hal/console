@@ -34,21 +34,10 @@
   }
 
   .selected {
-    &.error {
-      color: #fff;
-      background-color: rgb(204, 0, 0);
-    }
-    &.inactive {
-      background-color: rgb(187, 187, 187);
-    }
-    &.ok {
-      background-color: rgb(190, 225, 244);
-    }
-    &.warning {
-      background-color: rgba(236, 122, 8, 0.4);
-    }
-    a {
-      text-decoration: underline;
+    outline: 3px dashed #333;
+    outline-offset: -3px;
+    &.server {
+      outline-offset: -2px;
     }
   }
 

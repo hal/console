@@ -31,6 +31,7 @@ public interface Names {
     String DEPLOYMENTS = "Deployments";
     String DOMAIN_CONTROLLER = "Domain Controller";
     String EE = "EE";
+    String ENVIRONMENT = "Environment";
     String GLOBAL_MODULES = "Global Modules";
     String HAL = "HAL";
     String HOST = "Host";
@@ -38,9 +39,9 @@ public interface Names {
     String HOSTS = "Hosts";
     String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";
-    String IO = "IO";
     String JDBC_DRIVER = "JDBC Driver";
     String JDBC_DRIVERS = "JDBC Drivers";
+    String JVM = "JVM";
     String LOGGING = "Logging";
     String LOGGING_PROFILE = "Logging Profile";
     String LOGGING_PROFILES = "Logging Profiles";

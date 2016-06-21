@@ -223,6 +223,7 @@ public interface CSS {
     String rowHeader = "row-header";
 
     String secondaryVisiblePf = "secondary-visible-pf";
+    String selected = "selected";
     String selectpicker = "selectpicker";
     String separator = "separator";
     String server = "server";

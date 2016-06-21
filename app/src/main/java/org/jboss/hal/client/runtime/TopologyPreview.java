@@ -35,15 +35,16 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.core.finder.PreviewAttributes;
+import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.group.ServerGroupActions;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.runtime.host.HostActions;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
-import org.jboss.hal.core.finder.PreviewAttributes;
-import org.jboss.hal.core.finder.PreviewContent;
-import org.jboss.hal.core.finder.StaticItem;
+import org.jboss.hal.core.runtime.server.ServerConfigStatus;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
@@ -59,11 +60,16 @@ import org.jboss.hal.spi.MessageEvent;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.core.runtime.server.ServerConfigStatus.DISABLED;
+import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STARTED;
+import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STOPPED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.GROUP;
 import static org.jboss.hal.resources.CSS.*;
@@ -162,9 +168,6 @@ class TopologyPreview extends PreviewContent<StaticItem> {
         serverGroupAttributesSection = previewBuilder().referenceFor(SERVER_GROUP_ATTRIBUTES_SECTION);
         hostAttributesSection = previewBuilder().referenceFor(HOST_ATTRIBUTES_SECTION);
         serverAttributesSection = previewBuilder().referenceFor(SERVER_ATTRIBUTES_SECTION);
-        Elements.setVisible(serverGroupAttributesSection, false);
-        Elements.setVisible(hostAttributesSection, false);
-        Elements.setVisible(serverAttributesSection, false);
     }
 
 
@@ -172,6 +175,11 @@ class TopologyPreview extends PreviewContent<StaticItem> {
 
     @Override
     public void update(final StaticItem item) {
+        clearSelected();
+        Elements.setVisible(serverGroupAttributesSection, false);
+        Elements.setVisible(hostAttributesSection, false);
+        Elements.setVisible(serverAttributesSection, false);
+
         Function<FunctionContext> topologyFn = control -> {
             Operation hostOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
                     .param(CHILD_TYPE, HOST)
@@ -237,18 +245,23 @@ class TopologyPreview extends PreviewContent<StaticItem> {
                             .param(INCLUDE_RUNTIME, true)
                             .build()))
                     .collect(toList()));
-            dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
-                result.stream()
-                        .filter((modelNode) -> !modelNode.isFailure())
-                        .forEach(modelNode -> {
-                            ModelNode payload = modelNode.get(RESULT);
-                            Server serverConfig = serversByName.get(payload.get(NAME).asString());
-                            if (serverConfig != null) {
-                                serverConfig.addServerAttributes(payload);
-                            }
-                        });
+
+            if (composite.isEmpty()) {
                 control.proceed();
-            });
+            } else {
+                dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
+                    result.stream()
+                            .filter((modelNode) -> !modelNode.isFailure())
+                            .forEach(modelNode -> {
+                                ModelNode payload = modelNode.get(RESULT);
+                                Server serverConfig = serversByName.get(payload.get(NAME).asString());
+                                if (serverConfig != null) {
+                                    serverConfig.addServerAttributes(payload);
+                                }
+                            });
+                    control.proceed();
+                });
+            }
         };
 
         new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), new Outcome<FunctionContext>() {
@@ -298,23 +311,40 @@ class TopologyPreview extends PreviewContent<StaticItem> {
                             .appendHtmlConstant("&darr;").toSafeHtml())
                 .end();
                 for (ServerGroup serverGroup : serverGroups) {
+                    long serversInGroup = servers.stream()
+                            .filter(sc -> serverGroup.getName().equals(sc.getServerGroup()))
+                            .count();
+                    Map<ServerConfigStatus, List<Server>> byServerConfigStatus = servers.stream()
+                            .filter(sc -> serverGroup.getName().equals(sc.getServerGroup()))
+                            .collect(groupingBy(Server::getServerConfigStatus));
+                    boolean allStarted = byServerConfigStatus.getOrDefault(STARTED, emptyList()).size() == serversInGroup;
+                    boolean allStopped = byServerConfigStatus.getOrDefault(STOPPED, emptyList()).size() == serversInGroup;
+                    boolean allDisabled = byServerConfigStatus.getOrDefault(DISABLED, emptyList()).size() == serversInGroup;
                     String serverGroupDropDownId = IdBuilder.build(serverGroup.getName(), "server-group", "dropdown");
                     builder.th()
                             .on(click, event -> serverGroupDetails(serverGroup))
                             .data("serverGroup", serverGroup.getName())
                         .div().css(serverGroupContainer)
-                            .div().css(dropdown)
-                                .a().id(serverGroupDropDownId)
-                                    .css(clickable, dropdownToggle, name)
-                                    .data(TOGGLE, DROPDOWN)
-                                    .aria(HAS_POPUP, "true")
-                                    .title(serverGroup.getName())
-                                    .textContent(serverGroup.getName())
-                                .end()
-                                .ul().css(dropdownMenu).attr(ROLE, MENU).aria(LABELLED_BY, serverGroupDropDownId);
-                                    serverGroupActions(builder, serverGroup);
-                                builder.end()
-                            .end()
+                            // The dropdown is also added in case there are no servers. Otherwise the heights of
+                            // the cells w/ and w/o servers would be different.
+                            .div().css(dropdown);
+                                if (serversInGroup > 0) {
+                                    builder.a().id(serverGroupDropDownId)
+                                        .css(clickable, dropdownToggle, name)
+                                        .data(TOGGLE, DROPDOWN)
+                                        .aria(HAS_POPUP, "true")
+                                        .title(serverGroup.getName())
+                                        .textContent(serverGroup.getName())
+                                    .end()
+                                    .ul().css(dropdownMenu).attr(ROLE, MENU).aria(LABELLED_BY, serverGroupDropDownId);
+                                        serverGroupActions(builder, serverGroup, allStarted, allStopped, allDisabled);
+                                    builder.end();
+                                } else {
+                                    builder.span().css(name).title(serverGroup.getName())
+                                        .textContent(serverGroup.getName())
+                                    .end();
+                                }
+                            builder.end()
                         .end()
                     .end();
                 }
@@ -366,6 +396,7 @@ class TopologyPreview extends PreviewContent<StaticItem> {
                                             .on(click, event -> serverDetails(srv))
                                             .data("serverGroup", serverGroup.getName())
                                             .data("host", host.getName())
+                                            .data("server", srv.getName())
                                         .div().css(dropdown)
                                             .a()
                                                 .id(serverDropDownId)
@@ -396,7 +427,12 @@ class TopologyPreview extends PreviewContent<StaticItem> {
     private void adjustTdHeight() {
         NodeList servers = Browser.getDocument().querySelectorAll("." + CSS.topology + " ." + CSS.servers);
         Elements.elements(servers).forEach(element ->
-                element.getStyle().setHeight(element.getParentElement().getOffsetHeight(), PX));
+                element.getStyle().setHeight(element.getParentElement().getOffsetHeight() - 1, PX));
+    }
+
+    private void clearSelected() {
+        NodeList selected = Browser.getDocument().querySelectorAll("." + CSS.topology + " ." + CSS.selected);
+        Elements.elements(selected).forEach(element -> element.getClassList().remove(CSS.selected));
     }
 
     private void startProgress(String selector) {
@@ -435,13 +471,21 @@ class TopologyPreview extends PreviewContent<StaticItem> {
     // ------------------------------------------------------ server group
 
     private void serverGroupDetails(final ServerGroup serverGroup) {
+        clearSelected();
+        //noinspection HardCodedStringLiteral
+        Element element = Browser.getDocument().querySelector("th[data-server-group=" + serverGroup.getName() + "]");
+        if (element != null) {
+            element.getClassList().add(selected);
+        }
+
         serverGroupAttributes.refresh(serverGroup);
         Elements.setVisible(serverGroupAttributesSection, true);
         Elements.setVisible(hostAttributesSection, false);
         Elements.setVisible(serverAttributesSection, false);
     }
 
-    private void serverGroupActions(final Elements.Builder builder, final ServerGroup serverGroup) {
+    private void serverGroupActions(final Elements.Builder builder, final ServerGroup serverGroup,
+            final boolean allStarted, final boolean allStopped, final boolean allDisabled) {
         // @formatter:off
         builder.li().attr(ROLE, PRESENTATION)
             .a().css(clickable)
@@ -463,17 +507,21 @@ class TopologyPreview extends PreviewContent<StaticItem> {
             .a().css(clickable)
                 .textContent(resources.constants().resume())
             .end()
-        .end()
-        .li().attr(ROLE, PRESENTATION)
-            .a().css(clickable)
-                .textContent(resources.constants().stop())
-            .end()
-        .end()
-        .li().attr(ROLE, PRESENTATION)
-            .a().css(clickable)
-                .textContent(resources.constants().start())
-            .end()
         .end();
+        if (!(allStopped || allDisabled)) {
+            builder.li().attr(ROLE, PRESENTATION)
+                .a().css(clickable)
+                    .textContent(resources.constants().stop())
+                .end()
+            .end();
+        }
+        if (!allStarted) {
+            builder.li().attr(ROLE, PRESENTATION)
+                .a().css(clickable)
+                    .textContent(resources.constants().start())
+                .end()
+            .end();
+        }
         // @formatter:on
     }
 
@@ -481,6 +529,13 @@ class TopologyPreview extends PreviewContent<StaticItem> {
     // ------------------------------------------------------ host
 
     private void hostDetails(final Host host) {
+        clearSelected();
+        //noinspection HardCodedStringLiteral
+        Element element = Browser.getDocument().querySelector("th[data-host=" + host.getName() + "]");
+        if (element != null) {
+            element.getClassList().add(selected);
+        }
+
         hostAttributes.refresh(host);
         Elements.setVisible(serverGroupAttributesSection, false);
         Elements.setVisible(hostAttributesSection, true);
@@ -498,6 +553,13 @@ class TopologyPreview extends PreviewContent<StaticItem> {
     // ------------------------------------------------------ server
 
     private void serverDetails(final Server server) {
+        clearSelected();
+        //noinspection HardCodedStringLiteral
+        Element element = Browser.getDocument().querySelector("div[data-server=" + server.getName() + "]");
+        if (element != null) {
+            element.getClassList().add(selected);
+        }
+
         serverAttributes.refresh(server);
         Elements.setVisible(serverGroupAttributesSection, false);
         Elements.setVisible(hostAttributesSection, false);

@@ -74,6 +74,8 @@ public interface Ids {
     String HOMEPAGE_RUNTIME_SERVER_SECTION = "homepage-runtime-server-section";
     String HOMEPAGE_RUNTIME_SERVER_GROUP_SECTION = "homepage-runtime-server-group-section";
 
+    String LOG_FILE_COLUMN = "log-file";
+
     String MACRO_EDITOR = "macro-editor";
     String MACRO_LIST = "macro-list";
     String MACRO_OPTIONS = "macro-options";
@@ -86,6 +88,7 @@ public interface Ids {
 
     String ROOT_CONTAINER = "hal-root-container";
 
+    String SERVER_MONITOR_COLUMN = "server-monitor";
     String STANDALONE_SERVER_COLUMN = "standalone-server";
     String STORAGE_PREFIX = "org.jboss.hal";
 
