@@ -178,6 +178,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml testConnectionError();
     SafeHtml testConnectionSuccess();
     SafeHtml topologyError();
+    SafeHtml transactionSetUuidOrSocket();
+    SafeHtml transactionUnableSetProcessId();
 
     String updateAvailable(String current, String update);
     String unit(String unit);
