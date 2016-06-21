@@ -98,7 +98,11 @@
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <table id="server-system-property-table" form-ref="server-system-property-form">
                     <actions>
-                        <action handler-ref="add-resource"/>
+                        <action handler-ref="add-resource">
+                            <attributes>
+                                <attribute name="value"/>
+                            </attributes>
+                        </action>
                         <action handler-ref="remove-resource" scope="selected"
                                 name-resolver="{{api.selectedRow().getName()}}"/>
                     </actions>

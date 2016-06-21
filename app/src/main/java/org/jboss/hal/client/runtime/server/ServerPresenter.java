@@ -97,7 +97,7 @@ public class ServerPresenter extends MbuiPresenter<ServerPresenter.MyView, Serve
 
     @Override
     protected FinderPath finderPath() {
-        if (ServerColumn.browseByHosts(finder)) {
+        if (ServerColumn.browseByHosts(finder.getContext())) {
             return new FinderPath()
                     .append(HOST, Host.id(statementContext.selectedHost()),
                             Names.HOST, statementContext.selectedHost())

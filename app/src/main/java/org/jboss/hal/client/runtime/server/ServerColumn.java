@@ -28,6 +28,7 @@ import elemental.dom.Element;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
@@ -84,13 +85,13 @@ public class ServerColumn extends FinderColumn<Server> {
         );
 
         addColumnAction(columnActionFactory.add(IdBuilder.build(SERVER, "add"), Names.SERVER,
-                column -> addServer(browseByHosts(finder))));
+                column -> addServer(browseByHosts(finder.getContext()))));
         addColumnAction(columnActionFactory.refresh(IdBuilder.build(SERVER, "refresh")));
 
         setItemsProvider((context, callback) -> {
             Operation serverOp;
             Operation serverConfigOp;
-            boolean browseByHosts = browseByHosts(finder);
+            boolean browseByHosts = browseByHosts(context);
 
             if (browseByHosts) {
                 ResourceAddress address = AddressTemplate.of("/{selected.host}").resolve(statementContext);
@@ -227,7 +228,7 @@ public class ServerColumn extends FinderColumn<Server> {
             public List<ItemAction<Server>> actions() {
                 PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(NameTokens.SERVER_CONFIGURATION)
                         .with(HOST, item.getHost())
-                        .with(SERVER, item.getName())
+                        .with(SERVER_CONFIG, item.getName())
                         .build();
                 List<ItemAction<Server>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.viewAndMonitor(Server.id(item.getName()), placeRequest));
@@ -237,7 +238,7 @@ public class ServerColumn extends FinderColumn<Server> {
                     actions.add(itemActionFactory.remove(Names.SERVER, item.getName(), template, ServerColumn.this));
                 }
                 actions.add(new ItemAction<>(resources.constants().copy(),
-                        itm -> copyServer(itm, browseByHosts(finder))));
+                        itm -> copyServer(itm, browseByHosts(finder.getContext()))));
                 if (!item.isStarted()) {
                     actions.add(new ItemAction<>(resources.constants().start(),
                             itm -> serverActions.start(itm, () -> { /* noop */ })));
@@ -263,9 +264,9 @@ public class ServerColumn extends FinderColumn<Server> {
         setPreviewCallback(item -> new ServerPreview(this, serverActions, item, resources));
     }
 
-    static boolean browseByHosts(Finder finder) {
-        FinderSegment firstSegment = finder.getContext().getPath().iterator().next();
-        return firstSegment.getValue().equals(IdBuilder.asId(Names.HOSTS));
+    static boolean browseByHosts(FinderContext context) {
+        FinderSegment firstSegment = context.getPath().iterator().next();
+        return firstSegment.getKey().equals(HOST) || firstSegment.getValue().equals(IdBuilder.asId(Names.HOSTS));
     }
 
     private void addServer(boolean browseByHost) {
