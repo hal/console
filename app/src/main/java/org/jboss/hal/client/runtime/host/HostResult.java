@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.runtime.host;
+package org.jboss.hal.client.runtime.host;
 
 import com.gwtplatform.dispatch.annotation.GenEvent;
 import com.gwtplatform.dispatch.annotation.Order;
 import org.jboss.hal.core.runtime.Result;
+import org.jboss.hal.core.runtime.host.Host;
 
 /**
  * @author Harald Pehl

@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.runtime.server;
+package org.jboss.hal.client.runtime.group;
 
 import com.gwtplatform.dispatch.annotation.GenEvent;
 import com.gwtplatform.dispatch.annotation.Order;
 import org.jboss.hal.core.runtime.Result;
+import org.jboss.hal.core.runtime.group.ServerGroup;
 
 /**
  * @author Harald Pehl
  */
 @GenEvent
-public class ServerResult {
+public class ServerGroupResult {
 
-    @Order(1) Server server;
+    @Order(1) ServerGroup serverGroup;
     @Order(2) Result result;
 }

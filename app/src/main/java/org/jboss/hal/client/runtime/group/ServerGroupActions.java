@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.runtime.group;
+package org.jboss.hal.client.runtime.group;
 
 import javax.inject.Inject;
 
@@ -21,6 +21,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import org.jboss.hal.core.runtime.Action;
+import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.meta.MetadataRegistry;

@@ -33,7 +33,6 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.core.runtime.server.ServerSelectionEvent;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;

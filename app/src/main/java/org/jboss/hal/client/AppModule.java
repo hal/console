@@ -137,6 +137,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 DeploymentView.class,
                 DeploymentPresenter.MyProxy.class);
 
+        bindTemplatedPresenter(DeploymentScannerPresenter.class,
+                DeploymentScannerPresenter.MyView.class,
+                Mbui_DeploymentScannerView_Provider.class,
+                DeploymentScannerPresenter.MyProxy.class);
+
         bindPresenter(EEPresenter.class,
                 EEPresenter.MyView.class,
                 EEView.class,
@@ -152,12 +157,6 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 HomepageView.class,
                 HomepagePresenter.MyProxy.class);
         
-        bindTemplatedPresenter(DeploymentScannerPresenter.class,
-                DeploymentScannerPresenter.MyView.class,
-                Mbui_DeploymentScannerView_Provider.class,
-                DeploymentScannerPresenter.MyProxy.class);
-
-
         bindTemplatedPresenter(HostPresenter.class,
                 HostPresenter.MyView.class,
                 Mbui_HostView_Provider.class,

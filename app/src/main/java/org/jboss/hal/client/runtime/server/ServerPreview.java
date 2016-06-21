@@ -20,7 +20,6 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.client.runtime.RuntimePreview;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Resources;
 
