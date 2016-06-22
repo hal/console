@@ -55,6 +55,7 @@ import static org.jboss.hal.client.configuration.subsystem.transactions.AddressT
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
+ * TODO I18n for error / validation messages
  * @author Claudio Miranda
  */
 public class TransactionPresenter extends MbuiPresenter<TransactionPresenter.MyView, TransactionPresenter.MyProxy> {
@@ -116,18 +117,13 @@ public class TransactionPresenter extends MbuiPresenter<TransactionPresenter.MyV
                 TRANSACTIONS_SUBSYSTEM_TEMPLATE.resolve(statementContext))
                 .param(RECURSIVE_DEPTH, 1)
                 .build();
-        dispatcher.execute(operation, result -> {
-            // @formatter:off
-            getView().updateConfiguration(result);
-            // @formatter:on
-        });
+        dispatcher.execute(operation, result -> getView().updateConfiguration(result));
 
         PathsTypeahead.updateOperation(environment, dispatcher, statementContext);
     }
 
     // The process form, contains attributes that must have some special treatment before save operation
     // the process-uuid and process-id-socket-binding are mutually exclusive
-    
     // this is called from process-form in TransactionView.xml
     void saveProcessForm(Form<ModelNode> form, Map<String, Object> changeSet) {
         if (!changeSet.isEmpty()) {

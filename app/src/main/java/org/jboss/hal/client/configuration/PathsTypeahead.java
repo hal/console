@@ -38,6 +38,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 
 /**
+ * Special typeahead class for paths.
+ * TODO Listen for server start events and update operation
+ *
  * @author Harald Pehl
  */
 public class PathsTypeahead extends Typeahead {

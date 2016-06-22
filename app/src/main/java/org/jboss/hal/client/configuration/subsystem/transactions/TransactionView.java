@@ -79,6 +79,4 @@ public abstract class TransactionView extends MbuiViewImpl<TransactionPresenter>
     public VerticalNavigation getVerticalNavigation() {
         return navigation;
     }
-    
-    
 }

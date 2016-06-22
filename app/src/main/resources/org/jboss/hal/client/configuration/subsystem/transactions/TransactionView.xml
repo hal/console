@@ -18,20 +18,20 @@
 <view>
     <vertical-navigation id="transaction-vertical-navigation">
 
-        
+
         <item id="attributes-config-item" title="Configuration" icon="fa fa-list-ul">
             <metadata address="/{selected.profile}/subsystem=transactions">
                 <h1>Transaction Manager</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <form id="attributes-form" title="Transaction Manager" auto-save="true">
                     <attributes>
-                        <attribute name="default-timeout" />
-                        <attribute name="enable-tsm-status" />
-                        <attribute name="journal-store-enable-async-io" />
-                        <attribute name="jts" />
-                        <attribute name="node-identifier" />
-                        <attribute name="statistics-enabled" />
-                        <attribute name="use-journal-store" />
+                        <attribute name="default-timeout"/>
+                        <attribute name="enable-tsm-status"/>
+                        <attribute name="journal-store-enable-async-io"/>
+                        <attribute name="jts"/>
+                        <attribute name="node-identifier"/>
+                        <attribute name="statistics-enabled"/>
+                        <attribute name="use-journal-store"/>
                     </attributes>
                 </form>
             </metadata>
@@ -43,8 +43,8 @@
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <form id="process-form" title="Process ID" on-save="{{presenter.saveProcessForm(form, changedValues)}}">
                     <attributes>
-                        <attribute name="process-id-uuid" />
-                        <attribute name="process-id-socket-binding" >
+                        <attribute name="process-id-uuid"/>
+                        <attribute name="process-id-socket-binding">
                             <suggest-handler>
                                 <templates>
                                     <!-- @formatter:off -->
@@ -53,19 +53,19 @@
                                 </templates>
                             </suggest-handler>
                         </attribute>
-                        <attribute name="process-id-socket-max-ports" />
+                        <attribute name="process-id-socket-max-ports"/>
                     </attributes>
                 </form>
             </metadata>
         </item>
-        
+
         <item id="recovery-config-item" title="Recovery" icon="fa fa-repeat">
             <metadata address="/{selected.profile}/subsystem=transactions">
                 <h1>Recovery</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <form id="recovery-form" title="Recovery" auto-save="true">
                     <attributes>
-                        <attribute name="socket-binding" >
+                        <attribute name="socket-binding">
                             <suggest-handler>
                                 <templates>
                                     <!-- @formatter:off -->
@@ -74,7 +74,7 @@
                                 </templates>
                             </suggest-handler>
                         </attribute>
-                        <attribute name="status-socket-binding" >
+                        <attribute name="status-socket-binding">
                             <suggest-handler>
                                 <templates>
                                     <!-- @formatter:off -->
@@ -83,7 +83,7 @@
                                 </templates>
                             </suggest-handler>
                         </attribute>
-                        <attribute name="recovery-listener" />
+                        <attribute name="recovery-listener"/>
                     </attributes>
                 </form>
             </metadata>
@@ -95,8 +95,9 @@
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <form id="path-form" title="Path" auto-save="true">
                     <attributes>
-                        <attribute name="object-store-path" />
-                        <attribute name="object-store-relative-to" />
+                        <attribute name="object-store-path"/>
+                        <attribute name="object-store-relative-to"
+                                   suggest-handler="{{new org.jboss.hal.client.configuration.PathsTypeahead()}}"/>
                     </attributes>
                 </form>
             </metadata>
@@ -108,14 +109,14 @@
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <form id="jdbc-form" title="JDBC" auto-save="true">
                     <attributes>
-                        <attribute name="use-jdbc-store" />
-                        <attribute name="jdbc-action-store-drop-table" />
-                        <attribute name="jdbc-action-store-table-prefix" />
-                        <attribute name="jdbc-communication-store-drop-table" />
-                        <attribute name="jdbc-communication-store-table-prefix" />
-                        <attribute name="jdbc-state-store-drop-table" />
-                        <attribute name="jdbc-state-store-table-prefix" />
-                        <attribute name="jdbc-store-datasource" >
+                        <attribute name="use-jdbc-store"/>
+                        <attribute name="jdbc-action-store-drop-table"/>
+                        <attribute name="jdbc-action-store-table-prefix"/>
+                        <attribute name="jdbc-communication-store-drop-table"/>
+                        <attribute name="jdbc-communication-store-table-prefix"/>
+                        <attribute name="jdbc-state-store-drop-table"/>
+                        <attribute name="jdbc-state-store-table-prefix"/>
+                        <attribute name="jdbc-store-datasource">
                             <suggest-handler>
                                 <templates>
                                     <!-- @formatter:off -->
