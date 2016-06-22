@@ -1,5 +1,3 @@
-Next version of the WildFly management console. See https://github.com/hal/hal.next for more infos.
-
 Before running the console you need to configure the allowed origins of the HTTP management endpoint.
 
 - Standalone mode
@@ -15,6 +13,8 @@ Before running the console you need to configure the allowed origins of the HTTP
 After that install and run using 
 
 ```
-npm install hal-next
-npm run hal-next
+npm -g install hal-next
+npm -g start hal-next
 ```
+
+See https://github.com/hal/hal.next for more infos.

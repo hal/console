@@ -3,7 +3,7 @@
   "version": "0.2.2",
   "description": "The next version of the WildFly management console",
   "keywords": ["hal", "wildfly", "management", "console"],
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
