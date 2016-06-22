@@ -24,17 +24,21 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.flow.Async;
+import org.jboss.gwt.flow.FunctionContext;
+import org.jboss.gwt.flow.Outcome;
+import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.group.ServerGroupSelectionEvent;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.IdBuilder;
@@ -42,12 +46,9 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Requires;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 import static org.jboss.hal.resources.CSS.itemText;
 import static org.jboss.hal.resources.CSS.subtitle;
 
@@ -58,10 +59,9 @@ import static org.jboss.hal.resources.CSS.subtitle;
 @Requires(value = "/server-group=*", recursive = false)
 public class ServerGroupColumn extends FinderColumn<ServerGroup> {
 
-    private static final Logger logger = LoggerFactory.getLogger(ServerGroup.class);
-
     @Inject
     public ServerGroupColumn(final Finder finder,
+            final Environment environment,
             final Dispatcher dispatcher,
             final EventBus eventBus,
             final ColumnActionFactory columnActionFactory,
@@ -74,21 +74,25 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
                         AddressTemplate.of("/server-group=*")))
                 .columnAction(columnActionFactory.refresh(IdBuilder.build(SERVER_GROUP, "refresh")))
 
-                .itemsProvider((context, callback) -> {
-                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
-                            ResourceAddress.ROOT)
-                            .param(CHILD_TYPE, SERVER_GROUP)
-                            .param(INCLUDE_RUNTIME, true)
-                            .build();
-                    dispatcher.execute(operation, result -> {
-                        callback.onSuccess(result.asPropertyList().stream()
-                                .map(ServerGroup::new)
-                                .sorted(comparing(ServerGroup::getName))
-                                .collect(toList()));
-                    });
-                })
+                .itemsProvider((context, callback) ->
+                        new Async<FunctionContext>(Progress.NOOP).single(
+                                new FunctionContext(),
+                                new Outcome<FunctionContext>() {
+                                    @Override
+                                    public void onFailure(final FunctionContext context) {
+                                        callback.onFailure(context.getError());
+                                    }
+
+                                    @Override
+                                    public void onSuccess(final FunctionContext context) {
+                                        List<ServerGroup> serverGroups = context.get(TopologyFunctions.SERVER_GROUPS);
+                                        callback.onSuccess(serverGroups);
+                                    }
+                                },
+                                new TopologyFunctions.ServerGroupsWithServers(environment, dispatcher)))
 
                 .onPreview(ServerGroupPreview::new)
+                // TODO Change the security context (server group scoped roles!)
                 .onItemSelect(serverGroup -> eventBus.fireEvent(new ServerGroupSelectionEvent(serverGroup.getName())))
                 .pinnable()
                 .showCount()

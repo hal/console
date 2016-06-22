@@ -21,6 +21,7 @@ import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.runtime.group.ServerGroupActions;
 import org.jboss.hal.core.runtime.host.HostActions;
 import org.jboss.hal.core.runtime.server.ServerActions;
@@ -44,6 +45,7 @@ public class BrowseByColumn extends StaticItemColumn {
 
     @Inject
     public BrowseByColumn(final Finder finder,
+            final Environment environment,
             final @Footer Provider<Progress> progress,
             final EventBus eventBus,
             final Dispatcher dispatcher,
@@ -55,7 +57,7 @@ public class BrowseByColumn extends StaticItemColumn {
                 Arrays.asList(
                         new StaticItem.Builder(Names.TOPOLOGY)
                                 .onPreview(
-                                        new TopologyPreview(dispatcher, progress, eventBus,
+                                        new TopologyPreview(environment, dispatcher, progress, eventBus,
                                                 hostActions, serverGroupActions, serverActions, resources))
                                 .build(),
                         new StaticItem.Builder(Names.HOSTS)

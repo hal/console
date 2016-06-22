@@ -17,7 +17,6 @@ package org.jboss.hal.client.runtime.host;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import javax.inject.Inject;
 
 import com.google.common.base.Joiner;
@@ -25,6 +24,11 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.flow.Async;
+import org.jboss.gwt.flow.FunctionContext;
+import org.jboss.gwt.flow.Outcome;
+import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -33,6 +37,7 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.runtime.Action;
+import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.runtime.host.HostActionEvent;
 import org.jboss.hal.core.runtime.host.HostActionEvent.HostActionHandler;
@@ -40,15 +45,8 @@ import org.jboss.hal.core.runtime.host.HostActions;
 import org.jboss.hal.core.runtime.host.HostResultEvent;
 import org.jboss.hal.core.runtime.host.HostResultEvent.HostResultHandler;
 import org.jboss.hal.core.runtime.host.HostSelectionEvent;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.IdBuilder;
@@ -57,14 +55,9 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Requires;
 
-import static java.util.Comparator.comparing;
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
-import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STARTED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.resources.CSS.itemText;
 import static org.jboss.hal.resources.CSS.subtitle;
 
@@ -77,9 +70,9 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
 
     @Inject
     public HostColumn(final Finder finder,
+            final Environment environment,
             final Dispatcher dispatcher,
             final EventBus eventBus,
-            final StatementContext statementContext,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
             final HostActions hostActions,
@@ -89,55 +82,22 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
 
                 .columnAction(columnActionFactory.refresh(IdBuilder.build(HOST, "refresh")))
 
-                .itemsProvider((context, callback) -> {
-                    // Read the hosts and the running server in a composite operation.
-                    // The running servers are not needed by the column itself, however they're used by the
-                    // host actions like reload or restart to wait until the host and all of its running servers
-                    // are up and running again.
-                    Operation hosts = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
-                            ResourceAddress.ROOT)
-                            .param(CHILD_TYPE, HOST)
-                            .param(INCLUDE_RUNTIME, true)
-                            .build();
-                    Operation runningServers = new Operation.Builder(QUERY,
-                            AddressTemplate.of("/host=*/server-config=*").resolve(statementContext))
-                            .param(SELECT, new ModelNode().add(NAME))
-                            .param(WHERE, new ModelNode().set(STATUS, STARTED.name()))
-                            .build();
-                    dispatcher.execute(new Composite(hosts, runningServers),
-                            (CompositeResult result) -> {
-
-                                // read the hosts from step 0
-                                Map<String, Host> hostsByName = result.step(0).get(RESULT).asPropertyList().stream()
-                                        .map(Host::new)
-                                        .collect(toMap(Host::getAddressName, identity()));
-
-                                /*
-                                 * read the addresses of the running servers from step 1, the address looks like
-                                 * "address" => [
-                                 *     ("host" => "foo"),
-                                 *     ("server-config" => "bar")
-                                 * ]
-                                 */
-                                Map<String, List<ResourceAddress>> runningServersByHost = result.step(1).get(RESULT)
-                                        .asList().stream()
-                                        .map(modelNode -> new ResourceAddress(modelNode.get(ADDRESS)))
-                                        .collect(groupingBy(address -> address.getParent().lastValue()));
-
-                                // pick the server name from the address and add it to the host
-                                runningServersByHost.forEach((hostName, runningServerAddresses) -> {
-                                    Host host = hostsByName.get(hostName);
-                                    if (host != null) {
-                                        runningServerAddresses
-                                                .forEach(address -> host.addRunningServer(address.lastValue()));
+                .itemsProvider((context, callback) ->
+                        new Async<FunctionContext>(Progress.NOOP).single(
+                                new FunctionContext(),
+                                new Outcome<FunctionContext>() {
+                                    @Override
+                                    public void onFailure(final FunctionContext context) {
+                                        callback.onFailure(context.getError());
                                     }
-                                });
 
-                                // return the host instances as ordered list
-                                callback.onSuccess(hostsByName.values().stream().sorted(comparing(Host::getName))
-                                        .collect(toList()));
-                            });
-                })
+                                    @Override
+                                    public void onSuccess(final FunctionContext context) {
+                                        List<Host> hosts = context.get(TopologyFunctions.HOSTS);
+                                        callback.onSuccess(hosts);
+                                    }
+                                },
+                                new TopologyFunctions.HostsWithServers(environment, dispatcher)))
 
                 // TODO Change the security context (host scoped roles!)
                 .onItemSelect(host -> eventBus.fireEvent(new HostSelectionEvent(host.getAddressName())))

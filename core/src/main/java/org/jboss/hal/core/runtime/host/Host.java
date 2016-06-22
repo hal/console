@@ -15,12 +15,16 @@
  */
 package org.jboss.hal.core.runtime.host;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import org.jboss.hal.core.runtime.RunningMode;
 import org.jboss.hal.core.runtime.RunningState;
 import org.jboss.hal.core.runtime.SuspendState;
+import org.jboss.hal.core.runtime.server.Server;
+import org.jboss.hal.core.runtime.server.ServerConfigStatus;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
@@ -54,18 +58,18 @@ public class Host extends NamedNode {
     }
 
     private final String addressName;
-    private final List<String> runningServers;
+    private final Multimap<ServerConfigStatus, Server> serversByState;
 
     public Host(final ModelNode node) {
         super(node.get(NAME).asString(), node);
         this.addressName = node.get(NAME).asString();
-        this.runningServers = new ArrayList<>();
+        this.serversByState = ArrayListMultimap.create();
     }
 
     public Host(final Property property) {
         super(property.getValue().get(NAME).asString(), property.getValue());
         this.addressName = property.getName();
-        this.runningServers = new ArrayList<>();
+        this.serversByState = ArrayListMultimap.create();
     }
 
     public String getAddressName() {
@@ -122,16 +126,16 @@ public class Host extends NamedNode {
         return getHostState() == RELOAD_REQUIRED;
     }
 
-    public boolean hasRunningServers() {
-        return !runningServers.isEmpty();
+    public boolean hasServers(ServerConfigStatus status) {
+        return serversByState.containsKey(status);
     }
 
-    public void addRunningServer(String server) {
-        runningServers.add(server);
+    public void addServer(ServerConfigStatus status, Server server) {
+        serversByState.put(status, server);
     }
 
-    public List<String> getRunningServers() {
-        return runningServers;
+    public List<Server> getServers(ServerConfigStatus status) {
+        return Lists.newArrayList(serversByState.get(status));
     }
 
     public ResourceAddress getAddress() {

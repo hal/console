@@ -60,8 +60,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml deploymentEnabledError(String name);
     SafeHtml deploymentFailed(@PluralCount int count);
     SafeHtml deploymentReplaced(@PluralCount int count);
-    SafeHtml dispatcherException();
-    SafeHtml dispatcherFailed();
     SafeHtml domainControllerTimeout(String name);
     String duplicateResource(String type);
 
@@ -85,6 +83,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     String invalidRange(long value, long min, long max);
 
+    SafeHtml lastOperationException();
+    SafeHtml lastOperationFailed();
     SafeHtml listHint();
 
     SafeHtml macroPlaybackError();
@@ -143,6 +143,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml restartServerPending(String name);
     SafeHtml restartServerSuccess(String name);
 
+    SafeHtml serverGroupNoStartedServers(String name);
     SafeHtml serverGroupTimeout(String name);
     SafeHtml serverAdminMode(String name);
     SafeHtml serverFailed(String name);

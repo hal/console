@@ -17,7 +17,6 @@ package org.jboss.hal.client.runtime;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Provider;
@@ -31,13 +30,14 @@ import elemental.dom.Element;
 import elemental.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.flow.Async;
-import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
+import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.group.ServerGroupActions;
 import org.jboss.hal.core.runtime.host.Host;
@@ -47,10 +47,6 @@ import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.core.runtime.server.ServerConfigStatus;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Names;
@@ -62,10 +58,8 @@ import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
-import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.DISABLED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STARTED;
@@ -89,6 +83,7 @@ class TopologyPreview extends PreviewContent<StaticItem> {
     private static final String SERVER_ATTRIBUTES_SECTION = "server-attributes-section";
     private static final String SERVER_DATA = "server-data";
 
+    private final Environment environment;
     private final Dispatcher dispatcher;
     private final Provider<Progress> progress;
     private final EventBus eventBus;
@@ -105,7 +100,8 @@ class TopologyPreview extends PreviewContent<StaticItem> {
     private final PreviewAttributes<Host> hostAttributes;
     private final PreviewAttributes<Server> serverAttributes;
 
-    TopologyPreview(final Dispatcher dispatcher,
+    TopologyPreview(final Environment environment,
+            final Dispatcher dispatcher,
             final Provider<Progress> progress,
             final EventBus eventBus,
             final HostActions hostActions,
@@ -113,6 +109,7 @@ class TopologyPreview extends PreviewContent<StaticItem> {
             final ServerActions serverActions,
             final Resources resources) {
         super(Names.TOPOLOGY, resources.previews().topology());
+        this.environment = environment;
         this.dispatcher = dispatcher;
         this.progress = progress;
         this.eventBus = eventBus;
@@ -191,116 +188,37 @@ class TopologyPreview extends PreviewContent<StaticItem> {
         Elements.setVisible(hostAttributesSection, false);
         Elements.setVisible(serverAttributesSection, false);
 
-        Function<FunctionContext> topologyFn = control -> {
-            Operation hostOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
-                    .param(CHILD_TYPE, HOST)
-                    .param(INCLUDE_RUNTIME, true)
-                    .build();
-            Operation serverGroupOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
-                    .param(CHILD_TYPE, SERVER_GROUP)
-                    .param(INCLUDE_RUNTIME, true)
-                    .build();
-            Operation serverConfigOp = new Operation.Builder(QUERY,
-                    new ResourceAddress().add(HOST, "*").add(SERVER_CONFIG, "*"))
-                    .param(SELECT, new ModelNode().add(NAME).add(AUTO_START).add(GROUP).add(SOCKET_BINDING_PORT_OFFSET)
-                            .add(STATUS))
-                    .build();
-            dispatcher.executeInFunction(control, new Composite(hostOp, serverGroupOp, serverConfigOp),
-                    (CompositeResult result) -> {
-                        // first collect all hosts, sort them by name and finally
-                        // remove the host controller to add it as first element
-                        List<Host> allHosts = result.step(0).get(RESULT).asPropertyList().stream()
-                                .map(Host::new)
-                                .sorted(comparing(Host::getName))
-                                .collect(toList());
-                        Host domainController = null;
-                        List<Host> hosts = new ArrayList<>(allHosts);
-                        for (Iterator<Host> iterator = hosts.iterator();
-                                iterator.hasNext() && domainController == null; ) {
-                            Host host = iterator.next();
-                            if (host.isDomainController()) {
-                                domainController = host;
-                                iterator.remove();
-                            }
-                        }
-                        if (domainController != null) {
-                            hosts.add(0, domainController);
-                        }
-                        control.getContext().set(HOST_DATA, hosts);
-
-                        List<ServerGroup> serverGroups = result.step(1).get(RESULT).asPropertyList().stream()
-                                .map(ServerGroup::new)
-                                .sorted(comparing(ServerGroup::getName))
-                                .collect(toList());
-                        control.getContext().set(SERVER_GROUP_DATA, serverGroups);
-
-                        List<Server> serverConfigs = result.step(2).get(RESULT).asList().stream()
-                                .filter(modelNode -> !modelNode.isFailure())
-                                .map(modelNode -> {
-                                    ResourceAddress address = new ResourceAddress(modelNode.get(ADDRESS));
-                                    String host = address.getParent().lastValue();
-                                    return new Server(host, modelNode.get(RESULT));
-                                })
-                                .collect(toList());
-                        control.getContext().set(SERVER_DATA, serverConfigs);
-                        control.proceed();
-                    });
-        };
-
-        Function<FunctionContext> runningServerDetailsFn = control -> {
-            List<Server> servers = control.getContext().get(SERVER_DATA);
-            Map<String, Server> serversByName = servers.stream().collect(toMap(Server::getName, identity()));
-            Composite composite = new Composite(servers.stream()
-                    .filter(Server::isStarted)
-                    .map((server -> new Operation.Builder(READ_RESOURCE_OPERATION, server.getServerAddress())
-                            .param(INCLUDE_RUNTIME, true)
-                            .build()))
-                    .collect(toList()));
-
-            if (composite.isEmpty()) {
-                control.proceed();
-            } else {
-                dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
-                    result.stream()
-                            .filter((modelNode) -> !modelNode.isFailure())
-                            .forEach(modelNode -> {
-                                ModelNode payload = modelNode.get(RESULT);
-                                Server serverConfig = serversByName.get(payload.get(NAME).asString());
-                                if (serverConfig != null) {
-                                    serverConfig.addServerAttributes(payload);
-                                }
-                            });
-                    control.proceed();
-                });
-            }
-        };
-
         // show the loading indicator if the dmr operation take too long
         int timeoutHandle = Browser.getWindow()
                 .setTimeout(() -> Elements.setVisible(loadingSection, true), PROGRESS_TIMEOUT);
-        new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), new Outcome<FunctionContext>() {
-            @Override
-            public void onFailure(final FunctionContext context) {
-                Browser.getWindow().clearTimeout(timeoutHandle);
-                Elements.setVisible(loadingSection, false);
-                MessageEvent.fire(eventBus, Message.error(resources.messages().topologyError(),
-                        context.getErrorMessage()));
-            }
+        new Async<FunctionContext>(progress.get()).waterfall(
+                new FunctionContext(),
+                new Outcome<FunctionContext>() {
+                    @Override
+                    public void onFailure(final FunctionContext context) {
+                        Browser.getWindow().clearTimeout(timeoutHandle);
+                        Elements.setVisible(loadingSection, false);
+                        MessageEvent.fire(eventBus, Message.error(resources.messages().topologyError(),
+                                context.getErrorMessage()));
+                    }
 
-            @Override
-            public void onSuccess(final FunctionContext context) {
-                Browser.getWindow().clearTimeout(timeoutHandle);
-                Elements.setVisible(loadingSection, false);
-                Elements.removeChildrenFrom(topologySection);
+                    @Override
+                    public void onSuccess(final FunctionContext context) {
+                        Browser.getWindow().clearTimeout(timeoutHandle);
+                        Elements.setVisible(loadingSection, false);
+                        Elements.removeChildrenFrom(topologySection);
 
-                List<Host> hosts = context.get(HOST_DATA);
-                List<ServerGroup> serverGroups = context.get(SERVER_GROUP_DATA);
-                List<Server> servers = context.get(SERVER_DATA);
-                topologySection.appendChild(createTable(hosts, serverGroups, servers));
-                Elements.setVisible(topologySection, true);
-                adjustTdHeight();
-            }
-        }, topologyFn, runningServerDetailsFn);
+                        List<Host> hosts = context.get(HOST_DATA);
+                        List<ServerGroup> serverGroups = context.get(SERVER_GROUP_DATA);
+                        List<Server> servers = context.get(SERVER_DATA);
+
+                        topologySection.appendChild(createTable(hosts, serverGroups, servers));
+                        Elements.setVisible(topologySection, true);
+                        adjustTdHeight();
+                    }
+                },
+                new TopologyFunctions.Topology(environment, dispatcher),
+                new TopologyFunctions.RunningServerDetails(environment, dispatcher));
     }
 
 

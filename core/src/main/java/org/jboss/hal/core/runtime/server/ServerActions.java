@@ -20,7 +20,6 @@ import javax.inject.Inject;
 import com.google.gwt.core.client.Scheduler;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
-import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
@@ -32,7 +31,10 @@ import org.jboss.hal.resources.Resources;
  */
 public class ServerActions {
 
-    public static final int SERVER_TIMEOUT = 4;
+    public static final int SERVER_START_TIMEOUT = 4;
+    public static final int SERVER_STOP_TIMEOUT = 2;
+    public static final int SERVER_RELOAD_TIMEOUT = 4;
+    public static final int SERVER_RESTART_TIMEOUT = SERVER_STOP_TIMEOUT + SERVER_START_TIMEOUT;
 
     private final EventBus eventBus;
     private final Dispatcher dispatcher;

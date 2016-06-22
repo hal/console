@@ -247,11 +247,11 @@ public class HostActions {
     }
 
     private int reloadTimeout(Host host) {
-        return RELOAD_TIMEOUT + host.getRunningServers().size() * ServerActions.SERVER_TIMEOUT;
+        return RELOAD_TIMEOUT + host.getRunningServers().size() * ServerActions.SERVER_RELOAD_TIMEOUT;
     }
 
     private int restartTimeout(Host host) {
-        return RESTART_TIMEOUT + host.getRunningServers().size() * ServerActions.SERVER_TIMEOUT;
+        return RESTART_TIMEOUT + host.getRunningServers().size() * ServerActions.SERVER_RESTART_TIMEOUT;
     }
 
     private Operation ping(Host host) {
