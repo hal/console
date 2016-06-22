@@ -283,30 +283,35 @@ public class TopologyFunctions {
 
         @Override
         public void execute(final Control<FunctionContext> control) {
-            Composite composite = new Composite(HOST_OPERATION, serverConfigOperation(NAME, GROUP, STATUS));
-            dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
+            if (environment.isStandalone()) {
+                control.proceed();
+            } else {
+                Composite composite = new Composite(HOST_OPERATION, serverConfigOperation(NAME, GROUP, STATUS));
+                dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
 
-                List<Host> hosts = orderedHostWithDomainControllerAsFirstElement(
-                        result.step(0).get(RESULT).asPropertyList());
+                    List<Host> hosts = orderedHostWithDomainControllerAsFirstElement(
+                            result.step(0).get(RESULT).asPropertyList());
 
-                List<Server> serverConfigs = result.step(1).get(RESULT).asList().stream()
-                        .filter(modelNode -> !modelNode.isFailure())
-                        .map(modelNode -> {
-                            ResourceAddress address = new ResourceAddress(modelNode.get(ADDRESS));
-                            String host = address.getParent().lastValue();
-                            return new Server(host, modelNode.get(RESULT));
-                        })
-                        .collect(toList());
+                    List<Server> serverConfigs = result.step(1).get(RESULT).asList().stream()
+                            .filter(modelNode -> !modelNode.isFailure())
+                            .map(modelNode -> {
+                                ResourceAddress address = new ResourceAddress(modelNode.get(ADDRESS));
+                                String host = address.getParent().lastValue();
+                                return new Server(host, modelNode.get(RESULT));
+                            })
+                            .collect(toList());
 
-                Map<String, List<Server>> serversByHost = serverConfigs.stream()
-                        .collect(groupingBy(Server::getHost));
-                hosts.forEach(host -> {
-                    List<Server> serversOfHost = serversByHost.getOrDefault(host.getName(), emptyList());
-                    serversOfHost.forEach(server -> host.addServer(server.getServerConfigStatus(), server));
+                    Map<String, List<Server>> serversByHost = serverConfigs.stream()
+                            .collect(groupingBy(Server::getHost));
+                    hosts.forEach(host -> {
+                        List<Server> serversOfHost = serversByHost.getOrDefault(host.getName(), emptyList());
+                        serversOfHost.forEach(server -> host.addServer(server.getServerConfigStatus(), server));
+                    });
+
+                    control.getContext().set(HOSTS, hosts);
+                    control.proceed();
                 });
-
-                control.getContext().set(HOSTS, hosts);
-            });
+            }
         }
     }
 
@@ -329,34 +334,39 @@ public class TopologyFunctions {
 
         @Override
         public void execute(final Control<FunctionContext> control) {
-            Composite composite = new Composite(SERVER_GROUP_OPERATION, serverConfigOperation(NAME, GROUP, STATUS));
-            dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
+            if (environment.isStandalone()) {
+                control.proceed();
+            } else {
+                Composite composite = new Composite(SERVER_GROUP_OPERATION, serverConfigOperation(NAME, GROUP, STATUS));
+                dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
 
-                List<ServerGroup> serverGroups = result.step(0).get(RESULT).asPropertyList().stream()
-                        .map(ServerGroup::new)
-                        .sorted(comparing(ServerGroup::getName))
-                        .collect(toList());
+                    List<ServerGroup> serverGroups = result.step(0).get(RESULT).asPropertyList().stream()
+                            .map(ServerGroup::new)
+                            .sorted(comparing(ServerGroup::getName))
+                            .collect(toList());
 
-                List<Server> serverConfigs = result.step(1).get(RESULT).asList().stream()
-                        .filter(modelNode -> !modelNode.isFailure())
-                        .map(modelNode -> {
-                            ResourceAddress address = new ResourceAddress(modelNode.get(ADDRESS));
-                            String host = address.getParent().lastValue();
-                            return new Server(host, modelNode.get(RESULT));
-                        })
-                        .collect(toList());
+                    List<Server> serverConfigs = result.step(1).get(RESULT).asList().stream()
+                            .filter(modelNode -> !modelNode.isFailure())
+                            .map(modelNode -> {
+                                ResourceAddress address = new ResourceAddress(modelNode.get(ADDRESS));
+                                String host = address.getParent().lastValue();
+                                return new Server(host, modelNode.get(RESULT));
+                            })
+                            .collect(toList());
 
-                Map<String, List<Server>> serversByServerGroup = serverConfigs.stream()
-                        .collect(groupingBy(Server::getServerGroup));
-                serverGroups.forEach(serverGroup -> {
-                    List<Server> serversOfServerGroup = serversByServerGroup
-                            .getOrDefault(serverGroup.getName(), emptyList());
-                    serversOfServerGroup
-                            .forEach(server -> serverGroup.addServer(server.getServerConfigStatus(), server));
+                    Map<String, List<Server>> serversByServerGroup = serverConfigs.stream()
+                            .collect(groupingBy(Server::getServerGroup));
+                    serverGroups.forEach(serverGroup -> {
+                        List<Server> serversOfServerGroup = serversByServerGroup
+                                .getOrDefault(serverGroup.getName(), emptyList());
+                        serversOfServerGroup
+                                .forEach(server -> serverGroup.addServer(server.getServerConfigStatus(), server));
+                    });
+
+                    control.getContext().set(SERVER_GROUPS, serverGroups);
+                    control.proceed();
                 });
-
-                control.getContext().set(SERVER_GROUPS, serverGroups);
-            });
+            }
         }
     }
 

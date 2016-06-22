@@ -37,7 +37,7 @@
             </metadata>
         </item>
 
-        <item id="process-item" title="Process" icon="fa fa-clipboard">
+        <item id="process-item" title="Process" icon="pficon pficon-service">
             <metadata address="/{selected.profile}/subsystem=transactions">
                 <h1>Process ID</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>

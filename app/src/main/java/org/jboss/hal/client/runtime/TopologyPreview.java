@@ -77,11 +77,8 @@ class TopologyPreview extends PreviewContent<StaticItem> {
     private static final String LOADING_SECTION = "loading-section";
     private static final String TOPOLOGY_SECTION = "topology-section";
     private static final String SERVER_GROUP_ATTRIBUTES_SECTION = "server-group-attributes-section";
-    private static final String SERVER_GROUP_DATA = "server-group-data";
     private static final String HOST_ATTRIBUTES_SECTION = "host-attributes-section";
-    private static final String HOST_DATA = "host-data";
     private static final String SERVER_ATTRIBUTES_SECTION = "server-attributes-section";
-    private static final String SERVER_DATA = "server-data";
 
     private final Environment environment;
     private final Dispatcher dispatcher;
@@ -208,9 +205,9 @@ class TopologyPreview extends PreviewContent<StaticItem> {
                         Elements.setVisible(loadingSection, false);
                         Elements.removeChildrenFrom(topologySection);
 
-                        List<Host> hosts = context.get(HOST_DATA);
-                        List<ServerGroup> serverGroups = context.get(SERVER_GROUP_DATA);
-                        List<Server> servers = context.get(SERVER_DATA);
+                        List<Host> hosts = context.get(TopologyFunctions.HOSTS);
+                        List<ServerGroup> serverGroups = context.get(TopologyFunctions.SERVER_GROUPS);
+                        List<Server> servers = context.get(TopologyFunctions.SERVERS);
 
                         topologySection.appendChild(createTable(hosts, serverGroups, servers));
                         Elements.setVisible(topologySection, true);
