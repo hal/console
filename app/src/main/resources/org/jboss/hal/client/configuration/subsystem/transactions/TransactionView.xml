@@ -44,7 +44,15 @@
                 <form id="process-form" title="Process ID" on-save="{{presenter.saveProcessForm(form, changedValues)}}">
                     <attributes>
                         <attribute name="process-id-uuid" />
-                        <attribute name="process-id-socket-binding" />
+                        <attribute name="process-id-socket-binding" >
+                            <suggest-handler>
+                                <templates>
+                                    <!-- @formatter:off -->
+                                    <template address="/socket-binding-group=*/socket-binding=*"/>
+                                    <!-- @formatter:on -->
+                                </templates>
+                            </suggest-handler>
+                        </attribute>
                         <attribute name="process-id-socket-max-ports" />
                     </attributes>
                 </form>
@@ -57,8 +65,24 @@
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <form id="recovery-form" title="Recovery" auto-save="true">
                     <attributes>
-                        <attribute name="socket-binding" />
-                        <attribute name="status-socket-binding" />
+                        <attribute name="socket-binding" >
+                            <suggest-handler>
+                                <templates>
+                                    <!-- @formatter:off -->
+                                    <template address="/socket-binding-group=*/socket-binding=*"/>
+                                    <!-- @formatter:on -->
+                                </templates>
+                            </suggest-handler>
+                        </attribute>
+                        <attribute name="status-socket-binding" >
+                            <suggest-handler>
+                                <templates>
+                                    <!-- @formatter:off -->
+                                    <template address="/socket-binding-group=*/socket-binding=*"/>
+                                    <!-- @formatter:on -->
+                                </templates>
+                            </suggest-handler>
+                        </attribute>
                         <attribute name="recovery-listener" />
                     </attributes>
                 </form>
@@ -91,7 +115,16 @@
                         <attribute name="jdbc-communication-store-table-prefix" />
                         <attribute name="jdbc-state-store-drop-table" />
                         <attribute name="jdbc-state-store-table-prefix" />
-                        <attribute name="jdbc-store-datasource" />
+                        <attribute name="jdbc-store-datasource" >
+                            <suggest-handler>
+                                <templates>
+                                    <!-- @formatter:off -->
+                                    <template address="/{selected.profile}/subsystem=datasources/data-source=*"/>
+                                    <template address="/{selected.profile}/subsystem=datasources/xa-data-source=*"/>
+                                    <!-- @formatter:on -->
+                                </templates>
+                            </suggest-handler>
+                        </attribute>
                     </attributes>
                 </form>
             </metadata>

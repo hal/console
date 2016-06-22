@@ -125,7 +125,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     }
 
     @Override
-    public void addFormValidation(FormValidation formValidation) {
+    public void addFormValidation(FormValidation<T> formValidation) {
         formValidations.add(formValidation);
     }
 
@@ -552,7 +552,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         // validate form on its own
         List<String> messages = new ArrayList<>();
         for (FormValidation validationHandler : formValidations) {
-            ValidationResult validationResult = validationHandler.validate(getFormItems());
+            ValidationResult validationResult = validationHandler.validate(this);
             if (!validationResult.isValid()) {
                 messages.add(validationResult.getMessage());
             }

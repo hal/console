@@ -48,6 +48,8 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.transactions.AddressTemplates.TRANSACTIONS_SUBSYSTEM_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.transactions.AddressTemplates.TRANSACTIONS_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -57,10 +59,12 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 public class TransactionPresenter extends MbuiPresenter<TransactionPresenter.MyView, TransactionPresenter.MyProxy> {
 
+    // datasource address is required to as there is typeahead declared in TransactionView.xml
+    // to lookup datasource subsystem
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.TRANSACTIONS)
-    @Requires({TRANSACTIONS_SUBSYSTEM_ADDRESS})
+    @Requires({TRANSACTIONS_SUBSYSTEM_ADDRESS, DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS})
     public interface MyProxy extends ProxyPlace<TransactionPresenter> {}
 
     public interface MyView extends MbuiView<TransactionPresenter>, HasVerticalNavigation {
