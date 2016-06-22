@@ -1,6 +1,6 @@
 {
   "name": "hal-next",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "The next version of the WildFly management console",
   "keywords": ["hal", "wildfly", "management", "console"],
   "main": "index.js",
