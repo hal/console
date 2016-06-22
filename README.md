@@ -32,7 +32,7 @@ In order to make the console future proof, it's necessary to rewrite these parts
 
     - Navigation using cursor keys. Open an application by pressing ↵ (`enter`) and go back with ⌫ (`backspace`)
     - Pin frequently used subsystems to stay at the top
-    - Filter items by name *and* by properties like 'enabled' in the data sources column
+    - Filter items by name *and* by properties like 'enabled' in the data sources column or 'stopped' in the servers column
     - Columns could be provided by extensions
 
 ## Running
@@ -62,15 +62,15 @@ If you don't want to or cannot build locally you can download a somewhat recent 
 
 ### Local / NPM
 
-The `npm` module contains provides a npm package which launches a local web server at http://localhost:3000.
+The `npm` module provides a npm package which launches a local web server at http://localhost:3000.
   
 1. Add http://localhost:3000 as allowed origin
 1. `mvn install`
 1. `cd npm`
-1. `node index.js`
+1. `node server.js`
 1. Open http://localhost:9090
 
-If you don't want to or cannot build locally you can install the npm package `hal-next` which serves a somewhat recent version of HAL.next.
+If you don't want to or cannot build locally you can install the npm package [hal-next](https://www.npmjs.com/package/hal-next) which serves a somewhat recent version of HAL.next.
  
 1. `npm install -g hal-next`
 1. `hal-next`
@@ -87,7 +87,7 @@ Useful during development as it provides browser refresh after code changes.
 
 ### Remote
 
-A recent version of HAL.next is also available on the `gh-pages` branch at https://hal.github.io/hal.next/. 
+A somewhat recent version of HAL.next is also available on the `gh-pages` branch at https://hal.github.io/hal.next/. 
 
 1. Add https://hal.github.io/hal.next/ as allowed origin
 1. Open https://hal.github.io/hal.next/

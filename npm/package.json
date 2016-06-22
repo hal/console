@@ -4,7 +4,7 @@
   "description": "The next version of the WildFly management console",
   "keywords": ["hal", "wildfly", "management", "console"],
   "bin": {
-    "hal-next": "./server.js"
+    "hal-next": "./hal-next.js"
   },
   "main": "server.js",
   "scripts": {
