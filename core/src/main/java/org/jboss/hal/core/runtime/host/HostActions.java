@@ -51,6 +51,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STARTED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.NOOP_EXCEPTIONAL_CALLBACK;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.NOOP_FAILED_CALLBACK;
@@ -247,11 +248,11 @@ public class HostActions {
     }
 
     private int reloadTimeout(Host host) {
-        return RELOAD_TIMEOUT + host.getRunningServers().size() * ServerActions.SERVER_RELOAD_TIMEOUT;
+        return RELOAD_TIMEOUT + host.getServers(STARTED).size() * ServerActions.SERVER_RELOAD_TIMEOUT;
     }
 
     private int restartTimeout(Host host) {
-        return RESTART_TIMEOUT + host.getRunningServers().size() * ServerActions.SERVER_RESTART_TIMEOUT;
+        return RESTART_TIMEOUT + host.getServers(STARTED).size() * ServerActions.SERVER_RESTART_TIMEOUT;
     }
 
     private Operation ping(Host host) {
@@ -259,10 +260,10 @@ public class HostActions {
                 .add(HOST, host.getName()); // do not use host.getAddressName() here!
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address).build();
 
-        if (host.hasRunningServers()) {
-            List<Operation> pingServer = host.getRunningServers().stream()
+        if (host.hasServers(STARTED)) {
+            List<Operation> pingServer = host.getServers(STARTED).stream()
                     .map(server -> {
-                        ResourceAddress serverAddress = host.getAddress().add(SERVER, server);
+                        ResourceAddress serverAddress = host.getAddress().add(SERVER, server.getName());
                         return new Operation.Builder(READ_RESOURCE_OPERATION, serverAddress).build();
                     })
                     .collect(toList());
