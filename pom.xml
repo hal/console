@@ -88,6 +88,7 @@
         <module>config</module>
         <module>dmr</module>
         <module>meta</module>
+        <module>npm</module>
         <module>parent-with-dependencies</module>
         <module>processors</module>
         <module>resources</module>

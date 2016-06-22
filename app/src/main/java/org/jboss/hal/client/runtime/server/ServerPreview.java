@@ -116,6 +116,8 @@ public class ServerPreview extends RuntimePreview<Server> {
             running(resources.messages().serverRunning(server.getName()));
         } else if (server.isTimeout()) {
             timeout(resources.messages().serverTimeout(server.getName()));
+        } else if (server.isFailed()) {
+            timeout(resources.messages().serverFailed(server.getName()));
         } else if (server.isStopped()) {
             alertContainer.setClassName(alert + " " + alertInfo);
             alertIcon.setClassName(Icons.STOPPED);
@@ -136,7 +138,7 @@ public class ServerPreview extends RuntimePreview<Server> {
             Elements.setVisible(reloadLink, server.needsReload());
             Elements.setVisible(restartLink, server.needsRestart());
             Elements.setVisible(resumeLink, false);
-        } else if (server.isStopped()) {
+        } else if (server.isStopped() || server.isFailed()) {
             Elements.setVisible(startLink, true);
             Elements.setVisible(stopLink, false);
             Elements.setVisible(reloadLink, false);
@@ -145,6 +147,12 @@ public class ServerPreview extends RuntimePreview<Server> {
         } else if (server.isRunning()) {
             Elements.setVisible(startLink, false);
             Elements.setVisible(stopLink, true);
+            Elements.setVisible(reloadLink, false);
+            Elements.setVisible(restartLink, false);
+            Elements.setVisible(resumeLink, false);
+        } else {
+            Elements.setVisible(startLink, false);
+            Elements.setVisible(stopLink, false);
             Elements.setVisible(reloadLink, false);
             Elements.setVisible(restartLink, false);
             Elements.setVisible(resumeLink, false);

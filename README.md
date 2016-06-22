@@ -49,7 +49,7 @@ There are different ways to launch HAL.next and connect to a running WildFly ins
         /host=master/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=<url>)
         reload --host=master
         
-### Local / Production Mode
+### Local / Standalone
 
 The `standalone` module contains an executable jar which launches a local web server at http://localhost:9090.
   
@@ -59,6 +59,22 @@ The `standalone` module contains an executable jar which launches a local web se
 1. Open http://localhost:9090
 
 If you don't want to or cannot build locally you can download a somewhat recent version of `hal-standalone.jar` from https://repository.jboss.org/nexus/index.html#nexus-search;quick~hal-standalone. 
+
+### Local / NPM
+
+The `npm` module contains provides a npm package which launches a local web server at http://localhost:3000.
+  
+1. Add http://localhost:3000 as allowed origin
+1. `mvn install`
+1. `cd npm`
+1. `npm install`
+1. `node index.js`
+1. Open http://localhost:9090
+
+If you don't want to or cannot build locally you can install the npm package `hal-next` which contains a somewhat recent version of HAL.next.
+ 
+1. `mvn install hal-next`
+1. `mvn run hal-next`
 
 ### Local / SuperDevMode
 

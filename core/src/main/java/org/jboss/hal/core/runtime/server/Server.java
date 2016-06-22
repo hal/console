@@ -26,14 +26,6 @@ import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.IdBuilder;
 
-import static org.jboss.hal.core.runtime.RunningMode.ADMIN_ONLY;
-import static org.jboss.hal.core.runtime.RunningState.RELOAD_REQUIRED;
-import static org.jboss.hal.core.runtime.RunningState.RESTART_REQUIRED;
-import static org.jboss.hal.core.runtime.RunningState.STARTING;
-import static org.jboss.hal.core.runtime.RunningState.TIMEOUT;
-import static org.jboss.hal.core.runtime.SuspendState.PRE_SUSPEND;
-import static org.jboss.hal.core.runtime.SuspendState.SUSPENDED;
-import static org.jboss.hal.core.runtime.SuspendState.SUSPENDING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 
@@ -127,7 +119,7 @@ public class Server extends NamedNode {
     }
 
     public boolean isStarting() {
-        return getServerState() == STARTING;
+        return getServerState() == RunningState.STARTING;
     }
 
     public boolean isRunning() {
@@ -135,27 +127,32 @@ public class Server extends NamedNode {
     }
 
     public boolean isAdminMode() {
-        return getRunningMode() == ADMIN_ONLY;
+        return getRunningMode() == RunningMode.ADMIN_ONLY;
     }
 
     public boolean isSuspending() {
-        return EnumSet.of(PRE_SUSPEND, SUSPENDING, SUSPENDED).contains(getSuspendState());
+        return EnumSet.of(SuspendState.PRE_SUSPEND, SuspendState.SUSPENDING, SuspendState.SUSPENDED)
+                .contains(getSuspendState());
     }
 
     public boolean isTimeout() {
-        return getServerState() == TIMEOUT;
+        return getServerState() == RunningState.TIMEOUT;
     }
 
     public boolean isStopped() {
         return getServerConfigStatus() == ServerConfigStatus.STOPPED || getServerConfigStatus() == ServerConfigStatus.DISABLED;
     }
 
+    public boolean isFailed() {
+        return getServerConfigStatus() == ServerConfigStatus.FAILED;
+    }
+
     public boolean needsRestart() {
-        return getServerState() == RESTART_REQUIRED;
+        return getServerState() == RunningState.RESTART_REQUIRED;
     }
 
     public boolean needsReload() {
-        return getServerState() == RELOAD_REQUIRED;
+        return getServerState() == RunningState.RELOAD_REQUIRED;
     }
 
     /**

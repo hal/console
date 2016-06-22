@@ -49,6 +49,7 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
@@ -200,6 +201,8 @@ public class ServerColumn extends FinderColumn<Server> {
                     return resources.constants().running();
                 } else if (item.isTimeout()) {
                     return resources.constants().timeout();
+                } else if (item.isFailed()) {
+                    return resources.constants().failed();
                 } else if (item.isStopped()) {
                     return resources.constants().stopped();
                 } else {
@@ -215,7 +218,7 @@ public class ServerColumn extends FinderColumn<Server> {
                     return Icons.warning();
                 } else if (item.isRunning()) {
                     return Icons.ok();
-                } else if (item.isTimeout()) {
+                } else if (item.isTimeout() || item.isFailed()) {
                     return Icons.error();
                 } else if (item.isStopped()) {
                     return Icons.stopped();
@@ -258,6 +261,11 @@ public class ServerColumn extends FinderColumn<Server> {
                             itm -> serverActions.stop(itm, () -> { /* noop */ })));
                 }
                 return actions;
+            }
+
+            @Override
+            public String nextColumn() {
+                return item.isStarted() ? Ids.SERVER_MONITOR_COLUMN : null;
             }
         });
 

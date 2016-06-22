@@ -80,6 +80,7 @@ import static org.jboss.hal.resources.UIConstants.*;
  */
 class TopologyPreview extends PreviewContent<StaticItem> {
 
+    private static final String LOADING_SECTION = "loading-section";
     private static final String TOPOLOGY_SECTION = "topology-section";
     private static final String SERVER_GROUP_ATTRIBUTES_SECTION = "server-group-attributes-section";
     private static final String SERVER_GROUP_DATA = "server-group-data";
@@ -95,6 +96,7 @@ class TopologyPreview extends PreviewContent<StaticItem> {
     private final ServerGroupActions serverGroupActions;
     private final ServerActions serverActions;
     private final Resources resources;
+    private final Element loadingSection;
     private final Element topologySection;
     private final Element serverGroupAttributesSection;
     private final Element hostAttributesSection;
@@ -120,15 +122,22 @@ class TopologyPreview extends PreviewContent<StaticItem> {
         this.resources = resources;
 
         // @formatter:off
-        previewBuilder().p()
-            .a().css(clickable, pullRight).on(click, event-> update(null))
-                .span().css(fontAwesome("refresh"), marginRight4).end()
-                .span().textContent(resources.constants().refresh()).end()
+        previewBuilder()
+            .p()
+                .a().css(clickable, pullRight).on(click, event-> update(null))
+                    .span().css(fontAwesome("refresh"), marginRight4).end()
+                    .span().textContent(resources.constants().refresh()).end()
+                .end()
             .end()
-        .end();
+            .section().css(centerBlock).rememberAs(LOADING_SECTION)
+                .p().textContent(resources.constants().loading()).end()
+                .div().css(spinner, spinnerLg).end()
+            .end()
+            .section().rememberAs(TOPOLOGY_SECTION)
+            .end();
         // @formatter:on
 
-        previewBuilder().section().rememberAs(TOPOLOGY_SECTION).end();
+        loadingSection = previewBuilder().referenceFor(LOADING_SECTION);
         topologySection = previewBuilder().referenceFor(TOPOLOGY_SECTION);
 
         serverGroupAttributes = new PreviewAttributes<>(new ServerGroup(new ModelNode()), Names.SERVER_GROUP,
@@ -176,6 +185,8 @@ class TopologyPreview extends PreviewContent<StaticItem> {
     @Override
     public void update(final StaticItem item) {
         clearSelected();
+        Elements.setVisible(loadingSection, false);
+        Elements.setVisible(topologySection, false);
         Elements.setVisible(serverGroupAttributesSection, false);
         Elements.setVisible(hostAttributesSection, false);
         Elements.setVisible(serverAttributesSection, false);
@@ -264,21 +275,29 @@ class TopologyPreview extends PreviewContent<StaticItem> {
             }
         };
 
+        // show the loading indicator if the dmr operation take too long
+        int timeoutHandle = Browser.getWindow()
+                .setTimeout(() -> Elements.setVisible(loadingSection, true), PROGRESS_TIMEOUT);
         new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), new Outcome<FunctionContext>() {
             @Override
             public void onFailure(final FunctionContext context) {
+                Browser.getWindow().clearTimeout(timeoutHandle);
+                Elements.setVisible(loadingSection, false);
                 MessageEvent.fire(eventBus, Message.error(resources.messages().topologyError(),
                         context.getErrorMessage()));
             }
 
             @Override
             public void onSuccess(final FunctionContext context) {
+                Browser.getWindow().clearTimeout(timeoutHandle);
+                Elements.setVisible(loadingSection, false);
                 Elements.removeChildrenFrom(topologySection);
 
                 List<Host> hosts = context.get(HOST_DATA);
                 List<ServerGroup> serverGroups = context.get(SERVER_GROUP_DATA);
                 List<Server> servers = context.get(SERVER_DATA);
                 topologySection.appendChild(createTable(hosts, serverGroups, servers));
+                Elements.setVisible(topologySection, true);
                 adjustTdHeight();
             }
         }, topologyFn, runningServerDetailsFn);
@@ -487,29 +506,29 @@ class TopologyPreview extends PreviewContent<StaticItem> {
     private void serverGroupActions(final Elements.Builder builder, final ServerGroup serverGroup,
             final boolean allStarted, final boolean allStopped, final boolean allDisabled) {
         // @formatter:off
-        builder.li().attr(ROLE, PRESENTATION)
-            .a().css(clickable)
-                .on(click, event -> serverGroupActions.reload(serverGroup, () -> {/* noop */}))
-                .textContent(resources.constants().reload())
-            .end()
-        .end()
-        .li().attr(ROLE, PRESENTATION)
-            .a().css(clickable)
-                .textContent(resources.constants().restart())
-            .end()
-        .end()
-        .li().attr(ROLE, PRESENTATION)
-            .a().css(clickable)
-                .textContent(resources.constants().suspend())
-            .end()
-        .end()
-        .li().attr(ROLE, PRESENTATION)
-            .a().css(clickable)
-                .textContent(resources.constants().resume())
-            .end()
-        .end();
         if (!(allStopped || allDisabled)) {
             builder.li().attr(ROLE, PRESENTATION)
+                .a().css(clickable)
+                    .on(click, event -> serverGroupActions.reload(serverGroup, () -> {/* noop */}))
+                    .textContent(resources.constants().reload())
+                .end()
+            .end()
+            .li().attr(ROLE, PRESENTATION)
+                .a().css(clickable)
+                    .textContent(resources.constants().restart())
+                .end()
+            .end()
+            .li().attr(ROLE, PRESENTATION)
+                .a().css(clickable)
+                    .textContent(resources.constants().suspend())
+                .end()
+            .end()
+            .li().attr(ROLE, PRESENTATION)
+                .a().css(clickable)
+                    .textContent(resources.constants().resume())
+                .end()
+            .end()
+            .li().attr(ROLE, PRESENTATION)
                 .a().css(clickable)
                     .textContent(resources.constants().stop())
                 .end()
@@ -600,7 +619,7 @@ class TopologyPreview extends PreviewContent<StaticItem> {
             status.add(warning);
         } else if (server.isStarted() || server.isRunning()) {
             status.add(ok);
-        } else if (server.isTimeout()) {
+        } else if (server.isTimeout() || server.isFailed()) {
             status.add(error);
         }
         if (server.isStarting()) {

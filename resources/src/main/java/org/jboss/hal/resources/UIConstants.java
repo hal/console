@@ -22,6 +22,11 @@ package org.jboss.hal.resources;
  */
 public interface UIConstants {
 
+    /**
+     * The timeout for long running operations / actions before a loading indicator is shown
+     */
+    int PROGRESS_TIMEOUT = 333;
+
     String BUTTON = "button";
     String COLLAPSE = "collapse";
     String CONTROLS = "controls";

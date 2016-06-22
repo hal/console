@@ -25,6 +25,7 @@ import elemental.client.Browser;
 import elemental.dom.Element;
 
 import static org.jboss.hal.resources.CSS.withProgress;
+import static org.jboss.hal.resources.UIConstants.PROGRESS_TIMEOUT;
 
 /**
  * Class to monitor item actions and show a progress indicator if they take longer than a given timeout. Relies on an
@@ -33,8 +34,6 @@ import static org.jboss.hal.resources.CSS.withProgress;
  * @author Harald Pehl
  */
 public class ItemMonitor {
-
-    private static final int PROGRESS_TIMEOUT = 333;
 
     public static void startProgress(final String itemId) {
         Element element = Browser.getDocument().getElementById(itemId);
@@ -68,15 +67,14 @@ public class ItemMonitor {
         return itm -> {
             command.execute();
             startProgress(itemId);
-            timeoutHandle = Browser.getWindow().setTimeout(() -> {
-                handlerRegistration = eventBus.addHandler(NavigationEvent.getType(), navigationEvent -> {
-                    if (nameToken.equals(navigationEvent.getRequest().getNameToken())) {
-                        handlerRegistration.removeHandler();
-                        Browser.getWindow().clearTimeout(timeoutHandle);
-                        stopProgress(itemId);
-                    }
-                });
-            }, PROGRESS_TIMEOUT);
+            timeoutHandle = Browser.getWindow().setTimeout(() ->
+                    handlerRegistration = eventBus.addHandler(NavigationEvent.getType(), navigationEvent -> {
+                        if (nameToken.equals(navigationEvent.getRequest().getNameToken())) {
+                            handlerRegistration.removeHandler();
+                            Browser.getWindow().clearTimeout(timeoutHandle);
+                            stopProgress(itemId);
+                        }
+                    }), PROGRESS_TIMEOUT);
         };
     }
 }
