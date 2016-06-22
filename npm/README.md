@@ -1,4 +1,4 @@
-Before running the console you need to configure the allowed origins of the HTTP management endpoint.
+Starts a local web server listening to http://localhost:3000. Please make sure to configure the allowed origins of the HTTP management endpoint.
 
 - Standalone mode
 
@@ -10,11 +10,9 @@ Before running the console you need to configure the allowed origins of the HTTP
         /host=master/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=http://localhost:3000)
         reload --host=master
 
-After that install and run using 
-
 ```
 npm -g install hal-next
 npm -g start hal-next
 ```
 
-See https://github.com/hal/hal.next for more infos.
+For more details see https://github.com/hal/hal.next.

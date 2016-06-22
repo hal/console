@@ -73,8 +73,8 @@ The `npm` module contains provides a npm package which launches a local web serv
 
 If you don't want to or cannot build locally you can install the npm package `hal-next` which contains a somewhat recent version of HAL.next.
  
-1. `mvn install hal-next`
-1. `mvn run hal-next`
+1. `npm -g install hal-next`
+1. `npm -g start hal-next`
 
 ### Local / SuperDevMode
 
