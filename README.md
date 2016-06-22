@@ -67,14 +67,13 @@ The `npm` module contains provides a npm package which launches a local web serv
 1. Add http://localhost:3000 as allowed origin
 1. `mvn install`
 1. `cd npm`
-1. `npm install`
 1. `node index.js`
 1. Open http://localhost:9090
 
-If you don't want to or cannot build locally you can install the npm package `hal-next` which contains a somewhat recent version of HAL.next.
+If you don't want to or cannot build locally you can install the npm package `hal-next` which serves a somewhat recent version of HAL.next.
  
-1. `npm -g install hal-next`
-1. `npm -g start hal-next`
+1. `npm install -g hal-next`
+1. `hal-next`
 
 ### Local / SuperDevMode
 

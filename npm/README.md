@@ -11,8 +11,8 @@ Starts a local web server listening to http://localhost:3000. Please make sure t
         reload --host=master
 
 ```
-npm -g install hal-next
-npm -g start hal-next
+npm install -g hal-next
+hal-next
 ```
 
 For more details see https://github.com/hal/hal.next.
