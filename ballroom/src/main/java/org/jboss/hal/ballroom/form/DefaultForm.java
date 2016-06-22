@@ -75,7 +75,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     private final LinkedHashMap<String, FormItem> formItems;
     private final Set<String> unboundItems;
     private final LinkedHashMap<String, SafeHtml> helpTexts;
-    private final List<FormValidation<T>> formValidations;
+    private final List<FormValidation> formValidations;
 
     private T model;
     private SecurityContext securityContext;
@@ -124,6 +124,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         helpTexts.put(label, description);
     }
 
+    @Override
     public void addFormValidation(FormValidation<T> formValidation) {
         formValidations.add(formValidation);
     }

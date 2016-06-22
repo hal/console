@@ -220,7 +220,6 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
             .row()
                 .column()
                     .header(Names.DATASOURCE).rememberAs(HEADER_ELEMENT).end()
-                    .end()
                     .add(nonXaInfo)
                     .add(xaInfo)
                     .add(nonXaTabs.asElement())

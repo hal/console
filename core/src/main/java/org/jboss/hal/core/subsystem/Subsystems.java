@@ -60,7 +60,7 @@ public class Subsystems {
         add(new SubsystemMetadata(RESOURCE_ADAPTERS, "Resource Adapters", null, null,
                 RESOURCE_ADAPTER, true));
         add(new SubsystemMetadata(SECURITY, "Security", null, null, ModelDescriptionConstants.SECURITY_DOMAIN, true));
-        add(new SubsystemMetadata(TRANSACTIONS, "Transactions", null, NameTokens.TRANSACTIONS, null, false));
+        add(new SubsystemMetadata(TRANSACTIONS, "Transactions", null, NameTokens.TRANSACTIONS, null, true));
         add(new SubsystemMetadata(UNDERTOW, "Web", "Undertow", null, Ids.WEB_SETTINGS_COLUMN, true));
         add(new SubsystemMetadata(WEBSERVICES, "Web Services", null, NameTokens.WEBSERVICES, null, false));
     }

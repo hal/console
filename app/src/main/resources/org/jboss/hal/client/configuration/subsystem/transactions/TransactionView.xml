@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://raw.githubusercontent.com/hal/hal.next/develop/spi/src/main/resources/org/jboss/hal/spi/MbuiView.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!--
+  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<view>
+    <vertical-navigation id="transaction-vertical-navigation">
+
+        
+        <item id="attributes-config-item" title="Configuration" icon="fa fa-list-ul">
+            <metadata address="/{selected.profile}/subsystem=transactions">
+                <h1>Transaction Manager</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <form id="attributes-form" title="Transaction Manager" auto-save="true">
+                    <attributes>
+                        <attribute name="default-timeout" />
+                        <attribute name="enable-tsm-status" />
+                        <attribute name="journal-store-enable-async-io" />
+                        <attribute name="jts" />
+                        <attribute name="node-identifier" />
+                        <attribute name="statistics-enabled" />
+                        <attribute name="use-journal-store" />
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+
+        <item id="process-item" title="Process" icon="fa fa-clipboard">
+            <metadata address="/{selected.profile}/subsystem=transactions">
+                <h1>Process ID</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <form id="process-form" title="Process ID" on-save="{{presenter.saveProcessForm(form, changedValues)}}">
+                    <attributes>
+                        <attribute name="process-id-uuid" />
+                        <attribute name="process-id-socket-binding" >
+                            <suggest-handler>
+                                <templates>
+                                    <!-- @formatter:off -->
+                                    <template address="/socket-binding-group=*/socket-binding=*"/>
+                                    <!-- @formatter:on -->
+                                </templates>
+                            </suggest-handler>
+                        </attribute>
+                        <attribute name="process-id-socket-max-ports" />
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+        
+        <item id="recovery-config-item" title="Recovery" icon="fa fa-repeat">
+            <metadata address="/{selected.profile}/subsystem=transactions">
+                <h1>Recovery</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <form id="recovery-form" title="Recovery" auto-save="true">
+                    <attributes>
+                        <attribute name="socket-binding" >
+                            <suggest-handler>
+                                <templates>
+                                    <!-- @formatter:off -->
+                                    <template address="/socket-binding-group=*/socket-binding=*"/>
+                                    <!-- @formatter:on -->
+                                </templates>
+                            </suggest-handler>
+                        </attribute>
+                        <attribute name="status-socket-binding" >
+                            <suggest-handler>
+                                <templates>
+                                    <!-- @formatter:off -->
+                                    <template address="/socket-binding-group=*/socket-binding=*"/>
+                                    <!-- @formatter:on -->
+                                </templates>
+                            </suggest-handler>
+                        </attribute>
+                        <attribute name="recovery-listener" />
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+
+        <item id="path-config-item" title="Path" icon="fa fa-folder-open">
+            <metadata address="/{selected.profile}/subsystem=transactions">
+                <h1>Path</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <form id="path-form" title="Path" auto-save="true">
+                    <attributes>
+                        <attribute name="object-store-path" />
+                        <attribute name="object-store-relative-to" />
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+
+        <item id="jdbc-config-item" title="JDBC" icon="fa fa-database">
+            <metadata address="/{selected.profile}/subsystem=transactions">
+                <h1>JDBC</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <form id="jdbc-form" title="JDBC" auto-save="true">
+                    <attributes>
+                        <attribute name="use-jdbc-store" />
+                        <attribute name="jdbc-action-store-drop-table" />
+                        <attribute name="jdbc-action-store-table-prefix" />
+                        <attribute name="jdbc-communication-store-drop-table" />
+                        <attribute name="jdbc-communication-store-table-prefix" />
+                        <attribute name="jdbc-state-store-drop-table" />
+                        <attribute name="jdbc-state-store-table-prefix" />
+                        <attribute name="jdbc-store-datasource" >
+                            <suggest-handler>
+                                <templates>
+                                    <!-- @formatter:off -->
+                                    <template address="/{selected.profile}/subsystem=datasources/data-source=*"/>
+                                    <template address="/{selected.profile}/subsystem=datasources/xa-data-source=*"/>
+                                    <!-- @formatter:on -->
+                                </templates>
+                            </suggest-handler>
+                        </attribute>
+                    </attributes>
+                </form>
+            </metadata>
+        </item>
+
+
+    </vertical-navigation>
+</view>
