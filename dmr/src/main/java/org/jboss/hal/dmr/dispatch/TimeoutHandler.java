@@ -26,7 +26,6 @@ import org.jboss.hal.dmr.model.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.stream.StreamSupport.stream;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.NOOP_EXCEPTIONAL_CALLBACK;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.NOOP_FAILED_CALLBACK;
 
@@ -40,12 +39,12 @@ public class TimeoutHandler {
     public interface Callback {
 
         /**
-         * Operation was successful within the specified timeout
+         * Operation was successful within the specified timeout.
          */
         void onSuccess();
 
         /**
-         * Operation ran into a timeout
+         * Operation ran into a timeout.
          */
         void onTimeout();
     }
@@ -137,8 +136,8 @@ public class TimeoutHandler {
                     public void onSuccess(final TimeoutContext context) {
                         if (timeout(context)) {
                             //noinspection HardCodedStringLiteral
-                            logger.warn("Composite operation {} ran into a timeout after {} seconds", composite.asCli(),
-                                    timeout);
+                            logger.warn("Composite operation {} ran into a timeout after {} seconds",
+                                    composite.asCli(), timeout);
                             callback.onTimeout();
                         } else {
                             callback.onSuccess();
@@ -150,7 +149,7 @@ public class TimeoutHandler {
                             if (predicate != null) {
                                 control.getContext().conditionSatisfied = predicate.test(result);
                             } else {
-                                control.getContext().conditionSatisfied = stream(result.spliterator(), false)
+                                control.getContext().conditionSatisfied = result.stream()
                                         .map(stepResult -> !stepResult.isFailure())
                                         .allMatch(flag -> true);
                             }

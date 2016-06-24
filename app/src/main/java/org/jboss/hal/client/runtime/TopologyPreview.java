@@ -395,13 +395,6 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 .forEach(element -> element.getClassList().remove(withProgress));
     }
 
-    private void timeout(String selector) {
-        Elements.stream(Browser.getDocument().querySelectorAll(selector)).forEach(element -> {
-            element.getClassList().remove(withProgress);
-            element.getClassList().add(error);
-        });
-    }
-
 
     // ------------------------------------------------------ server group
 
@@ -463,6 +456,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 break;
         }
         startProgress(Joiner.on(", ").skipNulls().join(selectors));
+
     }
 
     @Override
@@ -561,7 +555,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             if (server.isSuspending()) {
                 actionLink(builder, event -> serverActions.resume(server), resources.constants().resume());
             } else {
-                actionLink(builder, event -> serverActions.suspend(server),resources.constants().suspend());
+                actionLink(builder, event -> serverActions.suspend(server), resources.constants().suspend());
             }
             actionLink(builder, event -> serverActions.stop(server), resources.constants().stop());
         }
@@ -592,7 +586,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     @Override
     public void onServerResult(final ServerResultEvent event) {
         stopProgress(serverSelector(event.getServer()));
-        update(null);
+        // update(null);
     }
 
     private String serverSelector(final Server server) {

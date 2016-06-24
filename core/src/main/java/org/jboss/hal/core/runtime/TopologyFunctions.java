@@ -132,9 +132,9 @@ public class TopologyFunctions {
      * Reads the topology (hosts, server groups and servers). Populates the context with three collections
      * <ul>
      * <li>{@link #HOSTS}: An ordered list of hosts with the domain controller as first element. Each host contains its
-     * servers which are returned by {@link Host#getServers(ServerConfigStatus)}</li>
+     * servers which are returned by {@link Host#getServers(ServerConfigStatus, ServerConfigStatus...)}</li>
      * <li>{@link #SERVER_GROUPS}: An ordered list of server groups. Each server group contains its servers which are
-     * returned by {@link ServerGroup#getServers(ServerConfigStatus)}</li>
+     * returned by {@link ServerGroup#getServers(ServerConfigStatus, ServerConfigStatus...)}</li>
      * <li>{@link #SERVERS}: An unordered list of all servers in the domain. The servers contain only selected
      * attributes from the {@code server-config} and {@code server} resources.
      * </ul>
@@ -194,7 +194,7 @@ public class TopologyFunctions {
 
     /**
      * Reads the hosts as order list with the domain controller as first element. Each host contains its
-     * servers which are returned by {@link Host#getServers(ServerConfigStatus)}.
+     * servers which are returned by {@link Host#getServers(ServerConfigStatus, ServerConfigStatus...)}
      * <p>
      * The list of hosts is available in the context under the key {@link #HOSTS}.
      */
@@ -235,7 +235,7 @@ public class TopologyFunctions {
 
     /**
      * Reads the server groups as order list. Each server group contains its servers which are available by {@link
-     * ServerGroup#getServers(ServerConfigStatus)}.
+     * ServerGroup#getServers(ServerConfigStatus, ServerConfigStatus...)}.
      * <p>
      * The list of server groups is available in the context under the key {@link #SERVER_GROUPS}.
      */

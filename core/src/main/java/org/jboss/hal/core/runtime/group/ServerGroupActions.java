@@ -31,6 +31,7 @@ import org.jboss.hal.core.runtime.Action;
 import org.jboss.hal.core.runtime.Result;
 import org.jboss.hal.core.runtime.SuspendState;
 import org.jboss.hal.core.runtime.server.Server;
+import org.jboss.hal.core.runtime.server.ServerActionEvent;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.core.runtime.server.ServerConfigStatus;
 import org.jboss.hal.dmr.ModelNode;
@@ -63,6 +64,8 @@ import static org.jboss.hal.dmr.dispatch.Dispatcher.NOOP_FAILED_CALLBACK;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.NOOP_OPERATION_CALLBACK;
 
 /**
+ * TODO Fire events for the servers of a server group as well.
+ *
  * @author Harald Pehl
  */
 public class ServerGroupActions {
@@ -91,7 +94,7 @@ public class ServerGroupActions {
     }
 
 
-    private static final int DEFAULT_TIMEOUT = 5; // seconds
+    private static final int DEFAULT_TIMEOUT = 10; // seconds
 
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
@@ -138,6 +141,7 @@ public class ServerGroupActions {
             DialogFactory.confirmation(title, question, () -> {
 
                 eventBus.fireEvent(new ServerGroupActionEvent(serverGroup, action));
+                startedServers.stream().forEach(server -> eventBus.fireEvent(new ServerActionEvent(server, action)));
                 dispatcher.execute(operation, NOOP_OPERATION_CALLBACK, NOOP_FAILED_CALLBACK,
                         NOOP_EXCEPTIONAL_CALLBACK);
 
@@ -172,6 +176,8 @@ public class ServerGroupActions {
 
                                         form.save();
                                         eventBus.fireEvent(new ServerGroupActionEvent(serverGroup, Action.SUSPEND));
+                                        startedServers.stream().forEach(server ->
+                                                eventBus.fireEvent(new ServerActionEvent(server, Action.SUSPEND)));
                                         int timeout = getOrDefault(form.getModel(), TIMEOUT,
                                                 () -> form.getModel().get(TIMEOUT).asInt(), 0);
                                         int uiTimeout = timeout + timeout(serverGroup, Action.SUSPEND);
@@ -217,6 +223,8 @@ public class ServerGroupActions {
         List<Server> suspendedServers = serverGroup.getServers(SUSPENDED);
         if (!suspendedServers.isEmpty()) {
             eventBus.fireEvent(new ServerGroupActionEvent(serverGroup, Action.RESUME));
+            suspendedServers.stream().forEach(server ->
+                    eventBus.fireEvent(new ServerActionEvent(server, Action.RESUME)));
             Operation operation = new Operation.Builder(RESUME_SERVERS, serverGroup.getAddress()).build();
             dispatcher.execute(operation, NOOP_OPERATION_CALLBACK, NOOP_FAILED_CALLBACK,
                     NOOP_EXCEPTIONAL_CALLBACK);
@@ -252,6 +260,8 @@ public class ServerGroupActions {
 
                                         form.save();
                                         eventBus.fireEvent(new ServerGroupActionEvent(serverGroup, Action.STOP));
+                                        startedServers.stream().forEach(server ->
+                                                eventBus.fireEvent(new ServerActionEvent(server, Action.STOP)));
                                         int timeout = getOrDefault(form.getModel(), TIMEOUT,
                                                 () -> form.getModel().get(TIMEOUT).asInt(), 0);
                                         int uiTimeout = timeout + timeout(serverGroup, Action.STOP);
@@ -297,6 +307,7 @@ public class ServerGroupActions {
                 .getServers(STOPPED, ServerConfigStatus.DISABLED, ServerConfigStatus.FAILED);
         if (!downServers.isEmpty()) {
             eventBus.fireEvent(new ServerGroupActionEvent(serverGroup, Action.START));
+            downServers.stream().forEach(server -> eventBus.fireEvent(new ServerActionEvent(server, Action.START)));
             Operation operation = new Operation.Builder(START_SERVERS, serverGroup.getAddress())
                     .param(BLOCKING, false)
                     .build();
@@ -361,7 +372,8 @@ public class ServerGroupActions {
                 .collect(toList()));
     }
 
-    private Predicate<CompositeResult> checkServerConfigStatus(long servers, ServerConfigStatus first, ServerConfigStatus... rest) {
+    private Predicate<CompositeResult> checkServerConfigStatus(long servers, ServerConfigStatus first,
+            ServerConfigStatus... rest) {
         return compositeResult -> {
             long statusCount = compositeResult.stream()
                     .map(step -> asEnumValue(step, RESULT, ServerConfigStatus::valueOf, ServerConfigStatus.UNDEFINED))
