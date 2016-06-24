@@ -100,19 +100,12 @@ class HostPreview extends RuntimePreview<Host> {
             needsRestart(resources.messages().hostNeedsRestart(host.getName()));
         } else if (host.isRunning()) {
             running(resources.messages().hostRunning(host.getName()));
-        } else if (host.isTimeout()) {
-            if (host.isDomainController()) {
-                timeout(resources.messages().domainControllerTimeout(host.getName()));
-            } else {
-                timeout(resources.messages().hostControllerTimeout(host.getName()));
-            }
         } else {
             undefined(resources.messages().hostUndefined(host.getName()));
         }
 
         Elements.setVisible(reloadLink, host.needsReload());
         Elements.setVisible(restartLink, host.needsRestart());
-        attributes.asElements()
-                .forEach(element -> Elements.setVisible(element, !host.isStarting() && !host.isTimeout()));
+        attributes.asElements().forEach(element -> Elements.setVisible(element, !host.isStarting()));
     }
 }

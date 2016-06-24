@@ -114,8 +114,6 @@ public class ServerPreview extends RuntimePreview<Server> {
             needsRestart(resources.messages().serverNeedsRestart(server.getName()));
         } else if (server.isRunning()) {
             running(resources.messages().serverRunning(server.getName()));
-        } else if (server.isTimeout()) {
-            timeout(resources.messages().serverTimeout(server.getName()));
         } else if (server.isFailed()) {
             timeout(resources.messages().serverFailed(server.getName()));
         } else if (server.isStopped()) {

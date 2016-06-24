@@ -135,10 +135,6 @@ public class Server extends NamedNode {
                 .contains(getSuspendState());
     }
 
-    public boolean isTimeout() {
-        return getServerState() == RunningState.TIMEOUT;
-    }
-
     public boolean isStopped() {
         return getServerConfigStatus() == ServerConfigStatus.STOPPED || getServerConfigStatus() == ServerConfigStatus.DISABLED;
     }

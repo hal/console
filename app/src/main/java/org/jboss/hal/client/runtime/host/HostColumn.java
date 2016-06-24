@@ -152,8 +152,6 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                     return resources.constants().needsRestart();
                 } else if (item.isRunning()) {
                     return resources.constants().running();
-                } else if (item.isTimeout()) {
-                    return resources.constants().timeout();
                 } else {
                     return resources.constants().unknownState();
                 }
@@ -167,8 +165,6 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                     return Icons.warning();
                 } else if (item.isRunning()) {
                     return Icons.ok();
-                } else if (item.isTimeout()) {
-                    return Icons.error();
                 } else {
                     return Icons.error();
                 }

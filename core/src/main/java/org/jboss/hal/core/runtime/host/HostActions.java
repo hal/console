@@ -18,7 +18,6 @@ package org.jboss.hal.core.runtime.host;
 import java.util.List;
 import javax.inject.Inject;
 
-import com.google.common.base.Joiner;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
@@ -27,13 +26,12 @@ import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.mbui.form.OperationFormBuilder;
 import org.jboss.hal.core.runtime.Action;
 import org.jboss.hal.core.runtime.Result;
 import org.jboss.hal.core.runtime.RunningState;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.dispatch.TimeoutHandler;
 import org.jboss.hal.dmr.model.Composite;
@@ -43,8 +41,6 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.description.ResourceDescription;
-import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
@@ -91,16 +87,9 @@ public class HostActions {
     @SuppressWarnings("HardCodedStringLiteral")
     public void reload(final Host host, final ScheduledCommand whileReloading) {
         Metadata hostMetadata = metadataRegistry.lookup(AddressTemplate.of("/{selected.host}"));
-        ModelNode modelNode = ModelNodeHelper.failSafeGet(hostMetadata.getDescription(),
-                Joiner.on('.').join(OPERATIONS, RELOAD, REQUEST_PROPERTIES));
-        ModelNode repackaged = new ModelNode();
-        repackaged.get(ATTRIBUTES).set(modelNode);
-        ResourceDescription reloadDescription = new ResourceDescription(repackaged);
-        Metadata reloadMetadata = new Metadata(SecurityContext.RWX, reloadDescription, capabilities);
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(IdBuilder.build("reload-host", host.getName(), "form"),
-                reloadMetadata)
-                .include("restart-servers" /* TODO "admin-only"? */)
-                .addOnly()
+        Form<ModelNode> form = new OperationFormBuilder<>(IdBuilder.build(RELOAD_HOST, host.getName(), "form"),
+                hostMetadata, RELOAD)
+                .include(RESTART_SERVERS)
                 .build();
 
         SafeHtml question;
@@ -209,7 +198,6 @@ public class HostActions {
 
             @Override
             public void onTimeout() {
-                host.setHostState(RunningState.TIMEOUT);
                 pendingDialog.close();
                 DialogFactory.blocking(title, timeoutMessage).show();
                 eventBus.fireEvent(new HostResultEvent(host, Result.TIMEOUT));
@@ -240,7 +228,6 @@ public class HostActions {
 
             @Override
             public void onTimeout() {
-                host.setHostState(RunningState.TIMEOUT);
                 MessageEvent.fire(eventBus, Message.error(timeoutMessage));
                 eventBus.fireEvent(new HostResultEvent(host, Result.TIMEOUT));
             }

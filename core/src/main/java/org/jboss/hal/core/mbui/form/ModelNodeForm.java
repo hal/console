@@ -91,7 +91,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         private static final String ILLEGAL_COMBINATION = "Illegal combination in ";
 
         final String id;
-        private Metadata metadata;
+        private final Metadata metadata;
         final LinkedHashSet<String> includes;
         final Set<String> excludes;
         FormItemProvider defaultFormItemProvider;
@@ -272,7 +272,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
     private final Map<String, ModelNode> attributeMetadata;
 
-    private ModelNodeForm(final Builder<T> builder) {
+    ModelNodeForm(final Builder<T> builder) {
         super(builder.id,
                 builder.stateMachine(),
                 builder.dataMapping != null ? builder.dataMapping : new ModelNodeMapping<>(

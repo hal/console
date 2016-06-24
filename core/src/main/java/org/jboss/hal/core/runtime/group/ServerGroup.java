@@ -15,16 +15,9 @@
  */
 package org.jboss.hal.core.runtime.group;
 
-import java.util.List;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.core.runtime.server.ServerConfigStatus;
+import org.jboss.hal.core.runtime.HasServersNode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.IdBuilder;
 
@@ -34,38 +27,22 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 /**
  * @author Harald Pehl
  */
-public class ServerGroup extends NamedNode {
+public class ServerGroup extends HasServersNode {
 
     public static String id(final String name) {
         return IdBuilder.build(SERVER_GROUP, name);
     }
 
-    private final Multimap<ServerConfigStatus, Server> serversByState;
-
     public ServerGroup(final ModelNode node) {
         super(node);
-        this.serversByState = ArrayListMultimap.create();
     }
 
     public ServerGroup(final Property property) {
         super(property);
-        this.serversByState = ArrayListMultimap.create();
     }
 
     public String getProfile() {
         return get(PROFILE).asString();
-    }
-
-    public boolean hasServers(ServerConfigStatus status) {
-        return serversByState.containsKey(status);
-    }
-
-    public void addServer(ServerConfigStatus status, Server server) {
-        serversByState.put(status, server);
-    }
-
-    public List<Server> getServers(ServerConfigStatus status) {
-        return Lists.newArrayList(serversByState.get(status));
     }
 
     public ResourceAddress getAddress() {

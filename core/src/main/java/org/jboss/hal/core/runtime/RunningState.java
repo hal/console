@@ -24,6 +24,5 @@ public enum RunningState {
     STOPPED,
     RESTART_REQUIRED,
     RELOAD_REQUIRED,
-    TIMEOUT, // artificial state used in UI w/o model counterpart
     UNDEFINED
 }

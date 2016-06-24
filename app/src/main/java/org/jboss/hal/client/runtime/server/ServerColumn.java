@@ -199,8 +199,6 @@ public class ServerColumn extends FinderColumn<Server> {
                     return resources.constants().needsRestart();
                 } else if (item.isRunning()) {
                     return resources.constants().running();
-                } else if (item.isTimeout()) {
-                    return resources.constants().timeout();
                 } else if (item.isFailed()) {
                     return resources.constants().failed();
                 } else if (item.isStopped()) {
@@ -218,7 +216,7 @@ public class ServerColumn extends FinderColumn<Server> {
                     return Icons.warning();
                 } else if (item.isRunning()) {
                     return Icons.ok();
-                } else if (item.isTimeout() || item.isFailed()) {
+                } else if (item.isFailed()) {
                     return Icons.error();
                 } else if (item.isStopped()) {
                     return Icons.stopped();

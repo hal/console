@@ -31,6 +31,7 @@ import org.jboss.hal.resources.Resources;
  */
 public class ServerActions {
 
+    public static final int SERVER_SUSPEND_TIMEOUT = 1; // not the timeout specified by the user, but the time the server needs to get into suspend mode
     public static final int SERVER_START_TIMEOUT = 4;
     public static final int SERVER_STOP_TIMEOUT = 2;
     public static final int SERVER_RELOAD_TIMEOUT = 4;

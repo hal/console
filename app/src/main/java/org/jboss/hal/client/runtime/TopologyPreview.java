@@ -188,7 +188,7 @@ class TopologyPreview extends PreviewContent<StaticItem> {
         // show the loading indicator if the dmr operation take too long
         int timeoutHandle = Browser.getWindow()
                 .setTimeout(() -> Elements.setVisible(loadingSection, true), PROGRESS_TIMEOUT);
-        new Async<FunctionContext>(progress.get()).waterfall(
+        new Async<FunctionContext>(progress.get()).single(
                 new FunctionContext(),
                 new Outcome<FunctionContext>() {
                     @Override
@@ -214,8 +214,7 @@ class TopologyPreview extends PreviewContent<StaticItem> {
                         adjustTdHeight();
                     }
                 },
-                new TopologyFunctions.Topology(environment, dispatcher),
-                new TopologyFunctions.RunningServerDetails(environment, dispatcher));
+                new TopologyFunctions.Topology(environment, dispatcher));
     }
 
 
@@ -534,7 +533,7 @@ class TopologyPreview extends PreviewContent<StaticItem> {
             status.add(warning);
         } else if (server.isStarted() || server.isRunning()) {
             status.add(ok);
-        } else if (server.isTimeout() || server.isFailed()) {
+        } else if (server.isFailed()) {
             status.add(error);
         }
         if (server.isStarting()) {

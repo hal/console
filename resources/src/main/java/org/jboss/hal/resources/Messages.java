@@ -126,7 +126,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml resourceDisabled(String type, String name);
     SafeHtml resourceEnabled(String type, String name);
 
-    SafeHtml resumeServerGroupPending(String name);
     SafeHtml resumeServerGroupSuccess(String name);
     SafeHtml resumeServerPending(String name);
     SafeHtml resumeServerSuccess(String name);
@@ -137,7 +136,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml restartHostPending(String name);
     SafeHtml restartHostSuccess(String name);
     SafeHtml restartServerGroupQuestion(String name);
-    SafeHtml restartServerGroupPending(String name);
     SafeHtml restartServerGroupSuccess(String name);
     SafeHtml restartServerQuestion(String name);
     SafeHtml restartServerPending(String name);
@@ -156,14 +154,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml serverTimeout(String name);
     SafeHtml serverUndefined(String name);
 
-    SafeHtml startServerGroupPending(String name);
     SafeHtml startServerGroupSuccess(String name);
     SafeHtml startServerPending(String name);
     SafeHtml startServerSuccess(String name);
 
     String stop(String name);
     SafeHtml stopServerGroupQuestion(String name);
-    SafeHtml stopServerGroupPending(String name);
     SafeHtml stopServerGroupSuccess(String name);
     SafeHtml stopServerQuestion(String name);
     SafeHtml stopServerPending(String name);
@@ -171,7 +167,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     String suspend(String name);
     SafeHtml suspendServerGroupQuestion(String name);
-    SafeHtml suspendServerGroupPending(String name);
     SafeHtml suspendServerGroupSuccess(String name);
     SafeHtml suspendServerQuestion(String name);
     SafeHtml suspendServerPending(String name);

@@ -15,20 +15,13 @@
  */
 package org.jboss.hal.core.runtime.host;
 
-import java.util.List;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
+import org.jboss.hal.core.runtime.HasServersNode;
 import org.jboss.hal.core.runtime.RunningMode;
 import org.jboss.hal.core.runtime.RunningState;
 import org.jboss.hal.core.runtime.SuspendState;
-import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.core.runtime.server.ServerConfigStatus;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
-import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.IdBuilder;
 
@@ -36,7 +29,6 @@ import static org.jboss.hal.core.runtime.RunningMode.ADMIN_ONLY;
 import static org.jboss.hal.core.runtime.RunningState.RELOAD_REQUIRED;
 import static org.jboss.hal.core.runtime.RunningState.RESTART_REQUIRED;
 import static org.jboss.hal.core.runtime.RunningState.STARTING;
-import static org.jboss.hal.core.runtime.RunningState.TIMEOUT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 
@@ -47,7 +39,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  *
  * @author Harald Pehl
  */
-public class Host extends NamedNode {
+public class Host extends HasServersNode {
 
     public static String id(final Host host) {
         return id(host.getAddressName());
@@ -58,18 +50,15 @@ public class Host extends NamedNode {
     }
 
     private final String addressName;
-    private final Multimap<ServerConfigStatus, Server> serversByState;
 
     public Host(final ModelNode node) {
         super(node.get(NAME).asString(), node);
         this.addressName = node.get(NAME).asString();
-        this.serversByState = ArrayListMultimap.create();
     }
 
     public Host(final Property property) {
         super(property.getValue().get(NAME).asString(), property.getValue());
         this.addressName = property.getName();
-        this.serversByState = ArrayListMultimap.create();
     }
 
     public String getAddressName() {
@@ -114,28 +103,12 @@ public class Host extends NamedNode {
         return getRunningMode() == ADMIN_ONLY;
     }
 
-    public boolean isTimeout() {
-        return getHostState() == TIMEOUT;
-    }
-
     public boolean needsRestart() {
         return getHostState() == RESTART_REQUIRED;
     }
 
     public boolean needsReload() {
         return getHostState() == RELOAD_REQUIRED;
-    }
-
-    public boolean hasServers(ServerConfigStatus status) {
-        return serversByState.containsKey(status);
-    }
-
-    public void addServer(ServerConfigStatus status, Server server) {
-        serversByState.put(status, server);
-    }
-
-    public List<Server> getServers(ServerConfigStatus status) {
-        return Lists.newArrayList(serversByState.get(status));
     }
 
     public ResourceAddress getAddress() {
