@@ -228,6 +228,7 @@ public interface ModelDescriptionConstants {
     String RESTART_REQUIRED = "restart-required";
     String RESTART_SERVERS = "restart-servers";
     String RESULT = "result";
+    String RESUME_SERVERS = "resume-servers";
     String ROLES = "HEADER_ROLES";
     String RUNNING_MODE = "running-mode";
     String RUNTIME = "runtime";
@@ -252,10 +253,12 @@ public interface ModelDescriptionConstants {
     String SHUTDOWN = "shutdown";
     String STANDALONE = "standalone";
     String START = "start";
+    String START_SERVERS = "start-servers";
     String STATUS = "status";
     String STATISTICS_ENABLED = "statistics-enabled";
     String STEPS = "steps";
     String STORAGE = "storage";
+    String STOP_SERVERS = "stop-servers";
     String SUBDEPLOYMENT = "subdeployment";
     String SUBSYSTEM = "subsystem";
     String SUCCESS = "success";

@@ -19,10 +19,9 @@ import java.util.List;
 import java.util.function.Predicate;
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental.client.Browser;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
@@ -44,14 +43,15 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.resources.IdBuilder;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.core.runtime.SuspendState.RUNNING;
 import static org.jboss.hal.core.runtime.SuspendState.SUSPENDED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STARTED;
+import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STOPPED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.NOOP_EXCEPTIONAL_CALLBACK;
@@ -63,8 +63,41 @@ import static org.jboss.hal.dmr.dispatch.Dispatcher.NOOP_OPERATION_CALLBACK;
  */
 public class ServerGroupActions {
 
-    private static final int RELOAD_TIMEOUT = 5; // seconds
-    private static final int RESTART_TIMEOUT = 6; // seconds
+    private class ServerGroupTimeoutCallback implements TimeoutHandler.Callback {
+
+        private final ServerGroup serverGroup;
+        private final SafeHtml successMessage;
+        private final ScheduledCommand whileOperation;
+
+        ServerGroupTimeoutCallback(final ServerGroup serverGroup, final ScheduledCommand whileOperation,
+                final SafeHtml successMessage) {
+            this.serverGroup = serverGroup;
+            this.successMessage = successMessage;
+            this.whileOperation = whileOperation;
+        }
+
+        @Override
+        public void onSuccess() {
+            MessageEvent.fire(eventBus, Message.success(successMessage));
+            eventBus.fireEvent(new ServerGroupResultEvent(serverGroup, Result.SUCCESS));
+        }
+
+        @Override
+        public void pending() {
+            if (whileOperation != null) {
+                whileOperation.execute();
+            }
+        }
+
+        @Override
+        public void onTimeout() {
+            MessageEvent.fire(eventBus, Message.error(resources.messages().serverGroupTimeout(serverGroup.getName())));
+            eventBus.fireEvent(new ServerGroupResultEvent(serverGroup, Result.TIMEOUT));
+        }
+    }
+
+
+    private static final int DEFAULT_TIMEOUT = 5; // seconds
 
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
@@ -85,73 +118,51 @@ public class ServerGroupActions {
         this.resources = resources;
     }
 
-    public void reload(ServerGroup serverGroup, final Scheduler.ScheduledCommand whileReloading) {
+    public void reload(ServerGroup serverGroup, final ScheduledCommand whileReloading) {
         reloadRestart(serverGroup,
                 new Operation.Builder(RELOAD_SERVERS, serverGroup.getAddress()).param(BLOCKING, false).build(),
                 Action.RELOAD,
                 whileReloading,
-                reloadTimeout(serverGroup),
                 resources.messages().reload(serverGroup.getName()),
                 resources.messages().reloadServerGroupQuestion(serverGroup.getName()),
-                resources.messages().reloadServerGroupSuccess(serverGroup.getName()),
-                resources.messages().serverGroupTimeout(serverGroup.getName()));
+                resources.messages().reloadServerGroupSuccess(serverGroup.getName()));
     }
 
-    public void restart(ServerGroup serverGroup, final Scheduler.ScheduledCommand whileRestarting) {
+    public void restart(ServerGroup serverGroup, final ScheduledCommand whileRestarting) {
         reloadRestart(serverGroup,
                 new Operation.Builder(RESTART_SERVERS, serverGroup.getAddress()).param(BLOCKING, false).build(),
                 Action.RESTART,
                 whileRestarting,
-                restartTimeout(serverGroup),
                 resources.messages().restart(serverGroup.getName()),
                 resources.messages().restartServerGroupQuestion(serverGroup.getName()),
-                resources.messages().restartServerGroupSuccess(serverGroup.getName()),
-                resources.messages().serverGroupTimeout(serverGroup.getName()));
+                resources.messages().restartServerGroupSuccess(serverGroup.getName()));
     }
 
     private void reloadRestart(ServerGroup serverGroup, Operation operation, Action action,
-            Scheduler.ScheduledCommand whileOperation, int timeout,
-            String title, SafeHtml question, SafeHtml successMessage, SafeHtml timeoutMessage) {
+            ScheduledCommand whileOperation, String title, SafeHtml question, SafeHtml successMessage) {
 
         List<Server> startedServers = serverGroup.getServers(STARTED);
         if (!startedServers.isEmpty()) {
             DialogFactory.confirmation(title, question, () -> {
+
                 eventBus.fireEvent(new ServerGroupActionEvent(serverGroup, action));
                 dispatcher.execute(operation, NOOP_OPERATION_CALLBACK, NOOP_FAILED_CALLBACK,
                         NOOP_EXCEPTIONAL_CALLBACK);
 
-                new TimeoutHandler(dispatcher, timeout).execute(
+                new TimeoutHandler(dispatcher, timeout(serverGroup, action)).execute(
                         readServerConfigStatus(startedServers),
                         checkServerConfigStatus(startedServers.size(), STARTED),
-                        new TimeoutHandler.Callback() {
-                            @Override
-                            public void onSuccess() {
-                                MessageEvent.fire(eventBus, Message.success(successMessage));
-                                eventBus.fireEvent(new ServerGroupResultEvent(serverGroup, Result.SUCCESS));
-                            }
-
-                            @Override
-                            public void pending() {
-                                if (whileOperation != null) {
-                                    whileOperation.execute();
-                                }
-                            }
-
-                            @Override
-                            public void onTimeout() {
-                                MessageEvent.fire(eventBus, Message.error(timeoutMessage));
-                                eventBus.fireEvent(new ServerGroupResultEvent(serverGroup, Result.TIMEOUT));
-                            }
-                        });
+                        new ServerGroupTimeoutCallback(serverGroup, whileOperation, successMessage));
                 return true;
             });
+
         } else {
             MessageEvent.fire(eventBus,
-                    Message.error(resources.messages().serverGroupNoStartedServers(serverGroup.getName())));
+                    Message.warning(resources.messages().serverGroupNoStartedServers(serverGroup.getName())));
         }
     }
 
-    public void suspend(ServerGroup serverGroup, final Scheduler.ScheduledCommand whileSuspending) {
+    public void suspend(ServerGroup serverGroup, final ScheduledCommand whileSuspending) {
         List<Server> startedServers = serverGroup.getServers(STARTED);
         if (!startedServers.isEmpty()) {
             Metadata serverGroupMetadata = metadataRegistry.lookup(AddressTemplate.of("/{selected.group}"));
@@ -164,10 +175,12 @@ public class ServerGroupActions {
                     .confirmation(resources.messages().suspend(serverGroup.getName()),
                             resources.messages().suspendServerGroupQuestion(serverGroup.getName()), form.asElement(),
                             () -> {
+
                                 eventBus.fireEvent(new ServerGroupActionEvent(serverGroup, Action.SUSPEND));
                                 form.save();
                                 int timeout = form.getModel().get(TIMEOUT).asInt();
-                                int uiTimeout = timeout + suspendTimeout(serverGroup);
+                                int uiTimeout = timeout + timeout(serverGroup, Action.SUSPEND);
+
                                 Operation operation = new Operation.Builder(SUSPEND_SERVERS, serverGroup.getAddress())
                                         .param(TIMEOUT, timeout)
                                         .build();
@@ -177,30 +190,8 @@ public class ServerGroupActions {
                                 new TimeoutHandler(dispatcher, uiTimeout).execute(
                                         readSuspendState(startedServers),
                                         checkSuspendState(startedServers.size(), SUSPENDED),
-                                        new TimeoutHandler.Callback() {
-                                            @Override
-                                            public void onSuccess() {
-                                                MessageEvent.fire(eventBus, Message.success(resources.messages()
-                                                        .suspendServerGroupSuccess(serverGroup.getName())));
-                                                eventBus.fireEvent(
-                                                        new ServerGroupResultEvent(serverGroup, Result.SUCCESS));
-                                            }
-
-                                            @Override
-                                            public void pending() {
-                                                if (whileSuspending != null) {
-                                                    whileSuspending.execute();
-                                                }
-                                            }
-
-                                            @Override
-                                            public void onTimeout() {
-                                                MessageEvent.fire(eventBus, Message.error(resources.messages()
-                                                        .serverGroupTimeout(serverGroup.getName())));
-                                                eventBus.fireEvent(
-                                                        new ServerGroupResultEvent(serverGroup, Result.TIMEOUT));
-                                            }
-                                        });
+                                        new ServerGroupTimeoutCallback(serverGroup, whileSuspending,
+                                                resources.messages().suspendServerGroupSuccess(serverGroup.getName())));
                                 return true;
                             });
             dialog.registerAttachable(form);
@@ -209,46 +200,133 @@ public class ServerGroupActions {
             ModelNode model = new ModelNode();
             model.get(TIMEOUT).set(0);
             form.add(model);
+
         } else {
             MessageEvent.fire(eventBus,
-                    Message.error(resources.messages().serverGroupNoStartedServers(serverGroup.getName())));
+                    Message.warning(resources.messages().serverGroupNoStartedServers(serverGroup.getName())));
         }
     }
 
-    public void resume(ServerGroup serverGroup, final Scheduler.ScheduledCommand whileResume) {
-        Browser.getWindow().alert(Names.NYI);
-    }
+    public void resume(ServerGroup serverGroup, final ScheduledCommand whileResume) {
+        List<Server> suspendedServers = serverGroup.getServers(SUSPENDED);
+        if (!suspendedServers.isEmpty()) {
+            eventBus.fireEvent(new ServerGroupActionEvent(serverGroup, Action.RESUME));
+            Operation operation = new Operation.Builder(RESUME_SERVERS, serverGroup.getAddress()).build();
+            dispatcher.execute(operation, NOOP_OPERATION_CALLBACK, NOOP_FAILED_CALLBACK,
+                    NOOP_EXCEPTIONAL_CALLBACK);
 
-    public void stop(ServerGroup serverGroup, final Scheduler.ScheduledCommand whileStopping) {
-        Browser.getWindow().alert(Names.NYI);
-    }
+            new TimeoutHandler(dispatcher, timeout(serverGroup, Action.RESUME)).execute(
+                    readSuspendState(suspendedServers),
+                    checkSuspendState(suspendedServers.size(), RUNNING),
+                    new ServerGroupTimeoutCallback(serverGroup, whileResume,
+                            resources.messages().resumeServerGroupSuccess(serverGroup.getName())));
 
-    public void start(ServerGroup serverGroup, final Scheduler.ScheduledCommand whileStarting) {
-        Browser.getWindow().alert(Names.NYI);
-    }
-
-    private int reloadTimeout(ServerGroup serverGroup) {
-        if (serverGroup.hasServers(STARTED)) {
-            return serverGroup.getServers(STARTED).size() * ServerActions.SERVER_RELOAD_TIMEOUT;
         } else {
-            return RELOAD_TIMEOUT;
+            MessageEvent.fire(eventBus,
+                    Message.warning(resources.messages().serverGroupNoSuspendedServers(serverGroup.getName())));
         }
     }
 
-    private int restartTimeout(ServerGroup serverGroup) {
-        if (serverGroup.hasServers(STARTED)) {
-            return serverGroup.getServers(STARTED).size() * ServerActions.SERVER_RESTART_TIMEOUT;
+    public void stop(ServerGroup serverGroup, final ScheduledCommand whileStopping) {
+        List<Server> startedServers = serverGroup.getServers(STARTED);
+        if (!startedServers.isEmpty()) {
+            Metadata serverGroupMetadata = metadataRegistry.lookup(AddressTemplate.of("/{selected.group}"));
+            Form<ModelNode> form = new OperationFormBuilder<>(
+                    IdBuilder.build(STOP_SERVERS, serverGroup.getName(), "form"), serverGroupMetadata, STOP_SERVERS)
+                    .build();
+
+            Dialog dialog = DialogFactory
+                    .confirmation(resources.messages().stop(serverGroup.getName()),
+                            resources.messages().stopServerGroupQuestion(serverGroup.getName()), form.asElement(),
+                            () -> {
+
+                                eventBus.fireEvent(new ServerGroupActionEvent(serverGroup, Action.STOP));
+                                form.save();
+                                int timeout = form.getModel().get(TIMEOUT).asInt();
+                                int uiTimeout = timeout + timeout(serverGroup, Action.STOP);
+
+                                Operation operation = new Operation.Builder(SUSPEND_SERVERS, serverGroup.getAddress())
+                                        .param(TIMEOUT, timeout)
+                                        .param(BLOCKING, false)
+                                        .build();
+                                dispatcher.execute(operation, NOOP_OPERATION_CALLBACK, NOOP_FAILED_CALLBACK,
+                                        NOOP_EXCEPTIONAL_CALLBACK);
+
+                                new TimeoutHandler(dispatcher, uiTimeout).execute(
+                                        readServerConfigStatus(startedServers),
+                                        checkServerConfigStatus(startedServers.size(), STOPPED),
+                                        new ServerGroupTimeoutCallback(serverGroup, whileStopping,
+                                                resources.messages().stopServerSuccess(serverGroup.getName())));
+                                return true;
+                            });
+            dialog.registerAttachable(form);
+            dialog.show();
+
+            ModelNode model = new ModelNode();
+            model.get(TIMEOUT).set(0);
+            form.add(model);
+
         } else {
-            return RESTART_TIMEOUT;
+            MessageEvent.fire(eventBus,
+                    Message.warning(resources.messages().serverGroupNoStartedServers(serverGroup.getName())));
         }
     }
 
-    private int suspendTimeout(ServerGroup serverGroup) {
-        if (serverGroup.hasServers(STARTED)) {
-            return serverGroup.getServers(STARTED).size() * ServerActions.SERVER_SUSPEND_TIMEOUT;
+    public void start(ServerGroup serverGroup, final ScheduledCommand whileStarting) {
+        List<Server> downServers = serverGroup
+                .getServers(STOPPED, ServerConfigStatus.DISABLED, ServerConfigStatus.FAILED);
+        if (!downServers.isEmpty()) {
+            Operation operation = new Operation.Builder(SUSPEND_SERVERS, serverGroup.getAddress())
+                    .param(BLOCKING, false)
+                    .build();
+            dispatcher.execute(operation, NOOP_OPERATION_CALLBACK, NOOP_FAILED_CALLBACK,
+                    NOOP_EXCEPTIONAL_CALLBACK);
+
+            new TimeoutHandler(dispatcher, timeout(serverGroup, Action.START)).execute(
+                    readServerConfigStatus(downServers),
+                    checkServerConfigStatus(downServers.size(), STARTED),
+                    new ServerGroupTimeoutCallback(serverGroup, whileStarting,
+                            resources.messages().startServerGroupSuccess(serverGroup.getName())));
+
         } else {
-            return RESTART_TIMEOUT;
+            MessageEvent.fire(eventBus,
+                    Message.warning(resources.messages().serverGroupNoStoppedServers(serverGroup.getName())));
         }
+    }
+
+    private int timeout(ServerGroup serverGroup, Action action) {
+        int timeout = DEFAULT_TIMEOUT;
+        switch (action) {
+            case RELOAD:
+                if (serverGroup.hasServers(STARTED)) {
+                    timeout = serverGroup.getServers(STARTED).size() * ServerActions.SERVER_RELOAD_TIMEOUT;
+                }
+                break;
+            case RESTART:
+                if (serverGroup.hasServers(STARTED)) {
+                    timeout = serverGroup.getServers(STARTED).size() * ServerActions.SERVER_RESTART_TIMEOUT;
+                }
+                break;
+            case SUSPEND:
+                if (serverGroup.hasServers(STARTED)) {
+                    timeout = serverGroup.getServers(STARTED).size() * ServerActions.SERVER_SUSPEND_TIMEOUT;
+                }
+                break;
+            case RESUME:
+                if (serverGroup.hasServers(SUSPENDED)) {
+                    timeout = serverGroup.getServers(SUSPENDED).size() * ServerActions.SERVER_RESUME_TIMEOUT;
+                }
+                break;
+            case START:
+                if (serverGroup.hasServers(STOPPED, ServerConfigStatus.DISABLED, ServerConfigStatus.FAILED)) {
+                    timeout = serverGroup.getServers(STOPPED, ServerConfigStatus.DISABLED, ServerConfigStatus.FAILED)
+                            .size() * ServerActions.SERVER_RESUME_TIMEOUT;
+                }
+                break;
+            case STOP:
+                break;
+        }
+        return timeout;
     }
 
     private Composite readServerConfigStatus(List<Server> servers) {

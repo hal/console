@@ -142,6 +142,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml restartServerSuccess(String name);
 
     SafeHtml serverGroupNoStartedServers(String name);
+    SafeHtml serverGroupNoStoppedServers(String name);
+    SafeHtml serverGroupNoSuspendedServers(String name);
     SafeHtml serverGroupTimeout(String name);
     SafeHtml serverAdminMode(String name);
     SafeHtml serverFailed(String name);

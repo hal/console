@@ -69,8 +69,17 @@ public abstract class HasServersNode extends NamedNode {
         return !servers.isEmpty();
     }
 
-    public boolean hasServers(ServerConfigStatus serverConfigStatus) {
-        return serversByServerConfigStatus.containsKey(serverConfigStatus);
+    public boolean hasServers(ServerConfigStatus first, ServerConfigStatus... rest) {
+        if (serversByServerConfigStatus.containsKey(first)) {
+            return true;
+        } else if (rest != null) {
+            for (ServerConfigStatus status : rest) {
+                if (serversByServerConfigStatus.containsKey(status)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public boolean hasServers(RunningMode runningMode) {
@@ -97,8 +106,15 @@ public abstract class HasServersNode extends NamedNode {
         return servers;
     }
 
-    public List<Server> getServers(ServerConfigStatus serverConfigStatus) {
-        return Lists.newArrayList(serversByServerConfigStatus.get(serverConfigStatus));
+    public List<Server> getServers(ServerConfigStatus first, ServerConfigStatus... rest) {
+        List<Server> servers = new ArrayList<>();
+        servers.addAll(serversByServerConfigStatus.get(first));
+        if (rest != null) {
+            for (ServerConfigStatus status : rest) {
+                servers.addAll(serversByServerConfigStatus.get(status));
+            }
+        }
+        return servers;
     }
 
     public List<Server> getServers(RunningMode runningMode) {
