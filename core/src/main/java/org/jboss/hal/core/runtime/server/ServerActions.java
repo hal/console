@@ -17,7 +17,6 @@ package org.jboss.hal.core.runtime.server;
 
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -33,9 +32,9 @@ public class ServerActions {
 
     public static final int SERVER_SUSPEND_TIMEOUT = 1; // not the timeout specified by the user, but the time the server needs to get into suspend mode
     public static final int SERVER_RESUME_TIMEOUT = 3;
-    public static final int SERVER_START_TIMEOUT = 4;
-    public static final int SERVER_STOP_TIMEOUT = 2;
-    public static final int SERVER_RELOAD_TIMEOUT = 4;
+    public static final int SERVER_START_TIMEOUT = 15;
+    public static final int SERVER_STOP_TIMEOUT = 4;
+    public static final int SERVER_RELOAD_TIMEOUT = 5;
     public static final int SERVER_RESTART_TIMEOUT = SERVER_STOP_TIMEOUT + SERVER_START_TIMEOUT;
 
     private final EventBus eventBus;
@@ -57,27 +56,27 @@ public class ServerActions {
         this.resources = resources;
     }
 
-    public void start(Server server, final Scheduler.ScheduledCommand whileStarting) {
+    public void start(Server server) {
         Browser.getWindow().alert(Names.NYI);
     }
 
-    public void stop(Server server, final Scheduler.ScheduledCommand whileStopping) {
+    public void stop(Server server) {
         Browser.getWindow().alert(Names.NYI);
     }
 
-    public void reload(Server server, final Scheduler.ScheduledCommand whileReloading) {
+    public void reload(Server server) {
         Browser.getWindow().alert(Names.NYI);
     }
 
-    public void restart(Server server, final Scheduler.ScheduledCommand whileRestarting) {
+    public void restart(Server server) {
         Browser.getWindow().alert(Names.NYI);
     }
 
-    public void suspend(Server server, final Scheduler.ScheduledCommand whileSuspending) {
+    public void suspend(Server server) {
         Browser.getWindow().alert(Names.NYI);
     }
 
-    public void resume(Server server, final Scheduler.ScheduledCommand whileResume) {
+    public void resume(Server server) {
         Browser.getWindow().alert(Names.NYI);
     }
 }

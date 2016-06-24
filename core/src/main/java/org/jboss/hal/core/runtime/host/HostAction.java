@@ -27,4 +27,5 @@ public class HostAction {
 
     @Order(1) Host host;
     @Order(2) Action action;
+    @Order(3) boolean withServers;
 }

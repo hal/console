@@ -35,9 +35,12 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.runtime.SuspendState;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.group.ServerGroup;
+import org.jboss.hal.core.runtime.group.ServerGroupActions;
 import org.jboss.hal.core.runtime.group.ServerGroupSelectionEvent;
+import org.jboss.hal.core.runtime.server.ServerConfigStatus;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.token.NameTokens;
@@ -66,6 +69,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
             final EventBus eventBus,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
+            final ServerGroupActions serverGroupActions,
             final Resources resources) {
 
         super(new Builder<ServerGroup>(finder, SERVER_GROUP, Names.SERVER_GROUP)
@@ -136,6 +140,26 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
                         .with(SERVER_GROUP, item.getName()).build();
                 List<ItemAction<ServerGroup>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.viewAndMonitor(ServerGroup.id(item.getName()), placeRequest));
+
+                // Order is: reload, restart, suspend, resume, stop, start
+                if (item.hasServers(ServerConfigStatus.STARTED)) {
+                    actions.add(new ItemAction<>(resources.constants().reload(), serverGroupActions::reload));
+                    actions.add(new ItemAction<>(resources.constants().restart(), serverGroupActions::restart));
+                }
+                if (item.getServers(ServerConfigStatus.STARTED).size() - item.getServers(SuspendState.SUSPENDED)
+                        .size() > 0) {
+                    actions.add(new ItemAction<>(resources.constants().suspend(), serverGroupActions::suspend));
+                }
+                if (item.hasServers(SuspendState.SUSPENDED)) {
+                    actions.add(new ItemAction<>(resources.constants().resume(), serverGroupActions::resume));
+                }
+                if (item.hasServers(ServerConfigStatus.STARTED)) {
+                    actions.add(new ItemAction<>(resources.constants().stop(), serverGroupActions::stop));
+                }
+                if (item.hasServers(ServerConfigStatus.STOPPED, ServerConfigStatus.DISABLED,
+                        ServerConfigStatus.FAILED)) {
+                    actions.add(new ItemAction<>(resources.constants().start(), serverGroupActions::start));
+                }
                 return actions;
             }
         });

@@ -255,7 +255,7 @@
                     <devmodeArgs>
                         <devmodeArg>-startupUrl</devmodeArg>
                         <devmodeArg>hal/dev.html</devmodeArg>
-                        <devmodeArg>-incremental</devmodeArg>
+                        <!--<devmodeArg>-incremental</devmodeArg>-->
                     </devmodeArgs>
                     <draftCompile>${gwt.draftCompile}</draftCompile>
                     <failOnError>${gwt.failOnError}</failOnError>

@@ -241,22 +241,17 @@ public class ServerColumn extends FinderColumn<Server> {
                 actions.add(new ItemAction<>(resources.constants().copy(),
                         itm -> copyServer(itm, browseByHosts(finder.getContext()))));
                 if (!item.isStarted()) {
-                    actions.add(new ItemAction<>(resources.constants().start(),
-                            itm -> serverActions.start(itm, () -> { /* noop */ })));
+                    actions.add(new ItemAction<>(resources.constants().start(), serverActions::start));
                 } else {
+                    // Order is: reload, restart, (resume | suspend), stop
+                    actions.add(new ItemAction<>(resources.constants().reload(), serverActions::reload));
+                    actions.add(new ItemAction<>(resources.constants().restart(), serverActions::restart));
                     if (item.isSuspending()) {
-                        actions.add(new ItemAction<>(resources.constants().resume(),
-                                itm -> serverActions.resume(itm, () -> { /* noop */ })));
+                        actions.add(new ItemAction<>(resources.constants().resume(), serverActions::resume));
                     } else {
-                        actions.add(new ItemAction<>(resources.constants().suspend(),
-                                itm -> serverActions.suspend(itm, () -> { /* noop */ })));
+                        actions.add(new ItemAction<>(resources.constants().suspend(), serverActions::suspend));
                     }
-                    actions.add(new ItemAction<>(resources.constants().reload(),
-                            itm -> serverActions.reload(itm, () -> { /* noop */ })));
-                    actions.add(new ItemAction<>(resources.constants().restart(),
-                            itm -> serverActions.restart(itm, () -> { /* noop */ })));
-                    actions.add(new ItemAction<>(resources.constants().stop(),
-                            itm -> serverActions.stop(itm, () -> { /* noop */ })));
+                    actions.add(new ItemAction<>(resources.constants().stop(), serverActions::stop));
                 }
                 return actions;
             }

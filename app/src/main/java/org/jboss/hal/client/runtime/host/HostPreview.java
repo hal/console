@@ -54,11 +54,11 @@ class HostPreview extends RuntimePreview<Host> {
                 .span().rememberAs(ALERT_TEXT).end()
                 .span().textContent(" ").end()
                 .a().rememberAs(RELOAD_LINK).css(clickable, alertLink)
-                    .on(click, event -> hostActions.reload(host, () -> hostColumn.refreshItem(Host.id(host), host)))
+                    .on(click, event -> hostActions.reload(host))
                     .textContent(resources.constants().reload())
                 .end()
                 .a().rememberAs(RESTART_LINK).css(clickable, alertLink)
-                    .on(click, event -> hostActions.restart(host, () -> hostColumn.refreshItem(Host.id(host), host)))
+                    .on(click, event -> hostActions.restart(host))
                     .textContent(resources.constants().restart())
                 .end()
             .end();

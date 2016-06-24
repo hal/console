@@ -86,8 +86,8 @@ public final class ModelNodeHelper {
         return properties.stream().map(NamedNode::new).collect(toList());
     }
 
-    public static <T> T getOrDefault(final ModelNode modelNode, String attribute,
-            Provider<T> provider, T defaultValue) {
+    public static <T> T getOrDefault(final ModelNode modelNode, String attribute, Provider<T> provider,
+            T defaultValue) {
         T result = defaultValue;
         if (modelNode != null && modelNode.hasDefined(attribute)) {
             try {

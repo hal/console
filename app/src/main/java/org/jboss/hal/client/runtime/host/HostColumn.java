@@ -181,10 +181,8 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                         .with(HOST, item.getAddressName()).build();
                 List<ItemAction<Host>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.viewAndMonitor(Host.id(item), placeRequest));
-                actions.add(new ItemAction<>(resources.constants().reload(),
-                        itm -> hostActions.reload(itm, () -> refreshItem(Host.id(itm), itm))));
-                actions.add(new ItemAction<>(resources.constants().restart(),
-                        itm -> hostActions.restart(itm, () -> refreshItem(Host.id(itm), itm))));
+                actions.add(new ItemAction<>(resources.constants().reload(), hostActions::reload));
+                actions.add(new ItemAction<>(resources.constants().restart(), hostActions::restart));
                 // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or :take-snapshot
                 return actions;
             }

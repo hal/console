@@ -44,10 +44,6 @@ public class TimeoutHandler {
          */
         void onSuccess();
 
-        default void pending() {
-            // noop
-        }
-
         /**
          * Operation ran into a timeout
          */
@@ -63,6 +59,7 @@ public class TimeoutHandler {
         TimeoutContext() {
             this.start = System.currentTimeMillis();
             this.conditionSatisfied = false;
+            logger.debug("Start timeout handler @ {}", start); //NON-NLS
         }
     }
 
@@ -114,14 +111,10 @@ public class TimeoutHandler {
                         }
                     }
                 },
-                control -> {
-                    callback.pending();
-                    dispatcher.execute(operation,
-                            result -> control.getContext().conditionSatisfied = predicate == null || predicate
-                                    .test(result),
-                            NOOP_FAILED_CALLBACK,
-                            NOOP_EXCEPTIONAL_CALLBACK);
-                },
+                control -> dispatcher.execute(operation,
+                        result -> control.getContext().conditionSatisfied = predicate == null || predicate.test(result),
+                        NOOP_FAILED_CALLBACK,
+                        NOOP_EXCEPTIONAL_CALLBACK),
                 PERIOD);
     }
 
@@ -152,25 +145,22 @@ public class TimeoutHandler {
                         }
                     }
                 },
-                control -> {
-                    callback.pending();
-                    dispatcher.execute(composite,
-                            (CompositeResult result) -> {
-                                if (predicate != null) {
-                                    control.getContext().conditionSatisfied = predicate.test(result);
-                                } else {
-                                    control.getContext().conditionSatisfied = stream(result.spliterator(), false)
-                                            .map(stepResult -> !stepResult.isFailure())
-                                            .allMatch(flag -> true);
-                                }
-                            }, NOOP_FAILED_CALLBACK,
-                            NOOP_EXCEPTIONAL_CALLBACK);
-                },
+                control -> dispatcher.execute(composite,
+                        (CompositeResult result) -> {
+                            if (predicate != null) {
+                                control.getContext().conditionSatisfied = predicate.test(result);
+                            } else {
+                                control.getContext().conditionSatisfied = stream(result.spliterator(), false)
+                                        .map(stepResult -> !stepResult.isFailure())
+                                        .allMatch(flag -> true);
+                            }
+                        }, NOOP_FAILED_CALLBACK, NOOP_EXCEPTIONAL_CALLBACK),
                 PERIOD);
     }
 
     private boolean timeout(TimeoutContext timeoutContext) {
         long elapsed = (System.currentTimeMillis() - timeoutContext.start) / 1000;
+        logger.debug("Checking elapsed > timeout ({} > {})", elapsed, timeout); //NON-NLS
         return elapsed > timeout;
     }
 }

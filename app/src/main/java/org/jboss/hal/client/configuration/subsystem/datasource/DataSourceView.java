@@ -263,11 +263,11 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
         //noinspection HardCodedStringLiteral
         header.setInnerHTML(new SafeHtmlBuilder()
                 .appendEscaped(dataSource.getName())
-                .appendEscaped(" (")
                 .appendHtmlConstant("<small>")
+                .appendEscaped(" (")
                 .appendEscaped(dataSource.isEnabled() ? resources.constants().enabled() : resources.constants().disabled())
+                .appendEscaped(")")
                 .appendHtmlConstant("</small>")
-                .appendEscaped(" )")
                 .toSafeHtml().asString());
         if (dataSource.isXa()) {
             for (Form<DataSource> form : xaForms) {
