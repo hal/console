@@ -586,7 +586,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     @Override
     public void onServerResult(final ServerResultEvent event) {
         stopProgress(serverSelector(event.getServer()));
-        // update(null);
+        update(null); // TODO Just reload the server and update the server cell
     }
 
     private String serverSelector(final Server server) {

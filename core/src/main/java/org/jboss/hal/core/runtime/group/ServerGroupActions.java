@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.core.runtime.group;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Predicate;
 import javax.inject.Inject;
@@ -31,7 +32,6 @@ import org.jboss.hal.core.runtime.Action;
 import org.jboss.hal.core.runtime.Result;
 import org.jboss.hal.core.runtime.SuspendState;
 import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.core.runtime.server.ServerActionEvent;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.core.runtime.server.ServerConfigStatus;
 import org.jboss.hal.dmr.ModelNode;
@@ -141,7 +141,6 @@ public class ServerGroupActions {
             DialogFactory.confirmation(title, question, () -> {
 
                 eventBus.fireEvent(new ServerGroupActionEvent(serverGroup, action));
-                startedServers.stream().forEach(server -> eventBus.fireEvent(new ServerActionEvent(server, action)));
                 dispatcher.execute(operation, NOOP_OPERATION_CALLBACK, NOOP_FAILED_CALLBACK,
                         NOOP_EXCEPTIONAL_CALLBACK);
 
@@ -176,8 +175,6 @@ public class ServerGroupActions {
 
                                         form.save();
                                         eventBus.fireEvent(new ServerGroupActionEvent(serverGroup, Action.SUSPEND));
-                                        startedServers.stream().forEach(server ->
-                                                eventBus.fireEvent(new ServerActionEvent(server, Action.SUSPEND)));
                                         int timeout = getOrDefault(form.getModel(), TIMEOUT,
                                                 () -> form.getModel().get(TIMEOUT).asInt(), 0);
                                         int uiTimeout = timeout + timeout(serverGroup, Action.SUSPEND);
@@ -223,8 +220,6 @@ public class ServerGroupActions {
         List<Server> suspendedServers = serverGroup.getServers(SUSPENDED);
         if (!suspendedServers.isEmpty()) {
             eventBus.fireEvent(new ServerGroupActionEvent(serverGroup, Action.RESUME));
-            suspendedServers.stream().forEach(server ->
-                    eventBus.fireEvent(new ServerActionEvent(server, Action.RESUME)));
             Operation operation = new Operation.Builder(RESUME_SERVERS, serverGroup.getAddress()).build();
             dispatcher.execute(operation, NOOP_OPERATION_CALLBACK, NOOP_FAILED_CALLBACK,
                     NOOP_EXCEPTIONAL_CALLBACK);
@@ -260,8 +255,6 @@ public class ServerGroupActions {
 
                                         form.save();
                                         eventBus.fireEvent(new ServerGroupActionEvent(serverGroup, Action.STOP));
-                                        startedServers.stream().forEach(server ->
-                                                eventBus.fireEvent(new ServerActionEvent(server, Action.STOP)));
                                         int timeout = getOrDefault(form.getModel(), TIMEOUT,
                                                 () -> form.getModel().get(TIMEOUT).asInt(), 0);
                                         int uiTimeout = timeout + timeout(serverGroup, Action.STOP);
@@ -307,7 +300,6 @@ public class ServerGroupActions {
                 .getServers(STOPPED, ServerConfigStatus.DISABLED, ServerConfigStatus.FAILED);
         if (!downServers.isEmpty()) {
             eventBus.fireEvent(new ServerGroupActionEvent(serverGroup, Action.START));
-            downServers.stream().forEach(server -> eventBus.fireEvent(new ServerActionEvent(server, Action.START)));
             Operation operation = new Operation.Builder(START_SERVERS, serverGroup.getAddress())
                     .param(BLOCKING, false)
                     .build();
@@ -377,18 +369,7 @@ public class ServerGroupActions {
         return compositeResult -> {
             long statusCount = compositeResult.stream()
                     .map(step -> asEnumValue(step, RESULT, ServerConfigStatus::valueOf, ServerConfigStatus.UNDEFINED))
-                    .filter(status -> {
-                        if (status == first) {
-                            return true;
-                        } else if (rest != null) {
-                            for (ServerConfigStatus scs : rest) {
-                                if (status == scs) {
-                                    return true;
-                                }
-                            }
-                        }
-                        return false;
-                    })
+                    .filter(status -> EnumSet.of(first, rest).contains(status))
                     .count();
             return statusCount == servers;
         };

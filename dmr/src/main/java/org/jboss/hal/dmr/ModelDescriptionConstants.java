@@ -225,9 +225,11 @@ public interface ModelDescriptionConstants {
     String RESOURCE_ADAPTER = "resource-adapter";
     String RESOURCE_ADAPTERS = "resource-adapters";
     String RESPONSE_HEADERS = "response-headers";
+    String RESTART = "restart";
     String RESTART_REQUIRED = "restart-required";
     String RESTART_SERVERS = "restart-servers";
     String RESULT = "result";
+    String RESUME = "resume";
     String RESUME_SERVERS = "resume-servers";
     String ROLES = "HEADER_ROLES";
     String RUNNING_MODE = "running-mode";
@@ -258,10 +260,12 @@ public interface ModelDescriptionConstants {
     String STATISTICS_ENABLED = "statistics-enabled";
     String STEPS = "steps";
     String STORAGE = "storage";
+    String STOP = "stop";
     String STOP_SERVERS = "stop-servers";
     String SUBDEPLOYMENT = "subdeployment";
     String SUBSYSTEM = "subsystem";
     String SUCCESS = "success";
+    String SUSPEND = "suspend";
     String SUSPEND_SERVERS = "suspend-servers";
     String SUSPEND_STATE = "suspend-state";
     String SYSTEM_PROPERTY = "system-property";

@@ -105,14 +105,19 @@ public final class ModelNodeHelper {
      */
     public static <E extends Enum<E>> E asEnumValue(final ModelNode modelNode, final String attribute,
             final Function<String, E> valueOf, final E defaultValue) {
-        E value = defaultValue;
         if (modelNode.hasDefined(attribute)) {
-            String stringValue = modelNode.get(attribute).asString();
-            String converted = LOWER_HYPHEN.to(UPPER_UNDERSCORE, stringValue);
-            try {
-                value = valueOf.apply(converted);
-            } catch (IllegalArgumentException ignored) {}
+            return asEnumValue(modelNode.get(attribute), valueOf, defaultValue);
         }
+        return defaultValue;
+    }
+
+    public static <E extends Enum<E>> E asEnumValue(final ModelNode modelNode, final Function<String, E> valueOf,
+            final E defaultValue) {
+        E value = defaultValue;
+        String converted = LOWER_HYPHEN.to(UPPER_UNDERSCORE, modelNode.asString());
+        try {
+            value = valueOf.apply(converted);
+        } catch (IllegalArgumentException ignored) {}
         return value;
     }
 
