@@ -113,8 +113,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml reloadServerGroupQuestion(String name);
     SafeHtml reloadServerGroupPending(String name);
     SafeHtml reloadServerGroupSuccess(String name);
-    SafeHtml reloadServerQuestion(String name);
+    SafeHtml reloadServerError(String name);
     SafeHtml reloadServerPending(String name);
+    SafeHtml reloadServerQuestion(String name);
     SafeHtml reloadServerSuccess(String name);
 
     String removeResourceConfirmationTitle(String name);
@@ -126,10 +127,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml resourceDisabled(String type, String name);
     SafeHtml resourceEnabled(String type, String name);
 
-    SafeHtml resumeServerGroupSuccess(String name);
-    SafeHtml resumeServerPending(String name);
-    SafeHtml resumeServerSuccess(String name);
-
     String restart(String name);
     SafeHtml restartDomainControllerQuestion(String name);
     SafeHtml restartHostControllerQuestion(String name);
@@ -137,9 +134,15 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml restartHostSuccess(String name);
     SafeHtml restartServerGroupQuestion(String name);
     SafeHtml restartServerGroupSuccess(String name);
-    SafeHtml restartServerQuestion(String name);
+    SafeHtml restartServerError(String name);
     SafeHtml restartServerPending(String name);
+    SafeHtml restartServerQuestion(String name);
     SafeHtml restartServerSuccess(String name);
+
+    SafeHtml resumeServerGroupSuccess(String name);
+    SafeHtml resumeServerError(String name);
+    SafeHtml resumeServerPending(String name);
+    SafeHtml resumeServerSuccess(String name);
 
     SafeHtml serverGroupNoStartedServers(String name);
     SafeHtml serverGroupNoStoppedServers(String name);
@@ -157,21 +160,24 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml serverUndefined(String name);
 
     SafeHtml startServerGroupSuccess(String name);
+    SafeHtml startServerError(String name);
     SafeHtml startServerPending(String name);
     SafeHtml startServerSuccess(String name);
 
     String stop(String name);
     SafeHtml stopServerGroupQuestion(String name);
     SafeHtml stopServerGroupSuccess(String name);
-    SafeHtml stopServerQuestion(String name);
+    SafeHtml stopServerError(String name);
     SafeHtml stopServerPending(String name);
+    SafeHtml stopServerQuestion(String name);
     SafeHtml stopServerSuccess(String name);
 
     String suspend(String name);
     SafeHtml suspendServerGroupQuestion(String name);
     SafeHtml suspendServerGroupSuccess(String name);
-    SafeHtml suspendServerQuestion(String name);
+    SafeHtml suspendServerError(String name);
     SafeHtml suspendServerPending(String name);
+    SafeHtml suspendServerQuestion(String name);
     SafeHtml suspendServerSuccess(String name);
 
     SafeHtml testConnectionError();
@@ -182,6 +188,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml txEnableJournalStore();
 
     String updateAvailable(String current, String update);
+    SafeHtml updateServerError(String name);
     String unit(String unit);
     SafeHtml unknownError();
     SafeHtml unknownResource();

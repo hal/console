@@ -18,6 +18,7 @@ package org.jboss.hal.client.runtime.host;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.common.base.Joiner;
 import com.google.web.bindery.event.shared.EventBus;
@@ -53,6 +54,7 @@ import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
+import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
@@ -73,6 +75,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
             final Environment environment,
             final Dispatcher dispatcher,
             final EventBus eventBus,
+            final @Footer Provider<Progress> progress,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
             final HostActions hostActions,
@@ -83,7 +86,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                 .columnAction(columnActionFactory.refresh(IdBuilder.build(HOST, "refresh")))
 
                 .itemsProvider((context, callback) ->
-                        new Async<FunctionContext>(Progress.NOOP).single(
+                        new Async<FunctionContext>(progress.get()).waterfall(
                                 new FunctionContext(),
                                 new Outcome<FunctionContext>() {
                                     @Override
@@ -97,7 +100,8 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                                         callback.onSuccess(hosts);
                                     }
                                 },
-                                new TopologyFunctions.HostsWithServers(environment, dispatcher)))
+                                new TopologyFunctions.HostsWithServerConfigs(environment, dispatcher),
+                                new TopologyFunctions.HostsStartedServers(environment, dispatcher)))
 
                 // TODO Change the security context (host scoped roles!)
                 .onItemSelect(host -> eventBus.fireEvent(new HostSelectionEvent(host.getAddressName())))

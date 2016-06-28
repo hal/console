@@ -35,7 +35,7 @@ import static org.jboss.hal.resources.CSS.clickable;
 /**
  * @author Harald Pehl
  */
-public class ServerPreview extends RuntimePreview<Server> {
+class ServerPreview extends RuntimePreview<Server> {
 
     private static final String START_LINK = "start-link";
     private static final String STOP_LINK = "stop-link";
@@ -48,7 +48,7 @@ public class ServerPreview extends RuntimePreview<Server> {
     private final Element resumeLink;
     private final PreviewAttributes<Server> attributes;
 
-    public ServerPreview(final ServerColumn serverColumn, final ServerActions serverActions, final Server server,
+    ServerPreview(final ServerActions serverActions, final Server server,
             final Resources resources) {
         super(server.getName(), null, resources);
 

@@ -18,6 +18,7 @@ package org.jboss.hal.client.runtime.group;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.common.base.Joiner;
 import com.google.web.bindery.event.shared.EventBus;
@@ -48,6 +49,7 @@ import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
+import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
@@ -67,6 +69,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
             final Environment environment,
             final Dispatcher dispatcher,
             final EventBus eventBus,
+            final @Footer Provider<Progress> progress,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
             final ServerGroupActions serverGroupActions,
@@ -79,7 +82,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
                 .columnAction(columnActionFactory.refresh(IdBuilder.build(SERVER_GROUP, "refresh")))
 
                 .itemsProvider((context, callback) ->
-                        new Async<FunctionContext>(Progress.NOOP).single(
+                        new Async<FunctionContext>(progress.get()).waterfall(
                                 new FunctionContext(),
                                 new Outcome<FunctionContext>() {
                                     @Override
@@ -93,7 +96,8 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
                                         callback.onSuccess(serverGroups);
                                     }
                                 },
-                                new TopologyFunctions.ServerGroupsWithServers(environment, dispatcher)))
+                                new TopologyFunctions.ServerGroupsWithServerConfigs(environment, dispatcher),
+                                new TopologyFunctions.ServerGroupsStartedServers(environment, dispatcher)))
 
                 .onPreview(ServerGroupPreview::new)
                 // TODO Change the security context (server group scoped roles!)

@@ -17,7 +17,9 @@ package org.jboss.hal.client.runtime;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.inject.Provider;
 
 import com.google.common.base.Joiner;
@@ -204,7 +206,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         // show the loading indicator if the dmr operation take too long
         int timeoutHandle = Browser.getWindow()
                 .setTimeout(() -> Elements.setVisible(loadingSection, true), PROGRESS_TIMEOUT);
-        new Async<FunctionContext>(progress.get()).single(
+        new Async<FunctionContext>(progress.get()).waterfall(
                 new FunctionContext(),
                 new Outcome<FunctionContext>() {
                     @Override
@@ -225,19 +227,53 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                         List<ServerGroup> serverGroups = context.get(TopologyFunctions.SERVER_GROUPS);
                         List<Server> servers = context.get(TopologyFunctions.SERVERS);
 
-                        topologySection.appendChild(createTable(hosts, serverGroups, servers));
+                        topologySection.appendChild(buildTable(hosts, serverGroups, servers));
                         Elements.setVisible(topologySection, true);
                         adjustTdHeight();
                     }
                 },
-                new TopologyFunctions.Topology(environment, dispatcher));
+                new TopologyFunctions.Topology(environment, dispatcher),
+                new TopologyFunctions.TopologyStartedServers(environment, dispatcher));
+    }
+
+    private void updateServer(Server server) {
+        new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), new Outcome<FunctionContext>() {
+                    @Override
+                    public void onFailure(final FunctionContext context) {
+                        MessageEvent.fire(eventBus,
+                                Message.error(resources.messages().updateServerError(server.getName()),
+                                        context.getErrorMessage()));
+                    }
+
+                    @Override
+                    public void onSuccess(final FunctionContext context) {
+                        Server updatedServer = context.pop();
+                        Element existingServerElement = Browser.getDocument()
+                                .getElementById(IdBuilder.build(updatedServer.getHost(), updatedServer.getName()));
+                        if (existingServerElement != null) {
+                            boolean hasSelection = existingServerElement.getClassList().contains(selected);
+                            Element parent = existingServerElement.getParentElement();
+                            if (parent != null) {
+                                Elements.Builder builder1 = new Elements.Builder();
+                                buildServer(builder1, updatedServer);
+                                Element updatedServerElement = builder1.build();
+                                parent.replaceChild(updatedServerElement, existingServerElement);
+                                if (hasSelection) {
+                                    serverDetails(updatedServer);
+                                }
+                            }
+                        }
+                    }
+                },
+                new TopologyFunctions.ServerConfigUpdate(dispatcher, server),
+                new TopologyFunctions.ServerUpdate(dispatcher));
     }
 
 
     // ------------------------------------------------------ UI methods
 
     @SuppressWarnings("HardCodedStringLiteral")
-    private Element createTable(List<Host> hosts, List<ServerGroup> serverGroups, List<Server> servers) {
+    private Element buildTable(List<Host> hosts, List<ServerGroup> serverGroups, List<Server> servers) {
         Elements.Builder builder = new Elements.Builder().table().css(topology);
 
         // <colgroup>
@@ -330,25 +366,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                         builder.td()
                             .div().css(CSS.servers);
                                 for (Server srv : matchingServers) {
-                                    String serverDropDownId = IdBuilder.build(serverGroup.getName(), "server", "dropdown");
-                                    builder.div()
-                                            .css(server, statusCss(srv))
-                                            .on(click, event -> serverDetails(srv))
-                                            .data("server", srv.getName())
-                                        .div().css(dropdown)
-                                            .a()
-                                                .id(serverDropDownId)
-                                                .css(clickable, dropdownToggle, name)
-                                                .data(TOGGLE, DROPDOWN)
-                                                .aria(HAS_POPUP, "true")
-                                                .title(srv.getName())
-                                                .textContent(srv.getName())
-                                            .end()
-                                            .ul().css(dropdownMenu).attr(ROLE, MENU).aria(LABELLED_BY, serverDropDownId);
-                                                serverActions(builder, srv);
-                                            builder.end()
-                                        .end()
-                                    .end();
+                                    buildServer(builder, srv);
                                 }
                             builder.end()
                         .end();
@@ -360,6 +378,31 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         // </tbody> @formatter:on
 
         return builder.end().build();
+    }
+
+    private void buildServer(Elements.Builder builder, Server srv) {
+        // @formatter:off
+        String serverDropDownId = IdBuilder.build(srv.getName(), "server", "dropdown");
+        builder.div()
+                .css(server, statusCss(srv))
+                .on(click, event -> serverDetails(srv))
+                .id(IdBuilder.build(srv.getHost(), srv.getName()))
+                .data("server", srv.getName())
+            .div().css(dropdown)
+                .a()
+                    .id(serverDropDownId)
+                    .css(clickable, dropdownToggle, name)
+                    .data(TOGGLE, DROPDOWN)
+                    .aria(HAS_POPUP, "true") //NON-NLS
+                    .title(srv.getName())
+                    .textContent(srv.getName())
+                .end()
+                .ul().css(dropdownMenu).attr(ROLE, MENU).aria(LABELLED_BY, serverDropDownId);
+                    serverActions(builder, srv);
+                builder.end()
+            .end()
+        .end();
+        // @formatter:on
     }
 
     private void adjustTdHeight() {
@@ -562,17 +605,23 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private String[] statusCss(final Server server) {
-        List<String> status = new ArrayList<>();
-        if (server.isAdminMode() || server.isStopped()) {
+        Server localServer = server;
+        Set<String> status = new HashSet<>();
+
+        if (serverActions.isPending(server)) {
+            localServer = serverActions.getPendingServer(server);
+            status.add(withProgress);
+        }
+        if (localServer.isAdminMode() || localServer.isStopped()) {
             status.add(inactive);
-        } else if (server.isSuspending() || server.needsReload() || server.needsRestart()) {
+        } else if (localServer.isSuspending() || localServer.needsReload() || localServer.needsRestart()) {
             status.add(warning);
-        } else if (server.isStarted() || server.isRunning()) {
+        } else if (localServer.isStarted() || localServer.isRunning()) {
             status.add(ok);
-        } else if (server.isFailed()) {
+        } else if (localServer.isFailed()) {
             status.add(error);
         }
-        if (server.isStarting()) {
+        if (localServer.isStarting()) {
             status.add(withProgress);
         }
         return status.toArray(new String[status.size()]);
@@ -586,7 +635,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     @Override
     public void onServerResult(final ServerResultEvent event) {
         stopProgress(serverSelector(event.getServer()));
-        update(null); // TODO Just reload the server and update the server cell
+        updateServer(event.getServer());
     }
 
     private String serverSelector(final Server server) {

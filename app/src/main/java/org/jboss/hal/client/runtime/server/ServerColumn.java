@@ -19,12 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.common.base.Joiner;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import elemental.dom.Element;
+import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -33,8 +35,13 @@ import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.runtime.server.Server;
+import org.jboss.hal.core.runtime.server.ServerActionEvent;
+import org.jboss.hal.core.runtime.server.ServerActionEvent.ServerActionHandler;
 import org.jboss.hal.core.runtime.server.ServerActions;
+import org.jboss.hal.core.runtime.server.ServerResultEvent;
+import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.core.runtime.server.ServerSelectionEvent;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
@@ -53,12 +60,14 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
+import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
@@ -66,12 +75,18 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 @Column(SERVER)
 @Requires(value = {"/host=*/server-config=*", "/host=*/server=*"}, recursive = false)
-public class ServerColumn extends FinderColumn<Server> {
+public class ServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
+
+    private final Dispatcher dispatcher;
+    private final EventBus eventBus;
+    private final Provider<Progress> progress;
+    private final Resources resources;
 
     @Inject
     public ServerColumn(final Finder finder,
             final Dispatcher dispatcher,
             final EventBus eventBus,
+            final @Footer Provider<Progress> progress,
             final StatementContext statementContext,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
@@ -83,12 +98,18 @@ public class ServerColumn extends FinderColumn<Server> {
                 .showCount()
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
+                .onPreview(item -> new ServerPreview(serverActions, item, resources))
         );
+        this.dispatcher = dispatcher;
+        this.eventBus = eventBus;
+        this.progress = progress;
+        this.resources = resources;
 
         addColumnAction(columnActionFactory.add(IdBuilder.build(SERVER, "add"), Names.SERVER,
                 column -> addServer(browseByHosts(finder.getContext()))));
         addColumnAction(columnActionFactory.refresh(IdBuilder.build(SERVER, "refresh")));
 
+        // TODO Use functions instead of composites to prevent errors when reading server resources for stopped servers
         setItemsProvider((context, callback) -> {
             Operation serverOp;
             Operation serverConfigOp;
@@ -262,7 +283,8 @@ public class ServerColumn extends FinderColumn<Server> {
             }
         });
 
-        setPreviewCallback(item -> new ServerPreview(this, serverActions, item, resources));
+        eventBus.addHandler(ServerActionEvent.getType(), this);
+        eventBus.addHandler(ServerResultEvent.getType(), this);
     }
 
     static boolean browseByHosts(FinderContext context) {
@@ -276,5 +298,18 @@ public class ServerColumn extends FinderColumn<Server> {
 
     private void copyServer(Server server, boolean browseByHost) {
         Browser.getWindow().alert(Names.NYI);
+    }
+
+    @Override
+    public void onServerAction(final ServerActionEvent event) {
+        ItemMonitor.startProgress(Server.id(event.getServer().getName()));
+    }
+
+    @Override
+    public void onServerResult(final ServerResultEvent event) {
+        Server server = event.getServer();
+        String itemId = Server.id(server.getName());
+        ItemMonitor.stopProgress(itemId);
+        refresh(RESTORE_SELECTION);
     }
 }

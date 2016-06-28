@@ -22,5 +22,5 @@ package org.jboss.hal.core.runtime;
  * @author Harald Pehl
  */
 public enum Result {
-    SUCCESS, TIMEOUT
+    SUCCESS, ERROR, TIMEOUT
 }
