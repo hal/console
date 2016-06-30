@@ -21,6 +21,7 @@ In order to make the console future proof, it's necessary to rewrite these parts
         - Search can be re-implemented
     - Switch between applications using the breadcrumb
     - Add deployments using drag & drop
+    - Topology overview
     - Macro recording
     - PatternFly compliant
     - Enhanced form items for lists, properties and booleans
@@ -68,7 +69,7 @@ The `npm` module provides a npm package which launches a local web server at htt
 1. `mvn install`
 1. `cd npm`
 1. `node server.js`
-1. Open http://localhost:9090
+1. Open http://localhost:3000
 
 If you don't want to or cannot build locally you can install the npm package [hal-next](https://www.npmjs.com/package/hal-next) which serves a somewhat recent version of HAL.next.
  
