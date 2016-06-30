@@ -33,8 +33,8 @@ public class ServerGroup extends HasServersNode {
         return IdBuilder.build(SERVER_GROUP, name);
     }
 
-    public ServerGroup(final ModelNode node) {
-        super(node);
+    public ServerGroup(final String name, final ModelNode node) {
+        super(name, node);
     }
 
     public ServerGroup(final Property property) {

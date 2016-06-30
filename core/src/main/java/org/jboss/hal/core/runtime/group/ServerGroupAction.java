@@ -15,9 +15,12 @@
  */
 package org.jboss.hal.core.runtime.group;
 
+import java.util.List;
+
 import com.gwtplatform.dispatch.annotation.GenEvent;
 import com.gwtplatform.dispatch.annotation.Order;
 import org.jboss.hal.core.runtime.Action;
+import org.jboss.hal.core.runtime.server.Server;
 
 /**
  * @author Harald Pehl
@@ -26,5 +29,6 @@ import org.jboss.hal.core.runtime.Action;
 public class ServerGroupAction {
 
     @Order(1) ServerGroup serverGroup;
-    @Order(2) Action action;
+    @Order(2) List<Server> servers;
+    @Order(3) Action action;
 }

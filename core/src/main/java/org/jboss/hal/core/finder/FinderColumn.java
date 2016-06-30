@@ -469,6 +469,10 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
     }
 
+    protected boolean isVisible() {
+        return asElement && Elements.isVisible(root) && root.getParentElement() != null;
+    }
+
 
     // ------------------------------------------------------ internal API
 
@@ -505,6 +509,10 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
     private FinderRow<T> row(Element element) {
         return rows.get(element.getId());
+    }
+
+    private FinderRow<T> row(String id) {
+        return rows.get(id);
     }
 
     FinderRow<T> selectedRow() {
@@ -886,18 +894,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                 }
             }
         });
-    }
-
-    /**
-     * Refreshes an existing item.
-     */
-    public void refreshItem(String itemId, T item) {
-        FinderRow<T> row = rows.get(itemId);
-        if (row != null) {
-            row.updateItem(item);
-            row.drawItem();
-            row.updatePreview();
-        }
     }
 
     @Override

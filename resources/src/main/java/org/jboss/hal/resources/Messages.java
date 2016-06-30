@@ -74,6 +74,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml hostControllerTimeout(String name);
     SafeHtml hostNeedsReload(String name);
     SafeHtml hostNeedsRestart(String name);
+    SafeHtml hostPending(String name);
     SafeHtml hostRunning(String name);
     SafeHtml hostStarting(String name);
     SafeHtml hostUndefined(String name);
@@ -106,15 +107,15 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml recordingStopped();
 
     String reload(String name);
+    SafeHtml reloadDomainControllerPending(String name);
     SafeHtml reloadDomainControllerQuestion(String name);
     SafeHtml reloadHostControllerQuestion(String name);
-    SafeHtml reloadHostPending(String name);
+    SafeHtml reloadHostError(String name);
     SafeHtml reloadHostSuccess(String name);
+    SafeHtml reloadServerGroupError(String name);
     SafeHtml reloadServerGroupQuestion(String name);
-    SafeHtml reloadServerGroupPending(String name);
     SafeHtml reloadServerGroupSuccess(String name);
     SafeHtml reloadServerError(String name);
-    SafeHtml reloadServerPending(String name);
     SafeHtml reloadServerQuestion(String name);
     SafeHtml reloadServerSuccess(String name);
 
@@ -128,20 +129,21 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml resourceEnabled(String type, String name);
 
     String restart(String name);
+    SafeHtml restartDomainControllerPending(String name);
     SafeHtml restartDomainControllerQuestion(String name);
     SafeHtml restartHostControllerQuestion(String name);
-    SafeHtml restartHostPending(String name);
+    SafeHtml restartHostError(String name);
     SafeHtml restartHostSuccess(String name);
+    SafeHtml restartServerGroupError(String name);
     SafeHtml restartServerGroupQuestion(String name);
     SafeHtml restartServerGroupSuccess(String name);
     SafeHtml restartServerError(String name);
-    SafeHtml restartServerPending(String name);
     SafeHtml restartServerQuestion(String name);
     SafeHtml restartServerSuccess(String name);
 
+    SafeHtml resumeServerGroupError(String name);
     SafeHtml resumeServerGroupSuccess(String name);
     SafeHtml resumeServerError(String name);
-    SafeHtml resumeServerPending(String name);
     SafeHtml resumeServerSuccess(String name);
 
     SafeHtml serverGroupNoStartedServers(String name);
@@ -153,30 +155,31 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml serverNeedsReload(String name);
     SafeHtml serverNeedsRestart(String name);
     SafeHtml serverRunning(String name);
+    SafeHtml serverPending(String name);
     SafeHtml serverStarting(String name);
     SafeHtml serverStopped(String name);
     SafeHtml serverSuspended(String name);
     SafeHtml serverTimeout(String name);
     SafeHtml serverUndefined(String name);
 
+    SafeHtml startServerGroupError(String name);
     SafeHtml startServerGroupSuccess(String name);
     SafeHtml startServerError(String name);
-    SafeHtml startServerPending(String name);
     SafeHtml startServerSuccess(String name);
 
     String stop(String name);
+    SafeHtml stopServerGroupError(String name);
     SafeHtml stopServerGroupQuestion(String name);
     SafeHtml stopServerGroupSuccess(String name);
     SafeHtml stopServerError(String name);
-    SafeHtml stopServerPending(String name);
     SafeHtml stopServerQuestion(String name);
     SafeHtml stopServerSuccess(String name);
 
     String suspend(String name);
+    SafeHtml suspendServerGroupError(String name);
     SafeHtml suspendServerGroupQuestion(String name);
     SafeHtml suspendServerGroupSuccess(String name);
     SafeHtml suspendServerError(String name);
-    SafeHtml suspendServerPending(String name);
     SafeHtml suspendServerQuestion(String name);
     SafeHtml suspendServerSuccess(String name);
 
@@ -188,11 +191,13 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml txEnableJournalStore();
 
     String updateAvailable(String current, String update);
+    SafeHtml updateHostError(String name);
     SafeHtml updateServerError(String name);
+    SafeHtml updateServerGroupError(String name);
     String unit(String unit);
     SafeHtml unknownError();
     SafeHtml unknownResource();
     String unknownResourceDetails(String address, String reason);
-    SafeHtml unknownState(String type, String name);
+
     //@formatter:on
 }

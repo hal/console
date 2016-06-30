@@ -47,10 +47,12 @@ class ServerPreview extends RuntimePreview<Server> {
     private final Element restartLink;
     private final Element resumeLink;
     private final PreviewAttributes<Server> attributes;
+    private final ServerActions serverActions;
 
     ServerPreview(final ServerActions serverActions, final Server server,
             final Resources resources) {
         super(server.getName(), null, resources);
+        this.serverActions = serverActions;
 
         // @formatter:off
         previewBuilder()
@@ -102,11 +104,14 @@ class ServerPreview extends RuntimePreview<Server> {
 
     @Override
     public void update(final Server server) {
-        if (server.isAdminMode()) {
+        boolean pending = serverActions.isPending(server);
+        if (pending) {
+            pending(resources.messages().serverPending(server.getName()));
+        } else if (server.isAdminMode()) {
             adminOnly(resources.messages().serverAdminMode(server.getName()));
         } else if (server.isStarting()) {
             starting(resources.messages().serverStarting(server.getName()));
-        } else if (server.isSuspending()) {
+        } else if (server.isSuspended()) {
             suspending(resources.messages().serverSuspended(server.getName()));
         } else if (server.needsReload()) {
             needsReload(resources.messages().serverNeedsReload(server.getName()));
@@ -121,15 +126,17 @@ class ServerPreview extends RuntimePreview<Server> {
             alertIcon.setClassName(Icons.STOPPED);
             alertText.setInnerHTML(resources.messages().serverStopped(server.getName()).asString());
         } else {
-            undefined(resources.messages().serverUndefined(server.getName()));
+            unknown(resources.messages().serverUndefined(server.getName()));
         }
 
-        if (server.isSuspending()) {
+        if (pending) {
+            disableAllLinks();
+        } else if (server.isSuspended()) {
             Elements.setVisible(startLink, false);
             Elements.setVisible(stopLink, false);
             Elements.setVisible(reloadLink, false);
             Elements.setVisible(restartLink, false);
-            Elements.setVisible(resumeLink, server.isSuspending());
+            Elements.setVisible(resumeLink, server.isSuspended());
         } else if (server.needsReload() || server.needsRestart()) {
             Elements.setVisible(startLink, false);
             Elements.setVisible(stopLink, false);
@@ -149,15 +156,19 @@ class ServerPreview extends RuntimePreview<Server> {
             Elements.setVisible(restartLink, false);
             Elements.setVisible(resumeLink, false);
         } else {
-            Elements.setVisible(startLink, false);
-            Elements.setVisible(stopLink, false);
-            Elements.setVisible(reloadLink, false);
-            Elements.setVisible(restartLink, false);
-            Elements.setVisible(resumeLink, false);
+            disableAllLinks();
         }
         attributes.setVisible(PROFILE_NAME, server.isStarted());
         attributes.setVisible(RUNNING_MODE, server.isStarted());
         attributes.setVisible(SERVER_STATE, server.isStarted());
         attributes.setVisible(SUSPEND_STATE, server.isStarted());
+    }
+
+    private void disableAllLinks() {
+        Elements.setVisible(startLink, false);
+        Elements.setVisible(stopLink, false);
+        Elements.setVisible(reloadLink, false);
+        Elements.setVisible(restartLink, false);
+        Elements.setVisible(resumeLink, false);
     }
 }

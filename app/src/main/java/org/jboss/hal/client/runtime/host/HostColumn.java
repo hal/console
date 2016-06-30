@@ -37,7 +37,6 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
-import org.jboss.hal.core.runtime.Action;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.runtime.host.HostActionEvent;
@@ -46,6 +45,7 @@ import org.jboss.hal.core.runtime.host.HostActions;
 import org.jboss.hal.core.runtime.host.HostResultEvent;
 import org.jboss.hal.core.runtime.host.HostResultEvent.HostResultHandler;
 import org.jboss.hal.core.runtime.host.HostSelectionEvent;
+import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.token.NameTokens;
@@ -98,6 +98,11 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                                     public void onSuccess(final FunctionContext context) {
                                         List<Host> hosts = context.get(TopologyFunctions.HOSTS);
                                         callback.onSuccess(hosts);
+
+                                        // Restore pending visualization
+                                        hosts.stream()
+                                                .filter(hostActions::isPending)
+                                                .forEach(host -> ItemMonitor.startProgress(Host.id(host)));
                                     }
                                 },
                                 new TopologyFunctions.HostsWithServerConfigs(environment, dispatcher),
@@ -105,14 +110,12 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
 
                 // TODO Change the security context (host scoped roles!)
                 .onItemSelect(host -> eventBus.fireEvent(new HostSelectionEvent(host.getAddressName())))
+                .onPreview(item -> new HostPreview(hostActions, item, resources))
                 .pinnable()
                 .showCount()
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
         );
-
-        eventBus.addHandler(HostActionEvent.getType(), this);
-        eventBus.addHandler(HostResultEvent.getType(), this);
 
         setItemRenderer(item -> new ItemDisplay<Host>() {
             @Override
@@ -146,7 +149,9 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
 
             @Override
             public String getTooltip() {
-                if (item.isAdminMode()) {
+                if (hostActions.isPending(item)) {
+                    return resources.constants().pending();
+                } else if (item.isAdminMode()) {
                     return resources.constants().adminOnly();
                 } else if (item.isStarting()) {
                     return resources.constants().starting();
@@ -163,14 +168,16 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
 
             @Override
             public Element getIcon() {
-                if (item.isAdminMode() || item.isStarting()) {
+                if (hostActions.isPending(item)) {
+                    return Icons.unknown();
+                } else if (item.isAdminMode() || item.isStarting()) {
                     return Icons.disabled();
                 } else if (item.needsReload() || item.needsRestart()) {
                     return Icons.warning();
                 } else if (item.isRunning()) {
                     return Icons.ok();
                 } else {
-                    return Icons.error();
+                    return Icons.unknown();
                 }
             }
 
@@ -185,41 +192,35 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                         .with(HOST, item.getAddressName()).build();
                 List<ItemAction<Host>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.viewAndMonitor(Host.id(item), placeRequest));
-                actions.add(new ItemAction<>(resources.constants().reload(), hostActions::reload));
-                actions.add(new ItemAction<>(resources.constants().restart(), hostActions::restart));
-                // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or :take-snapshot
+                if (!hostActions.isPending(item)) {
+                    actions.add(new ItemAction<>(resources.constants().reload(), hostActions::reload));
+                    actions.add(new ItemAction<>(resources.constants().restart(), hostActions::restart));
+                    // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or :take-snapshot
+                }
                 return actions;
             }
         });
 
-        setPreviewCallback(item -> new HostPreview(this, hostActions, item, resources));
+        eventBus.addHandler(HostActionEvent.getType(), this);
+        eventBus.addHandler(HostResultEvent.getType(), this);
     }
 
     @Override
     public void onHostAction(final HostActionEvent event) {
-        Host host = event.getHost();
-        if ((event.getAction() == Action.RELOAD || event.getAction() == Action.RESTART) &&
-                !host.isDomainController()) {
+        if (isVisible()) {
+            Host host = event.getHost();
             ItemMonitor.startProgress(Host.id(host));
+            event.getServers().forEach(server -> ItemMonitor.startProgress(Server.id(server.getName())));
         }
     }
 
     @Override
     public void onHostResult(final HostResultEvent event) {
-        Host host = event.getHost();
-        switch (event.getResult()) {
-            case SUCCESS:
-                if (!host.isDomainController()) {
-                    ItemMonitor.stopProgress(Host.id(host));
-                }
-                refresh(RESTORE_SELECTION);
-                break;
-            case TIMEOUT:
-                if (!host.isDomainController()) {
-                    ItemMonitor.stopProgress(Host.id(host));
-                }
-                refreshItem(Host.id(host), host);
-                break;
+        if (isVisible()) {
+            Host host = event.getHost();
+            ItemMonitor.stopProgress(Host.id(host));
+            event.getServers().forEach(server -> ItemMonitor.stopProgress(Server.id(server.getName())));
+            refresh(RESTORE_SELECTION);
         }
     }
 }

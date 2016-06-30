@@ -36,12 +36,16 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
-import org.jboss.hal.core.runtime.SuspendState;
+import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.group.ServerGroup;
+import org.jboss.hal.core.runtime.group.ServerGroupActionEvent;
+import org.jboss.hal.core.runtime.group.ServerGroupActionEvent.ServerGroupActionHandler;
 import org.jboss.hal.core.runtime.group.ServerGroupActions;
+import org.jboss.hal.core.runtime.group.ServerGroupResultEvent;
+import org.jboss.hal.core.runtime.group.ServerGroupResultEvent.ServerGroupResultHandler;
 import org.jboss.hal.core.runtime.group.ServerGroupSelectionEvent;
-import org.jboss.hal.core.runtime.server.ServerConfigStatus;
+import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.token.NameTokens;
@@ -52,6 +56,7 @@ import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 import static org.jboss.hal.resources.CSS.itemText;
@@ -62,7 +67,8 @@ import static org.jboss.hal.resources.CSS.subtitle;
  */
 @Column(SERVER_GROUP)
 @Requires(value = "/server-group=*", recursive = false)
-public class ServerGroupColumn extends FinderColumn<ServerGroup> {
+public class ServerGroupColumn extends FinderColumn<ServerGroup>
+        implements ServerGroupActionHandler, ServerGroupResultHandler {
 
     @Inject
     public ServerGroupColumn(final Finder finder,
@@ -146,26 +152,43 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
                 actions.add(itemActionFactory.viewAndMonitor(ServerGroup.id(item.getName()), placeRequest));
 
                 // Order is: reload, restart, suspend, resume, stop, start
-                if (item.hasServers(ServerConfigStatus.STARTED)) {
+                if (item.hasServers(Server::isStarted)) {
                     actions.add(new ItemAction<>(resources.constants().reload(), serverGroupActions::reload));
                     actions.add(new ItemAction<>(resources.constants().restart(), serverGroupActions::restart));
                 }
-                if (item.getServers(ServerConfigStatus.STARTED).size() - item.getServers(SuspendState.SUSPENDED)
+                if (item.getServers(Server::isStarted).size() - item.getServers(Server::isSuspended)
                         .size() > 0) {
                     actions.add(new ItemAction<>(resources.constants().suspend(), serverGroupActions::suspend));
                 }
-                if (item.hasServers(SuspendState.SUSPENDED)) {
+                if (item.hasServers(Server::isSuspended)) {
                     actions.add(new ItemAction<>(resources.constants().resume(), serverGroupActions::resume));
                 }
-                if (item.hasServers(ServerConfigStatus.STARTED)) {
+                if (item.hasServers(Server::isStarted)) {
                     actions.add(new ItemAction<>(resources.constants().stop(), serverGroupActions::stop));
                 }
-                if (item.hasServers(ServerConfigStatus.STOPPED, ServerConfigStatus.DISABLED,
-                        ServerConfigStatus.FAILED)) {
+                if (item.hasServers(server -> server.isStopped() || server.isFailed())) {
                     actions.add(new ItemAction<>(resources.constants().start(), serverGroupActions::start));
                 }
                 return actions;
             }
         });
+
+        eventBus.addHandler(ServerGroupActionEvent.getType(), this);
+        eventBus.addHandler(ServerGroupResultEvent.getType(), this);
+    }
+
+    @Override
+    public void onServerGroupAction(final ServerGroupActionEvent event) {
+        if (isVisible()) {
+            event.getServers().forEach(server -> ItemMonitor.startProgress(Server.id(server.getName())));
+        }
+    }
+
+    @Override
+    public void onServerGroupResult(final ServerGroupResultEvent event) {
+        if (isVisible()) {
+            event.getServers().forEach(server -> ItemMonitor.stopProgress(Server.id(server.getName())));
+            refresh(RESTORE_SELECTION);
+        }
     }
 }

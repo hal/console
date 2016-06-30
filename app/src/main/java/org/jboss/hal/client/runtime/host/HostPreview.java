@@ -39,12 +39,14 @@ class HostPreview extends RuntimePreview<Host> {
     private final Element reloadLink;
     private final Element restartLink;
     private final PreviewAttributes<Host> attributes;
+    private final HostActions hostActions;
     private final Resources resources;
 
     @SuppressWarnings("HardCodedStringLiteral")
-    HostPreview(final HostColumn hostColumn, final HostActions hostActions, final Host host,
+    HostPreview(final HostActions hostActions, final Host host,
             final Resources resources) {
         super(host.getName(), host.isDomainController() ? Names.DOMAIN_CONTROLLER : Names.HOST_CONTROLLER, resources);
+        this.hostActions = hostActions;
         this.resources = resources;
 
         // @formatter:off
@@ -90,7 +92,9 @@ class HostPreview extends RuntimePreview<Host> {
 
     @Override
     public void update(final Host host) {
-        if (host.isAdminMode()) {
+        if (hostActions.isPending(host)) {
+            pending(resources.messages().hostPending(host.getName()));
+        } else if (host.isAdminMode()) {
             adminOnly(resources.messages().hostAdminMode(host.getName()));
         } else if (host.isStarting()) {
             starting(resources.messages().hostStarting(host.getName()));
@@ -101,7 +105,7 @@ class HostPreview extends RuntimePreview<Host> {
         } else if (host.isRunning()) {
             running(resources.messages().hostRunning(host.getName()));
         } else {
-            undefined(resources.messages().hostUndefined(host.getName()));
+            unknown(resources.messages().hostUndefined(host.getName()));
         }
 
         Elements.setVisible(reloadLink, host.needsReload());

@@ -206,6 +206,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String operations();
     String output();
 
+    String pending();
     String pin();
     String ping();
     String platform();
@@ -250,7 +251,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String summary();
     String supportsExpressions();
     String suspend();
-    String suspending();
+    String suspended();
 
     String tags();
     String testConnection();

@@ -15,9 +15,12 @@
  */
 package org.jboss.hal.core.runtime.host;
 
+import java.util.List;
+
 import com.gwtplatform.dispatch.annotation.GenEvent;
 import com.gwtplatform.dispatch.annotation.Order;
 import org.jboss.hal.core.runtime.Result;
+import org.jboss.hal.core.runtime.server.Server;
 
 /**
  * @author Harald Pehl
@@ -26,5 +29,6 @@ import org.jboss.hal.core.runtime.Result;
 public class HostResult {
 
     @Order(1) Host host;
-    @Order(2) Result result;
+    @Order(2) List<Server> servers;
+    @Order(3) Result result;
 }

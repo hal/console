@@ -15,17 +15,19 @@
  */
 package org.jboss.hal.client.runtime;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import javax.inject.Provider;
 
 import com.google.common.base.Joiner;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
+import elemental.dom.Document;
 import elemental.dom.Element;
 import elemental.dom.NodeList;
 import elemental.events.EventListener;
@@ -38,7 +40,6 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
-import org.jboss.hal.core.runtime.Action;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.group.ServerGroupActionEvent;
@@ -56,7 +57,6 @@ import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActionEvent;
 import org.jboss.hal.core.runtime.server.ServerActionEvent.ServerActionHandler;
 import org.jboss.hal.core.runtime.server.ServerActions;
-import org.jboss.hal.core.runtime.server.ServerConfigStatus;
 import org.jboss.hal.core.runtime.server.ServerResultEvent;
 import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.dmr.ModelNode;
@@ -73,9 +73,6 @@ import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.core.runtime.SuspendState.SUSPENDED;
-import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STARTED;
-import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STOPPED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.GROUP;
 import static org.jboss.hal.resources.CSS.*;
@@ -89,8 +86,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private static final String LOADING_SECTION = "loading-section";
     private static final String TOPOLOGY_SECTION = "topology-section";
-    private static final String SERVER_GROUP_ATTRIBUTES_SECTION = "server-group-attributes-section";
     private static final String HOST_ATTRIBUTES_SECTION = "host-attributes-section";
+    private static final String SERVER_GROUP_ATTRIBUTES_SECTION = "server-group-attributes-section";
     private static final String SERVER_ATTRIBUTES_SECTION = "server-attributes-section";
 
     private final Environment environment;
@@ -103,8 +100,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private final Resources resources;
     private final Element loadingSection;
     private final Element topologySection;
-    private final Element serverGroupAttributesSection;
     private final Element hostAttributesSection;
+    private final Element serverGroupAttributesSection;
     private final Element serverAttributesSection;
     private final PreviewAttributes<ServerGroup> serverGroupAttributes;
     private final PreviewAttributes<Host> hostAttributes;
@@ -138,7 +135,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         // @formatter:off
         previewBuilder()
             .p()
-                .a().css(clickable, pullRight).on(click, event-> update(null))
+                .a().css(clickable, pullRight).on(click, event -> update(null))
                     .span().css(fontAwesome("refresh"), marginRight4).end()
                     .span().textContent(resources.constants().refresh()).end()
                 .end()
@@ -154,10 +151,6 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         loadingSection = previewBuilder().referenceFor(LOADING_SECTION);
         topologySection = previewBuilder().referenceFor(TOPOLOGY_SECTION);
 
-        serverGroupAttributes = new PreviewAttributes<>(new ServerGroup(new ModelNode()), Names.SERVER_GROUP,
-                Arrays.asList(NAME, PROFILE, SOCKET_BINDING_GROUP, SOCKET_BINDING_PORT_OFFSET,
-                        SOCKET_BINDING_DEFAULT_INTERFACE))
-                .end();
         hostAttributes = new PreviewAttributes<>(new Host(new ModelNode()), Names.HOST,
                 asList(NAME, RELEASE_CODENAME, RELEASE_VERSION, PRODUCT_NAME, PRODUCT_VERSION,
                         HOST_STATE, RUNNING_MODE))
@@ -171,6 +164,10 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                     };
                 })
                 .end();
+        serverGroupAttributes = new PreviewAttributes<>(new ServerGroup("", new ModelNode()), Names.SERVER_GROUP,
+                Arrays.asList(NAME, PROFILE, SOCKET_BINDING_GROUP, SOCKET_BINDING_PORT_OFFSET,
+                        SOCKET_BINDING_DEFAULT_INTERFACE))
+                .end();
         serverAttributes = new PreviewAttributes<>(new Server("", new ModelNode()), Names.SERVER,
                 asList(NAME, HOST, GROUP, PROFILE_NAME, AUTO_START, SOCKET_BINDING_PORT_OFFSET, STATUS, RUNNING_MODE,
                         SERVER_STATE, SUSPEND_STATE))
@@ -178,18 +175,18 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
         // @formatter:off
         previewBuilder()
-            .section().rememberAs(SERVER_GROUP_ATTRIBUTES_SECTION)
-                .addAll(serverGroupAttributes)
-            .end()
             .section().rememberAs(HOST_ATTRIBUTES_SECTION)
                 .addAll(hostAttributes)
+            .end()
+            .section().rememberAs(SERVER_GROUP_ATTRIBUTES_SECTION)
+                .addAll(serverGroupAttributes)
             .end()
             .section().rememberAs(SERVER_ATTRIBUTES_SECTION)
                 .addAll(serverAttributes)
             .end();
         // @formatter:on
-        serverGroupAttributesSection = previewBuilder().referenceFor(SERVER_GROUP_ATTRIBUTES_SECTION);
         hostAttributesSection = previewBuilder().referenceFor(HOST_ATTRIBUTES_SECTION);
+        serverGroupAttributesSection = previewBuilder().referenceFor(SERVER_GROUP_ATTRIBUTES_SECTION);
         serverAttributesSection = previewBuilder().referenceFor(SERVER_ATTRIBUTES_SECTION);
     }
 
@@ -197,7 +194,14 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     // ------------------------------------------------------ dmr functions
 
     @Override
+    @SuppressWarnings("HardCodedStringLiteral")
     public void update(final StaticItem item) {
+        // remeber selection
+        Element element = Browser.getDocument().querySelector("." + topology + " ." + selected);
+        String hostName = element != null ? String.valueOf(element.getDataset().at("host")) : null;
+        String serverGroupName = element != null ? String.valueOf(element.getDataset().at("serverGroup")) : null;
+        String serverName = element != null ? String.valueOf(element.getDataset().at("server")) : null;
+
         clearSelected();
         Elements.setVisible(loadingSection, false);
         Elements.setVisible(topologySection, false);
@@ -230,6 +234,26 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                         topologySection.appendChild(buildTable(hosts, serverGroups, servers));
                         Elements.setVisible(topologySection, true);
                         adjustTdHeight();
+
+                        // restore selection
+                        if (hostName != null) {
+                            hosts.stream()
+                                    .filter(host -> hostName.equals(host.getName()))
+                                    .findFirst()
+                                    .ifPresent(host -> hostDetails(host));
+                        }
+                        if (serverGroupName != null) {
+                            serverGroups.stream()
+                                    .filter(serverGroup -> serverGroupName.equals(serverGroup.getName()))
+                                    .findFirst()
+                                    .ifPresent(serverGroup -> serverGroupDetails(serverGroup));
+                        }
+                        if (serverName != null) {
+                            servers.stream()
+                                    .filter(server -> serverName.equals(server.getName()))
+                                    .findFirst()
+                                    .ifPresent(server -> serverDetails(server));
+                        }
                     }
                 },
                 new TopologyFunctions.Topology(environment, dispatcher),
@@ -247,26 +271,41 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
                     @Override
                     public void onSuccess(final FunctionContext context) {
-                        Server updatedServer = context.pop();
-                        Element existingServerElement = Browser.getDocument()
-                                .getElementById(IdBuilder.build(updatedServer.getHost(), updatedServer.getName()));
-                        if (existingServerElement != null) {
-                            boolean hasSelection = existingServerElement.getClassList().contains(selected);
-                            Element parent = existingServerElement.getParentElement();
-                            if (parent != null) {
-                                Elements.Builder builder1 = new Elements.Builder();
-                                buildServer(builder1, updatedServer);
-                                Element updatedServerElement = builder1.build();
-                                parent.replaceChild(updatedServerElement, existingServerElement);
-                                if (hasSelection) {
-                                    serverDetails(updatedServer);
-                                }
-                            }
+                        Document document = Browser.getDocument();
+
+                        Host host = context.get(TopologyFunctions.HOST);
+                        ServerGroup serverGroup = context.get(TopologyFunctions.SERVER_GROUP);
+                        if (host != null && serverGroup != null) {
+                            // Does not matter where we take the updated server from (must be included in both
+                            // host and server group)
+                            host.getServers().stream()
+                                    .filter(srv -> srv.getHost().equals(server.getHost()) &&
+                                            srv.getName().equals(server.getName()))
+                                    .findFirst()
+                                    .ifPresent(updatedServer -> {
+                                        String serverId = IdBuilder.build(updatedServer.getHost(), updatedServer.getName());
+                                        replaceElement(document.getElementById(serverId),
+                                                () -> serverElement(updatedServer),
+                                                whatever -> serverDetails(updatedServer));
+                                    });
+
+                            // Update not only the server, but also the host and server group elements. Since the
+                            // server's state has changed the host and server group dropdown links need to be updated
+                            // as well.
+                            replaceElement(document.querySelector(hostSelector(host)),
+                                    () -> hostElement(host),
+                                    whatever -> hostDetails(host));
+                            replaceElement(document.querySelector(serverGroupSelector(serverGroup)),
+                                    () -> serverGroupElement(serverGroup),
+                                    updatedElement -> serverGroupDetails(serverGroup));
                         }
                     }
                 },
-                new TopologyFunctions.ServerConfigUpdate(dispatcher, server),
-                new TopologyFunctions.ServerUpdate(dispatcher));
+                new TopologyFunctions.HostWithServerConfigs(server.getHost(), dispatcher),
+                new TopologyFunctions.HostStartedServers(dispatcher),
+                new TopologyFunctions.ServerGroupWithServerConfigs(server.getServerGroup(), dispatcher),
+                new TopologyFunctions.ServerGroupStartedServers(dispatcher)
+        );
     }
 
 
@@ -296,33 +335,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                             .appendHtmlConstant("&darr;").toSafeHtml())
                 .end();
                 for (ServerGroup serverGroup : serverGroups) {
-                    String serverGroupDropDownId = IdBuilder.build(serverGroup.getName(), "server-group", "dropdown");
-                    builder.th()
-                            .on(click, event -> serverGroupDetails(serverGroup))
-                            .data("serverGroup", serverGroup.getName())
-                        .div().css(serverGroupContainer)
-                            // The dropdown is also added in case there are no servers. Otherwise the heights of
-                            // the cells w/ and w/o servers would be different.
-                            .div().css(dropdown);
-                                if (serverGroup.hasServers()) {
-                                    builder.a().id(serverGroupDropDownId)
-                                        .css(clickable, dropdownToggle, name)
-                                        .data(TOGGLE, DROPDOWN)
-                                        .aria(HAS_POPUP, "true")
-                                        .title(serverGroup.getName())
-                                        .textContent(serverGroup.getName())
-                                    .end()
-                                    .ul().css(dropdownMenu).attr(ROLE, MENU).aria(LABELLED_BY, serverGroupDropDownId);
-                                        serverGroupActions(builder, serverGroup);
-                                    builder.end();
-                                } else {
-                                    builder.span().css(name).title(serverGroup.getName())
-                                        .textContent(serverGroup.getName())
-                                    .end();
-                                }
-                            builder.end()
-                        .end()
-                    .end();
+                    buildServerGroup(builder, serverGroup);
                 }
             builder.end()
         .end();
@@ -331,30 +344,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         // <tbody> @formatter:off
         builder.tbody();
         for (Host host : hosts) {
-            String hostDropDownId = IdBuilder.build(host.getName(), "host", "dropdown");
-            builder.tr()
-                .th().css(rowHeader)
-                        .on(click, event -> hostDetails(host))
-                        .data("host", host.getName())
-                    .div().css(hostContainer)
-                        .div().css(dropdown)
-                            .a()
-                                .id(hostDropDownId)
-                                .css(clickable, dropdownToggle, name)
-                                .data(TOGGLE, DROPDOWN)
-                                .aria(HAS_POPUP, "true")
-                                .title(host.getName());
-                                if (host.isDomainController()) {
-                                    builder.span().css(fontAwesome("star"), marginRight4).title(Names.DOMAIN_CONTROLLER).end();
-                                }
-                                builder.span().textContent(host.getName()).end()
-                            .end()
-                            .ul().css(dropdownMenu).attr(ROLE, MENU).aria(LABELLED_BY, hostDropDownId);
-                                hostActions(builder, host);
-                            builder.end()
-                        .end()
-                    .end()
-                .end();
+            builder.tr();
+                buildHost(builder, host);
                 for (ServerGroup serverGroup : serverGroups) {
                     List<Server> matchingServers =  servers.stream()
                             .filter(sc -> host.getName().equals(sc.getHost()) && serverGroup.getName().equals(sc.getServerGroup()))
@@ -380,33 +371,139 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         return builder.end().build();
     }
 
-    private void buildServer(Elements.Builder builder, Server srv) {
+    private void buildHost(final Elements.Builder builder, final Host host) {
         // @formatter:off
-        String serverDropDownId = IdBuilder.build(srv.getName(), "server", "dropdown");
-        builder.div()
-                .css(server, statusCss(srv))
-                .on(click, event -> serverDetails(srv))
-                .id(IdBuilder.build(srv.getHost(), srv.getName()))
-                .data("server", srv.getName())
-            .div().css(dropdown)
-                .a()
-                    .id(serverDropDownId)
-                    .css(clickable, dropdownToggle, name)
-                    .data(TOGGLE, DROPDOWN)
-                    .aria(HAS_POPUP, "true") //NON-NLS
-                    .title(srv.getName())
-                    .textContent(srv.getName())
-                .end()
-                .ul().css(dropdownMenu).attr(ROLE, MENU).aria(LABELLED_BY, serverDropDownId);
-                    serverActions(builder, srv);
+        String hostDropDownId = Host.id(host);
+        builder.th().css(rowHeader, statusCss(host))
+                .on(click, event -> hostDetails(host))
+                .data("host", host.getName())
+            .div().css(hostContainer)
+                // The dropdown is also added if there are no servers. Otherwise the heights of
+                // the cells w/ and w/o servers would be different.
+                .div().css(dropdown);
+                    if (host.hasServers() && !hostActions.isPending(host)) {
+                        builder.a()
+                            .id(hostDropDownId)
+                            .css(clickable, dropdownToggle, name)
+                            .data(TOGGLE, DROPDOWN)
+                            .aria(HAS_POPUP, "true") //NON-NLS
+                            .title(host.getName());
+                            if (host.isDomainController()) {
+                                builder.span().css(fontAwesome("star"), marginRight4).title(Names.DOMAIN_CONTROLLER).end();
+                            }
+                            builder.span().textContent(host.getName()).end()
+                        .end()
+                        .ul().css(dropdownMenu).attr(ROLE, MENU).aria(LABELLED_BY, hostDropDownId);
+                            hostActions(builder, host);
+                        builder.end();
+                    } else {
+                        builder.span().css(name).title(host.getName())
+                            .textContent(host.getName())
+                        .end();
+                    }
                 builder.end()
             .end()
         .end();
         // @formatter:on
     }
 
+    private Element hostElement(Host host) {
+        Elements.Builder builder = new Elements.Builder();
+        buildHost(builder, host);
+        return builder.build();
+    }
+
+    private void buildServerGroup(final Elements.Builder builder, final ServerGroup serverGroup) {
+        // @formatter:off
+        String serverGroupDropDownId = ServerGroup.id(serverGroup.getName());
+        builder.th()
+                .on(click, event -> serverGroupDetails(serverGroup))
+                .data("serverGroup", serverGroup.getName())
+            .div().css(serverGroupContainer)
+                // The dropdown is also added if there are no servers. Otherwise the heights of
+                // the cells w/ and w/o servers would be different.
+                .div().css(dropdown);
+                    if (serverGroup.hasServers() && !serverGroupActions.isPending(serverGroup)) {
+                        builder.a().id(serverGroupDropDownId)
+                            .css(clickable, dropdownToggle, name)
+                            .data(TOGGLE, DROPDOWN)
+                            .aria(HAS_POPUP, "true") //NON-NLS
+                            .title(serverGroup.getName())
+                            .textContent(serverGroup.getName())
+                        .end()
+                        .ul().css(dropdownMenu).attr(ROLE, MENU).aria(LABELLED_BY, serverGroupDropDownId);
+                            serverGroupActions(builder, serverGroup);
+                        builder.end();
+                    } else {
+                        builder.span().css(name).title(serverGroup.getName())
+                            .textContent(serverGroup.getName())
+                        .end();
+                    }
+                builder.end()
+            .end()
+        .end();
+        // @formatter:on
+    }
+
+    private Element serverGroupElement(ServerGroup serverGroup) {
+        Elements.Builder builder = new Elements.Builder();
+        buildServerGroup(builder, serverGroup);
+        return builder.build();
+    }
+
+    private void buildServer(Elements.Builder builder, Server srv) {
+        // @formatter:off
+        String serverDropDownId = Server.id(srv.getName());
+        builder.div()
+                .css(server, statusCss(srv))
+                .on(click, event -> serverDetails(srv))
+                .id(IdBuilder.build(srv.getHost(), srv.getName()))
+                .data(SERVER, srv.getName())
+            .div().css(dropdown);
+                if (!serverActions.isPending(srv)) {
+                    builder.a()
+                        .id(serverDropDownId)
+                        .css(clickable, dropdownToggle, name)
+                        .data(TOGGLE, DROPDOWN)
+                        .aria(HAS_POPUP, "true") //NON-NLS
+                        .title(srv.getName())
+                        .textContent(srv.getName())
+                    .end()
+                    .ul().css(dropdownMenu).attr(ROLE, MENU).aria(LABELLED_BY, serverDropDownId);
+                        serverActions(builder, srv);
+                    builder.end();
+                } else {
+                    builder.span().css(name).title(srv.getName())
+                        .textContent(srv.getName())
+                    .end();
+                }
+            builder.end()
+        .end();
+        // @formatter:on
+    }
+
+    private Element serverElement(Server server) {
+        Elements.Builder builder = new Elements.Builder();
+        buildServer(builder, server);
+        return builder.build();
+    }
+
+    private void replaceElement(Element existingElement, Supplier<Element> updateElement, Consumer<Element> select) {
+        if (existingElement != null) {
+            boolean hasSelection = existingElement.getClassList().contains(selected);
+            Element parent = existingElement.getParentElement();
+            if (parent != null) {
+                Element updatedElement = updateElement.get();
+                parent.replaceChild(updatedElement, existingElement);
+                if (hasSelection && select != null) {
+                    select.accept(updatedElement);
+                }
+            }
+        }
+    }
+
     private void adjustTdHeight() {
-        NodeList servers = Browser.getDocument().querySelectorAll("." + CSS.topology + " ." + CSS.servers);
+        NodeList servers = Browser.getDocument().querySelectorAll("." + topology + " ." + CSS.servers);
         Elements.elements(servers).forEach(element ->
                 element.getStyle().setHeight(element.getParentElement().getOffsetHeight() - 1, PX));
     }
@@ -418,8 +515,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private void clearSelected() {
-        NodeList selected = Browser.getDocument().querySelectorAll("." + CSS.topology + " ." + CSS.selected);
-        Elements.elements(selected).forEach(element -> element.getClassList().remove(CSS.selected));
+        NodeList selectedNodes = Browser.getDocument().querySelectorAll("." + topology + " ." + selected);
+        Elements.elements(selectedNodes).forEach(element -> element.getClassList().remove(selected));
     }
 
     private void actionLink(Elements.Builder builder, EventListener listener, String text) {
@@ -436,6 +533,81 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private void stopProgress(String selector) {
         Elements.stream(Browser.getDocument().querySelectorAll(selector))
                 .forEach(element -> element.getClassList().remove(withProgress));
+    }
+
+    private void disableDropdown(String id, String name) {
+        Element link = Browser.getDocument().getElementById(id);
+        if (link != null) {
+            Element parent = link.getParentElement();
+            Element ul = link.getNextElementSibling();
+            if (parent != null && ul != null) {
+                Element noLink = new Elements.Builder().span().css(CSS.name).title(name).textContent(name).end().build();
+                parent.getClassList().remove("open"); //NON-NLS
+                parent.replaceChild(noLink, link);
+                parent.removeChild(ul);
+            }
+        }
+    }
+
+    private boolean isVisible() {
+        return Elements.isVisible(topologySection) && topologySection.getParentElement() != null;
+    }
+
+
+    // ------------------------------------------------------ host
+
+    private void hostDetails(final Host host) {
+        clearSelected();
+        Element element = Browser.getDocument().querySelector(hostSelector(host));
+        if (element != null) {
+            element.getClassList().add(selected);
+        }
+
+        hostAttributes.refresh(host);
+        hostAttributes.setVisible(HOST_STATE, hostActions.isPending(host));
+        hostAttributes.setVisible(RUNNING_MODE, hostActions.isPending(host));
+        Elements.setVisible(serverGroupAttributesSection, false);
+        Elements.setVisible(hostAttributesSection, true);
+        Elements.setVisible(serverAttributesSection, false);
+    }
+
+    private void hostActions(final Elements.Builder builder, final Host host) {
+        actionLink(builder, event -> hostActions.reload(host), resources.constants().reload());
+        actionLink(builder, event -> hostActions.restart(host), resources.constants().restart());
+    }
+
+    private String[] statusCss(final Host host) {
+        return hostActions.isPending(host) ? new String[]{withProgress} : new String[]{};
+    }
+
+    @Override
+    public void onHostAction(final HostActionEvent event) {
+        if (isVisible()) {
+            Host host = event.getHost();
+
+            disableDropdown(Host.id(host), host.getName());
+            startProgress(hostSelector(host));
+
+            event.getServers().forEach(server -> {
+                disableDropdown(Server.id(server.getName()), server.getName());
+                startProgress(serverSelector(server));
+            });
+        }
+    }
+
+    @Override
+    public void onHostResult(final HostResultEvent event) {
+        if (isVisible()) {
+            Host host = event.getHost();
+
+            stopProgress(hostSelector(host));
+            event.getServers().forEach(server -> stopProgress(serverSelector(server)));
+            update(null);
+        }
+    }
+
+    private String hostSelector(final Host host) {
+        return "[data-host=" + host.getName() + "]"; //NON-NLS
     }
 
 
@@ -456,115 +628,43 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private void serverGroupActions(final Elements.Builder builder, final ServerGroup serverGroup) {
         // Order is: reload, restart, suspend, resume, stop, start
-        if (serverGroup.hasServers(ServerConfigStatus.STARTED)) {
+        if (serverGroup.hasServers(Server::isStarted)) {
             actionLink(builder, event -> serverGroupActions.reload(serverGroup), resources.constants().reload());
             actionLink(builder, event -> serverGroupActions.restart(serverGroup), resources.constants().restart());
         }
-        if (serverGroup.getServers(ServerConfigStatus.STARTED).size() - serverGroup.getServers(SUSPENDED).size() > 0) {
+        if (serverGroup.getServers(Server::isStarted).size() - serverGroup.getServers(Server::isSuspended).size() > 0) {
             actionLink(builder, event -> serverGroupActions.suspend(serverGroup), resources.constants().suspend());
         }
-        if (serverGroup.hasServers(SUSPENDED)) {
+        if (serverGroup.hasServers(Server::isSuspended)) {
             actionLink(builder, event -> serverGroupActions.resume(serverGroup),
                     resources.constants().resume());
         }
-        if (serverGroup.hasServers(ServerConfigStatus.STARTED)) {
+        if (serverGroup.hasServers(Server::isStarted)) {
             actionLink(builder, event -> serverGroupActions.stop(serverGroup), resources.constants().stop());
         }
-        if (serverGroup
-                .hasServers(ServerConfigStatus.STOPPED, ServerConfigStatus.DISABLED, ServerConfigStatus.FAILED)) {
+        if (serverGroup.hasServers(server -> server.isStopped() || server.isFailed())) {
             actionLink(builder, event -> serverGroupActions.start(serverGroup), resources.constants().start());
         }
     }
 
     @Override
     public void onServerGroupAction(final ServerGroupActionEvent event) {
-        List<String> selectors = new ArrayList<>();
         ServerGroup serverGroup = event.getServerGroup();
-        selectors.add(serverGroupSelector(serverGroup));
-
-        switch (event.getAction()) {
-            case RELOAD:
-            case RESTART:
-            case SUSPEND:
-            case STOP:
-                selectors.addAll(serverGroup.getServers(STARTED).stream().map(this::serverSelector).collect(toList()));
-                break;
-            case RESUME:
-                selectors.addAll(
-                        serverGroup.getServers(SUSPENDED).stream().map(this::serverSelector).collect(toList()));
-                break;
-            case START:
-                selectors.addAll(serverGroup.getServers(STOPPED, ServerConfigStatus.DISABLED, ServerConfigStatus.FAILED)
-                        .stream().map(this::serverSelector).collect(toList()));
-                break;
-        }
-        startProgress(Joiner.on(", ").skipNulls().join(selectors));
-
+        disableDropdown(ServerGroup.id(serverGroup.getName()), serverGroup.getName());
+        event.getServers().forEach(server -> {
+            disableDropdown(Server.id(server.getName()), server.getName());
+            startProgress(serverSelector(server));
+        });
     }
 
     @Override
     public void onServerGroupResult(final ServerGroupResultEvent event) {
-        List<String> selectors = new ArrayList<>();
-        ServerGroup serverGroup = event.getServerGroup();
-        selectors.add(serverGroupSelector(serverGroup));
-        selectors.addAll(serverGroup.getServers().stream().map(this::serverSelector).collect(toList()));
-        stopProgress(Joiner.on(", ").skipNulls().join(selectors));
+        event.getServers().forEach(server -> stopProgress(serverSelector(server)));
         update(null);
     }
 
     private String serverGroupSelector(final ServerGroup serverGroup) {
         return "[data-server-group=" + serverGroup.getName() + "]"; //NON-NLS
-    }
-
-
-    // ------------------------------------------------------ host
-
-    private void hostDetails(final Host host) {
-        clearSelected();
-        Element element = Browser.getDocument().querySelector(hostSelector(host));
-        if (element != null) {
-            element.getClassList().add(selected);
-        }
-
-        hostAttributes.refresh(host);
-        Elements.setVisible(serverGroupAttributesSection, false);
-        Elements.setVisible(hostAttributesSection, true);
-        Elements.setVisible(serverAttributesSection, false);
-    }
-
-    private void hostActions(final Elements.Builder builder, final Host host) {
-        actionLink(builder, event -> hostActions.reload(host), resources.constants().reload());
-        actionLink(builder, event -> hostActions.restart(host), resources.constants().restart());
-    }
-
-    @Override
-    public void onHostAction(final HostActionEvent event) {
-        List<String> selectors = new ArrayList<>();
-        Host host = event.getHost();
-        selectors.add(hostSelector(host));
-
-        if (event.isWithServers() && event.getAction() == Action.RELOAD || event.getAction() == Action.RESTART) {
-            selectors.addAll(host.getServers(STARTED).stream().map(this::serverSelector).collect(toList()));
-        }
-        startProgress(Joiner.on(", ").skipNulls().join(selectors));
-    }
-
-    @Override
-    public void onHostResult(final HostResultEvent event) {
-        List<String> selectors = new ArrayList<>();
-        Host host = event.getHost();
-        selectors.add(hostSelector(host));
-        selectors.addAll(host.getServers().stream().map(this::serverSelector).collect(toList()));
-        stopProgress(Joiner.on(", ").skipNulls().join(selectors));
-        update(null);
-
-        String selector = "[data-host=" + event.getHost().getName() + "]"; //NON-NLS
-        stopProgress(selector);
-        update(null);
-    }
-
-    private String hostSelector(final Host host) {
-        return "[data-host=" + host.getName() + "]"; //NON-NLS
     }
 
 
@@ -578,14 +678,13 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         }
 
         serverAttributes.refresh(server);
-        Elements.setVisible(serverGroupAttributesSection, false);
-        Elements.setVisible(hostAttributesSection, false);
-        Elements.setVisible(serverAttributesSection, true);
-
         serverAttributes.setVisible(PROFILE_NAME, server.isStarted());
         serverAttributes.setVisible(RUNNING_MODE, server.isStarted());
         serverAttributes.setVisible(SERVER_STATE, server.isStarted());
         serverAttributes.setVisible(SUSPEND_STATE, server.isStarted());
+        Elements.setVisible(serverGroupAttributesSection, false);
+        Elements.setVisible(hostAttributesSection, false);
+        Elements.setVisible(serverAttributesSection, true);
     }
 
     private void serverActions(final Elements.Builder builder, final Server server) {
@@ -595,7 +694,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             // Order is: reload, restart, (resume | suspend), stop
             actionLink(builder, event -> serverActions.reload(server), resources.constants().reload());
             actionLink(builder, event -> serverActions.restart(server), resources.constants().restart());
-            if (server.isSuspending()) {
+            if (server.isSuspended()) {
                 actionLink(builder, event -> serverActions.resume(server), resources.constants().resume());
             } else {
                 actionLink(builder, event -> serverActions.suspend(server), resources.constants().suspend());
@@ -605,23 +704,19 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private String[] statusCss(final Server server) {
-        Server localServer = server;
         Set<String> status = new HashSet<>();
-
         if (serverActions.isPending(server)) {
-            localServer = serverActions.getPendingServer(server);
             status.add(withProgress);
-        }
-        if (localServer.isAdminMode() || localServer.isStopped()) {
+        } else if (server.isAdminMode() || server.isStopped()) {
             status.add(inactive);
-        } else if (localServer.isSuspending() || localServer.needsReload() || localServer.needsRestart()) {
+        } else if (server.isSuspended() || server.needsReload() || server.needsRestart()) {
             status.add(warning);
-        } else if (localServer.isStarted() || localServer.isRunning()) {
+        } else if (server.isStarted() || server.isRunning()) {
             status.add(ok);
-        } else if (localServer.isFailed()) {
+        } else if (server.isFailed()) {
             status.add(error);
         }
-        if (localServer.isStarting()) {
+        if (server.isStarting()) {
             status.add(withProgress);
         }
         return status.toArray(new String[status.size()]);
@@ -629,13 +724,19 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     @Override
     public void onServerAction(final ServerActionEvent event) {
-        startProgress(serverSelector(event.getServer()));
+        if (isVisible()) {
+            Server server = event.getServer();
+            disableDropdown(Server.id(server.getName()), server.getName());
+            startProgress(serverSelector(server));
+        }
     }
 
     @Override
     public void onServerResult(final ServerResultEvent event) {
-        stopProgress(serverSelector(event.getServer()));
-        updateServer(event.getServer());
+        if (isVisible()) {
+            stopProgress(serverSelector(event.getServer()));
+            updateServer(event.getServer());
+        }
     }
 
     private String serverSelector(final Server server) {

@@ -30,7 +30,7 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.core.runtime.server.ServerConfigStatus;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -56,24 +56,26 @@ import static org.jboss.hal.dmr.model.ResourceAddress.ROOT;
  */
 public class TopologyFunctions {
 
+    public static final String SERVER_GROUP = "topologyFunctions.serverGroup";
     public static final String SERVER_GROUPS = "topologyFunctions.serverGroups";
+    public static final String HOST = "topologyFunctions.host";
     public static final String HOSTS = "topologyFunctions.hosts";
     public static final String SERVERS = "topologyFunctions.servers";
     public static final String RUNNING_SERVERS = "topologyFunctions.runningServers";
 
     private static final ResourceAddress ALL_SERVER_CONFIGS = new ResourceAddress()
-            .add(HOST, "*")
+            .add(ModelDescriptionConstants.HOST, "*")
             .add(SERVER_CONFIG, "*");
     private static final ResourceAddress ALL_SERVERS = new ResourceAddress()
-            .add(HOST, "*")
+            .add(ModelDescriptionConstants.HOST, "*")
             .add(SERVER, "*");
-    private static final Operation HOST_OPERATION = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ROOT)
-            .param(CHILD_TYPE, HOST)
+    private static final Operation HOSTS_OPERATION = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ROOT)
+            .param(CHILD_TYPE, ModelDescriptionConstants.HOST)
             .param(INCLUDE_RUNTIME, true)
             .build();
-    private static final Operation SERVER_GROUP_OPERATION = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
+    private static final Operation SERVER_GROUPS_OPERATION = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
             ROOT)
-            .param(CHILD_TYPE, SERVER_GROUP)
+            .param(CHILD_TYPE, ModelDescriptionConstants.SERVER_GROUP)
             .param(INCLUDE_RUNTIME, true)
             .build();
 
@@ -82,15 +84,19 @@ public class TopologyFunctions {
 
 
     /**
-     * Reads the topology (hosts, server groups and servers). Populates the context with three collections
+     * Reads the topology (hosts, server groups and servers). Should be followed by {@link TopologyStartedServers} to
+     * include the {@code server} resource attributes for the running servers.
+     * <p>
+     * Populates the context with three collections
      * <ul>
      * <li>{@link #HOSTS}: An ordered list of hosts with the domain controller as first element. Each host contains its
-     * servers which are returned by {@link Host#getServers(ServerConfigStatus, ServerConfigStatus...)}</li>
-     * <li>{@link #SERVER_GROUPS}: An ordered list of server groups. Each server group contains its servers which are
-     * returned by {@link ServerGroup#getServers(ServerConfigStatus, ServerConfigStatus...)}</li>
-     * <li>{@link #SERVERS}: An unordered list of all servers in the domain. The servers contain only selected
-     * attributes from the {@code server-config} resources. Use {@link TopologyStartedServers} to read the {@code
-     * server} attributes.
+     * server configs.</li>
+     * <li>{@link #SERVER_GROUPS}: An ordered list of server groups. Each server group contains its server
+     * configs.</li>
+     * <li>{@link #SERVERS}: An unordered list of all server configs in the domain. The servers contain only selected
+     * attributes from the {@code server-config} resources. Use {@link TopologyStartedServers} to add the {@code
+     * server}
+     * resource attributes attributes.
      * </ul>
      */
     public static class Topology implements Function<FunctionContext> {
@@ -115,8 +121,8 @@ public class TopologyFunctions {
                 control.proceed();
 
             } else {
-                Composite composite = new Composite(HOST_OPERATION, SERVER_GROUP_OPERATION,
-                        serverConfigOperation(NAME, GROUP, STATUS, AUTO_START, SOCKET_BINDING_PORT_OFFSET));
+                Composite composite = new Composite(HOSTS_OPERATION, SERVER_GROUPS_OPERATION,
+                        serverConfigOperation(NAME, GROUP, STATUS, AUTO_START, SOCKET_BINDING_PORT_OFFSET).build());
                 dispatcher.executeInFunction(control, composite,
                         (CompositeResult result) -> {
 
@@ -134,9 +140,8 @@ public class TopologyFunctions {
                                     result.step(2).get(RESULT).asList());
                             control.getContext().set(SERVERS, Lists.newArrayList(serverConfigsByName.values()));
 
-                            addServersToHosts(serverConfigsByName.values(), hosts);
-                            addServersToServerGroups(serverConfigsByName.values(), serverGroups);
-
+                            addServersToHosts(hosts, serverConfigsByName.values());
+                            addServersToServerGroups(serverGroups, serverConfigsByName.values());
                             control.proceed();
                         });
             }
@@ -145,8 +150,8 @@ public class TopologyFunctions {
 
 
     /**
-     * Reads the attributes from the {@code server} resource for started servers. Expects a list of servers provided by
-     * {@link Topology}.
+     * Adds the {@code server} resource attributes for started servers. Expects a list of servers in the context as
+     * provided by {@link Topology}.
      */
     public static class TopologyStartedServers implements Function<FunctionContext> {
 
@@ -177,14 +182,7 @@ public class TopologyFunctions {
                         Map<String, Server> serverConfigsByName = servers.stream()
                                 .collect(toMap(Server::getName, identity()));
                         dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
-                            result.stream().forEach(step -> {
-                                ModelNode payload = step.get(RESULT);
-                                String name = payload.get(NAME).asString();
-                                Server server = serverConfigsByName.get(name);
-                                if (server != null) {
-                                    server.addServerAttributes(payload);
-                                }
-                            });
+                            addServerAttributes(serverConfigsByName, result);
                             control.proceed();
                         });
                     } else {
@@ -203,7 +201,8 @@ public class TopologyFunctions {
 
     /**
      * Reads the hosts as order list with the domain controller as first element. Each host contains its
-     * server configs.
+     * server configs. Should be followed by {@link HostsStartedServers} to include the {@code server} resource
+     * attributes for the running servers.
      * <p>
      * The list of hosts is available in the context under the key {@link #HOSTS}.
      */
@@ -222,15 +221,15 @@ public class TopologyFunctions {
             if (environment.isStandalone()) {
                 control.proceed();
             } else {
-                Composite composite = new Composite(HOST_OPERATION,
-                        serverConfigOperation(NAME, GROUP, STATUS));
+                Composite composite = new Composite(HOSTS_OPERATION,
+                        serverConfigOperation(NAME, GROUP, STATUS).build());
                 dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
 
                     List<Host> hosts = orderedHostWithDomainControllerAsFirstElement(
                             result.step(0).get(RESULT).asPropertyList());
 
                     Map<String, Server> serverConfigsByName = serverConfigsByName(result.step(1).get(RESULT).asList());
-                    addServersToHosts(serverConfigsByName.values(), hosts);
+                    addServersToHosts(hosts, serverConfigsByName.values());
 
                     control.getContext().set(HOSTS, hosts);
                     control.proceed();
@@ -241,8 +240,8 @@ public class TopologyFunctions {
 
 
     /**
-     * Reads the attributes from the {@code server} resource for started servers across hosts. Expects a list of hosts
-     * provided by {@link HostsWithServerConfigs}.
+     * Reads the {@code server} resource attributes for started servers across hosts. Expects a list of hosts in the
+     * context as provided by {@link HostsWithServerConfigs}.
      */
     public static class HostsStartedServers implements Function<FunctionContext> {
 
@@ -272,13 +271,13 @@ public class TopologyFunctions {
                     if (!composite.isEmpty()) {
                         Map<String, Server> serverConfigsByHostAndServerName = hosts.stream()
                                 .flatMap(host -> host.getServers().stream().filter(Server::isStarted))
-                                .collect(toMap(server -> IdBuilder.build(server.getName(), server.getHost()),
+                                .collect(toMap(server -> IdBuilder.build(server.getHost(), server.getName()),
                                         identity()));
                         //noinspection Duplicates
                         dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
                             result.stream().forEach(step -> {
                                 ModelNode payload = step.get(RESULT);
-                                String hostName = payload.get(HOST).asString();
+                                String hostName = payload.get(ModelDescriptionConstants.HOST).asString();
                                 String serverName = payload.get(NAME).asString();
                                 String id = IdBuilder.build(hostName, serverName);
                                 Server server = serverConfigsByHostAndServerName.get(id);
@@ -299,11 +298,76 @@ public class TopologyFunctions {
     }
 
 
+    /**
+     * Reads one host and its server configs. Should be followed by {@link HostStartedServers} to include the {@code
+     * server} resource attributes for the running servers.
+     * <p>
+     * The host is available in the context under the key {@link #HOST}.
+     */
+    public static class HostWithServerConfigs implements Function<FunctionContext> {
+
+        private final String hostName;
+        private final Dispatcher dispatcher;
+
+        public HostWithServerConfigs(final String hostName, final Dispatcher dispatcher) {
+            this.hostName = hostName;
+            this.dispatcher = dispatcher;
+        }
+
+        @Override
+        public void execute(final Control<FunctionContext> control) {
+            ResourceAddress hostAddress = new ResourceAddress().add(ModelDescriptionConstants.HOST, hostName);
+            Operation hostOp = new Operation.Builder(READ_RESOURCE_OPERATION, hostAddress)
+                    .param(ATTRIBUTES_ONLY, true)
+                    .param(INCLUDE_RUNTIME, true)
+                    .build();
+            Operation serverConfigsOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, hostAddress)
+                    .param(CHILD_TYPE, SERVER_CONFIG)
+                    .param(INCLUDE_RUNTIME, true)
+                    .build();
+            dispatcher.executeInFunction(control, new Composite(hostOp, serverConfigsOp), (CompositeResult result) -> {
+                Host host = new Host(result.step(0).get(RESULT));
+                result.step(1).get(RESULT).asPropertyList().stream()
+                        .map(property -> new Server(hostName, property.getValue()))
+                        .forEach(host::addServer);
+
+                control.getContext().set(HOST, host);
+                control.proceed();
+            });
+        }
+    }
+
+
+    /**
+     * Reads the {@code server} resource attributes for started servers of a host. Expects the host in the context
+     * as provided by {@link HostWithServerConfigs}.
+     */
+    public static class HostStartedServers implements Function<FunctionContext> {
+
+        private final Dispatcher dispatcher;
+
+        public HostStartedServers(final Dispatcher dispatcher) {
+            this.dispatcher = dispatcher;
+        }
+
+        @Override
+        public void execute(final Control<FunctionContext> control) {
+            Host host = control.getContext().get(HOST);
+            if (host != null) {
+                readAndAddServerAttributes(dispatcher, control, host);
+            } else {
+                control.proceed();
+            }
+        }
+    }
+
+
     // ------------------------------------------------------ server groups
 
 
     /**
-     * Reads the server groups as order list. Each server group contains its server configs.
+     * Reads the server groups as order list. Each server group contains its server configs.  Should be followed by
+     * {@link ServerGroupsStartedServers} to include the {@code server} resource attributes for the running servers.
      * <p>
      * The list of server groups is available in the context under the key {@link #SERVER_GROUPS}.
      */
@@ -322,8 +386,8 @@ public class TopologyFunctions {
             if (environment.isStandalone()) {
                 control.proceed();
             } else {
-                Composite composite = new Composite(SERVER_GROUP_OPERATION,
-                        serverConfigOperation(NAME, GROUP, STATUS));
+                Composite composite = new Composite(SERVER_GROUPS_OPERATION,
+                        serverConfigOperation(NAME, GROUP, STATUS).build());
                 dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
 
                     List<ServerGroup> serverGroups = result.step(0).get(RESULT).asPropertyList().stream()
@@ -332,7 +396,7 @@ public class TopologyFunctions {
                             .collect(toList());
 
                     Map<String, Server> serverConfigsByName = serverConfigsByName(result.step(1).get(RESULT).asList());
-                    addServersToServerGroups(serverConfigsByName.values(), serverGroups);
+                    addServersToServerGroups(serverGroups, serverConfigsByName.values());
 
                     control.getContext().set(SERVER_GROUPS, serverGroups);
                     control.proceed();
@@ -343,8 +407,8 @@ public class TopologyFunctions {
 
 
     /**
-     * Reads the attributes from the {@code server} resource for started servers across server groups. Expects a list
-     * of server groups provided by {@link ServerGroupsWithServerConfigs}.
+     * Reads the {@code server} resource attributes for started servers across server groups. Expects a list of server
+     * groups in the context as provided by {@link ServerGroupsWithServerConfigs}.
      */
     public static class ServerGroupsStartedServers implements Function<FunctionContext> {
 
@@ -374,13 +438,13 @@ public class TopologyFunctions {
                     if (!composite.isEmpty()) {
                         Map<String, Server> serverConfigsByServerGroupAndServerName = serverGroups.stream()
                                 .flatMap(serverGroup -> serverGroup.getServers().stream().filter(Server::isStarted))
-                                .collect(toMap(server -> IdBuilder.build(server.getName(), server.getServerGroup()),
+                                .collect(toMap(server -> IdBuilder.build(server.getServerGroup(), server.getName()),
                                         identity()));
                         //noinspection Duplicates
                         dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
                             result.stream().forEach(step -> {
                                 ModelNode payload = step.get(RESULT);
-                                String serverGroupName = payload.get(SERVER_GROUP).asString();
+                                String serverGroupName = payload.get(ModelDescriptionConstants.SERVER_GROUP).asString();
                                 String serverName = payload.get(NAME).asString();
                                 String id = IdBuilder.build(serverGroupName, serverName);
                                 Server server = serverConfigsByServerGroupAndServerName.get(id);
@@ -396,6 +460,76 @@ public class TopologyFunctions {
                 } else {
                     control.proceed();
                 }
+            }
+        }
+    }
+
+
+    /**
+     * Reads one server group and its server configs. Should be followed by {@link ServerGroupStartedServers} to
+     * include the {@code server} resource attributes for the running servers.
+     * <p>
+     * The server group is available in the context under the key {@link #SERVER_GROUP}.
+     */
+    public static class ServerGroupWithServerConfigs implements Function<FunctionContext> {
+
+        private final String serverGroupName;
+        private final Dispatcher dispatcher;
+
+        public ServerGroupWithServerConfigs(final String serverGroupName, final Dispatcher dispatcher) {
+            this.serverGroupName = serverGroupName;
+            this.dispatcher = dispatcher;
+        }
+
+        @Override
+        public void execute(final Control<FunctionContext> control) {
+            ResourceAddress serverGroupAddress = new ResourceAddress()
+                    .add(ModelDescriptionConstants.SERVER_GROUP, serverGroupName);
+            Operation serverGroupOp = new Operation.Builder(READ_RESOURCE_OPERATION, serverGroupAddress)
+                    .param(ATTRIBUTES_ONLY, true)
+                    .param(INCLUDE_RUNTIME, true)
+                    .build();
+            Operation serverConfigsOp = serverConfigOperation(NAME, GROUP, STATUS)
+                    .param(WHERE, new ModelNode().set(GROUP, serverGroupName))
+                    .build();
+            dispatcher.executeInFunction(control, new Composite(serverGroupOp, serverConfigsOp),
+                    (CompositeResult result) -> {
+                        ServerGroup serverGroup = new ServerGroup(serverGroupName, result.step(0).get(RESULT));
+                        result.step(1).get(RESULT).asList().stream()
+                                .filter(modelNode -> !modelNode.isFailure())
+                                .map(modelNode -> {
+                                    ResourceAddress address = new ResourceAddress(modelNode.get(ADDRESS));
+                                    String host = address.getParent().lastValue();
+                                    return new Server(host, modelNode.get(RESULT));
+                                })
+                                .forEach(serverGroup::addServer);
+
+                        control.getContext().set(SERVER_GROUP, serverGroup);
+                        control.proceed();
+                    });
+        }
+    }
+
+
+    /**
+     * Reads the {@code server} resource attributes for started servers of a server groups. Expects the server group in
+     * the context as provided by {@link ServerGroupWithServerConfigs}.
+     */
+    public static class ServerGroupStartedServers implements Function<FunctionContext> {
+
+        private final Dispatcher dispatcher;
+
+        public ServerGroupStartedServers(final Dispatcher dispatcher) {
+            this.dispatcher = dispatcher;
+        }
+
+        @Override
+        public void execute(final Control<FunctionContext> control) {
+            ServerGroup serverGroup = control.getContext().get(SERVER_GROUP);
+            if (serverGroup != null) {
+                readAndAddServerAttributes(dispatcher, control, serverGroup);
+            } else {
+                control.proceed();
             }
         }
     }
@@ -430,8 +564,9 @@ public class TopologyFunctions {
                 control.proceed();
 
             } else {
-                ModelNode select = new ModelNode().add(HOST).add(LAUNCH_TYPE).add(NAME).add(PROFILE_NAME)
-                        .add(RUNNING_MODE).add(SERVER_GROUP).add(SERVER_STATE).add(SUSPEND_STATE).add("uuid");
+                ModelNode select = new ModelNode().add(ModelDescriptionConstants.HOST).add(LAUNCH_TYPE).add(NAME)
+                        .add(PROFILE_NAME).add(RUNNING_MODE).add(ModelDescriptionConstants.SERVER_GROUP)
+                        .add(SERVER_STATE).add(SUSPEND_STATE).add("uuid");
 
                 Operation operation = new Operation.Builder(QUERY, ALL_SERVERS)
                         .param(SELECT, select)
@@ -455,70 +590,9 @@ public class TopologyFunctions {
     }
 
 
-    /**
-     * Updates the {@code server-config} resource of an existing server and pushes the updated server to the stack.
-     */
-    public static class ServerConfigUpdate implements Function<FunctionContext> {
-
-        private final Dispatcher dispatcher;
-        private final Server server;
-
-        public ServerConfigUpdate(final Dispatcher dispatcher, final Server server) {
-            this.dispatcher = dispatcher;
-            this.server = server;
-        }
-
-        @Override
-        public void execute(final Control<FunctionContext> control) {
-            Operation serverConfigOp = new Operation.Builder(READ_RESOURCE_OPERATION, server.getServerConfigAddress())
-                    .param(ATTRIBUTES_ONLY, true)
-                    .param(INCLUDE_RUNTIME, true)
-                    .build();
-            dispatcher.executeInFunction(control, serverConfigOp, result -> {
-                Server updatedServer = new Server(server.getHost(), result);
-                control.getContext().push(updatedServer);
-                control.proceed();
-            });
-        }
-    }
-
-
-    /**
-     * Updates the {@code server} resource of an existing server config which is expected in the stack. If the server
-     * is not started nothing happens.
-     */
-    public static class ServerUpdate implements Function<FunctionContext> {
-
-        private final Dispatcher dispatcher;
-
-        public ServerUpdate(final Dispatcher dispatcher) {
-            this.dispatcher = dispatcher;
-        }
-
-        @Override
-        public void execute(final Control<FunctionContext> control) {
-            Server updatedServer = control.getContext().pop();
-            if (updatedServer.isStarted()) {
-                Operation serverOp = new Operation.Builder(READ_RESOURCE_OPERATION, updatedServer.getServerAddress())
-                        .param(ATTRIBUTES_ONLY, true)
-                        .param(INCLUDE_RUNTIME, true)
-                        .build();
-                dispatcher.executeInFunction(control, serverOp, result -> {
-                    updatedServer.addServerAttributes(result);
-                    control.getContext().push(updatedServer);
-                    control.proceed();
-                });
-            } else {
-                control.getContext().push(updatedServer);
-                control.proceed();
-            }
-        }
-    }
-
-
     // ------------------------------------------------------ helper methods
 
-    private static Operation serverConfigOperation(String first, String... rest) {
+    private static Operation.Builder serverConfigOperation(String first, String... rest) {
         ModelNode select = new ModelNode().add(first);
         if (rest != null) {
             for (String attribute : rest) {
@@ -526,20 +600,7 @@ public class TopologyFunctions {
             }
         }
         return new Operation.Builder(QUERY, ALL_SERVER_CONFIGS)
-                .param(SELECT, select)
-                .build();
-    }
-
-    private static Operation serverAttributesOperation(String first, String... rest) {
-        ModelNode select = new ModelNode().add(first);
-        if (rest != null) {
-            for (String attribute : rest) {
-                select.add(attribute);
-            }
-        }
-        return new Operation.Builder(QUERY, ALL_SERVERS)
-                .param(SELECT, select)
-                .build();
+                .param(SELECT, select);
     }
 
     private static List<Host> orderedHostWithDomainControllerAsFirstElement(List<Property> properties) {
@@ -565,7 +626,7 @@ public class TopologyFunctions {
         return hosts;
     }
 
-    private static void addServersToHosts(final Collection<Server> servers, final List<Host> hosts) {
+    private static void addServersToHosts(final List<Host> hosts, final Collection<Server> servers) {
         Map<String, List<Server>> serversByHost = servers.stream()
                 .collect(groupingBy(Server::getHost));
         hosts.forEach(host -> {
@@ -574,8 +635,7 @@ public class TopologyFunctions {
         });
     }
 
-    private static void addServersToServerGroups(final Collection<Server> servers,
-            final List<ServerGroup> serverGroups) {
+    private static void addServersToServerGroups(final List<ServerGroup> serverGroups, final Collection<Server> servers) {
         Map<String, List<Server>> serversByServerGroup = servers.stream()
                 .collect(groupingBy(Server::getServerGroup));
         serverGroups.forEach(serverGroup -> {
@@ -596,15 +656,35 @@ public class TopologyFunctions {
                 .collect(toMap(Server::getName, identity()));
     }
 
-    private static void addServerAttributes(Map<String, Server> serverConfigsByName, List<ModelNode> modelNodes) {
-        modelNodes.stream()
-                .filter(modelNode -> !modelNode.isFailure())
-                .forEach(modelNode -> {
-                    ResourceAddress address = new ResourceAddress(modelNode.get(ADDRESS));
-                    Server serverConfig = serverConfigsByName.get(address.lastValue());
-                    if (serverConfig != null) {
-                        serverConfig.addServerAttributes(modelNode.get(RESULT));
-                    }
-                });
+    private static void readAndAddServerAttributes(Dispatcher dispatcher, Control<FunctionContext> control,
+            HasServersNode hasServers) {
+        Composite composite = new Composite(hasServers.getServers().stream()
+                .filter(Server::isStarted)
+                .map(server -> new Operation.Builder(READ_RESOURCE_OPERATION, server.getServerAddress())
+                        .param(ATTRIBUTES_ONLY, true)
+                        .param(INCLUDE_RUNTIME, true)
+                        .build())
+                .collect(toList()));
+        if (!composite.isEmpty()) {
+            Map<String, Server> serverConfigsByName = hasServers.getServers().stream()
+                    .collect(toMap(Server::getName, identity()));
+            dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
+                addServerAttributes(serverConfigsByName, result);
+                control.proceed();
+            });
+        } else {
+            control.proceed();
+        }
+    }
+
+    private static void addServerAttributes(Map<String, Server> serverConfigsByName, CompositeResult result) {
+        result.stream().forEach(step -> {
+            ModelNode payload = step.get(RESULT);
+            String serverName = payload.get(NAME).asString();
+            Server server = serverConfigsByName.get(serverName);
+            if (server != null) {
+                server.addServerAttributes(payload);
+            }
+        });
     }
 }

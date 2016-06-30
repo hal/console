@@ -215,6 +215,8 @@ public interface CSS {
     String pullRight = "pull-right";
     String pulse = "pulse";
 
+    String questionsCircleO = "question-circle-o";
+
     String radio = "radio";
     String readonly = "readonly";
     String refresh = "refresh";

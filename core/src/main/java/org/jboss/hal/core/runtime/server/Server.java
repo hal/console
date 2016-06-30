@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.core.runtime.server;
 
-import java.util.EnumSet;
-
 import org.jboss.hal.core.runtime.RunningMode;
 import org.jboss.hal.core.runtime.RunningState;
 import org.jboss.hal.core.runtime.SuspendState;
@@ -123,16 +121,15 @@ public class Server extends NamedNode {
     }
 
     public boolean isRunning() {
-        return getServerState() == RunningState.RUNNING && !isSuspending();
+        return getServerState() == RunningState.RUNNING && !isSuspended();
     }
 
     public boolean isAdminMode() {
         return getRunningMode() == RunningMode.ADMIN_ONLY;
     }
 
-    public boolean isSuspending() {
-        return EnumSet.of(SuspendState.PRE_SUSPEND, SuspendState.SUSPENDING, SuspendState.SUSPENDED)
-                .contains(getSuspendState());
+    public boolean isSuspended() {
+        return getSuspendState() == SuspendState.SUSPENDED;
     }
 
     public boolean isStopped() {

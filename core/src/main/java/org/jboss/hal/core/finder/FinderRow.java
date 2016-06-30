@@ -45,6 +45,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String FOLDER_ELEMENT = "folderElement";
     private static final String BUTTON_CONTAINER = "buttonContainer";
+    private static final String PREVENT_SET_ITEMS = "preventSetItems";
 
     private final Finder finder;
     private final FinderColumn<T> column;
@@ -81,7 +82,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         }
         updateItem(item);
         drawItem();
-        root.setOnclick(event -> click());
+        root.setOnclick(event -> onClick(((Element) event.getTarget())));
     }
 
     void updateItem(final T item) {
@@ -123,17 +124,15 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
             eb.span()
                     .css(unpin, pfIcon("close"))
                     .title(CONSTANTS.unpin())
-                    .on(click, e -> {
-                        e.stopPropagation();
-                        column.unpin(FinderRow.this);
-                    }).end();
+                    .on(click, e -> column.unpin(FinderRow.this))
+                    .data(PREVENT_SET_ITEMS, String.valueOf(true))
+                    .end();
             eb.span()
                     .css(pin, pfIcon("thumb-tack-o"))
                     .title(CONSTANTS.pin())
-                    .on(click, e -> {
-                        e.stopPropagation();
-                        column.pin(FinderRow.this);
-                    }).end();
+                    .on(click, e -> column.pin(FinderRow.this))
+                    .data(PREVENT_SET_ITEMS, String.valueOf(true))
+                    .end();
         }
         if (display.nextColumn() != null) {
             eb.span().css(folder, fontAwesome("angle-right")).rememberAs(FOLDER_ELEMENT).end();
@@ -145,12 +144,14 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                         .css(btn, btnFinder)
                         .textContent(action.title)
                         .on(click, event -> action.handler.execute(item))
+                        .data(PREVENT_SET_ITEMS, String.valueOf(true))
                         .rememberAs(BUTTON_CONTAINER)
                         .end();
             } else {
                 boolean firstAction = true;
                 boolean ulCreated = false;
-                eb.div().css(btnGroup, pullRight).rememberAs(BUTTON_CONTAINER);
+                eb.div().css(btnGroup, pullRight).data(PREVENT_SET_ITEMS, String.valueOf(true))
+                        .rememberAs(BUTTON_CONTAINER);
                 for (ItemAction<T> action : display.actions()) {
                     if (firstAction) {
                         // @formatter:off
@@ -158,27 +159,33 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                                 .css(btn, btnFinder)
                                 .textContent(action.title)
                                 .on(click, event -> action.handler.execute(item))
+                                .data(PREVENT_SET_ITEMS, String.valueOf(true))
                         .end();
                         eb.button()
                                 .css(btn, btnFinder, dropdownToggle)
                                 .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
+                                .data(PREVENT_SET_ITEMS, String.valueOf(true))
                                 .aria(UIConstants.HAS_POPUP, String.valueOf(true))
                                 .aria(UIConstants.EXPANDED, String.valueOf(false))
-                            .span().css(caret).end()
-                            .span().css(srOnly).textContent(CONSTANTS.toggleDropdown()).end()
+                            .span().css(caret).data(PREVENT_SET_ITEMS, String.valueOf(true)).end()
+                            .span()
+                                .css(srOnly).data(PREVENT_SET_ITEMS, String.valueOf(true))
+                                .textContent(CONSTANTS.toggleDropdown())
+                            .end()
                         .end();
                         // @formatter:on
                         firstAction = false;
 
                     } else {
                         if (!ulCreated) {
-                            eb.ul().css(dropdownMenu);
+                            eb.ul().css(dropdownMenu).data(PREVENT_SET_ITEMS, String.valueOf(true));
                             ulCreated = true;
                         }
-                        eb.li().a()
+                        eb.li().data(PREVENT_SET_ITEMS, String.valueOf(true)).a()
                                 .textContent(action.title)
                                 .css(clickable)
                                 .on(click, event -> action.handler.execute(item))
+                                .data(PREVENT_SET_ITEMS, String.valueOf(true))
                                 .end().end();
                     }
                 }
@@ -195,6 +202,13 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
     }
 
     void click() {
+        onClick(null);
+    }
+
+    private void onClick(final Element target) {
+        if (target != null && Boolean.parseBoolean(String.valueOf(target.getDataset().at(PREVENT_SET_ITEMS)))) {
+            return;
+        }
         column.markSelected(id);
         // <keep> this in order!
         finder.reduceTo(column);

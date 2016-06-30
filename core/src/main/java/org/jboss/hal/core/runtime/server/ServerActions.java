@@ -46,6 +46,8 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.jboss.hal.core.runtime.SuspendState.SUSPENDED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.DISABLED;
@@ -72,52 +74,46 @@ public class ServerActions {
 
         @Override
         public void onSuccess() {
-            clearPending(server);
-            MessageEvent.fire(eventBus, Message.success(successMessage));
-            eventBus.fireEvent(new ServerResultEvent(server, Result.SUCCESS));
+            finish(server, Result.SUCCESS, Message.success(successMessage));
         }
 
         @Override
         public void onTimeout() {
-            clearPending(server);
-            MessageEvent.fire(eventBus, Message.error(resources.messages().serverTimeout(server.getName())));
-            eventBus.fireEvent(new ServerResultEvent(server, Result.TIMEOUT));
+            finish(server, Result.TIMEOUT, Message.error(resources.messages().serverTimeout(server.getName())));
         }
     }
 
 
-    private class FailedServerCallback implements FailedCallback {
+    private class ServerFailedCallback implements FailedCallback {
 
         private final Server server;
         private final SafeHtml errorMessage;
 
-        FailedServerCallback(final Server server, final SafeHtml errorMessage) {
+        ServerFailedCallback(final Server server, final SafeHtml errorMessage) {
             this.server = server;
             this.errorMessage = errorMessage;
         }
 
         @Override
         public void onFailed(final Operation operation, final String failure) {
-            MessageEvent.fire(eventBus, Message.error(errorMessage, failure));
-            eventBus.fireEvent(new ServerResultEvent(server, Result.ERROR));
+            finish(server, Result.ERROR, Message.error(errorMessage, failure));
         }
     }
 
 
-    private class ExceptionServerCallback implements ExceptionCallback {
+    private class ServerExceptionCallback implements ExceptionCallback {
 
         private final Server server;
         private final SafeHtml errorMessage;
 
-        ExceptionServerCallback(final Server server, SafeHtml errorMessage) {
+        ServerExceptionCallback(final Server server, SafeHtml errorMessage) {
             this.server = server;
             this.errorMessage = errorMessage;
         }
 
         @Override
         public void onException(final Operation operation, final Throwable exception) {
-            MessageEvent.fire(eventBus, Message.error(errorMessage, exception.getMessage()));
-            eventBus.fireEvent(new ServerResultEvent(server, Result.ERROR));
+            finish(server, Result.ERROR, Message.error(errorMessage, exception.getMessage()));
         }
     }
 
@@ -128,6 +124,7 @@ public class ServerActions {
     public static final int SERVER_STOP_TIMEOUT = 4;
     public static final int SERVER_RELOAD_TIMEOUT = 5;
     public static final int SERVER_RESTART_TIMEOUT = SERVER_STOP_TIMEOUT + SERVER_START_TIMEOUT;
+    private static final Logger logger = LoggerFactory.getLogger(ServerActions.class);
 
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
@@ -174,17 +171,14 @@ public class ServerActions {
             String title, SafeHtml question, SafeHtml successMessage, SafeHtml errorMessage) {
         DialogFactory.confirmation(title, question, () -> {
 
-            eventBus.fireEvent(new ServerActionEvent(server, action));
+            prepare(server, action);
             dispatcher.execute(operation,
-                    result -> {
-                        markAsPending(server);
-                        new TimeoutHandler(dispatcher, timeout).execute(
-                                readServerConfigStatus(server),
-                                checkServerConfigStatus(STARTED),
-                                new ServerTimeoutCallback(server, successMessage));
-                    },
-                    new FailedServerCallback(server, errorMessage),
-                    new ExceptionServerCallback(server, errorMessage));
+                    result -> new TimeoutHandler(dispatcher, timeout).execute(
+                            readServerConfigStatus(server),
+                            checkServerConfigStatus(STARTED),
+                            new ServerTimeoutCallback(server, successMessage)),
+                    new ServerFailedCallback(server, errorMessage),
+                    new ServerExceptionCallback(server, errorMessage));
             return true;
 
         }).show();
@@ -204,28 +198,26 @@ public class ServerActions {
                                 resources.messages().suspendServerQuestion(server.getName()),
                                 form.asElement(),
                                 () -> {
+
                                     form.save();
                                     int timeout = getOrDefault(form.getModel(), TIMEOUT,
                                             () -> form.getModel().get(TIMEOUT).asInt(), 0);
                                     int uiTimeout = timeout + SERVER_SUSPEND_TIMEOUT;
 
-                                    eventBus.fireEvent(new ServerActionEvent(server, Action.SUSPEND));
+                                    prepare(server, Action.SUSPEND);
                                     Operation operation = new Operation.Builder(SUSPEND,
                                             server.getServerConfigAddress())
                                             .param(TIMEOUT, timeout)
                                             .build();
                                     dispatcher.execute(operation,
-                                            result -> {
-                                                markAsPending(server);
-                                                new TimeoutHandler(dispatcher, uiTimeout).execute(
-                                                        readSuspendState(server),
-                                                        checkSuspendState(SUSPENDED),
-                                                        new ServerTimeoutCallback(server, resources.messages()
-                                                                .suspendServerGroupSuccess(server.getName())));
-                                            },
-                                            new FailedServerCallback(server,
+                                            result -> new TimeoutHandler(dispatcher, uiTimeout).execute(
+                                                    readSuspendState(server),
+                                                    checkSuspendState(SUSPENDED),
+                                                    new ServerTimeoutCallback(server, resources.messages()
+                                                            .suspendServerSuccess(server.getName()))),
+                                            new ServerFailedCallback(server,
                                                     resources.messages().suspendServerError(server.getName())),
-                                            new ExceptionServerCallback(server,
+                                            new ServerExceptionCallback(server,
                                                     resources.messages().suspendServerError(server.getName())));
                                     return true;
                                 });
@@ -247,19 +239,15 @@ public class ServerActions {
     }
 
     public void resume(Server server) {
-        eventBus.fireEvent(new ServerActionEvent(server, Action.RESUME));
+        prepare(server, Action.RESUME);
         Operation operation = new Operation.Builder(RESUME, server.getServerConfigAddress()).build();
         dispatcher.execute(operation,
-                result -> {
-                    markAsPending(server);
-                    new TimeoutHandler(dispatcher, SERVER_START_TIMEOUT).execute(
-                            readServerConfigStatus(server),
-                            checkServerConfigStatus(STARTED),
-                            new ServerTimeoutCallback(server,
-                                    resources.messages().resumeServerGroupSuccess(server.getName())));
-                },
-                new FailedServerCallback(server, resources.messages().resumeServerError(server.getName())),
-                new ExceptionServerCallback(server, resources.messages().resumeServerError(server.getName())));
+                result -> new TimeoutHandler(dispatcher, SERVER_START_TIMEOUT).execute(
+                        readServerConfigStatus(server),
+                        checkServerConfigStatus(STARTED),
+                        new ServerTimeoutCallback(server, resources.messages().resumeServerSuccess(server.getName()))),
+                new ServerFailedCallback(server, resources.messages().resumeServerError(server.getName())),
+                new ServerExceptionCallback(server, resources.messages().resumeServerError(server.getName())));
     }
 
     public void stop(Server server) {
@@ -276,29 +264,26 @@ public class ServerActions {
                         .confirmation(resources.messages().stop(server.getName()),
                                 resources.messages().stopServerQuestion(server.getName()), form.asElement(),
                                 () -> {
+
                                     form.save();
                                     int timeout = getOrDefault(form.getModel(), TIMEOUT,
                                             () -> form.getModel().get(TIMEOUT).asInt(), 0);
                                     int uiTimeout = timeout + SERVER_STOP_TIMEOUT;
 
-                                    eventBus.fireEvent(new ServerActionEvent(server, Action.STOP));
+                                    prepare(server, Action.STOP);
                                     Operation operation = new Operation.Builder(STOP, server.getServerConfigAddress())
                                             .param(TIMEOUT, timeout)
                                             .param(BLOCKING, false)
                                             .build();
                                     dispatcher.execute(operation,
-                                            result -> {
-                                                markAsPending(server);
-                                                new TimeoutHandler(dispatcher, uiTimeout).execute(
-                                                        readServerConfigStatus(server),
-                                                        checkServerConfigStatus(STOPPED, DISABLED),
-                                                        new ServerTimeoutCallback(server,
-                                                                resources.messages()
-                                                                        .stopServerSuccess(server.getName())));
-                                            },
-                                            new FailedServerCallback(server,
+                                            result -> new TimeoutHandler(dispatcher, uiTimeout).execute(
+                                                    readServerConfigStatus(server),
+                                                    checkServerConfigStatus(STOPPED, DISABLED),
+                                                    new ServerTimeoutCallback(server,
+                                                            resources.messages().stopServerSuccess(server.getName()))),
+                                            new ServerFailedCallback(server,
                                                     resources.messages().stopServerError(server.getName())),
-                                            new ExceptionServerCallback(server,
+                                            new ServerExceptionCallback(server,
                                                     resources.messages().stopServerError(server.getName())));
                                     return true;
                                 });
@@ -320,37 +305,41 @@ public class ServerActions {
     }
 
     public void start(Server server) {
-        eventBus.fireEvent(new ServerActionEvent(server, Action.START));
+        prepare(server, Action.START);
         Operation operation = new Operation.Builder(START, server.getServerConfigAddress())
                 .param(BLOCKING, false)
                 .build();
         dispatcher.execute(operation,
-                result -> {
-                    markAsPending(server);
-                    new TimeoutHandler(dispatcher, SERVER_START_TIMEOUT).execute(
-                            readServerConfigStatus(server),
-                            checkServerConfigStatus(STARTED),
-                            new ServerTimeoutCallback(server,
-                                    resources.messages().startServerSuccess(server.getName())));
-                },
-                new FailedServerCallback(server, resources.messages().startServerError(server.getName())),
-                new ExceptionServerCallback(server, resources.messages().startServerError(server.getName())));
+                result -> new TimeoutHandler(dispatcher, SERVER_START_TIMEOUT).execute(
+                        readServerConfigStatus(server),
+                        checkServerConfigStatus(STARTED),
+                        new ServerTimeoutCallback(server, resources.messages().startServerSuccess(server.getName()))),
+                new ServerFailedCallback(server, resources.messages().startServerError(server.getName())),
+                new ServerExceptionCallback(server, resources.messages().startServerError(server.getName())));
     }
 
-    private void markAsPending(Server server) {
+    private void prepare(Server server, Action action) {
+        markAsPending(server); // mark as pending *before* firing the event!
+        eventBus.fireEvent(new ServerActionEvent(server, action));
+    }
+
+    private void finish(Server server, Result result, Message message) {
+        clearPending(server); // clear pending state *before* firing the event!
+        eventBus.fireEvent(new ServerResultEvent(server, result));
+        MessageEvent.fire(eventBus, message);
+    }
+    public void markAsPending(Server server) {
         pendingServers.put(IdBuilder.build(server.getHost(), server.getName()), server);
+        logger.debug("Mark server {} as pending", server.getName()); //NON-NLS
     }
 
-    private void clearPending(Server server) {
+    public void clearPending(Server server) {
         pendingServers.remove(IdBuilder.build(server.getHost(), server.getName()));
+        logger.debug("Clear pending state for server {}", server.getName()); //NON-NLS
     }
 
     public boolean isPending(Server server) {
         return pendingServers.containsKey(IdBuilder.build(server.getHost(), server.getName()));
-    }
-
-    public Server getPendingServer(Server server) {
-        return pendingServers.get(IdBuilder.build(server.getHost(), server.getName()));
     }
 
     private Operation readServerConfigStatus(Server server) {

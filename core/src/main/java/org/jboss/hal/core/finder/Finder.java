@@ -120,6 +120,29 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     }
 
 
+    private class RefreshFunction implements Function<FunctionContext> {
+
+        private final FinderSegment segment;
+
+        private RefreshFunction(final FinderSegment segment) {this.segment = segment;}
+
+        @Override
+        public void execute(final Control<FunctionContext> control) {
+            FinderColumn column = getColumn(segment.getKey());
+            if (column != null) {
+                column.refresh(() -> {
+                    column.markSelected(segment.getValue());
+                    column.selectedRow().click();
+                    control.proceed();
+                });
+            } else {
+                logger.error("Unable to find column '{}'", segment.getKey()); //NON-NLS
+                control.abort();
+            }
+        }
+    }
+
+
     static final String DATA_BREADCRUMB = "breadcrumb";
     /**
      * The maximum number of visible columns. If there are more columns, the first column is hidden when column
@@ -399,9 +422,56 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     }
 
     /**
-     * Selects the columns as specified in the finder path. Please note that this might be a complex and long running
-     * operation since each segment in the finder path is turned into a function. The function will load and initialize
-     * the column and select the item as specified in the segment.
+     * Refreshes the specified path. The path needs to match the currently selected path or a sub-path of the
+     * currently selected path.
+     * <p>
+     * Please note that this might be a complex and long running operation since each segment in the path is turned
+     * into a function which reloads and re-selects the items.
+     */
+    public void refresh(FinderPath path) {
+        if (!path.isEmpty()) {
+
+            // Find the first column which is different between the new and the current path
+            boolean finished = false;
+            FinderPath refreshPath = new FinderPath();
+            Iterator<FinderSegment> newPathIterator = path.reversed().iterator();
+            Iterator<FinderSegment> currentPathIterator = context.getPath().reversed().iterator();
+            while (!finished && newPathIterator.hasNext() && currentPathIterator.hasNext()) {
+                FinderSegment newSegment = newPathIterator.next();
+                FinderSegment currentSegment = currentPathIterator.next();
+                if (newSegment.equals(currentSegment)) {
+                    refreshPath.append(newSegment.getKey(), newSegment.getValue());
+                } else {
+                    finished = true;
+                }
+            }
+
+            refreshPath = refreshPath.reversed();
+            if (!refreshPath.isEmpty()) {
+                int index = 0;
+                Function[] functions = new Function[refreshPath.size()];
+                for (FinderSegment segment : refreshPath) {
+                    functions[index] = new RefreshFunction(segment);
+                    index++;
+                }
+                new Async<FunctionContext>(progress.get())
+                        .waterfall(new FunctionContext(), new Outcome<FunctionContext>() {
+                            @Override
+                            public void onFailure(final FunctionContext context) {}
+
+                            @Override
+                            public void onSuccess(final FunctionContext context) {}
+                        }, functions);
+            }
+        }
+    }
+
+    /**
+     * Selects the columns as specified in the finder path.
+     * <p>
+     * Please note that this might be a complex and long running operation since each segment in the path is turned
+     * into a function. The function will load and initialize the column and select the item as specified in the
+     * segment.
      * <p>
      * If the path is empty, the fallback operation is executed.
      */
