@@ -116,8 +116,8 @@ public class ServerGroupPresenter extends MbuiPresenter<ServerGroupPresenter.MyV
                 (CompositeResult result) -> {
                     getView().updateServerGroup(
                             new ServerGroup(statementContext.selectedServerGroup(), result.step(0).get(RESULT)));
-                    getView().updateJvms(asNamedNodes(result.step(2).get(RESULT).asPropertyList()));
-                    getView().updateSystemProperties(asNamedNodes(result.step(5).get(RESULT).asPropertyList()));
+                    getView().updateJvms(asNamedNodes(result.step(1).get(RESULT).asPropertyList()));
+                    getView().updateSystemProperties(asNamedNodes(result.step(2).get(RESULT).asPropertyList()));
                 });
     }
 }
