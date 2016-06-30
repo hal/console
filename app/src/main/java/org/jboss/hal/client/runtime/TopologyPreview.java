@@ -541,7 +541,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             Element parent = link.getParentElement();
             Element ul = link.getNextElementSibling();
             if (parent != null && ul != null) {
-                Element noLink = new Elements.Builder().span().css(CSS.name).title(name).textContent(name).end().build();
+                Element noLink = new Elements.Builder().span().css(CSS.name).title(name).textContent(name).end()
+                        .build();
                 parent.getClassList().remove("open"); //NON-NLS
                 parent.replaceChild(noLink, link);
                 parent.removeChild(ul);
@@ -649,18 +650,22 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     @Override
     public void onServerGroupAction(final ServerGroupActionEvent event) {
-        ServerGroup serverGroup = event.getServerGroup();
-        disableDropdown(ServerGroup.id(serverGroup.getName()), serverGroup.getName());
-        event.getServers().forEach(server -> {
-            disableDropdown(Server.id(server.getName()), server.getName());
-            startProgress(serverSelector(server));
-        });
+        if (isVisible()) {
+            ServerGroup serverGroup = event.getServerGroup();
+            disableDropdown(ServerGroup.id(serverGroup.getName()), serverGroup.getName());
+            event.getServers().forEach(server -> {
+                disableDropdown(Server.id(server.getName()), server.getName());
+                startProgress(serverSelector(server));
+            });
+        }
     }
 
     @Override
     public void onServerGroupResult(final ServerGroupResultEvent event) {
-        event.getServers().forEach(server -> stopProgress(serverSelector(server)));
-        update(null);
+        if (isVisible()) {
+            event.getServers().forEach(server -> stopProgress(serverSelector(server)));
+            update(null);
+        }
     }
 
     private String serverGroupSelector(final ServerGroup serverGroup) {
@@ -709,8 +714,10 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             status.add(withProgress);
         } else if (server.isAdminMode() || server.isStopped()) {
             status.add(inactive);
-        } else if (server.isSuspended() || server.needsReload() || server.needsRestart()) {
+        } else if (server.needsReload() || server.needsRestart()) {
             status.add(warning);
+        } else if (server.isSuspended()) {
+            status.add(suspended);
         } else if (server.isStarted() || server.isRunning()) {
             status.add(ok);
         } else if (server.isFailed()) {

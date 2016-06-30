@@ -236,6 +236,7 @@ public interface CSS {
     String srOnly = "sr-only";
     String stopCircleO = "stop-circle-o";
     String subtitle = "subtitle";
+    String suspended = "suspended";
 
     String tabContent = "tab-content";
     String tabPane = "tab-pane";
