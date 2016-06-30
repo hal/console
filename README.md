@@ -97,7 +97,7 @@ The remote version is served from **https** so you need to secure the management
 
 ### Bundled
 
-There's a WildFly 10.1.0 server bundled with a somewhat recent HAL.next version available at https://drive.google.com/file/d/0BzCXrwefSBHJbUxJRDJhcDlWWlE/view?usp=sharing. 
+There's a WildFly 10.1.0 server bundled with a somewhat recent HAL.next version available at https://drive.google.com/file/d/0BzCXrwefSBHJaGxFY1lYekY5dEk/view?usp=sharing. 
 
 1. Download and extract 
 1. run `bin/standalone.sh` or `bin/domain.sh`
