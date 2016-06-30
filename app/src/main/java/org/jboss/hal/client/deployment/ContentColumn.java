@@ -20,8 +20,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.FluentIterable;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.dom.Element;
@@ -49,6 +47,7 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
+import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
@@ -104,10 +103,9 @@ public class ContentColumn extends FinderColumn<Content> {
             @Override
             public Element asElement() {
                 if (!item.getAssignments().isEmpty()) {
-                    //noinspection Guava
-                    String serverGroups = FluentIterable.from(item.getAssignments())
-                            .transform(Assignment::getServerGroup)
-                            .join(Joiner.on(", "));
+                    String serverGroups = item.getAssignments().stream()
+                            .map(Assignment::getServerGroup)
+                            .collect(joining(", "));
                     return new Elements.Builder()
                             .span().css(itemText)
                             .span().textContent(item.getName()).end()
@@ -120,10 +118,9 @@ public class ContentColumn extends FinderColumn<Content> {
             @Override
             public String getFilterData() {
                 if (!item.getAssignments().isEmpty()) {
-                    //noinspection Guava
-                    String serverGroups = FluentIterable.from(item.getAssignments())
-                            .transform(Assignment::getServerGroup)
-                            .join(Joiner.on(" "));
+                    String serverGroups = item.getAssignments().stream()
+                            .map(Assignment::getServerGroup)
+                            .collect(joining(" "));
                     return getTitle() + " " + serverGroups;
                 }
                 return getTitle() + " unassigned"; //NON-NLS

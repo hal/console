@@ -44,7 +44,7 @@ public interface Ids {
 
     String DATA_SOURCE_DRIVER_COLUMN = "data-source-driver";
     String DEPLOYMENT_BROWSE_BY_COLUMN = "deployment-browse-by";
-    String DOMAIN_BROWSE_BY = "domain-browse-by";
+    String DOMAIN_BROWSE_BY_COLUMN = "domain-browse-by";
     String DRAG_AND_DROP_DEPLOYMENT = "drag-and-drop-deployment";
 
     String EE_ATTRIBUTES_ENTRY = "ee-attributes-entry";
@@ -74,6 +74,8 @@ public interface Ids {
     String HOMEPAGE_RUNTIME_SERVER_SECTION = "homepage-runtime-server-section";
     String HOMEPAGE_RUNTIME_SERVER_GROUP_SECTION = "homepage-runtime-server-group-section";
 
+    String LOG_FILE_COLUMN = "log-file";
+
     String MACRO_EDITOR = "macro-editor";
     String MACRO_LIST = "macro-list";
     String MACRO_OPTIONS = "macro-options";
@@ -86,6 +88,8 @@ public interface Ids {
 
     String ROOT_CONTAINER = "hal-root-container";
 
+    String SERVER_MONITOR_COLUMN = "server-monitor";
+    String STANDALONE_SERVER_COLUMN = "standalone-server";
     String STORAGE_PREFIX = "org.jboss.hal";
 
     String TLC_ACCESS_CONTROL = "tlc-access-control";
@@ -94,6 +98,7 @@ public interface Ids {
     String TLC_HOMEPAGE = "tlc-homepage";
     String TLC_PATCHING = "tlc-patching";
     String TLC_RUNTIME = "tlc-runtime";
+    String TOPOLOGY_REFRESH = "topology-refresh";
 
     String VERSION_INFO = "version-info";
     String VERSION_INFO_FORM = IdBuilder.build(VERSION_INFO, "form");

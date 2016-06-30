@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.form.DefaultMapping;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
@@ -32,6 +31,7 @@ import org.jboss.hal.dmr.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelType.BIG_INTEGER;
 import static org.jboss.hal.dmr.ModelType.EXPRESSION;
@@ -99,7 +99,7 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                             break;
 
                         case LIST:
-                            List<String> list = Lists.transform(value.asList(), ModelNode::asString);
+                            List<String> list = value.asList().stream().map(ModelNode::asString).collect(toList());
                             formItem.setValue(list);
                             break;
 
@@ -145,11 +145,7 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
         for (FormItem formItem : form.getBoundFormItems()) {
             String name = formItem.getName();
 
-            if (model.hasDefined(name) && formItem.isUndefined()) {
-                // TODO Check default value
-                model.remove(name);
-
-            } else if (formItem.isModified()) {
+            if (formItem.isModified()) {
                 ModelNode attributeDescription = findAttribute(name);
                 if (attributeDescription == null) {
                     //noinspection HardCodedStringLiteral

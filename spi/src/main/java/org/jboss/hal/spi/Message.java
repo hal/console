@@ -15,9 +15,10 @@
  */
 package org.jboss.hal.spi;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
-
 import java.util.Date;
+
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 import static com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat.DATE_TIME_LONG;
 
@@ -28,52 +29,52 @@ public class Message {
     }
 
 
-    public static Message error(final String message) {
+    public static Message error(final SafeHtml message) {
         return error(message, null, false);
     }
 
-    public static Message error(final String message, String details) {
+    public static Message error(final SafeHtml message, String details) {
         return error(message, details, false);
     }
 
-    public static Message error(final String message, final String details, boolean sticky) {
+    public static Message error(final SafeHtml message, final String details, boolean sticky) {
         return new Message(Level.ERROR, message, details, sticky);
     }
 
-    public static Message warning(final String message) {
+    public static Message warning(final SafeHtml message) {
         return warning(message, null, false);
     }
 
-    public static Message warning(final String message, String details) {
+    public static Message warning(final SafeHtml message, String details) {
         return warning(message, details, false);
     }
 
-    public static Message warning(final String message, final String details, boolean sticky) {
+    public static Message warning(final SafeHtml message, final String details, boolean sticky) {
         return new Message(Level.WARNING, message, details, sticky);
     }
 
-    public static Message info(final String message) {
+    public static Message info(final SafeHtml message) {
         return info(message, null, false);
     }
 
-    public static Message info(final String message, final String details) {
+    public static Message info(final SafeHtml message, final String details) {
         return info(message, details, false);
     }
 
-    public static Message info(final String message, final String details, boolean sticky) {
+    public static Message info(final SafeHtml message, final String details, boolean sticky) {
         return new Message(Level.INFO, message, details, sticky);
     }
 
 
-    public static Message success(final String message) {
+    public static Message success(final SafeHtml message) {
         return success(message, null, false);
     }
 
-    public static Message success(final String message, final String details) {
+    public static Message success(final SafeHtml message, final String details) {
         return success(message, details, false);
     }
 
-    public static Message success(final String message, final String details, boolean sticky) {
+    public static Message success(final SafeHtml message, final String details, boolean sticky) {
         return new Message(Level.SUCCESS, message, details, sticky);
     }
 
@@ -81,11 +82,11 @@ public class Message {
     private final long id;
     private final String timestamp;
     private final Level level;
-    private final String message;
+    private final SafeHtml message;
     private final String details;
     private final boolean sticky;
 
-    private Message(final Level level, final String message, final String details, final boolean sticky) {
+    private Message(final Level level, final SafeHtml message, final String details, final boolean sticky) {
         this.id = System.currentTimeMillis();
         this.timestamp = DateTimeFormat.getFormat(DATE_TIME_LONG).format(new Date());
         this.level = level;
@@ -106,7 +107,7 @@ public class Message {
         return level;
     }
 
-    public String getMessage() {
+    public SafeHtml getMessage() {
         return message;
     }
 

@@ -17,13 +17,17 @@ package org.jboss.hal.dmr;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.inject.Provider;
 import org.jboss.hal.dmr.model.NamedNode;
+
+import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Static helper methods for dealing with {@link ModelNode}s.
@@ -79,11 +83,11 @@ public final class ModelNodeHelper {
      * ModelDescriptionConstants#NAME} key with the properties name.
      */
     public static List<NamedNode> asNamedNodes(List<Property> properties) {
-        return Lists.transform(properties, NamedNode::new);
+        return properties.stream().map(NamedNode::new).collect(toList());
     }
 
-    public static <T> T getOrDefault(final ModelNode modelNode, String attribute,
-            Provider<T> provider, T defaultValue) {
+    public static <T> T getOrDefault(final ModelNode modelNode, String attribute, Provider<T> provider,
+            T defaultValue) {
         T result = defaultValue;
         if (modelNode != null && modelNode.hasDefined(attribute)) {
             try {
@@ -93,5 +97,34 @@ public final class ModelNodeHelper {
             }
         }
         return result;
+    }
+
+    /**
+     * Looks for the specified attribute and tries to convert it to an enum constant using
+     * {@code LOWER_HYPHEN.to(UPPER_UNDERSCORE, modelNode.get(attribute).asString())}.
+     */
+    public static <E extends Enum<E>> E asEnumValue(final ModelNode modelNode, final String attribute,
+            final Function<String, E> valueOf, final E defaultValue) {
+        if (modelNode.hasDefined(attribute)) {
+            return asEnumValue(modelNode.get(attribute), valueOf, defaultValue);
+        }
+        return defaultValue;
+    }
+
+    public static <E extends Enum<E>> E asEnumValue(final ModelNode modelNode, final Function<String, E> valueOf,
+            final E defaultValue) {
+        E value = defaultValue;
+        String converted = LOWER_HYPHEN.to(UPPER_UNDERSCORE, modelNode.asString());
+        try {
+            value = valueOf.apply(converted);
+        } catch (IllegalArgumentException ignored) {}
+        return value;
+    }
+
+    /**
+     * The reverse operation to {@link #asEnumValue(ModelNode, String, Function, Enum)}.
+     */
+    public static <E extends Enum<E>> String asAttributeValue(final E enumValue) {
+        return UPPER_UNDERSCORE.to(LOWER_HYPHEN, enumValue.name());
     }
 }

@@ -106,6 +106,25 @@ public class FinderSegment<T> {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (this == o) { return true; }
+        if (!(o instanceof FinderSegment)) { return false; }
+
+        FinderSegment<?> that = (FinderSegment<?>) o;
+
+        if (!key.equals(that.key)) { return false; }
+        return value.equals(that.value);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = key.hashCode();
+        result = 31 * result + value.hashCode();
+        return result;
+    }
+
+    @Override
     public String toString() {
         // Do not change this implementation as the place management relies on it!
         return key + "=" + value;

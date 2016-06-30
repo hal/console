@@ -23,5 +23,5 @@ package org.jboss.hal.core.finder;
 @FunctionalInterface
 public interface PreviewCallback<T> {
 
-    PreviewContent onPreview(T item);
+    PreviewContent<T> onPreview(T item);
 }

@@ -34,11 +34,9 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
@@ -85,10 +83,8 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
 
 
     private final Environment environment;
-    private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
-    private final Resources resources;
 
     @Inject
     public LoggingPresenter(final EventBus eventBus,
@@ -96,16 +92,12 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
             final MyProxy proxy,
             final Finder finder,
             final Environment environment,
-            final MetadataRegistry metadataRegistry,
             final StatementContext statementContext,
-            final Dispatcher dispatcher,
-            final Resources resources) {
+            final Dispatcher dispatcher) {
         super(eventBus, view, proxy, finder);
         this.environment = environment;
-        this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
-        this.resources = resources;
     }
 
     @Override

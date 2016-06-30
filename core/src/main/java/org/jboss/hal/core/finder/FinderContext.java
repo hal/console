@@ -24,6 +24,8 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
  */
 public class FinderContext {
 
+    public static final String PATH_PARAM = "path";
+
     private String token;
     private FinderPath path;
 
@@ -56,7 +58,7 @@ public class FinderContext {
     public PlaceRequest toPlaceRequest() {
         PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(token);
         if (!path.isEmpty()) {
-            builder.with("path", path.toString());
+            builder.with(PATH_PARAM, path.toString());
         }
         return builder.build();
     }

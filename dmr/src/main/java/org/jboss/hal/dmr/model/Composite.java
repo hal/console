@@ -15,15 +15,14 @@
  */
 package org.jboss.hal.dmr.model;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import org.jboss.hal.dmr.ModelNode;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jboss.hal.dmr.ModelNode;
+
+import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.COMPOSITE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STEPS;
 
@@ -72,6 +71,6 @@ public class Composite extends Operation implements Iterable<Operation> {
     }
 
     public String asCli() {
-        return Joiner.on('\n').join(Lists.transform(operations, Operation::asCli));
+        return operations.stream().map(Operation::asCli).collect(joining("\n"));
     }
 }

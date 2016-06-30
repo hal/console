@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
@@ -52,6 +51,8 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.alert;
 import static org.jboss.hal.resources.CSS.alertInfo;
@@ -90,7 +91,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         private static final String ILLEGAL_COMBINATION = "Illegal combination in ";
 
         final String id;
-        private Metadata metadata;
+        private final Metadata metadata;
         final LinkedHashSet<String> includes;
         final Set<String> excludes;
         FormItemProvider defaultFormItemProvider;
@@ -269,7 +270,9 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
     private static final Messages MESSAGES = GWT.create(Messages.class);
     private static final Logger logger = LoggerFactory.getLogger(ModelNodeForm.class);
 
-    private ModelNodeForm(final Builder<T> builder) {
+    private final Map<String, ModelNode> attributeMetadata;
+
+    ModelNodeForm(final Builder<T> builder) {
         super(builder.id,
                 builder.stateMachine(),
                 builder.dataMapping != null ? builder.dataMapping : new ModelNodeMapping<>(
@@ -281,11 +284,10 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         this.resetCallback = builder.resetCallback;
 
         List<Property> properties = new ArrayList<>();
-        //noinspection Guava
-        List<Property> filteredProperties = FluentIterable
-                .from(builder.metadata.getDescription().getAttributes(builder.attributePath))
+        List<Property> filteredProperties = builder.metadata.getDescription().getAttributes(builder.attributePath)
+                .stream()
                 .filter(new PropertyFilter(builder))
-                .toList();
+                .collect(toList());
         LinkedHashMap<String, Property> filteredByName = new LinkedHashMap<>();
         for (Property property : filteredProperties) {
             filteredByName.put(property.getName(), property);
@@ -306,8 +308,9 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             properties.addAll(filteredByName.values());
         } else {
             properties.addAll(filteredProperties);
-            Collections.sort(properties, (p1, p2)-> p1.getName().compareTo(p2.getName()));
+            Collections.sort(properties, (p1, p2) -> p1.getName().compareTo(p2.getName()));
         }
+        this.attributeMetadata = properties.stream().collect(toMap(Property::getName, Property::getValue));
 
         int index = 0;
         LabelBuilder labelBuilder = new LabelBuilder();
@@ -366,5 +369,16 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             Elements.removeChildrenFrom(asElement());
             asElement().appendChild(empty);
         }
+    }
+
+    @Override
+    protected Map<String, Object> getChangedValues() {
+        Map<String, Object> writableChanges = new HashMap<>(super.getChangedValues());
+        writableChanges.entrySet().removeIf(entry -> {
+            ModelNode metadata = attributeMetadata.get(entry.getKey());
+            return metadata != null && metadata.hasDefined(ACCESS_TYPE) && READ_ONLY
+                    .equals(metadata.get(ACCESS_TYPE).asString());
+        });
+        return writableChanges;
     }
 }

@@ -15,23 +15,21 @@
  */
 package org.jboss.hal.client.runtime;
 
+import javax.inject.Inject;
+
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.finder.HasFinder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.FinderPresenter;
-import org.jboss.hal.core.mvp.PatternFlyView;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.core.mvp.FinderView;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-
-import javax.inject.Inject;
 
 /**
  * @author Harald Pehl
@@ -43,7 +41,7 @@ public class RuntimePresenter extends FinderPresenter<RuntimePresenter.MyView, R
     @NameToken(NameTokens.RUNTIME)
     public interface MyProxy extends ProxyPlace<RuntimePresenter> {}
 
-    public interface MyView extends PatternFlyView, HasFinder {}
+    public interface MyView extends FinderView {}
     // @formatter:on
 
 
@@ -63,7 +61,7 @@ public class RuntimePresenter extends FinderPresenter<RuntimePresenter.MyView, R
 
     @Override
     protected String initialColumn() {
-        return environment.isStandalone() ? ModelDescriptionConstants.SERVER : Ids.DOMAIN_BROWSE_BY;
+        return environment.isStandalone() ? Ids.STANDALONE_SERVER_COLUMN : Ids.DOMAIN_BROWSE_BY_COLUMN;
     }
 
     @Override

@@ -40,11 +40,13 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.Widget;
 import org.jetbrains.annotations.NonNls;
+
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.StreamSupport.stream;
 
 /**
  * Helper to generate unique IDs.
@@ -79,11 +81,10 @@ public final class IdBuilder {
                 .omitEmptyStrings()
                 .trimResults()
                 .split(text);
-        //noinspection Guava
-        return FluentIterable.from(parts)
-                .transform(String::toLowerCase)
-                .transform(CharMatcher.javaLetterOrDigit()::retainFrom)
-                .join(Joiner.on('-'));
+        return stream(parts.spliterator(), false)
+                .map(String::toLowerCase)
+                .map(CharMatcher.javaLetterOrDigit()::retainFrom)
+                .collect(joining("-"));
     }
 
     public static void set(Widget widget, @NonNls String id) {

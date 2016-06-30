@@ -15,11 +15,13 @@
  */
 package org.jboss.hal.dmr.model;
 
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
-
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
 
 /**
  * @author Harald Pehl
@@ -64,4 +66,8 @@ public class CompositeResult implements Iterable<ModelNode> {
     public int size() {return steps.size();}
 
     public boolean isEmpty() {return steps.isEmpty();}
+
+    public Stream<ModelNode> stream() {
+        return StreamSupport.stream(spliterator(), false);
+    }
 }

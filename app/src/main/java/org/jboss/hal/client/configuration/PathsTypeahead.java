@@ -23,8 +23,8 @@ import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.typeahead.NamesResultProcessor;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
-import org.jboss.hal.client.runtime.Server;
-import org.jboss.hal.client.runtime.domain.TopologyFunctions;
+import org.jboss.hal.core.runtime.server.Server;
+import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -38,6 +38,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 
 /**
+ * Special typeahead class for paths.
+ * TODO Listen for server start events and update operation
+ *
  * @author Harald Pehl
  */
 public class PathsTypeahead extends Typeahead {

@@ -77,10 +77,10 @@ public class ReadEnvironment implements BootstrapFunction {
 
         List<Operation> ops = new ArrayList<>();
         ops.add(new Operation.Builder(READ_RESOURCE_OPERATION, ROOT)
-                .param("attributes-only", true)
+                .param(ATTRIBUTES_ONLY, true)
                 .param(INCLUDE_RUNTIME, true)
                 .build());
-        ops.add(new Operation.Builder("whoami", ROOT).param("verbose", true).build());
+        ops.add(new Operation.Builder(WHOAMI, ROOT).param(VERBOSE, true).build());
         ResourceAddress address = new ResourceAddress().add("core-service", "management")
                 .add("access", "authorization");
         ops.add(new Operation.Builder(READ_ATTRIBUTE_OPERATION, address).param(NAME, "provider").build());
@@ -90,18 +90,18 @@ public class ReadEnvironment implements BootstrapFunction {
                     // server info
                     logger.debug("{}: Parse root resource", name());
                     ModelNode node = result.step(0).get(RESULT);
-                    environment.setInstanceInfo(node.get("product-name").asString(),
-                            node.get("product-version").asString(),
-                            node.get("release-codename").asString(), node.get("release-version").asString(),
-                            node.get("name").asString());
+                    environment.setInstanceInfo(node.get(PRODUCT_NAME).asString(),
+                            node.get(PRODUCT_VERSION).asString(),
+                            node.get(RELEASE_CODENAME).asString(), node.get(RELEASE_VERSION).asString(),
+                            node.get(NAME).asString());
 
                     // operation mode
-                    environment.setOperationMode(node.get("launch-type").asString());
+                    environment.setOperationMode(node.get(LAUNCH_TYPE).asString());
 
                     // management version
-                    environment.setManagementVersion(node.get("management-major-version").asString(),
-                            node.get("management-micro-version").asString(),
-                            node.get("management-minor-version").asString());
+                    environment.setManagementVersion(node.get(MANAGEMENT_MAJOR_VERSION).asString(),
+                            node.get(MANAGEMENT_MICRO_VERSION).asString(),
+                            node.get(MANAGEMENT_MINOR_VERSION).asString());
 
                     // user info
                     logger.debug("{}: Parse whoami data", name());

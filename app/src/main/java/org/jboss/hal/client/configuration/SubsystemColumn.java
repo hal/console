@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
-import com.google.common.collect.FluentIterable;
 import com.google.gwt.resources.client.ExternalTextResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -54,7 +53,11 @@ import org.jboss.hal.spi.Column;
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
 import static java.util.Collections.singletonList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION;
 import static org.jboss.hal.resources.CSS.itemText;
 import static org.jboss.hal.resources.CSS.subtitle;
 
@@ -64,7 +67,7 @@ import static org.jboss.hal.resources.CSS.subtitle;
 @Column(ModelDescriptionConstants.SUBSYSTEM)
 public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
-    private static class ResourceDescriptionPreview extends PreviewContent {
+    private static class ResourceDescriptionPreview extends PreviewContent<SubsystemMetadata> {
 
         ResourceDescriptionPreview(final String header, final Dispatcher dispatcher, final Operation operation) {
             super(header);
@@ -212,10 +215,9 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                     @Override
                     public void onSuccess(final List<SubsystemMetadata> result) {
                         // only subsystems w/o next columns will show up in the breadcrumb dropdown
-                        //noinspection Guava
-                        List<SubsystemMetadata> subsystemsWithTokens = FluentIterable.from(result)
+                        List<SubsystemMetadata> subsystemsWithTokens = result.stream()
                                 .filter(metadata -> metadata.getNextColumn() == null)
-                                .toList();
+                                .collect(toList());
                         callback.onSuccess(subsystemsWithTokens);
                     }
                 }));

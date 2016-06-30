@@ -21,7 +21,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.collect.Lists;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
@@ -32,8 +31,8 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.client.configuration.subsystem.datasource.wizard.NewDataSourceWizard;
-import org.jboss.hal.client.runtime.Server;
-import org.jboss.hal.client.runtime.domain.TopologyFunctions;
+import org.jboss.hal.core.runtime.server.Server;
+import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -50,16 +49,17 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.Message.Level;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
@@ -126,10 +126,10 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                     .param(CHILD_TYPE, XA_DATA_SOURCE).build();
             dispatcher.execute(new Composite(dataSourceOperation, xaDataSourceOperation), (CompositeResult result) -> {
                 List<DataSource> combined = new ArrayList<>();
-                combined.addAll(Lists.transform(result.step(0).get(RESULT).asPropertyList(),
-                        property -> new DataSource(property, false)));
-                combined.addAll(Lists.transform(result.step(1).get(RESULT).asPropertyList(),
-                        property -> new DataSource(property, true)));
+                combined.addAll(result.step(0).get(RESULT).asPropertyList().stream()
+                        .map(property -> new DataSource(property, false)).collect(toList()));
+                combined.addAll(result.step(1).get(RESULT).asPropertyList().stream()
+                        .map(property -> new DataSource(property, true)).collect(toList()));
                 callback.onSuccess(combined);
             });
         });
@@ -158,8 +158,8 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             }
 
             @Override
-            public Level getMarker() {
-                return dataSource.isEnabled() ? Level.SUCCESS : Level.INFO;
+            public Element getIcon() {
+                return dataSource.isEnabled() ? Icons.ok() : Icons.disabled();
             }
 
             @Override
@@ -236,8 +236,8 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, dataSourceAddress)
                     .param(CHILD_TYPE, xa ? XA_DATA_SOURCE : DATA_SOURCE).build();
             dispatcher.executeInFunction(control, operation, result -> {
-                List<DataSource> dataSources = Lists.transform(result.asPropertyList(),
-                        property -> new DataSource(property, xa));
+                List<DataSource> dataSources = result.asPropertyList().stream()
+                        .map(property -> new DataSource(property, xa)).collect(toList());
                 control.getContext().set(DATASOURCES, dataSources);
                 control.proceed();
             });
@@ -300,12 +300,12 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             @Override
             public void onFailure(final FunctionContext context) {
                 MessageEvent.fire(eventBus,
-                        Message.error(resources.constants().testConnectionError(), context.getErrorMessage()));
+                        Message.error(resources.messages().testConnectionError(), context.getErrorMessage()));
             }
 
             @Override
             public void onSuccess(final FunctionContext context) {
-                MessageEvent.fire(eventBus, Message.success(resources.constants().testConnectionSuccess()));
+                MessageEvent.fire(eventBus, Message.success(resources.messages().testConnectionSuccess()));
             }
         };
 

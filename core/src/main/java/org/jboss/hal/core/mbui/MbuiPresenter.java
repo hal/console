@@ -18,13 +18,13 @@ package org.jboss.hal.core.mbui;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.mvp.SubsystemPresenter;
+import org.jboss.hal.core.mvp.ApplicationPresenter;
 
 /**
  * @author Harald Pehl
  */
 public abstract class MbuiPresenter<V extends MbuiView, Proxy_ extends ProxyPlace<?>>
-        extends SubsystemPresenter<V, Proxy_> {
+        extends ApplicationPresenter<V, Proxy_> {
 
     protected MbuiPresenter(final EventBus eventBus, final V view,
             final Proxy_ proxy_, final Finder finder) {

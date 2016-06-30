@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemProvider;
@@ -42,6 +41,7 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.form.NumberItem.MAX_SAFE_LONG;
 import static org.jboss.hal.ballroom.form.NumberItem.MIN_SAFE_LONG;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -214,7 +214,7 @@ class DefaultFormItemProvider implements FormItemProvider {
         if (modelNode.hasDefined(property)) {
             List<ModelNode> nodes = ModelNodeHelper.getOrDefault(modelNode, property,
                     () -> modelNode.get(property).asList(), emptyList());
-            return Lists.transform(nodes, ModelNode::asString);
+            return nodes.stream().map(ModelNode::asString).collect(toList());
         }
         return emptyList();
     }

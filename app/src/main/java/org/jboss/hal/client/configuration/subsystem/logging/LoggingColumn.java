@@ -55,6 +55,7 @@ public class LoggingColumn extends StaticItemColumn {
             final Resources resources) {
 
         super(finder, LOGGING, Names.LOGGING, asList(
+
                 new StaticItem.Builder(Names.CONFIGURATION)
                         .id(NameTokens.LOGGING_CONFIGURATION)
                         .action(resources.constants().view(), item ->
@@ -70,6 +71,7 @@ public class LoggingColumn extends StaticItemColumn {
                                 new Operation.Builder(READ_RESOURCE_OPERATION,
                                         ROOT_LOGGER_TEMPLATE.resolve(statementContext)).build()))
                         .build(),
+
                 new StaticItem.Builder(Names.LOGGING_PROFILES)
                         .nextColumn(LOGGING_PROFILE)
                         .onPreview(new PreviewContent(Names.LOGGING_PROFILES, resources.previews().loggingProfiles()))

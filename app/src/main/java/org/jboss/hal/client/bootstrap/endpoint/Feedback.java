@@ -19,6 +19,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.resources.Icons;
 
 import static org.jboss.hal.resources.CSS.*;
 
@@ -56,7 +57,7 @@ class Feedback implements IsElement {
     void ok(SafeHtml message) {
         root.getClassList().add(alertSuccess);
         root.getClassList().remove(alertDanger);
-        icon.setClassName(pfIcon("ok"));
+        icon.setClassName(Icons.OK);
         this.message.setInnerHTML(message.asString());
         Elements.setVisible(root, true);
     }
@@ -64,7 +65,7 @@ class Feedback implements IsElement {
     void error(SafeHtml message) {
         root.getClassList().add(alertDanger);
         root.getClassList().remove(alertSuccess);
-        icon.setClassName(pfIcon(errorCircleO));
+        icon.setClassName(Icons.ERROR);
         this.message.setInnerHTML(message.asString());
         Elements.setVisible(root, true);
     }

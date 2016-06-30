@@ -56,7 +56,7 @@ class MessageElement implements IsElement {
                     .end();
         }
         builder.span().css(pfIcon(cssIcon[1])).end();
-        builder.span().textContent(message.getMessage()).end();
+        builder.span().innerHtml(message.getMessage()).end();
         builder.end(); // </div>
 
         root = builder.build();

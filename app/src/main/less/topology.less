@@ -1,0 +1,131 @@
+.topology {
+
+  .dropdown {
+    min-width: 0;
+  }
+
+  .empty {
+    background-color: #fff;
+    cursor: inherit;
+  }
+
+  .error {
+    background-color: rgba(204, 0, 0, .4);
+    &:hover {
+      color: #fff;
+      background-color: rgb(204, 0, 0);
+    }
+  }
+
+  .inactive {
+    background-color: rgba(187, 187, 187, 0.4);
+    &:hover {
+      background-color: rgb(187, 187, 187);
+    }
+  }
+
+  .name {
+    display: inline-block;
+    max-width: 100%;
+    .text-overflow();
+  }
+
+  .ok {
+    background-color: rgba(158, 207, 153, 0.4);
+    &:hover {
+      background-color: rgb(158, 207, 153);
+    }
+  }
+
+  .selected {
+    outline: 3px dashed #333;
+    outline-offset: -3px;
+    &.server {
+      outline-offset: -2px;
+    }
+  }
+
+  .host-container, .server-group-container {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+
+  .servers {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+
+    .server:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .server {
+    align-items: center;
+    border-bottom: 1px solid #d1d1d1;
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: center;
+    min-height: 50px;
+    padding: 5px;
+  }
+
+  .status {
+    padding: 2px 5px;
+  }
+
+  .suspended {
+    background-color: rgba(190, 225, 244, .4);
+    &:hover {
+      background-color: rgb(190, 225, 244);
+    }
+  }
+
+  .warning {
+    background-color: rgba(236, 122, 8, 0.4);
+    &:hover {
+      background-color: rgb(236, 122, 8);
+    }
+  }
+}
+
+table.topology {
+  margin-bottom: 20px;
+  max-width: 100%;
+  width: 100%;
+
+  th, td {
+    border: 1px solid #bbbbbb;
+    margin: 0;
+    max-width: 100px; // pseudo value to enable .text-overflow() for .name classes
+  }
+
+  th {
+    padding: 5px;
+    text-align: center;
+    vertical-align: middle;
+
+    &.empty {
+      background: none;
+      border: none;
+      color: #8b8d8f;
+      font-weight: normal;
+    }
+    &.selected, &:hover {
+      background-color: #fafafa;
+    }
+  }
+
+  th.empty:hover {
+    background: none;
+  }
+
+  td {
+    padding: 0;
+  }
+
+  a {
+    color: inherit;
+  }
+}

@@ -1,3 +1,18 @@
+.alert > .fa {
+  font-size: 22px;
+  position: absolute;
+  left: 13px;
+  top: 10px;
+}
+
+.fa.grey:before {
+  color: #666;
+}
+
+h2.underline {
+  border-bottom: 1px solid #ededed;
+}
+
 .layout-pf.layout-pf-fixed body {
   padding-top: @hal-header-height;
   @media (max-width: @screen-sm) {
@@ -6,10 +21,43 @@
   padding-bottom: @hal-footer-height;
 }
 
-.padding-left-4 {
-  padding-left: 4px;
+.margin-right-4 {
+  margin-right: 4px;
 }
 
 .margin-top-20 {
   margin-top: 20px;
+}
+
+.padding-left-4 {
+  padding-left: 4px;
+}
+
+.pficon-disabled-circle-o:before {
+  color: #666;
+  content: "\e61d";
+}
+
+.with-progress {
+  animation: progress-animation 1s linear infinite;
+  background-size: 40px 40px;
+  background-image: linear-gradient(
+          45deg,
+          rgba(0, 0, 0, 0.1) 25%,
+          transparent 25%,
+          transparent 50%,
+          rgba(0, 0, 0, 0.1) 50%,
+          rgba(0, 0, 0, 0.1) 75%,
+          transparent 75%,
+          transparent
+  );
+}
+
+@keyframes progress-animation {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 80px 40px;
+  }
 }

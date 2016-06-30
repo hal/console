@@ -20,10 +20,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.resources.Names;
@@ -118,11 +117,9 @@ public class FinderPath implements Iterable<FinderSegment> {
 
     @Override
     public String toString() {
-        //noinspection Guava
-        List<FinderSegment> validSegments = FluentIterable.from(segments)
+        return segments.stream()
                 .filter(segment -> segment.getValue() != null)
-                .toList();
-        // Do not change this implementation as the place management relies on it!
-        return Joiner.on("/").join(validSegments);
+                .map(FinderSegment::toString)
+                .collect(Collectors.joining("/"));
     }
 }

@@ -19,13 +19,13 @@ import com.google.gwt.core.client.GWT;
 import com.gwtplatform.mvp.client.PreBootstrapper;
 import elemental.client.Browser;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Names;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @author Harald Pehl
  */
-@SuppressWarnings("unused")
 public class HalPreBootstrapper implements PreBootstrapper {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
@@ -35,10 +35,10 @@ public class HalPreBootstrapper implements PreBootstrapper {
     public void onPreBootstrap() {
         GWT.setUncaughtExceptionHandler(e -> {
             LoadingPanel.get().off();
-            //noinspection HardCodedStringLiteral
-            logger.error("Bootstrap error in {}: {}", HalPreBootstrapper.class.getSimpleName(), e.getMessage());
-            Browser.getDocument().getBody().appendChild(
-                    BootstrapFailed.create(CONSTANTS.bootstrapException(), e.getMessage()).asElement());
+            String errorMessage = e != null ? e.getMessage() : Names.NOT_AVAILABLE;
+            logger.error("Uncaught bootstrap error: {}", errorMessage); //NON-NLS
+            Browser.getDocument().getBody()
+                    .appendChild(BootstrapFailed.create(CONSTANTS.bootstrapException(), errorMessage).asElement());
         });
     }
 }

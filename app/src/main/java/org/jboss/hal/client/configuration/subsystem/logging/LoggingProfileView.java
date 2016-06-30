@@ -496,10 +496,6 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     // ------------------------------------------------------ view / mbui contract
 
-    LoggingProfilePresenter getPresenter() {
-        return presenter;
-    }
-
     @Override
     public VerticalNavigation getVerticalNavigation() {
         return navigation;

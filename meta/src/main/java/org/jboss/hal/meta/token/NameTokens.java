@@ -32,6 +32,7 @@ public interface NameTokens {
     String EJB3 = ModelDescriptionConstants.EJB3;
     String GENERIC_SUBSYSTEM = "generic-subsystem";
     String HOMEPAGE = "home";
+    String HOST_CONFIGURATION = "host-configuration";
     String IIOP = ModelDescriptionConstants.IIOP_OPENJDK;
     String INTERFACE = "interface";
     String IO = ModelDescriptionConstants.IO;
@@ -48,6 +49,8 @@ public interface NameTokens {
     String REMOTING = ModelDescriptionConstants.REMOTING;
     String REQUEST_CONTROLLER = ModelDescriptionConstants.REQUEST_CONTROLLER;
     String RUNTIME = "runtime";
+    String SERVER_CONFIGURATION = "server-configuration";
+    String SERVER_GROUP_CONFIGURATION = "server-group-configuration";
     String SOCKET_BINDING = ModelDescriptionConstants.SOCKET_BINDING;
     String SYSTEM_PROPERTIES = "system-properties";
     String TRANSACTIONS = ModelDescriptionConstants.TRANSACTIONS;

@@ -15,7 +15,11 @@
  */
 package org.jboss.hal.resources;
 
+import java.util.Arrays;
+
 import org.jetbrains.annotations.NonNls;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * Contains common CSS classes from HAL, PatternFly & Bootstrap. The constants in this interface are not involved in
@@ -56,11 +60,15 @@ public interface CSS {
     String btnPrimary = "btn-primary";
 
     String caret = "caret";
+    String centerBlock = "center-block";
     String clearfix = "clearfix";
     String clickable = "clickable";
     String close = "close";
     String column = "col";
-    String columnMedium = "md";
+    String columnLg = "lg";
+    String columnMd = "md";
+    String columnSm = "sm";
+    String columnXs = "xs";
     String collapse = "collapse";
     String containerFluid = "container-fluid";
     String containerPfNavPfVertical = "container-pf-nav-pf-vertical";
@@ -71,6 +79,7 @@ public interface CSS {
     String dataTable = "datatable";
     String defaultValue = "default-value";
     String disabled = "disabled";
+    String disabledCircleO = "disabled-circle-o";
     String dropdown = "dropdown";
     String dropdownKebabPf = "dropdown-kebab-pf";
     String dropdownMenu = "dropdown-menu";
@@ -81,6 +90,7 @@ public interface CSS {
     String eapHomeTitle = "eap-home-title";
     String editing = "editing";
     String editor = "editor";
+    String error = "error";
     String errorCircleO = "error-circle-o";
     String equals = "equals";
     String empty = "empty";
@@ -102,14 +112,18 @@ public interface CSS {
     String formLinks = "form-links";
     String formSection = "form-section";
 
+    String grey = "grey";
+
     String hasError = "has-error";
     String hasFeedback = "has-feedback";
     String helpBlock = "help-block";
     String hiddenColumns = "hidden-columns";
     String hint = "hint";
     String hover = "hover";
+    String hostContainer = "host-container";
 
     String in = "in";
+    String inactive = "inactive";
     String indicator = "indicator";
     String info = "info";
     String inputGroup = "input-group";
@@ -142,6 +156,7 @@ public interface CSS {
 
     String macroEditor = "macro-editor";
     String macroList = "macro-list";
+    String marginRight4 = "margin-right-4";
     String marginTop20 = "margin-top-20";
     String messageDetails = "message-details";
     String messageDetailsPre = "message-details-pre";
@@ -160,6 +175,7 @@ public interface CSS {
     String modelBrowserContent = "model-browser-content";
     String modelBrowserTree = "model-browser-tree";
 
+    String name = "name";
     String nav = "nav";
     String navbar = "navbar";
     String navPfPersistentSecondary = "nav-pf-persistent-secondary";
@@ -192,25 +208,44 @@ public interface CSS {
     String pinnable = "pinnable";
     String progress = "progress";
     String progressBar = "progress-bar";
+    String progressBarDanger= "progress-bar-danger";
+    String progressBarRemaining= "progress-bar-remaining";
     String progressBarStriped = "progress-bar-striped";
+    String progressBarSuccess= "progress-bar-success";
+    String progressBarWarning= "progress-bar-warning";
+    String progressContainer = "progress-container";
+    String progressDescription = "progress-description";
+    String progressDescriptionLeft = "progress-description-left ";
+    String progressLabelRight = "progress-label-right";
+    String progressLabelTopRight = "progress-label-top-right";
     String progressXs = "progress-xs";
     String properties = "properties";
     String pullLeft = "pull-left";
     String pullRight = "pull-right";
     String pulse = "pulse";
 
+    String questionsCircleO = "question-circle-o";
+
     String radio = "radio";
     String readonly = "readonly";
     String refresh = "refresh";
     String restricted = "restricted";
     String row = "row";
+    String rowHeader = "row-header";
 
     String secondaryVisiblePf = "secondary-visible-pf";
+    String selected = "selected";
     String selectpicker = "selectpicker";
     String separator = "separator";
+    String server = "server";
+    String servers = "servers";
+    String serverGroupContainer = "server-group-container";
     String spinner = "spinner";
+    String spinnerLg = "spinner-lg";
     String srOnly = "sr-only";
+    String stopCircleO = "stop-circle-o";
     String subtitle = "subtitle";
+    String suspended = "suspended";
 
     String tabContent = "tab-content";
     String tabPane = "tab-pane";
@@ -227,26 +262,47 @@ public interface CSS {
     String toastPfAction = "toast-pf-action";
     String toastPfMaxWidth = "toast-pf-max-width";
     String toastPfTopRight = "toast-pf-top-right";
+    String topology = "topology";
     String ttNested = "tt-nested";
 
+    String underline = "underline";
     String unpin = "unpin";
     String unpinned = "unpinned";
 
     String value = "value";
     String valueDropdown = "value-dropdown";
 
+    String warning = "warning";
     String warningTriangleO = "warning-triangle-o";
     String withProgress = "with-progress";
     String wizardHeader = "wizard-header";
     String wizardProgress = "wizard-progress";
     String wizardStep = "wizard-step";
 
-    static String column(int columns) {
-        return column + "-" + columnMedium + "-" + String.valueOf(columns);
+    static String column(int columns, String... sizes) {
+        if (sizes != null && sizes.length != 0) {
+            return Arrays.stream(sizes)
+                    .map(size -> column + "-" + size + "-" + String.valueOf(columns))
+                    .collect(joining(" "));
+        } else {
+            return column + "-" + columnXs + "-" + String.valueOf(columns) + " " +
+                    column + "-" + columnSm + "-" + String.valueOf(columns) + " " +
+                    column + "-" + columnMd + "-" + String.valueOf(columns) + " " +
+                    column + "-" + columnLg + "-" + String.valueOf(columns);
+        }
     }
 
-    static String offset(int columns) {
-        return column + "-" + columnMedium + "-" + offset + "-" + String.valueOf(columns);
+    static String offset(int columns, String... sizes) {
+        if (sizes != null && sizes.length != 0) {
+            return Arrays.stream(sizes)
+                    .map(size -> column + "-" + size + "-" + offset + "-" + String.valueOf(columns))
+                    .collect(joining(" "));
+        } else {
+            return column + "-" + columnXs + "-" + offset + "-" + String.valueOf(columns) + " " +
+                    column + "-" + columnSm + "-" + offset + "-" + String.valueOf(columns) + " " +
+                    column + "-" + columnMd + "-" + offset + "-" + String.valueOf(columns) + " " +
+                    column + "-" + columnLg + "-" + offset + "-" + String.valueOf(columns);
+        }
     }
 
     /**

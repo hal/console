@@ -15,16 +15,16 @@
  */
 package org.jboss.hal.resources;
 
-import com.google.gwt.resources.client.ExternalTextResource;
-
 import javax.inject.Inject;
+
+import com.google.gwt.resources.client.ExternalTextResource;
 
 /**
  * Umbrella over all kind of resources in HAL.
  *
  * @author Harald Pehl
  */
-public class Resources implements Ids, Names, UIConstants, CSS {
+public class Resources implements Ids, Names, UIConstants, CSS, Icons {
 
     private final Constants constants;
     private final Messages messages;

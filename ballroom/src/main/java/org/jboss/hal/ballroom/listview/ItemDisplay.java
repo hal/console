@@ -15,17 +15,18 @@
  */
 package org.jboss.hal.ballroom.listview;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.FluentIterable;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.HasTitle;
 
-import java.util.ArrayList;
-import java.util.List;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.StreamSupport.stream;
 
 /**
  * Controls the layout of a list view item.
@@ -43,7 +44,7 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
      */
     default String getId() {
         Iterable<String> parts = Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings().trimResults().split(getTitle());
-        return FluentIterable.from(parts).transform(String::toLowerCase).join(Joiner.on('-'));
+        return stream(parts.spliterator(), false).map(String::toLowerCase).collect(joining("-"));
     }
 
     default boolean stacked() {

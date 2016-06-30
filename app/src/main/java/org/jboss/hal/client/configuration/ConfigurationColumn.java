@@ -50,7 +50,7 @@ public class ConfigurationColumn extends StaticItemColumn {
             if (environment.isStandalone()) {
                 items.add(new StaticItem.Builder(Names.SUBSYSTEMS)
                         .nextColumn(ModelDescriptionConstants.SUBSYSTEM)
-                        .onPreview(new PreviewContent(Names.SUBSYSTEMS, resources.previews().subsystems()))
+                        .onPreview(new PreviewContent(Names.SUBSYSTEMS, resources.previews().configurationSubsystems()))
                         .build());
 
             } else {

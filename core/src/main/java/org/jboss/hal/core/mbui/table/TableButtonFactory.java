@@ -17,10 +17,10 @@ package org.jboss.hal.core.mbui.table;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.base.Function;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.gwt.flow.Progress;
@@ -82,8 +82,7 @@ public class TableButtonFactory {
     }
 
     public <T extends ModelNode> Button<T> add(String id, String type, AddressTemplate template,
-            ScheduledCommand afterAdd,
-            @NonNls final String firstAttribute, @NonNls final String... otherAttributes) {
+            ScheduledCommand afterAdd, @NonNls final String firstAttribute, @NonNls final String... otherAttributes) {
 
         AddResourceDialog.Callback addResourceCallback = (name, model) -> {
             ResourceAddress address = template.resolve(statementContext, name);
@@ -103,7 +102,7 @@ public class TableButtonFactory {
             @Override
             public void onError(final Throwable error) {
                 MessageEvent.fire(eventBus,
-                        Message.error(resources.constants().metadataError(), error.getMessage()));
+                        Message.error(resources.messages().metadataError(), error.getMessage()));
             }
 
             @Override
@@ -127,7 +126,6 @@ public class TableButtonFactory {
         return button;
     }
 
-    @SuppressWarnings("Guava")
     public <T> Button<T> remove(String type, AddressTemplate addressTemplate, Function<Api<T>, String> nameFunction,
             ScheduledCommand afterRemove) {
         Button<T> button = new Button<>();

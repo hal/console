@@ -89,6 +89,16 @@ gulp.task('copy', function () {
     gulp.src('bower_components/patternfly/dist/js/patternfly.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 4}));
 
+    // C3 / D3
+    gulp.src('bower_components/c3/c3.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 2}));
+    gulp.src('bower_components/c3/c3.min.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 2}));
+    gulp.src('bower_components/d3/d3.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 2}));
+    gulp.src('bower_components/d3/d3.min.js')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 2}));
+
     // ZeroClipboard
     gulp.src('bower_components/zeroclipboard/dist/ZeroClipboard.js')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));

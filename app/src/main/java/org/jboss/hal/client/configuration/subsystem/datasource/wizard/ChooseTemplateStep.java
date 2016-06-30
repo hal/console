@@ -15,7 +15,8 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
-import com.google.common.collect.FluentIterable;
+import java.util.List;
+
 import elemental.dom.Element;
 import elemental.html.InputElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -26,6 +27,8 @@ import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplat
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Resources;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.StreamSupport.stream;
 import static org.jboss.gwt.elemento.core.EventType.click;
 
 /**
@@ -52,7 +55,9 @@ class ChooseTemplateStep extends WizardStep<Context, State> {
             .end();
             // @formatter:on
 
-        for (DataSourceTemplate template : FluentIterable.from(templates).filter(t -> t.getDataSource().isXa() == xa)) {
+        List<DataSourceTemplate> matchingTemplates = stream(templates.spliterator(), false)
+                .filter(t -> t.getDataSource().isXa() == xa).collect(toList());
+        for (DataSourceTemplate template : matchingTemplates) {
             // @formatter:off
             builder.div().css(CSS.radio)
                 .label()

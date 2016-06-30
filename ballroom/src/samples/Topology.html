@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<html class="layout-pf layout-pf-fixed transitions">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Topology</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="../../../app/src/main/resources/org/jboss/hal/public/css/hal.css" rel="stylesheet">
+
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.dataTables.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/typeahead.bundle.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/tagmanager.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/dataTables.buttons.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/dataTables.select.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jstree.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-select.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-switch.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/patternfly.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/c3.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/d3.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/ace.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/ZeroClipboard.min.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="finder row" style="height: 555px">
+        <div class="finder-column col-xs-2 col-sm-2 col-md-2 col-lg-2">
+            <header>
+                <h1 title="Browse By">Browse By</h1>
+            </header>
+            <ul>
+                <li class="active"><span class="item-text">Topology</span></li>
+                <li><span class="item-text">Hosts</span><span class="folder fa fa-angle-right"></span></li>
+                <li><span class="item-text">Server Groups</span><span class="folder fa fa-angle-right"></span></li>
+            </ul>
+        </div>
+        <div class="finder-preview col-xs-10 col-sm-10 col-md-10 col-lg-10">
+            <h1>Topology</h1>
+            <p class="topology">An overview of the hosts, server groups and servers defined in your domain with the server groups as columns and the hosts as rows. The servers are displayed according to their status:
+                <span class="status error">error or timed out</span>,
+                <span class="status warning">needs reload / restart</span>,
+                <span class="status suspended">suspended</span>,
+                <span class="status ok">up and running</span> and
+                <span class="status inactive">stopped or disabled</span>.</p>
+            <p>Click on a host, server group or server to see additional information or execute operations.</p>
+            <p><a class="clickable pull-right"><i class="fa fa-refresh margin-right-4"></i><span>Refresh</span></a></p>
+            <table class="topology">
+                <colgroup>
+                    <col width="20%"/>
+                    <col width="20%"/>
+                    <col width="20%"/>
+                    <col width="20%"/>
+                    <col width="20%"/>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th class="empty">Server Groups &rarr;<br/>Hosts &darr;</th>
+                    <th><a class="name clickable">development</a></th>
+                    <th class="selected"><a class="name clickable">staging</a></th>
+                    <th>
+                        <a class="name clickable" title="qa-server-group-used-for-testing-our-applications">qa-server-group-used-for-testing-our-applications</a>
+                    </th>
+                    <th><a class="name clickable">production</a></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th class="row-header">
+                        <a class="name clickable"><span class="fa fa-star margin-right-4" title="Domain Controller"></span><span>master</span></a>
+                    </th>
+                    <td>
+                        <div class="servers">
+                            <div class="server ok with-progress">
+                                <a class="name clickable">server1</a>
+                            </div>
+                            <div class="server ok">
+                                <a class="name clickable">server2</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="servers">
+                            <div class="server ok">
+                                <div class="dropdown">
+                                    <a class="name clickable dropdown-toggle" id="server3-dropdown" data-toggle="dropdown" aria-haspopup="true">server3</a>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="server3-dropdown">
+                                        <li><a href="#">Reload</a></li>
+                                        <li><a href="#">Restart</a></li>
+                                        <li><a href="#">Suspend</a></li>
+                                        <li><a href="#">Stop</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="servers">
+                            <div class="server warning">
+                                <a class="name clickable">server4</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="servers">
+                            <div class="server ok">
+                                <a class="name clickable">server5</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="row-header selected">
+                        <a class="name clickable">slave1</a>
+                    </th>
+                    <td class="empty">&nbsp;</td>
+                    <td>
+                        <div class="servers">
+                            <div class="server suspended">
+                                <a class="name clickable">server6</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="servers">
+                            <div class="server error with-progress">
+                                <a class="name clickable">server7</a>
+                            </div>
+                            <div class="server ok selected">
+                                <a class="name clickable">server8</a>
+                            </div>
+                        </div>
+
+                    </td>
+                    <td class="empty">&nbsp;</td>
+                </tr>
+                <tr>
+                    <th class="row-header">
+                        <a class="name clickable" title="slave2-which-contains-lots-of-servers-with-all-kind-of-states">slave2-which-contains-lots-of-servers-with-all-kind-of-states</a>
+                    </th>
+                    <td>
+                        <div class="servers">
+                            <div class="server error">
+                                <a class="name clickable">server9</a>
+                            </div>
+                            <div class="server ok">
+                                <a class="name clickable">server10</a>
+                            </div>
+                            <div class="server suspended">
+                                <a class="name clickable">server11</a>
+                            </div>
+                            <div class="server suspended">
+                                <a class="name clickable">server12</a>
+                            </div>
+                            <div class="server ok">
+                                <a class="name clickable">server13</a>
+                            </div>
+                            <div class="server inactive">
+                                <a class="name clickable">server14</a>
+                            </div>
+                            <div class="server suspended with-progress">
+                                <a class="name clickable">server15</a>
+                            </div>
+                            <div class="server warning">
+                                <a class="name clickable">server16</a>
+                            </div>
+                            <div class="server ok">
+                                <a class="name clickable">server17</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="servers">
+                            <div class="server inactive with-progress">
+                                <a class="name clickable" title="server1-with-a-pretty-long-name-that-is-way-too-long">server1-with-a-pretty-long-name-that-is-way-too-long</a>
+                            </div>
+                            <div class="server ok">
+                                <a class="name clickable">server19</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="empty">&nbsp;</td>
+                    <td>
+                        <div class="servers">
+                            <div class="server ok">
+                                <a class="name clickable">server20</a>
+                            </div>
+                            <div class="server warning with-progress">
+                                <a class="name clickable">server21</a>
+                            </div>
+                            <div class="server ok">
+                                <a class="name clickable">server22</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="row-header">
+                        <a class="name clickable">slave3</a>
+                    </th>
+                    <td>
+                        <div class="servers">
+                            <div class="server inactive">
+                                <a class="name clickable">server23</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="servers">
+                            <div class="server inactive">
+                                <a class="name clickable">server24</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="empty">&nbsp;</td>
+                    <td>
+                        <div class="servers">
+                            <div class="server inactive">
+                                <a class="name clickable">server25</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <h2>Server</h2>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <span class="key">Name</span>
+                    <span class="value">server8</span>
+                </li>
+                <li class="list-group-item">
+                    <span class="key">Host</span>
+                    <span class="value">slave1</span>
+                </li>
+                <li class="list-group-item">
+                    <span class="key">Server Group</span>
+                    <span class="value">qa-server-group-used-for-testing-our-applications</span>
+                </li>
+                <li class="list-group-item">
+                    <span class="key">Socket Binding Port Offset</span>
+                    <span class="value">0</span>
+                </li>
+                <li class="list-group-item">
+                    <span class="key">Status</span>
+                    <span class="value">running</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('[data-toggle=tooltip]').tooltip();
+        // couldn't find another (CSS-only) way to make the <div class="servers"> inside the <td>s 100% height
+        $(".topology .servers").each(function () {
+            $(this).height($(this).parent().height() + 1);
+        });
+    });
+</script>
+</body>
+</html>

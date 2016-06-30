@@ -19,10 +19,10 @@ import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
 
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.gwt.flow.Async;
+import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
@@ -42,6 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.singleton;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Metadata processor which processes the required resources attached to tokens and stores the retrieved metadata in
@@ -103,8 +105,7 @@ public class MetadataProcessor {
             callback.onSuccess(null);
 
         } else {
-            //noinspection Guava
-            Set<AddressTemplate> templates = FluentIterable.from(resources).transform(AddressTemplate::of).toSet();
+            Set<AddressTemplate> templates = resources.stream().map(AddressTemplate::of).collect(toSet());
             processInternal(templates, requiredResources.isRecursive(id), progress, callback);
         }
     }
@@ -136,12 +137,13 @@ public class MetadataProcessor {
             logger.debug("{}", lookupResult);
             List<Operation> operations = rrdOps.create(lookupResult);
             List<List<Operation>> piles = Lists.partition(operations, BATCH_SIZE);
-            List<Composite> composites = Lists.transform(piles, Composite::new);
+            List<Composite> composites = piles.stream().map(Composite::new).collect(toList());
 
             logger.debug("About to execute {} composite operations", composites.size());
-            List<RrdFunction> functions = Lists.transform(composites,
-                    composite -> new RrdFunction(metadataRegistry, securityFramework, resourceDescriptions,
-                            capabilities, dispatcher, composite));
+            List<RrdFunction> functions = composites.stream()
+                    .map(composite -> new RrdFunction(metadataRegistry, securityFramework, resourceDescriptions,
+                            capabilities, dispatcher, composite))
+                    .collect(toList());
             Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
                 @Override
                 public void onFailure(final FunctionContext context) {
@@ -160,7 +162,7 @@ public class MetadataProcessor {
             } else {
                 //noinspection SuspiciousToArrayCall
                 new Async<FunctionContext>(progress).waterfall(new FunctionContext(), outcome,
-                        (org.jboss.gwt.flow.Function[]) functions.toArray(new RrdFunction[functions.size()]));
+                        (Function[]) functions.toArray(new RrdFunction[functions.size()]));
             }
         }
     }

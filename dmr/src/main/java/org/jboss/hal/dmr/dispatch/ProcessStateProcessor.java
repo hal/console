@@ -23,11 +23,6 @@ import org.jboss.hal.dmr.ModelNode;
  */
 public interface ProcessStateProcessor {
 
-    String RESPONSE_HEADERS = "response-headers";
-    String PROCESS_STATE = "process-state";
-    String RESTART_REQUIRED = "restart-required";
-    String RELOAD_REQUIRED = "reload-required";
-
     boolean accepts(ModelNode response);
 
     ProcessState process(ModelNode response);

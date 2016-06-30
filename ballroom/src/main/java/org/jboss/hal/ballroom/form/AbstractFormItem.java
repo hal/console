@@ -35,6 +35,7 @@ import elemental.html.ParagraphElement;
 import elemental.html.SpanElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandler;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
@@ -123,10 +124,14 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         editingRoot = new Elements.Builder().div().css(formGroup).end().build();
         inputLabelElement = new Elements.Builder()
                 .label(label)
-                .css(column(labelColumns), controlLabel)
+                .css(column(labelColumns, columnLg, columnMd, columnSm), controlLabel)
                 .end()
                 .build();
-        inputContainer = new Elements.Builder().div().css(column(inputColumns)).end().build();
+        inputContainer = new Elements.Builder()
+                .div()
+                .css(column(inputColumns, columnLg, columnMd, columnSm))
+                .end()
+                .build();
         errorText = new Elements.Builder().span().css(helpBlock).end().build();
         Elements.setVisible(errorText, false);
 
@@ -177,11 +182,15 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         readonlyRoot = new Elements.Builder().div().css(formGroup).end().build();
         readonlyLabelElement = new Elements.Builder()
                 .label()
-                .css(column(labelColumns), controlLabel)
+                .css(column(labelColumns, columnLg, columnMd, columnSm), controlLabel)
                 .textContent(label)
                 .end()
                 .build();
-        valueContainer = new Elements.Builder().div().css(column(inputColumns)).end().build();
+        valueContainer = new Elements.Builder()
+                .div()
+                .css(column(inputColumns, columnLg, columnMd, columnSm))
+                .end()
+                .build();
         valueElement = new Elements.Builder().p().css(formControlStatic).end().build();
         readonlyRestricted = new Elements.Builder()
                 .span()
@@ -541,8 +550,8 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     @Override
-    public void addResolveExpressionHandler(ResolveExpressionEvent.Handler handler) {
-        eventBus.addHandler(ResolveExpressionEvent.TYPE, handler);
+    public void addResolveExpressionHandler(ResolveExpressionHandler handler) {
+        eventBus.addHandler(ResolveExpressionEvent.getType(), handler);
     }
 
     private boolean hasExpressionScheme(String value) {

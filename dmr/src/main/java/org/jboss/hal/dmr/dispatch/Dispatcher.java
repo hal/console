@@ -30,6 +30,7 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.macro.Action;
 import org.jboss.hal.dmr.macro.Macro;
 import org.jboss.hal.dmr.macro.MacroFinishedEvent;
 import org.jboss.hal.dmr.macro.MacroOperationEvent;
@@ -97,6 +98,10 @@ public class Dispatcher implements RecordingHandler {
     public static final String HEADER_MANAGEMENT_CLIENT_NAME = "X-Management-Client-Name";
     public static final String HEADER_MANAGEMENT_CLIENT_VALUE = "HAL";
 
+    public static OperationCallback NOOP_OPERATION_CALLBACK = (result) -> {};
+    public static FailedCallback NOOP_FAILED_CALLBACK = (op, failure) -> {};
+    public static ExceptionCallback NOOP_EXCEPTIONAL_CALLBACK = (op, exception) -> {};
+
     private static final String HEADER_ACCEPT = "Accept";
     private static final String HEADER_CONTENT_TYPE = "Content-Type";
 
@@ -130,12 +135,12 @@ public class Dispatcher implements RecordingHandler {
 
         this.failedCallback = (operation, failure) -> {
             logger.error("Dispatcher failed: {}, operation: {}", failure, operation);
-            eventBus.fireEvent(new MessageEvent(Message.error(resources.constants().dispatcherFailed(), failure)));
+            eventBus.fireEvent(new MessageEvent(Message.error(resources.messages().lastOperationFailed(), failure)));
         };
         this.exceptionCallback = (operation, t) -> {
             logger.error("Dispatcher exception: {}, operation {}", t.getMessage(), operation);
             eventBus.fireEvent(
-                    new MessageEvent(Message.error(resources.constants().dispatcherException(), t.getMessage())));
+                    new MessageEvent(Message.error(resources.messages().lastOperationException(), t.getMessage())));
         };
     }
 
@@ -362,12 +367,12 @@ public class Dispatcher implements RecordingHandler {
 
     @Override
     public void onRecording(final RecordingEvent event) {
-        if (event.getAction() == RecordingEvent.Action.START && macros.current() == null) {
+        if (event.getAction() == Action.START && macros.current() == null) {
             MacroOptions options = event.getOptions();
             String description = options.hasDefined(DESCRIPTION) ? options.get(DESCRIPTION).asString() : null;
             macros.startRecording(new Macro(options.getName(), description), options);
 
-        } else if (event.getAction() == RecordingEvent.Action.STOP && macros.current() != null) {
+        } else if (event.getAction() == Action.STOP && macros.current() != null) {
             Macro finished = macros.current();
             MacroOptions options = macros.currentOptions();
             macros.stopRecording();

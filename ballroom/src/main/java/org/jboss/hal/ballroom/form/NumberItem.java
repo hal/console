@@ -15,11 +15,12 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import java.util.List;
+
+import com.google.common.base.Strings;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.form.InputElement.Context;
-
-import java.util.List;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Arrays.asList;
@@ -166,10 +167,15 @@ public class NumberItem extends AbstractFormItem<Long> {
 
         @Override
         public Long getValue() {
-            try {
-                return Long.parseLong(element.getValue());
-            } catch (NumberFormatException e) {
+            String value = element.getValue();
+            if (Strings.isNullOrEmpty(value)) {
                 return null;
+            } else {
+                try {
+                    return Long.parseLong(value);
+                } catch (NumberFormatException e) {
+                    return null;
+                }
             }
         }
 

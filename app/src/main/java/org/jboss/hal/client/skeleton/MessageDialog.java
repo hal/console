@@ -40,7 +40,7 @@ public class MessageDialog {
         // header
         elementBuilder.div().css(alert, cssIcon[0])
                 .span().css(pfIcon(cssIcon[1])).end()
-                .span().textContent(message.getMessage()).end()
+                .span().innerHtml(message.getMessage()).end()
                 .end();
 
         // details

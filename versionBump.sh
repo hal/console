@@ -10,6 +10,7 @@ else
     mvn versions:set -DnewVersion=$1
     sed -i.versionsBackup "s/\"version\": \".*\",$/\"version\": \"$1\",/" app/bower.json
     sed -i.versionsBackup "s/\"version\": \".*\",$/\"version\": \"$1\",/" app/package.json
+    sed -i.versionsBackup "s/\"version\": \".*\",$/\"version\": \"$1\",/" npm/package.json
     sed -i.versionsBackup "s/name=\"hal\.version\" value=\".*\"/\name=\"hal.version\" value=\"$1\"/" app/src/main/module.gwt.xml
-    find . -name *.versionsBackup -exec rm {} \;
+    find . -name "*.versionsBackup" -exec rm {} \;
 fi

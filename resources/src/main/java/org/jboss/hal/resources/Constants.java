@@ -42,8 +42,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String accessType();
     String action();
     String add();
-    String allMailServersExist();
-    String allSingletonsExist();
+    String adminOnly();
     String assign();
     String assignedContentDesc();
     String attribute();
@@ -59,24 +58,25 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String chooseTemplate();
     String clearMessages();
     String close();
+    String commited();
     String connection();
     String connectToServer();
     String consoleVersion();
     String content();
     String contentRepository();
     String copied();
+    String copy();
     String copyToClipboard();
     String custom();
 
     String data();
+    String day();
+    String days();
     String defaultValue();
     String deploymentAttributes();
-    String deploymentFailed();
     String details();
     String disable();
     String disabled();
-    String dispatcherException();
-    String dispatcherFailed();
     String duplicateMacro();
 
     String edit();
@@ -94,6 +94,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String finish();
     String formErrors();
     String formResetDesc();
+
+    String goodbye();
 
     String help();
     String hiddenColumns();
@@ -171,29 +173,33 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageHelpWildFlyHomeText();
     String homepageHelpModelReferenceText();
     String homepageHelpLatestNews();
+    String hour();
+    String hours();
 
     String input();
 
     String jdbcDriver();
 
     String loading();
+    String logFiles();
     String logout();
 
     String macroEditor();
-    String macroPlaybackError();
-    String macroPlaybackSuccessful();
     String mainAttributes();
     String managementVersion();
     String message();
-    String metadataError();
+    String minute();
+    String minutes();
     String modelBrowser();
+    String monitor();
 
     String next();
+    String needsReload();
+    String needsRestart();
     String no();
     String noAttributes();
     String noConfiguredMailServers();
     String noDetails();
-    String noDeploymentsUploaded();
     String noItems();
     String noMacros();
     String noRootLogger();
@@ -207,49 +213,60 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String operations();
     String output();
 
+    String pending();
     String pin();
     String ping();
     String platform();
     String play();
     String pool();
+    String processors();
     String productName();
     String productVersion();
 
-    String recordingStarted();
-    String recordingStopped();
     String refresh();
     String releaseName();
     String releaseVersion();
+    String reload();
     String remove();
     String removeResource();
     String rename();
     String required();
     String requiredField();
     String reset();
+    String restart();
     String restartAllServices();
     String restartJvm();
     String restartNoServices();
     String restartResourceServices();
     String restricted();
+    String resume();
+    String running();
 
     String sameOrigin();
     String save();
+    String second();
+    String seconds();
     String security();
     String serverName();
     String settings();
     String showAll();
     String start();
+    String starting();
     String startMacro();
     String statements();
+    String status();
+    String stop();
     String stopMacro();
+    String stopped();
     String storage();
     String summary();
     String supportsExpressions();
+    String suspend();
+    String suspended();
 
     String tags();
     String testConnection();
-    String testConnectionError();
-    String testConnectionSuccess();
+    String timeout();
     String timeouts();
     String toggleDropdown();
     String toggleNavigation();
@@ -259,9 +276,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String unassign();
     String unassignedContentDesc();
-    String unknownError();
-    String unknownResource();
+    String unknownState();
     String unpin();
+    String used();
 
     String validation();
     String view();

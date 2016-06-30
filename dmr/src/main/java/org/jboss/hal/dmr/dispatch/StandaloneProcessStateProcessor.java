@@ -15,11 +15,16 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
+import java.util.List;
+
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.ServerState.State;
 
-import java.util.List;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROCESS_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD_REQUIRED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESPONSE_HEADERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART_REQUIRED;
 
 /**
  * @author Heiko Braun

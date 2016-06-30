@@ -15,17 +15,17 @@
  */
 package org.jboss.hal.core.finder;
 
+import java.util.HashMap;
+import java.util.Map;
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.meta.resource.RequiredResources;
 import org.jboss.hal.spi.Footer;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Registry for finder columns. Manages both sync and async columns behind a split point.
@@ -85,8 +85,8 @@ public class ColumnRegistry {
                     @Override
                     public void onFailure(final Throwable throwable) {
                         //noinspection HardCodedStringLiteral
-                        callback.error("Unable to load required resources for column '" + id + "': " + throwable
-                                .getMessage());
+                        callback.error("Unable to load required resources for column '" + id +
+                                ((throwable != null) ? "': " + throwable.getMessage() : "'"));
                     }
 
                     @Override

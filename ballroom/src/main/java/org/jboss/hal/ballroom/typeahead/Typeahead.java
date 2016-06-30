@@ -20,7 +20,6 @@ import java.util.List;
 import javax.inject.Provider;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.gwt.core.client.GWT;
 import elemental.client.Browser;
@@ -51,6 +50,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.singleton;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.StreamSupport.stream;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -219,11 +220,10 @@ public class Typeahead implements SuggestHandler, Attachable {
 
         options = initOptions();
         bloodhound = initBloodhound(identifier, dataTokenizer, resultProcessor, () -> {
-                    //noinspection Guava
-                    List<Operation> operations = FluentIterable.from(templates)
-                            .transform(template -> template.resolve(statementContext))
-                            .transform(address -> operation(address, numberOfTemplates))
-                            .toList();
+                    List<Operation> operations = stream(templates.spliterator(), false)
+                            .map(template -> template.resolve(statementContext))
+                            .map(address -> operation(address, numberOfTemplates))
+                            .collect(toList());
 
                     return operations.size() == 1 ? operations.get(0) : new Composite(operations);
                 }

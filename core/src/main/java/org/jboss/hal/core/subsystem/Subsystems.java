@@ -41,12 +41,12 @@ public class Subsystems {
         add(new SubsystemMetadata(DATASOURCES, Names.DATASOURCES_DRIVERS, null, null,
                 Ids.DATA_SOURCE_DRIVER_COLUMN, true));
         add(new SubsystemMetadata(DEPLOYMENT_SCANNER, "Deployment Scanners", null, NameTokens.DEPLOYMENT_SCANNERS,
-                null, false));
+                null, true));
         add(new SubsystemMetadata(EE, "EE", null, NameTokens.EE, null, true));
         add(new SubsystemMetadata(EJB3, "EJB3", null, NameTokens.EJB3, null, false));
         add(new SubsystemMetadata(IIOP_OPENJDK, "IIOP", "OpenJDK", NameTokens.IIOP, null, true));
         add(new SubsystemMetadata(INFINISPAN, "Infinispan", null, null, Ids.CACHE_CONTAINER_COLUMN, true));
-        add(new SubsystemMetadata(IO, "IO", null, NameTokens.IO, null, false));
+        add(new SubsystemMetadata(IO, "IO", null, NameTokens.IO, null, true));
         add(new SubsystemMetadata(JCA, "JCA", null, NameTokens.JCA, null, false));
         add(new SubsystemMetadata(JMX, "JMX", null, NameTokens.JMX, null, false));
         add(new SubsystemMetadata(JPA, "JPA", null, NameTokens.JPA, null, false));
@@ -60,7 +60,7 @@ public class Subsystems {
         add(new SubsystemMetadata(RESOURCE_ADAPTERS, "Resource Adapters", null, null,
                 RESOURCE_ADAPTER, true));
         add(new SubsystemMetadata(SECURITY, "Security", null, null, ModelDescriptionConstants.SECURITY_DOMAIN, true));
-        add(new SubsystemMetadata(TRANSACTIONS, "Transactions", null, NameTokens.TRANSACTIONS, null, false));
+        add(new SubsystemMetadata(TRANSACTIONS, "Transactions", null, NameTokens.TRANSACTIONS, null, true));
         add(new SubsystemMetadata(UNDERTOW, "Web", "Undertow", null, Ids.WEB_SETTINGS_COLUMN, true));
         add(new SubsystemMetadata(WEBSERVICES, "Web Services", null, NameTokens.WEBSERVICES, null, false));
     }

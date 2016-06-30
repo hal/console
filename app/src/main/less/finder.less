@@ -52,7 +52,7 @@
       }
 
       h1 {
-        flex: 1 0 auto;
+        flex: 1 1 auto;
         font-size: 13px;
         font-weight: 700;
         line-height: 1.67;
@@ -111,33 +111,9 @@
           background-color: @active-item-color;
         }
 
-        &.error-marker, &.info-marker, &.success-marker, &.warning-marker {
-          border-left: 3px solid;
-        }
-        &.error-marker {
-          border-left-color: @brand-danger;
-        }
-        &.info-marker {
-          border-left-color: #8b8d8f;
-        }
-        &.success-marker {
-          border-left-color: @brand-success;
-        }
-        &.warning-marker {
-          border-left-color: @brand-warning;
-        }
-
         &.with-progress {
-          background-image: linear-gradient(-45deg,
-          rgba(255, 255, 255, 0.33) 25%,
-          rgba(0, 0, 0, 0) 25%,
-          rgba(0, 0, 0, 0) 50%,
-          rgba(255, 255, 255, 0.33) 50%,
-          rgba(255, 255, 255, 0.33) 75%,
-          rgba(0, 0, 0, 0) 75%,
-          rgba(0, 0, 0, 0));
-          animation: finder-item-progress 1s linear infinite;
-          background-size: 40px 40px;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+          border-top: 1px solid rgba(0, 0, 0, 0.1);
         }
 
         .item-icon {
@@ -233,6 +209,11 @@
 
     img.preview {
       .img-responsive;
+      margin: 0 0 10px;
+    }
+
+    .alert {
+      flex: 0 0 auto;
     }
 
     .list-group > .list-group-item {
@@ -253,14 +234,5 @@
         width: 70%;
       }
     }
-  }
-}
-
-@keyframes finder-item-progress {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: 40px 0;
   }
 }

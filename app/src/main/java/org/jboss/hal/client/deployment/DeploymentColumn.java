@@ -20,9 +20,9 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.collect.Lists;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
+import elemental.dom.Element;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
@@ -30,7 +30,7 @@ import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.client.deployment.Deployment.Status;
-import org.jboss.hal.client.runtime.Server;
+import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -40,6 +40,7 @@ import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -47,9 +48,9 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.Message.Level;
 import org.jboss.hal.spi.MessageEvent;
 
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -88,8 +89,9 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
                             .param(INCLUDE_RUNTIME, true)
                             .build();
                     dispatcher.execute(operation, result -> {
-                        List<Deployment> deployments = Lists.transform(result.asPropertyList(),
-                                property -> new Deployment(Server.STANDALONE, property.getValue()));
+                        List<Deployment> deployments = result.asPropertyList().stream()
+                                .map(property -> new Deployment(Server.STANDALONE, property.getValue()))
+                                .collect(toList());
                         callback.onSuccess(deployments);
                     });
                 })
@@ -110,11 +112,11 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
             }
 
             @Override
-            public Level getMarker() {
+            public Element getIcon() {
                 if (item.getStatus() == Status.FAILED) {
-                    return Level.ERROR;
+                    return Icons.error();
                 } else {
-                    return item.isEnabled() ? Level.SUCCESS : Level.INFO;
+                    return item.isEnabled() ? Icons.ok() : Icons.disabled();
                 }
             }
 
@@ -184,6 +186,8 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
 
         // execute using Async to make use of the progress bar
         new Async<FunctionContext>(progress.get()).single(new FunctionContext(), outcome,
-                control -> dispatcher.executeInFunction(control, operation, result -> { control.proceed(); }));
+                control -> dispatcher.executeInFunction(control, operation, result -> {
+                    control.proceed();
+                }));
     }
 }

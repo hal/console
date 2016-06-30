@@ -15,6 +15,9 @@
  */
 package org.jboss.hal.ballroom;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.base.Joiner;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -28,12 +31,11 @@ import org.jboss.hal.resources.Names;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.*;
+import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.ALL_SERVICES;
+import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.NO_SERVICES;
+import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.RESOURCE_SERVICES;
+import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.UNKNOWN;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.dmr.dispatch.ProcessStateProcessor.RESTART_REQUIRED;
 
 /**
  * Class to build a help text from an attribute description. Besides the description itself includes information about
@@ -82,7 +84,7 @@ public class HelpTextBuilder {
             logger.warn("Unknown restart mode in attribute description for '{}': '{}'", property.getName(), //NON-NLS
                     attribute.get(RESTART_REQUIRED).asString());
         }
-        boolean showRestartHelp = (restartMode == ALL_SERVICES || restartMode == JVM || restartMode == RESOURCE_SERVICES);
+        boolean showRestartHelp = (restartMode == ALL_SERVICES || restartMode == RestartMode.JVM || restartMode == RESOURCE_SERVICES);
 
         List<String> textModules = new ArrayList<>();
         if (required) {
@@ -114,7 +116,7 @@ public class HelpTextBuilder {
                 case "resource-services":
                     return RESOURCE_SERVICES;
                 case "jvm":
-                    return JVM;
+                    return RestartMode.JVM;
                 case "no-services":
                     return NO_SERVICES;
                 default:

@@ -56,7 +56,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         void tlcMode();
         void fullscreenMode(String title);
         void applicationMode();
-        void updateBack(FinderContext finderContext);
+        void updateLinks(FinderContext finderContext);
         void updateBreadcrumb(FinderContext finderContext);
         void updateBreadcrumb(ModelBrowserPath path);
     }
@@ -146,7 +146,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
 
     @Override
     public void onFinderContext(final FinderContextEvent event) {
-        getView().updateBack(event.getFinderContext());
+        getView().updateLinks(event.getFinderContext());
         getView().updateBreadcrumb(event.getFinderContext());
     }
 
@@ -165,7 +165,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
 
     public void fullscreenMode(final String title) {
         if (finder.getContext().getToken() != null) {
-            getView().updateBack(finder.getContext());
+            getView().updateLinks(finder.getContext());
         }
         getView().fullscreenMode(title);
     }

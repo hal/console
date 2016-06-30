@@ -43,7 +43,7 @@ import org.jboss.hal.dmr.macro.MacroFinishedEvent.MacroFinishedHandler;
 import org.jboss.hal.dmr.macro.MacroOperationEvent;
 import org.jboss.hal.dmr.macro.MacroOperationEvent.MacroOperationHandler;
 import org.jboss.hal.dmr.macro.Macros;
-import org.jboss.hal.dmr.macro.RecordingEvent;
+import org.jboss.hal.dmr.macro.Recording;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.token.NameTokens;
@@ -172,12 +172,12 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
         if (recording) {
             recording = false;
             getView().stopRecording();
-            getEventBus().fireEvent(RecordingEvent.stop());
+            getEventBus().fireEvent(Recording.stop());
 
         } else {
             new MacroOptionsDialog(macros, capabilities, resources, options -> {
-                MessageEvent.fire(getEventBus(), Message.info(resources.constants().recordingStarted()));
-                getEventBus().fireEvent(RecordingEvent.start(options));
+                MessageEvent.fire(getEventBus(), Message.info(resources.messages().recordingStarted()));
+                getEventBus().fireEvent(Recording.start(options));
                 getView().startRecording();
                 getView().steps(0);
                 recording = true;
@@ -198,7 +198,7 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
 
     @Override
     public void onMacroFinished(final MacroFinishedEvent event) {
-        MessageEvent.fire(getEventBus(), Message.info(resources.constants().recordingStopped()));
+        MessageEvent.fire(getEventBus(), Message.info(resources.messages().recordingStopped()));
 
         if (event.getOptions().openInEditor()) {
             PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(NameTokens.MACRO_EDITOR)
@@ -210,9 +210,5 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
 
     void onSettings() {
         Window.alert(NYI);
-    }
-
-    boolean isRecording() {
-        return recording;
     }
 }

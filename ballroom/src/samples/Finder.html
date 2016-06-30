@@ -35,6 +35,8 @@
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-switch.js"></script>
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/patternfly.js"></script>
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/ace.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/c3.js"></script>
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/d3.js"></script>
     <script src="../../../app/src/main/resources/org/jboss/hal/public/js/ZeroClipboard.min.js"></script>
 </head>
 <body>
@@ -86,19 +88,19 @@
                 </div>
             </header>
             <ul>
-                <li class="error-marker">
+                <li>
                     <span class="item-text">default</span>
                     <span class="folder fa fa-angle-right"></span>
                 </li>
-                <li class="info-marker">
+                <li>
                     <span class="item-text">full</span>
                     <span class="folder fa fa-angle-right"></span>
                 </li>
-                <li class="success-marker">
+                <li>
                     <span class="item-text">ha</span>
                     <span class="folder fa fa-angle-right"></span>
                 </li>
-                <li class="active warning-marker">
+                <li class="active">
                     <span class="item-text">full-ha</span>
                     <span class="folder fa fa-angle-right"></span>
                 </li>
@@ -136,7 +138,7 @@
                     </div>
                 </li>
                 <li class="active pinned">
-                    <span class="item-text">DataSources</span>
+                    <span class="item-text">Datasources</span>
                     <span class="unpin pficon-close"></span>
                     <span class="pin pficon-thumb-tack-o"></span>
                     <span class="folder fa fa-angle-right"></span>
@@ -152,7 +154,7 @@
                     <span class="pin pficon-thumb-tack-o"></span>
                     <button class="btn btn-finder">View</button>
                 </li>
-                <li class="unpinned">
+                <li class="unpinned with-progress">
                     <span class="item-text">EJB</span>
                     <span class="unpin pficon-close"></span>
                     <span class="pin pficon-thumb-tack-o"></span>
@@ -162,7 +164,7 @@
                     <span class="unpin pficon-close"></span>
                     <span class="pin pficon-thumb-tack-o"></span>
                 </li>
-                <li class="unpinned">
+                <li class="unpinned with-progress active">
                     <span class="item-text">Infinispan</span>
                     <span class="unpin pficon-close"></span>
                     <span class="pin pficon-thumb-tack-o"></span>
@@ -236,16 +238,28 @@
         <!-- finder column #4 -->
         <div id="column-4" class="finder-column col-md-2 col-sm-2">
             <header>
-                <h1>Type</h1>
+                <h1>Datasource</h1>
             </header>
             <ul>
                 <li class="active">
-                    <span class="item-icon fa fa-cubes"></span>
-                    <span class="item-text">Non-XA</span>
+                    <span class="item-icon pficon pficon-ok"></span>
+                    <span class="item-text">Enabled / Running State</span>
                 </li>
                 <li>
-                    <span class="item-icon fa fa-archive"></span>
-                    <span class="item-text">XA</span>
+                    <span class="item-icon pficon pficon-warning-triangle-o"></span>
+                    <span class="item-text">Warning State</span>
+                </li>
+                <li>
+                    <span class="item-icon pficon pficon-disabled-circle-o"></span>
+                    <span class="item-text">Disabled State</span>
+                </li>
+                <li>
+                    <span class="item-icon fa fa-stop-circle-o grey"></span>
+                    <span class="item-text">Stopped State</span>
+                </li>
+                <li>
+                    <span class="item-icon pficon pficon-error-circle-o"></span>
+                    <span class="item-text">Error State</span>
                 </li>
                 <li class="empty"><span class="item-text">No items</span></li>
             </ul>

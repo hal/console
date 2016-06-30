@@ -25,22 +25,39 @@ import elemental.client.Browser;
 import elemental.dom.Element;
 
 import static org.jboss.hal.resources.CSS.withProgress;
+import static org.jboss.hal.resources.UIConstants.PROGRESS_TIMEOUT;
 
 /**
- * Class to monitor item actions and show a progress indicator if they take longer than a given timeout.
+ * Class to monitor item actions and show a progress indicator if they take longer than a given timeout. Relies on an
+ * unique item id implemented by {@link ItemDisplay#getId()} and specified in the column setup.
  *
  * @author Harald Pehl
  */
 public class ItemMonitor {
 
-    private static final int PROGRESS_TIMEOUT = 333;
+    public static void startProgress(final String itemId) {
+        Element element = Browser.getDocument().getElementById(itemId);
+        if (element != null) {
+            element.getClassList().add(withProgress);
+        }
+    }
+
+    public static void stopProgress(final String itemId) {
+        Element element = Browser.getDocument().getElementById(itemId);
+        if (element != null) {
+            element.getClassList().remove(withProgress);
+        }
+    }
+
 
     private final EventBus eventBus;
     private int timeoutHandle = -1;
     private HandlerRegistration handlerRegistration;
 
     @Inject
-    public ItemMonitor(final EventBus eventBus) {this.eventBus = eventBus;}
+    public ItemMonitor(final EventBus eventBus) {
+        this.eventBus = eventBus;
+    }
 
     /**
      * Wraps and monitors an item action which triggers a place request.
@@ -49,19 +66,15 @@ public class ItemMonitor {
             final Scheduler.ScheduledCommand command) {
         return itm -> {
             command.execute();
-            Element element = Browser.getDocument().getElementById(itemId);
-            if (element != null) {
-                timeoutHandle = Browser.getWindow().setTimeout(() -> {
-                    element.getClassList().add(withProgress);
+            startProgress(itemId);
+            timeoutHandle = Browser.getWindow().setTimeout(() ->
                     handlerRegistration = eventBus.addHandler(NavigationEvent.getType(), navigationEvent -> {
                         if (nameToken.equals(navigationEvent.getRequest().getNameToken())) {
                             handlerRegistration.removeHandler();
                             Browser.getWindow().clearTimeout(timeoutHandle);
-                            element.getClassList().remove(withProgress);
+                            stopProgress(itemId);
                         }
-                    });
-                }, PROGRESS_TIMEOUT);
-            }
+                    }), PROGRESS_TIMEOUT);
         };
     }
 }

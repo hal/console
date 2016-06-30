@@ -15,15 +15,14 @@
  */
 package org.jboss.hal.client.deployment;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import com.google.common.base.Joiner;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.spi.Message;
@@ -99,7 +98,7 @@ public class UploadStatistics {
 
             // no statistics
             case INFO:
-                message = Message.info(CONSTANTS.noDeploymentsUploaded());
+                message = Message.info(MESSAGES.noDeploymentsUploaded());
                 break;
 
             // some deployments have been successfully added or replaced, but some couldn't
@@ -113,23 +112,29 @@ public class UploadStatistics {
                 break;
 
             default:
-                message = Message.error(CONSTANTS.unknownError());
+                message = Message.error(MESSAGES.unknownError());
         }
 
         return message;
     }
 
-    private String sentences(SortedSet<String> added, SortedSet<String> replaced, SortedSet<String> failed) {
-        List<String> sentences = new ArrayList<>();
+    private SafeHtml sentences(SortedSet<String> added, SortedSet<String> replaced, SortedSet<String> failed) {
+        SafeHtmlBuilder builder = new SafeHtmlBuilder();
         if (!added.isEmpty()) {
-            sentences.add(MESSAGES.deploymentAdded(added.size()));
+            builder.append(MESSAGES.deploymentAdded(added.size()));
+            if (!replaced.isEmpty() || !failed.isEmpty()) {
+                builder.appendHtmlConstant("<br/>"); //NON-NLS
+            }
         }
         if (!replaced.isEmpty()) {
-            sentences.add(MESSAGES.deploymentReplaced(replaced.size()));
+            builder.append(MESSAGES.deploymentReplaced(replaced.size()));
+            if (!failed.isEmpty()) {
+                builder.appendHtmlConstant("<br/>"); //NON-NLS
+            }
         }
         if (!failed.isEmpty()) {
-            sentences.add(MESSAGES.deploymentFailed(failed.size()));
+            builder.append(MESSAGES.deploymentFailed(failed.size()));
         }
-        return Joiner.on(' ').join(sentences);
+        return builder.toSafeHtml();
     }
 }

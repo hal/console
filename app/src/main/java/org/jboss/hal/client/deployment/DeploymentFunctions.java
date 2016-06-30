@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 import javax.inject.Provider;
 
-import com.google.common.collect.FluentIterable;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.html.File;
 import elemental.html.FileList;
@@ -46,6 +45,7 @@ import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -136,8 +136,7 @@ public class DeploymentFunctions {
                     .param(CHILD_TYPE, DEPLOYMENT)
                     .build();
             dispatcher.executeInFunction(control, operation, result -> {
-                //noinspection Guava
-                Set<String> names = FluentIterable.from(result.asList()).transform(ModelNode::asString).toSet();
+                Set<String> names = result.asList().stream().map(ModelNode::asString).collect(toSet());
                 if (names.contains(name)) {
                     control.getContext().push(200);
                 } else {
@@ -251,7 +250,7 @@ public class DeploymentFunctions {
                 @Override
                 public void onFailure(final FunctionContext context) {
                     // Should not happen since UploadOrReplace functions proceed also for errors and exceptions!
-                    MessageEvent.fire(eventBus, Message.error(resources.constants().deploymentFailed()));
+                    MessageEvent.fire(eventBus, Message.error(resources.messages().deploymentFailed(files.getLength())));
                 }
 
                 @Override

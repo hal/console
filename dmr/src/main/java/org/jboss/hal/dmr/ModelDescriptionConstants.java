@@ -54,8 +54,10 @@ public interface ModelDescriptionConstants {
     String ANY = "any";
     String ATTRIBUTES = "attributes";
     String ATTRIBUTES_ONLY = "attributes-only";
+    String AUTO_START = "auto-start";
 
     String BATCH_JBERET = "batch-jberet";
+    String BLOCKING = "blocking";
     String BYTES = "bytes";
 
     String CAPABILITIES = "capabilities";
@@ -112,6 +114,7 @@ public interface ModelDescriptionConstants {
     String HOST = "host";
     String HOST_FAILURE_DESCRIPTION = "host-failure-description";
     String HOST_FAILURE_DESCRIPTIONS = "host-failure-descriptions";
+    String HOST_STATE = "host-state";
 
     String IGNORED = "ignored";
     String IIOP_OPENJDK = "iiop-openjdk";
@@ -132,7 +135,9 @@ public interface ModelDescriptionConstants {
     String JMX = "jmx";
     String JNDI_NAME = "jndi-name";
     String JPA = "jpa";
+    String JVM = "jvm";
 
+    String LAUNCH_TYPE = "launch-type";
     String LEVEL = "level";
     String LIST_ADD = "list-add";
     String LIST_REMOVE = "list-remove";
@@ -146,6 +151,9 @@ public interface ModelDescriptionConstants {
     String MANAGED_EXECUTOR_SERVICE = "managed-executor-service";
     String MANAGED_SCHEDULED_EXECUTOR_SERVICE = "managed-scheduled-executor-service";
     String MANAGED_THREAD_FACTORY = "managed-thread-factory";
+    String MANAGEMENT_MAJOR_VERSION = "management-major-version";
+    String MANAGEMENT_MICRO_VERSION = "management-micro-version";
+    String MANAGEMENT_MINOR_VERSION = "management-minor-version";
     String MASK = "mask";
     String MAX = "max";
     String MAX_LENGTH = "max-length";
@@ -176,7 +184,11 @@ public interface ModelDescriptionConstants {
     String PASSWORD = "password";
     String PATH = "path";
     String PORT = "port";
+    String PROCESS_STATE = "process-state";
+    String PRODUCT_NAME = "product-name";
+    String PRODUCT_VERSION = "product-version";
     String PROFILE = "profile";
+    String PROFILE_NAME = "profile-name";
     String PROXIES = "proxies";
 
     String QUERY = "query";
@@ -199,6 +211,12 @@ public interface ModelDescriptionConstants {
     String REQUEST_PROPERTIES = "request-properties";
     String RECURSIVE = "recursive";
     String RECURSIVE_DEPTH = "recursive-depth";
+    String RELEASE_CODENAME = "release-codename";
+    String RELEASE_VERSION = "release-version";
+    String RELOAD = "reload";
+    String RELOAD_HOST = "reload-host";
+    String RELOAD_REQUIRED = "reload-required";
+    String RELOAD_SERVERS = "reload-servers";
     String REPLY_PROPERTIES = "reply-properties";
     String REQUEST_CONTROLLER = "request-controller";
     String REQUIRED = "required";
@@ -206,8 +224,15 @@ public interface ModelDescriptionConstants {
     String RESPONSE = "response";
     String RESOURCE_ADAPTER = "resource-adapter";
     String RESOURCE_ADAPTERS = "resource-adapters";
+    String RESPONSE_HEADERS = "response-headers";
+    String RESTART = "restart";
+    String RESTART_REQUIRED = "restart-required";
+    String RESTART_SERVERS = "restart-servers";
     String RESULT = "result";
+    String RESUME = "resume";
+    String RESUME_SERVERS = "resume-servers";
     String ROLES = "HEADER_ROLES";
+    String RUNNING_MODE = "running-mode";
     String RUNTIME = "runtime";
     String RUNTIME_NAME = "runtime-name";
 
@@ -224,18 +249,28 @@ public interface ModelDescriptionConstants {
     String SERVER_TYPE = "server-type";
     String SERVICE = "service";
     String SOCKET_BINDING = "socket-binding";
+    String SOCKET_BINDING_DEFAULT_INTERFACE = "socket-binding-default-interface";
     String SOCKET_BINDING_GROUP = "socket-binding-group";
+    String SOCKET_BINDING_PORT_OFFSET = "socket-binding-port-offset";
     String SHUTDOWN = "shutdown";
     String STANDALONE = "standalone";
     String START = "start";
+    String START_SERVERS = "start-servers";
     String STATUS = "status";
     String STATISTICS_ENABLED = "statistics-enabled";
     String STEPS = "steps";
     String STORAGE = "storage";
+    String STOP = "stop";
+    String STOP_SERVERS = "stop-servers";
     String SUBDEPLOYMENT = "subdeployment";
     String SUBSYSTEM = "subsystem";
     String SUCCESS = "success";
+    String SUSPEND = "suspend";
+    String SUSPEND_SERVERS = "suspend-servers";
+    String SUSPEND_STATE = "suspend-state";
+    String SYSTEM_PROPERTY = "system-property";
 
+    String TIMEOUT = "timeout";
     String TRANSACTIONS = "transactions";
     String TRIM_DESCRIPTIONS = "trim-descriptions";
     String TYPE = "type";
@@ -245,6 +280,7 @@ public interface ModelDescriptionConstants {
 
     String VALUE = "value";
     String VALUE_TYPE = "value-type";
+    String VERBOSE = "verbose";
 
     String WEBSERVICES = "webservices";
     String WHERE = "where";

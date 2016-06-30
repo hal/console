@@ -21,6 +21,7 @@ In order to make the console future proof, it's necessary to rewrite these parts
         - Search can be re-implemented
     - Switch between applications using the breadcrumb
     - Add deployments using drag & drop
+    - Topology overview
     - Macro recording
     - PatternFly compliant
     - Enhanced form items for lists, properties and booleans
@@ -32,7 +33,7 @@ In order to make the console future proof, it's necessary to rewrite these parts
 
     - Navigation using cursor keys. Open an application by pressing ↵ (`enter`) and go back with ⌫ (`backspace`)
     - Pin frequently used subsystems to stay at the top
-    - Filter items by name *and* by properties like 'enabled' in the data sources column
+    - Filter items by name *and* by properties like 'enabled' in the data sources column or 'stopped' in the servers column
     - Columns could be provided by extensions
 
 ## Running
@@ -49,7 +50,7 @@ There are different ways to launch HAL.next and connect to a running WildFly ins
         /host=master/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=<url>)
         reload --host=master
         
-### Local / Production Mode
+### Local / Standalone
 
 The `standalone` module contains an executable jar which launches a local web server at http://localhost:9090.
   
@@ -57,6 +58,23 @@ The `standalone` module contains an executable jar which launches a local web se
 1. `mvn install`
 1. `java -jar standalone/target/hal-standalone-<version>.jar`
 1. Open http://localhost:9090
+
+If you don't want to or cannot build locally you can download a somewhat recent version of `hal-standalone.jar` from https://repository.jboss.org/nexus/index.html#nexus-search;quick~hal-standalone. 
+
+### Local / NPM
+
+The `npm` module provides a npm package which launches a local web server at http://localhost:3000.
+  
+1. Add http://localhost:3000 as allowed origin
+1. `mvn install`
+1. `cd npm`
+1. `node server.js`
+1. Open http://localhost:3000
+
+If you don't want to or cannot build locally you can install the npm package [hal-next](https://www.npmjs.com/package/hal-next) which serves a somewhat recent version of HAL.next.
+ 
+1. `npm install -g hal-next`
+1. `hal-next`
 
 ### Local / SuperDevMode
 
@@ -70,7 +88,7 @@ Useful during development as it provides browser refresh after code changes.
 
 ### Remote
 
-A recent version of HAL.next is also available on the `gh-pages` branch at https://hal.github.io/hal.next/. 
+A somewhat recent version of HAL.next is also available on the `gh-pages` branch at https://hal.github.io/hal.next/. 
 
 1. Add https://hal.github.io/hal.next/ as allowed origin
 1. Open https://hal.github.io/hal.next/
@@ -79,9 +97,9 @@ The remote version is served from **https** so you need to secure the management
 
 ### Bundled
 
-There's a WildFly 10.1.0 development version bundled with the HAL.next available at https://drive.google.com/file/d/0BzCXrwefSBHJbUxJRDJhcDlWWlE/view?usp=sharing. 
+There's a WildFly 10.1.0 server bundled with a somewhat recent HAL.next version available at https://drive.google.com/file/d/0BzCXrwefSBHJbUxJRDJhcDlWWlE/view?usp=sharing. 
 
 1. Download and extract 
 1. run `bin/standalone.sh` or `bin/domain.sh`
-1. Open http://localhost:9090
+1. Open http://localhost:9990
 1. Use `admin` / `admin` to login

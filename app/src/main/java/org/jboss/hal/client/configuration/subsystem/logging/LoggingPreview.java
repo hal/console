@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.client.configuration.subsystem.logging;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.FluentIterable;
 import com.google.gwt.resources.client.ExternalTextResource;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
@@ -29,6 +27,7 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LEVEL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
@@ -39,14 +38,14 @@ import static org.jboss.hal.resources.Names.ROOT_LOGGER;
  *
  * @author Harald Pehl
  */
-public class LoggingPreview extends PreviewContent {
+class LoggingPreview extends PreviewContent {
 
     private final Dispatcher dispatcher;
     private final Operation operation;
     private final PreviewAttributes<ModelNode> attributes;
     private final Element undefined;
 
-    public LoggingPreview(Dispatcher dispatcher, Resources resources,
+    LoggingPreview(Dispatcher dispatcher, Resources resources,
             String header, ExternalTextResource description, Operation operation) {
         super(header, description);
         this.dispatcher = dispatcher;
@@ -58,10 +57,9 @@ public class LoggingPreview extends PreviewContent {
                 .append(model -> {
                     String handlers = "";
                     if (model.hasDefined(HANDLERS)) {
-                        //noinspection Guava
-                        handlers = FluentIterable.from(model.get(HANDLERS).asList())
-                                .transform(ModelNode::asString)
-                                .join(Joiner.on(", "));
+                        handlers = model.get(HANDLERS).asList().stream()
+                                .map(ModelNode::asString)
+                                .collect(joining(", "));
                     }
                     return new String[]{labelBuilder.label(HANDLERS), handlers};
                 })
@@ -77,7 +75,7 @@ public class LoggingPreview extends PreviewContent {
     }
 
     @Override
-    public void onReset() {
+    public void update(Object whatever) {
         dispatcher.execute(operation,
                 (model) -> {
                     for (Element element : attributes.asElements()) {

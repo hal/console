@@ -21,6 +21,7 @@ import com.google.gwt.event.shared.GwtEvent;
 /**
  * @author Harald Pehl
  */
+// No @GenEvent here due to naming conflicts
 public class ProcessStateEvent extends GwtEvent<ProcessStateEvent.ProcessStateHandler> {
 
     public interface ProcessStateHandler extends EventHandler {

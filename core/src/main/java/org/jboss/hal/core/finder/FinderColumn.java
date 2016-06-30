@@ -59,11 +59,11 @@ import static org.jboss.hal.resources.UIConstants.ROLE;
 import static org.jboss.hal.resources.UIConstants.TABINDEX;
 
 /**
- * Describes and renders a column in a finder. A column has a unique id, a title, a number of optional column actions
+ * Describes a column in a finder. A column has an unique id, a title, a number of optional column actions
  * and an {@link ItemRenderer} which defines how the items of this column are rendered.
  * <p>
  * The idea is that columns are self-contained and don't need direct references to other columns. References are only
- * provided by id. The {@link ColumnRegistry} will then try to resolve the id against an existing column.
+ * provided by id. The {@link ColumnRegistry} will then resolve the id against an existing column.
  *
  * @param <T> The columns type.
  *
@@ -410,7 +410,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                             finder.selectColumn(previousColumn.getId());
                             FinderRow selectedRow = previousColumn.selectedRow();
                             if (selectedRow != null) {
-                                selectedRow.showPreview();
+                                selectedRow.updatePreview();
                             }
                             finder.updateContext();
                             finder.updateHistory();
@@ -441,7 +441,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                                         if (column.activeElement() == null && column.hasVisibleElements()) {
                                             Element firstElement = column.nextVisibleElement(null);
                                             column.markSelected(firstElement.getId());
-                                            column.row(firstElement).showPreview();
+                                            column.row(firstElement).updatePreview();
                                         }
                                         finder.updateContext();
                                         finder.updateHistory();
@@ -467,6 +467,10 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                 }
             }
         }
+    }
+
+    protected boolean isVisible() {
+        return asElement && Elements.isVisible(root) && root.getParentElement() != null;
     }
 
 
@@ -505,6 +509,10 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
     private FinderRow<T> row(Element element) {
         return rows.get(element.getId());
+    }
+
+    private FinderRow<T> row(String id) {
+        return rows.get(id);
     }
 
     FinderRow<T> selectedRow() {
@@ -857,6 +865,9 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
     }
 
+    /**
+     * Refreshes and selects and the specified item.
+     */
     public void refresh(String selectItemId) {
         refresh(() -> {
             FinderRow<T> row = rows.get(selectItemId);

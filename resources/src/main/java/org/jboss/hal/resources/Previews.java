@@ -29,6 +29,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/standalone.html")
     ExternalTextResource configurationStandalone();
 
+    @Source("previews/configuration/subsystems.html")
+    ExternalTextResource configurationSubsystems();
+
     @Source("previews/deployments/content-repository.html")
     ExternalTextResource contentRepository();
 
@@ -38,8 +41,35 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/subsystems/datasources-only.html")
     ExternalTextResource datasourcesOnly();
 
+    @Source("previews/deployments/domain.html")
+    ExternalTextResource deploymentsDomain();
+
+    @Source("previews/deployments/server-groups.html")
+    ExternalTextResource deploymentsServerGroups();
+
+    @Source("previews/deployments/standalone.html")
+    ExternalTextResource deploymentsStandalone();
+
+    @Source("previews/subsystems/deployment-scanner.html")
+    ExternalTextResource deploymentScanner();
+
     @Source("previews/subsystems/ee.html")
     ExternalTextResource ee();
+
+    @Source("previews/runtime/hosts.html")
+    ExternalTextResource hosts();
+
+    @Source("previews/configuration/interfaces.html")
+    ExternalTextResource interfaces();
+
+    @Source("previews/subsystems/io.html")
+    ExternalTextResource io();
+
+    @Source("previews/configuration/subsystems/jdbc-drivers.html")
+    ExternalTextResource jdbcDrivers();
+
+    @Source("previews/runtime/logfiles.html")
+    ExternalTextResource logFiles();
 
     @Source("previews/subsystems/logging.html")
     ExternalTextResource logging();
@@ -53,21 +83,6 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/subsystems/mail.html")
     ExternalTextResource mail();
 
-    @Source("previews/deployments/domain.html")
-    ExternalTextResource deploymentsDomain();
-
-    @Source("previews/deployments/server-groups.html")
-    ExternalTextResource deploymentsServerGroups();
-
-    @Source("previews/deployments/standalone.html")
-    ExternalTextResource deploymentsStandalone();
-
-    @Source("previews/configuration/interfaces.html")
-    ExternalTextResource interfaces();
-
-    @Source("previews/configuration/subsystems/jdbc-drivers.html")
-    ExternalTextResource jdbcDrivers();
-
     @Source("previews/configuration/paths.html")
     ExternalTextResource paths();
 
@@ -80,12 +95,18 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/runtime/standalone.html")
     ExternalTextResource runtimeStandalone();
 
+    @Source("previews/runtime/server-groups.html")
+    ExternalTextResource runtimeServerGroups();
+
+    @Source("previews/runtime/subsystems.html")
+    ExternalTextResource runtimeSubsystems();
+
     @Source("previews/configuration/socket-bindings.html")
     ExternalTextResource socketBindings();
 
-    @Source("previews/configuration/subsystems.html")
-    ExternalTextResource subsystems();
-
     @Source("previews/configuration/system-properties.html")
     ExternalTextResource systemProperties();
+
+    @Source("previews/runtime/topology.html")
+    ExternalTextResource topology();
 }

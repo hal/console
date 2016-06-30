@@ -1,0 +1,26 @@
+{
+  "name": "hal-next",
+  "version": "0.3.0",
+  "description": "The next version of the WildFly management console",
+  "keywords": ["hal", "wildfly", "management", "console"],
+  "bin": {
+    "hal-next": "./server.js"
+  },
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hal/hal.next.git"
+  },
+  "author": "Harald Pehl <harald.pehl@gmail.com> (http://hpehl.info)",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://issues.jboss.org/browse/HAL"
+  },
+  "homepage": "https://github.com/hal/hal.next/#readme",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}

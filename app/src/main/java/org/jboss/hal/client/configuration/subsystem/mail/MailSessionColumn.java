@@ -21,7 +21,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
@@ -50,6 +49,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_SESSION_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -85,8 +85,8 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
                     .param(RECURSIVE, true).build();
 
             dispatcher.execute(op, result -> {
-                List<MailSession> mailSessions = Lists.transform(result.get(MAIL_SESSION).asPropertyList(),
-                        MailSession::new);
+                List<MailSession> mailSessions = result.get(MAIL_SESSION).asPropertyList().stream()
+                        .map(MailSession::new).collect(toList());
                 callback.onSuccess(mailSessions);
             });
         });

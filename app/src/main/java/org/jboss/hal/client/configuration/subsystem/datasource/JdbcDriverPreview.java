@@ -29,7 +29,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_VERSION;
 /**
  * @author Harald Pehl
  */
-class JdbcDriverPreview extends PreviewContent {
+class JdbcDriverPreview extends PreviewContent<JdbcDriver> {
 
     JdbcDriverPreview(final JdbcDriver driver, final Resources resources) {
         super(driver.getName());
