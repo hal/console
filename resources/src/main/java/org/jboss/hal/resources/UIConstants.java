@@ -41,6 +41,7 @@ public interface UIConstants {
     String OBJECT = "Object";
     String PLACEMENT = "placement";
     String PRESENTATION = "presentation";
+    String PROGRESSBAR = "progressbar";
     String ROLE = "role";
     String TABINDEX = "tabindex";
     String TABLIST = "tablist";

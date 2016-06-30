@@ -43,8 +43,8 @@ public class ServerMonitorColumn extends StaticItemColumn {
             final Resources resources) {
         super(finder, Ids.SERVER_MONITOR_COLUMN, resources.constants().monitor(), asList(
 
-                new StaticItem.Builder(Names.JVM)
-                        .onPreview(new JvmPreview(dispatcher, statementContext))
+                new StaticItem.Builder(resources.constants().status())
+                        .onPreview(new ServerStatusPreview(dispatcher, statementContext, resources))
                         .build(),
 
                 new StaticItem.Builder(resources.constants().logFiles())

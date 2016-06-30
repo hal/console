@@ -208,7 +208,16 @@ public interface CSS {
     String pinnable = "pinnable";
     String progress = "progress";
     String progressBar = "progress-bar";
+    String progressBarDanger= "progress-bar-danger";
+    String progressBarRemaining= "progress-bar-remaining";
     String progressBarStriped = "progress-bar-striped";
+    String progressBarSuccess= "progress-bar-success";
+    String progressBarWarning= "progress-bar-warning";
+    String progressContainer = "progress-container";
+    String progressDescription = "progress-description";
+    String progressDescriptionLeft = "progress-description-left ";
+    String progressLabelRight = "progress-label-right";
+    String progressLabelTopRight = "progress-label-top-right";
     String progressXs = "progress-xs";
     String properties = "properties";
     String pullLeft = "pull-left";
@@ -256,6 +265,7 @@ public interface CSS {
     String topology = "topology";
     String ttNested = "tt-nested";
 
+    String underline = "underline";
     String unpin = "unpin";
     String unpinned = "unpinned";
 

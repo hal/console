@@ -31,9 +31,9 @@ public interface Names {
     String DEPLOYMENTS = "Deployments";
     String DOMAIN_CONTROLLER = "Domain Controller";
     String EE = "EE";
-    String ENVIRONMENT = "Environment";
     String GLOBAL_MODULES = "Global Modules";
     String HAL = "HAL";
+    String HEAP = "Heap";
     String HOST = "Host";
     String HOST_CONTROLLER = "Host Controller";
     String HOSTS = "Hosts";
@@ -48,6 +48,7 @@ public interface Names {
     String MAIL_SESSION = "Mail Session";
     String MANAGEMENT_CONSOLE = "Management Console";
     String MANAGEMENT_MODEL = "Management Model";
+    String MB = "MB";
     String MODULE = "Module";
     String NAME = "Name";
     String NOT_AVAILABLE = "n/a";
@@ -68,6 +69,7 @@ public interface Names {
     String SUBSYSTEM = "Subsystem";
     String SUBSYSTEMS = "Subsystems";
     String SYSTEM_PROPERTIES = "System Properties";
+    String THREADS = "Threads";
     String TOPOLOGY = "Topology";
     String UNKNOWN= "unknown";
     String XA_DATASOURCE = "XA Datasource";

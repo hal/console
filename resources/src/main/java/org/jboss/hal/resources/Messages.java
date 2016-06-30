@@ -46,11 +46,13 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml addSingleResourceSuccess(String type);
     SafeHtml allMailServersExist();
     SafeHtml allSingletonsExist();
+    String available(double value);
 
     String blacklist(String blacklist);
 
     SafeHtml configuredMailServer(String servers);
     String connectedTo(String url);
+    String currentOfTottal(long current, long total);
 
     SafeHtml databaseDisabled(String name);
     SafeHtml databaseEnabled(String name);
@@ -198,6 +200,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml unknownError();
     SafeHtml unknownResource();
     String unknownResourceDetails(String address, String reason);
-
+    String uptime(String uptime);
+    String used(double value);
     //@formatter:on
 }

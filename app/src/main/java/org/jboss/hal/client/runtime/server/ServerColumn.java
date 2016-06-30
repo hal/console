@@ -41,6 +41,7 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
+import org.jboss.hal.core.runtime.host.HostSelectionEvent;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActionEvent;
 import org.jboss.hal.core.runtime.server.ServerActionEvent.ServerActionHandler;
@@ -95,7 +96,11 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             final ServerActions serverActions,
             final Resources resources) {
         super(new Builder<Server>(finder, SERVER, Names.SERVER)
-                .onItemSelect(server -> eventBus.fireEvent(new ServerSelectionEvent(server.getName())))
+                .onItemSelect(server -> {
+                    // if we select a server using server groups we still need to have a valid {selected.host}
+                    eventBus.fireEvent(new HostSelectionEvent(server.getHost()));
+                    eventBus.fireEvent(new ServerSelectionEvent(server.getName()));
+                })
                 .pinnable()
                 .showCount()
                 .useFirstActionAsBreadcrumbHandler()

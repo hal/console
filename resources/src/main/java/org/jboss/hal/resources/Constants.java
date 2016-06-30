@@ -58,6 +58,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String chooseTemplate();
     String clearMessages();
     String close();
+    String commited();
     String connection();
     String connectToServer();
     String consoleVersion();
@@ -69,6 +70,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String custom();
 
     String data();
+    String day();
+    String days();
     String defaultValue();
     String deploymentAttributes();
     String details();
@@ -170,6 +173,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageHelpWildFlyHomeText();
     String homepageHelpModelReferenceText();
     String homepageHelpLatestNews();
+    String hour();
+    String hours();
 
     String input();
 
@@ -183,6 +188,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String mainAttributes();
     String managementVersion();
     String message();
+    String minute();
+    String minutes();
     String modelBrowser();
     String monitor();
 
@@ -212,6 +219,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String platform();
     String play();
     String pool();
+    String processors();
     String productName();
     String productVersion();
 
@@ -236,6 +244,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String sameOrigin();
     String save();
+    String second();
+    String seconds();
     String security();
     String serverName();
     String settings();
@@ -244,6 +254,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String starting();
     String startMacro();
     String statements();
+    String status();
     String stop();
     String stopMacro();
     String stopped();
@@ -267,6 +278,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String unassignedContentDesc();
     String unknownState();
     String unpin();
+    String used();
 
     String validation();
     String view();
