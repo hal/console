@@ -68,6 +68,7 @@ The `npm` module provides a npm package which launches a local web server at htt
 1. Add http://localhost:3000 as allowed origin
 1. `mvn install`
 1. `cd npm`
+1. `npm install`
 1. `node server.js`
 1. Open http://localhost:3000
 
