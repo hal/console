@@ -38,6 +38,7 @@ import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.resource.RequiredResources;
 import org.jboss.hal.meta.security.SecurityFramework;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +68,7 @@ public class MetadataProcessor {
      */
     private final static int BATCH_SIZE = 3;
 
-    private static final Logger logger = LoggerFactory.getLogger(MetadataProcessor.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(MetadataProcessor.class);
 
     private final Dispatcher dispatcher;
     private final RequiredResources requiredResources;
@@ -99,9 +100,9 @@ public class MetadataProcessor {
 
     public void process(final String id, final Progress progress, final AsyncCallback<Void> callback) {
         Set<String> resources = requiredResources.getResources(id);
-        logger.debug("Process required resources {} for id {}", resources, id); //NON-NLS
+        logger.debug("Process required resources {} for id {}", resources, id);
         if (resources.isEmpty()) {
-            logger.debug("No required resources found -> callback.onSuccess(null)"); //NON-NLS
+            logger.debug("No required resources found -> callback.onSuccess(null)");
             callback.onSuccess(null);
 
         } else {
@@ -111,7 +112,7 @@ public class MetadataProcessor {
     }
 
     public void lookup(final AddressTemplate template, Progress progress, final MetadataCallback callback) {
-        logger.debug("Lookup metadata for {}", template); //NON-NLS
+        logger.debug("Lookup metadata for {}", template);
         processInternal(singleton(template), false, progress, new AsyncCallback<Void>() {
             @Override
             public void onFailure(final Throwable throwable) {
@@ -126,7 +127,6 @@ public class MetadataProcessor {
         });
     }
 
-    @SuppressWarnings("HardCodedStringLiteral")
     private void processInternal(final Set<AddressTemplate> templates, final boolean recursive, final Progress progress,
             final AsyncCallback<Void> callback) {
         LookupResult lookupResult = lookup.check(templates, recursive);

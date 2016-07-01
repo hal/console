@@ -86,6 +86,8 @@ public interface Ids {
     String MAIL_SESSION_SERVERS_TABLE = "mail-session-servers-table";
     String MODEL_BROWSER = "model-browser";
 
+    String PREVIEW_ID = IdBuilder.build(FINDER, "preview");
+
     String ROOT_CONTAINER = "hal-root-container";
 
     String SERVER_MONITOR_COLUMN = "server-monitor";

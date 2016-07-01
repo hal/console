@@ -23,6 +23,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +65,7 @@ public class TimeoutHandler {
 
 
     private static final int PERIOD = 500;
-    private static final Logger logger = LoggerFactory.getLogger(TimeoutHandler.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(TimeoutHandler.class);
 
     private final Dispatcher dispatcher;
     private final int timeout; // in seconds
@@ -95,14 +96,13 @@ public class TimeoutHandler {
                 new Outcome<TimeoutContext>() {
                     @Override
                     public void onFailure(final TimeoutContext context) {
-                        logger.error("Operation {} ran into an error: {}", operation.asCli()); //NON-NLS
+                        logger.error("Operation {} ran into an error: {}", operation.asCli());
                         callback.onTimeout();
                     }
 
                     @Override
                     public void onSuccess(final TimeoutContext context) {
                         if (timeout(context)) {
-                            //noinspection HardCodedStringLiteral
                             logger.warn("Operation {} ran into a timeout after {} seconds", operation.asCli(), timeout);
                             callback.onTimeout();
                         } else {
@@ -128,16 +128,15 @@ public class TimeoutHandler {
                 new Outcome<TimeoutContext>() {
                     @Override
                     public void onFailure(final TimeoutContext context) {
-                        logger.error("Composite operation {} ran into an error", composite.asCli()); //NON-NLS
+                        logger.error("Composite operation {} ran into an error", composite.asCli());
                         callback.onTimeout();
                     }
 
                     @Override
                     public void onSuccess(final TimeoutContext context) {
                         if (timeout(context)) {
-                            //noinspection HardCodedStringLiteral
-                            logger.warn("Composite operation {} ran into a timeout after {} seconds",
-                                    composite.asCli(), timeout);
+                            logger.warn("Composite operation {} ran into a timeout after {} seconds", composite.asCli(),
+                                    timeout);
                             callback.onTimeout();
                         } else {
                             callback.onSuccess();
@@ -159,7 +158,7 @@ public class TimeoutHandler {
 
     private boolean timeout(TimeoutContext timeoutContext) {
         long elapsed = (System.currentTimeMillis() - timeoutContext.start) / 1000;
-        logger.debug("Checking elapsed > timeout ({} > {})", elapsed, timeout); //NON-NLS
+        logger.debug("Checking elapsed > timeout ({} > {})", elapsed, timeout);
         return elapsed > timeout;
     }
 }

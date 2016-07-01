@@ -44,6 +44,7 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +59,6 @@ import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
  *
  * @author Harald Pehl
  */
-@SuppressWarnings("HardCodedStringLiteral")
 public class Dispatcher implements RecordingHandler {
 
     @FunctionalInterface
@@ -98,7 +98,6 @@ public class Dispatcher implements RecordingHandler {
     public static final String HEADER_MANAGEMENT_CLIENT_NAME = "X-Management-Client-Name";
     public static final String HEADER_MANAGEMENT_CLIENT_VALUE = "HAL";
 
-    public static OperationCallback NOOP_OPERATION_CALLBACK = (result) -> {};
     public static FailedCallback NOOP_FAILED_CALLBACK = (op, failure) -> {};
     public static ExceptionCallback NOOP_EXCEPTIONAL_CALLBACK = (op, exception) -> {};
 
@@ -115,7 +114,7 @@ public class Dispatcher implements RecordingHandler {
             RECURSIVE, PROXIES, OPERATIONS, INHERITED, LOCALE
     };
 
-    private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
 
     private final Endpoints endpoints;
     private final EventBus eventBus;
@@ -221,6 +220,7 @@ public class Dispatcher implements RecordingHandler {
         recordOperation(operation);
     }
 
+    @SuppressWarnings("HardCodedStringLiteral")
     private String descriptionOperationToUrl(final ModelNode operation) {
         StringBuilder url = new StringBuilder();
         final List<Property> address = operation.get(ADDRESS).asPropertyList();
@@ -353,7 +353,7 @@ public class Dispatcher implements RecordingHandler {
             }
         });
 
-        xhr.addEventListener("error", event -> exceptionCallback
+        xhr.addEventListener("error", event -> exceptionCallback //NON-NLS
                 .onException(operation, new DispatchException("Communication error.", xhr.getStatus())), false);
         xhr.open(method.name(), url, true);
         xhr.setRequestHeader(HEADER_MANAGEMENT_CLIENT_NAME, HEADER_MANAGEMENT_CLIENT_VALUE);
@@ -395,6 +395,7 @@ public class Dispatcher implements RecordingHandler {
         }
     }
 
+    @SuppressWarnings("HardCodedStringLiteral")
     private boolean readOnlyOperation(Operation operation) {
         if (operation instanceof Composite) {
             Composite composite = (Composite) operation;

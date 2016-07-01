@@ -28,6 +28,7 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,7 +118,7 @@ public class VerticalNavigation {
     private static final int PRIMARY_VISIBLE_TEXT_LENGTH = 13;
     private static final String UL_ELEMENT = "ul-element";
     private static VerticalNavigation singleton = null;
-    private static final Logger logger = LoggerFactory.getLogger(VerticalNavigation.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(VerticalNavigation.class);
 
     private final Element root;
     private final Element primaryUl;
@@ -144,7 +145,6 @@ public class VerticalNavigation {
      */
     public void on() {
         if (singleton != null) {
-            //noinspection HardCodedStringLiteral
             logger.error(
                     "There's another vertical navigation which is still attached to the DOM. Did you forget to call VerticalNavigation.off()?");
             off();
@@ -306,7 +306,7 @@ public class VerticalNavigation {
             panes.put(id, pane);
 
         } else {
-            logger.error("Unable to find primary navigation entry for id '{}'", primaryId); //NON-NLS
+            logger.error("Unable to find primary navigation entry for id '{}'", primaryId);
         }
         return this;
     }
@@ -335,7 +335,7 @@ public class VerticalNavigation {
             }
 
         } else {
-            logger.error("Unable to show entry for id '{}': No such entry!", id); //NON-NLS
+            logger.error("Unable to show entry for id '{}': No such entry!", id);
         }
     }
 
@@ -356,10 +356,10 @@ public class VerticalNavigation {
                 a.appendChild(badgeContainer);
 
             } else {
-                logger.error("Entry behind '{}' is primary, but must be secondary!", secondaryId); //NON-NLS
+                logger.error("Entry behind '{}' is primary, but must be secondary!", secondaryId);
             }
         } else {
-            logger.error("Unable to find secondary navigation entry for id '{}'", secondaryId); //NON-NLS
+            logger.error("Unable to find secondary navigation entry for id '{}'", secondaryId);
         }
     }
 

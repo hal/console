@@ -24,6 +24,7 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderContextEvent;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderSegment;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ extends ProxyPlace<?>>
         extends PatternFlyPresenter<V, Proxy_> {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApplicationPresenter.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(ApplicationPresenter.class);
 
     protected final Finder finder;
 
@@ -98,7 +99,6 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
                 if (column != null) {
                     segment.connect(column);
                 } else {
-                    //noinspection HardCodedStringLiteral
                     logger.warn("Unable to find column '{}' to connect breadcrumb segment '{}' for token '{}'",
                             segment.getKey(), segment, getProxy().getNameToken());
                 }

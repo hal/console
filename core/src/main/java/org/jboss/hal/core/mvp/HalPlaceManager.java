@@ -46,6 +46,7 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER_CONFIG;
 
 public class HalPlaceManager extends DefaultPlaceManager {
 
@@ -76,6 +77,7 @@ public class HalPlaceManager extends DefaultPlaceManager {
         selectFunctions.put(SELECTED_GROUP, param -> getEventBus().fireEvent(new ServerGroupSelectionEvent(param)));
         selectFunctions.put(SELECTED_HOST, param -> getEventBus().fireEvent(new HostSelectionEvent(param)));
         selectFunctions.put(SELECTED_SERVER, param -> getEventBus().fireEvent(new ServerSelectionEvent(param)));
+        selectFunctions.put(SELECTED_SERVER_CONFIG, param -> getEventBus().fireEvent(new ServerSelectionEvent(param)));
     }
 
     @Override

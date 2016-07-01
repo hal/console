@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +70,7 @@ public class FinderSegment<T> {
     }
 
 
-    private static final Logger logger = LoggerFactory.getLogger(FinderSegment.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(FinderSegment.class);
 
     private final String key;
     private final String value;
@@ -173,8 +174,7 @@ public class FinderSegment<T> {
         AsyncCallback<List<T>> asyncCallback = new AsyncCallback<List<T>>() {
             @Override
             public void onFailure(final Throwable caught) {
-                logger.error("Cannot provide dropdown items for breadcrumb segment '{}': {}", this, //NON-NLS
-                        caught.getMessage());
+                logger.error("Cannot provide dropdown items for breadcrumb segment '{}': {}", this,caught.getMessage());
             }
 
             @Override
@@ -210,7 +210,7 @@ public class FinderSegment<T> {
                 if (actions != null && !actions.isEmpty()) {
                     breadcrumbItemHandler = new ItemActionBreadcrumbHandler<>(actions.get(0));
                 } else {
-                    //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
+                    //noinspection DuplicateStringLiteralInspection
                     logger.error("Unable to get breadcrumb handler for segment '{}': " +
                             "Column '{}' was specified to use first item action as breadcrumb handler, " +
                             "but no actions were found.", this, column.getId());
@@ -222,7 +222,7 @@ public class FinderSegment<T> {
             } else {
                 // This method only gets called when supportsDropdown() returned true.
                 // So there has to be a handler
-                //noinspection HardCodedStringLiteral,DuplicateStringLiteralInspection
+                //noinspection DuplicateStringLiteralInspection
                 logger.error("Unable to get breadcrumb handler for segment '{}': " +
                         "No handler found for column '{}'", this, column.getId());
             }

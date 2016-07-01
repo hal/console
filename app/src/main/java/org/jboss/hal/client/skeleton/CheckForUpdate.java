@@ -24,6 +24,7 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.InstanceInfo;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.config.semver.Versions;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +37,7 @@ class CheckForUpdate {
     }
 
     private static final String UPDATE_URL = "http://access-halproject.rhcloud.com/latest";
-    private static Logger logger = LoggerFactory.getLogger(CheckForUpdate.class);
+    @NonNls private static Logger logger = LoggerFactory.getLogger(CheckForUpdate.class);
 
     private final Environment environment;
 
@@ -44,7 +45,6 @@ class CheckForUpdate {
         this.environment = environment;
     }
 
-    @SuppressWarnings("HardCodedStringLiteral")
     void execute(VersionCallback callback) {
         // only check for community updates
         if (environment.getInstanceInfo() == InstanceInfo.EAP) {

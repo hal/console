@@ -60,7 +60,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
                 Column<T> column = columnFactory.createColumn(attributeDescription);
                 return column(column);
             } else {
-                logger.error("No attribute description for column '{}' found in resource description\n{}", //NON-NLS
+                logger.error("No attribute description for column '{}' found in resource description\n{}",
                         attribute, metadata.getDescription());
                 return that();
             }
@@ -82,7 +82,7 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
     }
 
 
-    private static final Logger logger = LoggerFactory.getLogger(ModelNodeTable.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelNodeTable.class);
 
     public ModelNodeTable(@NonNls final String id, final Options<T> options) {
         super(id, options);

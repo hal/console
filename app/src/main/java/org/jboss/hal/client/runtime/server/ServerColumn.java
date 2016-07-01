@@ -97,8 +97,10 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             final Resources resources) {
         super(new Builder<Server>(finder, SERVER, Names.SERVER)
                 .onItemSelect(server -> {
-                    // if we select a server using server groups we still need to have a valid {selected.host}
-                    eventBus.fireEvent(new HostSelectionEvent(server.getHost()));
+                    if (browseByHosts(finder.getContext())) {
+                        // if we select a server using server groups we still need to have a valid {selected.host}
+                        eventBus.fireEvent(new HostSelectionEvent(server.getHost()));
+                    }
                     eventBus.fireEvent(new ServerSelectionEvent(server.getName()));
                 })
                 .pinnable()
@@ -208,9 +210,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                             // Restore pending servers visualization
                             servers.stream()
                                     .filter(serverActions::isPending)
-                                    .forEach(server -> {
-                                        ItemMonitor.startProgress(Server.id(server.getName()));
-                                    });
+                                    .forEach(server -> ItemMonitor.startProgress(Server.id(server.getName())));
                         }
                     },
                     serverConfigsFn, startedServersFn);

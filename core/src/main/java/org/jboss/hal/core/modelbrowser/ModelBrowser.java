@@ -63,6 +63,7 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,7 +146,7 @@ public class ModelBrowser implements HasElements {
     static final String ROOT_ID = IdBuilder.build(Ids.MODEL_BROWSER, "root");
     static final Element PLACE_HOLDER_ELEMENT = Browser.getDocument().createDivElement();
 
-    private static final Logger logger = LoggerFactory.getLogger(ModelBrowser.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelBrowser.class);
 
     private MetadataProcessor metadataProcessor;
     private Provider<Progress> progress;
@@ -321,7 +322,7 @@ public class ModelBrowser implements HasElements {
             Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
                 @Override
                 public void onFailure(final FunctionContext context) {
-                    logger.debug("Failed to restore selection {}", previousFilter.parents); //NON-NLS
+                    logger.debug("Failed to restore selection {}", previousFilter.parents);
                 }
 
                 @Override

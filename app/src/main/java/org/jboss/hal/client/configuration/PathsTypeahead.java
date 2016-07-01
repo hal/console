@@ -23,13 +23,14 @@ import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.typeahead.NamesResultProcessor;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
-import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.runtime.TopologyFunctions;
+import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OP
  */
 public class PathsTypeahead extends Typeahead {
 
-    private static final Logger logger = LoggerFactory.getLogger(PathsTypeahead.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(PathsTypeahead.class);
     private static Operation operation = defaultOperation();
 
     public static void updateOperation(final Environment environment, final Dispatcher dispatcher,
@@ -57,7 +58,6 @@ public class PathsTypeahead extends Typeahead {
                     new Outcome<FunctionContext>() {
                         @Override
                         public void onFailure(final FunctionContext context) {
-                            //noinspection HardCodedStringLiteral
                             logger.error("Unable to update operation for paths type-ahead: " +
                                     "Error reading running servers: {}", context.getErrorMessage());
                             operation = defaultOperation();

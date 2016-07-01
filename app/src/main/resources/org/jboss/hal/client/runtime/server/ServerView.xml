@@ -18,7 +18,7 @@
 <view>
     <vertical-navigation id="server-navigation">
         <item id="server-configuration-item" title="Configuration" icon="pficon pficon-cluster">
-            <metadata address="/{selected.host}/{selected.server}">
+            <metadata address="/{selected.host}/{selected.server-config}">
                 <h1>Server Configuration</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <form id="server-configuration-form" title="Server Configuration" auto-save="true"
@@ -38,7 +38,7 @@
         </item>
 
         <item id="server-interface-item" title="Interfaces" icon="fa fa-exchange">
-            <metadata address="/{selected.host}/{selected.server}/interface=*">
+            <metadata address="/{selected.host}/{selected.server-config}/interface=*">
                 <h1>Interfaces</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <table id="server-interface-table" form-ref="server-interface-form">
@@ -56,7 +56,7 @@
         </item>
 
         <item id="server-jvm-item" title="JVMs" icon="fa fa-coffee">
-            <metadata address="/{selected.host}/{selected.server}/jvm=*">
+            <metadata address="/{selected.host}/{selected.server-config}/jvm=*">
                 <h1>JVMs</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <table id="server-jvm-table" form-ref="server-jvm-form">
@@ -74,7 +74,7 @@
         </item>
 
         <item id="server-path-item" title="Paths" icon="fa fa-folder-open">
-            <metadata address="/{selected.host}/{selected.server}/path=*">
+            <metadata address="/{selected.host}/{selected.server-config}/path=*">
                 <h1>Paths</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <table id="server-path-table" form-ref="server-path-form">
@@ -93,7 +93,7 @@
         </item>
 
         <item id="server-system-property-item" title="System Properties" icon="fa fa-list-ul">
-            <metadata address="/{selected.host}/{selected.server}/system-property=*">
+            <metadata address="/{selected.host}/{selected.server-config}/system-property=*">
                 <h1>System Properties</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
                 <table id="server-system-property-table" form-ref="server-system-property-form">

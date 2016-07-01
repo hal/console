@@ -46,6 +46,7 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Constants;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,9 +125,8 @@ public class Typeahead implements SuggestHandler, Attachable {
     private static final String ID = "id";
     private static final String ITEM = "item";
     private static final String VAL = "val";
-
     private static final Constants CONSTANTS = GWT.create(Constants.class);
-    private static final Logger logger = LoggerFactory.getLogger(Typeahead.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(Typeahead.class);
 
     private final Options options;
     private final Bloodhound bloodhound;
@@ -361,8 +361,8 @@ public class Typeahead implements SuggestHandler, Attachable {
                 if (node.isFailure()) {
                     details = node.getFailureDescription();
                 }
-                logger.error("Unable to process typeahead operation on form item {}: {}", //NON-NLS
-                        formItem().getId(EDITING), details);
+                logger.error("Unable to process typeahead operation on form item {}: {}", formItem().getId(EDITING),
+                        details);
             };
             settings.contentType = APPLICATION_DMR_ENCODED;
             settings.dataType = "text"; //NON-NLS

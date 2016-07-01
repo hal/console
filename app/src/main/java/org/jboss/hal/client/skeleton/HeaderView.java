@@ -50,6 +50,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +81,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     // @formatter:on
 
 
-    private static final Logger logger = LoggerFactory.getLogger(HeaderView.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(HeaderView.class);
     private static final PlaceRequest HOMEPAGE = new PlaceRequest.Builder().nameToken(NameTokens.HOMEPAGE).build();
 
     private PlaceRequest backPlaceRequest;

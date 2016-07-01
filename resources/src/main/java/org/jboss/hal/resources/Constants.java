@@ -181,6 +181,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String jdbcDriver();
 
     String loading();
+    String logFile();
     String logFiles();
     String logout();
 

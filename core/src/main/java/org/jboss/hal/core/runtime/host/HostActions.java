@@ -49,6 +49,7 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,7 +103,7 @@ public class HostActions {
     private static final int DIALOG_TIMEOUT = 111;
     private static final int RELOAD_TIMEOUT = 10; // seconds w/o servers
     private static final int RESTART_TIMEOUT = 15; // seconds w/o servers
-    private static final Logger logger = LoggerFactory.getLogger(HostActions.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(HostActions.class);
 
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
@@ -298,12 +299,12 @@ public class HostActions {
 
     private void markAsPending(Host host) {
         pendingHosts.put(host.getName(), host);
-        logger.debug("Mark host {} as pending", host.getName()); //NON-NLS
+        logger.debug("Mark host {} as pending", host.getName());
     }
 
     private void clearPending(Host host) {
         pendingHosts.remove(host.getName());
-        logger.debug("Clear pending state for host {}", host.getName()); //NON-NLS
+        logger.debug("Clear pending state for host {}", host.getName());
     }
 
     public boolean isPending(Host host) {

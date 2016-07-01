@@ -45,7 +45,7 @@ import org.jboss.hal.core.finder.FinderColumn.RefreshMode;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Footer;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
@@ -159,7 +159,6 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     private final PlaceManager placeManager;
     private final ColumnRegistry columnRegistry;
     private final Provider<Progress> progress;
-    private final String id;
     private final FinderContext context;
     private final LinkedHashMap<String, FinderColumn> columns;
     private final Map<String, String> initialColumnsByToken;
@@ -180,7 +179,6 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         this.columnRegistry = columnRegistry;
         this.progress = progress;
 
-        this.id = FINDER;
         this.context = new FinderContext();
         this.columns = new LinkedHashMap<>();
         this.initialColumnsByToken = new HashMap<>();
@@ -188,9 +186,9 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
         // @formatter:off
         Elements.Builder builder = new Elements.Builder()
-            .div().id(this.id).css(row, finder)
+            .div().id(FINDER).css(row, finder)
                 .div()
-                    .id(IdBuilder.build(id, "preview"))
+                    .id(Ids.PREVIEW_ID)
                     .css(finderPreview, column(12))
                     .rememberAs(PREVIEW_COLUMN)
                 .end()
@@ -381,6 +379,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             for (Element element : elements) {
                 previewColumn.appendChild(element);
             }
+            preview.attach();
         }
     }
 
@@ -550,10 +549,6 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         for (FinderColumn column : columns.values()) {
             column.onSecurityContextChange(securityContext);
         }
-    }
-
-    public String getId() {
-        return id;
     }
 
     public FinderColumn getColumn(String columnId) {

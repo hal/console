@@ -44,6 +44,7 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.UIConstants;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -186,7 +187,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     private static final String COLUMN_ACTIONS_ELEMENT = "columnActionsElement";
     private static final String FILTER_ELEMENT = "filterElement";
     private static final String UL_ELEMENT = "ulElement";
-    private static final Logger logger = LoggerFactory.getLogger(FinderColumn.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(FinderColumn.class);
 
     private final Finder finder;
     private final String id;
@@ -431,7 +432,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                                 new AsyncCallback<FinderColumn>() {
                                     @Override
                                     public void onFailure(final Throwable throwable) {
-                                        //noinspection HardCodedStringLiteral
                                         logger.error("Unable to append next column '{}' on keyboard right: {}",
                                                 nextColumn, throwable.getMessage());
                                     }
@@ -883,7 +883,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         setItems(new AsyncCallback<FinderColumn>() {
             @Override
             public void onFailure(final Throwable throwable) {
-                logger.error("Unable to refresh column {}: {}", id, throwable.getMessage()); //NON-NLS
+                logger.error("Unable to refresh column {}: {}", id, throwable.getMessage());
             }
 
             @Override

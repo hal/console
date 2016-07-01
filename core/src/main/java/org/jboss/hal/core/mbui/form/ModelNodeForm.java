@@ -268,7 +268,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
 
     private static final Messages MESSAGES = GWT.create(Messages.class);
-    private static final Logger logger = LoggerFactory.getLogger(ModelNodeForm.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelNodeForm.class);
 
     private final Map<String, ModelNode> attributeMetadata;
 
@@ -344,7 +344,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                 }
                 index++;
             } else {
-                logger.warn("Unable to create form item for '{}' in form '{}'", name, builder.id); //NON-NLS
+                logger.warn("Unable to create form item for '{}' in form '{}'", name, builder.id);
             }
         }
 

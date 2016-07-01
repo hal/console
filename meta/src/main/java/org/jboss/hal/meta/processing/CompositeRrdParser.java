@@ -25,6 +25,7 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 class CompositeRrdParser {
 
-    private static final Logger logger = LoggerFactory.getLogger(CompositeRrdParser.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(CompositeRrdParser.class);
 
     private final Composite composite;
 
@@ -107,7 +108,7 @@ class CompositeRrdParser {
                     .add(HOST, operationSegments.get(0).getValue().asString())
                     .add(SERVER, operationSegments.get(1).getValue().asString())
                     .add(resultAddress);
-            logger.debug("Adjust result address '{}' -> '{}'", resultAddress, resolved); //NON-NLS
+            logger.debug("Adjust result address '{}' -> '{}'", resultAddress, resolved);
         }
         return resolved;
     }

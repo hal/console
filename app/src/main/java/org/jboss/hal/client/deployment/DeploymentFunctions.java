@@ -42,6 +42,7 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 public class DeploymentFunctions {
 
     public static final String UPLOAD_STATISTICS = "deploymentsFunctions.uploadStatistics";
-    private static final Logger logger = LoggerFactory.getLogger(DeploymentFunctions.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(DeploymentFunctions.class);
 
     /**
      * Loads the contents form the content repository and pushes a {@code List&lt;Content&gt;} onto the context stack.
@@ -245,7 +246,7 @@ public class DeploymentFunctions {
                 functions.add(new UploadOrReplace(dispatcher, files.item(i), false));
             }
 
-            logger.debug("About to upload {} file(s): {}", files.getLength(), builder.toString()); //NON-NLS
+            logger.debug("About to upload {} file(s): {}", files.getLength(), builder.toString());
             final Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
                 @Override
                 public void onFailure(final FunctionContext context) {
@@ -259,7 +260,7 @@ public class DeploymentFunctions {
                     if (statistics != null) {
                         eventBus.fireEvent(new MessageEvent(statistics.getMessage()));
                     } else {
-                        logger.error("Unable to find upload statistics in the context using key '{}'", //NON-NLS
+                        logger.error("Unable to find upload statistics in the context using key '{}'",
                                 UPLOAD_STATISTICS);
                     }
                     column.refresh(RESTORE_SELECTION);

@@ -28,6 +28,7 @@ import org.jboss.hal.ballroom.form.ModelNodeItem;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +43,7 @@ import static org.jboss.hal.dmr.ModelType.INT;
  */
 class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
 
-    private static final Logger logger = LoggerFactory.getLogger(ModelNodeMapping.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelNodeMapping.class);
 
     private final List<Property> attributeDescriptions;
 
@@ -60,7 +61,6 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
             if (model.hasDefined(name)) {
                 ModelNode attributeDescription = findAttribute(name);
                 if (attributeDescription == null) {
-                    //noinspection HardCodedStringLiteral
                     logger.error("{}: Unable to populate form item '{}': No attribute description found in\n{}",
                             id(form), name, attributeDescriptions);
                     continue;
@@ -72,7 +72,6 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                     if (formItem.supportsExpressions()) {
                         formItem.setExpressionValue(value.asString());
                     } else {
-                        //noinspection HardCodedStringLiteral
                         logger.error(
                                 "{}: Unable to populate form item '{}': Value is an expression, but form item does not support expressions",
                                 id(form), name);
@@ -124,7 +123,6 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                         case PROPERTY:
                         case TYPE:
                         case UNDEFINED:
-                            //noinspection HardCodedStringLiteral
                             logger.warn("{}: populating form field '{}' of type '{}' not implemented", id(form), name,
                                     descriptionType);
                             break;
@@ -148,7 +146,6 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
             if (formItem.isModified()) {
                 ModelNode attributeDescription = findAttribute(name);
                 if (attributeDescription == null) {
-                    //noinspection HardCodedStringLiteral
                     logger.error("{}: Unable to persist attribute '{}': No attribute description found in\n{}",
                             id(form), name, attributeDescriptions);
                     continue;
@@ -225,7 +222,6 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                         case PROPERTY:
                         case TYPE:
                         case UNDEFINED:
-                            //noinspection HardCodedStringLiteral
                             logger.warn("{}: persisting form field '{}' to type '{}' not implemented", id(form), name,
                                     type);
                             break;
