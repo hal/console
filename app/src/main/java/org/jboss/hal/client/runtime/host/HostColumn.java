@@ -24,7 +24,6 @@ import com.google.common.base.Joiner;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
@@ -60,8 +59,6 @@ import org.jboss.hal.spi.Requires;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
-import static org.jboss.hal.resources.CSS.itemText;
-import static org.jboss.hal.resources.CSS.subtitle;
 
 /**
  * @author Harald Pehl
@@ -130,14 +127,8 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
 
             @Override
             public Element asElement() {
-                if (item.isDomainController()) {
-                    return new Elements.Builder()
-                            .span().css(itemText)
-                            .span().textContent(item.getName()).end()
-                            .start("small").css(subtitle).textContent(Names.DOMAIN_CONTROLLER).end()
-                            .end().build();
-                }
-                return null;
+                return item.isDomainController() ? ItemDisplay
+                        .withSubtitle(item.getName(), Names.DOMAIN_CONTROLLER) : null;
             }
 
             @Override

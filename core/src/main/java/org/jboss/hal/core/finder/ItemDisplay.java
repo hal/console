@@ -19,9 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.HasTitle;
+import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.IdBuilder;
+
+import static org.jboss.hal.resources.CSS.itemText;
 
 /**
  * Controls the layout of a finder item. For simple items you only need to implement the {@link #getTitle()} method.
@@ -94,5 +98,13 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
      */
     default Element asElement() {
         return null;
+    }
+
+    static Element withSubtitle(String title, String subtitle) {
+        return new Elements.Builder()
+                .span().css(itemText)
+                .span().textContent(title).end()
+                .start("small").css(CSS.subtitle).title(subtitle).textContent(subtitle).end()
+                .end().build();
     }
 }

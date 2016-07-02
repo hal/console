@@ -15,10 +15,6 @@
  */
 package org.jboss.hal.core.finder;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.google.gwt.resources.client.ExternalTextResource;
 import com.google.gwt.resources.client.ResourceCallback;
 import com.google.gwt.resources.client.ResourceException;
@@ -28,13 +24,10 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
-import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.core.Strings;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
-import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +37,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Harald Pehl
  */
-public class PreviewContent<T> implements HasElements, Attachable, SecurityContextAware {
+public class PreviewContent<T> implements HasElements, SecurityContextAware {
 
     protected static final String CONTENT_ELEMENT = "contentRepository";
 
@@ -53,7 +46,6 @@ public class PreviewContent<T> implements HasElements, Attachable, SecurityConte
     private static final int MAX_HEADER_LENGTH = 30;
 
     private final Elements.Builder builder;
-    private final List<Attachable> attachables;
 
     /**
      * Empty preview w/o content
@@ -67,7 +59,6 @@ public class PreviewContent<T> implements HasElements, Attachable, SecurityConte
         if (lead != null) {
             builder.p().css(CSS.lead).textContent(lead).end();
         }
-        this.attachables = new ArrayList<>();
     }
 
     public PreviewContent(final String header, final SafeHtml html) {
@@ -80,7 +71,6 @@ public class PreviewContent<T> implements HasElements, Attachable, SecurityConte
             builder.p().css(CSS.lead).textContent(lead).end();
         }
         builder.section().innerHtml(html).end();
-        this.attachables = new ArrayList<>();
     }
 
     public PreviewContent(final String header, final Element first, final Element... rest) {
@@ -99,7 +89,6 @@ public class PreviewContent<T> implements HasElements, Attachable, SecurityConte
             }
         }
         builder.end();
-        this.attachables = new ArrayList<>();
     }
 
     public PreviewContent(final String header, final ExternalTextResource resource) {
@@ -132,7 +121,6 @@ public class PreviewContent<T> implements HasElements, Attachable, SecurityConte
                 logger.error(ERROR_MESSAGE, resource.getName(), e.getMessage());
             }
         }
-        this.attachables = new ArrayList<>();
     }
 
     private Elements.Builder header(final String header) {
@@ -153,21 +141,6 @@ public class PreviewContent<T> implements HasElements, Attachable, SecurityConte
     @Override
     public Iterable<Element> asElements() {
         return builder.elements();
-    }
-
-    public void registerAttachable(Attachable first, Attachable... rest) {
-        attachables.add(first);
-        if (rest != null) {
-            Collections.addAll(attachables, rest);
-        }
-    }
-
-    @Override
-    public void attach() {
-        PatternFly.initComponents("#" + Ids.PREVIEW_ID);
-        for (Attachable attachable : attachables) {
-            attachable.attach();
-        }
     }
 
     @SuppressWarnings("UnusedParameters")

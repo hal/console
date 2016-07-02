@@ -180,6 +180,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String jdbcDriver();
 
+    String lastModified();
     String loading();
     String logFile();
     String logFiles();
@@ -251,6 +252,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String serverName();
     String settings();
     String showAll();
+    String size();
     String start();
     String starting();
     String startMacro();

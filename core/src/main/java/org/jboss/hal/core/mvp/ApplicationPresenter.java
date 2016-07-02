@@ -81,7 +81,8 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
     /**
      * Application presenters need to provide information about their path in the finder. Normally this path is
      * updated automatically when navigating in the finder. However since application presenters can also be revealed
-     * directly using the breadcrumb dropdown, this information is crucial to restore the path in the finder context.
+     * using the breadcrumb dropdown or by entering the URL directly this information is crucial to restore the path
+     * in the finder context.
      * <p>
      * If this method returns {@code null} the path in the finder context is not touched.
      * <p>

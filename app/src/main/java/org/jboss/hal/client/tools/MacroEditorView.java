@@ -15,6 +15,10 @@
  */
 package org.jboss.hal.client.tools;
 
+import java.util.Arrays;
+import java.util.List;
+import javax.inject.Inject;
+
 import com.google.common.collect.Iterables;
 import elemental.client.Browser;
 import elemental.dom.Element;
@@ -36,10 +40,6 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
-
-import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.List;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.lang.Math.max;
@@ -128,7 +128,7 @@ public class MacroEditorView extends PatternFlyViewImpl implements MacroEditorPr
                     .rememberAs(COPY_TO_CLIPBOARD_ELEMENT)
                         .span().css(fontAwesome("clipboard")).end()
                 .end()
-                .add(editor.asElement())
+                .add(editor)
             .end();
         // @formatter:on
 

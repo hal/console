@@ -127,11 +127,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
 
             @Override
             public Element asElement() {
-                return new Elements.Builder()
-                        .span().css(itemText)
-                        .span().textContent(item.getName()).end()
-                        .start("small").css(subtitle).textContent(item.getProfile()).end()
-                        .end().build();
+                return ItemDisplay.withSubtitle(item.getName(), item.getProfile());
             }
 
             @Override

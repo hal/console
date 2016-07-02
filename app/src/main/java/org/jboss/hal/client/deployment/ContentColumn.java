@@ -23,7 +23,6 @@ import javax.inject.Provider;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
@@ -51,8 +50,6 @@ import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
-import static org.jboss.hal.resources.CSS.itemText;
-import static org.jboss.hal.resources.CSS.subtitle;
 
 /**
  * @author Harald Pehl
@@ -106,11 +103,7 @@ public class ContentColumn extends FinderColumn<Content> {
                     String serverGroups = item.getAssignments().stream()
                             .map(Assignment::getServerGroup)
                             .collect(joining(", "));
-                    return new Elements.Builder()
-                            .span().css(itemText)
-                            .span().textContent(item.getName()).end()
-                            .start("small").css(subtitle).textContent(serverGroups).end()
-                            .end().build();
+                    return ItemDisplay.withSubtitle(item.getName(), serverGroups);
                 }
                 return null;
             }

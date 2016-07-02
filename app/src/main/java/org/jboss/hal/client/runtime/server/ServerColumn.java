@@ -83,6 +83,16 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 @Requires(value = {"/host=*/server-config=*", "/host=*/server=*"}, recursive = false)
 public class ServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
+    public static boolean browseByHosts(FinderContext context) {
+        FinderSegment firstSegment = context.getPath().iterator().next();
+        return firstSegment.getValue().equals(IdBuilder.asId(Names.HOSTS));
+    }
+
+    public static boolean browseByServerGroups(FinderContext context) {
+        FinderSegment firstSegment = context.getPath().iterator().next();
+        return firstSegment.getValue().equals(IdBuilder.asId(Names.SERVER_GROUPS));
+    }
+
     private final Finder finder;
 
     @Inject
@@ -97,8 +107,8 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             final Resources resources) {
         super(new Builder<Server>(finder, SERVER, Names.SERVER)
                 .onItemSelect(server -> {
-                    if (browseByHosts(finder.getContext())) {
-                        // if we select a server using server groups we still need to have a valid {selected.host}
+                    if (browseByServerGroups(finder.getContext())) {
+                        // if we browse by server groups we still need to have a valid {selected.host}
                         eventBus.fireEvent(new HostSelectionEvent(server.getHost()));
                     }
                     eventBus.fireEvent(new ServerSelectionEvent(server.getName()));
@@ -326,11 +336,6 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
         eventBus.addHandler(ServerActionEvent.getType(), this);
         eventBus.addHandler(ServerResultEvent.getType(), this);
-    }
-
-    static boolean browseByHosts(FinderContext context) {
-        FinderSegment firstSegment = context.getPath().iterator().next();
-        return firstSegment.getKey().equals(HOST) || firstSegment.getValue().equals(IdBuilder.asId(Names.HOSTS));
     }
 
     private void addServer(boolean browseByHost) {

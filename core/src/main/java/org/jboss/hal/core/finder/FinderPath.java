@@ -27,9 +27,7 @@ import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.resources.Names;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CONFIGURATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
@@ -60,6 +58,18 @@ public class FinderPath implements Iterable<FinderSegment> {
         String subsystemLabel = new LabelBuilder().label(subsystem);
         path.append(SUBSYSTEM, subsystem, Names.SUBSYSTEM, subsystemLabel);
         return path;
+    }
+
+    public static FinderPath runtimeHostPath(String host, String server) {
+        return new FinderPath()
+                .append(HOST, host, Names.HOST, host)
+                .append(SERVER, server, Names.SERVER, server);
+    }
+
+    public static FinderPath runtimeServerGropupPath(String serverGroup, String server) {
+        return new FinderPath()
+                .append(SERVER_GROUP, serverGroup, Names.SERVER_GROUP, serverGroup)
+                .append(SERVER, server, Names.SERVER, server);
     }
 
 

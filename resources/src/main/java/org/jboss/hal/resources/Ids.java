@@ -75,6 +75,7 @@ public interface Ids {
     String HOMEPAGE_RUNTIME_SERVER_GROUP_SECTION = "homepage-runtime-server-group-section";
 
     String LOG_FILE_COLUMN = "log-file";
+    String LOG_FILE_EDITOR = "log-file-editor";
 
     String MACRO_EDITOR = "macro-editor";
     String MACRO_LIST = "macro-list";

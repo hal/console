@@ -39,6 +39,7 @@ public interface NameTokens {
     String JCA = ModelDescriptionConstants.JCA;
     String JMX = ModelDescriptionConstants.JMX;
     String JPA = ModelDescriptionConstants.JPA;
+    String LOG_FILE = "log-file";
     String LOGGING_CONFIGURATION = "logging-configuration";
     String LOGGING_PROFILE = "logging-profile";
     String MACRO_EDITOR = "macro-editor";

@@ -379,7 +379,6 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             for (Element element : elements) {
                 previewColumn.appendChild(element);
             }
-            preview.attach();
         }
     }
 

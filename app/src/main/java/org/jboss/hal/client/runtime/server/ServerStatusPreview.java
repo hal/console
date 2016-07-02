@@ -27,6 +27,7 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -101,6 +102,8 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
         this.jvm = previewBuilder().referenceFor(JVM);
         this.jvmVersion = previewBuilder().referenceFor(JVM_VERSION);
         this.uptime = previewBuilder().referenceFor(UPTIME);
+
+        PatternFly.initComponents("#" + Ids.PREVIEW_ID);
     }
 
     @Override

@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import com.google.common.base.Joiner;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -53,8 +52,6 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_SESSION_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.CSS.itemText;
-import static org.jboss.hal.resources.CSS.subtitle;
 
 /**
  * @author Claudio Miranda
@@ -126,12 +123,8 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
             @Override
             public Element asElement() {
                 if (!mailSession.getServers().isEmpty()) {
-                    return new Elements.Builder()
-                            .span().css(itemText)
-                            .span().textContent(mailSession.getName()).end()
-                            .start("small").css(subtitle).textContent(Joiner.on(", ").join(mailSession.getServers()))
-                            .end()
-                            .end().build();
+                    return ItemDisplay
+                            .withSubtitle(mailSession.getName(), Joiner.on(", ").join(mailSession.getServers()));
                 }
                 return null;
             }
