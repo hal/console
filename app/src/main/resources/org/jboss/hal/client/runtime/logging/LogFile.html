@@ -62,12 +62,14 @@
                             <button type="button" class="clear" aria-hidden="true"><span class="pficon pficon-close"></span></button>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group btn-group">
                         <button class="btn btn-default" type="button"><span class="fa fa-search"></span></button>
+                        <button class="btn btn-default" type="button"><span class="fa fa-angle-left"></span></button>
+                        <button class="btn btn-default" type="button"><span class="fa fa-angle-right"></span></button>
                     </div>
                 </div>
                 <div class="log-file-follow">
-                    <label for="log-file-follow">Tail Mode</label><input class="bootstrap-switch" id="log-file-follow" type="checkbox">
+                    <label for="log-file-follow">Tail Mode</label><input class="bootstrap-switch" id="log-file-follow" type="checkbox"/>
                 </div>
                 <div class="log-file-buttons btn-group">
                     <a class="btn btn-default" href="#">
@@ -144,7 +146,10 @@
 <script>
     (function ($) {
         $(document).ready(function () {
-            ace.edit("log-file-editor");
+            var editor = ace.edit("log-file-editor");
+            editor.setShowPrintMargin(false);
+            editor.setTheme("ace/theme/logfile");
+            editor.getSession().setMode("ace/mode/logfile");
             $(".bootstrap-switch").bootstrapSwitch();
 
             // Hide the clear button if the search input is empty

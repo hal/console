@@ -2,3 +2,5 @@ css
 fonts
 img
 js
+!js/mode-logfile.js
+!js/theme-logfile.js

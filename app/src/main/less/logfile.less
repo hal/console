@@ -1,7 +1,14 @@
 .log-file-controls {
+  align-items: center;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.log-file-status {
+  align-self: center;
+  flex: 1 1 auto;
 }
 
 .log-file-search {
@@ -29,6 +36,13 @@
 
   .form-group.has-clear {
     flex: 1 1 auto;
+  }
+
+  .form-group {
+    margin-bottom: 0;
+    .btn{
+      width: 25px;
+    }
   }
 
   .has-clear {
@@ -71,11 +85,28 @@
 }
 
 .log-file-follow {
+  align-items: center;
+  display: flex;
+  flex-flow: row nowrap;
   label {
+    font-weight: normal;
+    margin-bottom: 0;
     margin-right: 5px;
   }
 }
 
 .log-file-search, .log-file-follow {
   margin-right: 30px;
+}
+
+.log-file-buttons {
+  .btn {
+    box-shadow: none;
+  }
+}
+
+.log-file-editor {
+  .ace_scrollbar-h {
+    overflow-x: scroll;
+  }
 }

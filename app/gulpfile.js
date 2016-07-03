@@ -51,7 +51,7 @@ gulp.task('copy', function () {
     gulp.src('bower_components/jquery/dist/jquery.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
 
-    // ace editor
+    // Ace Editor
     gulp.src('bower_components/ace-builds/src-min-noconflict/ace.js')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
 
