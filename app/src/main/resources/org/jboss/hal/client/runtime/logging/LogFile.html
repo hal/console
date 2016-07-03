@@ -27,7 +27,6 @@
     <style type="text/css" media="screen">
         #log-file-editor {
             height: 300px;
-            border: 1px solid #ccc;
         }
     </style>
 
@@ -68,6 +67,7 @@
                         <button class="btn btn-default" type="button"><span class="fa fa-angle-right"></span></button>
                     </div>
                 </div>
+                <div class="log-file-status" title="Some status text, an error message or anything related to the current log file">Some status text, an error message or anything related to the current log file</div>
                 <div class="log-file-follow">
                     <label for="log-file-follow">Tail Mode</label><input class="bootstrap-switch" id="log-file-follow" type="checkbox"/>
                 </div>
@@ -147,9 +147,13 @@
     (function ($) {
         $(document).ready(function () {
             var editor = ace.edit("log-file-editor");
+            editor.setReadOnly(true);
             editor.setShowPrintMargin(false);
             editor.setTheme("ace/theme/logfile");
             editor.getSession().setMode("ace/mode/logfile");
+            editor.getSession().setUseWrapMode(false);
+            editor.resize();
+
             $(".bootstrap-switch").bootstrapSwitch();
 
             // Hide the clear button if the search input is empty

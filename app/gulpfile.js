@@ -113,7 +113,9 @@ gulp.task('clean', function (cb) {
     del(['src/main/resources/org/jboss/hal/public/css/**',
         'src/main/resources/org/jboss/hal/public/fonts/**',
         'src/main/resources/org/jboss/hal/public/img/**',
-        'src/main/resources/org/jboss/hal/public/js/**'], cb)
+        'src/main/resources/org/jboss/hal/public/js/*',
+        '!src/main/resources/org/jboss/hal/public/js/mode-logfile.js',
+        '!src/main/resources/org/jboss/hal/public/js/theme-logfile.js'], cb)
 });
 
 // Development task

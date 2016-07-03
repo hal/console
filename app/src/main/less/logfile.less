@@ -3,12 +3,7 @@
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
-  margin-bottom: 15px;
-}
-
-.log-file-status {
-  align-self: center;
-  flex: 1 1 auto;
+  margin-bottom: 10px;
 }
 
 .log-file-search {
@@ -84,6 +79,13 @@
   }
 }
 
+.log-file-status {
+  align-self: center;
+  flex: 1;
+  min-width: 50px;
+  .text-overflow();
+}
+
 .log-file-follow {
   align-items: center;
   display: flex;
@@ -91,12 +93,12 @@
   label {
     font-weight: normal;
     margin-bottom: 0;
-    margin-right: 5px;
+    margin-right: 10px;
   }
 }
 
-.log-file-search, .log-file-follow {
-  margin-right: 30px;
+.log-file-search, .log-file-status, .log-file-follow {
+  margin-right: 20px;
 }
 
 .log-file-buttons {
@@ -105,8 +107,7 @@
   }
 }
 
-.log-file-editor {
-  .ace_scrollbar-h {
-    overflow-x: scroll;
-  }
+#log-file-editor {
+  border: 1px solid #ccc;
+  font-size: 11px;
 }

@@ -11,7 +11,7 @@ width: 1px;\
 background: #e8e8e8\
 }\
 .ace-logfile {\
-background-color: #F9F9F9;\
+background-color: #fff;\
 color: #080808\
 }\
 .ace-logfile .ace_cursor {\
