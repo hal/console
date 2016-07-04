@@ -22,6 +22,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import elemental.client.Browser;
 import org.jboss.hal.client.runtime.server.ServerColumn;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -38,6 +39,9 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.joining;
@@ -59,21 +63,20 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
     public interface MyProxy extends ProxyPlace<LogFilePresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<LogFilePresenter> {
-        void showContent(LogFile logFile, String content);
+        void loading();
+        void show(LogFile logFile, String content);
     }
     // @formatter:on
 
 
     static final String LOG_FILE_PARAM = "log-file";
-    static final int LINES = 100;
+    private static final int LINES = 2000;
 
     private final Dispatcher dispatcher;
+    private final LogFiles logFiles;
     private final StatementContext statementContext;
     private final Resources resources;
     private String logFileName;
-    private int lines;
-    private int skip;
-    private boolean tail;
 
     @Inject
     public LogFilePresenter(final EventBus eventBus,
@@ -81,15 +84,14 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
             final MyProxy myProxy,
             final Finder finder,
             final Dispatcher dispatcher,
+            final LogFiles logFiles,
             final StatementContext statementContext,
             final Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.dispatcher = dispatcher;
+        this.logFiles = logFiles;
         this.statementContext = statementContext;
         this.resources = resources;
-        this.lines = LINES;
-        this.skip = 0;
-        this.tail = true;
     }
 
     @Override
@@ -109,43 +111,62 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
         FinderPath path;
         if (ServerColumn.browseByServerGroups(finder.getContext())) {
             path = FinderPath
-                    .runtimeServerGropupPath(statementContext.selectedServerGroup(), statementContext.selectedServer());
+                    .runtimeServerGroupPath(statementContext.selectedServerGroup(), statementContext.selectedServer());
         } else {
             path = FinderPath.runtimeHostPath(statementContext.selectedHost(), statementContext.selectedServer());
         }
         path.append(Ids.SERVER_MONITOR_COLUMN, IdBuilder.asId(resources.constants().logFiles()),
                 resources.constants().monitor(), resources.constants().logFiles())
-                .append(Ids.LOG_FILE_COLUMN, IdBuilder.asId(logFileName),
-                        resources.constants().logFile(), logFileName);
+                .append(Ids.LOG_FILE_COLUMN, IdBuilder.asId(logFileName), resources.constants().logFile(), logFileName);
         return path;
     }
 
     @Override
     protected void onReset() {
         super.onReset();
-        loadContent();
+        load();
     }
 
-    void loadContent() {
+    void load() {
         if (logFileName != null) {
+            int handle = Browser.getWindow().setTimeout(() -> getView().loading(), UIConstants.PROGRESS_TIMEOUT);
             ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, logFileName);
             Operation logFileOp = new Operation.Builder(READ_RESOURCE_OPERATION, address)
                     .param(INCLUDE_RUNTIME, true)
                     .build();
             //noinspection HardCodedStringLiteral
             Operation contentOp = new Operation.Builder("read-log-file", address)
-                    .param("lines", lines)
-                    .param("skip", skip)
-                    .param("tail", tail)
+                    .param("lines", LINES)
+                    .param("tail", true)
                     .build();
-            dispatcher.execute(new Composite(logFileOp, contentOp), (CompositeResult result) -> {
-                LogFile logFile = new LogFile(logFileName, result.step(0).get(RESULT));
-                String content = result.step(1).get(RESULT).asList().stream().map(ModelNode::asString)
-                        .collect(joining("\n"));
-                getView().showContent(logFile, content);
-            });
+            dispatcher.execute(new Composite(logFileOp, contentOp),
+                    (CompositeResult result) -> {
+                        Browser.getWindow().clearTimeout(handle);
+                        LogFile logFile = new LogFile(logFileName, result.step(0).get(RESULT));
+                        String content = result.step(1).get(RESULT).asList().stream().map(ModelNode::asString)
+                                .collect(joining("\n"));
+                        getView().show(logFile, content);
+                    },
+                    (operation, failure) -> {
+                        Browser.getWindow().clearTimeout(handle);
+                        MessageEvent.fire(getEventBus(),
+                                Message.error(resources.messages().logFileError(logFileName), failure));
+                    },
+                    (operation, exception) -> {
+                        Browser.getWindow().clearTimeout(handle);
+                        MessageEvent.fire(getEventBus(),
+                                Message.error(resources.messages().logFileError(logFileName), exception.getMessage()));
+                    });
         } else {
-            // TODO show empty state with option to select a log file from {{statementContext.selectedServer()}}
+            MessageEvent.fire(getEventBus(), Message.error(resources.messages().noLogFile()));
+        }
+    }
+
+    void download() {
+        if (logFileName != null) {
+            logFiles.download(logFileName);
+        } else {
+            MessageEvent.fire(getEventBus(), Message.error(resources.messages().noLogFile()));
         }
     }
 }

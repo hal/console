@@ -19,6 +19,7 @@ import java.util.Date;
 
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.i18n.shared.DateTimeFormat;
+import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.dmr.ModelNode;
 
 import static com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT;
@@ -83,13 +84,6 @@ class LogFile extends ModelNode {
     }
 
     public String getFormattedSize() {
-        return readableFileSize(getSize());
-    }
-
-    private String readableFileSize(long size) {
-        if (size <= 0) { return "0"; }
-        final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"}; //NON-NLS
-        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
-        return SIZE_FORMAT.format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+        return Format.humanReadableFileSize(getSize());
     }
 }

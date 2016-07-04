@@ -27,8 +27,6 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
 public class Options {
 
-    public boolean highlightActiveLine;
-    public boolean highlightGutterLine;
     public boolean readOnly;
     public boolean showGutter;
     public boolean showLineNumbers;

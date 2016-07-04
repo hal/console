@@ -19,7 +19,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.dom.Element;
 import org.jboss.hal.client.runtime.server.ServerColumn;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -53,12 +52,18 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 @Requires(value = {LOGGING_SUBSYSTEM_ADDRESS, LOG_FILE_ADDRESS}, recursive = false)
 public class LogFileColumn extends FinderColumn<LogFile> {
 
+    /**
+     * If log files are bigger than this threshold a confirmation dialog is displayed.
+     */
+    public static final int LOG_FILE_SIZE_THRESHOLD = 15000000; // bytes
+
     @Inject
     public LogFileColumn(final Finder finder,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
+            final LogFiles logFiles,
             final Resources resources) {
         super(new Builder<LogFile>(finder, Ids.LOG_FILE_COLUMN, resources.constants().logFile())
 
@@ -75,11 +80,6 @@ public class LogFileColumn extends FinderColumn<LogFile> {
                     @Override
                     public String getTitle() {
                         return item.getFilename();
-                    }
-
-                    @Override
-                    public Element asElement() {
-                        return ItemDisplay.withSubtitle(item.getFilename(), item.getFormattedLastModifiedDate());
                     }
 
                     @Override
@@ -105,11 +105,15 @@ public class LogFileColumn extends FinderColumn<LogFile> {
                         return singletonList(itemActionFactory.view(builder.build()));
                     }
                 })
-                .onPreview(item -> new LogFilePreview(item, resources))
+                .onPreview(item -> new LogFilePreview(logFiles, item, resources))
                 .pinnable()
                 .showCount()
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
         );
+    }
+
+    void download(final LogFile logFile) {
+
     }
 }

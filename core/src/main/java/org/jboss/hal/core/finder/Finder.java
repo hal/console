@@ -144,6 +144,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
 
     static final String DATA_BREADCRUMB = "breadcrumb";
+    static final String DATA_FILTER = "filter";
     /**
      * The maximum number of visible columns. If there are more columns, the first column is hidden when column
      * {@code MAX_VISIBLE_COLUMNS + 1} is shown.

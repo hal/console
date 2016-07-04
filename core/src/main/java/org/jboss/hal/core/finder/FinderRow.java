@@ -94,7 +94,8 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         Elements.removeChildrenFrom(root);
         root.setId(display.getId());
         root.getDataset().setAt(DATA_BREADCRUMB, display.getTitle());
-        root.getDataset().setAt(filter, display.getFilterData());
+        // TODO getFilterData() causes a ReferenceError in SuperDevMode WTF?
+        // root.getDataset().setAt(DATA_FILTER, display.getFilterData());
 
         Element icon = display.getIcon();
         if (icon != null) {

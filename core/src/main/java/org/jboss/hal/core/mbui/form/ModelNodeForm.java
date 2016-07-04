@@ -31,8 +31,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.HelpTextBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
@@ -46,6 +46,7 @@ import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Messages;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
@@ -54,9 +55,6 @@ import org.slf4j.LoggerFactory;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.CSS.alert;
-import static org.jboss.hal.resources.CSS.alertInfo;
-import static org.jboss.hal.resources.CSS.pfIcon;
 
 /**
  * TODO Add form based validations based on "alternatives" => ["foo"] information from the resource description
@@ -359,15 +357,9 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
     public void attach() {
         super.attach();
         if (Iterables.isEmpty(getFormItems())) {
-            // if there's really nothing at all show an info
-            Element empty = new Elements.Builder()
-                    .div().css(alert, alertInfo)
-                    .span().css(pfIcon("info")).end()
-                    .span().innerHtml(MESSAGES.emptyModelNodeForm()).end()
-                    .end()
-                    .build();
+            Alert alert = new Alert(Icons.INFO, MESSAGES.emptyModelNodeForm());
             Elements.removeChildrenFrom(asElement());
-            asElement().appendChild(empty);
+            asElement().appendChild(alert.asElement());
         }
     }
 

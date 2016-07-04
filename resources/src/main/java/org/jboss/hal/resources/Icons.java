@@ -26,15 +26,22 @@ import static org.jboss.hal.resources.CSS.*;
 public interface Icons {
 
     String OK = pfIcon(ok);
+    String INFO = pfIcon(info);
     String WARNING = pfIcon(warningTriangleO);
     String DISABLED = pfIcon(disabledCircleO);
     String STOPPED = fontAwesome(stopCircleO) + " " + grey;
     String ERROR = pfIcon(errorCircleO);
-    String UNKNWON = fontAwesome("question-circle"); // TODO replace with questionsCircleO once PatternFly uses FontAwesome 4.6
+    String UNKNOWN = fontAwesome("question-circle"); // TODO replace with questionsCircleO once PatternFly uses FontAwesome 4.6
 
     static Element ok() {
         Element icon = Browser.getDocument().createSpanElement();
         icon.setClassName(OK);
+        return icon;
+    }
+
+    static Element info() {
+        Element icon = Browser.getDocument().createSpanElement();
+        icon.setClassName(INFO);
         return icon;
     }
 
@@ -64,7 +71,7 @@ public interface Icons {
 
     static Element unknown() {
         Element icon = Browser.getDocument().createSpanElement();
-        icon.setClassName(UNKNWON);
+        icon.setClassName(UNKNOWN);
         return icon;
     }
 }

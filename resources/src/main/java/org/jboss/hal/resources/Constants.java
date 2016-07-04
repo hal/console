@@ -77,6 +77,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String details();
     String disable();
     String disabled();
+    String download();
     String duplicateMacro();
 
     String edit();
@@ -94,8 +95,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String finish();
     String formErrors();
     String formResetDesc();
-
-    String goodbye();
 
     String help();
     String hiddenColumns();
@@ -211,6 +210,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String nothingSelected();
 
     String ok();
+    String openInExternalWindow();
     String operationMode();
     String operations();
     String output();
@@ -246,6 +246,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String sameOrigin();
     String save();
+    String search();
     String second();
     String seconds();
     String security();
@@ -268,6 +269,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String suspended();
 
     String tags();
+    String tailMode();
     String testConnection();
     String timeout();
     String timeouts();

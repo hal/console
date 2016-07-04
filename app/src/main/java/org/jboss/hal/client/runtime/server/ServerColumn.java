@@ -89,8 +89,11 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     }
 
     public static boolean browseByServerGroups(FinderContext context) {
-        FinderSegment firstSegment = context.getPath().iterator().next();
-        return firstSegment.getValue().equals(IdBuilder.asId(Names.SERVER_GROUPS));
+        if (!context.getPath().isEmpty()) {
+            FinderSegment firstSegment = context.getPath().iterator().next();
+            return firstSegment.getValue().equals(IdBuilder.asId(Names.SERVER_GROUPS));
+        }
+        return false;
     }
 
     private final Finder finder;

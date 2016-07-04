@@ -21,7 +21,11 @@ import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.alert;
+import static org.jboss.hal.resources.CSS.alertDanger;
+import static org.jboss.hal.resources.CSS.alertInfo;
+import static org.jboss.hal.resources.CSS.alertSuccess;
+import static org.jboss.hal.resources.CSS.alertWarning;
 
 /**
  * @author Harald Pehl
@@ -58,7 +62,7 @@ public abstract class RuntimePreview<T> extends PreviewContent<T> {
 
     protected void pending(SafeHtml message) {
         alertContainer.setClassName(alert + " " + alertInfo);
-        alertIcon.setClassName(Icons.UNKNWON);
+        alertIcon.setClassName(Icons.UNKNOWN);
         alertText.setInnerHTML(message.asString());
     }
 
@@ -91,7 +95,7 @@ public abstract class RuntimePreview<T> extends PreviewContent<T> {
 
     protected void unknown(SafeHtml message) {
         alertContainer.setClassName(alert + " " + alertWarning);
-        alertIcon.setClassName(Icons.UNKNWON);
+        alertIcon.setClassName(Icons.UNKNOWN);
         alertText.setInnerHTML(message.asString());
     }
 

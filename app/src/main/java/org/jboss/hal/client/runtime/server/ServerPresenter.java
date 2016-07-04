@@ -22,8 +22,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.core.runtime.group.ServerGroup;
-import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.MbuiPresenter;
@@ -39,7 +37,6 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -98,17 +95,10 @@ public class ServerPresenter extends MbuiPresenter<ServerPresenter.MyView, Serve
     @Override
     protected FinderPath finderPath() {
         if (ServerColumn.browseByHosts(finder.getContext())) {
-            return new FinderPath()
-                    .append(HOST, Host.id(statementContext.selectedHost()),
-                            Names.HOST, statementContext.selectedHost())
-                    .append(SERVER, Server.id(statementContext.selectedServer()),
-                            Names.SERVER, statementContext.selectedServer());
+            return FinderPath.runtimeHostPath(statementContext.selectedHost(), statementContext.selectedServer());
         } else {
-            return new FinderPath()
-                    .append(SERVER_GROUP, ServerGroup.id(statementContext.selectedServerGroup()),
-                            Names.SERVER_GROUP, statementContext.selectedServerGroup())
-                    .append(SERVER, Server.id(statementContext.selectedServer()),
-                            Names.SERVER, statementContext.selectedServer());
+            return FinderPath
+                    .runtimeServerGroupPath(statementContext.selectedServerGroup(), statementContext.selectedServer());
         }
     }
 

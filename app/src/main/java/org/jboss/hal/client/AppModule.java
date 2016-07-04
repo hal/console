@@ -62,7 +62,7 @@ import org.jboss.hal.client.runtime.group.ServerGroupPresenter;
 import org.jboss.hal.client.runtime.host.HostPresenter;
 import org.jboss.hal.client.runtime.host.Mbui_HostView_Provider;
 import org.jboss.hal.client.runtime.logging.LogFilePresenter;
-import org.jboss.hal.client.runtime.logging.LogFileView;
+import org.jboss.hal.client.runtime.logging.Templated_LogFileView_Provider;
 import org.jboss.hal.client.runtime.server.Mbui_ServerView_Provider;
 import org.jboss.hal.client.runtime.server.ServerPresenter;
 import org.jboss.hal.client.skeleton.FooterPresenter;
@@ -181,9 +181,9 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 Mbui_InterfaceView_Provider.class,
                 InterfacePresenter.MyProxy.class);
 
-        bindPresenter(LogFilePresenter.class,
+        bindTemplatedPresenter(LogFilePresenter.class,
                 LogFilePresenter.MyView.class,
-                LogFileView.class,
+                Templated_LogFileView_Provider.class,
                 LogFilePresenter.MyProxy.class);
 
         bindTemplatedPresenter(LoggingPresenter.class,

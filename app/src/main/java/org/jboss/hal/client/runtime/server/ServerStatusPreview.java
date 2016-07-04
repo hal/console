@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.server;
 
 import elemental.dom.Element;
+import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.metric.Utilization;
 import org.jboss.hal.core.finder.PreviewContent;
@@ -144,7 +145,8 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
             ModelNode runtimeNode = result.step(1).get(RESULT);
             jvm.setTextContent(runtimeNode.get("vm-name").asString());
             jvmVersion.setTextContent(" " + runtimeNode.get("spec-version").asString());
-            uptime.setTextContent(resources.messages().uptime(humanReadable(runtimeNode.get("uptime").asLong())));
+            uptime.setTextContent(resources.messages().uptime(
+                    Format.humanReadableDuration(runtimeNode.get("uptime").asLong())));
 
             // memory
             ModelNode heapMemoryNode = result.step(2).get(RESULT).get("heap-memory-usage");
@@ -163,52 +165,5 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
             // init the tooltips for the utilization bars
             PatternFly.initComponents("." + finderPreview);
         });
-    }
-
-    private String humanReadable(long uptime) {
-        uptime = uptime / 1000;
-
-        int sec = (int) uptime % 60;
-        uptime /= 60;
-
-        int min = (int) uptime % 60;
-        uptime /= 60;
-
-        int hour = (int) uptime % 24;
-        uptime /= 24;
-
-        int day = (int) uptime;
-
-        String str = "";
-        if (day > 0) {
-            if (day > 1) {
-                str += day + " " + resources.constants().days() + ", ";
-            } else {
-                str += day + " " + resources.constants().day() + ", ";
-            }
-        }
-        // prints 0 hour in case days exists. Otherwise prints 2 days, 34 min, sounds weird.
-        if (hour > 0 || (day > 0)) {
-            if (hour > 1) {
-                str += hour + " " + resources.constants().hours() + ", ";
-            } else {
-                str += hour + " " + resources.constants().hour() + ", ";
-            }
-        }
-        if (min > 0) {
-            if (min > 1) {
-                str += min + " " + resources.constants().minutes() + ", ";
-            } else {
-                str += min + " " + resources.constants().minute() + ", ";
-            }
-        }
-        if (sec > 0) {
-            if (sec > 1) {
-                str += sec + " " + resources.constants().seconds();
-            } else {
-                str += sec + " " + resources.constants().second();
-            }
-        }
-        return str;
     }
 }

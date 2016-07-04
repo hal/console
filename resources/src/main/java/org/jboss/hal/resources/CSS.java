@@ -153,6 +153,7 @@ public interface CSS {
     String listViewPfStacked = "list-view-pf-stacked";
     String loading = "loading";
     String loadingContainer = "loading-container";
+    String logFileLoading = "log-file-loading";
 
     String macroEditor = "macro-editor";
     String macroList = "macro-list";

@@ -114,6 +114,8 @@ public class MacroEditorView extends PatternFlyViewImpl implements MacroEditorPr
 
         Options editorOptions = new Options();
         editorOptions.readOnly = true;
+        editorOptions.showGutter = true;
+        editorOptions.showLineNumbers = true;
         editorOptions.showPrintMargin = false;
         editor = new AceEditor(Ids.MACRO_EDITOR, editorOptions);
 

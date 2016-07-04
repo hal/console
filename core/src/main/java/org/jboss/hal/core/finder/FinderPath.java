@@ -24,7 +24,14 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import com.google.gwt.core.client.GWT;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.core.runtime.group.ServerGroup;
+import org.jboss.hal.core.runtime.host.Host;
+import org.jboss.hal.core.runtime.server.Server;
+import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -35,6 +42,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 public class FinderPath implements Iterable<FinderSegment> {
 
     // ------------------------------------------------------ static factory methods
+
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
 
     public static FinderPath from(String path) {
         List<FinderSegment> segments = new ArrayList<>();
@@ -60,16 +69,25 @@ public class FinderPath implements Iterable<FinderSegment> {
         return path;
     }
 
-    public static FinderPath runtimeHostPath(String host, String server) {
+    public static FinderPath runtimeHostPath(String host) {
         return new FinderPath()
-                .append(HOST, host, Names.HOST, host)
-                .append(SERVER, server, Names.SERVER, server);
+                .append(Ids.DOMAIN_BROWSE_BY_COLUMN, IdBuilder.asId(Names.HOSTS), CONSTANTS.browseBy(), Names.HOSTS)
+                .append(HOST, Host.id(host), Names.HOST, host);
     }
 
-    public static FinderPath runtimeServerGropupPath(String serverGroup, String server) {
+    public static FinderPath runtimeHostPath(String host, String server) {
+        return runtimeHostPath(host).append(SERVER, Server.id(server), Names.SERVER, server);
+    }
+
+    public static FinderPath runtimeServerGroupPath(String serverGroup) {
         return new FinderPath()
-                .append(SERVER_GROUP, serverGroup, Names.SERVER_GROUP, serverGroup)
-                .append(SERVER, server, Names.SERVER, server);
+                .append(Ids.DOMAIN_BROWSE_BY_COLUMN, IdBuilder.asId(Names.SERVER_GROUPS),
+                        CONSTANTS.browseBy(), Names.SERVER_GROUPS)
+                .append(SERVER_GROUP, ServerGroup.id(serverGroup), Names.SERVER_GROUP, serverGroup);
+    }
+
+    public static FinderPath runtimeServerGroupPath(String serverGroup, String server) {
+        return runtimeServerGroupPath(serverGroup).append(SERVER, Server.id(server), Names.SERVER, server);
     }
 
 

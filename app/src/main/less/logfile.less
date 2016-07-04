@@ -107,6 +107,25 @@
   }
 }
 
+.log-file-editor-container {
+  margin-bottom: 20px;
+
+  .spinner {
+    display: none;
+    position: relative;
+  }
+
+  &.log-file-loading {
+    #log-file-editor {
+      opacity: .3;
+    }
+
+    .spinner {
+      display: block;
+    }
+  }
+}
+
 #log-file-editor {
   border: 1px solid #ccc;
   font-size: 11px;
