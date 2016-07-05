@@ -75,13 +75,15 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
     @DataElement Element clearSearch;
     @DataElement Element status;
     @DataElement Element tailMode;
-    @DataElement Element clearEditor;
     @DataElement Element copyToClipboard;
     @DataElement Element download;
     @DataElement Element external;
     @DataElement Element editorContainer;
     @DataElement Element editorPlaceholder;
     @DataElement Element loading;
+
+
+    // ------------------------------------------------------ init & ui
 
     @PostConstruct
     void init() {
@@ -114,30 +116,14 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
     }
 
     @Override
-    @SuppressWarnings("HardCodedStringLiteral")
     public void attach() {
         super.attach();
-
-        if (presenter.isExternal()) {
-            Document document = Browser.getDocument();
-            Element body = document.getBody();
-            Element element = document.querySelector("body > nav.navbar");
-            if (element != null) {
-                body.removeChild(element);
-            }
-            element = document.querySelector("body > footer.footer");
-            if (element != null) {
-                body.removeChild(element);
-            }
-            body.getStyle().setPadding(0, PX);
-            Elements.setVisible(external, false);
-        }
 
         SwitchBridge.Bridge.element(tailMode).onChange((event, state) -> presenter.toggleTailMode(state));
 
         editor.getEditor().$blockScrolling = 1;
-        editor.getEditor().setTheme("ace/theme/logfile");
-        editor.getEditor().getSession().setMode("ace/mode/logfile");
+        editor.getEditor().setTheme("ace/theme/logfile"); //NON-NLS
+        editor.getEditor().getSession().setMode("ace/mode/logfile"); //NON-NLS
 
         Browser.getWindow().setOnresize(event -> adjustHeight());
         adjustHeight();
@@ -155,6 +141,25 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
     @Override
     public void setPresenter(final LogFilePresenter presenter) {
         this.presenter = presenter;
+    }
+
+
+    // ------------------------------------------------------ API
+    
+    @Override
+    public void externalMode() {
+        Document document = Browser.getDocument();
+        Element body = document.getBody();
+        Element element = document.querySelector("body > nav.navbar"); //NON-NLS
+        if (element != null) {
+            body.removeChild(element);
+        }
+        element = document.querySelector("body > footer.footer"); //NON-NLS
+        if (element != null) {
+            body.removeChild(element);
+        }
+        body.getStyle().setPadding(0, PX);
+        Elements.setVisible(external, false);
     }
 
     @Override
@@ -204,6 +209,9 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
         searchInput.setValue("");
     }
 
+
+    // ------------------------------------------------------ event handler
+
     @EventHandler(element = "searchInput", on = keyup)
     void onSearchInput(KeyboardEvent event) {
         Elements.setVisible(clearSearch, !Strings.isNullOrEmpty(searchInput.getValue()));
@@ -232,13 +240,6 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
     @EventHandler(element = "next", on = click)
     void onNext() {
         editor.getEditor().findNext();
-    }
-
-    @EventHandler(element = "clearEditor", on = click)
-    void onClearEditor() {
-        status.setTextContent("");
-        status.setTitle("");
-        editor.getEditor().getSession().setValue("");
     }
 
     @EventHandler(element = "refresh", on = click)
