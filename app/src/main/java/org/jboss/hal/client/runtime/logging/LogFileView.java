@@ -38,7 +38,6 @@ import org.jboss.hal.ballroom.form.SwitchBridge;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 
@@ -222,17 +221,17 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
 
     @EventHandler(element = "search", on = click)
     void onSearch() {
-        Browser.getWindow().alert(Names.NYI);
+        editor.getEditor().find(searchInput.getValue());
     }
 
     @EventHandler(element = "previous", on = click)
     void onPrevious() {
-        Browser.getWindow().alert(Names.NYI);
+        editor.getEditor().findPrevious();
     }
 
     @EventHandler(element = "next", on = click)
     void onNext() {
-        Browser.getWindow().alert(Names.NYI);
+        editor.getEditor().findNext();
     }
 
     @EventHandler(element = "clearEditor", on = click)

@@ -38,6 +38,12 @@ public class Editor {
 
     public native void setTheme(String theme);
 
+    public native void find(String query);
+
+    public native void findNext();
+
+    public native void findPrevious();
+
     @JsProperty
     public Object $blockScrolling;
 }
