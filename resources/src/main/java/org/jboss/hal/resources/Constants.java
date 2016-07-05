@@ -56,6 +56,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String cancel();
     String chooseSingleton();
     String chooseTemplate();
+    String clear();
     String clearMessages();
     String close();
     String commited();
@@ -181,6 +182,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String lastModified();
     String loading();
+    String loadingPleaseWait();
     String logFile();
     String logFiles();
     String logout();

@@ -15,10 +15,12 @@
  */
 package org.jboss.hal.client.runtime.logging;
 
+import java.util.Date;
 import javax.annotation.PostConstruct;
 
 import com.google.common.base.Strings;
 import elemental.client.Browser;
+import elemental.dom.Document;
 import elemental.dom.Element;
 import elemental.events.KeyboardEvent;
 import elemental.events.KeyboardEvent.KeyCode;
@@ -28,14 +30,17 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventHandler;
 import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.ballroom.Clipboard;
+import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
+import org.jboss.hal.ballroom.form.SwitchBridge;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.lang.Math.max;
@@ -51,10 +56,11 @@ import static org.jboss.hal.resources.CSS.logFileLoading;
 public abstract class LogFileView extends PatternFlyViewImpl implements LogFilePresenter.MyView {
 
     // @formatter:off
-    public static LogFileView create(final Resources resources) {
-        return new Templated_LogFileView(resources);
+    public static LogFileView create(final LogFiles logFiles, final Resources resources) {
+        return new Templated_LogFileView(logFiles, resources);
     }
 
+    public abstract LogFiles logFiles();
     public abstract Resources resources();
     // @formatter:on
 
@@ -67,17 +73,20 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
     @DataElement Element header;
     @DataElement Element logFileControls;
     @DataElement InputElement searchInput;
-    @DataElement Element clear;
+    @DataElement Element clearSearch;
     @DataElement Element status;
     @DataElement Element tailMode;
+    @DataElement Element clearEditor;
     @DataElement Element copyToClipboard;
+    @DataElement Element download;
+    @DataElement Element external;
     @DataElement Element editorContainer;
     @DataElement Element editorPlaceholder;
     @DataElement Element loading;
 
     @PostConstruct
     void init() {
-        Elements.setVisible(clear, false);
+        Elements.setVisible(clearSearch, false);
 
         Options editorOptions = new Options();
         editorOptions.readOnly = true;
@@ -106,20 +115,40 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
     }
 
     @Override
+    @SuppressWarnings("HardCodedStringLiteral")
     public void attach() {
         super.attach();
 
+        if (presenter.isExternal()) {
+            Document document = Browser.getDocument();
+            Element body = document.getBody();
+            Element element = document.querySelector("body > nav.navbar");
+            if (element != null) {
+                body.removeChild(element);
+            }
+            element = document.querySelector("body > footer.footer");
+            if (element != null) {
+                body.removeChild(element);
+            }
+            body.getStyle().setPadding(0, PX);
+            Elements.setVisible(external, false);
+        }
+
+        SwitchBridge.Bridge.element(tailMode).onChange((event, state) -> presenter.toggleTailMode(state));
+
         editor.getEditor().$blockScrolling = 1;
-        editor.getEditor().setTheme("ace/theme/logfile"); //NON-NLS
-        editor.getEditor().getSession().setMode("ace/mode/logfile"); //NON-NLS
+        editor.getEditor().setTheme("ace/theme/logfile");
+        editor.getEditor().getSession().setMode("ace/mode/logfile");
 
         Browser.getWindow().setOnresize(event -> adjustHeight());
         adjustHeight();
     }
 
     private void adjustHeight() {
-        int height = max(Skeleton.applicationHeight() - 2 * MARGIN_BIG - 1, MIN_HEIGHT);
+        int height = presenter.isExternal() ? Browser.getWindow().getInnerHeight() : Skeleton.applicationHeight();
+        height -= 2 * MARGIN_BIG;
         height -= (header.getOffsetHeight() + logFileControls.getOffsetHeight() + 20);
+        height = max(height, MIN_HEIGHT);
         editor.asElement().getStyle().setHeight(height, PX);
         editor.getEditor().resize();
     }
@@ -131,35 +160,64 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
 
     @Override
     public void loading() {
+        status.setTextContent(resources().constants().loadingPleaseWait());
+        status.setTitle(resources().constants().loadingPleaseWait());
         int top = loading.getOffsetHeight() + editor.asElement().getOffsetHeight() / 2;
         loading.getStyle().setTop(-1 * top, PX);
         editorContainer.getClassList().add(logFileLoading);
     }
 
     @Override
-    public void show(final LogFile logFile, final String content) {
-        editorContainer.getClassList().remove(logFileLoading);
+    public void show(final LogFile logFile, int lines, final String content) {
+        statusUpdate(lines);
         header.setTextContent(logFile.getFilename());
-        searchInput.setValue("");
-        status.setTextContent("");
+        download.setAttribute(UIConstants.DOWNLOAD, logFile.getFilename());
+        download.setAttribute(UIConstants.HREF, logFiles().downloadUrl(logFile.getFilename()));
+        external.setAttribute(UIConstants.HREF, logFiles().externalUrl(logFile.getFilename()));
+        external.setAttribute(UIConstants.TARGET, logFiles().target(logFile.getFilename()));
+
         editor.getEditor().getSession().setValue(content);
-        int lines = editor.getEditor().getSession().getLength();
         editor.getEditor().gotoLine(lines, 0, false);
+    }
+
+    @Override
+    public void refresh(final int lines, final String content) {
+        statusUpdate(lines);
+        editor.getEditor().getSession().setValue(content);
+        editor.getEditor().gotoLine(lines, 0, false);
+    }
+
+    @Override
+    public int visibleLines() {
+        int lineHeight = 15;
+        Element lineElement = Browser.getDocument()
+                .querySelector("#" + Ids.LOG_FILE_EDITOR + " .ace_text-layer .ace_line"); //NON-NLS
+        if (lineElement != null) {
+            lineHeight = lineElement.getOffsetHeight();
+        }
+        return editor.asElement().getOffsetHeight() / lineHeight;
+    }
+
+    private void statusUpdate(int lines) {
+        status.setTextContent(resources().messages().logFileStatus(lines, Format.time(new Date())));
+        status.setTitle(resources().messages().logFileStatus(lines, Format.time(new Date())));
+        editorContainer.getClassList().remove(logFileLoading);
+        searchInput.setValue("");
     }
 
     @EventHandler(element = "searchInput", on = keyup)
     void onSearchInput(KeyboardEvent event) {
-        Elements.setVisible(clear, !Strings.isNullOrEmpty(searchInput.getValue()));
+        Elements.setVisible(clearSearch, !Strings.isNullOrEmpty(searchInput.getValue()));
         if (event.getKeyCode() == KeyCode.ENTER) {
             onSearch();
         }
     }
 
-    @EventHandler(element = "clear", on = click)
+    @EventHandler(element = "clearSearch", on = click)
     void onClear() {
         searchInput.setValue("");
         searchInput.focus();
-        Elements.setVisible(clear, false);
+        Elements.setVisible(clearSearch, false);
     }
 
     @EventHandler(element = "search", on = click)
@@ -177,18 +235,15 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
         Browser.getWindow().alert(Names.NYI);
     }
 
+    @EventHandler(element = "clearEditor", on = click)
+    void onClearEditor() {
+        status.setTextContent("");
+        status.setTitle("");
+        editor.getEditor().getSession().setValue("");
+    }
+
     @EventHandler(element = "refresh", on = click)
     void onRefresh() {
-        presenter.load();
-    }
-
-    @EventHandler(element = "download", on = click)
-    void onDownload() {
-        presenter.download();
-    }
-
-    @EventHandler(element = "external", on = click)
-    void onExternal() {
-        Browser.getWindow().alert(Names.NYI);
+        presenter.refresh();
     }
 }

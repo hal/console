@@ -15,30 +15,48 @@
  */
 package org.jboss.hal.client.runtime.logging;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.Alert;
-import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
 
-import static org.jboss.hal.client.runtime.logging.LogFileColumn.LOG_FILE_SIZE_THRESHOLD;
+import static org.jboss.hal.client.runtime.logging.LogFiles.LOG_FILE_SIZE_THRESHOLD;
+import static org.jboss.hal.resources.CSS.alert;
+import static org.jboss.hal.resources.CSS.alertInfo;
+import static org.jboss.hal.resources.CSS.alertLink;
+import static org.jboss.hal.resources.CSS.alertWarning;
 
 /**
  * @author Harald Pehl
  */
 class LogFilePreview extends PreviewContent<LogFile> {
 
-    private final Alert alert;
-
     LogFilePreview(LogFiles logFiles, LogFile logFile, final Resources resources) {
         super(logFile.getFilename());
 
-        alert = new Alert(Icons.WARNING, resources.messages().largeLogFile(
-                logFile.getFilename(), Format.humanReadableFileSize(LOG_FILE_SIZE_THRESHOLD)),
-                resources.constants().download(), event -> logFiles.download(logFile.getFilename()));
-        previewBuilder().add(alert);
+        previewBuilder().div();
+        if (logFile.getSize() > LOG_FILE_SIZE_THRESHOLD) {
+            previewBuilder().css(alert, alertWarning)
+                    .span().css(Icons.WARNING).end()
+                    .span()
+                    .innerHtml(resources.messages().largeLogFile(logFile.getFormattedSize()))
+                    .end();
+        } else {
+            previewBuilder().css(alert, alertInfo)
+                    .span().css(Icons.INFO).end()
+                    .span()
+                    .innerHtml(resources.messages().normalLogFile(logFile.getFormattedSize()))
+                    .end();
+        }
+        previewBuilder()
+                .span().textContent(" ").end()
+                .a().css(alertLink)
+                .attr(UIConstants.HREF, logFiles.downloadUrl(logFile.getFilename()))
+                .attr(UIConstants.DOWNLOAD, logFile.getFilename())
+                .textContent(resources.constants().download())
+                .end()
+                .end();
 
         PreviewAttributes<LogFile> previewAttributes = new PreviewAttributes<>(logFile)
                 .append(model ->
@@ -47,10 +65,5 @@ class LogFilePreview extends PreviewContent<LogFile> {
                         new String[]{resources.constants().size(), logFile.getFormattedSize()})
                 .end();
         previewBuilder().addAll(previewAttributes);
-    }
-
-    @Override
-    public void update(final LogFile item) {
-        Elements.setVisible(alert.asElement(), item.getSize() > LOG_FILE_SIZE_THRESHOLD);
     }
 }

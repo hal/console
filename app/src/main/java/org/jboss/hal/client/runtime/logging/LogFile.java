@@ -22,7 +22,6 @@ import com.google.gwt.i18n.shared.DateTimeFormat;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.dmr.ModelNode;
 
-import static com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT;
 import static com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat.ISO_8601;
 
 /**
@@ -74,7 +73,7 @@ class LogFile extends ModelNode {
     public String getFormattedLastModifiedDate() {
         Date lastModifiedDate = getLastModifiedDate();
         if (lastModifiedDate != null) {
-            return DateTimeFormat.getFormat(DATE_TIME_SHORT).format(lastModifiedDate);
+            return Format.shortDateTime(lastModifiedDate);
         }
         return null;
     }

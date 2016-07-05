@@ -33,10 +33,11 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Requires;
 
-import static java.util.Collections.singletonList;
+import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.logging.AddressTemplates.LOGGING_SUBSYSTEM_ADDRESS;
@@ -51,11 +52,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 @Column(Ids.LOG_FILE_COLUMN)
 @Requires(value = {LOGGING_SUBSYSTEM_ADDRESS, LOG_FILE_ADDRESS}, recursive = false)
 public class LogFileColumn extends FinderColumn<LogFile> {
-
-    /**
-     * If log files are bigger than this threshold a confirmation dialog is displayed.
-     */
-    public static final int LOG_FILE_SIZE_THRESHOLD = 15000000; // bytes
 
     @Inject
     public LogFileColumn(final Finder finder,
@@ -101,8 +97,17 @@ public class LogFileColumn extends FinderColumn<LogFile> {
                             builder.with(HOST, statementContext.selectedHost());
                         }
                         builder.with(SERVER, statementContext.selectedServer())
-                            .with(LogFilePresenter.LOG_FILE_PARAM, item.getFilename());
-                        return singletonList(itemActionFactory.view(builder.build()));
+                                .with(LogFilePresenter.LOG_FILE_PARAM, item.getFilename());
+
+                        ItemAction<LogFile> download = new ItemAction<>(resources.constants().download(),
+                                logFiles.downloadUrl(item.getFilename()),
+                                UIConstants.DOWNLOAD, item.getFilename());
+
+                        ItemAction<LogFile> external = new ItemAction<>(resources.constants().openInExternalWindow(),
+                                logFiles.externalUrl(item.getFilename()),
+                                UIConstants.TARGET, logFiles.target(item.getFilename()));
+
+                        return asList(itemActionFactory.view(builder.build()), download, external);
                     }
                 })
                 .onPreview(item -> new LogFilePreview(logFiles, item, resources))
@@ -113,7 +118,5 @@ public class LogFileColumn extends FinderColumn<LogFile> {
         );
     }
 
-    void download(final LogFile logFile) {
 
-    }
 }

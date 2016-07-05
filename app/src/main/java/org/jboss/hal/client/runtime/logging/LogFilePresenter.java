@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.runtime.logging;
 
+import java.util.List;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -46,6 +47,7 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.client.runtime.logging.AddressTemplates.LOG_FILE_ADDRESS;
+import static org.jboss.hal.client.runtime.logging.LogFiles.LINES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
@@ -64,19 +66,25 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
 
     public interface MyView extends PatternFlyView, HasPresenter<LogFilePresenter> {
         void loading();
-        void show(LogFile logFile, String content);
+        void show(LogFile logFile, int lines, String content);
+        void refresh(int lines, String content);
+        int visibleLines();
     }
     // @formatter:on
 
 
     static final String LOG_FILE_PARAM = "log-file";
-    private static final int LINES = 2000;
+    static final String EXTERNAL_PARAM = "external";
+    private static final int REFRESH_INTERVAL = 1000;
 
     private final Dispatcher dispatcher;
-    private final LogFiles logFiles;
     private final StatementContext statementContext;
     private final Resources resources;
     private String logFileName;
+    private LogFile logFile;
+    private int intervalHandle;
+    private boolean external;
+
 
     @Inject
     public LogFilePresenter(final EventBus eventBus,
@@ -84,14 +92,17 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
             final MyProxy myProxy,
             final Finder finder,
             final Dispatcher dispatcher,
-            final LogFiles logFiles,
             final StatementContext statementContext,
             final Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.dispatcher = dispatcher;
-        this.logFiles = logFiles;
         this.statementContext = statementContext;
         this.resources = resources;
+
+        this.logFileName = null;
+        this.logFile = null;
+        this.intervalHandle = -1;
+        this.external = false;
     }
 
     @Override
@@ -104,6 +115,7 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
     public void prepareFromRequest(final PlaceRequest request) {
         super.prepareFromRequest(request);
         logFileName = request.getParameter(LOG_FILE_PARAM, null);
+        external = Boolean.parseBoolean(request.getParameter(EXTERNAL_PARAM, "false")); //NON-NLS
     }
 
     @Override
@@ -127,7 +139,7 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
         load();
     }
 
-    void load() {
+    private void load() {
         if (logFileName != null) {
             int handle = Browser.getWindow().setTimeout(() -> getView().loading(), UIConstants.PROGRESS_TIMEOUT);
             ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, logFileName);
@@ -142,10 +154,11 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
             dispatcher.execute(new Composite(logFileOp, contentOp),
                     (CompositeResult result) -> {
                         Browser.getWindow().clearTimeout(handle);
-                        LogFile logFile = new LogFile(logFileName, result.step(0).get(RESULT));
-                        String content = result.step(1).get(RESULT).asList().stream().map(ModelNode::asString)
+                        logFile = new LogFile(logFileName, result.step(0).get(RESULT));
+                        List<ModelNode> linesRead = result.step(1).get(RESULT).asList();
+                        String content = linesRead.stream().map(ModelNode::asString)
                                 .collect(joining("\n"));
-                        getView().show(logFile, content);
+                        getView().show(logFile, linesRead.size(), content);
                     },
                     (operation, failure) -> {
                         Browser.getWindow().clearTimeout(handle);
@@ -162,11 +175,58 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
         }
     }
 
-    void download() {
-        if (logFileName != null) {
-            logFiles.download(logFileName);
+    void refresh() {
+        if (logFile != null) {
+            int linesToRead = inTailMode() ? getView().visibleLines() : LogFiles.LINES;
+            int handle = Browser.getWindow().setTimeout(() -> getView().loading(), UIConstants.PROGRESS_TIMEOUT);
+            ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, logFileName);
+            //noinspection HardCodedStringLiteral
+            Operation operation = new Operation.Builder("read-log-file", address)
+                    .param("lines", linesToRead)
+                    .param("tail", true)
+                    .build();
+            dispatcher.execute(operation, result -> {
+                        Browser.getWindow().clearTimeout(handle);
+                        List<ModelNode> linesRead = result.asList();
+                        String content = linesRead.stream().map(ModelNode::asString).collect(joining("\n"));
+                        getView().refresh(linesRead.size(), content);
+                    },
+                    (op, failure) -> {
+                        Browser.getWindow().clearTimeout(handle);
+                        MessageEvent.fire(getEventBus(),
+                                Message.error(resources.messages().logFileError(logFileName), failure));
+                    },
+                    (op, exception) -> {
+                        Browser.getWindow().clearTimeout(handle);
+                        MessageEvent.fire(getEventBus(),
+                                Message.error(resources.messages().logFileError(logFileName), exception.getMessage()));
+                    });
         } else {
             MessageEvent.fire(getEventBus(), Message.error(resources.messages().noLogFile()));
         }
+    }
+
+    void toggleTailMode(final boolean on) {
+        if (logFile != null) {
+            if (on) {
+                if (!inTailMode()) {
+                    intervalHandle = Browser.getWindow().setInterval(this::refresh, REFRESH_INTERVAL);
+                }
+            } else {
+                Browser.getWindow().clearInterval(intervalHandle);
+                intervalHandle = -1;
+                refresh();
+            }
+        } else {
+            MessageEvent.fire(getEventBus(), Message.error(resources.messages().noLogFile()));
+        }
+    }
+
+    boolean isExternal() {
+        return external;
+    }
+
+    private boolean inTailMode() {
+        return intervalHandle != -1;
     }
 }

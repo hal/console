@@ -15,17 +15,32 @@
  */
 package org.jboss.hal.ballroom;
 
+import java.util.Date;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.i18n.shared.DateTimeFormat;
+import com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat;
 import org.jboss.hal.resources.Constants;
+
 
 /**
  * @author Harald Pehl
  */
 public final class Format {
 
+    private static final DateTimeFormat DATE_TIME_SHORT = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT);
+    private static final DateTimeFormat TIME_MEDIUM = DateTimeFormat.getFormat(PredefinedFormat.TIME_MEDIUM);
     private static final NumberFormat SIZE_FORMAT = NumberFormat.getFormat("#,##0.#");
     private static final Constants CONSTANTS = GWT.create(Constants.class);
+
+    public static String time(Date date) {
+        return TIME_MEDIUM.format(date);
+    }
+
+    public static String shortDateTime(Date date) {
+        return DATE_TIME_SHORT.format(date);
+    }
 
     public static String humanReadableFileSize(long size) {
         if (size <= 0) { return "0"; }

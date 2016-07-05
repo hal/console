@@ -57,7 +57,7 @@
                         <div class="search-pf-input-group">
                             <label for="log-file-search" class="sr-only">{{resources().constants().search()}}</label>
                             <input data-element="searchInput" id="log-file-search" type="search" class="form-control" placeholder="{{resources().constants().search()}}">
-                            <button data-element="clear" type="button" class="clear" aria-hidden="true">
+                            <button data-element="clearSearch" type="button" class="clear" aria-hidden="true">
                                 <span class="pficon pficon-close"></span></button>
                         </div>
                     </div>
@@ -75,9 +75,10 @@
                     <label for="log-file-follow">{{resources().constants().tailMode()}}</label><input data-element="tailMode" class="bootstrap-switch" id="log-file-follow" type="checkbox"/>
                 </div>
                 <div class="log-file-buttons btn-group">
+                    <a data-element="clearEditor" class="btn btn-default clickable" data-toggle="tooltip" data-container="body" data-placement="top" title="{{resources().constants().clear()}}"><i class="fa fa-eraser"></i></a>
                     <a data-element="refresh" class="btn btn-default clickable" data-toggle="tooltip" data-container="body" data-placement="top" title="{{resources().constants().refresh()}}"><i class="fa fa-refresh"></i></a>
                     <a data-element="copyToClipboard" class="btn btn-default clickable" data-toggle="tooltip" data-container="body" data-placement="top" title="{{resources().constants().copyToClipboard()}}"><i class="fa fa-clipboard"></i></a>
-                    <a data-element="download" class="btn btn-default clickable" data-toggle="tooltip" data-container="body" data-placement="top" title="{{resources().constants().download()}}"><i class="fa fa-download"></i></a>
+                    <a data-element="download" href="#" class="btn btn-default clickable" data-toggle="tooltip" data-container="body" data-placement="top" title="{{resources().constants().download()}}"><i class="fa fa-download"></i></a>
                     <a data-element="external" class="btn btn-default clickable" data-toggle="tooltip" data-container="body" data-placement="top" title="{{resources().constants().openInExternalWindow()}}"><i class="fa fa-external-link"></i></a>
                 </div>
             </div>
