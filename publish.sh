@@ -25,23 +25,20 @@ cd ${ROOT}
 stop_spinner $?
 
 start_spinner "Publishing to gh-pages..."
-rm -rf /tmp/hal
-mv app/target/hal-app-*/hal /tmp/
-git checkout gh-pages > /dev/null 2>&1
-git reset --hard origin/gh-pages > /dev/null 2>&1
-rm -rf *.png *.gif *.ico *.txt *.html *.js
-rm -rf css deferredjs fonts img js previews
-git commit -am "Prepare update" > /dev/null 2>&1
-git push -f origin gh-pages > /dev/null 2>&1
-mv /tmp/hal/* .
+rm -rf /tmp/hal.next
+cd /tmp/
+git clone -b gh-pages --single-branch git@github.com:hal/hal.next.git > /dev/null 2>&1
+cd hal.next
+rm -rf *.gif *.html *.ico *.js *.png *.txt css deferredjs fonts img js previews
+cp -R ${ROOT}/app/target/hal-app-*/hal/ .
 date > .build
 git add --all > /dev/null 2>&1
 git commit -am "Update hal.next" > /dev/null 2>&1
 git push -f origin gh-pages > /dev/null 2>&1
-git checkout ${BRANCH} > /dev/null 2>&1
+cd ${ROOT}
 stop_spinner $?
 
 echo
-echo "HAL.Next successfully published to branch gh-pages."
+echo "HAL.next successfully published to branch gh-pages."
 echo "Please visit https://hal.github.io/hal.next/"
 echo

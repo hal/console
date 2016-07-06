@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jboss.hal</groupId>
+        <artifactId>hal-parent-with-dependencies</artifactId>
+        <version>0.3.0</version>
+        <relativePath>../parent-with-dependencies/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>hal-docker</artifactId>
+    <name>HAL :: Docker</name>
+    <description>Builds a docker container with the latest WildFly and HAL.next</description>
+    <packaging>docker-build</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-app</artifactId>
+            <classifier>resources</classifier>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>hal-app</artifactId>
+                                    <classifier>resources</classifier>
+                                    <version>${project.version}</version>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <logDate>default</logDate>
+                    <verbose>true</verbose>
+                    <images>
+                        <image>
+                            <alias>hal-next</alias>
+                            <name>hpehl/hal-next</name>
+                            <build>
+                                <from>jboss/wildfly</from>
+                                <tags>
+                                    <tag>${project.version}</tag>
+                                    <tag>latest</tag>
+                                </tags>
+                                <assembly>
+                                    <mode>dir</mode>
+                                    <basedir>/opt/jboss/wildfly/modules/system/layers/base/org/jboss/as/console/main
+                                    </basedir>
+                                    <inline>
+                                        <fileSets>
+                                            <fileSet>
+                                                <directory>${project.basedir}/src/main/docker</directory>
+                                                <outputDirectory>.</outputDirectory>
+                                                <includes>
+                                                    <include>module.xml</include>
+                                                </includes>
+                                                <filtered>true</filtered>
+                                            </fileSet>
+                                            <fileSet>
+                                                <directory>${project.build.directory}</directory>
+                                                <outputDirectory>.</outputDirectory>
+                                                <includes>
+                                                    <include>hal-app-${project.version}-resources.jar</include>
+                                                </includes>
+                                            </fileSet>
+                                        </fileSets>
+                                    </inline>
+                                </assembly>
+                                <runCmds>
+                                    <run>/opt/jboss/wildfly/bin/add-user.sh -u admin -p admin --silent</run>
+                                </runCmds>
+                            </build>
+                            <run>
+                                <ports>
+                                    <port>9990:9990</port>
+                                </ports>
+                            </run>
+                        </image>
+                    </images>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
