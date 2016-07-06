@@ -38,7 +38,7 @@ In order to make the console future proof, it's necessary to rewrite these parts
 
 ## Running
 
-There are different ways to launch HAL.next and connect to a running WildFly instance. Each one requires to configure the allowed origins of the HTTP management endpoint.
+There are different ways to launch HAL.next and connect to a running WildFly instance. Most of them require to configure the allowed origins of the HTTP management endpoint.
  
 - Standalone mode
 
@@ -52,7 +52,7 @@ There are different ways to launch HAL.next and connect to a running WildFly ins
         
 ### Standalone
 
-The `standalone` module contains an executable jar which launches a local web server serving HAL.next.
+The `standalone` module contains an executable jar which launches a local web server at http://localhost:9090.
   
 1. Add http://localhost:9090 as allowed origin
 1. `mvn install`
@@ -86,7 +86,7 @@ The `docker` module is used to build a docker image with WildFly 10.0.0.Final an
 1. `docker run -p 9990:9990 -it hpehl/hal-next /opt/jboss/wildfly/bin/domain.sh -b 0.0.0.0 -bmanagement 0.0.0.0` 
 1. Open http://localhost:9990 and log in with `admin:admin`
 
-The docker image is also available on the public repository: https://hub.docker.com/r/hpehl/hal-next/
+The docker image is also available in the public docker repository: https://hub.docker.com/r/hpehl/hal-next/
 
 ### GitHub Pages
 
@@ -95,7 +95,7 @@ Finally HAL.next is also available on the `gh-pages` branch at https://hal.githu
 1. Add https://hal.github.io/hal.next/ as allowed origin
 1. Open https://hal.github.io/hal.next/
 
-The remote version is served from **https** so you need to secure the management interface as well. Please note that if you're using a self signed key store you might need to open the local management endpoint in the browser and accept the unsafe certificate before you can use it with HAL.next.
+GitHub pages are served from **https** so you need to secure the management interface as well. Please note that if you're using a self signed key store you might need to open the local management endpoint in the browser and accept the unsafe certificate before you can use it with HAL.next.
 
 ### SuperDevMode
 
