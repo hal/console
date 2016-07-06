@@ -27,6 +27,7 @@ public interface Icons {
 
     String OK = pfIcon(ok);
     String INFO = pfIcon(info);
+    String PAUSE = fontAwesome(pauseCircle) + " " + blue;
     String WARNING = pfIcon(warningTriangleO);
     String DISABLED = pfIcon(disabledCircleO);
     String STOPPED = fontAwesome(stopCircleO) + " " + grey;
@@ -42,6 +43,12 @@ public interface Icons {
     static Element info() {
         Element icon = Browser.getDocument().createSpanElement();
         icon.setClassName(INFO);
+        return icon;
+    }
+
+    static Element pause() {
+        Element icon = Browser.getDocument().createSpanElement();
+        icon.setClassName(PAUSE);
         return icon;
     }
 

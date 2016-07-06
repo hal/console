@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.logging;
+package org.jboss.hal.client.runtime.subsystem.logging;
 
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
@@ -21,7 +21,7 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 
-import static org.jboss.hal.client.runtime.logging.LogFiles.LOG_FILE_SIZE_THRESHOLD;
+import static org.jboss.hal.client.runtime.subsystem.logging.LogFiles.LOG_FILE_SIZE_THRESHOLD;
 import static org.jboss.hal.resources.CSS.alert;
 import static org.jboss.hal.resources.CSS.alertInfo;
 import static org.jboss.hal.resources.CSS.alertLink;

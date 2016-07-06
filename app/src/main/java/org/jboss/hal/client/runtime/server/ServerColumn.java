@@ -285,7 +285,9 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     return Icons.unknown();
                 } else if (item.isAdminMode() || item.isStarting()) {
                     return Icons.disabled();
-                } else if (item.isSuspended() || item.needsReload() || item.needsRestart()) {
+                } else if (item.isSuspended()) {
+                    return Icons.pause();
+                } else if (item.needsReload() || item.needsRestart()) {
                     return Icons.warning();
                 } else if (item.isRunning()) {
                     return Icons.ok();

@@ -51,7 +51,7 @@
             <ul>
                 <li>
                     <span class="item-text">First Item</span>
-                    <button class="btn btn-finder">View</button>
+                    <a class="btn btn-finder">View</a>
                 </li>
                 <li class="active">
                     <span class="item-text">Second Item</span>
@@ -60,7 +60,7 @@
                 <li>
                     <span class="item-text" title="Third Item which is quite long">Third Item which is quite long</span>
                     <div class="btn-group pull-right">
-                        <button type="button" class="btn btn-finder">Action</button>
+                        <a class="btn btn-finder">Action</a>
                         <button type="button" class="btn btn-finder dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="caret"></span>
                             <span class="sr-only">Toggle Dropdown</span>
@@ -124,7 +124,7 @@
                     <span class="unpin pficon-close"></span>
                     <span class="pin pficon-thumb-tack-o"></span>
                     <div class="btn-group pull-right">
-                        <button type="button" class="btn btn-finder">Action</button>
+                        <a class="btn btn-finder">Action</a>
                         <button type="button" class="btn btn-finder dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="caret"></span>
                             <span class="sr-only">Toggle Dropdown</span>
@@ -152,7 +152,7 @@
                     <span class="item-text">EE</span>
                     <span class="unpin pficon-close"></span>
                     <span class="pin pficon-thumb-tack-o"></span>
-                    <button class="btn btn-finder">View</button>
+                    <a class="btn btn-finder">View</a>
                 </li>
                 <li class="unpinned with-progress">
                     <span class="item-text">EJB</span>
@@ -174,7 +174,7 @@
                     <span class="item-text">IO<small class="subtitle">Subsystem with an extremely long subtitle</small></span>
                     <span class="unpin pficon-close"></span>
                     <span class="pin pficon-thumb-tack-o"></span>
-                    <button class="btn btn-finder">View</button>
+                    <a class="btn btn-finder">View</a>
                 </li>
                 <li class="unpinned">
                     <span class="item-text">JAX-RS</span>
@@ -240,10 +240,14 @@
             <header>
                 <h1>Datasource</h1>
             </header>
-            <ul>
+            <ul class="clickable">
                 <li class="active">
                     <span class="item-icon pficon pficon-ok"></span>
                     <span class="item-text">Enabled / Running State</span>
+                </li>
+                <li>
+                    <span class="item-icon fa fa-pause-circle-o blue"></span>
+                    <span class="item-text">Pause State</span>
                 </li>
                 <li>
                     <span class="item-icon pficon pficon-warning-triangle-o"></span>
@@ -274,20 +278,120 @@
         <div class="finder-preview col-md-4">
             <div>
                 <h1>Preview Section</h1>
-                <section>
-                    <p class="lead">An optional short description of the resource in preview</p>
-                    <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+                <p class="lead">An optional short description of the resource in preview</p>
+                <div class="alert alert-success">
+                    <span class="pficon pficon-ok"></span><span>The resource <strong>foo</strong> is ok.</span>
+                    <a class="clickable alert-link">Change this</a>
+                </div>
+                <div class="alert alert-suspended">
+                    <span class="fa fa-pause-circle-o blue"></span><span>The resource <strong>foo</strong> is paused.</span>
+                    <a class="clickable alert-link">Change this</a>
+                </div>
+                <div class="alert alert-warning">
+                    <span class="pficon pficon-warning-triangle-o"></span><span>The resource <strong>foo</strong> is strange.</span>
+                    <a class="clickable alert-link">Change this</a>
+                </div>
+                <div class="alert alert-info">
+                    <span class="pficon pficon-disabled-circle-o"></span><span>The resource <strong>foo</strong> is disabled.</span>
+                    <a class="clickable alert-link">Change this</a>
+                </div>
+                <div class="alert alert-info">
+                    <span class="fa fa-question-circle"></span><span>The resource <strong>foo</strong> is unknown.</span>
+                    <a class="clickable alert-link">Change this</a>
+                </div>
+                <div class="alert alert-info">
+                    <span class="fa fa-stop-circle-o grey"></span><span>The resource <strong>foo</strong> is stopped.</span>
+                    <a class="clickable alert-link">Change this</a>
+                </div>
+                <div class="alert alert-danger">
+                    <span class="pficon pficon-error-circle-o"></span><span>The resource <strong>foo</strong> is not ok.</span>
+                    <a class="clickable alert-link">Change this</a>
+                </div>
+                <div>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Tu vero, inquam, ducas licet, si sequetur;
+                        <a href='http://loripsum.net/' target='_blank'>Bestiarum vero nullum iudicium puto.</a> Sed eum qui audiebant, quoad poterant, defendebant sententiam suam.
+                        <code>Duo Reges: constructio interrete.</code> Praeclarae mortes sunt imperatoriae; Quo tandem modo? Qui-vere falsone, quaerere mittimus-dicitur oculis se privasse; Itaque si aut requietem natura non quaereret aut eam posset alia quadam ratione consequi.
+                    </p>
 
-                    <p>Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
-                </section>
+                    <p>Sed venio ad inconstantiae crimen, ne saepius dicas me aberrare;
+                        <b>Quippe: habes enim a rhetoribus;</b> <i>Quippe: habes enim a rhetoribus;</i>
+                        <i>Inquit, dasne adolescenti veniam?</i> Dic in quovis conventu te omnia facere, ne doleas.
+                        <a href='http://loripsum.net/' target='_blank'>Non semper, inquam;</a></p>
+
+<pre>
+Quo posito et omnium adsensu adprobato illud adsumitur, eum,
+qui magno sit animo atque forti, omnia, quae cadere in
+hominem possint, despicere ac pro nihilo putare.
+
+Hanc se tuus Epicurus omnino ignorare dicit quam aut qualem
+esse velint qui honestate summum bonum metiantur.
+</pre>
+
+
+                    <p><i>Haeret in salebra.</i> <i>Summus dolor plures dies manere non potest?</i></p>
+
+                    <p>
+                        <b>Nihil enim hoc differt.</b> Itaque sensibus rationem adiunxit et ratione effecta sensus non reliquit. Isto modo ne improbos quidem, si essent boni viri.
+                        <i>Quid Zeno?</i> Habes, inquam, Cato, formam eorum, de quibus loquor, philosophorum. Eaedem enim utilitates poterunt eas labefactare atque pervertere. Sullae consulatum? Diodorus, eius auditor, adiungit ad honestatem vacuitatem doloris.
+                    </p>
+
+                    <ul>
+                        <li>Hic ego: Pomponius quidem, inquam, noster iocari videtur, et fortasse suo iure.</li>
+                        <li>Dulce amarum, leve asperum, prope longe, stare movere, quadratum rotundum.</li>
+                        <li>Sed quid attinet de rebus tam apertis plura requirere?</li>
+                        <li>Igitur neque stultorum quisquam beatus neque sapientium non beatus.</li>
+                    </ul>
+
+
+                    <p>Sin te auctoritas commovebat, nobisne omnibus et Platoni ipsi nescio quem illum anteponebas? Odium autem et invidiam facile vitabis. Laboro autem non sine causa; Sin aliud quid voles, postea. Quid Zeno? Non autem hoc: igitur ne illud quidem.
+                        <mark>Refert tamen, quo modo.</mark>
+                        <mark>Itaque his sapiens semper vacabit.</mark>
+                        <a href='http://loripsum.net/' target='_blank'>Laboro autem non sine causa;</a> Sed in rebus apertissimis nimium longi sumus.
+                    </p>
+
+                    <ol>
+                        <li>In quibus doctissimi illi veteres inesse quiddam caeleste et divinum putaverunt.</li>
+                        <li>Mihi quidem Homerus huius modi quiddam vidisse videatur in iis, quae de Sirenum cantibus finxerit.</li>
+                        <li>Sed in rebus apertissimis nimium longi sumus.</li>
+                        <li>Fortes viri voluptatumne calculis subductis proelium ineunt, sanguinem pro patria profundunt, an quodam animi ardore atque impetu concitati?</li>
+                    </ol>
+
+
+                    <p>
+                        <mark>Quae cum dixisset, finem ille.</mark>
+                        <a href='http://loripsum.net/' target='_blank'>Ut id aliis narrare gestiant?</a> Expressa vero in iis aetatibus, quae iam confirmatae sunt. Stuprata per vim Lucretia a regis filio testata civis se ipsa interemit.
+                        <mark>Ita nemo beato beatior.</mark>
+                        <i>Itaque his sapiens semper vacabit.</i>
+                        <b>De illis, cum volemus.</b> Eam si varietatem diceres, intellegerem, ut etiam non dicente te intellego;
+                    </p>
+
+                    <p>Diodorus, eius auditor, adiungit ad honestatem vacuitatem doloris. Et si turpitudinem fugimus in statu et motu corporis, quid est cur pulchritudinem non sequamur? Est enim effectrix multarum et magnarum voluptatum.
+                        <i>Nos commodius agimus.</i> Ut enim consuetudo loquitur, id solum dicitur honestum, quod est populari fama gloriosum.
+                        <a href='http://loripsum.net/' target='_blank'>Eaedem res maneant alio modo.</a></p>
+                </div>
             </div>
         </div>
     </div>
 </div>
 <script>
     $(document).ready(function () {
-        $('[data-toggle=tooltip]').tooltip();
+        $("[data-toggle=tooltip]").tooltip();
+
+        // Not part of the actual finder UI / logic. Just used to show the different states in the preview pane
+        showPreview(0);
+        $(".clickable > li").click(function () {
+            if (!$(this).hasClass("empty")) {
+                $(".clickable > li").removeClass("active");
+                $(this).addClass("active");
+                showPreview($(this).index());
+            }
+        });
     });
+
+    function showPreview(index) {
+        $(".finder-preview .alert").hide();
+        $(".finder-preview .alert").eq(index).show();
+    }
 </script>
 </body>
 </html>

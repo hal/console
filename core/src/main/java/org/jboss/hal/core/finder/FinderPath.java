@@ -56,7 +56,7 @@ public class FinderPath implements Iterable<FinderSegment> {
         return new FinderPath(segments);
     }
 
-    public static FinderPath subsystemPath(String profile, String subsystem) {
+    public static FinderPath configurationSubsystemPath(String profile, String subsystem) {
         FinderPath path = new FinderPath();
         if (profile == null) {
             path.append(CONFIGURATION, Names.SUBSYSTEMS.toLowerCase(), Names.CONFIGURATION, Names.SUBSYSTEMS);

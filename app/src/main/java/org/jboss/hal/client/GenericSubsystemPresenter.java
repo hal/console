@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration.subsystem;
+package org.jboss.hal.client;
 
 import javax.inject.Inject;
 
@@ -94,7 +94,7 @@ public class GenericSubsystemPresenter
 
     @Override
     protected FinderPath finderPath() {
-        return FinderPath.subsystemPath(profile(), address.lastValue());
+        return FinderPath.configurationSubsystemPath(profile(), address.lastValue());
     }
 
     private String profile() {

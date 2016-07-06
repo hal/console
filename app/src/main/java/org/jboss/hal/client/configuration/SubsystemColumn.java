@@ -27,7 +27,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.LabelBuilder;
-import org.jboss.hal.client.configuration.subsystem.GenericSubsystemPresenter;
+import org.jboss.hal.client.GenericSubsystemPresenter;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;

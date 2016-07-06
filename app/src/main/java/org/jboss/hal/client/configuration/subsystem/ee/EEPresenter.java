@@ -130,7 +130,7 @@ public class EEPresenter extends ApplicationPresenter<EEPresenter.MyView, EEPres
     @Override
     protected FinderPath finderPath() {
         return FinderPath
-                .subsystemPath(statementContext.selectedProfile(), AddressTemplates.EE_SUBSYSTEM_TEMPLATE.lastValue());
+                .configurationSubsystemPath(statementContext.selectedProfile(), AddressTemplates.EE_SUBSYSTEM_TEMPLATE.lastValue());
     }
 
     void loadEESubsystem() {

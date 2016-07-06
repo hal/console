@@ -117,7 +117,7 @@ public class DataSourcePresenter extends
 
     @Override
     protected FinderPath finderPath() {
-        return FinderPath.subsystemPath(statementContext.selectedProfile(), DATASOURCES)
+        return FinderPath.configurationSubsystemPath(statementContext.selectedProfile(), DATASOURCES)
                 .append(Ids.DATA_SOURCE_DRIVER_COLUMN, DATASOURCES, Names.DATASOURCES_DRIVERS, Names.DATASOURCES)
                 .append(DATA_SOURCE, DataSource.id(name, xa), Names.DATASOURCE, name);
     }

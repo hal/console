@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.logging;
+package org.jboss.hal.client.runtime.subsystem.logging;
 
 import javax.inject.Inject;
 
@@ -28,8 +28,8 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.IdBuilder;
 
 import static java.util.Collections.singletonList;
-import static org.jboss.hal.client.runtime.logging.LogFilePresenter.EXTERNAL_PARAM;
-import static org.jboss.hal.client.runtime.logging.LogFilePresenter.LOG_FILE_PARAM;
+import static org.jboss.hal.client.runtime.subsystem.logging.LogFilePresenter.EXTERNAL_PARAM;
+import static org.jboss.hal.client.runtime.subsystem.logging.LogFilePresenter.LOG_FILE_PARAM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 

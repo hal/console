@@ -88,7 +88,7 @@ public class IOPresenter extends MbuiPresenter<IOPresenter.MyView, IOPresenter.M
     @Override
     protected FinderPath finderPath() {
         return FinderPath
-                .subsystemPath(statementContext.selectedProfile(), ModelDescriptionConstants.IO);
+                .configurationSubsystemPath(statementContext.selectedProfile(), ModelDescriptionConstants.IO);
     }
 
     @Override

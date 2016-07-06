@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.logging;
+package org.jboss.hal.client.runtime.subsystem.logging;
 
 import java.util.List;
 import javax.inject.Inject;
@@ -46,8 +46,8 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.joining;
-import static org.jboss.hal.client.runtime.logging.AddressTemplates.LOG_FILE_ADDRESS;
-import static org.jboss.hal.client.runtime.logging.LogFiles.LINES;
+import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.LOG_FILE_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.logging.LogFiles.LINES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
