@@ -196,7 +196,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
         };
         setItemsProvider(itemsProvider);
 
-        // reuse the items provider to provide breadcrumb items
+        // reuse the items provider to filter breadcrumb items
         setBreadcrumbItemsProvider((context, callback) ->
                 itemsProvider.get(context, new AsyncCallback<List<SubsystemMetadata>>() {
                     @Override

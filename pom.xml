@@ -88,7 +88,6 @@
         <module>core</module>
         <module>config</module>
         <module>dmr</module>
-        <module>docker</module>
         <module>meta</module>
         <module>npm</module>
         <module>parent-with-dependencies</module>
@@ -141,6 +140,15 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>docker</id>
+            <modules>
+                <module>docker</module>
+            </modules>
+        </profile>
+    </profiles>
 
     <repositories>
         <repository>
