@@ -110,11 +110,6 @@
                                     <run>/opt/jboss/wildfly/bin/add-user.sh -u admin -p admin --silent</run>
                                 </runCmds>
                             </build>
-                            <run>
-                                <ports>
-                                    <port>9990:9990</port>
-                                </ports>
-                            </run>
                         </image>
                     </images>
                 </configuration>

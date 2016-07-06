@@ -50,18 +50,18 @@ There are different ways to launch HAL.next and connect to a running WildFly ins
         /host=master/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=<url>)
         reload --host=master
         
-### Local / Standalone
+### Standalone
 
-The `standalone` module contains an executable jar which launches a local web server at http://localhost:9090.
+The `standalone` module contains an executable jar which launches a local web server serving HAL.next.
   
 1. Add http://localhost:9090 as allowed origin
 1. `mvn install`
 1. `java -jar standalone/target/hal-standalone-<version>.jar`
 1. Open http://localhost:9090
 
-If you don't want to or cannot build locally you can download a somewhat recent version of `hal-standalone.jar` from https://repository.jboss.org/nexus/index.html#nexus-search;quick~hal-standalone. 
+If you don't want to or cannot build locally you can download `hal-standalone.jar` from https://repository.jboss.org/nexus/index.html#nexus-search;quick~hal-standalone. 
 
-### Local / NPM
+### NPM
 
 The `npm` module provides a npm package which launches a local web server at http://localhost:3000.
   
@@ -72,35 +72,37 @@ The `npm` module provides a npm package which launches a local web server at htt
 1. `node server.js`
 1. Open http://localhost:3000
 
-If you don't want to or cannot build locally you can install the npm package [hal-next](https://www.npmjs.com/package/hal-next) which serves a somewhat recent version of HAL.next.
+The package is also available on npmjs.com: [hal-next](https://www.npmjs.com/package/hal-next)
  
 1. `npm install -g hal-next`
 1. `hal-next`
 
-### Local / SuperDevMode
+### Docker 
 
-Useful during development as it provides browser refresh after code changes. 
+The `docker` module is used to build a docker image with WildFly 10.0.0.Final and HAL.next.
 
-1. Add http://localhost:8888 as allowed origin
-1. `mvn install -Dgwt.skipCompilation -Pdev` 
-1. `cd app`
-1. `./devmode.sh`
-1. Open http://localhost:8888/hal/dev.html
+1. `mvn install`
+1. Standalone Mode: `docker run -p 9990:9990 -it hpehl/hal-next /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0`
+1. Domain Mode: `docker run -p 9990:9990 -it hpehl/hal-next /opt/jboss/wildfly/bin/domain.sh -b 0.0.0.0 -bmanagement 0.0.0.0` 
+1. Open http://localhost:9990 and log in with `admin:admin`
 
-### Remote
+The docker image is also available on the public repository: https://hub.docker.com/r/hpehl/hal-next/
 
-A somewhat recent version of HAL.next is also available on the `gh-pages` branch at https://hal.github.io/hal.next/. 
+### GitHub Pages
+
+Finally HAL.next is also available on the `gh-pages` branch at https://hal.github.io/hal.next/. 
 
 1. Add https://hal.github.io/hal.next/ as allowed origin
 1. Open https://hal.github.io/hal.next/
 
 The remote version is served from **https** so you need to secure the management interface as well. Please note that if you're using a self signed key store you might need to open the local management endpoint in the browser and accept the unsafe certificate before you can use it with HAL.next.
 
-### Bundled
+### SuperDevMode
 
-There's a WildFly 10.1.0 server bundled with a somewhat recent HAL.next version available at https://drive.google.com/file/d/0BzCXrwefSBHJNUl2UXVRRXp1RjQ/view?usp=sharing. 
+The SuperDevMode is intended for development as it provides browser refresh after code changes. 
 
-1. Download and extract 
-1. run `bin/standalone.sh` or `bin/domain.sh`
-1. Open http://localhost:9990
-1. Use `admin` / `admin` to login
+1. Add http://localhost:8888 as allowed origin
+1. `mvn install -Dgwt.skipCompilation -Pdev` 
+1. `cd app`
+1. `./devmode.sh`
+1. Open http://localhost:8888/hal/dev.html
