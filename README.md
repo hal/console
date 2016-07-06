@@ -72,7 +72,7 @@ The `npm` module provides a npm package which launches a local web server at htt
 1. `node server.js`
 1. Open http://localhost:3000
 
-The package is also available on npmjs.com: [hal-next](https://www.npmjs.com/package/hal-next)
+The package is also available on npmjs.com: https://www.npmjs.com/package/hal-next
  
 1. `npm install -g hal-next`
 1. `hal-next`
@@ -82,8 +82,8 @@ The package is also available on npmjs.com: [hal-next](https://www.npmjs.com/pac
 The `docker` module is used to build a docker image with WildFly 10.0.0.Final and HAL.next.
 
 1. `mvn install`
-1. Standalone Mode: `docker run -p 9990:9990 -it hpehl/hal-next /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0`
-1. Domain Mode: `docker run -p 9990:9990 -it hpehl/hal-next /opt/jboss/wildfly/bin/domain.sh -b 0.0.0.0 -bmanagement 0.0.0.0` 
+1. `docker run -p 9990:9990 -it hpehl/hal-next /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0` or 
+1. `docker run -p 9990:9990 -it hpehl/hal-next /opt/jboss/wildfly/bin/domain.sh -b 0.0.0.0 -bmanagement 0.0.0.0` 
 1. Open http://localhost:9990 and log in with `admin:admin`
 
 The docker image is also available on the public repository: https://hub.docker.com/r/hpehl/hal-next/
