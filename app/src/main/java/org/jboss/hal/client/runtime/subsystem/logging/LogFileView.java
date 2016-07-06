@@ -37,6 +37,7 @@ import org.jboss.hal.ballroom.editor.Options;
 import org.jboss.hal.ballroom.form.SwitchBridge;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.core.ui.Skeleton;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
@@ -55,10 +56,12 @@ import static org.jboss.hal.resources.CSS.logFileLoading;
 public abstract class LogFileView extends PatternFlyViewImpl implements LogFilePresenter.MyView {
 
     // @formatter:off
-    public static LogFileView create(final LogFiles logFiles, final Resources resources) {
-        return new Templated_LogFileView(logFiles, resources);
+    public static LogFileView create(final StatementContext statementContext, final LogFiles logFiles,
+            final Resources resources) {
+        return new Templated_LogFileView(statementContext, logFiles, resources);
     }
 
+    public abstract StatementContext statementContext();
     public abstract LogFiles logFiles();
     public abstract Resources resources();
     // @formatter:on
@@ -174,7 +177,15 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
     @Override
     public void show(final LogFile logFile, int lines, final String content) {
         statusUpdate(lines);
-        header.setTextContent(logFile.getFilename());
+        StringBuilder builder = new StringBuilder();
+        if (presenter.isExternal()) {
+            builder.append(statementContext().selectedHost())
+                    .append(" / ")
+                    .append(statementContext().selectedServer())
+                    .append(" / ");
+        }
+        builder.append(logFile.getFilename());
+        header.setTextContent(builder.toString());
         download.setAttribute(UIConstants.DOWNLOAD, logFile.getFilename());
         download.setAttribute(UIConstants.HREF, logFiles().downloadUrl(logFile.getFilename()));
         external.setAttribute(UIConstants.HREF, logFiles().externalUrl(logFile.getFilename()));
