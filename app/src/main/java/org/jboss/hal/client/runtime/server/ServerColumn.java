@@ -23,6 +23,7 @@ import javax.inject.Provider;
 
 import com.google.common.base.Joiner;
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import elemental.dom.Element;
@@ -31,6 +32,7 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.client.GenericSubsystemPresenter;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -51,6 +53,7 @@ import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.core.runtime.server.ServerSelectionEvent;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -104,11 +107,114 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             final EventBus eventBus,
             final @Footer Provider<Progress> progress,
             final StatementContext statementContext,
+            final PlaceManager placeManager,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
             final ServerActions serverActions,
             final Resources resources) {
         super(new Builder<Server>(finder, SERVER, Names.SERVER)
+
+                .itemsProvider((context, callback) -> {
+                    Function<FunctionContext> serverConfigsFn;
+                    Function<FunctionContext> startedServersFn;
+                    boolean browseByHosts = browseByHosts(context);
+
+                    if (browseByHosts) {
+                        serverConfigsFn = control -> {
+                            ResourceAddress address = AddressTemplate.of("/{selected.host}").resolve(statementContext);
+                            Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
+                                    .param(CHILD_TYPE, SERVER_CONFIG)
+                                    .param(INCLUDE_RUNTIME, true)
+                                    .build();
+                            dispatcher.executeInFunction(control, operation, result -> {
+                                List<Server> servers = result.asPropertyList().stream()
+                                        .map(property -> new Server(statementContext.selectedHost(), property))
+                                        .collect(toList());
+                                control.getContext().push(servers);
+                                control.proceed();
+                            });
+                        };
+
+                    } else {
+                        serverConfigsFn = control -> {
+                            ResourceAddress serverConfigAddress = AddressTemplate.of("/host=*/server-config=*")
+                                    .resolve(statementContext);
+                            Operation operation = new Operation.Builder(QUERY, serverConfigAddress)
+                                    .param(WHERE, new ModelNode().set(GROUP, statementContext.selectedServerGroup()))
+                                    .build();
+                            dispatcher.executeInFunction(control, operation, result -> {
+                                List<Server> servers = result.asList().stream()
+                                        .filter(modelNode -> !modelNode.isFailure())
+                                        .map(modelNode -> {
+                                            ResourceAddress address = new ResourceAddress(modelNode.get(ADDRESS));
+                                            String host = address.getParent().lastValue();
+                                            return new Server(host, modelNode.get(RESULT));
+                                        })
+                                        .collect(toList());
+                                control.getContext().push(servers);
+                                control.proceed();
+                            });
+                        };
+                    }
+
+                    startedServersFn = control -> {
+                        List<Server> servers = control.getContext().pop();
+                        if (servers != null) {
+                            Composite composite = new Composite(servers.stream()
+                                    .filter(Server::isStarted)
+                                    .map(server -> new Operation.Builder(READ_RESOURCE_OPERATION,
+                                            server.getServerAddress())
+                                            .param(ATTRIBUTES_ONLY, true)
+                                            .param(INCLUDE_RUNTIME, true)
+                                            .build())
+                                    .collect(toList()));
+                            if (!composite.isEmpty()) {
+                                Map<String, Server> serverConfigsByName = servers.stream()
+                                        .collect(toMap(Server::getName, identity()));
+                                dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
+                                    result.stream().forEach(step -> {
+                                        ModelNode payload = step.get(RESULT);
+                                        String name = payload.get(NAME).asString();
+                                        Server server = serverConfigsByName.get(name);
+                                        if (server != null) {
+                                            server.addServerAttributes(payload);
+                                        }
+                                    });
+                                    control.getContext().push(servers);
+                                    control.proceed();
+                                });
+                            } else {
+                                control.getContext().push(servers);
+                                control.proceed();
+                            }
+                        } else {
+                            control.getContext().push(emptyList());
+                            control.proceed();
+                        }
+                    };
+
+                    new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
+                            new Outcome<FunctionContext>() {
+                                @Override
+                                public void onFailure(final FunctionContext context) {
+                                    callback.onFailure(context.getError());
+                                }
+
+                                @Override
+                                public void onSuccess(final FunctionContext context) {
+                                    List<Server> servers = context.emptyStack() ? emptyList() : context.pop();
+                                    callback.onSuccess(servers.stream().sorted(comparing(Server::getName))
+                                            .collect(toList()));
+
+                                    // Restore pending servers visualization
+                                    servers.stream()
+                                            .filter(serverActions::isPending)
+                                            .forEach(server -> ItemMonitor.startProgress(Server.id(server.getName())));
+                                }
+                            },
+                            serverConfigsFn, startedServersFn);
+                })
+
                 .onItemSelect(server -> {
                     if (browseByServerGroups(finder.getContext())) {
                         // if we browse by server groups we still need to have a valid {selected.host}
@@ -116,118 +222,46 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     }
                     eventBus.fireEvent(new ServerSelectionEvent(server.getName()));
                 })
+
+                .onBreadcrumbItem((item, context) -> {
+                    PlaceRequest current = placeManager.getCurrentPlaceRequest();
+                    PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(current.getNameToken());
+
+                    if (NameTokens.GENERIC_SUBSYSTEM.equals(current.getNameToken())) {
+                        // switch server in address parameter of generic presenter
+                        String addressParam = current.getParameter(GenericSubsystemPresenter.ADDRESS_PARAM, null);
+                        if (addressParam != null) {
+                            ResourceAddress currentAddress = AddressTemplate.of(addressParam).resolve(statementContext);
+                            ResourceAddress newAddress = new ResourceAddress();
+                            for (Property property : currentAddress.asPropertyList()) {
+                                if (SERVER.equals(property.getName())) {
+                                    newAddress.add(SERVER, item.getName());
+                                } else {
+                                    newAddress.add(property.getName(), property.getValue().asString());
+                                }
+                            }
+                            builder.with(GenericSubsystemPresenter.ADDRESS_PARAM, newAddress.toString());
+                        }
+
+                    } else {
+                        // switch server in place request parameter of specific presenter
+                        for (String parameter : current.getParameterNames()) {
+                            if (SERVER.equals(parameter)) {
+                                builder.with(SERVER, item.getName());
+                            } else {
+                                builder.with(parameter, current.getParameter(parameter, ""));
+                            }
+                        }
+                    }
+                    placeManager.revealPlace(builder.build());
+                })
+
                 .pinnable()
                 .showCount()
-                .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
                 .onPreview(item -> new ServerPreview(serverActions, item, resources))
         );
         this.finder = finder;
-
-        addColumnAction(columnActionFactory.add(IdBuilder.build(SERVER, "add"), Names.SERVER,
-                column -> addServer(browseByHosts(finder.getContext()))));
-        addColumnAction(columnActionFactory.refresh(IdBuilder.build(SERVER, "refresh")));
-
-        setItemsProvider((context, callback) -> {
-            Function<FunctionContext> serverConfigsFn;
-            Function<FunctionContext> startedServersFn;
-            boolean browseByHosts = browseByHosts(context);
-
-            if (browseByHosts) {
-                serverConfigsFn = control -> {
-                    ResourceAddress address = AddressTemplate.of("/{selected.host}").resolve(statementContext);
-                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
-                            .param(CHILD_TYPE, SERVER_CONFIG)
-                            .param(INCLUDE_RUNTIME, true)
-                            .build();
-                    dispatcher.executeInFunction(control, operation, result -> {
-                        List<Server> servers = result.asPropertyList().stream()
-                                .map(property -> new Server(statementContext.selectedHost(), property))
-                                .collect(toList());
-                        control.getContext().push(servers);
-                        control.proceed();
-                    });
-                };
-
-            } else {
-                serverConfigsFn = control -> {
-                    ResourceAddress serverConfigAddress = AddressTemplate.of("/host=*/server-config=*")
-                            .resolve(statementContext);
-                    Operation operation = new Operation.Builder(QUERY, serverConfigAddress)
-                            .param(WHERE, new ModelNode().set(GROUP, statementContext.selectedServerGroup()))
-                            .build();
-                    dispatcher.executeInFunction(control, operation, result -> {
-                        List<Server> servers = result.asList().stream()
-                                .filter(modelNode -> !modelNode.isFailure())
-                                .map(modelNode -> {
-                                    ResourceAddress address = new ResourceAddress(modelNode.get(ADDRESS));
-                                    String host = address.getParent().lastValue();
-                                    return new Server(host, modelNode.get(RESULT));
-                                })
-                                .collect(toList());
-                        control.getContext().push(servers);
-                        control.proceed();
-                    });
-                };
-            }
-
-            startedServersFn = control -> {
-                List<Server> servers = control.getContext().pop();
-                if (servers != null) {
-                    Composite composite = new Composite(servers.stream()
-                            .filter(Server::isStarted)
-                            .map(server -> new Operation.Builder(READ_RESOURCE_OPERATION,
-                                    server.getServerAddress())
-                                    .param(ATTRIBUTES_ONLY, true)
-                                    .param(INCLUDE_RUNTIME, true)
-                                    .build())
-                            .collect(toList()));
-                    if (!composite.isEmpty()) {
-                        Map<String, Server> serverConfigsByName = servers.stream()
-                                .collect(toMap(Server::getName, identity()));
-                        dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
-                            result.stream().forEach(step -> {
-                                ModelNode payload = step.get(RESULT);
-                                String name = payload.get(NAME).asString();
-                                Server server = serverConfigsByName.get(name);
-                                if (server != null) {
-                                    server.addServerAttributes(payload);
-                                }
-                            });
-                            control.getContext().push(servers);
-                            control.proceed();
-                        });
-                    } else {
-                        control.getContext().push(servers);
-                        control.proceed();
-                    }
-                } else {
-                    control.getContext().push(emptyList());
-                    control.proceed();
-                }
-            };
-
-            new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
-                    new Outcome<FunctionContext>() {
-                        @Override
-                        public void onFailure(final FunctionContext context) {
-                            callback.onFailure(context.getError());
-                        }
-
-                        @Override
-                        public void onSuccess(final FunctionContext context) {
-                            List<Server> servers = context.emptyStack() ? emptyList() : context.pop();
-                            callback.onSuccess(servers.stream().sorted(comparing(Server::getName))
-                                    .collect(toList()));
-
-                            // Restore pending servers visualization
-                            servers.stream()
-                                    .filter(serverActions::isPending)
-                                    .forEach(server -> ItemMonitor.startProgress(Server.id(server.getName())));
-                        }
-                    },
-                    serverConfigsFn, startedServersFn);
-        });
 
         setItemRenderer(item -> new ItemDisplay<Server>() {
             @Override
@@ -258,7 +292,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             public String getTooltip() {
                 if (serverActions.isPending(item)) {
                     return resources.constants().pending();
-                }else if (item.isAdminMode()) {
+                } else if (item.isAdminMode()) {
                     return resources.constants().adminOnly();
                 } else if (item.isStarting()) {
                     return resources.constants().starting();
@@ -312,7 +346,8 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     if (!item.isStarted()) {
                         AddressTemplate template = AddressTemplate
                                 .of("/host=" + item.getHost() + "/item-config=" + item.getName());
-                        actions.add(itemActionFactory.remove(Names.SERVER, item.getName(), template, ServerColumn.this));
+                        actions.add(
+                                itemActionFactory.remove(Names.SERVER, item.getName(), template, ServerColumn.this));
                     }
                     actions.add(new ItemAction<>(resources.constants().copy(),
                             itm -> copyServer(itm, browseByHosts(finder.getContext()))));
@@ -338,6 +373,10 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 return item.isStarted() ? Ids.SERVER_MONITOR_COLUMN : null;
             }
         });
+
+        addColumnAction(columnActionFactory.add(IdBuilder.build(SERVER, "add"), Names.SERVER,
+                column -> addServer(browseByHosts(finder.getContext()))));
+        addColumnAction(columnActionFactory.refresh(IdBuilder.build(SERVER, "refresh")));
 
         eventBus.addHandler(ServerActionEvent.getType(), this);
         eventBus.addHandler(ServerResultEvent.getType(), this);

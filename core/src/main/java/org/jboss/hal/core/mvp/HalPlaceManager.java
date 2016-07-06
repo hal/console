@@ -42,11 +42,7 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER_CONFIG;
+import static org.jboss.hal.meta.StatementContext.Tuple.*;
 
 public class HalPlaceManager extends DefaultPlaceManager {
 
@@ -96,7 +92,11 @@ public class HalPlaceManager extends DefaultPlaceManager {
             @Override
             public void onFailure(final Throwable throwable) {
                 unlock();
-                revealDefaultPlace();
+                if (firstRequest) {
+                    revealDefaultPlace();
+                } else {
+                    revealCurrentPlace();
+                }
                 if (throwable == null) {
                     getEventBus().fireEvent(new MessageEvent(Message.error(resources.messages().metadataError())));
                 } else {
