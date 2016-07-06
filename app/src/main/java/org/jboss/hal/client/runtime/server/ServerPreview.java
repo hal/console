@@ -112,7 +112,7 @@ class ServerPreview extends RuntimePreview<Server> {
         } else if (server.isStarting()) {
             starting(resources.messages().serverStarting(server.getName()));
         } else if (server.isSuspended()) {
-            suspending(resources.messages().serverSuspended(server.getName()));
+            suspended(resources.messages().serverSuspended(server.getName()));
         } else if (server.needsReload()) {
             needsReload(resources.messages().serverNeedsReload(server.getName()));
         } else if (server.needsRestart()) {

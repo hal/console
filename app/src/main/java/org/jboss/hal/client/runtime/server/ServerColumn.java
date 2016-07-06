@@ -83,6 +83,19 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 @Requires(value = {"/host=*/server-config=*", "/host=*/server=*"}, recursive = false)
 public class ServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
+    public static boolean browseByHosts(FinderContext context) {
+        FinderSegment firstSegment = context.getPath().iterator().next();
+        return firstSegment.getValue().equals(IdBuilder.asId(Names.HOSTS));
+    }
+
+    public static boolean browseByServerGroups(FinderContext context) {
+        if (!context.getPath().isEmpty()) {
+            FinderSegment firstSegment = context.getPath().iterator().next();
+            return firstSegment.getValue().equals(IdBuilder.asId(Names.SERVER_GROUPS));
+        }
+        return false;
+    }
+
     private final Finder finder;
 
     @Inject
@@ -97,8 +110,10 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             final Resources resources) {
         super(new Builder<Server>(finder, SERVER, Names.SERVER)
                 .onItemSelect(server -> {
-                    // if we select a server using server groups we still need to have a valid {selected.host}
-                    eventBus.fireEvent(new HostSelectionEvent(server.getHost()));
+                    if (browseByServerGroups(finder.getContext())) {
+                        // if we browse by server groups we still need to have a valid {selected.host}
+                        eventBus.fireEvent(new HostSelectionEvent(server.getHost()));
+                    }
                     eventBus.fireEvent(new ServerSelectionEvent(server.getName()));
                 })
                 .pinnable()
@@ -208,9 +223,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                             // Restore pending servers visualization
                             servers.stream()
                                     .filter(serverActions::isPending)
-                                    .forEach(server -> {
-                                        ItemMonitor.startProgress(Server.id(server.getName()));
-                                    });
+                                    .forEach(server -> ItemMonitor.startProgress(Server.id(server.getName())));
                         }
                     },
                     serverConfigsFn, startedServersFn);
@@ -272,7 +285,9 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     return Icons.unknown();
                 } else if (item.isAdminMode() || item.isStarting()) {
                     return Icons.disabled();
-                } else if (item.isSuspended() || item.needsReload() || item.needsRestart()) {
+                } else if (item.isSuspended()) {
+                    return Icons.pause();
+                } else if (item.needsReload() || item.needsRestart()) {
                     return Icons.warning();
                 } else if (item.isRunning()) {
                     return Icons.ok();
@@ -326,11 +341,6 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
         eventBus.addHandler(ServerActionEvent.getType(), this);
         eventBus.addHandler(ServerResultEvent.getType(), this);
-    }
-
-    static boolean browseByHosts(FinderContext context) {
-        FinderSegment firstSegment = context.getPath().iterator().next();
-        return firstSegment.getKey().equals(HOST) || firstSegment.getValue().equals(IdBuilder.asId(Names.HOSTS));
     }
 
     private void addServer(boolean browseByHost) {

@@ -31,6 +31,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +77,7 @@ class NestedResultProcessor extends AbstractResultProcessor<NestedResultProcesso
     static final String ADDRESSES = "addresses";
     static final String KEY = "key";
     static final String VALUE = "value";
-    private static final Logger logger = LoggerFactory.getLogger(NestedResultProcessor.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(NestedResultProcessor.class);
 
     private final boolean composite;
 
@@ -119,7 +120,6 @@ class NestedResultProcessor extends AbstractResultProcessor<NestedResultProcesso
             int length = iterator.next().asList().size();
             while (iterator.hasNext()) {
                 if (iterator.next().asList().size() != length) {
-                    //noinspection HardCodedStringLiteral
                     logger.error("Different address types in result processor");
                     return Collections.emptyList();
                 }

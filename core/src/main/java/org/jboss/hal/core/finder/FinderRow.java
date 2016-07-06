@@ -85,16 +85,17 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         root.setOnclick(event -> onClick(((Element) event.getTarget())));
     }
 
-    void updateItem(final T item) {
+    private void updateItem(final T item) {
         this.id = display.getId();
         this.item = item;
     }
 
-    void drawItem() {
+    private void drawItem() {
         Elements.removeChildrenFrom(root);
         root.setId(display.getId());
         root.getDataset().setAt(DATA_BREADCRUMB, display.getTitle());
-        root.getDataset().setAt(filter, display.getFilterData());
+        // TODO getFilterData() causes a ReferenceError in SuperDevMode WTF?
+        // root.getDataset().setAt(DATA_FILTER, display.getFilterData());
 
         Element icon = display.getIcon();
         if (icon != null) {
@@ -140,13 +141,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         if (!display.actions().isEmpty()) {
             if (display.actions().size() == 1) {
                 ItemAction<T> action = display.actions().get(0);
-                eb.button()
-                        .css(btn, btnFinder)
-                        .textContent(action.title)
-                        .on(click, event -> action.handler.execute(item))
-                        .data(PREVENT_SET_ITEMS, String.valueOf(true))
-                        .rememberAs(BUTTON_CONTAINER)
-                        .end();
+                actionLink(eb, action, false, BUTTON_CONTAINER);
             } else {
                 boolean firstAction = true;
                 boolean ulCreated = false;
@@ -155,12 +150,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                 for (ItemAction<T> action : display.actions()) {
                     if (firstAction) {
                         // @formatter:off
-                        eb.button()
-                                .css(btn, btnFinder)
-                                .textContent(action.title)
-                                .on(click, event -> action.handler.execute(item))
-                                .data(PREVENT_SET_ITEMS, String.valueOf(true))
-                        .end();
+                        actionLink(eb, action, false, null);
                         eb.button()
                                 .css(btn, btnFinder, dropdownToggle)
                                 .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
@@ -181,12 +171,9 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
                             eb.ul().css(dropdownMenu).data(PREVENT_SET_ITEMS, String.valueOf(true));
                             ulCreated = true;
                         }
-                        eb.li().data(PREVENT_SET_ITEMS, String.valueOf(true)).a()
-                                .textContent(action.title)
-                                .css(clickable)
-                                .on(click, event -> action.handler.execute(item))
-                                .data(PREVENT_SET_ITEMS, String.valueOf(true))
-                                .end().end();
+                        eb.li().data(PREVENT_SET_ITEMS, String.valueOf(true));
+                        actionLink(eb, action, true, null);
+                        eb.end();
                     }
                 }
                 eb.end().end(); // </ul> && </div>
@@ -199,6 +186,24 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
             Elements.setVisible(buttonContainer, isSelected());
         }
         PatternFly.initComponents("#" + display.getId());
+    }
+
+    private void actionLink(Elements.Builder builder, ItemAction<T> action, boolean li, String reference) {
+        builder.a().css(clickable, li ? new String[]{} : new String[]{btn, btnFinder})
+                .data(PREVENT_SET_ITEMS, String.valueOf(true))
+                .textContent(action.title);
+        if (action.handler != null) {
+            builder.on(click, event -> action.handler.execute(item));
+        } else if (action.href != null) {
+            builder.attr(UIConstants.HREF, action.href);
+        }
+        if (!action.parameter.isEmpty()) {
+            action.parameter.forEach(builder::attr);
+        }
+        if (reference != null) {
+            builder.rememberAs(reference);
+        }
+        builder.end();
     }
 
     void click() {

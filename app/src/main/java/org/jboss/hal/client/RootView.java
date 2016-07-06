@@ -31,6 +31,7 @@ import org.jboss.hal.core.mvp.FullscreenPresenter;
 import org.jboss.hal.core.mvp.Slots;
 import org.jboss.hal.core.mvp.TopLevelCategory;
 import org.jboss.hal.resources.Ids;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +44,7 @@ import static org.jboss.hal.resources.CSS.containerFluid;
  */
 public class RootView extends ViewImpl implements RootPresenter.MyView {
 
-    private static final Logger logger = LoggerFactory.getLogger(RootView.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(RootView.class);
 
     private final Map<Object, Element> slots;
     private final DivElement rootContainer;
@@ -110,7 +111,7 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
             }
 
         } else {
-            logger.warn("Unknown slot {}. Delegate to super.setInSlot()", slot); //NON-NLS
+            logger.warn("Unknown slot {}. Delegate to super.setInSlot()", slot);
             super.setInSlot(slot, content);
         }
     }

@@ -31,9 +31,11 @@ public interface UIConstants {
     String COLLAPSE = "collapse";
     String CONTROLS = "controls";
     String DROPDOWN = "dropdown";
+    String DOWNLOAD = "download";
     String EXPANDED = "expanded";
     String GROUP = "group";
     String HAS_POPUP = "haspopup";
+    String HREF = "href";
     String HIDDEN = "hidden";
     String LABELLED_BY = "labelledby";
     String MENU = "MENU";

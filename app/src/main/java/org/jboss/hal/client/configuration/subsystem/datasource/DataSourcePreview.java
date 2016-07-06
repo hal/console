@@ -18,15 +18,14 @@ package org.jboss.hal.client.configuration.subsystem.datasource;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.CSS.*;
 
 /**
  * @author Harald Pehl
@@ -41,24 +40,16 @@ class DataSourcePreview extends PreviewContent<DataSource> {
         boolean enabled = dataSource.hasDefined(ENABLED) && dataSource.get(ENABLED).asBoolean();
         String type = dataSource.isXa() ? DATASOURCE : XA_DATASOURCE;
 
-        previewBuilder().div();
         if (enabled) {
-            previewBuilder().css(alert, alertSuccess)
-                    .span().css(Icons.OK).end()
-                    .span().innerHtml(resources.messages().resourceEnabled(type, dataSource.getName())).end()
-                    .span().textContent(" ").end()
-                    .a().css(clickable, alertLink).on(click, event -> column.disable(dataSource))
-                    .textContent(resources.constants().disable()).end();
+            previewBuilder().add(
+                    new Alert(Icons.OK, resources.messages().resourceEnabled(type, dataSource.getName()),
+                            resources.constants().disable(), event -> column.disable(dataSource)));
 
         } else {
-            previewBuilder().css(alert, alertInfo)
-                    .span().css(Icons.DISABLED).end()
-                    .span().innerHtml(resources.messages().resourceDisabled(type, dataSource.getName())).end()
-                    .span().textContent(" ").end()
-                    .a().css(clickable, alertLink).on(click, event -> column.enable(dataSource))
-                    .textContent(resources.constants().enable()).end();
+            previewBuilder().add(
+                    new Alert(Icons.DISABLED, resources.messages().resourceDisabled(type, dataSource.getName()),
+                            resources.constants().enable(), event -> column.enable(dataSource)));
         }
-        previewBuilder().end(); // </div>
 
         List<String> attributes = Lists
                 .newArrayList(JNDI_NAME, DRIVER_NAME, CONNECTION_URL, ENABLED, STATISTICS_ENABLED);

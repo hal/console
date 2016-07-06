@@ -19,6 +19,9 @@ import com.gwtplatform.dispatch.annotation.GenEvent;
 import com.gwtplatform.dispatch.annotation.Order;
 
 /**
+ * Selects both {@link org.jboss.hal.meta.StatementContext.Tuple#SELECTED_SERVER_CONFIG} and {@link
+ * org.jboss.hal.meta.StatementContext.Tuple#SELECTED_SERVER}
+ *
  * @author Harald Pehl
  */
 @GenEvent

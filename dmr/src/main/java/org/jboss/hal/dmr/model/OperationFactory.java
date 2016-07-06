@@ -22,6 +22,7 @@ import java.util.Map;
 
 import com.google.common.base.Strings;
 import org.jboss.hal.dmr.ModelNode;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERAT
  */
 public class OperationFactory {
 
-    private static final Logger logger = LoggerFactory.getLogger(OperationFactory.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(OperationFactory.class);
 
     /**
      * Turns a changeset into a composite operation containing {@link org.jboss.hal.dmr.ModelDescriptionConstants#WRITE_ATTRIBUTE_OPERATION}
@@ -67,7 +68,6 @@ public class OperationFactory {
                     step.get(VALUE).set(valueNode);
                     operations.add(step);
                 } else {
-                    //noinspection HardCodedStringLiteral
                     logger.error("Unsupported type {} when building composite operation for {} from changeset {}",
                             value.getClass(), address, changeSet);
                 }

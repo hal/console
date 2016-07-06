@@ -24,15 +24,12 @@ import javax.inject.Provider;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.client.configuration.subsystem.datasource.wizard.NewDataSourceWizard;
-import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -41,6 +38,8 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.core.runtime.TopologyFunctions;
+import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -63,8 +62,6 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
-import static org.jboss.hal.resources.CSS.itemText;
-import static org.jboss.hal.resources.CSS.subtitle;
 
 /**
  * Column which is used for both XA and normal data sources.
@@ -143,13 +140,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             @Override
             public Element asElement() {
                 //noinspection HardCodedStringLiteral
-                return dataSource.isXa()
-                        ? new Elements.Builder()
-                        .span().css(itemText)
-                        .span().textContent(dataSource.getName()).end()
-                        .start("small").css(subtitle).textContent(Names.XA_DATASOURCE).end()
-                        .end().build()
-                        : null;
+                return dataSource.isXa() ? ItemDisplay.withSubtitle(dataSource.getName(), Names.XA_DATASOURCE) : null;
             }
 
             @Override

@@ -25,7 +25,8 @@ public interface StatementContext {
         SELECTED_PROFILE("selected.profile", PROFILE),
         SELECTED_GROUP("selected.group", SERVER_GROUP),
         SELECTED_HOST("selected.host", HOST),
-        SELECTED_SERVER("selected.server", SERVER_CONFIG);
+        SELECTED_SERVER_CONFIG("selected.server-config", SERVER_CONFIG),
+        SELECTED_SERVER("selected.server", SERVER);
 
         private final String tuple;
         private final String resource;
@@ -88,6 +89,11 @@ public interface StatementContext {
         }
 
         @Override
+        public String selectedServerConfig() {
+            return null;
+        }
+
+        @Override
         public String selectedServer() {
             return null;
         }
@@ -109,6 +115,8 @@ public interface StatementContext {
     String selectedServerGroup();
 
     String selectedHost();
+
+    String selectedServerConfig();
 
     String selectedServer();
 }

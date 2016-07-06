@@ -29,6 +29,7 @@ import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.capabilitiy.Capability;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.security.SecurityFramework;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 class RrdFunction implements Function<FunctionContext> {
 
-    private static final Logger logger = LoggerFactory.getLogger(RrdFunction.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(RrdFunction.class);
 
     private final MetadataRegistry metadataRegistry;
     private final SecurityFramework securityFramework;
@@ -58,7 +59,6 @@ class RrdFunction implements Function<FunctionContext> {
     }
 
     @Override
-    @SuppressWarnings("HardCodedStringLiteral")
     public void execute(final Control<FunctionContext> control) {
         dispatcher.executeInFunction(control, composite,
                 (CompositeResult compositeResult) -> {

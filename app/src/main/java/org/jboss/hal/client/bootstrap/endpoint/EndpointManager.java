@@ -23,6 +23,7 @@ import elemental.client.Browser;
 import elemental.xml.XMLHttpRequest;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +43,7 @@ import static org.jboss.hal.resources.Urls.MANAGEMENT;
 public class EndpointManager {
 
     private final static String CONNECT_PARAMETER = "connect";
-    private final static Logger logger = LoggerFactory.getLogger(EndpointManager.class);
+    @NonNls private final static Logger logger = LoggerFactory.getLogger(EndpointManager.class);
 
     private final Endpoints endpoints;
     private final EndpointStorage storage;
@@ -57,7 +58,6 @@ public class EndpointManager {
         this.capabilities = capabilities;
     }
 
-    @SuppressWarnings("HardCodedStringLiteral")
     public void select(ScheduledCommand next) {
         this.next = next;
 
@@ -128,7 +128,7 @@ public class EndpointManager {
                 if (status == 200) {
                     callback.onSuccess(null);
                 } else {
-                    logger.error("Wrong status {} when pinging '{}'", status, managementEndpoint); //NON-NLS
+                    logger.error("Wrong status {} when pinging '{}'", status, managementEndpoint);
                     callback.onFailure(new IllegalStateException());
                 }
             }

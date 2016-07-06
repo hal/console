@@ -22,8 +22,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.core.runtime.group.ServerGroup;
-import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.MbuiPresenter;
@@ -39,7 +37,6 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -50,17 +47,17 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
  */
 public class ServerPresenter extends MbuiPresenter<ServerPresenter.MyView, ServerPresenter.MyProxy> {
 
-    static final String SERVER_ADDRESS = "/{selected.host}/{selected.server}";
-    static final String INTERFACE_ADDRESS = SERVER_ADDRESS + "/interface=*";
-    static final String JVM_ADDRESS = SERVER_ADDRESS + "/jvm=*";
-    static final String PATH_ADDRESS = SERVER_ADDRESS + "/path=*";
-    static final String SYSTEM_PROPERTY_ADDRESS = SERVER_ADDRESS + "/system-property=*";
+    static final String SERVER_CONFIG_ADDRESS = "/{selected.host}/{selected.server-config}";
+    static final String INTERFACE_ADDRESS = SERVER_CONFIG_ADDRESS + "/interface=*";
+    static final String JVM_ADDRESS = SERVER_CONFIG_ADDRESS + "/jvm=*";
+    static final String PATH_ADDRESS = SERVER_CONFIG_ADDRESS + "/path=*";
+    static final String SYSTEM_PROPERTY_ADDRESS = SERVER_CONFIG_ADDRESS + "/system-property=*";
 
 
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.SERVER_CONFIGURATION)
-    @Requires(value = {SERVER_ADDRESS, INTERFACE_ADDRESS, JVM_ADDRESS, PATH_ADDRESS, SYSTEM_PROPERTY_ADDRESS},
+    @Requires(value = {SERVER_CONFIG_ADDRESS, INTERFACE_ADDRESS, JVM_ADDRESS, PATH_ADDRESS, SYSTEM_PROPERTY_ADDRESS},
             recursive = false)
     public interface MyProxy extends ProxyPlace<ServerPresenter> {}
 
@@ -98,23 +95,16 @@ public class ServerPresenter extends MbuiPresenter<ServerPresenter.MyView, Serve
     @Override
     protected FinderPath finderPath() {
         if (ServerColumn.browseByHosts(finder.getContext())) {
-            return new FinderPath()
-                    .append(HOST, Host.id(statementContext.selectedHost()),
-                            Names.HOST, statementContext.selectedHost())
-                    .append(SERVER, Server.id(statementContext.selectedServer()),
-                            Names.SERVER, statementContext.selectedServer());
+            return FinderPath.runtimeHostPath(statementContext.selectedHost(), statementContext.selectedServer());
         } else {
-            return new FinderPath()
-                    .append(SERVER_GROUP, ServerGroup.id(statementContext.selectedServerGroup()),
-                            Names.SERVER_GROUP, statementContext.selectedServerGroup())
-                    .append(SERVER, Server.id(statementContext.selectedServer()),
-                            Names.SERVER, statementContext.selectedServer());
+            return FinderPath
+                    .runtimeServerGroupPath(statementContext.selectedServerGroup(), statementContext.selectedServer());
         }
     }
 
     @Override
     protected void reload() {
-        ResourceAddress serverAddress = AddressTemplate.of(SERVER_ADDRESS).resolve(statementContext);
+        ResourceAddress serverAddress = AddressTemplate.of(SERVER_CONFIG_ADDRESS).resolve(statementContext);
         Operation serverOp = new Operation.Builder(READ_RESOURCE_OPERATION, serverAddress)
                 .param(INCLUDE_RUNTIME, true)
                 .build();

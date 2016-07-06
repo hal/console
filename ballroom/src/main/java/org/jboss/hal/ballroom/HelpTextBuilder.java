@@ -28,6 +28,7 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Names;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +69,7 @@ public class HelpTextBuilder {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
-    private static final Logger logger = LoggerFactory.getLogger(HelpTextBuilder.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(HelpTextBuilder.class);
 
     public SafeHtml helpText(Property property) {
         SafeHtmlBuilder help = new SafeHtmlBuilder();
@@ -81,7 +82,7 @@ public class HelpTextBuilder {
 
         RestartMode restartMode = restartRequired(attribute);
         if (restartMode == UNKNOWN) {
-            logger.warn("Unknown restart mode in attribute description for '{}': '{}'", property.getName(), //NON-NLS
+            logger.warn("Unknown restart mode in attribute description for '{}': '{}'", property.getName(),
                     attribute.get(RESTART_REQUIRED).asString());
         }
         boolean showRestartHelp = (restartMode == ALL_SERVICES || restartMode == RestartMode.JVM || restartMode == RESOURCE_SERVICES);

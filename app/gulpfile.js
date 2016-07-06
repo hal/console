@@ -51,7 +51,7 @@ gulp.task('copy', function () {
     gulp.src('bower_components/jquery/dist/jquery.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
 
-    // ace editor
+    // Ace Editor
     gulp.src('bower_components/ace-builds/src-min-noconflict/ace.js')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
 
@@ -113,7 +113,9 @@ gulp.task('clean', function (cb) {
     del(['src/main/resources/org/jboss/hal/public/css/**',
         'src/main/resources/org/jboss/hal/public/fonts/**',
         'src/main/resources/org/jboss/hal/public/img/**',
-        'src/main/resources/org/jboss/hal/public/js/**'], cb)
+        'src/main/resources/org/jboss/hal/public/js/*',
+        '!src/main/resources/org/jboss/hal/public/js/mode-logfile.js',
+        '!src/main/resources/org/jboss/hal/public/js/theme-logfile.js'], cb)
 });
 
 // Development task

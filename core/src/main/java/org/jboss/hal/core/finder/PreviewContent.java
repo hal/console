@@ -28,6 +28,7 @@ import org.jboss.hal.core.Strings;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,7 @@ public class PreviewContent<T> implements HasElements, SecurityContextAware {
     protected static final String CONTENT_ELEMENT = "contentRepository";
 
     private static final String ERROR_MESSAGE = "Unable to get preview content from '{}': {}";
-    private static final Logger logger = LoggerFactory.getLogger(PreviewContent.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(PreviewContent.class);
     private static final int MAX_HEADER_LENGTH = 30;
 
     private final Elements.Builder builder;

@@ -51,6 +51,7 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,7 +138,7 @@ public class ServerGroupActions {
 
 
     private static final int DEFAULT_TIMEOUT = 10; // seconds
-    private static final Logger logger = LoggerFactory.getLogger(ServerGroupActions.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(ServerGroupActions.class);
 
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
@@ -432,12 +433,12 @@ public class ServerGroupActions {
 
     private void markAsPending(ServerGroup serverGroup) {
         pendingServerGroups.put(serverGroup.getName(), serverGroup);
-        logger.debug("Mark server group {} as pending", serverGroup.getName()); //NON-NLS
+        logger.debug("Mark server group {} as pending", serverGroup.getName());
     }
 
     private void clearPending(ServerGroup serverGroup) {
         pendingServerGroups.remove(serverGroup.getName());
-        logger.debug("Clear pending state for server group {}", serverGroup.getName()); //NON-NLS
+        logger.debug("Clear pending state for server group {}", serverGroup.getName());
     }
 
     public boolean isPending(ServerGroup serverGroup) {

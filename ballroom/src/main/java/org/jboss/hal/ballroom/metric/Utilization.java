@@ -21,6 +21,7 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Messages;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,7 @@ public class Utilization implements IsElement {
     private static final String VALUE_NOW = "valuenow";
 
     private static final Messages MESSAGES = GWT.create(Messages.class);
-    private static final Logger logger = LoggerFactory.getLogger(Utilization.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(Utilization.class);
 
     private final String unit;
     private final boolean thresholds;
@@ -144,7 +145,6 @@ public class Utilization implements IsElement {
             }
 
         } else {
-            //noinspection HardCodedStringLiteral
             logger.error("Invalid values for utilization bar chart: current > total ({} > {})", current, total);
         }
     }

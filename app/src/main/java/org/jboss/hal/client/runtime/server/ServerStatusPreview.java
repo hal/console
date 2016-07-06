@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.server;
 
 import elemental.dom.Element;
+import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.metric.Utilization;
 import org.jboss.hal.core.finder.PreviewContent;
@@ -27,6 +28,7 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -44,7 +46,6 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
     private static final String PROCESSORS = "processors";
     private static final String JVM = "jvm";
     private static final String JVM_VERSION = "jvm-version";
-    private static final String JVM_VENDOR = "jvm-vendor";
     private static final String UPTIME = "uptime";
 
     private final Dispatcher dispatcher;
@@ -55,7 +56,6 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
     private final Element processors;
     private final Element jvm;
     private final Element jvmVersion;
-    private final Element jvmVendor;
     private final Element uptime;
     private final Utilization usedHeap;
     private final Utilization committedHeap;
@@ -81,7 +81,6 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
                 .add("br")
                 .span().rememberAs(JVM).end()
                 .span().rememberAs(JVM_VERSION).end()
-                .span().rememberAs(JVM_VENDOR).end()
                 .add("br")
                 .span().rememberAs(UPTIME).end()
             .end()
@@ -103,8 +102,9 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
         this.processors = previewBuilder().referenceFor(PROCESSORS);
         this.jvm = previewBuilder().referenceFor(JVM);
         this.jvmVersion = previewBuilder().referenceFor(JVM_VERSION);
-        this.jvmVendor = previewBuilder().referenceFor(JVM_VENDOR);
         this.uptime = previewBuilder().referenceFor(UPTIME);
+
+        PatternFly.initComponents("#" + Ids.PREVIEW_ID);
     }
 
     @Override
@@ -138,14 +138,15 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
             ModelNode osNode = result.step(0).get(RESULT);
             osName.setTextContent(osNode.get(NAME).asString());
             osVersion.setTextContent(" " + osNode.get("version").asString());
-            processors.setTextContent(", " + osNode.get("available-processors").asInt() + " " + resources.constants().processors());
+            processors.setTextContent(
+                    ", " + osNode.get("available-processors").asInt() + " " + resources.constants().processors());
 
             // runtime
             ModelNode runtimeNode = result.step(1).get(RESULT);
             jvm.setTextContent(runtimeNode.get("vm-name").asString());
             jvmVersion.setTextContent(" " + runtimeNode.get("spec-version").asString());
-            jvmVendor.setTextContent(" (" + runtimeNode.get("spec-vendor") + ")");
-            uptime.setTextContent(resources.messages().uptime(humanReadable(runtimeNode.get("uptime").asLong())));
+            uptime.setTextContent(resources.messages().uptime(
+                    Format.humanReadableDuration(runtimeNode.get("uptime").asLong())));
 
             // memory
             ModelNode heapMemoryNode = result.step(2).get(RESULT).get("heap-memory-usage");
@@ -164,44 +165,5 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
             // init the tooltips for the utilization bars
             PatternFly.initComponents("." + finderPreview);
         });
-    }
-
-    private String humanReadable(long uptime) {
-        uptime = uptime / 1000;
-
-        int sec = (int) uptime % 60;
-        uptime /= 60;
-
-        int min = (int) uptime % 60;
-        uptime /= 60;
-
-        int hour = (int) uptime % 24;
-        uptime /= 24;
-
-        int day = (int) uptime;
-
-        String str = "";
-        if (day > 0) {
-            if (day > 1) { str += day + " " + resources.constants().days() + ", "; } else {
-                str += day + " " + resources.constants().day() + ", ";
-            }
-        }
-        // prints 0 hour in case days exists. Otherwise prints 2 days, 34 min, sounds weird.
-        if (hour > 0 || (day > 0)) {
-            if (hour > 1) { str += hour + " " + resources.constants().hours() + ", "; } else {
-                str += hour + " " + resources.constants().hour() + ", ";
-            }
-        }
-        if (min > 0) {
-            if (min > 1) { str += min + " " + resources.constants().minutes() + ", "; } else {
-                str += min + " " + resources.constants().minute() + ", ";
-            }
-        }
-        if (sec > 0) {
-            if (sec > 1) { str += sec + " " + resources.constants().seconds(); } else {
-                str += sec + " " + resources.constants().second();
-            }
-        }
-        return str;
     }
 }

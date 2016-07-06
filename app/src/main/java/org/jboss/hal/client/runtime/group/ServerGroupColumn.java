@@ -24,7 +24,6 @@ import com.google.common.base.Joiner;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
@@ -59,14 +58,12 @@ import org.jboss.hal.spi.Requires;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
-import static org.jboss.hal.resources.CSS.itemText;
-import static org.jboss.hal.resources.CSS.subtitle;
 
 /**
  * @author Harald Pehl
  */
 @Column(SERVER_GROUP)
-@Requires(value = "/server-group=*", recursive = false)
+@Requires(value = "/server-group=*")
 public class ServerGroupColumn extends FinderColumn<ServerGroup>
         implements ServerGroupActionHandler, ServerGroupResultHandler {
 
@@ -127,11 +124,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
 
             @Override
             public Element asElement() {
-                return new Elements.Builder()
-                        .span().css(itemText)
-                        .span().textContent(item.getName()).end()
-                        .start("small").css(subtitle).textContent(item.getProfile()).end()
-                        .end().build();
+                return ItemDisplay.withSubtitle(item.getName(), item.getProfile());
             }
 
             @Override

@@ -25,6 +25,8 @@ public class Session {
 
     public native void setValue(String value);
 
+    public native void setMode(String mode);
+
     public native String getValue();
 
     public native int getLength();

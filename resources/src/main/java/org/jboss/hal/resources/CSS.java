@@ -39,6 +39,7 @@ public interface CSS {
     String alertInfo = "alert-info";
     String alertLink = "alert-link";
     String alertSuccess = "alert-success";
+    String alertSuspended = "alert-suspended";
     String alertWarning = "alert-warning";
     String arrow = "arrow";
     String attributes = "attributes";
@@ -49,6 +50,7 @@ public interface CSS {
     String blankSlatePfIcon = "blank-slate-pf-icon";
     String blankSlatePfMainAction = "blank-slate-pf-main-action";
     String blankSlatePfSecondaryAction = "blank-slate-pf-secondary-action";
+    String blue = "blue";
     String bootstrapSwitch = "bootstrap-switch";
     String btn = "btn";
     String btnDefault = "btn-default";
@@ -153,6 +155,7 @@ public interface CSS {
     String listViewPfStacked = "list-view-pf-stacked";
     String loading = "loading";
     String loadingContainer = "loading-container";
+    String logFileLoading = "log-file-loading";
 
     String macroEditor = "macro-editor";
     String macroList = "macro-list";
@@ -201,6 +204,7 @@ public interface CSS {
     String panelGroup = "panel-group";
     String panelHeading = "panel-heading";
     String panelTitle = "panel-title";
+    String pauseCircle ="pause-circle-o";
     String persistentSecondary = "persistent-secondary";
     String persistentSecondaryHeader = "persistent-secondary-header";
     String pin = "pin";
@@ -208,11 +212,11 @@ public interface CSS {
     String pinnable = "pinnable";
     String progress = "progress";
     String progressBar = "progress-bar";
-    String progressBarDanger= "progress-bar-danger";
-    String progressBarRemaining= "progress-bar-remaining";
+    String progressBarDanger = "progress-bar-danger";
+    String progressBarRemaining = "progress-bar-remaining";
     String progressBarStriped = "progress-bar-striped";
-    String progressBarSuccess= "progress-bar-success";
-    String progressBarWarning= "progress-bar-warning";
+    String progressBarSuccess = "progress-bar-success";
+    String progressBarWarning = "progress-bar-warning";
     String progressContainer = "progress-container";
     String progressDescription = "progress-description";
     String progressDescriptionLeft = "progress-description-left ";

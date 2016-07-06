@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!--suppress HtmlUnknownTarget -->
+<html class="layout-pf layout-pf-fixed transitions">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Log File</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="../../../public/css/hal.css" media="screen">
+    <style type="text/css" media="screen">
+        #log-file-editor {
+            height: 100px;
+        }
+    </style>
+
+    <script src="../../../public/js/jquery.js"></script>
+    <script src="../../../public/js/jquery.dataTables.js"></script>
+    <script src="../../../public/js/typeahead.bundle.js"></script>
+    <script src="../../../public/js/tagmanager.js"></script>
+    <script src="../../../public/js/dataTables.buttons.js"></script>
+    <script src="../../../public/js/dataTables.select.js"></script>
+    <script src="../../../public/js/jstree.js"></script>
+    <script src="../../../public/js/bootstrap.js"></script>
+    <script src="../../../public/js/bootstrap-select.js"></script>
+    <script src="../../../public/js/bootstrap-switch.js"></script>
+    <script src="../../../public/js/patternfly.js"></script>
+    <script src="../../../public/js/c3.js"></script>
+    <script src="../../../public/js/d3.js"></script>
+    <script src="../../../public/js/ace.js"></script>
+    <script src="../../../public/js/ZeroClipboard.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <!-- Content starts with this row -->
+    <div data-element="root" class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12"><h1 data-element="header">server.log</h1>
+            <div data-element="logFileControls" class="log-file-controls">
+                <div class="log-file-search has-button">
+                    <div class="form-group has-clear">
+                        <div class="search-pf-input-group">
+                            <label for="log-file-search" class="sr-only">{{resources().constants().search()}}</label>
+                            <input data-element="searchInput" id="log-file-search" type="search" class="form-control" placeholder="{{resources().constants().search()}}">
+                            <button data-element="clearSearch" type="button" class="clear" aria-hidden="true">
+                                <span class="pficon pficon-close"></span></button>
+                        </div>
+                    </div>
+                    <div class="form-group btn-group">
+                        <button data-element="search" class="btn btn-default" type="button">
+                            <span class="fa fa-search"></span></button>
+                        <button data-element="previous" class="btn btn-default" type="button">
+                            <span class="fa fa-angle-left"></span></button>
+                        <button data-element="next" class="btn btn-default" type="button">
+                            <span class="fa fa-angle-right"></span></button>
+                    </div>
+                </div>
+                <div data-element="status" class="log-file-status" title="Some status text, an error message or anything related to the current log file">Some status text, an error message or anything related to the current log file</div>
+                <div class="log-file-follow">
+                    <label for="log-file-follow">{{resources().constants().tailMode()}}</label><input data-element="tailMode" class="bootstrap-switch" id="log-file-follow" type="checkbox"/>
+                </div>
+                <div class="log-file-buttons btn-group">
+                    <a data-element="refresh" class="btn btn-default clickable" data-toggle="tooltip" data-container="body" data-placement="top" data-animation="false" title="{{resources().constants().refresh()}}"><i class="fa fa-refresh"></i></a>
+                    <a data-element="copyToClipboard" class="btn btn-default clickable" data-toggle="tooltip" data-container="body" data-placement="top" data-animation="false" title="{{resources().constants().copyToClipboard()}}"><i class="fa fa-clipboard"></i></a>
+                    <a data-element="download" href="#" class="btn btn-default clickable" data-toggle="tooltip" data-container="body" data-placement="top" data-animation="false" title="{{resources().constants().download()}}"><i class="fa fa-download"></i></a>
+                    <a data-element="external" class="btn btn-default clickable" data-toggle="tooltip" data-container="body" data-placement="top" data-animation="false" title="{{resources().constants().openInExternalWindow()}}"><i class="fa fa-external-link"></i></a>
+                </div>
+            </div>
+            <div data-element="editorContainer" class="log-file-editor-container">
+                <!-- will be replaced with the ace editor -->
+                <pre data-element="editorPlaceholder" id="log-file-editor">2016-07-01 08:39:55,755 WARN [org.jboss.as.txn] (ServerService Thread Pool -- 36) WFLYTX0013: Node identifier property is set to the default value. Please make sure it is unique.
+2016-07-01 08:39:55,756 INFO [org.jboss.as.webservices] (ServerService Thread Pool -- 34) WFLYWS0002: Activating WebServices Extension
+2016-07-01 08:39:55,765 INFO [org.jboss.as.security] (ServerService Thread Pool -- 38) WFLYSEC0002: Activating Security Subsystem
+2016-07-01 08:39:55,770 INFO [org.jboss.as.security] (MSC service thread 1-6) WFLYSEC0001: Current PicketBox version=4.9.6.Final
+2016-07-01 08:39:58,823 INFO [org.wildfly.extension.messaging-activemq] (MSC service thread 1-4) WFLYMSGAMQ0002: Bound messaging object to jndi name java:jboss/DefaultJMSConnectionFactory
+2016-07-01 08:39:59,041 INFO [org.jboss.as] (Controller Boot Thread) WFLYSRV0025: WildFly Core 2.2.0.CR4 "Kenny" started in 6002ms - Started 360 of 606 services (404 services are lazy, passive or on-demand)</pre>
+                <div data-element="loading" class="spinner spinner-lg"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    (function ($) {
+        $(document).ready(function () {
+            var editor = ace.edit("log-file-editor");
+            editor.$blockScrolling = Infinity;
+            editor.setReadOnly(true);
+            editor.setShowPrintMargin(false);
+            editor.setTheme("ace/theme/logfile");
+            editor.getSession().setMode("ace/mode/logfile");
+            editor.getSession().setUseWrapMode(false);
+
+            $('[data-toggle="tooltip"]').tooltip();
+            $(".bootstrap-switch").bootstrapSwitch();
+
+            // Hide the clear button if the search input is empty
+            $(".log-file-search .has-clear .clear").each(function () {
+                if (!$(this).prev('.form-control').val()) {
+                    $(this).hide();
+                }
+            });
+            // Show the clear button upon entering text in the search input
+            $(".log-file-search .has-clear .form-control").keyup(function () {
+                var t = $(this);
+                t.next('button').toggle(Boolean(t.val()));
+            });
+            // Upon clicking the clear button, empty the entered text and hide the clear button
+            $(".log-file-search .has-clear .clear").click(function () {
+                $(this).prev('.form-control').val('').focus();
+                $(this).hide();
+            });
+        });
+    })(jQuery);
+</script>
+</body>
+</html>

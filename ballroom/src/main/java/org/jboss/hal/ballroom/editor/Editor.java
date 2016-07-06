@@ -36,10 +36,14 @@ public class Editor {
 
     public native void setOptions(Options options);
 
-    public native void setReadOnly(boolean readOnly);
-
     public native void setTheme(String theme);
 
+    public native void find(String query);
+
+    public native void findNext();
+
+    public native void findPrevious();
+
     @JsProperty
-    Object $blockScrolling;
+    public Object $blockScrolling;
 }

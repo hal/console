@@ -42,7 +42,6 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -111,8 +110,7 @@ public class HostPresenter extends MbuiPresenter<HostPresenter.MyView, HostPrese
 
     @Override
     protected FinderPath finderPath() {
-        return new FinderPath()
-                .append(HOST, Host.id(statementContext.selectedHost()), Names.HOST, statementContext.selectedHost());
+        return FinderPath.runtimeHostPath(statementContext.selectedHost());
     }
 
     @Override

@@ -86,9 +86,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     String invalidRange(long value, long min, long max);
 
+    SafeHtml largeLogFile(String size);
     SafeHtml lastOperationException();
     SafeHtml lastOperationFailed();
     SafeHtml listHint();
+    SafeHtml logFileError(String name);
+    String logFileStatus(int lines, String lastUpdate);
 
     SafeHtml macroPlaybackError();
     SafeHtml macroPlaybackSuccessful();
@@ -98,7 +101,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml modifySingleResourceSuccess(String type);
 
     SafeHtml noDeploymentsUploaded();
+    SafeHtml noLogFile();
     SafeHtml noMacrosDescription(String startMacro);
+    SafeHtml normalLogFile(String size);
 
     SafeHtml pageNotFound(String invalidHistoryToken);
     String patternMismatch(String pattern);

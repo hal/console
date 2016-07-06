@@ -69,6 +69,11 @@ public class FilteringStatementContext implements StatementContext {
     }
 
     @Override
+    public String selectedServerConfig() {
+        return delegate.selectedServerConfig();
+    }
+
+    @Override
     public String selectedServer() {
         return delegate.selectedServer();
     }

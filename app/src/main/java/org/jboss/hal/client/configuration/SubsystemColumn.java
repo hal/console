@@ -26,9 +26,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LabelBuilder;
-import org.jboss.hal.client.configuration.subsystem.GenericSubsystemPresenter;
+import org.jboss.hal.client.GenericSubsystemPresenter;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
@@ -58,8 +57,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION;
-import static org.jboss.hal.resources.CSS.itemText;
-import static org.jboss.hal.resources.CSS.subtitle;
 
 /**
  * @author Harald Pehl
@@ -120,13 +117,8 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
                     @Override
                     public Element asElement() {
-                        return item.getSubtitle() != null
-                                ? new Elements.Builder()
-                                .span().css(itemText)
-                                .span().textContent(item.getTitle()).end()
-                                .start("small").css(subtitle).textContent(item.getSubtitle()).end()
-                                .end().build()
-                                : null;
+                        return item.getSubtitle() != null ? ItemDisplay
+                                .withSubtitle(item.getTitle(), item.getSubtitle()) : null;
                     }
 
                     @Override

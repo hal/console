@@ -109,7 +109,7 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
     @Override
     protected FinderPath finderPath() {
         return FinderPath
-                .subsystemPath(statementContext.selectedProfile(), ModelDescriptionConstants.LOGGING)
+                .configurationSubsystemPath(statementContext.selectedProfile(), ModelDescriptionConstants.LOGGING)
                 .append(ModelDescriptionConstants.LOGGING, NameTokens.LOGGING_CONFIGURATION,
                         Names.LOGGING, Names.CONFIGURATION);
     }

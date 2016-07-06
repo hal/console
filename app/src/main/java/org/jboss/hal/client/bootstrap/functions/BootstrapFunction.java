@@ -26,16 +26,16 @@ import org.slf4j.LoggerFactory;
  */
 public interface BootstrapFunction extends Function<FunctionContext> {
 
-    Logger logger = LoggerFactory.getLogger(BootstrapFunction.class);
+    @NonNls Logger logger = LoggerFactory.getLogger(BootstrapFunction.class);
 
     @NonNls
     String name();
 
     default void logStart() {
-        logger.info("{}: Start", name()); //NON-NLS
+        logger.info("{}: Start", name());
     }
 
     default void logDone() {
-        logger.info("{}: Done", name()); //NON-NLS
+        logger.info("{}: Done", name());
     }
 }

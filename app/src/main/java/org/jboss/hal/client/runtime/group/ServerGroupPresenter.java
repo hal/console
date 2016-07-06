@@ -37,7 +37,6 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -91,9 +90,7 @@ public class ServerGroupPresenter extends MbuiPresenter<ServerGroupPresenter.MyV
 
     @Override
     protected FinderPath finderPath() {
-        return new FinderPath()
-                .append(SERVER_GROUP, ServerGroup.id(statementContext.selectedServerGroup()),
-                        Names.SERVER_GROUP, statementContext.selectedServerGroup());
+        return FinderPath.runtimeServerGroupPath(statementContext.selectedServerGroup());
     }
 
     @Override

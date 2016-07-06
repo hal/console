@@ -27,7 +27,7 @@ import static org.jboss.hal.resources.CSS.*;
 /**
  * @author Harald Pehl
  */
-public class MessageDialog {
+class MessageDialog {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 

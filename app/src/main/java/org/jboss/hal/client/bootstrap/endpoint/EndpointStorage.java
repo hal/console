@@ -20,9 +20,10 @@ import java.util.List;
 
 import elemental.client.Browser;
 import elemental.html.Storage;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class EndpointStorage {
 
     private static final String KEY = IdBuilder.build(Ids.STORAGE_PREFIX, '.', "endpoints");
-    private static final Logger logger = LoggerFactory.getLogger(EndpointStorage.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(EndpointStorage.class);
 
     private final Storage storage;
     private final List<Endpoint> endpoints;
@@ -55,7 +56,6 @@ public class EndpointStorage {
                         endpoints.add(new Endpoint(node));
                     }
                 } catch (IllegalArgumentException e) {
-                    //noinspection HardCodedStringLiteral
                     logger.error("Unable to read endpoints from local storage using key '{}': {}", KEY, e.getMessage());
                 }
             }

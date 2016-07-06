@@ -15,6 +15,9 @@
  */
 package org.jboss.hal.core.finder;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import elemental.dom.Element;
 
 /**
@@ -25,18 +28,39 @@ public class ItemAction<T> {
     final String title;
     final Element element;
     final ItemActionHandler<T> handler;
+    final String href;
+    final Map<String, String> parameter;
 
     public ItemAction(final String title, final ItemActionHandler<T> handler) {
-        this(title, null, handler);
+        this(title, null, handler, null, (String[]) null);
     }
 
     public ItemAction(final Element element, final ItemActionHandler<T> handler) {
-        this(null, element, handler);
+        this(null, element, handler, null, (String[]) null);
     }
 
-    private ItemAction(final String title, final Element element, final ItemActionHandler<T> handler) {
+    public ItemAction(final String title, final String href, String... parameter) {
+        this(title, null, null, href, parameter);
+    }
+
+    public ItemAction(final Element element, final String href, String... parameter) {
+        this(null, element, null, href, parameter);
+    }
+
+    private ItemAction(final String title, final Element element, final ItemActionHandler<T> handler,
+            final String href, String... parameter) {
         this.title = title;
         this.element = element;
         this.handler = handler;
+        this.href = href;
+        this.parameter = new HashMap<>();
+        if (parameter != null && parameter.length > 1) {
+            if (parameter.length % 2 != 0) {
+                throw new IllegalArgumentException("Parameter in new ItemAction() must be key/value pairs");
+            }
+            for (int i = 0; i < parameter.length; i += 2) {
+                this.parameter.put(parameter[i], parameter[i + 1]);
+            }
+        }
     }
 }

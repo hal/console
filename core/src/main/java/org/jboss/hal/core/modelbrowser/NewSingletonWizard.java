@@ -47,8 +47,6 @@ import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.core.modelbrowser.NewSingletonWizard.SingletonState.CHOOSE;
@@ -117,8 +115,6 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
 
 
     private static class CreateSingletonStep extends WizardStep<SingletonContext, SingletonState> {
-
-        private static final Logger logger = LoggerFactory.getLogger(CreateSingletonStep.class);
 
         private final MetadataProcessor metadataProcessor;
         private final Provider<Progress> progress;

@@ -27,7 +27,7 @@
 
     <groupId>org.jboss.hal</groupId>
     <artifactId>hal-parent</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.1</version>
     <name>HAL :: Parent :: Aggregator</name>
     <description>The WildFly / EAP management console</description>
     <packaging>pom</packaging>
@@ -72,6 +72,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
 
+        <plugin.version.docker>0.15.9</plugin.version.docker>
         <plugin.version.frontend>0.0.29</plugin.version.frontend>
         <plugin.version.gwt.maven>1.0-rc-6</plugin.version.gwt.maven>
         <plugin.version.processor.plugin>3.1.0</plugin.version.processor.plugin>
@@ -87,6 +88,7 @@
         <module>core</module>
         <module>config</module>
         <module>dmr</module>
+        <module>docker</module>
         <module>meta</module>
         <module>npm</module>
         <module>parent-with-dependencies</module>
@@ -100,6 +102,11 @@
         <pluginManagement>
             <!-- All plugins ordered by short name -->
             <plugins>
+                <plugin>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>${plugin.version.docker}</version>
+                </plugin>
                 <plugin>
                     <groupId>com.github.eirslett</groupId>
                     <artifactId>frontend-maven-plugin</artifactId>

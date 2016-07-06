@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.skeleton;
 
+import javax.annotation.PostConstruct;
+
 import com.gwtplatform.mvp.client.ViewImpl;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.DataElement;
@@ -28,10 +30,9 @@ import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.ui.UIRegistry;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.PostConstruct;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.disabled;
@@ -53,7 +54,7 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
     // @formatter:on
 
 
-    private static Logger logger = LoggerFactory.getLogger(FooterView.class);
+    @NonNls private static Logger logger = LoggerFactory.getLogger(FooterView.class);
 
     private FooterPresenter presenter;
     private Environment environment;
@@ -87,7 +88,7 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
     @Override
     public void updateVersion(final Version version) {
         if (version.greaterThan(environment.getHalVersion())) {
-            logger.info("A new HAL version is available. Current version: {}, new version: {}", //NON-NLS
+            logger.info("A new HAL version is available. Current version: {}, new version: {}",
                     environment.getHalVersion(), version);
             String message = resources().messages().updateAvailable(environment.getHalVersion().toString(),
                     version.toString());

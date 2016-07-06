@@ -20,6 +20,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental.dom.Element;
 import elemental.html.ButtonElement;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.ButtonItem;
 import org.jboss.hal.ballroom.form.Form;
@@ -33,6 +34,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 
@@ -44,7 +46,9 @@ import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 import static org.jboss.hal.client.bootstrap.endpoint.Endpoint.SCHEME;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.ADD;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.SELECT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PORT;
 import static org.jboss.hal.meta.security.SecurityContext.RWX;
 
 /**
@@ -65,7 +69,7 @@ class EndpointDialog {
     private final EndpointStorage storage;
     private final Element selectPage;
     private final Element addPage;
-    private final Feedback feedback;
+    private final Alert alert;
     private final Form<Endpoint> form;
     private final ButtonItem ping;
 
@@ -96,19 +100,21 @@ class EndpointDialog {
                 .add(table.asElement())
                 .end().build();
 
-        feedback = new Feedback();
+        alert = new Alert();
         ping = new ButtonItem(Ids.ENDPOINT_PING, CONSTANTS.ping());
         ping.onClick((event) -> {
             Endpoint endpoint = transientEndpoint();
             manager.pingServer(endpoint, new AsyncCallback<Void>() {
                 @Override
                 public void onFailure(final Throwable throwable) {
-                    feedback.error(MESSAGES.endpointError(Endpoints.getBaseUrl()));
+                    alert.setIcon(Icons.ERROR).setText(MESSAGES.endpointError(Endpoints.getBaseUrl()));
+                    Elements.setVisible(alert.asElement(), true);
                 }
 
                 @Override
                 public void onSuccess(final Void aVoid) {
-                    feedback.ok(MESSAGES.endpointOk(endpoint.getUrl()));
+                    alert.setIcon(Icons.OK).setText(MESSAGES.endpointOk(endpoint.getUrl()));
+                    Elements.setVisible(alert.asElement(), true);
                 }
             });
         });
@@ -129,7 +135,7 @@ class EndpointDialog {
         addPage = new Elements.Builder()
                 .div()
                 .p().textContent(CONSTANTS.endpointAddDescription()).end()
-                .add(feedback.asElement())
+                .add(alert)
                 .add(form.asElement())
                 .end().build();
 
@@ -169,7 +175,7 @@ class EndpointDialog {
 
         } else if (mode == ADD) {
             dialog.setTitle(CONSTANTS.endpointAddTitle());
-            feedback.reset();
+            Elements.setVisible(alert.asElement(), false);
             form.add(new Endpoint());
             primaryButton.setInnerText(CONSTANTS.add());
             primaryButton.setDisabled(false);

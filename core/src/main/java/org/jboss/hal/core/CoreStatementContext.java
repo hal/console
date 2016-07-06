@@ -38,6 +38,7 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER_CONFIG;
 
 /**
  * @author Harald Pehl
@@ -63,7 +64,7 @@ public class CoreStatementContext implements StatementContext,
         context.put(SELECTED_PROFILE, null);
         context.put(SELECTED_GROUP, null);
         context.put(SELECTED_HOST, null);
-        context.put(SELECTED_SERVER, null);
+        context.put(SELECTED_SERVER_CONFIG, null);
 
         eventBus.addHandler(ProfileSelectionEvent.getType(), this);
         eventBus.addHandler(ServerGroupSelectionEvent.getType(), this);
@@ -110,6 +111,7 @@ public class CoreStatementContext implements StatementContext,
 
     @Override
     public void onServerSelection(final ServerSelectionEvent event) {
+        context.put(SELECTED_SERVER_CONFIG, event.getServer());
         context.put(SELECTED_SERVER, event.getServer());
         logger.info("Selected server {}", event.getServer());
     }
@@ -127,6 +129,11 @@ public class CoreStatementContext implements StatementContext,
     @Override
     public String selectedHost() {
         return environment.isStandalone() ? null : context.get(SELECTED_HOST);
+    }
+
+    @Override
+    public String selectedServerConfig() {
+        return environment.isStandalone() ? null : context.get(SELECTED_SERVER_CONFIG);
     }
 
     @Override
