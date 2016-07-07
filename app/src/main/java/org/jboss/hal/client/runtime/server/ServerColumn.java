@@ -282,9 +282,10 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 @Override
                 public void onSuccess(final List<Server> servers) {
                     if (!serverIsLastSegment()) {
-                        // provide only running servers
-                        List<Server> startedServers = servers.stream().filter(Server::isStarted).collect(toList());
-                        callback.onSuccess(startedServers);
+                        // When the server is not the last segment in the finder path, we assume that
+                        // the current path is related to something which requires a running server.
+                        // In that case return only started servers.
+                        callback.onSuccess(servers.stream().filter(Server::isStarted).collect(toList()));
                     } else {
                         callback.onSuccess(servers);
                     }
