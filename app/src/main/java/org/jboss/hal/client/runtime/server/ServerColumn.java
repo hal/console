@@ -22,7 +22,10 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import elemental.dom.Element;
@@ -31,6 +34,7 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.client.GenericSubsystemPresenter;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -41,6 +45,7 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
+import org.jboss.hal.core.finder.ItemsProvider;
 import org.jboss.hal.core.runtime.host.HostSelectionEvent;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActionEvent;
@@ -51,6 +56,7 @@ import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.core.runtime.server.ServerSelectionEvent;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -104,11 +110,13 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             final EventBus eventBus,
             final @Footer Provider<Progress> progress,
             final StatementContext statementContext,
+            final PlaceManager placeManager,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
             final ServerActions serverActions,
             final Resources resources) {
         super(new Builder<Server>(finder, SERVER, Names.SERVER)
+
                 .onItemSelect(server -> {
                     if (browseByServerGroups(finder.getContext())) {
                         // if we browse by server groups we still need to have a valid {selected.host}
@@ -116,19 +124,52 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     }
                     eventBus.fireEvent(new ServerSelectionEvent(server.getName()));
                 })
+
+                .onBreadcrumbItem((item, context) -> {
+                    PlaceRequest current = placeManager.getCurrentPlaceRequest();
+                    PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(current.getNameToken());
+
+                    if (NameTokens.GENERIC_SUBSYSTEM.equals(current.getNameToken())) {
+                        // switch server in address parameter of generic presenter
+                        String addressParam = current.getParameter(GenericSubsystemPresenter.ADDRESS_PARAM, null);
+                        if (addressParam != null) {
+                            ResourceAddress currentAddress = AddressTemplate.of(addressParam).resolve(statementContext);
+                            ResourceAddress newAddress = new ResourceAddress();
+                            for (Property property : currentAddress.asPropertyList()) {
+                                if (SERVER.equals(property.getName())) {
+                                    newAddress.add(SERVER, item.getName());
+                                } else if (SERVER_CONFIG.equals(property.getName())) {
+                                    newAddress.add(SERVER_CONFIG, item.getName());
+                                } else {
+                                    newAddress.add(property.getName(), property.getValue().asString());
+                                }
+                            }
+                            builder.with(GenericSubsystemPresenter.ADDRESS_PARAM, newAddress.toString());
+                        }
+
+                    } else {
+                        // switch server in place request parameter of specific presenter
+                        for (String parameter : current.getParameterNames()) {
+                            if (SERVER.equals(parameter)) {
+                                builder.with(SERVER, item.getName());
+                            } else if (SERVER_CONFIG.equals(parameter)) {
+                                builder.with(SERVER_CONFIG, item.getName());
+                            } else {
+                                builder.with(parameter, current.getParameter(parameter, ""));
+                            }
+                        }
+                    }
+                    placeManager.revealPlace(builder.build());
+                })
+
                 .pinnable()
                 .showCount()
-                .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
                 .onPreview(item -> new ServerPreview(serverActions, item, resources))
         );
         this.finder = finder;
 
-        addColumnAction(columnActionFactory.add(IdBuilder.build(SERVER, "add"), Names.SERVER,
-                column -> addServer(browseByHosts(finder.getContext()))));
-        addColumnAction(columnActionFactory.refresh(IdBuilder.build(SERVER, "refresh")));
-
-        setItemsProvider((context, callback) -> {
+        ItemsProvider<Server> itemsProvider = (context, callback) -> {
             Function<FunctionContext> serverConfigsFn;
             Function<FunctionContext> startedServersFn;
             boolean browseByHosts = browseByHosts(context);
@@ -227,6 +268,29 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         }
                     },
                     serverConfigsFn, startedServersFn);
+        };
+        setItemsProvider(itemsProvider);
+
+        // reuse the items provider to filter breadcrumb items
+        setBreadcrumbItemsProvider((context, callback) -> {
+            itemsProvider.get(context, new AsyncCallback<List<Server>>() {
+                @Override
+                public void onFailure(final Throwable throwable) {
+                    callback.onFailure(throwable);
+                }
+
+                @Override
+                public void onSuccess(final List<Server> servers) {
+                    if (!serverIsLastSegment()) {
+                        // When the server is not the last segment in the finder path, we assume that
+                        // the current path is related to something which requires a running server.
+                        // In that case return only started servers.
+                        callback.onSuccess(servers.stream().filter(Server::isStarted).collect(toList()));
+                    } else {
+                        callback.onSuccess(servers);
+                    }
+                }
+            });
         });
 
         setItemRenderer(item -> new ItemDisplay<Server>() {
@@ -258,7 +322,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             public String getTooltip() {
                 if (serverActions.isPending(item)) {
                     return resources.constants().pending();
-                }else if (item.isAdminMode()) {
+                } else if (item.isAdminMode()) {
                     return resources.constants().adminOnly();
                 } else if (item.isStarting()) {
                     return resources.constants().starting();
@@ -312,7 +376,8 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     if (!item.isStarted()) {
                         AddressTemplate template = AddressTemplate
                                 .of("/host=" + item.getHost() + "/item-config=" + item.getName());
-                        actions.add(itemActionFactory.remove(Names.SERVER, item.getName(), template, ServerColumn.this));
+                        actions.add(
+                                itemActionFactory.remove(Names.SERVER, item.getName(), template, ServerColumn.this));
                     }
                     actions.add(new ItemAction<>(resources.constants().copy(),
                             itm -> copyServer(itm, browseByHosts(finder.getContext()))));
@@ -339,6 +404,10 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             }
         });
 
+        addColumnAction(columnActionFactory.add(IdBuilder.build(SERVER, "add"), Names.SERVER,
+                column -> addServer(browseByHosts(finder.getContext()))));
+        addColumnAction(columnActionFactory.refresh(IdBuilder.build(SERVER, "refresh")));
+
         eventBus.addHandler(ServerActionEvent.getType(), this);
         eventBus.addHandler(ServerResultEvent.getType(), this);
     }
@@ -349,6 +418,11 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
     private void copyServer(Server server, boolean browseByHost) {
         Browser.getWindow().alert(Names.NYI);
+    }
+
+    private boolean serverIsLastSegment() {
+        FinderSegment segment = Iterables.getLast(finder.getContext().getPath(), null);
+        return segment != null && SERVER.equals(segment.getKey());
     }
 
     @Override

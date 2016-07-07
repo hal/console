@@ -148,7 +148,7 @@ public class MetadataProcessor {
                 @Override
                 public void onFailure(final FunctionContext context) {
                     logger.debug("Failed to process metadata: {}", context.getErrorMessage());
-                    callback.onFailure(context.getError());
+                    callback.onFailure(new RuntimeException(context.getErrorMessage()));
                 }
 
                 @Override

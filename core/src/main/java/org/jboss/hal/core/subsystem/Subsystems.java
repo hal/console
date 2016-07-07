@@ -26,54 +26,73 @@ import org.jboss.hal.resources.Names;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
+ * TODO set customImplementation flags to true once the subsystems are implemented
  * @author Harald Pehl
  */
 public class Subsystems {
 
-    private final Map<String, SubsystemMetadata> subsystems;
+    private final Map<String, SubsystemMetadata> configurationSubsystems;
+    private final Map<String, SubsystemMetadata> runtimeSubsystems;
 
     @SuppressWarnings("HardCodedStringLiteral")
     public Subsystems() {
-        subsystems = new HashMap<>();
+        configurationSubsystems = new HashMap<>();
+        runtimeSubsystems = new HashMap<>();
 
-        // TODO set builtin flag to true once the subsystem implementations are in place
-        add(new SubsystemMetadata(BATCH_JBERET, "Batch", "JBeret", NameTokens.BATCH, null, false));
-        add(new SubsystemMetadata(DATASOURCES, Names.DATASOURCES_DRIVERS, null, null,
+        // ------------------------------------------------------ configuration
+        addConfiguration(new SubsystemMetadata(BATCH_JBERET, "Batch", "JBeret", NameTokens.BATCH_CONFIGURATION, null, false));
+        addConfiguration(new SubsystemMetadata(DATASOURCES, Names.DATASOURCES_DRIVERS, null, null,
                 Ids.DATA_SOURCE_DRIVER_COLUMN, true));
-        add(new SubsystemMetadata(DEPLOYMENT_SCANNER, "Deployment Scanners", null, NameTokens.DEPLOYMENT_SCANNERS,
+        addConfiguration(new SubsystemMetadata(DEPLOYMENT_SCANNER, "Deployment Scanners", null, NameTokens.DEPLOYMENT_SCANNERS,
                 null, true));
-        add(new SubsystemMetadata(EE, "EE", null, NameTokens.EE, null, true));
-        add(new SubsystemMetadata(EJB3, "EJB3", null, NameTokens.EJB3, null, false));
-        add(new SubsystemMetadata(IIOP_OPENJDK, "IIOP", "OpenJDK", NameTokens.IIOP, null, true));
-        add(new SubsystemMetadata(INFINISPAN, "Infinispan", null, null, Ids.CACHE_CONTAINER_COLUMN, true));
-        add(new SubsystemMetadata(IO, "IO", null, NameTokens.IO, null, true));
-        add(new SubsystemMetadata(JCA, "JCA", null, NameTokens.JCA, null, false));
-        add(new SubsystemMetadata(JMX, "JMX", null, NameTokens.JMX, null, false));
-        add(new SubsystemMetadata(JPA, "JPA", null, NameTokens.JPA, null, false));
-        add(new SubsystemMetadata(LOGGING, Names.LOGGING, null, null, ModelDescriptionConstants.LOGGING, true));
-        add(new SubsystemMetadata(MAIL, "Mail", null, null, ModelDescriptionConstants.MAIL_SESSION, true));
-        add(new SubsystemMetadata(MESSAGING_ACTIVEMQ, "Messaging", "ActiveMQ", null,
+        addConfiguration(new SubsystemMetadata(EE, "EE", null, NameTokens.EE, null, true));
+        addConfiguration(new SubsystemMetadata(EJB3, "EJB3", null, NameTokens.EJB3, null, false));
+        addConfiguration(new SubsystemMetadata(IIOP_OPENJDK, "IIOP", "OpenJDK", NameTokens.IIOP, null, true));
+        addConfiguration(new SubsystemMetadata(INFINISPAN, "Infinispan", null, null, Ids.CACHE_CONTAINER_COLUMN, true));
+        addConfiguration(new SubsystemMetadata(IO, "IO", null, NameTokens.IO, null, true));
+        addConfiguration(new SubsystemMetadata(JCA, "JCA", null, NameTokens.JCA, null, false));
+        addConfiguration(new SubsystemMetadata(JMX, "JMX", null, NameTokens.JMX, null, false));
+        addConfiguration(new SubsystemMetadata(JPA, "JPA", null, NameTokens.JPA_CONFIGURATION, null, false));
+        addConfiguration(new SubsystemMetadata(LOGGING, Names.LOGGING, null, null, ModelDescriptionConstants.LOGGING, true));
+        addConfiguration(new SubsystemMetadata(MAIL, "Mail", null, null, ModelDescriptionConstants.MAIL_SESSION, true));
+        addConfiguration(new SubsystemMetadata(MESSAGING_ACTIVEMQ, "Messaging", "ActiveMQ", null,
                 ModelDescriptionConstants.MESSAGING_SERVER, true));
-        add(new SubsystemMetadata(REMOTING, "Remoting", null, NameTokens.REMOTING, null, false));
-        add(new SubsystemMetadata(REQUEST_CONTROLLER, "Request Controller", null, NameTokens.REQUEST_CONTROLLER, null,
+        addConfiguration(new SubsystemMetadata(REMOTING, "Remoting", null, NameTokens.REMOTING, null, false));
+        addConfiguration(new SubsystemMetadata(REQUEST_CONTROLLER, "Request Controller", null, NameTokens.REQUEST_CONTROLLER, null,
                 false));
-        add(new SubsystemMetadata(RESOURCE_ADAPTERS, "Resource Adapters", null, null,
+        addConfiguration(new SubsystemMetadata(RESOURCE_ADAPTERS, "Resource Adapters", null, null,
                 RESOURCE_ADAPTER, true));
-        add(new SubsystemMetadata(SECURITY, "Security", null, null, ModelDescriptionConstants.SECURITY_DOMAIN, true));
-        add(new SubsystemMetadata(TRANSACTIONS, "Transactions", null, NameTokens.TRANSACTIONS, null, true));
-        add(new SubsystemMetadata(UNDERTOW, "Web", "Undertow", null, Ids.WEB_SETTINGS_COLUMN, true));
-        add(new SubsystemMetadata(WEBSERVICES, "Web Services", null, NameTokens.WEBSERVICES, null, false));
+        addConfiguration(new SubsystemMetadata(SECURITY, "Security", null, null, ModelDescriptionConstants.SECURITY_DOMAIN, true));
+        addConfiguration(new SubsystemMetadata(TRANSACTIONS, "Transactions", null, NameTokens.TRANSACTIONS, null, true));
+        addConfiguration(new SubsystemMetadata(UNDERTOW, "Web", "Undertow", null, Ids.WEB_SETTINGS_COLUMN, true));
+        addConfiguration(new SubsystemMetadata(WEBSERVICES, "Web Services", null, NameTokens.WEBSERVICES, null, false));
+
+        // ------------------------------------------------------ runtime
+        addRuntime(new SubsystemMetadata(BATCH_JBERET, "Batch", "JBeret", NameTokens.BATCH_RUNTIME, null, false));
+        addRuntime(new SubsystemMetadata(DATASOURCES, Names.DATASOURCES, null, null, DATA_SOURCE, true));
     }
 
-    private void add(SubsystemMetadata subsystem) {
-        subsystems.put(subsystem.getName(), subsystem);
+    private void addConfiguration(SubsystemMetadata subsystem) {
+        configurationSubsystems.put(subsystem.getName(), subsystem);
     }
 
-    public boolean isBuiltIn(String name) {
-        return subsystems.containsKey(name);
+    private void addRuntime(SubsystemMetadata subsystem) {
+        runtimeSubsystems.put(subsystem.getName(), subsystem);
     }
 
-    public SubsystemMetadata getSubsystem(String name) {
-        return subsystems.get(name);
+    public boolean containsConfiguration(String name) {
+        return configurationSubsystems.containsKey(name);
+    }
+
+    public boolean containsRuntime(String name) {
+        return runtimeSubsystems.containsKey(name);
+    }
+
+    public SubsystemMetadata getConfigurationSubsystem(String name) {
+        return configurationSubsystems.get(name);
+    }
+
+    public SubsystemMetadata getRuntimeSubsystem(String name) {
+        return runtimeSubsystems.get(name);
     }
 }

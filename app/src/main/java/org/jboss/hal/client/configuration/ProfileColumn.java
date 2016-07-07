@@ -67,7 +67,8 @@ public class ProfileColumn extends FinderColumn<ModelNode> {
                         IdBuilder.build(ModelDescriptionConstants.PROFILE, "add"),
                         Names.PROFILE,
                         PROFILE_TEMPLATE))
-                .columnAction(columnActionFactory.refresh(IdBuilder.build(ModelDescriptionConstants.PROFILE, "refresh")))
+                .columnAction(
+                        columnActionFactory.refresh(IdBuilder.build(ModelDescriptionConstants.PROFILE, "refresh")))
 
                 .itemRenderer(modelNode -> new ItemDisplay<ModelNode>() {
                     @Override
@@ -94,12 +95,11 @@ public class ProfileColumn extends FinderColumn<ModelNode> {
                 .onPreview(item -> new PreviewContent<>(item.asString()))
 
                 .onBreadcrumbItem((item, context) -> {
-                    eventBus.fireEvent(new ProfileSelectionEvent(item.asString()));
                     PlaceRequest current = placeManager.getCurrentPlaceRequest();
                     PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(current.getNameToken());
 
-                    // switch profile in address parameter of generic presenter
                     if (NameTokens.GENERIC_SUBSYSTEM.equals(current.getNameToken())) {
+                        // switch profile in address parameter of generic presenter
                         String addressParam = current.getParameter(GenericSubsystemPresenter.ADDRESS_PARAM, null);
                         if (addressParam != null) {
                             ResourceAddress currentAddress = AddressTemplate.of(addressParam).resolve(statementContext);
@@ -114,8 +114,8 @@ public class ProfileColumn extends FinderColumn<ModelNode> {
                             builder.with(GenericSubsystemPresenter.ADDRESS_PARAM, newAddress.toString());
                         }
 
-                    // switch profile in place request parameter of specific presenter
                     } else {
+                        // switch profile in place request parameter of specific presenter
                         for (String parameter : current.getParameterNames()) {
                             if (PROFILE.equals(parameter)) {
                                 builder.with(PROFILE, item.asString());

@@ -85,10 +85,10 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
     private static PlaceRequest subsystemPlaceRequest(Places places, StatementContext statementContext,
             SubsystemMetadata metadata) {
         PlaceRequest placeRequest = null;
-        if (metadata.isBuiltIn() && metadata.getToken() != null) {
+        if (metadata.hasCustomImplementation() && metadata.getToken() != null) {
             placeRequest = places.selectedProfile(metadata.getToken()).build();
 
-        } else if (!metadata.isBuiltIn()) {
+        } else if (!metadata.hasCustomImplementation()) {
             ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, metadata.getName());
             placeRequest = new PlaceRequest.Builder()
                     .nameToken(NameTokens.GENERIC_SUBSYSTEM)
@@ -181,8 +181,8 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 List<SubsystemMetadata> combined = new ArrayList<>();
                 for (ModelNode modelNode : result.asList()) {
                     String name = modelNode.asString();
-                    if (subsystems.isBuiltIn(name)) {
-                        combined.add(subsystems.getSubsystem(name));
+                    if (subsystems.containsConfiguration(name)) {
+                        combined.add(subsystems.getConfigurationSubsystem(name));
 
                     } else {
                         String title = new LabelBuilder().label(name);
@@ -196,7 +196,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
         };
         setItemsProvider(itemsProvider);
 
-        // reuse the items provider to provide breadcrumb items
+        // reuse the items provider to filter breadcrumb items
         setBreadcrumbItemsProvider((context, callback) ->
                 itemsProvider.get(context, new AsyncCallback<List<SubsystemMetadata>>() {
                     @Override
