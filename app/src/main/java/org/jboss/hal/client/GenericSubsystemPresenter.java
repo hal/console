@@ -25,6 +25,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.configuration.ProfileSelectionEvent;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.dmr.Property;
@@ -57,6 +58,7 @@ public class GenericSubsystemPresenter
 
     public final static String ADDRESS_PARAM = "address";
 
+    private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private ResourceAddress address;
 
@@ -65,8 +67,10 @@ public class GenericSubsystemPresenter
             final MyView view,
             final MyProxy proxy,
             final Finder finder,
+            final FinderPathFactory finderPathFactory,
             final StatementContext statementContext) {
         super(eventBus, view, proxy, finder);
+        this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
         this.address = ResourceAddress.ROOT;
     }
@@ -94,17 +98,7 @@ public class GenericSubsystemPresenter
 
     @Override
     protected FinderPath finderPath() {
-        return FinderPath.configurationSubsystemPath(profile(), address.lastValue());
-    }
-
-    private String profile() {
-        if (address != null) {
-            for (Property property : address.asPropertyList()) {
-                if (PROFILE.equals(property.getName())) {
-                    return property.getValue().asString();
-                }
-            }
-        }
-        return null;
+        // TODO Support for runtime
+        return finderPathFactory.configurationSubsystemPath(address.lastValue());
     }
 }

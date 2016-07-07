@@ -26,6 +26,7 @@ import org.jboss.hal.client.configuration.PathsTypeahead;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
@@ -63,6 +64,7 @@ public class DeploymentScannerPresenter
     // @formatter:on
 
 
+    private final FinderPathFactory finderPathFactory;
     private final Environment environment;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
@@ -72,10 +74,12 @@ public class DeploymentScannerPresenter
             final MyView view,
             final MyProxy proxy,
             final Finder finder,
+            final FinderPathFactory finderPathFactory,
             final Environment environment,
             final StatementContext statementContext,
             final Dispatcher dispatcher) {
         super(eventBus, view, proxy, finder);
+        this.finderPathFactory = finderPathFactory;
         this.environment = environment;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
@@ -89,8 +93,7 @@ public class DeploymentScannerPresenter
 
     @Override
     protected FinderPath finderPath() {
-        return FinderPath
-            .configurationSubsystemPath(statementContext.selectedProfile(), ModelDescriptionConstants.DEPLOYMENT_SCANNER);
+        return finderPathFactory.configurationSubsystemPath(ModelDescriptionConstants.DEPLOYMENT_SCANNER);
     }
 
     @Override

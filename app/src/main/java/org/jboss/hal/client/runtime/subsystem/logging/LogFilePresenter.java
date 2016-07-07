@@ -24,9 +24,9 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
-import org.jboss.hal.client.runtime.server.ServerColumn;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
@@ -78,6 +78,7 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
     static final String EXTERNAL_PARAM = "external";
     private static final int REFRESH_INTERVAL = 1000;
 
+    private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final Resources resources;
@@ -92,10 +93,12 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
             final MyView view,
             final MyProxy myProxy,
             final Finder finder,
+            final FinderPathFactory finderPathFactory,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
             final Resources resources) {
         super(eventBus, view, myProxy, finder);
+        this.finderPathFactory = finderPathFactory;
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
         this.resources = resources;
@@ -129,17 +132,10 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
 
     @Override
     protected FinderPath finderPath() {
-        FinderPath path;
-        if (ServerColumn.browseByServerGroups(finder.getContext())) {
-            path = FinderPath
-                    .runtimeServerGroupPath(statementContext.selectedServerGroup(), statementContext.selectedServer());
-        } else {
-            path = FinderPath.runtimeHostPath(statementContext.selectedHost(), statementContext.selectedServer());
-        }
-        path.append(Ids.SERVER_MONITOR_COLUMN, IdBuilder.asId(resources.constants().logFiles()),
-                resources.constants().monitor(), resources.constants().logFiles())
+        return finderPathFactory.runtimeServerPath()
+                .append(Ids.SERVER_MONITOR_COLUMN, IdBuilder.asId(resources.constants().logFiles()),
+                        resources.constants().monitor(), resources.constants().logFiles())
                 .append(Ids.LOG_FILE_COLUMN, IdBuilder.asId(logFileName), resources.constants().logFile(), logFileName);
-        return path;
     }
 
     @Override

@@ -25,6 +25,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
@@ -74,6 +75,7 @@ public class DataSourcePresenter extends
 
     static final String XA_PARAM = "xa";
 
+    private final FinderPathFactory finderPathFactory;
     private final Resources resources;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
@@ -86,10 +88,12 @@ public class DataSourcePresenter extends
             final MyView view,
             final MyProxy proxy,
             final Finder finder,
+            final FinderPathFactory finderPathFactory,
             final Resources resources,
             final Dispatcher dispatcher,
             final StatementContext statementContext) {
         super(eventBus, view, proxy, finder);
+        this.finderPathFactory = finderPathFactory;
         this.resources = resources;
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
@@ -117,7 +121,7 @@ public class DataSourcePresenter extends
 
     @Override
     protected FinderPath finderPath() {
-        return FinderPath.configurationSubsystemPath(statementContext.selectedProfile(), DATASOURCES)
+        return finderPathFactory.configurationSubsystemPath(DATASOURCES)
                 .append(Ids.DATA_SOURCE_DRIVER_COLUMN, DATASOURCES, Names.DATASOURCES_DRIVERS, Names.DATASOURCES)
                 .append(DATA_SOURCE, DataSource.id(name, xa), Names.DATASOURCE, name);
     }

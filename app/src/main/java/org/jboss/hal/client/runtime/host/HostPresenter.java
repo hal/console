@@ -26,6 +26,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
@@ -81,6 +82,7 @@ public class HostPresenter extends MbuiPresenter<HostPresenter.MyView, HostPrese
     // @formatter:on
 
 
+    private final FinderPathFactory finderPathFactory;
     private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
@@ -91,11 +93,13 @@ public class HostPresenter extends MbuiPresenter<HostPresenter.MyView, HostPrese
             final HostPresenter.MyView view,
             final HostPresenter.MyProxy proxy,
             final Finder finder,
+            final FinderPathFactory finderPathFactory,
             final MetadataRegistry metadataRegistry,
             final StatementContext statementContext,
             final Dispatcher dispatcher,
             final Resources resources) {
         super(eventBus, view, proxy, finder);
+        this.finderPathFactory = finderPathFactory;
         this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
@@ -110,7 +114,7 @@ public class HostPresenter extends MbuiPresenter<HostPresenter.MyView, HostPrese
 
     @Override
     protected FinderPath finderPath() {
-        return FinderPath.runtimeHostPath(statementContext.selectedHost());
+        return finderPathFactory.runtimeHostPath();
     }
 
     @Override

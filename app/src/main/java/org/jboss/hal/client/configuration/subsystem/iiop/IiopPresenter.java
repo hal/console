@@ -23,6 +23,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.dmr.ModelNode;
@@ -60,6 +61,7 @@ public class IiopPresenter extends MbuiPresenter<IiopPresenter.MyView, IiopPrese
     static final String ROOT_ADDRESS = "/{selected.profile}/subsystem=iiop-openjdk";
     private static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
 
+    private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
     private final Resources resources;
@@ -69,10 +71,12 @@ public class IiopPresenter extends MbuiPresenter<IiopPresenter.MyView, IiopPrese
             final MyView view,
             final MyProxy myProxy,
             final Finder finder,
+            final FinderPathFactory finderPathFactory,
             final StatementContext statementContext,
             final Dispatcher dispatcher,
             final Resources resources) {
         super(eventBus, view, myProxy, finder);
+        this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
         this.resources = resources;
@@ -86,7 +90,7 @@ public class IiopPresenter extends MbuiPresenter<IiopPresenter.MyView, IiopPrese
 
     @Override
     protected FinderPath finderPath() {
-        return FinderPath.configurationSubsystemPath(statementContext.selectedProfile(), ROOT_TEMPLATE.lastValue());
+        return finderPathFactory.configurationSubsystemPath(ROOT_TEMPLATE.lastValue());
     }
 
     @Override

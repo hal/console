@@ -22,6 +22,7 @@ import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.ColumnRegistry;
 import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.mbui.MbuiContext;
@@ -45,6 +46,7 @@ public class CoreModule extends AbstractGinModule {
         bind(ColumnRegistry.class).in(Singleton.class);
         bind(ColumnActionFactory.class).in(Singleton.class);
         bind(Finder.class).in(Singleton.class);
+        bind(FinderPathFactory.class).in(Singleton.class);
         bind(HostActions.class).in(Singleton.class);
         bind(ItemMonitor.class).in(Singleton.class);
         bind(ItemActionFactory.class).in(Singleton.class);

@@ -40,6 +40,7 @@ package org.jboss.hal.resources;
 public interface Ids {
 
     String CACHE_CONTAINER_COLUMN = "cache-container";
+    String CONFIGURATION_SUBSYSTEM_COLUMN = "c-subsystem";
     String CONTENT_COLUMN = "content";
 
     String DATA_SOURCE_DRIVER_COLUMN = "data-source-driver";
@@ -90,6 +91,7 @@ public interface Ids {
     String PREVIEW_ID = IdBuilder.build(FINDER, "preview");
 
     String ROOT_CONTAINER = "hal-root-container";
+    String RUNTIME_SUBSYSTEM_COLUMN = "r-subsystem";
 
     String SERVER_MONITOR_COLUMN = "server-monitor";
     String STANDALONE_SERVER_COLUMN = "standalone-server";

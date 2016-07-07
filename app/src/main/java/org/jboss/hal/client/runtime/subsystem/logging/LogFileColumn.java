@@ -19,7 +19,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.client.runtime.server.ServerColumn;
+import org.jboss.hal.client.runtime.BrowseByColumn;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -91,7 +91,7 @@ public class LogFileColumn extends FinderColumn<LogFile> {
                     @Override
                     public List<ItemAction<LogFile>> actions() {
                         PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(NameTokens.LOG_FILE);
-                        if (ServerColumn.browseByServerGroups(finder.getContext())) {
+                        if (BrowseByColumn.browseByServerGroups(finder.getContext())) {
                             builder.with(SERVER_GROUP, statementContext.selectedServerGroup());
                         } else {
                             builder.with(HOST, statementContext.selectedHost());

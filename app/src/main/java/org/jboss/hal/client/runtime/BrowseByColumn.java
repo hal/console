@@ -22,15 +22,18 @@ import javax.inject.Provider;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.core.runtime.group.ServerGroupActions;
-import org.jboss.hal.core.runtime.host.HostActions;
-import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.FinderContext;
+import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
+import org.jboss.hal.core.runtime.group.ServerGroupActions;
+import org.jboss.hal.core.runtime.host.HostActions;
+import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -42,6 +45,19 @@ import org.jboss.hal.spi.Footer;
  */
 @Column(Ids.DOMAIN_BROWSE_BY_COLUMN)
 public class BrowseByColumn extends StaticItemColumn {
+
+    public static boolean browseByHosts(FinderContext context) {
+        FinderSegment firstSegment = context.getPath().iterator().next();
+        return firstSegment.getValue().equals(IdBuilder.asId(Names.HOSTS));
+    }
+
+    public static boolean browseByServerGroups(FinderContext context) {
+        if (!context.getPath().isEmpty()) {
+            FinderSegment firstSegment = context.getPath().iterator().next();
+            return firstSegment.getValue().equals(IdBuilder.asId(Names.SERVER_GROUPS));
+        }
+        return false;
+    }
 
     @Inject
     public BrowseByColumn(final Finder finder,

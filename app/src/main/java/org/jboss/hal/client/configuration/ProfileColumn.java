@@ -37,6 +37,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Requires;
@@ -78,7 +79,7 @@ public class ProfileColumn extends FinderColumn<ModelNode> {
 
                     @Override
                     public String nextColumn() {
-                        return ModelDescriptionConstants.SUBSYSTEM;
+                        return Ids.CONFIGURATION_SUBSYSTEM_COLUMN;
                     }
                 })
 

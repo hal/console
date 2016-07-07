@@ -33,6 +33,7 @@ import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
@@ -84,6 +85,7 @@ public class MailSessionPresenter
     private final Resources resources;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
+    private final FinderPathFactory finderPathFactory;
     private final MetadataRegistry metadataRegistry;
     private final OperationFactory operationFactory;
     private String mailSessionName;
@@ -93,12 +95,13 @@ public class MailSessionPresenter
             final MyView view,
             final MyProxy proxy,
             final Finder finder,
+            final FinderPathFactory finderPathFactory,
             final Resources resources,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
             final MetadataRegistry metadataRegistry) {
         super(eventBus, view, proxy, finder);
-
+        this.finderPathFactory = finderPathFactory;
         this.metadataRegistry = metadataRegistry;
         this.resources = resources;
         this.dispatcher = dispatcher;
@@ -126,8 +129,7 @@ public class MailSessionPresenter
 
     @Override
     protected FinderPath finderPath() {
-        return FinderPath
-                .configurationSubsystemPath(statementContext.selectedProfile(), ModelDescriptionConstants.MAIL)
+        return finderPathFactory.configurationSubsystemPath(ModelDescriptionConstants.MAIL)
                 .append(ModelDescriptionConstants.MAIL_SESSION, mailSessionName, Names.MAIL_SESSION, mailSessionName);
     }
 

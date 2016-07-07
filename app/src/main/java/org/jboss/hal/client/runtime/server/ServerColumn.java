@@ -35,10 +35,10 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.client.GenericSubsystemPresenter;
+import org.jboss.hal.client.runtime.BrowseByColumn;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemAction;
@@ -89,19 +89,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 @Requires(value = {"/host=*/server-config=*", "/host=*/server=*"}, recursive = false)
 public class ServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
-    public static boolean browseByHosts(FinderContext context) {
-        FinderSegment firstSegment = context.getPath().iterator().next();
-        return firstSegment.getValue().equals(IdBuilder.asId(Names.HOSTS));
-    }
-
-    public static boolean browseByServerGroups(FinderContext context) {
-        if (!context.getPath().isEmpty()) {
-            FinderSegment firstSegment = context.getPath().iterator().next();
-            return firstSegment.getValue().equals(IdBuilder.asId(Names.SERVER_GROUPS));
-        }
-        return false;
-    }
-
     private final Finder finder;
 
     @Inject
@@ -118,7 +105,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
         super(new Builder<Server>(finder, SERVER, Names.SERVER)
 
                 .onItemSelect(server -> {
-                    if (browseByServerGroups(finder.getContext())) {
+                    if (BrowseByColumn.browseByServerGroups(finder.getContext())) {
                         // if we browse by server groups we still need to have a valid {selected.host}
                         eventBus.fireEvent(new HostSelectionEvent(server.getHost()));
                     }
@@ -172,7 +159,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
         ItemsProvider<Server> itemsProvider = (context, callback) -> {
             Function<FunctionContext> serverConfigsFn;
             Function<FunctionContext> startedServersFn;
-            boolean browseByHosts = browseByHosts(context);
+            boolean browseByHosts = BrowseByColumn.browseByHosts(context);
 
             if (browseByHosts) {
                 serverConfigsFn = control -> {
@@ -380,7 +367,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                 itemActionFactory.remove(Names.SERVER, item.getName(), template, ServerColumn.this));
                     }
                     actions.add(new ItemAction<>(resources.constants().copy(),
-                            itm -> copyServer(itm, browseByHosts(finder.getContext()))));
+                            itm -> copyServer(itm, BrowseByColumn.browseByHosts(finder.getContext()))));
                     if (!item.isStarted()) {
                         actions.add(new ItemAction<>(resources.constants().start(), serverActions::start));
                     } else {
@@ -405,7 +392,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
         });
 
         addColumnAction(columnActionFactory.add(IdBuilder.build(SERVER, "add"), Names.SERVER,
-                column -> addServer(browseByHosts(finder.getContext()))));
+                column -> addServer(BrowseByColumn.browseByHosts(finder.getContext()))));
         addColumnAction(columnActionFactory.refresh(IdBuilder.build(SERVER, "refresh")));
 
         eventBus.addHandler(ServerActionEvent.getType(), this);
