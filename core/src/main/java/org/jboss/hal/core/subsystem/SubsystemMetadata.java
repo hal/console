@@ -27,22 +27,22 @@ public class SubsystemMetadata {
     private final String subtitle;
     private final String token;
     private final String nextColumn;
-    private final boolean builtIn;
+    private final boolean customImplementation;
     private final PreviewContent previewContent;
 
     public SubsystemMetadata(final String name, final String title, final String subtitle, final String token,
-            final String nextColumn, final boolean builtIn) {
-        this(name, title, subtitle, token, nextColumn, builtIn, null);
+            final String nextColumn, final boolean customImplementation) {
+        this(name, title, subtitle, token, nextColumn, customImplementation, null);
     }
 
     public SubsystemMetadata(final String name, final String title, final String subtitle, final String token,
-            final String nextColumn, final boolean builtIn, final PreviewContent previewContent) {
+            final String nextColumn, final boolean customImplementation, final PreviewContent previewContent) {
         this.name = name;
         this.title = title;
         this.subtitle = subtitle;
         this.token = token;
         this.nextColumn = nextColumn;
-        this.builtIn = builtIn;
+        this.customImplementation = customImplementation;
         this.previewContent = previewContent;
     }
 
@@ -71,8 +71,8 @@ public class SubsystemMetadata {
         return nextColumn;
     }
 
-    public boolean isBuiltIn() {
-        return builtIn;
+    public boolean hasCustomImplementation() {
+        return customImplementation;
     }
 
     public PreviewContent getPreviewContent() {

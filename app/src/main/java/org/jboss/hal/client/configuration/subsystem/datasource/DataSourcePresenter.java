@@ -61,7 +61,7 @@ public class DataSourcePresenter extends
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(NameTokens.DATA_SOURCE)
+    @NameToken(NameTokens.DATA_SOURCE_CONFIGURATION)
     @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS})
     public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
 

@@ -168,7 +168,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
             @Override
             public List<ItemAction<DataSource>> actions() {
-                PlaceRequest.Builder builder = places.selectedProfile(NameTokens.DATA_SOURCE)
+                PlaceRequest.Builder builder = places.selectedProfile(NameTokens.DATA_SOURCE_CONFIGURATION)
                         .with(NAME, dataSource.getName());
                 if (dataSource.isXa()) {
                     builder.with(DataSourcePresenter.XA_PARAM, String.valueOf(true));

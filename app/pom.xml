@@ -60,6 +60,10 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-meta</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.hal</groupId>
             <artifactId>hal-processors</artifactId>
         </dependency>
         <dependency>
@@ -187,6 +191,7 @@
                             </options>
                             <defaultOutputDirectory>${project.build.directory}/generated-sources/apt-app
                             </defaultOutputDirectory>
+                            <failOnError>false</failOnError>
                         </configuration>
                     </execution>
                     <execution>
@@ -255,7 +260,7 @@
                     <devmodeArgs>
                         <devmodeArg>-startupUrl</devmodeArg>
                         <devmodeArg>hal/dev.html</devmodeArg>
-                        <devmodeArg>-incremental</devmodeArg>
+                        <!--<devmodeArg>-incremental</devmodeArg>-->
                     </devmodeArgs>
                     <draftCompile>${gwt.draftCompile}</draftCompile>
                     <failOnError>${gwt.failOnError}</failOnError>
