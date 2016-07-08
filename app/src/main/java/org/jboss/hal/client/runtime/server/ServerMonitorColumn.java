@@ -54,6 +54,7 @@ public class ServerMonitorColumn extends StaticItemColumn {
 
                 new StaticItem.Builder(Names.SUBSYSTEMS)
                         .onPreview(new PreviewContent(Names.SUBSYSTEMS, resources.previews().runtimeSubsystems()))
+                        .nextColumn(Ids.RUNTIME_SUBSYSTEM)
                         .build()
         ));
     }

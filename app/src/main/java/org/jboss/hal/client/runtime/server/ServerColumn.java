@@ -34,7 +34,7 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.client.GenericSubsystemPresenter;
+import org.jboss.hal.core.subsystem.GenericSubsystemPresenter;
 import org.jboss.hal.client.runtime.BrowseByColumn;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
