@@ -40,7 +40,6 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.Icons;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -60,7 +59,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  *
  * @author Harald Pehl
  */
-@Column(Ids.DEPLOYMENT_COLUMN)
+@Column(Ids.DEPLOYMENT)
 public class DeploymentColumn extends FinderColumn<Deployment> {
 
     private final Dispatcher dispatcher;
@@ -76,9 +75,9 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
             @Footer final Provider<Progress> progress,
             final Resources resources) {
 
-        super(new Builder<Deployment>(finder, Ids.DEPLOYMENT_COLUMN, Names.DEPLOYMENT)
+        super(new Builder<Deployment>(finder, Ids.DEPLOYMENT, Names.DEPLOYMENT)
 
-                .columnAction(columnActionFactory.add(IdBuilder.build(Ids.CONTENT_COLUMN, "add"),
+                .columnAction(columnActionFactory.add(Ids.DEPLOYMENT_ADD,
                         resources.constants().content(), column -> Browser.getWindow().alert(Names.NYI)))
 
                 .itemsProvider((context, callback) -> {

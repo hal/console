@@ -118,6 +118,7 @@ public interface ModelDescriptionConstants {
 
     String IGNORED = "ignored";
     String IIOP_OPENJDK = "iiop-openjdk";
+    String IMAP = "imap";
     String INCLUDE = "include";
     String INCLUDES = "includes";
     String INCLUDE_ALIASES = "include-aliases";
@@ -179,10 +180,12 @@ public interface ModelDescriptionConstants {
     String OP = "operation";
     String OPERATIONS = "operations";
     String OPERATION_HEADERS = "operation-headers";
+    String OUTBOUND_SOCKET_BINDING_REF = "outbound-socket-binding-ref";
     String OUTCOME = "outcome";
 
     String PASSWORD = "password";
     String PATH = "path";
+    String POP3 = "pop3";
     String PORT = "port";
     String PROCESS_STATE = "process-state";
     String PRODUCT_NAME = "product-name";
@@ -253,6 +256,7 @@ public interface ModelDescriptionConstants {
     String SOCKET_BINDING_GROUP = "socket-binding-group";
     String SOCKET_BINDING_PORT_OFFSET = "socket-binding-port-offset";
     String SHUTDOWN = "shutdown";
+    String SMTP = "smtp";
     String STANDALONE = "standalone";
     String START = "start";
     String START_SERVERS = "start-servers";

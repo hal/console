@@ -39,7 +39,6 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -56,7 +55,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Claudio Miranda
  */
-@AsyncColumn(Ids.MAIL_SESSION_COLUMN)
+@AsyncColumn(Ids.MAIL_SESSION)
 @Requires(MAIL_SESSION_ADDRESS)
 public class MailSessionColumn extends FinderColumn<MailSession> {
 
@@ -71,7 +70,7 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
             final Places places,
             final Resources resources) {
 
-        super(new Builder<MailSession>(finder, Ids.MAIL_SESSION_COLUMN, Names.MAIL_SESSION)
+        super(new Builder<MailSession>(finder, Ids.MAIL_SESSION, Names.MAIL_SESSION)
                 .withFilter()
                 .useFirstActionAsBreadcrumbHandler());
 
@@ -87,10 +86,10 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
             });
         });
 
-        addColumnAction(columnActionFactory.add(IdBuilder.build(MAIL_SESSION, ADD), Names.MAIL_SESSION,
+        addColumnAction(columnActionFactory.add(Ids.MAIL_SESSION_ADD, Names.MAIL_SESSION,
                 column -> {
                     Metadata metadata = metadataRegistry.lookup(AddressTemplates.MAIL_SESSION_TEMPLATE);
-                    AddResourceDialog dialog = new AddResourceDialog(IdBuilder.build(MAIL_SESSION, ADD, "form"),
+                    AddResourceDialog dialog = new AddResourceDialog(Ids.MAIL_SESSION_DIALOG,
                             resources.messages().addResourceTitle(Names.MAIL_SESSION), metadata,
                             Arrays.asList(ModelDescriptionConstants.JNDI_NAME, "from", "debug"), //NON-NLS
                             (name, modelNode) -> {
@@ -111,7 +110,7 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
                             });
                     dialog.show();
                 }));
-        addColumnAction(columnActionFactory.refresh(IdBuilder.build(MAIL_SESSION, "refresh")));
+        addColumnAction(columnActionFactory.refresh(Ids.MAIL_SESSION_REFRESH));
 
         setItemRenderer(mailSession -> new ItemDisplay<MailSession>() {
             @Override

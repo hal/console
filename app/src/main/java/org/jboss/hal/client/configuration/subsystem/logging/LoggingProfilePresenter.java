@@ -123,7 +123,7 @@ public class LoggingProfilePresenter
     @Override
     protected FinderPath finderPath() {
         return finderPathFactory.configurationSubsystemPath(LOGGING_SUBSYSTEM_TEMPLATE.lastValue())
-                .append(Ids.LOGGING_PROFILE_COLUMN, Logging.profileId(loggingProfile),
+                .append(Ids.LOGGING_PROFILE, Ids.loggingProfileId(loggingProfile),
                         Names.LOGGING_PROFILE, loggingProfile);
     }
 

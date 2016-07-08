@@ -44,6 +44,10 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
+import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.CONTEXT_SERVICE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.MANAGED_EXECUTOR_SCHEDULED_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.MANAGED_EXECUTOR_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.MANAGED_THREAD_FACTORY_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.resources.CSS.fontAwesome;
@@ -54,12 +58,6 @@ import static org.jboss.hal.resources.Ids.*;
  */
 public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
 
-    // local ids
-    private static final String CONTEXT_SERVICE_ID = IdBuilder.build(EE, "service", "context-service");
-    private static final String MANAGED_EXECUTOR_ID = IdBuilder.build(EE, "service", "executor");
-    private static final String MANAGED_EXECUTOR_SCHEDULED_ID = IdBuilder.build(EE, "service", "scheduled-executor");
-    private static final String MANAGED_THREAD_FACTORY_ID = IdBuilder.build(EE, "service", "thread-factories");
-
     // local names
     private static final String DEFAULT_BINDINGS_NAME = "Default Bindings";
     private static final String CONTEXT_SERVICE_NAME = "Context Service";
@@ -69,7 +67,6 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
     private static final String MANAGED_THREAD_FACTORY_NAME = "Thread Factories";
 
     private final MetadataRegistry metadataRegistry;
-    private final Resources resources;
     private final VerticalNavigation navigation;
     private final TableButtonFactory tableButtonFactory;
     private final Map<String, ModelNodeForm> forms;
@@ -79,11 +76,10 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
     private EEPresenter presenter;
 
     @Inject
-    public EEView(MetadataRegistry metadataRegistry,
-            final Resources resources,
-            final TableButtonFactory tableButtonFactory) {
+    public EEView(final MetadataRegistry metadataRegistry,
+            final TableButtonFactory tableButtonFactory,
+            final Resources resources) {
         this.metadataRegistry = metadataRegistry;
-        this.resources = resources;
         this.tableButtonFactory = tableButtonFactory;
 
         this.navigation = new VerticalNavigation();
@@ -156,18 +152,18 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
 
         // ============================================
         // services
-        String primaryId = IdBuilder.build(EE, "services", "entry");
-        navigation.addPrimary(primaryId, SERVICES_NAME, fontAwesome("cogs"));
+        navigation.addPrimary(EE_SERVICES_ENTRY, SERVICES_NAME, fontAwesome("cogs"));
 
-        navigation.addSecondary(primaryId, CONTEXT_SERVICE_ID, CONTEXT_SERVICE_NAME,
-                buildServicePanel(AddressTemplates.CONTEXT_SERVICE_TEMPLATE, CONTEXT_SERVICE_NAME));
-        navigation.addSecondary(primaryId, MANAGED_EXECUTOR_ID, MANAGED_EXECUTOR_NAME,
-                buildServicePanel(AddressTemplates.MANAGED_EXECUTOR_TEMPLATE, MANAGED_EXECUTOR_NAME));
-        navigation.addSecondary(primaryId, MANAGED_EXECUTOR_SCHEDULED_ID, MANAGED_EXECUTOR_SCHEDULED_NAME,
-                buildServicePanel(AddressTemplates.MANAGED_EXECUTOR_SCHEDULED_TEMPLATE,
+        navigation.addSecondary(EE_SERVICES_ENTRY, EE_CONTEXT_SERVICE, CONTEXT_SERVICE_NAME,
+                buildServicePanel(EE_CONTEXT_SERVICE, CONTEXT_SERVICE_TEMPLATE, CONTEXT_SERVICE_NAME));
+        navigation.addSecondary(EE_SERVICES_ENTRY, EE_MANAGED_EXECUTOR, MANAGED_EXECUTOR_NAME,
+                buildServicePanel(EE_MANAGED_EXECUTOR, MANAGED_EXECUTOR_TEMPLATE, MANAGED_EXECUTOR_NAME));
+        navigation.addSecondary(EE_SERVICES_ENTRY, EE_MANAGED_EXECUTOR_SCHEDULED, MANAGED_EXECUTOR_SCHEDULED_NAME,
+                buildServicePanel(EE_MANAGED_EXECUTOR_SCHEDULED, MANAGED_EXECUTOR_SCHEDULED_TEMPLATE,
                         MANAGED_EXECUTOR_SCHEDULED_NAME));
-        navigation.addSecondary(primaryId, MANAGED_THREAD_FACTORY_ID, MANAGED_THREAD_FACTORY_NAME,
-                buildServicePanel(AddressTemplates.MANAGED_THREAD_FACTORY_TEMPLATE, MANAGED_THREAD_FACTORY_NAME));
+        navigation.addSecondary(EE_SERVICES_ENTRY, EE_MANAGED_THREAD_FACTORY, MANAGED_THREAD_FACTORY_NAME,
+                buildServicePanel(EE_MANAGED_THREAD_FACTORY, MANAGED_THREAD_FACTORY_TEMPLATE,
+                        MANAGED_THREAD_FACTORY_NAME));
 
         // ============================================
         // main layout
@@ -230,16 +226,16 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
             formDefaultBindings.view(defaultBindings);
         }
         // update the context-service table
-        update(eeData, ModelDescriptionConstants.CONTEXT_SERVICE, CONTEXT_SERVICE_ID);
+        update(eeData, ModelDescriptionConstants.CONTEXT_SERVICE, EE_CONTEXT_SERVICE);
 
         // update the managed-executor-service table
-        update(eeData, MANAGED_EXECUTOR_SERVICE, MANAGED_EXECUTOR_ID);
+        update(eeData, MANAGED_EXECUTOR_SERVICE, EE_MANAGED_EXECUTOR);
 
         // update the managed-scheduled-executor-service table
-        update(eeData, MANAGED_SCHEDULED_EXECUTOR_SERVICE, MANAGED_EXECUTOR_SCHEDULED_ID);
+        update(eeData, MANAGED_SCHEDULED_EXECUTOR_SERVICE, EE_MANAGED_EXECUTOR_SCHEDULED);
 
         // update the managed-thread-factory table
-        update(eeData, MANAGED_THREAD_FACTORY, MANAGED_THREAD_FACTORY_ID);
+        update(eeData, MANAGED_THREAD_FACTORY, EE_MANAGED_THREAD_FACTORY);
 
     }
 
@@ -256,16 +252,15 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
     }
 
     @SuppressWarnings("ConstantConditions")
-    private Element buildServicePanel(AddressTemplate template, String type) {
+    private Element buildServicePanel(String baseId, AddressTemplate template, String type) {
 
         Metadata metadata = metadataRegistry.lookup(template);
 
-        String baseId = IdBuilder.build(EE, "service", template.lastKey());
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
                 .column(NAME, (cell, t, row, meta) -> row.getName())
 
                 .button(tableButtonFactory.add(
-                        IdBuilder.build(baseId, "add"), type,
+                        IdBuilder.build(baseId, Ids.ADD_SUFFIX), type,
                         template,
                         () -> presenter.loadEESubsystem()))
 
@@ -276,11 +271,12 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
 
                 .build();
 
-        ModelNodeTable<NamedNode> table = new ModelNodeTable<>(IdBuilder.build(baseId, "table"), options);
+        ModelNodeTable<NamedNode> table = new ModelNodeTable<>(IdBuilder.build(baseId, Ids.TABLE_SUFFIX), options);
         registerAttachable(table);
         tables.put(template.lastKey(), table);
 
-        ModelNodeForm<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(IdBuilder.build(baseId, "form"), metadata)
+        ModelNodeForm<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(IdBuilder.build(baseId, Ids.FORM_SUFFIX),
+                metadata)
                 .onSave((f, changedValues) -> {
                     AddressTemplate fullyQualified = template.replaceWildcards(table.api().selectedRow().getName());
                     presenter.save(fullyQualified, changedValues, template.lastKey());

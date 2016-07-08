@@ -29,19 +29,19 @@ import org.jboss.hal.spi.Column;
 /**
  * @author Harald Pehl
  */
-@Column(Ids.STANDALONE_SERVER_COLUMN)
+@Column(Ids.STANDALONE_SERVER)
 public class StandaloneServerColumn extends FinderColumn<Server> {
 
     @Inject
     public StandaloneServerColumn(final Finder finder) {
-        super(new Builder<Server>(finder, Ids.STANDALONE_SERVER_COLUMN, Names.STANDALON_SERVER)
+        super(new Builder<Server>(finder, Ids.STANDALONE_SERVER, Names.STANDALON_SERVER)
 
                 .itemsProvider((context, callback) -> callback.onSuccess(Collections.singletonList(Server.STANDALONE)))
 
                 .itemRenderer(item -> new ItemDisplay<Server>() {
                     @Override
                     public String getId() {
-                        return Server.id(item.getName());
+                        return Ids.serverId(item.getName());
                     }
 
                     @Override
@@ -51,7 +51,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> {
 
                     @Override
                     public String nextColumn() {
-                        return Ids.SERVER_MONITOR_COLUMN;
+                        return Ids.SERVER_MONITOR;
                     }
                 })
         );

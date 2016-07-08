@@ -42,7 +42,7 @@ import org.jboss.hal.spi.Footer;
 /**
  * @author Harald Pehl
  */
-@Column(Ids.DOMAIN_BROWSE_BY_COLUMN)
+@Column(Ids.DOMAIN_BROWSE_BY)
 public class BrowseByColumn extends StaticItemColumn {
 
     public static boolean browseByHosts(FinderContext context) {
@@ -68,7 +68,7 @@ public class BrowseByColumn extends StaticItemColumn {
             final ServerGroupActions serverGroupActions,
             final ServerActions serverActions,
             final Resources resources) {
-        super(finder, Ids.DOMAIN_BROWSE_BY_COLUMN, resources.constants().browseBy(),
+        super(finder, Ids.DOMAIN_BROWSE_BY, resources.constants().browseBy(),
                 Arrays.asList(
                         new StaticItem.Builder(Names.TOPOLOGY)
                                 .onPreview(
@@ -76,11 +76,11 @@ public class BrowseByColumn extends StaticItemColumn {
                                                 hostActions, serverGroupActions, serverActions, resources))
                                 .build(),
                         new StaticItem.Builder(Names.HOSTS)
-                                .nextColumn(Ids.HOST_COLUMMN)
+                                .nextColumn(Ids.HOST)
                                 .onPreview(new PreviewContent(Names.HOSTS, resources.previews().hosts()))
                                 .build(),
                         new StaticItem.Builder(Names.SERVER_GROUPS)
-                                .nextColumn(Ids.SERVER_GROUP_COLUMN)
+                                .nextColumn(Ids.SERVER_GROUP)
                                 .onPreview(new PreviewContent(Names.SERVER_GROUPS,
                                         resources.previews().runtimeServerGroups()))
                                 .build()

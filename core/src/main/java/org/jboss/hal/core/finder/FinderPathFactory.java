@@ -19,8 +19,6 @@ import javax.inject.Inject;
 
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.core.runtime.group.ServerGroup;
-import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.subsystem.SubsystemMetadata;
 import org.jboss.hal.core.subsystem.Subsystems;
@@ -68,15 +66,15 @@ public class FinderPathFactory {
         FinderPath path = new FinderPath();
 
         if (environment.isStandalone()) {
-            path.append(Ids.CONFIGURATION_COLUMN, IdBuilder.asId(Names.SUBSYSTEMS),
+            path.append(Ids.CONFIGURATION, IdBuilder.asId(Names.SUBSYSTEMS),
                     Names.CONFIGURATION, Names.SUBSYSTEMS);
         } else {
             String profile = statementContext.selectedProfile();
-            path.append(Ids.CONFIGURATION_COLUMN, IdBuilder.asId(Names.PROFILES), Names.CONFIGURATION, Names.PROFILES)
-                    .append(Ids.PROFILE_COLUMN, profile, Names.PROFILES, profile);
+            path.append(Ids.CONFIGURATION, IdBuilder.asId(Names.PROFILES), Names.CONFIGURATION, Names.PROFILES)
+                    .append(Ids.PROFILE, profile, Names.PROFILES, profile);
 
         }
-        path.append(Ids.CONFIGURATION_SUBSYSTEM_COLUMN, subsystem, Names.SUBSYSTEM, subsystemTitle(subsystem));
+        path.append(Ids.CONFIGURATION_SUBSYSTEM, subsystem, Names.SUBSYSTEM, subsystemTitle(subsystem));
         return path;
     }
 
@@ -89,9 +87,9 @@ public class FinderPathFactory {
     public FinderPath runtimeHostPath() {
         String host = statementContext.selectedHost();
         return new FinderPath()
-                .append(Ids.DOMAIN_BROWSE_BY_COLUMN, IdBuilder.asId(Names.HOSTS),
+                .append(Ids.DOMAIN_BROWSE_BY, IdBuilder.asId(Names.HOSTS),
                         resources.constants().browseBy(), Names.HOSTS)
-                .append(Ids.HOST_COLUMMN, Host.id(host), Names.HOST, host);
+                .append(Ids.HOST, Ids.hostId(host), Names.HOST, host);
     }
 
     /**
@@ -100,9 +98,9 @@ public class FinderPathFactory {
     public FinderPath runtimeServerGroupPath() {
         String serverGroup = statementContext.selectedServerGroup();
         return new FinderPath()
-                .append(Ids.DOMAIN_BROWSE_BY_COLUMN, IdBuilder.asId(Names.SERVER_GROUPS),
+                .append(Ids.DOMAIN_BROWSE_BY, IdBuilder.asId(Names.SERVER_GROUPS),
                         resources.constants().browseBy(), Names.SERVER_GROUPS)
-                .append(SERVER_GROUP, ServerGroup.id(serverGroup), Names.SERVER_GROUP, serverGroup);
+                .append(SERVER_GROUP, Ids.serverGroupId(serverGroup), Names.SERVER_GROUP, serverGroup);
     }
 
     /**
@@ -110,12 +108,12 @@ public class FinderPathFactory {
      */
     public FinderPath runtimeServerPath() {
         if (environment.isStandalone()) {
-            return new FinderPath().append(Ids.STANDALONE_SERVER_COLUMN, Server.id(Server.STANDALONE.getName()),
+            return new FinderPath().append(Ids.STANDALONE_SERVER, Ids.serverId(Server.STANDALONE.getName()),
                     Names.SERVER, Names.STANDALON_SERVER);
         } else {
             String server = statementContext.selectedServer();
             FinderPath path = browseByServerGroups() ? runtimeServerGroupPath() : runtimeHostPath();
-            return path.append(Ids.SERVER_COLUMN, Server.id(server), Names.SERVER, server);
+            return path.append(Ids.SERVER, Ids.serverId(server), Names.SERVER, server);
         }
     }
 
@@ -125,7 +123,7 @@ public class FinderPathFactory {
      */
     public FinderPath runtimeSubsystemPath(String subsystem) {
         return runtimeServerPath()
-                .append(Ids.RUNTIME_SUBSYSTEM_COLUMN, subsystem, Names.SUBSYSTEM, subsystemTitle(subsystem));
+                .append(Ids.RUNTIME_SUBSYSTEM, subsystem, Names.SUBSYSTEM, subsystemTitle(subsystem));
     }
 
 

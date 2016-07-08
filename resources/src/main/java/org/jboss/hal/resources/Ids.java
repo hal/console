@@ -35,95 +35,135 @@
 package org.jboss.hal.resources;
 
 /**
- * Ids used in HTML elements and accross multiple classes
+ * Ids used in HTML elements and across multiple classes. Please add IDs also for stuff that's already in
+ * {@code ModelDescriptionConstants} (SoC).
+ * <p>
+ * The IDs defined here are reused by QA. So it's important that IDs are not spread over the complete code base but
+ * gathered in this interface.
  */
+@SuppressWarnings("DuplicateStringLiteralInspection")
 public interface Ids {
 
-    // ------------------------------------------------------ column ids (need to be unique!)
+    // ------------------------------------------------------ common suffixes used in IDs
 
-    String CACHE_CONTAINER_COLUMN = "cache-container";
-    String CONFIGURATION_COLUMN = "configuration";
-    String CONFIGURATION_SUBSYSTEM_COLUMN = "c-subsystem";
-    String CONTENT_COLUMN = "content";
-
-    String DATA_SOURCE_COLUMN = "data-source";
-    String DATA_SOURCE_DRIVER_COLUMN = "data-source-driver";
-    String DEPLOYMENT_COLUMN = "deployment";
-    String DEPLOYMENT_BROWSE_BY_COLUMN = "deployment-browse-by";
-    String DOMAIN_BROWSE_BY_COLUMN = "domain-browse-by";
-
-    String HOST_COLUMMN = "host";
-
-    String INTERFACE_COLUMN = "interface";
-
-    String JDBC_DRIVER_COLUMN = "jdbc-driver";
-
-    String LOG_FILE_COLUMN = "log-file";
-    String LOGGING_COLUMN = "logging";
-    String LOGGING_PROFILE_COLUMN = "logging-profile";
-
-    String MAIL_SESSION_COLUMN = "mail-session";
-
-    String PROFILE_COLUMN = "profile";
-
-    String RUNTIME_SUBSYSTEM_COLUMN = "r-subsystem";
-
-    String SERVER_COLUMN = "server";
-    String SERVER_GROUP_COLUMN = "server-group";
-    String SERVER_MONITOR_COLUMN = "server-monitor";
-    String SOCKET_BINDING_COLUMN = "socket-binding";
-    String STANDALONE_SERVER_COLUMN = "standalone-server";
-
-    String WEB_SETTINGS_COLUMN = "settings";
+    String ADD_SUFFIX = "add";
+    String ENTRY_SUFFIX = "entry";
+    String FORM_SUFFIX = "form";
+    String REFRESH_SUFFIX = "refresh";
+    String TAB_SUFFIX = "tab";
+    String TABLE_SUFFIX = "table";
+    String WIZARD_SUFFIX = "wizard";
 
 
-    // ------------------------------------------------------ other ids
+    // ------------------------------------------------------ ids (a-z)
 
+    String CONFIGURATION = "configuration";
+    String CONFIGURATION_SUBSYSTEM = "c-subsystem";
+    String CONTENT = "content";
+    String CONTENT_ADD = IdBuilder.build(Ids.CONTENT, ADD_SUFFIX);
+
+    String DATA_SOURCE = "data-source";
+    String DATA_SOURCE_ADD = IdBuilder.build(DATA_SOURCE, ADD_SUFFIX);
+    String DATA_SOURCE_DRIVER = "data-source-driver"; // can't be replaced with IdBuilder.build(...)
+    String DATA_SOURCE_REFRESH = IdBuilder.build(DATA_SOURCE, REFRESH_SUFFIX);
+    String DATA_SOURCE_WIZARD = IdBuilder.build(DATA_SOURCE, WIZARD_SUFFIX);
+    String DEPLOYMENT = "deployment";
+    String DEPLOYMENT_ADD = IdBuilder.build(Ids.DEPLOYMENT, ADD_SUFFIX);
+    String DEPLOYMENT_BROWSE_BY = "deployment-browse-by"; // can't be replaced with IdBuilder.build(...)
+    String DOMAIN_BROWSE_BY = "domain-browse-by";
     String DRAG_AND_DROP_DEPLOYMENT = "drag-and-drop-deployment";
 
-    String EE_ATTRIBUTES_ENTRY = "ee-attributes-entry";
-    String EE_ATTRIBUTES_FORM = "ee-attributes-form";
-    String EE_GLOBAL_MODULES_ENTRY = "ee-global-modules-entry";
-    String EE_GLOBAL_MODULES_TABLE = "ee-global-modules-table";
-    String EE_GLOBAL_MODULES_FORM = "ee-global-modules-form";
-    String EE_DEFAULT_BINDINGS_ENTRY = "ee-default-bindings-entry";
-    String EE_DEFAULT_BINDINGS_FORM = "ee-default-bindings-form";
+    String EE = "ee";
+    String EE_ATTRIBUTES_ENTRY = IdBuilder.build(EE, "attributes", ENTRY_SUFFIX);
+    String EE_ATTRIBUTES_FORM = IdBuilder.build(EE, "attributes", FORM_SUFFIX);
+    String EE_CONTEXT_SERVICE = IdBuilder.build(EE, "service", "context-service");
+    String EE_DEFAULT_BINDINGS_ENTRY = IdBuilder.build(EE, "default-bindings", ENTRY_SUFFIX);
+    String EE_DEFAULT_BINDINGS_FORM = IdBuilder.build(EE, "default-bindings", FORM_SUFFIX);
+    String EE_GLOBAL_MODULES_ENTRY = IdBuilder.build(EE, "global-modules", ENTRY_SUFFIX);
+    String EE_GLOBAL_MODULES_FORM = IdBuilder.build(EE, "global-modules", FORM_SUFFIX);
+    String EE_GLOBAL_MODULES_TABLE = IdBuilder.build(EE, "global-modules", TABLE_SUFFIX);
+    String EE_MANAGED_EXECUTOR = IdBuilder.build(EE, "service", "executor");
+    String EE_MANAGED_EXECUTOR_SCHEDULED = IdBuilder.build(EE, "service", "scheduled-executor");
+    String EE_MANAGED_THREAD_FACTORY = IdBuilder.build(EE, "service", "thread-factories");
+    String EE_SERVICES_ENTRY = IdBuilder.build(Ids.EE, "services", ENTRY_SUFFIX);
 
-    String ENDPOINT_ADD = "endpoint-add";
-    String ENDPOINT_PING = "endpoint-ping";
-    String ENDPOINT_SELECT = "endpoint-select";
+    String ENDPOINT = "endpoint";
+    String ENDPOINT_ADD = IdBuilder.build(ENDPOINT, "add");
+    String ENDPOINT_PING = IdBuilder.build(ENDPOINT, "ping");
+    String ENDPOINT_SELECT = IdBuilder.build(ENDPOINT, "select");
 
     String FINDER = "hal-finder";
 
-    String HEADER_CONNECTED_TO = "header-connected-to";
-    String HEADER_MESSAGES = "header-messages";
-    String HEADER_ROLES = "header-roles";
-    String HEADER_USERNAME = "header-username";
-    String HOMEPAGE_ACCESS_CONTROL_SECTION = "homepage-access-control-section";
-    String HOMEPAGE_CONFIGURATION_SECTION = "homepage-configuration-section";
-    String HOMEPAGE_DEPLOYMENTS_SECTION = "homepage-deployments-section";
-    String HOMEPAGE_PATCHING_SECTION = "homepage-patching-section";
-    String HOMEPAGE_RUNTIME_SECTION = "homepage-runtime-section";
-    String HOMEPAGE_RUNTIME_MONITOR_SECTION = "homepage-runtime-monitor-section";
-    String HOMEPAGE_RUNTIME_SERVER_SECTION = "homepage-runtime-server-section";
-    String HOMEPAGE_RUNTIME_SERVER_GROUP_SECTION = "homepage-runtime-server-group-section";
+    String HEADER = "header";
+    String HEADER_CONNECTED_TO = IdBuilder.build(HEADER, "connected-to");
+    String HEADER_MESSAGES = IdBuilder.build(HEADER, "messages");
+    String HEADER_ROLES = IdBuilder.build(HEADER, "roles");
+    String HEADER_USERNAME = IdBuilder.build(HEADER, "username");
 
-    String LOG_FILE_EDITOR = "log-file-editor";
+    String HOMEPAGE = "homepage";
+    String HOMEPAGE_ACCESS_CONTROL_SECTION = IdBuilder.build(HOMEPAGE, "access-control-section");
+    String HOMEPAGE_CONFIGURATION_SECTION = IdBuilder.build(HOMEPAGE, "configuration-section");
+    String HOMEPAGE_DEPLOYMENTS_SECTION = IdBuilder.build(HOMEPAGE, "deployments-section");
+    String HOMEPAGE_PATCHING_SECTION = IdBuilder.build(HOMEPAGE, "patching-section");
+    String HOMEPAGE_RUNTIME_MONITOR_SECTION = IdBuilder.build(HOMEPAGE, "runtime-monitor-section");
+    String HOMEPAGE_RUNTIME_SECTION = IdBuilder.build(HOMEPAGE, "runtime-section");
+    String HOMEPAGE_RUNTIME_SERVER_GROUP_SECTION = IdBuilder.build(HOMEPAGE, "runtime-server-group-section");
+    String HOMEPAGE_RUNTIME_SERVER_SECTION = IdBuilder.build(HOMEPAGE, "runtime-server-section");
+    String HOST = "host";
+    String HOST_REFRESH = IdBuilder.build(HOST, REFRESH_SUFFIX);
 
-    String MACRO_EDITOR = "macro-editor";
-    String MACRO_LIST = "macro-list";
-    String MACRO_OPTIONS = "macro-options";
-    String MAIL_SESSION_ATTRIBUTES_ENTRY = "mail-session-attributes-entry";
-    String MAIL_SESSION_ATTRIBUTES_FORM = "mail-session-attributes-form";
-    String MAIL_SESSION_SERVERS_ENTRY = "mail-session-servers-entry";
-    String MAIL_SESSION_SERVERS_FORM = "mail-session-servers-form";
-    String MAIL_SESSION_SERVERS_TABLE = "mail-session-servers-table";
+    String INTERFACE = "interface";
+    String INTERFACE_ADD = IdBuilder.build(INTERFACE, ADD_SUFFIX);
+    String INTERFACE_REFRESH = IdBuilder.build(INTERFACE, REFRESH_SUFFIX);
+
+    String JDBC_DRIVER = "jdbc-driver";
+    String JDBC_DRIVER_ADD = IdBuilder.build(JDBC_DRIVER, ADD_SUFFIX);
+    String JDBC_DRIVER_ADD_FORM = IdBuilder.build(JDBC_DRIVER, ADD_SUFFIX, FORM_SUFFIX);
+    String JDBC_DRIVER_REFRESH = IdBuilder.build(JDBC_DRIVER, REFRESH_SUFFIX);
+
+    String LOG_FILE = "log-file";
+    String LOG_FILE_EDITOR = IdBuilder.build(LOG_FILE, "editor");
+    String LOG_FILE_REFRESH = IdBuilder.build(LOG_FILE, REFRESH_SUFFIX);
+    String LOGGING = "logging";
+    String LOGGING_PROFILE = "logging-profile";
+    String LOGGING_PROFILE_ADD = IdBuilder.build(LOGGING_PROFILE, ADD_SUFFIX);
+
+    String MACRO = "macro";
+    String MACRO_EDITOR = IdBuilder.build(MACRO, "editor");
+    String MACRO_LIST = IdBuilder.build(MACRO, "list");
+    String MACRO_OPTIONS = IdBuilder.build(MACRO, "options");
+    String MAIL_SERVER = "mail-server";
+    String MAIL_SERVER_ENTRY = IdBuilder.build(MAIL_SERVER, ENTRY_SUFFIX);
+    String MAIL_SERVER_DIALOG = IdBuilder.build(MAIL_SERVER, ADD_SUFFIX, FORM_SUFFIX);
+    String MAIL_SERVER_FORM = IdBuilder.build(MAIL_SERVER, FORM_SUFFIX);
+    String MAIL_SERVER_TABLE = IdBuilder.build(MAIL_SERVER, TABLE_SUFFIX);;
+    String MAIL_SESSION = "mail-session";
+    String MAIL_SESSION_ADD = IdBuilder.build(MAIL_SESSION, ADD_SUFFIX);
+    String MAIL_SESSION_ATTRIBUTES_ENTRY = IdBuilder.build(MAIL_SESSION, "attributes", ENTRY_SUFFIX);
+    String MAIL_SESSION_ATTRIBUTES_FORM = IdBuilder.build(MAIL_SESSION, "attributes", FORM_SUFFIX);
+    String MAIL_SESSION_DIALOG = IdBuilder.build(MAIL_SESSION, FORM_SUFFIX);
+    String MAIL_SESSION_REFRESH = IdBuilder.build(MAIL_SESSION, REFRESH_SUFFIX);
     String MODEL_BROWSER = "model-browser";
 
     String PREVIEW_ID = IdBuilder.build(FINDER, "preview");
+    String PROFILE = "profile";
+    String PROFILE_ADD = IdBuilder.build(PROFILE, ADD_SUFFIX);
+    String PROFILE_REFRESH = IdBuilder.build(PROFILE, REFRESH_SUFFIX);
 
     String ROOT_CONTAINER = "hal-root-container";
+    String RUNTIME_SUBSYSTEM = "r-subsystem";
 
+    String SERVER = "server";
+    String SERVER_ADD = IdBuilder.build(SERVER, ADD_SUFFIX);
+    String SERVER_GROUP = "server-group";
+    String SERVER_GROUP_ADD = IdBuilder.build(SERVER_GROUP, ADD_SUFFIX);
+    String SERVER_GROUP_REFRESH = IdBuilder.build(SERVER_GROUP, REFRESH_SUFFIX);
+    String SERVER_MONITOR = "server-monitor";
+    String SERVER_REFRESH = IdBuilder.build(SERVER, REFRESH_SUFFIX);
+    String SOCKET_BINDING = "socket-binding";
+    String SOCKET_BINDING_ADD = IdBuilder.build(SOCKET_BINDING, ADD_SUFFIX);
+    String SOCKET_BINDING_REFRESH = IdBuilder.build(SOCKET_BINDING, REFRESH_SUFFIX);
+    String STANDALONE_SERVER = "standalone-server";
     String STORAGE_PREFIX = "org.jboss.hal";
 
     String TLC_ACCESS_CONTROL = "tlc-access-control";
@@ -134,5 +174,38 @@ public interface Ids {
     String TLC_RUNTIME = "tlc-runtime";
 
     String VERSION_INFO = "version-info";
-    String VERSION_INFO_FORM = IdBuilder.build(VERSION_INFO, "form");
+    String VERSION_INFO_FORM = IdBuilder.build(VERSION_INFO, FORM_SUFFIX);
+
+    String WEB_SETTINGS = "settings";
+
+    String XA_DATA_SOURCE = "xa-data-source";
+    String XA_DATA_SOURCE_ADD = IdBuilder.build(XA_DATA_SOURCE, ADD_SUFFIX);
+
+    static String dataSourceId(String name, boolean xa) {
+        return IdBuilder.build(xa ? "xa" : "non-xa", DATA_SOURCE, name);
+    }
+
+    static String hostId(final String name) {
+        return IdBuilder.build(HOST, name);
+    }
+
+    static String loggingProfileId(final String name) {
+        return IdBuilder.build(LOGGING, name);
+    }
+
+    static String serverId(final String name) {
+        return IdBuilder.build(SERVER, name);
+    }
+
+    static String hostServerId(final String host, final String server) {
+        return IdBuilder.build(host, server);
+    }
+
+    static String serverGroupServerId(final String serverGroup, final String server) {
+        return IdBuilder.build(serverGroup, server);
+    }
+
+    static String serverGroupId(final String name) {
+        return IdBuilder.build(SERVER_GROUP, name);
+    }
 }

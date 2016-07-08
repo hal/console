@@ -38,6 +38,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
@@ -114,7 +115,7 @@ public class TableButtonFactory {
                 if (otherAttributes != null) {
                     attributes.addAll(asList(otherAttributes));
                 }
-                AddResourceDialog dialog = new AddResourceDialog(IdBuilder.build(id, "add", "form"),
+                AddResourceDialog dialog = new AddResourceDialog(IdBuilder.build(id, Ids.FORM_SUFFIX),
                         resources.messages().addResourceTitle(type), metadata, attributes, addResourceCallback);
                 dialog.show();
             }

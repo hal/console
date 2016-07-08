@@ -47,6 +47,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.meta.processing.MetadataProcessor.MetadataCallback;
 import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
@@ -216,7 +217,7 @@ public class ServerGroupActions {
             metadataProcessor.lookup(template, progress.get(), new MetadataCallback() {
                 @Override
                 public void onMetadata(final Metadata metadata) {
-                    String id = IdBuilder.build(SUSPEND_SERVERS, serverGroup.getName(), "form");
+                    String id = IdBuilder.build(SUSPEND_SERVERS, serverGroup.getName(), Ids.FORM_SUFFIX);
                     Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, SUSPEND_SERVERS).build();
 
                     Dialog dialog = DialogFactory
@@ -299,7 +300,7 @@ public class ServerGroupActions {
             metadataProcessor.lookup(template, progress.get(), new MetadataCallback() {
                 @Override
                 public void onMetadata(final Metadata metadata) {
-                    String id = IdBuilder.build(STOP_SERVERS, serverGroup.getName(), "form");
+                    String id = IdBuilder.build(STOP_SERVERS, serverGroup.getName(), Ids.FORM_SUFFIX);
                     Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, STOP_SERVERS)
                             .include(TIMEOUT).build();
 

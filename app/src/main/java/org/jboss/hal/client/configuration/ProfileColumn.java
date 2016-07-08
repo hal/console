@@ -35,7 +35,6 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Column;
@@ -49,7 +48,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OP
 /**
  * @author Harald Pehl
  */
-@Column(Ids.PROFILE_COLUMN)
+@Column(Ids.PROFILE)
 @Requires(value = "/profile=*", recursive = false)
 public class ProfileColumn extends FinderColumn<String> {
 
@@ -64,13 +63,12 @@ public class ProfileColumn extends FinderColumn<String> {
             final ColumnActionFactory columnActionFactory,
             final StatementContext statementContext) {
 
-        super(new Builder<String>(finder, Ids.PROFILE_COLUMN, Names.PROFILE)
+        super(new Builder<String>(finder, Ids.PROFILE, Names.PROFILE)
                 .columnAction(columnActionFactory.add(
-                        IdBuilder.build(PROFILE, "add"),
+                        Ids.PROFILE_ADD,
                         Names.PROFILE,
                         PROFILE_TEMPLATE))
-                .columnAction(
-                        columnActionFactory.refresh(IdBuilder.build(PROFILE, "refresh")))
+                .columnAction(columnActionFactory.refresh(Ids.PROFILE_REFRESH))
 
                 .itemsProvider((context, callback) -> {
                     Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION,
@@ -89,7 +87,7 @@ public class ProfileColumn extends FinderColumn<String> {
 
                     @Override
                     public String nextColumn() {
-                        return Ids.CONFIGURATION_SUBSYSTEM_COLUMN;
+                        return Ids.CONFIGURATION_SUBSYSTEM;
                     }
                 })
 

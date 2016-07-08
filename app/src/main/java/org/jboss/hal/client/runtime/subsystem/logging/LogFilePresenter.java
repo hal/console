@@ -133,9 +133,9 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
     @Override
     protected FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.SERVER_MONITOR_COLUMN, IdBuilder.asId(resources.constants().logFiles()),
+                .append(Ids.SERVER_MONITOR, IdBuilder.asId(resources.constants().logFiles()),
                         resources.constants().monitor(), resources.constants().logFiles())
-                .append(Ids.LOG_FILE_COLUMN, IdBuilder.asId(logFileName), resources.constants().logFile(), logFileName);
+                .append(Ids.LOG_FILE, IdBuilder.asId(logFileName), resources.constants().logFile(), logFileName);
     }
 
     @Override

@@ -62,7 +62,7 @@ public class ConfigurationPresenter
 
     @Override
     protected String initialColumn() {
-        return Ids.CONFIGURATION_COLUMN;
+        return Ids.CONFIGURATION;
     }
 
     @Override

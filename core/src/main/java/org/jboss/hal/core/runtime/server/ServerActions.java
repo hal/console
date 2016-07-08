@@ -42,6 +42,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
@@ -191,7 +192,7 @@ public class ServerActions {
         metadataProcessor.lookup(template, progress.get(), new MetadataProcessor.MetadataCallback() {
             @Override
             public void onMetadata(final Metadata metadata) {
-                String id = IdBuilder.build(SUSPEND, server.getName(), "form");
+                String id = IdBuilder.build(SUSPEND, server.getName(), Ids.FORM_SUFFIX);
                 Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, SUSPEND).build();
 
                 Dialog dialog = DialogFactory
@@ -257,7 +258,7 @@ public class ServerActions {
         metadataProcessor.lookup(template, progress.get(), new MetadataProcessor.MetadataCallback() {
             @Override
             public void onMetadata(final Metadata metadata) {
-                String id = IdBuilder.build(STOP, server.getName(), "form");
+                String id = IdBuilder.build(STOP, server.getName(), Ids.FORM_SUFFIX);
                 Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, STOP)
                         .include(TIMEOUT).build();
 
@@ -330,17 +331,17 @@ public class ServerActions {
         MessageEvent.fire(eventBus, message);
     }
     public void markAsPending(Server server) {
-        pendingServers.put(IdBuilder.build(server.getHost(), server.getName()), server);
+        pendingServers.put(Ids.hostServerId(server.getHost(), server.getName()), server);
         logger.debug("Mark server {} as pending", server.getName());
     }
 
     public void clearPending(Server server) {
-        pendingServers.remove(IdBuilder.build(server.getHost(), server.getName()));
+        pendingServers.remove(Ids.hostServerId(server.getHost(), server.getName()));
         logger.debug("Clear pending state for server {}", server.getName());
     }
 
     public boolean isPending(Server server) {
-        return pendingServers.containsKey(IdBuilder.build(server.getHost(), server.getName()));
+        return pendingServers.containsKey(Ids.hostServerId(server.getHost(), server.getName()));
     }
 
     private Operation readServerConfigStatus(Server server) {

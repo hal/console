@@ -22,7 +22,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.resources.IdBuilder;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
@@ -40,10 +39,6 @@ public class Server extends NamedNode {
 
     public static final Server STANDALONE = new Server(STANDALONE_HOST, STANDALONE_SERVER,
             ServerConfigStatus.STARTED, RunningState.RUNNING);
-
-    public static String id(final String name) {
-        return IdBuilder.build(SERVER, name);
-    }
 
     private Server(String host, String server, ServerConfigStatus serverConfigStatus,
             RunningState serverState) {

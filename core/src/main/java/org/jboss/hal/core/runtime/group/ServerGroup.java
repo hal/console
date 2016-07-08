@@ -19,7 +19,6 @@ import org.jboss.hal.core.runtime.HasServersNode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.resources.IdBuilder;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
@@ -28,10 +27,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
  * @author Harald Pehl
  */
 public class ServerGroup extends HasServersNode {
-
-    public static String id(final String name) {
-        return IdBuilder.build(SERVER_GROUP, name);
-    }
 
     public ServerGroup(final String name, final ModelNode node) {
         super(name, node);

@@ -31,20 +31,20 @@ import static java.util.Arrays.asList;
 /**
  * @author Harald Pehl
  */
-@AsyncColumn(Ids.DATA_SOURCE_DRIVER_COLUMN)
+@AsyncColumn(Ids.DATA_SOURCE_DRIVER)
 public class DataSourcesDriversColumn extends StaticItemColumn {
 
     @Inject
     public DataSourcesDriversColumn(final Finder finder,
             Resources resources) {
 
-        super(finder, Ids.DATA_SOURCE_DRIVER_COLUMN, Names.DATASOURCES_DRIVERS, asList(
+        super(finder, Ids.DATA_SOURCE_DRIVER, Names.DATASOURCES_DRIVERS, asList(
                 new StaticItem.Builder(Names.DATASOURCES)
-                        .nextColumn(Ids.DATA_SOURCE_COLUMN)
+                        .nextColumn(Ids.DATA_SOURCE)
                         .onPreview(new PreviewContent(Names.DATASOURCES, resources.previews().datasourcesOnly()))
                         .build(),
                 new StaticItem.Builder(Names.JDBC_DRIVERS)
-                        .nextColumn(Ids.JDBC_DRIVER_COLUMN)
+                        .nextColumn(Ids.JDBC_DRIVER)
                         .onPreview(new PreviewContent(Names.JDBC_DRIVERS, resources.previews().jdbcDrivers()))
                         .build()
         ));

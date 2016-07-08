@@ -65,7 +65,6 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -84,7 +83,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-@Column(Ids.SERVER_COLUMN)
+@Column(Ids.SERVER)
 @Requires(value = {"/host=*/server-config=*", "/host=*/server=*"}, recursive = false)
 public class ServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
@@ -102,7 +101,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             final ItemActionFactory itemActionFactory,
             final ServerActions serverActions,
             final Resources resources) {
-        super(new Builder<Server>(finder, Ids.SERVER_COLUMN, Names.SERVER)
+        super(new Builder<Server>(finder, Ids.SERVER, Names.SERVER)
 
                 .onItemSelect(server -> {
                     if (BrowseByColumn.browseByServerGroups(finder.getContext())) {
@@ -237,7 +236,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                             // Restore pending servers visualization
                             servers.stream()
                                     .filter(serverActions::isPending)
-                                    .forEach(server -> ItemMonitor.startProgress(Server.id(server.getName())));
+                                    .forEach(server -> ItemMonitor.startProgress(Ids.serverId(server.getName())));
                         }
                     },
                     serverConfigsFn, startedServersFn);
@@ -269,7 +268,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
         setItemRenderer(item -> new ItemDisplay<Server>() {
             @Override
             public String getId() {
-                return Server.id(item.getName());
+                return Ids.serverId(item.getName());
             }
 
             @Override
@@ -344,7 +343,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         .with(SERVER_CONFIG, item.getName())
                         .build();
                 List<ItemAction<Server>> actions = new ArrayList<>();
-                actions.add(itemActionFactory.viewAndMonitor(Server.id(item.getName()), placeRequest));
+                actions.add(itemActionFactory.viewAndMonitor(Ids.serverId(item.getName()), placeRequest));
                 if (!serverActions.isPending(item)) {
                     if (!item.isStarted()) {
                         AddressTemplate template = AddressTemplate
@@ -373,13 +372,13 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
             @Override
             public String nextColumn() {
-                return item.isStarted() ? Ids.SERVER_MONITOR_COLUMN : null;
+                return item.isStarted() ? Ids.SERVER_MONITOR : null;
             }
         });
 
-        addColumnAction(columnActionFactory.add(IdBuilder.build(SERVER, "add"), Names.SERVER,
+        addColumnAction(columnActionFactory.add(Ids.SERVER_ADD, Names.SERVER,
                 column -> addServer(BrowseByColumn.browseByHosts(finder.getContext()))));
-        addColumnAction(columnActionFactory.refresh(IdBuilder.build(SERVER, "refresh")));
+        addColumnAction(columnActionFactory.refresh(Ids.SERVER_REFRESH));
 
         eventBus.addHandler(ServerActionEvent.getType(), this);
         eventBus.addHandler(ServerResultEvent.getType(), this);
@@ -395,13 +394,13 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
     private boolean serverIsLastSegment() {
         FinderSegment segment = Iterables.getLast(finder.getContext().getPath(), null);
-        return segment != null && Ids.SERVER_COLUMN.equals(segment.getColumnId());
+        return segment != null && Ids.SERVER.equals(segment.getColumnId());
     }
 
     @Override
     public void onServerAction(final ServerActionEvent event) {
         if (isVisible()) {
-            ItemMonitor.startProgress(Server.id(event.getServer().getName()));
+            ItemMonitor.startProgress(Ids.serverId(event.getServer().getName()));
             refresh(RESTORE_SELECTION);
         }
     }
@@ -410,11 +409,11 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     public void onServerResult(final ServerResultEvent event) {
         if (isVisible()) {
             Server server = event.getServer();
-            String itemId = Server.id(server.getName());
+            String itemId = Ids.serverId(server.getName());
             ItemMonitor.stopProgress(itemId);
 
             // 'Browse By' does not need to be refreshed
-            finder.refresh(finder.getContext().getPath().subPathAfter(Ids.DOMAIN_BROWSE_BY_COLUMN));
+            finder.refresh(finder.getContext().getPath().subPathAfter(Ids.DOMAIN_BROWSE_BY));
         }
     }
 }

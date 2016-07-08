@@ -33,6 +33,7 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
@@ -120,7 +121,7 @@ public class ColumnActionFactory {
             if (otherAttributes != null) {
                 attributes.addAll(asList(otherAttributes));
             }
-            AddResourceDialog dialog = new AddResourceDialog(IdBuilder.build(id, "form"),
+            AddResourceDialog dialog = new AddResourceDialog(IdBuilder.build(id, Ids.FORM_SUFFIX),
                     resources.messages().addResourceTitle(type), metadata,  attributes,
                     new ColumnAddResourceCallback<>(column, type, template));
             dialog.show();

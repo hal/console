@@ -51,7 +51,6 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -131,7 +130,7 @@ public class MailSessionPresenter
     @Override
     protected FinderPath finderPath() {
         return finderPathFactory.configurationSubsystemPath(ModelDescriptionConstants.MAIL)
-                .append(Ids.MAIL_SESSION_COLUMN, mailSessionName, Names.MAIL_SESSION, mailSessionName);
+                .append(Ids.MAIL_SESSION, mailSessionName, Names.MAIL_SESSION, mailSessionName);
     }
 
     void loadMailSession() {
@@ -156,12 +155,12 @@ public class MailSessionPresenter
     }
 
     void launchAddNewServer() {
-        SortedSet<String> availableServers = new TreeSet<>(asList(MailSession.SMTP.toUpperCase(),
-                MailSession.IMAP.toUpperCase(), MailSession.POP3.toUpperCase()));
+        SortedSet<String> availableServers = new TreeSet<>(asList(SMTP.toUpperCase(),
+                IMAP.toUpperCase(), POP3.toUpperCase()));
         ResourceAddress selectedSessionAddress = AddressTemplates.SELECTED_MAIL_SESSION_TEMPLATE
                 .resolve(statementContext);
         Operation serverNamesOp = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, selectedSessionAddress)
-                .param(CHILD_TYPE, MailSession.SERVER)
+                .param(CHILD_TYPE, SERVER)
                 .build();
         dispatcher.execute(serverNamesOp, serversResult -> {
             Set<String> existingServers = serversResult.asList().stream()
@@ -188,9 +187,9 @@ public class MailSessionPresenter
 
                 Metadata metadata = metadataRegistry.lookup(AddressTemplates.SERVER_TEMPLATE);
                 AddResourceDialog dialog = new AddResourceDialog(
-                        IdBuilder.build(ModelDescriptionConstants.SERVER, ModelDescriptionConstants.ADD, "form"),
+                        Ids.MAIL_SERVER_DIALOG,
                         resources.messages().addResourceTitle(Names.SERVER), metadata,
-                        asList(MailSession.OUTBOUND_SOCKET_BINDING_REF, "username", "password", "ssl", "tls"), //NON-NLS
+                        asList(OUTBOUND_SOCKET_BINDING_REF, "username", "password", "ssl", "tls"), //NON-NLS
                         (name, modelNode) -> {
 
                             String serverType = serverTypeItem.getValue().toLowerCase();
@@ -208,7 +207,7 @@ public class MailSessionPresenter
                                 loadMailSession();
                             });
                         });
-                dialog.getForm().getFormItem(MailSession.OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
+                dialog.getForm().getFormItem(OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
                         new Typeahead(AddressTemplates.SOCKET_BINDING_TEMPLATE, statementContext));
                 dialog.show();
             }

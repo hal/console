@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
+import static com.google.common.base.Strings.nullToEmpty;
+
 /**
  * The finder path holds the current selection in the finder. It's a collection of segments with each segment holding
  * four values:
@@ -45,9 +47,11 @@ public class FinderPath implements Iterable<FinderSegment> {
     public static FinderPath from(String path) {
         List<FinderSegment> segments = new ArrayList<>();
 
-        Map<String, String> parts = Splitter.on('/').withKeyValueSeparator('=').split(path);
-        for (Map.Entry<String, String> entry : parts.entrySet()) {
-            segments.add(new FinderSegment(entry.getKey(), entry.getValue()));
+        if (nullToEmpty(path).trim().length() != 0) {
+            Map<String, String> parts = Splitter.on('/').withKeyValueSeparator('=').split(path);
+            for (Map.Entry<String, String> entry : parts.entrySet()) {
+                segments.add(new FinderSegment(entry.getKey(), entry.getValue()));
+            }
         }
 
         return new FinderPath(segments);

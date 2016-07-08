@@ -41,7 +41,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
 /**
  * @author Harald Pehl
  */
-@AsyncColumn(Ids.LOGGING_COLUMN)
+@AsyncColumn(Ids.LOGGING)
 public class LoggingColumn extends StaticItemColumn {
 
     @Inject
@@ -53,7 +53,7 @@ public class LoggingColumn extends StaticItemColumn {
             final Places places,
             final Resources resources) {
 
-        super(finder, Ids.LOGGING_COLUMN, Names.LOGGING, asList(
+        super(finder, Ids.LOGGING, Names.LOGGING, asList(
 
                 new StaticItem.Builder(Names.CONFIGURATION)
                         .id(NameTokens.LOGGING_CONFIGURATION)
@@ -72,7 +72,7 @@ public class LoggingColumn extends StaticItemColumn {
                         .build(),
 
                 new StaticItem.Builder(Names.LOGGING_PROFILES)
-                        .nextColumn(Ids.LOGGING_PROFILE_COLUMN)
+                        .nextColumn(Ids.LOGGING_PROFILE)
                         .onPreview(new PreviewContent(Names.LOGGING_PROFILES, resources.previews().loggingProfiles()))
                         .build()
         ));

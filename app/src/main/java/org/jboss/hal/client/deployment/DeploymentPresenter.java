@@ -84,7 +84,7 @@ public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyV
 
     @Override
     protected String initialColumn() {
-        return environment.isStandalone() ? Ids.DEPLOYMENT_COLUMN : Ids.DEPLOYMENT_BROWSE_BY_COLUMN;
+        return environment.isStandalone() ? Ids.DEPLOYMENT : Ids.DEPLOYMENT_BROWSE_BY;
     }
 
     @Override

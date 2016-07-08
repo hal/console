@@ -18,18 +18,18 @@ package org.jboss.hal.core.runtime.host;
 import org.jboss.hal.core.runtime.HasServersNode;
 import org.jboss.hal.core.runtime.RunningMode;
 import org.jboss.hal.core.runtime.RunningState;
-import org.jboss.hal.core.runtime.SuspendState;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.resources.IdBuilder;
 
 import static org.jboss.hal.core.runtime.RunningMode.ADMIN_ONLY;
 import static org.jboss.hal.core.runtime.RunningState.RELOAD_REQUIRED;
 import static org.jboss.hal.core.runtime.RunningState.RESTART_REQUIRED;
 import static org.jboss.hal.core.runtime.RunningState.STARTING;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNNING_MODE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 
 /**
@@ -40,14 +40,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  * @author Harald Pehl
  */
 public class Host extends HasServersNode {
-
-    public static String id(final Host host) {
-        return id(host.getAddressName());
-    }
-
-    public static String id(final String name) {
-        return IdBuilder.build(HOST, name);
-    }
 
     private final String addressName;
 
@@ -71,17 +63,6 @@ public class Host extends HasServersNode {
 
     public RunningState getHostState() {
         return asEnumValue(this, HOST_STATE, RunningState::valueOf, RunningState.UNDEFINED);
-    }
-
-    public void setHostState(RunningState state) {
-        get(HOST_STATE).set(ModelNodeHelper.asAttributeValue(state));
-    }
-
-    /**
-     * @return the state as defined by {@code server.suspend-state}
-     */
-    public SuspendState getSuspendState() {
-        return asEnumValue(this, SUSPEND_STATE, SuspendState::valueOf, SuspendState.UNDEFINED);
     }
 
     /**

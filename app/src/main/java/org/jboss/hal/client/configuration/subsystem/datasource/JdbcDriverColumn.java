@@ -46,7 +46,6 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -67,7 +66,7 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 /**
  * @author Harald Pehl
  */
-@AsyncColumn(Ids.JDBC_DRIVER_COLUMN)
+@AsyncColumn(Ids.JDBC_DRIVER)
 @Requires(JDBC_DRIVER_ADDRESS)
 public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
 
@@ -83,7 +82,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
             final @Footer Provider<Progress> progress,
             final Resources resources) {
 
-        super(new FinderColumn.Builder<JdbcDriver>(finder, Ids.JDBC_DRIVER_COLUMN, Names.JDBC_DRIVER)
+        super(new FinderColumn.Builder<JdbcDriver>(finder, Ids.JDBC_DRIVER, Names.JDBC_DRIVER)
 
                 .itemsProvider((context, callback) -> {
                     Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
@@ -107,11 +106,10 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                 .withFilter()
         );
 
-        addColumnAction(columnActionFactory.add(IdBuilder.build(JDBC_DRIVER, "add"), Names.JDBC_DRIVER,
+        addColumnAction(columnActionFactory.add(Ids.JDBC_DRIVER_ADD, Names.JDBC_DRIVER,
                 column -> {
                     Metadata metadata = metadataRegistry.lookup(JDBC_DRIVER_TEMPLATE);
-                    Form<ModelNode> form = new ModelNodeForm.Builder<>(
-                            IdBuilder.build(JDBC_DRIVER, "add", "form"), metadata)
+                    Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.JDBC_DRIVER_ADD_FORM, metadata)
                             .addFromRequestProperties()
                             .include(DRIVER_NAME, DRIVER_MODULE_NAME, DRIVER_CLASS_NAME, DRIVER_MAJOR_VERSION,
                                     DRIVER_MINOR_VERSION)
@@ -136,7 +134,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                             });
                     dialog.show();
                 }));
-        addColumnAction(columnActionFactory.refresh(IdBuilder.build(JDBC_DRIVER, "refresh")));
+        addColumnAction(columnActionFactory.refresh(Ids.JDBC_DRIVER_REFRESH));
 
         setItemRenderer(driver -> new ItemDisplay<JdbcDriver>() {
             @Override

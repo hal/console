@@ -62,7 +62,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_DESCRIPT
 /**
  * @author Harald Pehl
  */
-@Column(Ids.CONFIGURATION_SUBSYSTEM_COLUMN)
+@Column(Ids.CONFIGURATION_SUBSYSTEM)
 public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
     private static class ResourceDescriptionPreview extends PreviewContent<SubsystemMetadata> {
@@ -108,7 +108,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
             final Subsystems subsystems,
             final Resources resources) {
 
-        super(new Builder<SubsystemMetadata>(finder, Ids.CONFIGURATION_SUBSYSTEM_COLUMN, Names.SUBSYSTEM)
+        super(new Builder<SubsystemMetadata>(finder, Ids.CONFIGURATION_SUBSYSTEM, Names.SUBSYSTEM)
 
                 .itemRenderer(item -> new ItemDisplay<SubsystemMetadata>() {
                     @Override

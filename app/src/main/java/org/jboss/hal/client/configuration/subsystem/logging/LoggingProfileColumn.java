@@ -33,7 +33,6 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -48,7 +47,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 /**
  * @author Harald Pehl
  */
-@AsyncColumn(Ids.LOGGING_PROFILE_COLUMN)
+@AsyncColumn(Ids.LOGGING_PROFILE)
 @Requires(LOGGING_PROFILE_ADDRESS)
 public class LoggingProfileColumn extends FinderColumn<NamedNode> {
 
@@ -61,10 +60,10 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
             final StatementContext statementContext,
             final Resources resources) {
 
-        super(new FinderColumn.Builder<NamedNode>(finder, Ids.LOGGING_PROFILE_COLUMN, Names.LOGGING_PROFILES)
+        super(new FinderColumn.Builder<NamedNode>(finder, Ids.LOGGING_PROFILE, Names.LOGGING_PROFILES)
 
                 .columnAction(columnActionFactory.add(
-                        IdBuilder.build(LOGGING_PROFILE, "add"),
+                        Ids.LOGGING_PROFILE_ADD,
                         Names.LOGGING_PROFILE,
                         AddressTemplates.LOGGING_PROFILE_TEMPLATE))
 
@@ -90,7 +89,7 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
         setItemRenderer(item -> new ItemDisplay<NamedNode>() {
             @Override
             public String getId() {
-                return Logging.profileId(item.getName());
+                return Ids.loggingProfileId(item.getName());
             }
 
             @Override
@@ -104,7 +103,7 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
                         .with(NAME, item.getName())
                         .build();
                 return Arrays.asList(
-                        itemActionFactory.viewAndMonitor(Logging.profileId(item.getName()), placeRequest),
+                        itemActionFactory.viewAndMonitor(Ids.loggingProfileId(item.getName()), placeRequest),
                         itemActionFactory.remove(Names.LOGGING_PROFILE, item.getName(),
                                 AddressTemplates.LOGGING_PROFILE_TEMPLATE, LoggingProfileColumn.this));
             }

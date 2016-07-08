@@ -37,7 +37,6 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -54,7 +53,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 /**
  * @author Harald Pehl
  */
-@Column(Ids.CONTENT_COLUMN)
+@Column(Ids.CONTENT)
 public class ContentColumn extends FinderColumn<Content> {
 
     @Inject
@@ -65,9 +64,9 @@ public class ContentColumn extends FinderColumn<Content> {
             @Footer final Provider<Progress> progress,
             final Resources resources) {
 
-        super(new FinderColumn.Builder<Content>(finder, Ids.CONTENT_COLUMN, resources.constants().content())
+        super(new FinderColumn.Builder<Content>(finder, Ids.CONTENT, resources.constants().content())
 
-                .columnAction(columnActionFactory.add(IdBuilder.build(Ids.CONTENT_COLUMN, "add"),
+                .columnAction(columnActionFactory.add(Ids.CONTENT_ADD,
                         resources.constants().content(), column -> Browser.getWindow().alert(Names.NYI)))
 
                 .itemsProvider((context, callback) -> {

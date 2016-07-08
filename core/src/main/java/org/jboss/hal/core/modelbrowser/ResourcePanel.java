@@ -68,9 +68,9 @@ class ResourcePanel implements HasElements {
         this.dispatcher = dispatcher;
         this.resources = resources;
 
-        dataId = IdBuilder.build(Ids.MODEL_BROWSER, "resource", "data", "tab");
-        attributesId = IdBuilder.build(Ids.MODEL_BROWSER, "resource", "attributes", "tab");
-        operationsId = IdBuilder.build(Ids.MODEL_BROWSER, "resource", "operations", "tab");
+        dataId = IdBuilder.build(Ids.MODEL_BROWSER, "resource", "data", Ids.TAB_SUFFIX);
+        attributesId = IdBuilder.build(Ids.MODEL_BROWSER, "resource", "attributes", Ids.TAB_SUFFIX);
+        operationsId = IdBuilder.build(Ids.MODEL_BROWSER, "resource", "operations", Ids.TAB_SUFFIX);
 
         tabs = new Tabs();
         tabs.add(dataId, resources.constants().data(), PLACE_HOLDER_ELEMENT);
@@ -110,7 +110,7 @@ class ResourcePanel implements HasElements {
                     .build();
             dispatcher.execute(operation, result -> {
                 ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(
-                        IdBuilder.build(Ids.MODEL_BROWSER, node.id, "form"), metadata)
+                        IdBuilder.build(Ids.MODEL_BROWSER, node.id, Ids.FORM_SUFFIX), metadata)
                         .includeRuntime()
                         .onReset(modelBrowser::reset)
                         .onSave((f, changedValues) -> modelBrowser.save(address, changedValues))

@@ -417,7 +417,7 @@ public class ModelBrowser implements HasElements {
                 metadataProcessor.lookup(template, progress.get(), new DefaultMetadataCallback(singletonAddress) {
                     @Override
                     public void onMetadata(Metadata metadata) {
-                        String id = IdBuilder.build(parent.id, "singleton", "add");
+                        String id = IdBuilder.build(parent.id, "singleton", Ids.FORM_SUFFIX);
                         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                                 .addFromRequestProperties()
                                 .build();

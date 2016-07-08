@@ -99,7 +99,7 @@ class ChildrenPanel implements HasElements, Attachable {
                 .paging(false)
                 .build();
 
-        table = new DataTable<>(IdBuilder.build(Ids.MODEL_BROWSER, "children", "table"), options);
+        table = new DataTable<>(IdBuilder.build(Ids.MODEL_BROWSER, "children", Ids.TABLE_SUFFIX), options);
 
         builder = new Elements.Builder()
                 .h(1).rememberAs(HEADER_ELEMENT).end()

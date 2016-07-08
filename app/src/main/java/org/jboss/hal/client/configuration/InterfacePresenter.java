@@ -106,9 +106,9 @@ public class InterfacePresenter extends MbuiPresenter<InterfacePresenter.MyView,
     @Override
     protected FinderPath finderPath() {
         return new FinderPath()
-                .append(Ids.CONFIGURATION_COLUMN, IdBuilder.asId(Names.INTERFACE),
+                .append(Ids.CONFIGURATION, IdBuilder.asId(Names.INTERFACE),
                         Names.CONFIGURATION, Names.INTERFACES)
-                .append(Ids.INTERFACE_COLUMN, interfce, Names.INTERFACE, interfce);
+                .append(Ids.INTERFACE, interfce, Names.INTERFACE, interfce);
     }
 
     @Override

@@ -48,7 +48,6 @@ import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -62,7 +61,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 /**
  * @author Harald Pehl
  */
-@Column(Ids.SERVER_GROUP_COLUMN)
+@Column(Ids.SERVER_GROUP)
 @Requires(value = "/server-group=*")
 public class ServerGroupColumn extends FinderColumn<ServerGroup>
         implements ServerGroupActionHandler, ServerGroupResultHandler {
@@ -78,11 +77,11 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
             final ServerGroupActions serverGroupActions,
             final Resources resources) {
 
-        super(new Builder<ServerGroup>(finder, Ids.SERVER_GROUP_COLUMN, Names.SERVER_GROUP)
+        super(new Builder<ServerGroup>(finder, Ids.SERVER_GROUP, Names.SERVER_GROUP)
 
-                .columnAction(columnActionFactory.add(IdBuilder.build(SERVER_GROUP, "add"), Names.SERVER_GROUP,
+                .columnAction(columnActionFactory.add(Ids.SERVER_GROUP_ADD, Names.SERVER_GROUP,
                         AddressTemplate.of("/server-group=*")))
-                .columnAction(columnActionFactory.refresh(IdBuilder.build(SERVER_GROUP, "refresh")))
+                .columnAction(columnActionFactory.refresh(Ids.SERVER_GROUP_REFRESH))
 
                 .itemsProvider((context, callback) ->
                         new Async<FunctionContext>(progress.get()).waterfall(
@@ -117,7 +116,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
         setItemRenderer(item -> new ItemDisplay<ServerGroup>() {
             @Override
             public String getId() {
-                return ServerGroup.id(item.getName());
+                return Ids.serverGroupId(item.getName());
             }
 
             @Override
@@ -137,7 +136,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
 
             @Override
             public String nextColumn() {
-                return Ids.SERVER_COLUMN;
+                return Ids.SERVER;
             }
 
             @Override
@@ -145,7 +144,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                 PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(NameTokens.SERVER_GROUP_CONFIGURATION)
                         .with(SERVER_GROUP, item.getName()).build();
                 List<ItemAction<ServerGroup>> actions = new ArrayList<>();
-                actions.add(itemActionFactory.viewAndMonitor(ServerGroup.id(item.getName()), placeRequest));
+                actions.add(itemActionFactory.viewAndMonitor(Ids.serverGroupId(item.getName()), placeRequest));
 
                 // Order is: reload, restart, suspend, resume, stop, start
                 if (item.hasServers(Server::isStarted)) {
@@ -176,14 +175,14 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
     @Override
     public void onServerGroupAction(final ServerGroupActionEvent event) {
         if (isVisible()) {
-            event.getServers().forEach(server -> ItemMonitor.startProgress(Server.id(server.getName())));
+            event.getServers().forEach(server -> ItemMonitor.startProgress(Ids.serverId(server.getName())));
         }
     }
 
     @Override
     public void onServerGroupResult(final ServerGroupResultEvent event) {
         if (isVisible()) {
-            event.getServers().forEach(server -> ItemMonitor.stopProgress(Server.id(server.getName())));
+            event.getServers().forEach(server -> ItemMonitor.stopProgress(Ids.serverId(server.getName())));
             refresh(RESTORE_SELECTION);
         }
     }

@@ -36,7 +36,7 @@ import static java.util.Arrays.asList;
 /**
  * @author Harald Pehl
  */
-@Column(Ids.CONFIGURATION_COLUMN)
+@Column(Ids.CONFIGURATION)
 public class ConfigurationColumn extends StaticItemColumn {
 
     @Inject
@@ -45,29 +45,29 @@ public class ConfigurationColumn extends StaticItemColumn {
             final PlaceManager placeManager,
             final Environment environment) {
 
-        super(finder, Ids.CONFIGURATION_COLUMN, Names.CONFIGURATION, (context, callback) -> {
+        super(finder, Ids.CONFIGURATION, Names.CONFIGURATION, (context, callback) -> {
             List<StaticItem> items = new ArrayList<>();
             if (environment.isStandalone()) {
                 items.add(new StaticItem.Builder(Names.SUBSYSTEMS)
-                        .nextColumn(Ids.CONFIGURATION_SUBSYSTEM_COLUMN)
+                        .nextColumn(Ids.CONFIGURATION_SUBSYSTEM)
                         .onPreview(new PreviewContent(Names.SUBSYSTEMS, resources.previews().configurationSubsystems()))
                         .build());
 
             } else {
                 items.add(new StaticItem.Builder(Names.PROFILES)
-                        .nextColumn(Ids.PROFILE_COLUMN)
+                        .nextColumn(Ids.PROFILE)
                         .onPreview(new PreviewContent(Names.PROFILES, resources.previews().profiles()))
                         .build());
             }
 
             items.addAll(asList(
                     new StaticItem.Builder(Names.INTERFACES)
-                            .nextColumn(Ids.INTERFACE_COLUMN)
+                            .nextColumn(Ids.INTERFACE)
                             .onPreview(new PreviewContent(Names.INTERFACES, resources.previews().interfaces()))
                             .build(),
 
                     new StaticItem.Builder(Names.SOCKET_BINDINGS)
-                            .nextColumn(Ids.SOCKET_BINDING_COLUMN)
+                            .nextColumn(Ids.SOCKET_BINDING)
                             .onPreview(new PreviewContent(Names.SOCKET_BINDINGS, resources.previews().socketBindings()))
                             .build(),
 

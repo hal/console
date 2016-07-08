@@ -62,7 +62,7 @@ import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.CSS;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
@@ -283,7 +283,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                                             srv.getName().equals(server.getName()))
                                     .findFirst()
                                     .ifPresent(updatedServer -> {
-                                        String serverId = IdBuilder.build(updatedServer.getHost(), updatedServer.getName());
+                                        String serverId = Ids
+                                                .hostServerId(updatedServer.getHost(), updatedServer.getName());
                                         replaceElement(document.getElementById(serverId),
                                                 () -> serverElement(updatedServer),
                                                 whatever -> serverDetails(updatedServer));
@@ -373,7 +374,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private void buildHost(final Elements.Builder builder, final Host host) {
         // @formatter:off
-        String hostDropDownId = Host.id(host);
+        String hostDropDownId = Ids.hostId(host.getAddressName());
         builder.th().css(rowHeader, statusCss(host))
                 .on(click, event -> hostDetails(host))
                 .data("host", host.getName())
@@ -415,7 +416,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private void buildServerGroup(final Elements.Builder builder, final ServerGroup serverGroup) {
         // @formatter:off
-        String serverGroupDropDownId = ServerGroup.id(serverGroup.getName());
+        String serverGroupDropDownId = Ids.serverGroupId(serverGroup.getName());
         builder.th()
                 .on(click, event -> serverGroupDetails(serverGroup))
                 .data("serverGroup", serverGroup.getName())
@@ -453,11 +454,11 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private void buildServer(Elements.Builder builder, Server srv) {
         // @formatter:off
-        String serverDropDownId = Server.id(srv.getName());
+        String serverDropDownId = Ids.serverId(srv.getName());
         builder.div()
                 .css(server, statusCss(srv))
                 .on(click, event -> serverDetails(srv))
-                .id(IdBuilder.build(srv.getHost(), srv.getName()))
+                .id(Ids.hostServerId(srv.getHost(), srv.getName()))
                 .data(SERVER, srv.getName())
             .div().css(dropdown);
                 if (!serverActions.isPending(srv)) {
@@ -586,11 +587,11 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         if (isVisible()) {
             Host host = event.getHost();
 
-            disableDropdown(Host.id(host), host.getName());
+            disableDropdown(Ids.hostId(host.getAddressName()), host.getName());
             startProgress(hostSelector(host));
 
             event.getServers().forEach(server -> {
-                disableDropdown(Server.id(server.getName()), server.getName());
+                disableDropdown(Ids.serverId(server.getName()), server.getName());
                 startProgress(serverSelector(server));
             });
         }
@@ -652,9 +653,9 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     public void onServerGroupAction(final ServerGroupActionEvent event) {
         if (isVisible()) {
             ServerGroup serverGroup = event.getServerGroup();
-            disableDropdown(ServerGroup.id(serverGroup.getName()), serverGroup.getName());
+            disableDropdown(Ids.serverGroupId(serverGroup.getName()), serverGroup.getName());
             event.getServers().forEach(server -> {
-                disableDropdown(Server.id(server.getName()), server.getName());
+                disableDropdown(Ids.serverId(server.getName()), server.getName());
                 startProgress(serverSelector(server));
             });
         }
@@ -733,7 +734,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     public void onServerAction(final ServerActionEvent event) {
         if (isVisible()) {
             Server server = event.getServer();
-            disableDropdown(Server.id(server.getName()), server.getName());
+            disableDropdown(Ids.serverId(server.getName()), server.getName());
             startProgress(serverSelector(server));
         }
     }

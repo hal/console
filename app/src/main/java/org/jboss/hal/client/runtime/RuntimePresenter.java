@@ -61,7 +61,7 @@ public class RuntimePresenter extends FinderPresenter<RuntimePresenter.MyView, R
 
     @Override
     protected String initialColumn() {
-        return environment.isStandalone() ? Ids.STANDALONE_SERVER_COLUMN : Ids.DOMAIN_BROWSE_BY_COLUMN;
+        return environment.isStandalone() ? Ids.STANDALONE_SERVER : Ids.DOMAIN_BROWSE_BY;
     }
 
     @Override
