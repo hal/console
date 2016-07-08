@@ -38,7 +38,6 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -106,8 +105,7 @@ public class InterfacePresenter extends MbuiPresenter<InterfacePresenter.MyView,
     @Override
     protected FinderPath finderPath() {
         return new FinderPath()
-                .append(Ids.CONFIGURATION, IdBuilder.asId(Names.INTERFACE),
-                        Names.CONFIGURATION, Names.INTERFACES)
+                .append(Ids.CONFIGURATION, Ids.asId(Names.INTERFACE), Names.CONFIGURATION, Names.INTERFACES)
                 .append(Ids.INTERFACE, interfce, Names.INTERFACE, interfce);
     }
 

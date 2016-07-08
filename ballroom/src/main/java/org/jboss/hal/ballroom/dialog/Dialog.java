@@ -35,7 +35,7 @@ import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.dialog.Modal.ModalOptions;
 import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.dialog.Modal.$;
@@ -262,7 +262,7 @@ public class Dialog implements IsElement {
 
 
     static {
-        String labelId = IdBuilder.build(ID, LABEL);
+        String labelId = Ids.build(ID, LABEL);
         // @formatter:off
         Elements.Builder rootBuilder = new Elements.Builder()
             .div().id(ID).css(modal)

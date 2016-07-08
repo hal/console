@@ -37,7 +37,6 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
@@ -133,9 +132,9 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
     @Override
     protected FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.SERVER_MONITOR, IdBuilder.asId(resources.constants().logFiles()),
+                .append(Ids.SERVER_MONITOR, Ids.asId(resources.constants().logFiles()),
                         resources.constants().monitor(), resources.constants().logFiles())
-                .append(Ids.LOG_FILE, IdBuilder.asId(logFileName), resources.constants().logFile(), logFileName);
+                .append(Ids.LOG_FILE, Ids.asId(logFileName), resources.constants().logFile(), logFileName);
     }
 
     @Override

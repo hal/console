@@ -15,6 +15,10 @@
  */
 package org.jboss.hal.ballroom.listview;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import elemental.dom.Element;
@@ -22,12 +26,8 @@ import elemental.html.InputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.InputType;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
@@ -69,7 +69,7 @@ class ListItem<T> implements IsElement {
             int index = 0;
             for (Iterator<ItemAction<T>> iterator = display.actions().iterator(); iterator.hasNext(); ) {
                 ItemAction<T> action = iterator.next();
-                String actionId = IdBuilder.build(this.id, action.id);
+                String actionId = Ids.build(this.id, action.id);
 
                 if (index == 0) {
                     // first action is a button
@@ -83,7 +83,7 @@ class ListItem<T> implements IsElement {
                 } else {
                     // remaining actions are inside the kebab menu
                     if (index == 1) {
-                        String id = IdBuilder.build(display.getId(), "kebab", "menu");
+                        String id = Ids.build(display.getId(), "kebab", "menu");
                         // @formatter:off
                         builder.div().css(dropdown, pullRight, dropdownKebabPf)
                             .button().css(btn, btnLink, dropdownToggle)

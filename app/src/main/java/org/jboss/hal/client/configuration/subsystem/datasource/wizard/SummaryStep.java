@@ -26,7 +26,7 @@ import org.jboss.hal.client.configuration.subsystem.datasource.DataSource;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CONNECTION_URL;
@@ -53,7 +53,7 @@ class SummaryStep extends WizardStep<Context, State> {
         }
         attributes.addAll(Arrays.asList(DRIVER_NAME, "user-name", PASSWORD)); //NON-NLS
 
-        form = new ModelNodeForm.Builder<DataSource>(IdBuilder.build(id(), "summary", "step"), metadata)
+        form = new ModelNodeForm.Builder<DataSource>(Ids.build(id(), "summary", "step"), metadata)
                 .unboundFormItem(new NameItem(), 0)
                 .include(attributes)
                 .unsorted()

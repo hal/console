@@ -44,7 +44,6 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.meta.processing.MetadataProcessor.MetadataCallback;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
@@ -139,7 +138,7 @@ public class HostActions {
             @Override
             public void onMetadata(final Metadata metadata) {
                 Form<ModelNode> form = new OperationFormBuilder<>(
-                        IdBuilder.build(RELOAD_HOST, host.getName(), Ids.FORM_SUFFIX),
+                        Ids.build(RELOAD_HOST, host.getName(), Ids.FORM_SUFFIX),
                         metadata, RELOAD)
                         .include(RESTART_SERVERS)
                         .build();

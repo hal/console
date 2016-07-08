@@ -45,7 +45,6 @@ import org.jboss.hal.core.modelbrowser.ModelBrowserPath;
 import org.jboss.hal.core.modelbrowser.ModelBrowserPath.Segment;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.CSS;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
@@ -313,7 +312,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
             builder.span();
             if (segment.supportsDropdown()) {
                 builder.css(value, dropdown);
-                String id = IdBuilder.build(segment.getColumnId(), VALUE);
+                String id = Ids.build(segment.getColumnId(), VALUE);
                 builder.a().id(id)
                         .css(clickable)
                         .data(UIConstants.TARGET, "#")

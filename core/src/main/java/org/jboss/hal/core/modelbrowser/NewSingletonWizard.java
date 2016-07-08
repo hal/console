@@ -42,7 +42,6 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Resources;
@@ -154,7 +153,7 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
 
                         @Override
                         public void onMetadata(final Metadata metadata) {
-                            String id = IdBuilder.build(id(), Ids.FORM_SUFFIX);
+                            String id = Ids.build(id(), Ids.FORM_SUFFIX);
                             Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                                     .addFromRequestProperties()
                                     .onSave((f, changedValues) -> wizard.getContext().modelNode = f.getModel())
@@ -180,7 +179,7 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
             final List<String> children,
             final FinishCallback<SingletonContext> finishCallback) {
 
-        super(IdBuilder.build(parent.id, "singleton", Ids.WIZARD_SUFFIX),
+        super(Ids.build(parent.id, "singleton", Ids.WIZARD_SUFFIX),
                 MESSAGES.addResourceTitle(parent.text),
                 new SingletonContext(parent, children),
                 finishCallback);

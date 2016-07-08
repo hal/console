@@ -32,7 +32,6 @@ import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
@@ -86,7 +85,7 @@ public class PathsPresenter extends MbuiPresenter<PathsPresenter.MyView, PathsPr
     @Override
     protected FinderPath finderPath() {
         return new FinderPath()
-                .append(Ids.CONFIGURATION, IdBuilder.asId(Names.PATHS), Names.CONFIGURATION, Names.PATHS);
+                .append(Ids.CONFIGURATION, Ids.asId(Names.PATHS), Names.CONFIGURATION, Names.PATHS);
     }
 
     @Override

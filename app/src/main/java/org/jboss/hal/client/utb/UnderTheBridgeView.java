@@ -39,7 +39,7 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 
 import static org.jboss.hal.meta.security.SecurityContext.RWX;
 
@@ -119,10 +119,10 @@ public class UnderTheBridgeView extends PatternFlyViewImpl implements UnderTheBr
         Form.SaveCallback<ModelNode> saveCallback = (form, changedValues) -> presenter.saveModel(form.getModel());
 
         for (Map.Entry<String, String[]> entry : ATTRIBUTES.entrySet()) {
-            forms.add(new ModelNodeForm.Builder<>(IdBuilder.build("form", entry.getKey()),
+            forms.add(new ModelNodeForm.Builder<>(Ids.build(entry.getKey(), Ids.FORM_SUFFIX),
                     new Metadata(RWX, description, capabilities))
                     .include(entry.getValue()).onSave(saveCallback).build());
-            tabs.add(IdBuilder.build("tab", entry.getKey()), new LabelBuilder().label(entry.getKey()),
+            tabs.add(Ids.build(entry.getKey(), Ids.TAB_SUFFIX), new LabelBuilder().label(entry.getKey()),
                     forms.get(forms.size() - 1).asElement());
         }
 

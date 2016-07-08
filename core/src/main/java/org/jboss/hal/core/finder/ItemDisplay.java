@@ -23,7 +23,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.HasTitle;
 import org.jboss.hal.resources.CSS;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 
 import static org.jboss.hal.resources.CSS.itemText;
 
@@ -42,7 +42,7 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
      * @return an id based on {@link #getTitle()}
      */
     default String getId() {
-        return IdBuilder.asId(getTitle());
+        return Ids.asId(getTitle());
     }
 
     /**

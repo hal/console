@@ -43,7 +43,7 @@ import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Icons;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 
 import static java.util.stream.Collectors.toList;
@@ -112,7 +112,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     protected void addFormItem(FormItem formItem, FormItem... formItems) {
         for (FormItem item : Lists.asList(formItem, formItems)) {
             this.formItems.put(item.getName(), item);
-            item.setId(IdBuilder.build(id, item.getName()));
+            item.setId(Ids.build(id, item.getName()));
         }
     }
 
@@ -178,7 +178,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
 
     private Element viewPanel() {
         Element viewPanel = new Elements.Builder()
-                .div().id(IdBuilder.build(id, READONLY.name().toLowerCase())).css(form, formHorizontal, readonly)
+                .div().id(Ids.build(id, READONLY.name().toLowerCase())).css(form, formHorizontal, readonly)
                 .end().build();
         for (Iterator<FormItem> iterator = getFormItems().iterator(); iterator.hasNext(); ) {
             FormItem formItem = iterator.next();
@@ -207,7 +207,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         clearErrors();
 
         Element editPanel = new Elements.Builder()
-                .div().id(IdBuilder.build(id, EDITING.name().toLowerCase())).css(form, formHorizontal, editing).end()
+                .div().id(Ids.build(id, EDITING.name().toLowerCase())).css(form, formHorizontal, editing).end()
                 .build();
         editPanel.appendChild(errorPanel);
         boolean hasRequiredField = false;

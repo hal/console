@@ -27,7 +27,7 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.form.Form.State;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -61,8 +61,8 @@ class FormLinks<T> implements IsElement {
         this.stateMachine = stateMachine;
         this.helpTexts = helpTexts;
 
-        String linksId = IdBuilder.build(formId, LINKS);
-        String helpId = IdBuilder.build(formId, "help");
+        String linksId = Ids.build(formId, LINKS);
+        String helpId = Ids.build(formId, "help");
 
         // @formatter:off
         Elements.Builder rootBuilder = new Elements.Builder()

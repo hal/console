@@ -25,7 +25,7 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
@@ -119,7 +119,7 @@ final class ${context.subclass} extends ${context.base} {
                             <#if action.attributes?has_content>
                                 <#if action.hasAttributesWithProvider>
             .button(mbuiContext.resources().constants().add(), (event, api) -> {
-                ModelNodeForm form = new ModelNodeForm.Builder(IdBuilder.build("${table.selector}", "add"),
+                ModelNodeForm form = new ModelNodeForm.Builder(Ids.build("${table.selector}", Ids.ADD_SUFFIX),
                     ${table.metadata.name})
                     .addFromRequestProperties()
                     .unboundFormItem(new org.jboss.hal.core.mbui.dialog.NameItem(), 0)
@@ -165,7 +165,7 @@ final class ${context.subclass} extends ${context.base} {
                                 <#elseif action.hasAttributesWithValidationsHandler || action.hasAttributesWithSuggestionHandler>
             .button(mbuiContext.resources().constants().add(), (event, api) -> {
                 AddResourceDialog dialog = new AddResourceDialog(
-                    IdBuilder.build("${table.selector}", "add"),
+                    Ids.build("${table.selector}", Ids.ADD_SUFFIX),
                     mbuiContext.resources().messages().addResourceTitle(${table.title}),
                     ${table.metadata.name},
                     asList(<#list action.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>),
@@ -197,7 +197,7 @@ final class ${context.subclass} extends ${context.base} {
                 dialog.show();
             })
                                 <#else>
-            .button(mbuiContext.tableButtonFactory().add(IdBuilder.build("${table.selector}", "add"), ${table.title},
+            .button(mbuiContext.tableButtonFactory().add(Ids.build("${table.selector}", Ids.ADD_SUFFIX), ${table.title},
                 ${table.metadata.name}Template,
                 () -> presenter.reload(),
                                     <#list action.attributes as attribute>
@@ -205,7 +205,7 @@ final class ${context.subclass} extends ${context.base} {
                                     </#list>
                                 </#if>
                             <#else>
-            .button(mbuiContext.tableButtonFactory().add(IdBuilder.build("${table.selector}", "add"), ${table.title},
+            .button(mbuiContext.tableButtonFactory().add(Ids.build("${table.selector}", Ids.ADD_SUFFIX), ${table.title},
                 ${table.metadata.name}Template,
                 () -> presenter.reload()))
                             </#if>

@@ -32,7 +32,6 @@ import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -45,7 +44,6 @@ import static org.jboss.hal.client.configuration.subsystem.datasource.Attribute.
 import static org.jboss.hal.client.configuration.subsystem.datasource.Attribute.Scope.NON_XA;
 import static org.jboss.hal.client.configuration.subsystem.datasource.Attribute.Scope.XA;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.IdBuilder.asId;
 
 /**
  * TODO Add support for nested 'connection-properties' (non-xa) and 'xa-datasource-properties' (xa)
@@ -188,7 +186,7 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
         Form.SaveCallback<DataSource> saveCallback = (f, changedValues) -> presenter.saveDataSource(changedValues);
 
         for (String section : attributes.keySet()) {
-            String sectionId = asId(section);
+            String sectionId = Ids.asId(section);
             List<Attribute> sectionAttributes = attributes.get(section);
 
             // non xa form and tab
@@ -196,24 +194,24 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
                     .filter(attribute -> attribute.scope == BOTH || attribute.scope == NON_XA)
                     .map(attribute -> attribute.name)
                     .collect(toList());
-            form = new ModelNodeForm.Builder<DataSource>(IdBuilder.build(Ids.DATA_SOURCE, "form", sectionId), nonXaMeta)
+            form = new ModelNodeForm.Builder<DataSource>(Ids.build(Ids.DATA_SOURCE, "form", sectionId), nonXaMeta)
                     .include(nonXaNames)
                     .onSave(saveCallback)
                     .build();
             nonXaForms.add(form);
-            nonXaTabs.add(IdBuilder.build(Ids.DATA_SOURCE, "tab", sectionId), section, form.asElement());
+            nonXaTabs.add(Ids.build(Ids.DATA_SOURCE, "tab", sectionId), section, form.asElement());
 
             // xa form and tab
             List<String> xaNames = sectionAttributes.stream()
                     .filter(attribute -> attribute.scope == BOTH || attribute.scope == XA)
                     .map(attribute -> attribute.name)
                     .collect(toList());
-            form = new ModelNodeForm.Builder<DataSource>(IdBuilder.build(Ids.XA_DATA_SOURCE, "form", sectionId), xaMeta)
+            form = new ModelNodeForm.Builder<DataSource>(Ids.build(Ids.XA_DATA_SOURCE, "form", sectionId), xaMeta)
                     .include(xaNames)
                     .onSave(saveCallback)
                     .build();
             xaForms.add(form);
-            xaTabs.add(IdBuilder.build(Ids.XA_DATA_SOURCE, "tab", sectionId), section, form.asElement());
+            xaTabs.add(Ids.build(Ids.XA_DATA_SOURCE, "tab", sectionId), section, form.asElement());
         }
 
         // @formatter:off

@@ -21,7 +21,6 @@ import java.util.List;
 import elemental.client.Browser;
 import elemental.html.Storage;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
@@ -34,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public class EndpointStorage {
 
-    private static final String KEY = IdBuilder.build(Ids.STORAGE_PREFIX, '.', "endpoints");
+    private static final String KEY = Ids.build(Ids.STORAGE_PREFIX, '.', "endpoints");
     @NonNls private static final Logger logger = LoggerFactory.getLogger(EndpointStorage.class);
 
     private final Storage storage;

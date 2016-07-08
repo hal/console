@@ -23,7 +23,6 @@ import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.subsystem.SubsystemMetadata;
 import org.jboss.hal.core.subsystem.Subsystems;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -66,11 +65,10 @@ public class FinderPathFactory {
         FinderPath path = new FinderPath();
 
         if (environment.isStandalone()) {
-            path.append(Ids.CONFIGURATION, IdBuilder.asId(Names.SUBSYSTEMS),
-                    Names.CONFIGURATION, Names.SUBSYSTEMS);
+            path.append(Ids.CONFIGURATION, Ids.asId(Names.SUBSYSTEMS), Names.CONFIGURATION, Names.SUBSYSTEMS);
         } else {
             String profile = statementContext.selectedProfile();
-            path.append(Ids.CONFIGURATION, IdBuilder.asId(Names.PROFILES), Names.CONFIGURATION, Names.PROFILES)
+            path.append(Ids.CONFIGURATION, Ids.asId(Names.PROFILES), Names.CONFIGURATION, Names.PROFILES)
                     .append(Ids.PROFILE, profile, Names.PROFILES, profile);
 
         }
@@ -87,8 +85,7 @@ public class FinderPathFactory {
     public FinderPath runtimeHostPath() {
         String host = statementContext.selectedHost();
         return new FinderPath()
-                .append(Ids.DOMAIN_BROWSE_BY, IdBuilder.asId(Names.HOSTS),
-                        resources.constants().browseBy(), Names.HOSTS)
+                .append(Ids.DOMAIN_BROWSE_BY, Ids.asId(Names.HOSTS), resources.constants().browseBy(), Names.HOSTS)
                 .append(Ids.HOST, Ids.hostId(host), Names.HOST, host);
     }
 
@@ -98,7 +95,7 @@ public class FinderPathFactory {
     public FinderPath runtimeServerGroupPath() {
         String serverGroup = statementContext.selectedServerGroup();
         return new FinderPath()
-                .append(Ids.DOMAIN_BROWSE_BY, IdBuilder.asId(Names.SERVER_GROUPS),
+                .append(Ids.DOMAIN_BROWSE_BY, Ids.asId(Names.SERVER_GROUPS),
                         resources.constants().browseBy(), Names.SERVER_GROUPS)
                 .append(SERVER_GROUP, Ids.serverGroupId(serverGroup), Names.SERVER_GROUP, serverGroup);
     }
@@ -132,7 +129,7 @@ public class FinderPathFactory {
     private boolean browseByServerGroups() {
         if (!finder.getContext().getPath().isEmpty()) {
             FinderSegment firstSegment = finder.getContext().getPath().iterator().next();
-            return firstSegment.getItemId().equals(IdBuilder.asId(Names.SERVER_GROUPS));
+            return firstSegment.getItemId().equals(Ids.asId(Names.SERVER_GROUPS));
         }
         return false;
     }

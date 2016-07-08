@@ -38,7 +38,6 @@ import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -259,8 +258,7 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
         Options<NamedNode> options = new ModelNodeTable.Builder<NamedNode>(metadata)
                 .column(NAME, (cell, t, row, meta) -> row.getName())
 
-                .button(tableButtonFactory.add(
-                        IdBuilder.build(baseId, Ids.ADD_SUFFIX), type,
+                .button(tableButtonFactory.add(Ids.build(baseId, Ids.ADD_SUFFIX), type,
                         template,
                         () -> presenter.loadEESubsystem()))
 
@@ -271,11 +269,11 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
 
                 .build();
 
-        ModelNodeTable<NamedNode> table = new ModelNodeTable<>(IdBuilder.build(baseId, Ids.TABLE_SUFFIX), options);
+        ModelNodeTable<NamedNode> table = new ModelNodeTable<>(Ids.build(baseId, Ids.TABLE_SUFFIX), options);
         registerAttachable(table);
         tables.put(template.lastKey(), table);
 
-        ModelNodeForm<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(IdBuilder.build(baseId, Ids.FORM_SUFFIX),
+        ModelNodeForm<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, Ids.FORM_SUFFIX),
                 metadata)
                 .onSave((f, changedValues) -> {
                     AddressTemplate fullyQualified = template.replaceWildcards(table.api().selectedRow().getName());

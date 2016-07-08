@@ -28,7 +28,7 @@ import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 
 import static org.jboss.hal.resources.CSS.key;
 import static org.jboss.hal.resources.CSS.listGroup;
@@ -94,9 +94,9 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
     }
 
     public PreviewAttributes<T> append(final PreviewAttributeFunction<T> function) {
-        String id = IdBuilder.uniqueId();
-        String labelId = IdBuilder.build(id, LABEL);
-        String valueId = IdBuilder.build(id, VALUE);
+        String id = Ids.uniqueId();
+        String labelId = Ids.build(id, LABEL);
+        String valueId = Ids.build(id, VALUE);
         functions.put(id, function);
 
         String[] labelValue = function.labelValue(model);
@@ -119,8 +119,8 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
     public void refresh(T model) {
         for (Map.Entry<String, PreviewAttributeFunction<T>> entry : functions.entrySet()) {
             String id = entry.getKey();
-            String labelId = IdBuilder.build(id, LABEL);
-            String valueId = IdBuilder.build(id, VALUE);
+            String labelId = Ids.build(id, LABEL);
+            String valueId = Ids.build(id, VALUE);
 
             PreviewAttributeFunction<T> function = entry.getValue();
             String[] labelValue = function.labelValue(model);

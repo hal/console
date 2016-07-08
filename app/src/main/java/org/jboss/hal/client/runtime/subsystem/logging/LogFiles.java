@@ -25,7 +25,7 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 
 import static java.util.Collections.singletonList;
 import static org.jboss.hal.client.runtime.subsystem.logging.LogFilePresenter.EXTERNAL_PARAM;
@@ -92,7 +92,6 @@ public class LogFiles {
     }
 
     public String target(String name) {
-        return IdBuilder
-                .build(statementContext.selectedHost(), statementContext.selectedServer(), IdBuilder.asId(name));
+        return Ids.build(statementContext.selectedHost(), statementContext.selectedServer(), Ids.asId(name));
     }
 }

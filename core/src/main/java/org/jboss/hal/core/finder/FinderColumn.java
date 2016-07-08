@@ -42,7 +42,7 @@ import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
@@ -274,11 +274,11 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
         // filter box
         if (builder.withFilter) {
-            String iconId = IdBuilder.build(id, filter, "icon");
+            String iconId = Ids.build(id, filter, "icon");
             // @formatter:off
             eb.div().css(inputGroup, filter)
                 .input(text)
-                    .id(IdBuilder.build(id, filter))
+                    .id(Ids.build(id, filter))
                     .css(formControl)
                     .aria("describedby", iconId)
                     .attr("placeholder", CONSTANTS.filter())

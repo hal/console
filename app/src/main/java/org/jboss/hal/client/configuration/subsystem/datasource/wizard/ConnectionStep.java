@@ -23,7 +23,7 @@ import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSource;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
@@ -47,7 +47,7 @@ class ConnectionStep extends WizardStep<Context, State> {
             attributes.add(CONNECTION_URL);
         }
         attributes.addAll(asList("user-name", PASSWORD, SECURITY_DOMAIN)); //NON-NLS
-        form = new ModelNodeForm.Builder<DataSource>(IdBuilder.build(id(), "connection", "step"), metadata)
+        form = new ModelNodeForm.Builder<DataSource>(Ids.build(id(), "connection", "step"), metadata)
                 .include(attributes)
                 .unsorted()
                 .onSave((form, changedValues) -> wizard.getContext().dataSource = form.getModel())

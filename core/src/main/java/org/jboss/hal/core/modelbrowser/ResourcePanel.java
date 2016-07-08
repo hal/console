@@ -20,7 +20,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.tree.Node;
@@ -68,9 +67,9 @@ class ResourcePanel implements HasElements {
         this.dispatcher = dispatcher;
         this.resources = resources;
 
-        dataId = IdBuilder.build(Ids.MODEL_BROWSER, "resource", "data", Ids.TAB_SUFFIX);
-        attributesId = IdBuilder.build(Ids.MODEL_BROWSER, "resource", "attributes", Ids.TAB_SUFFIX);
-        operationsId = IdBuilder.build(Ids.MODEL_BROWSER, "resource", "operations", Ids.TAB_SUFFIX);
+        dataId = Ids.build(Ids.MODEL_BROWSER, "resource", "data", Ids.TAB_SUFFIX);
+        attributesId = Ids.build(Ids.MODEL_BROWSER, "resource", "attributes", Ids.TAB_SUFFIX);
+        operationsId = Ids.build(Ids.MODEL_BROWSER, "resource", "operations", Ids.TAB_SUFFIX);
 
         tabs = new Tabs();
         tabs.add(dataId, resources.constants().data(), PLACE_HOLDER_ELEMENT);
@@ -110,7 +109,7 @@ class ResourcePanel implements HasElements {
                     .build();
             dispatcher.execute(operation, result -> {
                 ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(
-                        IdBuilder.build(Ids.MODEL_BROWSER, node.id, Ids.FORM_SUFFIX), metadata)
+                        Ids.build(Ids.MODEL_BROWSER, node.id, Ids.FORM_SUFFIX), metadata)
                         .includeRuntime()
                         .onReset(modelBrowser::reset)
                         .onSave((f, changedValues) -> modelBrowser.save(address, changedValues))

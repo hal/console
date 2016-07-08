@@ -23,7 +23,6 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import elemental.client.Browser;
 import elemental.html.Storage;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 
 /**
@@ -35,7 +34,7 @@ class FinderColumnStorage {
     private final Storage storage;
 
     FinderColumnStorage(final String id) {
-        this.pinnedId = IdBuilder.build(Ids.STORAGE_PREFIX, '.', id, "pinned");
+        this.pinnedId = Ids.build(Ids.STORAGE_PREFIX, '.', id, "pinned");
         this.storage = Browser.getWindow().getLocalStorage();
     }
 

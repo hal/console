@@ -32,7 +32,6 @@ import org.jboss.hal.core.runtime.group.ServerGroupActions;
 import org.jboss.hal.core.runtime.host.HostActions;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -47,13 +46,13 @@ public class BrowseByColumn extends StaticItemColumn {
 
     public static boolean browseByHosts(FinderContext context) {
         FinderSegment firstSegment = context.getPath().iterator().next();
-        return firstSegment.getItemId().equals(IdBuilder.asId(Names.HOSTS));
+        return firstSegment.getItemId().equals(Ids.asId(Names.HOSTS));
     }
 
     public static boolean browseByServerGroups(FinderContext context) {
         if (!context.getPath().isEmpty()) {
             FinderSegment firstSegment = context.getPath().iterator().next();
-            return firstSegment.getItemId().equals(IdBuilder.asId(Names.SERVER_GROUPS));
+            return firstSegment.getItemId().equals(Ids.asId(Names.SERVER_GROUPS));
         }
         return false;
     }

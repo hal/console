@@ -56,7 +56,6 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.resources.CSS;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -143,7 +142,8 @@ public class ModelBrowser implements HasElements {
     private static final String FILTER_ELEMENT = "filterElement";
     private static final String REFRESH_ELEMENT = "refreshElement";
     private static final String COLLAPSE_ELEMENT = "collapseElement";
-    static final String ROOT_ID = IdBuilder.build(Ids.MODEL_BROWSER, "root");
+
+    static final String ROOT_ID = Ids.build(Ids.MODEL_BROWSER, "root");
     static final Element PLACE_HOLDER_ELEMENT = Browser.getDocument().createDivElement();
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelBrowser.class);
@@ -417,7 +417,7 @@ public class ModelBrowser implements HasElements {
                 metadataProcessor.lookup(template, progress.get(), new DefaultMetadataCallback(singletonAddress) {
                     @Override
                     public void onMetadata(Metadata metadata) {
-                        String id = IdBuilder.build(parent.id, "singleton", Ids.FORM_SUFFIX);
+                        String id = Ids.build(parent.id, "singleton", Ids.FORM_SUFFIX);
                         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                                 .addFromRequestProperties()
                                 .build();
@@ -467,7 +467,7 @@ public class ModelBrowser implements HasElements {
                 @Override
                 public void onMetadata(Metadata metadata) {
                     AddResourceDialog dialog = new AddResourceDialog(
-                            IdBuilder.build(parent.id, "add"),
+                            Ids.build(parent.id, "add"),
                             resources.messages().addResourceTitle(parent.text),
                             metadata, (name, modelNode) -> {
                         Operation operation = new Operation.Builder(ADD, fqAddress(parent, name))

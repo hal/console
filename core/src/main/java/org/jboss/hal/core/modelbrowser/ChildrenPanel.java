@@ -39,7 +39,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -99,7 +98,7 @@ class ChildrenPanel implements HasElements, Attachable {
                 .paging(false)
                 .build();
 
-        table = new DataTable<>(IdBuilder.build(Ids.MODEL_BROWSER, "children", Ids.TABLE_SUFFIX), options);
+        table = new DataTable<>(Ids.build(Ids.MODEL_BROWSER, "children", Ids.TABLE_SUFFIX), options);
 
         builder = new Elements.Builder()
                 .h(1).rememberAs(HEADER_ELEMENT).end()

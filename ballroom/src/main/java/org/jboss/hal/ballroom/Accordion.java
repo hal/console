@@ -21,7 +21,7 @@ import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -59,7 +59,7 @@ public class Accordion implements IsElement {
 
     public void add(String id, String title, Element first, Element... rest) {
         boolean firstPanel = root.getChildElementCount() == 0;
-        String headerId = IdBuilder.build(id, "header");
+        String headerId = Ids.build(id, "header");
 
         // @formatter:off
         Elements.Builder builder = new Elements.Builder()
