@@ -48,7 +48,6 @@ import org.jboss.hal.spi.Requires;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DATASOURCES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DATA_SOURCE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
@@ -123,7 +122,7 @@ public class DataSourcePresenter extends
     protected FinderPath finderPath() {
         return finderPathFactory.configurationSubsystemPath(DATASOURCES)
                 .append(Ids.DATA_SOURCE_DRIVER_COLUMN, DATASOURCES, Names.DATASOURCES_DRIVERS, Names.DATASOURCES)
-                .append(DATA_SOURCE, DataSource.id(name, xa), Names.DATASOURCE, name);
+                .append(Ids.DATA_SOURCE_COLUMN, DataSource.id(name, xa), Names.DATASOURCE, name);
     }
 
     private void loadDataSource() {

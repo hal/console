@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * A segment inside a {@link FinderPath}.
+ *
  * @author Harald Pehl
  */
 public class FinderSegment<T> {
@@ -72,37 +74,37 @@ public class FinderSegment<T> {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(FinderSegment.class);
 
-    private final String key;
-    private final String value;
-    private final String breadcrumbKey;
-    private final String breadcrumbValue;
+    private final String columnId;
+    private final String itemId;
+    private final String columnTitle;
+    private final String itemTitle;
 
     private FinderColumn<T> column;
 
-    FinderSegment(final String key, final String value) {
-        this(key, value, key, value);
+    FinderSegment(final String columnId, final String itemId) {
+        this(columnId, itemId, columnId, itemId);
     }
 
-    FinderSegment(final String key, final String value, final String breadcrumbKey,
-            final String breadcrumbValue) {
-        this.key = key;
-        this.value = value;
-        this.breadcrumbKey = breadcrumbKey;
-        this.breadcrumbValue = breadcrumbValue;
+    FinderSegment(final String columnId, final String itemId,
+            final String columnTitle, final String itemTitle) {
+        this.columnId = columnId;
+        this.itemId = itemId;
+        this.columnTitle = columnTitle;
+        this.itemTitle = itemTitle;
     }
 
     FinderSegment(final FinderColumn<T> column) {
-        this.key = column.getId();
-        this.breadcrumbKey = column.getTitle();
+        this.columnId = column.getId();
+        this.columnTitle = column.getTitle();
         this.column = column;
 
         FinderRow selectedRow = column.selectedRow();
         if (selectedRow != null) {
-            this.value = selectedRow.getId();
-            this.breadcrumbValue = selectedRow.getDisplay().getTitle();
+            this.itemId = selectedRow.getId();
+            this.itemTitle = selectedRow.getDisplay().getTitle();
         } else {
-            this.value = null;
-            this.breadcrumbValue = null;
+            this.itemId = null;
+            this.itemTitle = null;
         }
     }
 
@@ -113,42 +115,42 @@ public class FinderSegment<T> {
 
         FinderSegment<?> that = (FinderSegment<?>) o;
 
-        if (!key.equals(that.key)) { return false; }
-        return value.equals(that.value);
+        if (!columnId.equals(that.columnId)) { return false; }
+        return itemId.equals(that.itemId);
 
     }
 
     @Override
     public int hashCode() {
-        int result = key.hashCode();
-        result = 31 * result + value.hashCode();
+        int result = columnId.hashCode();
+        result = 31 * result + itemId.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
         // Do not change this implementation as the place management relies on it!
-        return key + "=" + value;
+        return columnId + "=" + itemId;
     }
 
     public void connect(FinderColumn<T> column) {
         this.column = column;
     }
 
-    public String getKey() {
-        return key;
+    public String getColumnId() {
+        return columnId;
     }
 
-    public String getValue() {
-        return value;
+    public String getItemId() {
+        return itemId;
     }
 
-    public String getBreadcrumbKey() {
-        return breadcrumbKey;
+    public String getColumnTitle() {
+        return columnTitle;
     }
 
-    public String getBreadcrumbValue() {
-        return breadcrumbValue;
+    public String getItemTitle() {
+        return itemTitle;
     }
 
     /**
@@ -174,7 +176,8 @@ public class FinderSegment<T> {
         AsyncCallback<List<T>> asyncCallback = new AsyncCallback<List<T>>() {
             @Override
             public void onFailure(final Throwable caught) {
-                logger.error("Cannot provide dropdown items for breadcrumb segment '{}': {}", this,caught.getMessage());
+                logger.error("Cannot provide dropdown items for breadcrumb segment '{}': {}", this,
+                        caught.getMessage());
             }
 
             @Override
@@ -200,7 +203,7 @@ public class FinderSegment<T> {
     private void collectDropdownElements(List<DropdownItem<T>> elements, List<T> items) {
         for (T item : items) {
             ItemDisplay<T> display = column.getItemRenderer().render(item);
-            if (display.getId().equals(value)) {
+            if (display.getId().equals(itemId)) {
                 continue;
             }
 

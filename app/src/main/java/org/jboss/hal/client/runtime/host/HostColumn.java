@@ -50,6 +50,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
@@ -63,7 +64,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 /**
  * @author Harald Pehl
  */
-@Column(HOST)
+@Column(Ids.HOST_COLUMMN)
 @Requires(value = "/host=*", recursive = false)
 public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {
 
@@ -78,7 +79,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
             final HostActions hostActions,
             final Resources resources) {
 
-        super(new Builder<Host>(finder, HOST, Names.HOST)
+        super(new Builder<Host>(finder, Ids.HOST_COLUMMN, Names.HOST)
 
                 .columnAction(columnActionFactory.refresh(IdBuilder.build(HOST, "refresh")))
 
@@ -110,6 +111,9 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                 .onPreview(item -> new HostPreview(hostActions, item, resources))
                 .pinnable()
                 .showCount()
+                // Unlike other columns the host column does not have a custom breadcrumb item handler.
+                // It makes no sense to replace the host in a finder path like
+                // "host => master / server => server-one / subsystem => logging / log-file => server.log"
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
         );

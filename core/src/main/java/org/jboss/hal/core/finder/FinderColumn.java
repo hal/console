@@ -65,6 +65,9 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
  * <p>
  * The idea is that columns are self-contained and don't need direct references to other columns. References are only
  * provided by id. The {@link ColumnRegistry} will then resolve the id against an existing column.
+ * <p>
+ * Please do not use constants from {@code ModelDescriptionConstants} for the column ids (it makes refactoring harder).
+ * Instead add an id to {@link org.jboss.hal.resources.Ids}.
  *
  * @param <T> The columns type.
  *

@@ -31,7 +31,6 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
@@ -40,6 +39,7 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
@@ -123,7 +123,7 @@ public class LoggingProfilePresenter
     @Override
     protected FinderPath finderPath() {
         return finderPathFactory.configurationSubsystemPath(LOGGING_SUBSYSTEM_TEMPLATE.lastValue())
-                .append(ModelDescriptionConstants.LOGGING_PROFILE, Logging.profileId(loggingProfile),
+                .append(Ids.LOGGING_PROFILE_COLUMN, Logging.profileId(loggingProfile),
                         Names.LOGGING_PROFILE, loggingProfile);
     }
 

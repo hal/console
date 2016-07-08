@@ -284,13 +284,13 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
         for (Iterator<FinderSegment> iterator = context.getPath().iterator(); iterator.hasNext(); ) {
             FinderSegment<Object> segment = iterator.next();
-            if (segment.getKey() == null || segment.getValue() == null) {
+            if (segment.getColumnId() == null || segment.getItemId() == null) {
                 // we need to ignore half filled segments which occur when removing items from a column
                 break;
             }
 
             boolean last = !iterator.hasNext();
-            currentPath.append(segment.getKey(), segment.getValue());
+            currentPath.append(segment.getColumnId(), segment.getItemId());
 
             Elements.Builder builder = new Elements.Builder().li();
             if (last) {
@@ -303,17 +303,17 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
                         .with("path", currentPath.toString())
                         .build();
                 builder.a().css(clickable).on(click, event -> presenter.goTo(keyRequest))
-                        .textContent(segment.getBreadcrumbKey())
+                        .textContent(segment.getColumnTitle())
                         .end();
             } else {
-                builder.textContent(segment.getBreadcrumbKey());
+                builder.textContent(segment.getColumnTitle());
             }
             builder.end().span().css(arrow).innerHtml(SafeHtmlUtils.fromSafeConstant("&#8658;")).end();
 
             builder.span();
             if (segment.supportsDropdown()) {
                 builder.css(value, dropdown);
-                String id = IdBuilder.build(segment.getKey(), VALUE);
+                String id = IdBuilder.build(segment.getColumnId(), VALUE);
                 builder.a().id(id)
                         .css(clickable)
                         .data(UIConstants.TARGET, "#")
@@ -342,7 +342,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
                             });
                         });
 
-                String breadcrumbValue = segment.getBreadcrumbValue();
+                String breadcrumbValue = segment.getItemTitle();
                 if (breadcrumbValue.length() > MAX_BREADCRUMB_VALUE_LENGTH) {
                     builder.span()
                             .textContent(abbreviateMiddle(breadcrumbValue, MAX_BREADCRUMB_VALUE_LENGTH) + " ")
@@ -358,12 +358,12 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
                         .end();
             } else {
                 builder.css(value);
-                String breadcrumbValue = segment.getBreadcrumbValue();
+                String breadcrumbValue = segment.getItemTitle();
                 if (breadcrumbValue.length() > MAX_BREADCRUMB_VALUE_LENGTH) {
                     builder.textContent(abbreviateMiddle(breadcrumbValue, MAX_BREADCRUMB_VALUE_LENGTH))
                             .title(breadcrumbValue);
                 } else {
-                    builder.textContent(segment.getBreadcrumbValue());
+                    builder.textContent(segment.getItemTitle());
                 }
             }
             builder.end(); // </span>

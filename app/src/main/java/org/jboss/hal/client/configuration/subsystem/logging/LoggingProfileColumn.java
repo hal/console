@@ -34,6 +34,7 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
@@ -47,7 +48,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 /**
  * @author Harald Pehl
  */
-@AsyncColumn(LOGGING_PROFILE)
+@AsyncColumn(Ids.LOGGING_PROFILE_COLUMN)
 @Requires(LOGGING_PROFILE_ADDRESS)
 public class LoggingProfileColumn extends FinderColumn<NamedNode> {
 
@@ -60,7 +61,7 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
             final StatementContext statementContext,
             final Resources resources) {
 
-        super(new FinderColumn.Builder<NamedNode>(finder, LOGGING_PROFILE, Names.LOGGING_PROFILES)
+        super(new FinderColumn.Builder<NamedNode>(finder, Ids.LOGGING_PROFILE_COLUMN, Names.LOGGING_PROFILES)
 
                 .columnAction(columnActionFactory.add(
                         IdBuilder.build(LOGGING_PROFILE, "add"),

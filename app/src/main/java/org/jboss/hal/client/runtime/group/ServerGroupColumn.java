@@ -49,6 +49,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
@@ -56,13 +57,12 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 
 /**
  * @author Harald Pehl
  */
-@Column(SERVER_GROUP)
+@Column(Ids.SERVER_GROUP_COLUMN)
 @Requires(value = "/server-group=*")
 public class ServerGroupColumn extends FinderColumn<ServerGroup>
         implements ServerGroupActionHandler, ServerGroupResultHandler {
@@ -78,7 +78,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
             final ServerGroupActions serverGroupActions,
             final Resources resources) {
 
-        super(new Builder<ServerGroup>(finder, SERVER_GROUP, Names.SERVER_GROUP)
+        super(new Builder<ServerGroup>(finder, Ids.SERVER_GROUP_COLUMN, Names.SERVER_GROUP)
 
                 .columnAction(columnActionFactory.add(IdBuilder.build(SERVER_GROUP, "add"), Names.SERVER_GROUP,
                         AddressTemplate.of("/server-group=*")))
@@ -107,6 +107,9 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                 .onItemSelect(serverGroup -> eventBus.fireEvent(new ServerGroupSelectionEvent(serverGroup.getName())))
                 .pinnable()
                 .showCount()
+                // Unlike other columns the server group column does not have a custom breadcrumb item handler.
+                // It makes no sense to replace the server group in a finder path like
+                // "server-group => main-server-group / server => server-one / subsystem => logging / log-file => server.log"
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
         );
@@ -134,7 +137,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
 
             @Override
             public String nextColumn() {
-                return SERVER;
+                return Ids.SERVER_COLUMN;
             }
 
             @Override

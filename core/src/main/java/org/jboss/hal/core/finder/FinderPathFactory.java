@@ -18,6 +18,7 @@ package org.jboss.hal.core.finder;
 import javax.inject.Inject;
 
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.runtime.server.Server;
@@ -29,43 +30,51 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 
 /**
- * Factory to build finder path instances for configuration and runtime presenters.
+ * Factory to build common finder path instances for configuration and runtime presenters.
  *
  * @author Harald Pehl
  */
 public class FinderPathFactory {
 
-    private final Subsystems subsystems;
+    private final Environment environment;
     private final StatementContext statementContext;
     private final Finder finder;
+    private final Subsystems subsystems;
     private final Resources resources;
 
     @Inject
-    public FinderPathFactory(final Subsystems subsystems,
+    public FinderPathFactory(final Environment environment,
             final StatementContext statementContext,
             final Finder finder,
+            final Subsystems subsystems,
             final Resources resources) {
-        this.subsystems = subsystems;
+        this.environment = environment;
         this.statementContext = statementContext;
         this.finder = finder;
+        this.subsystems = subsystems;
         this.resources = resources;
     }
 
 
     // ------------------------------------------------------ configuration
 
+    /**
+     * Create a finder path for the specified subsystem. Includes the selected profile when running in domain mode.
+     */
     public FinderPath configurationSubsystemPath(String subsystem) {
         FinderPath path = new FinderPath();
-        String profile = statementContext.selectedProfile();
 
-        if (profile == null) {
-            path.append(CONFIGURATION, Names.SUBSYSTEMS.toLowerCase(), Names.CONFIGURATION, Names.SUBSYSTEMS);
+        if (environment.isStandalone()) {
+            path.append(Ids.CONFIGURATION_COLUMN, IdBuilder.asId(Names.SUBSYSTEMS),
+                    Names.CONFIGURATION, Names.SUBSYSTEMS);
         } else {
-            path.append(CONFIGURATION, Names.PROFILES.toLowerCase(), Names.CONFIGURATION, Names.PROFILES)
-                    .append(PROFILE, profile, Names.PROFILES);
+            String profile = statementContext.selectedProfile();
+            path.append(Ids.CONFIGURATION_COLUMN, IdBuilder.asId(Names.PROFILES), Names.CONFIGURATION, Names.PROFILES)
+                    .append(Ids.PROFILE_COLUMN, profile, Names.PROFILES, profile);
+
         }
         path.append(Ids.CONFIGURATION_SUBSYSTEM_COLUMN, subsystem, Names.SUBSYSTEM, subsystemTitle(subsystem));
         return path;
@@ -74,14 +83,20 @@ public class FinderPathFactory {
 
     // ------------------------------------------------------ runtime
 
+    /**
+     * Creates a finder path for the selected host.
+     */
     public FinderPath runtimeHostPath() {
         String host = statementContext.selectedHost();
         return new FinderPath()
                 .append(Ids.DOMAIN_BROWSE_BY_COLUMN, IdBuilder.asId(Names.HOSTS),
                         resources.constants().browseBy(), Names.HOSTS)
-                .append(HOST, Host.id(host), Names.HOST, host);
+                .append(Ids.HOST_COLUMMN, Host.id(host), Names.HOST, host);
     }
 
+    /**
+     * Creates a finder path for the selected server group.
+     */
     public FinderPath runtimeServerGroupPath() {
         String serverGroup = statementContext.selectedServerGroup();
         return new FinderPath()
@@ -90,12 +105,24 @@ public class FinderPathFactory {
                 .append(SERVER_GROUP, ServerGroup.id(serverGroup), Names.SERVER_GROUP, serverGroup);
     }
 
+    /**
+     * Creates a finder path for the selected server. Adds the selected host / server group when running domain mode.
+     */
     public FinderPath runtimeServerPath() {
-        String server = statementContext.selectedServer();
-        FinderPath path = browseByHosts() ? runtimeHostPath() : runtimeServerGroupPath();
-        return path.append(SERVER, Server.id(server), Names.SERVER, server);
+        if (environment.isStandalone()) {
+            return new FinderPath().append(Ids.STANDALONE_SERVER_COLUMN, Server.id(Server.STANDALONE.getName()),
+                    Names.SERVER, Names.STANDALON_SERVER);
+        } else {
+            String server = statementContext.selectedServer();
+            FinderPath path = browseByServerGroups() ? runtimeServerGroupPath() : runtimeHostPath();
+            return path.append(Ids.SERVER_COLUMN, Server.id(server), Names.SERVER, server);
+        }
     }
 
+    /**
+     * Create a finder path for the specified subsystem of the selected server. Includes the selected host / server
+     * group when running domain mode.
+     */
     public FinderPath runtimeSubsystemPath(String subsystem) {
         return runtimeServerPath()
                 .append(Ids.RUNTIME_SUBSYSTEM_COLUMN, subsystem, Names.SUBSYSTEM, subsystemTitle(subsystem));
@@ -104,18 +131,10 @@ public class FinderPathFactory {
 
     // ------------------------------------------------------ helpers
 
-    private boolean browseByHosts() {
-        if (!finder.getContext().getPath().isEmpty()) {
-            FinderSegment firstSegment = finder.getContext().getPath().iterator().next();
-            return firstSegment.getValue().equals(IdBuilder.asId(Names.HOSTS));
-        }
-        return false;
-    }
-
     private boolean browseByServerGroups() {
         if (!finder.getContext().getPath().isEmpty()) {
             FinderSegment firstSegment = finder.getContext().getPath().iterator().next();
-            return firstSegment.getValue().equals(IdBuilder.asId(Names.SERVER_GROUPS));
+            return firstSegment.getItemId().equals(IdBuilder.asId(Names.SERVER_GROUPS));
         }
         return false;
     }

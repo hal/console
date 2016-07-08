@@ -24,23 +24,24 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INTERFACE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 
-@Column(ModelDescriptionConstants.INTERFACE)
+@Column(Ids.INTERFACE_COLUMN)
 @Requires(InterfacePresenter.ROOT_ADDRESS)
 public class InterfaceColumn extends FinderColumn<Property> {
 
@@ -50,19 +51,19 @@ public class InterfaceColumn extends FinderColumn<Property> {
             final ItemActionFactory itemActionFactory,
             final Dispatcher dispatcher) {
 
-        super(new Builder<Property>(finder, ModelDescriptionConstants.INTERFACE, Names.INTERFACE)
+        super(new Builder<Property>(finder, Ids.INTERFACE_COLUMN, Names.INTERFACE)
 
                 .columnAction(columnActionFactory.add(
-                        IdBuilder.build(ModelDescriptionConstants.INTERFACE, "add"),
+                        IdBuilder.build(INTERFACE, "add"),
                         Names.INTERFACE,
                         InterfacePresenter.ROOT_TEMPLATE,
                         "inet-address"))
                 .columnAction(
-                        columnActionFactory.refresh(IdBuilder.build(ModelDescriptionConstants.INTERFACE, "refresh")))
+                        columnActionFactory.refresh(IdBuilder.build(INTERFACE, "refresh")))
 
                 .itemsProvider((context, callback) -> {
                     Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
-                            .param(CHILD_TYPE, ModelDescriptionConstants.INTERFACE).build();
+                            .param(CHILD_TYPE, INTERFACE).build();
                     dispatcher.execute(operation, result -> {
                         callback.onSuccess(result.asPropertyList());
                     });

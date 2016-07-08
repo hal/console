@@ -21,7 +21,6 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -41,11 +40,11 @@ public class DataSourcesDriversColumn extends StaticItemColumn {
 
         super(finder, Ids.DATA_SOURCE_DRIVER_COLUMN, Names.DATASOURCES_DRIVERS, asList(
                 new StaticItem.Builder(Names.DATASOURCES)
-                        .nextColumn(ModelDescriptionConstants.DATA_SOURCE)
+                        .nextColumn(Ids.DATA_SOURCE_COLUMN)
                         .onPreview(new PreviewContent(Names.DATASOURCES, resources.previews().datasourcesOnly()))
                         .build(),
                 new StaticItem.Builder(Names.JDBC_DRIVERS)
-                        .nextColumn(ModelDescriptionConstants.JDBC_DRIVER)
+                        .nextColumn(Ids.JDBC_DRIVER_COLUMN)
                         .onPreview(new PreviewContent(Names.JDBC_DRIVERS, resources.previews().jdbcDrivers()))
                         .build()
         ));

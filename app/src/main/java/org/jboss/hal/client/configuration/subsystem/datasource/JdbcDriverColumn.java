@@ -29,7 +29,6 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -39,6 +38,7 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -47,6 +47,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
@@ -66,7 +67,7 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 /**
  * @author Harald Pehl
  */
-@AsyncColumn(JDBC_DRIVER)
+@AsyncColumn(Ids.JDBC_DRIVER_COLUMN)
 @Requires(JDBC_DRIVER_ADDRESS)
 public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
 
@@ -82,7 +83,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
             final @Footer Provider<Progress> progress,
             final Resources resources) {
 
-        super(new FinderColumn.Builder<JdbcDriver>(finder, JDBC_DRIVER, Names.JDBC_DRIVER)
+        super(new FinderColumn.Builder<JdbcDriver>(finder, Ids.JDBC_DRIVER_COLUMN, Names.JDBC_DRIVER)
 
                 .itemsProvider((context, callback) -> {
                     Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {

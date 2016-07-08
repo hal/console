@@ -71,4 +71,19 @@ public class Places {
         }
         return builder;
     }
+
+    /**
+     * Replaces a parameter in an existing place request with a new value.
+     */
+    public PlaceRequest.Builder replaceParameter(PlaceRequest placeRequest, String parameter, String newValue) {
+        PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(placeRequest.getNameToken());
+        for (String p : placeRequest.getParameterNames()) {
+            if (parameter.equals(p)) {
+                builder.with(parameter, newValue);
+            } else {
+                builder.with(p, placeRequest.getParameter(p, ""));
+            }
+        }
+        return builder;
+    }
 }

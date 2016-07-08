@@ -31,7 +31,6 @@ import org.jboss.hal.core.finder.StaticItemColumn;
 import org.jboss.hal.core.runtime.group.ServerGroupActions;
 import org.jboss.hal.core.runtime.host.HostActions;
 import org.jboss.hal.core.runtime.server.ServerActions;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
@@ -48,13 +47,13 @@ public class BrowseByColumn extends StaticItemColumn {
 
     public static boolean browseByHosts(FinderContext context) {
         FinderSegment firstSegment = context.getPath().iterator().next();
-        return firstSegment.getValue().equals(IdBuilder.asId(Names.HOSTS));
+        return firstSegment.getItemId().equals(IdBuilder.asId(Names.HOSTS));
     }
 
     public static boolean browseByServerGroups(FinderContext context) {
         if (!context.getPath().isEmpty()) {
             FinderSegment firstSegment = context.getPath().iterator().next();
-            return firstSegment.getValue().equals(IdBuilder.asId(Names.SERVER_GROUPS));
+            return firstSegment.getItemId().equals(IdBuilder.asId(Names.SERVER_GROUPS));
         }
         return false;
     }
@@ -77,11 +76,11 @@ public class BrowseByColumn extends StaticItemColumn {
                                                 hostActions, serverGroupActions, serverActions, resources))
                                 .build(),
                         new StaticItem.Builder(Names.HOSTS)
-                                .nextColumn(ModelDescriptionConstants.HOST)
+                                .nextColumn(Ids.HOST_COLUMMN)
                                 .onPreview(new PreviewContent(Names.HOSTS, resources.previews().hosts()))
                                 .build(),
                         new StaticItem.Builder(Names.SERVER_GROUPS)
-                                .nextColumn(ModelDescriptionConstants.SERVER_GROUP)
+                                .nextColumn(Ids.SERVER_GROUP_COLUMN)
                                 .onPreview(new PreviewContent(Names.SERVER_GROUPS,
                                         resources.previews().runtimeServerGroups()))
                                 .build()

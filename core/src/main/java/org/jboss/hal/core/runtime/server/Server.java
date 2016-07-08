@@ -35,8 +35,8 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  */
 public class Server extends NamedNode {
 
-    private static final String STANDALONE_SERVER = "standalone.server";
-    private static final String STANDALONE_HOST = "standalone.host";
+    private static final String STANDALONE_SERVER = "standalone-server";
+    private static final String STANDALONE_HOST = "standalone-host";
 
     public static final Server STANDALONE = new Server(STANDALONE_HOST, STANDALONE_SERVER,
             ServerConfigStatus.STARTED, RunningState.RUNNING);

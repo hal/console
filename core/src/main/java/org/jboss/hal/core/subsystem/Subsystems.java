@@ -18,7 +18,6 @@ package org.jboss.hal.core.subsystem;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -27,6 +26,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * TODO set customImplementation flags to true once the subsystems are implemented
+ *
  * @author Harald Pehl
  */
 public class Subsystems {
@@ -39,12 +39,10 @@ public class Subsystems {
         configurationSubsystems = new HashMap<>();
         runtimeSubsystems = new HashMap<>();
 
-        // ------------------------------------------------------ configuration
+        // @formatter:off ------------------------------------------------------ configuration
         addConfiguration(new SubsystemMetadata(BATCH_JBERET, "Batch", "JBeret", NameTokens.BATCH_CONFIGURATION, null, false));
-        addConfiguration(new SubsystemMetadata(DATASOURCES, Names.DATASOURCES_DRIVERS, null, null,
-                Ids.DATA_SOURCE_DRIVER_COLUMN, true));
-        addConfiguration(new SubsystemMetadata(DEPLOYMENT_SCANNER, "Deployment Scanners", null, NameTokens.DEPLOYMENT_SCANNERS,
-                null, true));
+        addConfiguration(new SubsystemMetadata(DATASOURCES, Names.DATASOURCES_DRIVERS, null, null, Ids.DATA_SOURCE_DRIVER_COLUMN, true));
+        addConfiguration(new SubsystemMetadata(DEPLOYMENT_SCANNER, "Deployment Scanners", null, NameTokens.DEPLOYMENT_SCANNERS, null, true));
         addConfiguration(new SubsystemMetadata(EE, "EE", null, NameTokens.EE, null, true));
         addConfiguration(new SubsystemMetadata(EJB3, "EJB3", null, NameTokens.EJB3, null, false));
         addConfiguration(new SubsystemMetadata(IIOP_OPENJDK, "IIOP", "OpenJDK", NameTokens.IIOP, null, true));
@@ -53,23 +51,20 @@ public class Subsystems {
         addConfiguration(new SubsystemMetadata(JCA, "JCA", null, NameTokens.JCA, null, false));
         addConfiguration(new SubsystemMetadata(JMX, "JMX", null, NameTokens.JMX, null, false));
         addConfiguration(new SubsystemMetadata(JPA, "JPA", null, NameTokens.JPA_CONFIGURATION, null, false));
-        addConfiguration(new SubsystemMetadata(LOGGING, Names.LOGGING, null, null, ModelDescriptionConstants.LOGGING, true));
-        addConfiguration(new SubsystemMetadata(MAIL, "Mail", null, null, ModelDescriptionConstants.MAIL_SESSION, true));
-        addConfiguration(new SubsystemMetadata(MESSAGING_ACTIVEMQ, "Messaging", "ActiveMQ", null,
-                ModelDescriptionConstants.MESSAGING_SERVER, true));
+        addConfiguration(new SubsystemMetadata(LOGGING, Names.LOGGING, null, null, Ids.LOGGING_COLUMN, true));
+        addConfiguration(new SubsystemMetadata(MAIL, "Mail", null, null, Ids.MAIL_SESSION_COLUMN, true));
+        addConfiguration(new SubsystemMetadata(MESSAGING_ACTIVEMQ, "Messaging", "ActiveMQ", null, null, true));
         addConfiguration(new SubsystemMetadata(REMOTING, "Remoting", null, NameTokens.REMOTING, null, false));
-        addConfiguration(new SubsystemMetadata(REQUEST_CONTROLLER, "Request Controller", null, NameTokens.REQUEST_CONTROLLER, null,
-                false));
-        addConfiguration(new SubsystemMetadata(RESOURCE_ADAPTERS, "Resource Adapters", null, null,
-                RESOURCE_ADAPTER, true));
-        addConfiguration(new SubsystemMetadata(SECURITY, "Security", null, null, ModelDescriptionConstants.SECURITY_DOMAIN, true));
+        addConfiguration(new SubsystemMetadata(REQUEST_CONTROLLER, "Request Controller", null, NameTokens.REQUEST_CONTROLLER, null, false));
+        addConfiguration(new SubsystemMetadata(RESOURCE_ADAPTERS, "Resource Adapters", null, null, null, true));
+        addConfiguration(new SubsystemMetadata(SECURITY, "Security", null, null, null, true));
         addConfiguration(new SubsystemMetadata(TRANSACTIONS, "Transactions", null, NameTokens.TRANSACTIONS, null, true));
         addConfiguration(new SubsystemMetadata(UNDERTOW, "Web", "Undertow", null, Ids.WEB_SETTINGS_COLUMN, true));
         addConfiguration(new SubsystemMetadata(WEBSERVICES, "Web Services", null, NameTokens.WEBSERVICES, null, false));
 
         // ------------------------------------------------------ runtime
         addRuntime(new SubsystemMetadata(BATCH_JBERET, "Batch", "JBeret", NameTokens.BATCH_RUNTIME, null, false));
-        addRuntime(new SubsystemMetadata(DATASOURCES, Names.DATASOURCES, null, null, DATA_SOURCE, true));
+        // @formatter:on
     }
 
     private void addConfiguration(SubsystemMetadata subsystem) {

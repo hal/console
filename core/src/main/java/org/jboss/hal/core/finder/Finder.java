@@ -85,14 +85,14 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         public void execute(final Control<FunctionContext> control) {
             if (columnElement != null &&
                     columns.containsKey(columnElement.getId()) &&
-                    segment.getKey().equals(columnElement.getId())) {
+                    segment.getColumnId().equals(columnElement.getId())) {
                 // column is already in place just select the item
                 FinderColumn finderColumn = columns.get(columnElement.getId());
                 selectItem(finderColumn, control);
 
             } else {
                 // append the column
-                appendColumn(segment.getKey(), new AsyncCallback<FinderColumn>() {
+                appendColumn(segment.getColumnId(), new AsyncCallback<FinderColumn>() {
                     @Override
                     public void onFailure(final Throwable throwable) {
                         control.abort();
@@ -107,13 +107,13 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         }
 
         private void selectItem(FinderColumn finderColumn, Control<FunctionContext> control) {
-            if (finderColumn.contains(segment.getValue())) {
-                finderColumn.markSelected(segment.getValue());
+            if (finderColumn.contains(segment.getItemId())) {
+                finderColumn.markSelected(segment.getItemId());
                 updateContext();
                 control.getContext().push(finderColumn);
                 control.proceed();
             } else {
-                logger.error("Unable to select item '{}'", segment.getValue()); //NON-NLS
+                logger.error("Unable to select item '{}'", segment.getItemId()); //NON-NLS
                 control.abort();
             }
         }
@@ -128,15 +128,15 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
         @Override
         public void execute(final Control<FunctionContext> control) {
-            FinderColumn column = getColumn(segment.getKey());
+            FinderColumn column = getColumn(segment.getColumnId());
             if (column != null) {
                 column.refresh(() -> {
-                    column.markSelected(segment.getValue());
+                    column.markSelected(segment.getItemId());
                     column.selectedRow().click();
                     control.proceed();
                 });
             } else {
-                logger.error("Unable to find column '{}'", segment.getKey()); //NON-NLS
+                logger.error("Unable to find column '{}'", segment.getColumnId()); //NON-NLS
                 control.abort();
             }
         }
@@ -439,7 +439,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 FinderSegment newSegment = newPathIterator.next();
                 FinderSegment currentSegment = currentPathIterator.next();
                 if (newSegment.equals(currentSegment)) {
-                    refreshPath.append(newSegment.getKey(), newSegment.getValue());
+                    refreshPath.append(newSegment.getColumnId(), newSegment.getItemId());
                 } else {
                     finished = true;
                 }
@@ -494,8 +494,8 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 FinderPath currentPath = context.getPath().reversed();
                 for (FinderSegment newSegment : newPath) {
                     for (FinderSegment currentSegment : currentPath) {
-                        if (newSegment.getKey().equals(currentSegment.getKey())) {
-                            match = newSegment.getKey();
+                        if (newSegment.getColumnId().equals(currentSegment.getColumnId())) {
+                            match = newSegment.getColumnId();
                             break;
                         }
                     }
@@ -514,7 +514,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             HTMLCollection columns = root.getChildren();
             for (FinderSegment segment : path) {
                 Element column = index < columns.getLength() ? (Element) columns.item(index) : null;
-                functions[index] = new SelectFunction(new FinderSegment(segment.getKey(), segment.getValue()),
+                functions[index] = new SelectFunction(new FinderSegment(segment.getColumnId(), segment.getItemId()),
                         column); // work with a copy of segment!
                 index++;
             }

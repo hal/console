@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import com.google.common.base.Joiner;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.dom.Element;
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -41,6 +40,7 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
@@ -56,7 +56,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Claudio Miranda
  */
-@AsyncColumn(MAIL_SESSION)
+@AsyncColumn(Ids.MAIL_SESSION_COLUMN)
 @Requires(MAIL_SESSION_ADDRESS)
 public class MailSessionColumn extends FinderColumn<MailSession> {
 
@@ -64,7 +64,6 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
     protected MailSessionColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
-            final Environment environment,
             final EventBus eventBus,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
@@ -72,7 +71,7 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
             final Places places,
             final Resources resources) {
 
-        super(new Builder<MailSession>(finder, MAIL_SESSION, Names.MAIL_SESSION)
+        super(new Builder<MailSession>(finder, Ids.MAIL_SESSION_COLUMN, Names.MAIL_SESSION)
                 .withFilter()
                 .useFirstActionAsBreadcrumbHandler());
 

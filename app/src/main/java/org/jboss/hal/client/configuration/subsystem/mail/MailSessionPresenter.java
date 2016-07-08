@@ -52,6 +52,7 @@ import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
@@ -130,7 +131,7 @@ public class MailSessionPresenter
     @Override
     protected FinderPath finderPath() {
         return finderPathFactory.configurationSubsystemPath(ModelDescriptionConstants.MAIL)
-                .append(ModelDescriptionConstants.MAIL_SESSION, mailSessionName, Names.MAIL_SESSION, mailSessionName);
+                .append(Ids.MAIL_SESSION_COLUMN, mailSessionName, Names.MAIL_SESSION, mailSessionName);
     }
 
     void loadMailSession() {

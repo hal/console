@@ -26,6 +26,16 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
 /**
+ * The finder path holds the current selection in the finder. It's a collection of segments with each segment holding
+ * four values:
+ * <ol>
+ * <li>{@code columnId} The column id. Used to lookup columns from the column registry</li>
+ * <li>{@code itemId} The selected item id</li>
+ * <li>{@code columnTitle} The title of the column used in the UI. If not specified defaults to {@code columnId}</li>
+ * <li>{@code itemTitle} The title of the selected item used un the UI. If not specified defaults to {@code
+ * itemId}</li>
+ * </ol>
+ *
  * @author Harald Pehl
  */
 public class FinderPath implements Iterable<FinderSegment> {
@@ -53,22 +63,16 @@ public class FinderPath implements Iterable<FinderSegment> {
     }
 
     public FinderPath(final List<FinderSegment> segments) {
-        // this.segments needs to be modified. So make sure the underlying implementation
-        // supports this even if the list passed as parameters does not.
         this.segments = new ArrayList<>();
         this.segments.addAll(segments);
     }
 
-    public FinderPath append(String key, String value) {
-        return append(key, value, key, value);
+    public FinderPath append(String columnId, String itemId) {
+        return append(columnId, itemId, columnId, itemId);
     }
 
-    public FinderPath append(final String key, String value, String breadcrumbKey) {
-        return append(key, value, breadcrumbKey, value);
-    }
-
-    public FinderPath append(String key, String value, String breadcrumbKey, String breadcrumbValue) {
-        segments.add(new FinderSegment(key, value, breadcrumbKey, breadcrumbValue));
+    public FinderPath append(String columnId, String itemId, String columnTitle, String itemTitle) {
+        segments.add(new FinderSegment(columnId, itemId, columnTitle, itemTitle));
         return this;
     }
 
@@ -89,6 +93,21 @@ public class FinderPath implements Iterable<FinderSegment> {
 
     public void clear() {segments.clear();}
 
+    public FinderPath subPathAfter(String columnId) {
+        FinderPath subPath = new FinderPath();
+        boolean hit = false;
+        for (Iterator<FinderSegment> iterator = iterator(); iterator.hasNext(); ) {
+            FinderSegment segment = iterator.next();
+            if (hit) {
+                subPath.append(segment.getColumnId(), segment.getItemId());
+            }
+            if (segment.getColumnId().equals(columnId)) {
+                hit = true;
+            }
+        }
+        return subPath;
+    }
+
     /**
      * @return a reversed copy of this path. The current path is not modified.
      */
@@ -99,7 +118,7 @@ public class FinderPath implements Iterable<FinderSegment> {
     @Override
     public String toString() {
         return segments.stream()
-                .filter(segment -> segment.getValue() != null)
+                .filter(segment -> segment.getItemId() != null)
                 .map(FinderSegment::toString)
                 .collect(Collectors.joining("/"));
     }

@@ -37,6 +37,7 @@ import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
@@ -113,8 +114,7 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
     @Override
     protected FinderPath finderPath() {
         return finderPathFactory.configurationSubsystemPath(ModelDescriptionConstants.LOGGING)
-                .append(ModelDescriptionConstants.LOGGING, NameTokens.LOGGING_CONFIGURATION,
-                        Names.LOGGING, Names.CONFIGURATION);
+                .append(Ids.LOGGING_COLUMN, NameTokens.LOGGING_CONFIGURATION, Names.LOGGING, Names.CONFIGURATION);
     }
 
     @Override

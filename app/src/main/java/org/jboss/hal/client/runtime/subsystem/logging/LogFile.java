@@ -17,7 +17,6 @@ package org.jboss.hal.client.runtime.subsystem.logging;
 
 import java.util.Date;
 
-import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.i18n.shared.DateTimeFormat;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.dmr.ModelNode;
@@ -35,7 +34,6 @@ class LogFile extends ModelNode {
     private static final String LAST_MODIFIED_TIMESTAMP = "last-modified-timestamp";
 
     private static final DateTimeFormat DATE_TIME_FORMAT = DateTimeFormat.getFormat(ISO_8601);
-    private static final NumberFormat SIZE_FORMAT = NumberFormat.getFormat("#,##0.#");
 
     LogFile(final ModelNode node) {
         set(node);

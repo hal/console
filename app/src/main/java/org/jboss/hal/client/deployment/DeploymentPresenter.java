@@ -29,7 +29,6 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.FinderPresenter;
 import org.jboss.hal.core.mvp.FinderView;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -85,7 +84,7 @@ public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyV
 
     @Override
     protected String initialColumn() {
-        return environment.isStandalone() ? ModelDescriptionConstants.DEPLOYMENT : Ids.DEPLOYMENT_BROWSE_BY_COLUMN;
+        return environment.isStandalone() ? Ids.DEPLOYMENT_COLUMN : Ids.DEPLOYMENT_BROWSE_BY_COLUMN;
     }
 
     @Override

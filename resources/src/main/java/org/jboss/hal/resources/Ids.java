@@ -39,13 +39,46 @@ package org.jboss.hal.resources;
  */
 public interface Ids {
 
+    // ------------------------------------------------------ column ids (need to be unique!)
+
     String CACHE_CONTAINER_COLUMN = "cache-container";
+    String CONFIGURATION_COLUMN = "configuration";
     String CONFIGURATION_SUBSYSTEM_COLUMN = "c-subsystem";
     String CONTENT_COLUMN = "content";
 
+    String DATA_SOURCE_COLUMN = "data-source";
     String DATA_SOURCE_DRIVER_COLUMN = "data-source-driver";
+    String DEPLOYMENT_COLUMN = "deployment";
     String DEPLOYMENT_BROWSE_BY_COLUMN = "deployment-browse-by";
     String DOMAIN_BROWSE_BY_COLUMN = "domain-browse-by";
+
+    String HOST_COLUMMN = "host";
+
+    String INTERFACE_COLUMN = "interface";
+
+    String JDBC_DRIVER_COLUMN = "jdbc-driver";
+
+    String LOG_FILE_COLUMN = "log-file";
+    String LOGGING_COLUMN = "logging";
+    String LOGGING_PROFILE_COLUMN = "logging-profile";
+
+    String MAIL_SESSION_COLUMN = "mail-session";
+
+    String PROFILE_COLUMN = "profile";
+
+    String RUNTIME_SUBSYSTEM_COLUMN = "r-subsystem";
+
+    String SERVER_COLUMN = "server";
+    String SERVER_GROUP_COLUMN = "server-group";
+    String SERVER_MONITOR_COLUMN = "server-monitor";
+    String SOCKET_BINDING_COLUMN = "socket-binding";
+    String STANDALONE_SERVER_COLUMN = "standalone-server";
+
+    String WEB_SETTINGS_COLUMN = "settings";
+
+
+    // ------------------------------------------------------ other ids
+
     String DRAG_AND_DROP_DEPLOYMENT = "drag-and-drop-deployment";
 
     String EE_ATTRIBUTES_ENTRY = "ee-attributes-entry";
@@ -75,7 +108,6 @@ public interface Ids {
     String HOMEPAGE_RUNTIME_SERVER_SECTION = "homepage-runtime-server-section";
     String HOMEPAGE_RUNTIME_SERVER_GROUP_SECTION = "homepage-runtime-server-group-section";
 
-    String LOG_FILE_COLUMN = "log-file";
     String LOG_FILE_EDITOR = "log-file-editor";
 
     String MACRO_EDITOR = "macro-editor";
@@ -91,10 +123,7 @@ public interface Ids {
     String PREVIEW_ID = IdBuilder.build(FINDER, "preview");
 
     String ROOT_CONTAINER = "hal-root-container";
-    String RUNTIME_SUBSYSTEM_COLUMN = "r-subsystem";
 
-    String SERVER_MONITOR_COLUMN = "server-monitor";
-    String STANDALONE_SERVER_COLUMN = "standalone-server";
     String STORAGE_PREFIX = "org.jboss.hal";
 
     String TLC_ACCESS_CONTROL = "tlc-access-control";
@@ -103,10 +132,7 @@ public interface Ids {
     String TLC_HOMEPAGE = "tlc-homepage";
     String TLC_PATCHING = "tlc-patching";
     String TLC_RUNTIME = "tlc-runtime";
-    String TOPOLOGY_REFRESH = "topology-refresh";
 
     String VERSION_INFO = "version-info";
     String VERSION_INFO_FORM = IdBuilder.build(VERSION_INFO, "form");
-
-    String WEB_SETTINGS_COLUMN = "settings";
 }

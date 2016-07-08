@@ -96,12 +96,12 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
         if (applicationPath != null) {
             // try to connect segments with existing columns from the finder
             for (FinderSegment segment : applicationPath) {
-                FinderColumn column = finder.getColumn(segment.getKey());
+                FinderColumn column = finder.getColumn(segment.getColumnId());
                 if (column != null) {
                     segment.connect(column);
                 } else {
                     logger.warn("Unable to find column '{}' to connect breadcrumb segment '{}' for token '{}'",
-                            segment.getKey(), segment, getProxy().getNameToken());
+                            segment.getColumnId(), segment, getProxy().getNameToken());
                 }
             }
             finder.getContext().reset(applicationPath);

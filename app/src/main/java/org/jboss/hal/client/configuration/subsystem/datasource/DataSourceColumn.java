@@ -50,6 +50,7 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
@@ -68,7 +69,7 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
  *
  * @author Harald Pehl
  */
-@AsyncColumn(DATA_SOURCE)
+@AsyncColumn(Ids.DATA_SOURCE_COLUMN)
 @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS, JDBC_DRIVER_ADDRESS})
 public class DataSourceColumn extends FinderColumn<DataSource> {
 
@@ -95,7 +96,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory) {
 
-        super(new Builder<DataSource>(finder, DATA_SOURCE, Names.DATASOURCE)
+        super(new Builder<DataSource>(finder, Ids.DATA_SOURCE_COLUMN, Names.DATASOURCE)
                 .withFilter()
                 .useFirstActionAsBreadcrumbHandler());
 
