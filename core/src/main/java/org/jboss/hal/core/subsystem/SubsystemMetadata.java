@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.core.subsystem;
 
-import org.jboss.hal.core.finder.PreviewContent;
+import com.google.gwt.resources.client.ExternalTextResource;
 
 /**
  * @author Harald Pehl
@@ -28,7 +28,7 @@ public class SubsystemMetadata {
     private final String token;
     private final String nextColumn;
     private final boolean customImplementation;
-    private final PreviewContent previewContent;
+    private final ExternalTextResource externalTextResource;
 
     public SubsystemMetadata(final String name, final String title, final String subtitle, final String token,
             final String nextColumn, final boolean customImplementation) {
@@ -36,14 +36,30 @@ public class SubsystemMetadata {
     }
 
     public SubsystemMetadata(final String name, final String title, final String subtitle, final String token,
-            final String nextColumn, final boolean customImplementation, final PreviewContent previewContent) {
+            final String nextColumn, final boolean customImplementation, ExternalTextResource externalTextResource) {
         this.name = name;
         this.title = title;
         this.subtitle = subtitle;
         this.token = token;
         this.nextColumn = nextColumn;
         this.customImplementation = customImplementation;
-        this.previewContent = previewContent;
+        this.externalTextResource = externalTextResource;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) { return true; }
+        if (!(o instanceof SubsystemMetadata)) { return false; }
+
+        SubsystemMetadata that = (SubsystemMetadata) o;
+
+        return name.equals(that.name);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
     }
 
     @Override
@@ -75,7 +91,7 @@ public class SubsystemMetadata {
         return customImplementation;
     }
 
-    public PreviewContent getPreviewContent() {
-        return previewContent;
+    public ExternalTextResource getExternalTextResource() {
+        return externalTextResource;
     }
 }

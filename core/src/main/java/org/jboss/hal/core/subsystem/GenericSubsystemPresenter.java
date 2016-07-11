@@ -98,7 +98,10 @@ public class GenericSubsystemPresenter
 
     @Override
     protected FinderPath finderPath() {
-        // TODO Support for runtime
-        return finderPathFactory.configurationSubsystemPath(address.lastValue());
+        if (NameTokens.RUNTIME.equals(finder.getContext().getToken())) {
+            return finderPathFactory.runtimeSubsystemPath(address.lastValue());
+        } else {
+            return finderPathFactory.configurationSubsystemPath(address.lastValue());
+        }
     }
 }

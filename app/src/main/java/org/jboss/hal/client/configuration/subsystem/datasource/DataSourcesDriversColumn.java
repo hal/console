@@ -41,11 +41,11 @@ public class DataSourcesDriversColumn extends StaticItemColumn {
         super(finder, Ids.DATA_SOURCE_DRIVER, Names.DATASOURCES_DRIVERS, asList(
                 new StaticItem.Builder(Names.DATASOURCES)
                         .nextColumn(Ids.DATA_SOURCE)
-                        .onPreview(new PreviewContent(Names.DATASOURCES, resources.previews().datasourcesOnly()))
+                        .onPreview(new PreviewContent(Names.DATASOURCES, resources.previews().configurationDatasources()))
                         .build(),
                 new StaticItem.Builder(Names.JDBC_DRIVERS)
                         .nextColumn(Ids.JDBC_DRIVER)
-                        .onPreview(new PreviewContent(Names.JDBC_DRIVERS, resources.previews().jdbcDrivers()))
+                        .onPreview(new PreviewContent(Names.JDBC_DRIVERS, resources.previews().configurationJdbcDrivers()))
                         .build()
         ));
     }

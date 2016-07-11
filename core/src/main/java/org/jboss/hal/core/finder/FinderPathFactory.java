@@ -135,7 +135,7 @@ public class FinderPathFactory {
     }
 
     private String subsystemTitle(String subsystem) {
-        SubsystemMetadata subsystemMetadata = subsystems.getConfigurationSubsystem(subsystem);
+        SubsystemMetadata subsystemMetadata = subsystems.getConfigurationSubsystems().get(subsystem);
         return subsystemMetadata != null ? subsystemMetadata.getTitle() : new LabelBuilder().label(subsystem);
     }
 }

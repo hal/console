@@ -18,9 +18,12 @@ package org.jboss.hal.core.subsystem;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -35,24 +38,25 @@ public class Subsystems {
     private final Map<String, SubsystemMetadata> runtimeSubsystems;
 
     @SuppressWarnings("HardCodedStringLiteral")
-    public Subsystems() {
+    @Inject
+    public Subsystems(Resources resources) {
         configurationSubsystems = new HashMap<>();
         runtimeSubsystems = new HashMap<>();
 
         // @formatter:off ------------------------------------------------------ configuration
         addConfiguration(new SubsystemMetadata(BATCH_JBERET, "Batch", "JBeret", NameTokens.BATCH_CONFIGURATION, null, false));
-        addConfiguration(new SubsystemMetadata(DATASOURCES, Names.DATASOURCES_DRIVERS, null, null, Ids.DATA_SOURCE_DRIVER, true));
-        addConfiguration(new SubsystemMetadata(DEPLOYMENT_SCANNER, "Deployment Scanners", null, NameTokens.DEPLOYMENT_SCANNERS, null, true));
-        addConfiguration(new SubsystemMetadata(EE, "EE", null, NameTokens.EE, null, true));
+        addConfiguration(new SubsystemMetadata(DATASOURCES, Names.DATASOURCES_DRIVERS, null, null, Ids.DATA_SOURCE_DRIVER, true, resources.previews().configurationDatasourcesDrivers()));
+        addConfiguration(new SubsystemMetadata(DEPLOYMENT_SCANNER, "Deployment Scanners", null, NameTokens.DEPLOYMENT_SCANNERS, null, true, resources.previews().configurationDeploymentScanner()));
+        addConfiguration(new SubsystemMetadata(EE, "EE", null, NameTokens.EE, null, true, resources.previews().configurationEe()));
         addConfiguration(new SubsystemMetadata(EJB3, "EJB3", null, NameTokens.EJB3, null, false));
         addConfiguration(new SubsystemMetadata(IIOP_OPENJDK, "IIOP", "OpenJDK", NameTokens.IIOP, null, true));
         addConfiguration(new SubsystemMetadata(INFINISPAN, "Infinispan", null, null, null, true));
-        addConfiguration(new SubsystemMetadata(IO, "IO", null, NameTokens.IO, null, true));
+        addConfiguration(new SubsystemMetadata(IO, "IO", null, NameTokens.IO, null, true, resources.previews().configurationIo()));
         addConfiguration(new SubsystemMetadata(JCA, "JCA", null, NameTokens.JCA, null, false));
         addConfiguration(new SubsystemMetadata(JMX, "JMX", null, NameTokens.JMX, null, false));
         addConfiguration(new SubsystemMetadata(JPA, "JPA", null, NameTokens.JPA_CONFIGURATION, null, false));
-        addConfiguration(new SubsystemMetadata(LOGGING, Names.LOGGING, null, null, Ids.LOGGING, true));
-        addConfiguration(new SubsystemMetadata(MAIL, "Mail", null, null, Ids.MAIL_SESSION, true));
+        addConfiguration(new SubsystemMetadata(LOGGING, Names.LOGGING, null, null, Ids.LOGGING, true, resources.previews().configurationLogging()));
+        addConfiguration(new SubsystemMetadata(MAIL, "Mail", null, null, Ids.MAIL_SESSION, true, resources.previews().configurationMail()));
         addConfiguration(new SubsystemMetadata(MESSAGING_ACTIVEMQ, "Messaging", "ActiveMQ", null, null, true));
         addConfiguration(new SubsystemMetadata(REMOTING, "Remoting", null, NameTokens.REMOTING, null, false));
         addConfiguration(new SubsystemMetadata(REQUEST_CONTROLLER, "Request Controller", null, NameTokens.REQUEST_CONTROLLER, null, false));
@@ -75,19 +79,11 @@ public class Subsystems {
         runtimeSubsystems.put(subsystem.getName(), subsystem);
     }
 
-    public boolean containsConfiguration(String name) {
-        return configurationSubsystems.containsKey(name);
+    public Map<String, SubsystemMetadata> getConfigurationSubsystems() {
+        return configurationSubsystems;
     }
 
-    public boolean containsRuntime(String name) {
-        return runtimeSubsystems.containsKey(name);
-    }
-
-    public SubsystemMetadata getConfigurationSubsystem(String name) {
-        return configurationSubsystems.get(name);
-    }
-
-    public SubsystemMetadata getRuntimeSubsystem(String name) {
-        return runtimeSubsystems.get(name);
+    public Map<String, SubsystemMetadata> getRuntimeSubsystems() {
+        return runtimeSubsystems;
     }
 }

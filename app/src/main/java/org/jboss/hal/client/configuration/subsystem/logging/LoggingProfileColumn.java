@@ -77,7 +77,7 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
                 })
 
                 .onPreview(item -> new LoggingPreview(dispatcher, resources,
-                        item.getName(), resources.previews().loggingProfiles(),
+                        item.getName(), resources.previews().configurationLoggingProfiles(),
                         new Operation.Builder(READ_RESOURCE_OPERATION,
                                 LOGGING_PROFILE_TEMPLATE.append("root-logger=ROOT")
                                         .resolve(statementContext, item.getName()))

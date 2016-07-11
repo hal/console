@@ -41,7 +41,7 @@ public class BrowseByColumn extends StaticItemColumn {
     private static class ContentRepositoryPreview extends PreviewContent<StaticItem> {
 
         ContentRepositoryPreview(Resources resources) {
-            super(resources.constants().contentRepository(), resources.previews().contentRepository());
+            super(resources.constants().contentRepository(), resources.previews().deploymentsContentRepository());
         }
 
         @Override

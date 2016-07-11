@@ -76,7 +76,7 @@ public class BrowseByColumn extends StaticItemColumn {
                                 .build(),
                         new StaticItem.Builder(Names.HOSTS)
                                 .nextColumn(Ids.HOST)
-                                .onPreview(new PreviewContent(Names.HOSTS, resources.previews().hosts()))
+                                .onPreview(new PreviewContent(Names.HOSTS, resources.previews().runtimeHosts()))
                                 .build(),
                         new StaticItem.Builder(Names.SERVER_GROUPS)
                                 .nextColumn(Ids.SERVER_GROUP)

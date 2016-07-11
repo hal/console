@@ -66,14 +66,14 @@ public class LoggingColumn extends StaticItemColumn {
                                 }).execute(item)
                         )
                         .onPreview(new LoggingPreview(dispatcher, resources, Names.CONFIGURATION,
-                                resources.previews().loggingConfiguration(),
+                                resources.previews().configurationLoggingConfiguration(),
                                 new Operation.Builder(READ_RESOURCE_OPERATION,
                                         ROOT_LOGGER_TEMPLATE.resolve(statementContext)).build()))
                         .build(),
 
                 new StaticItem.Builder(Names.LOGGING_PROFILES)
                         .nextColumn(Ids.LOGGING_PROFILE)
-                        .onPreview(new PreviewContent(Names.LOGGING_PROFILES, resources.previews().loggingProfiles()))
+                        .onPreview(new PreviewContent(Names.LOGGING_PROFILES, resources.previews().configurationLoggingProfiles()))
                         .build()
         ));
     }

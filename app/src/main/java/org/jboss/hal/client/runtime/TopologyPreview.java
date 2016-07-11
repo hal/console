@@ -115,7 +115,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             final ServerGroupActions serverGroupActions,
             final ServerActions serverActions,
             final Resources resources) {
-        super(Names.TOPOLOGY, resources.previews().topology());
+        super(Names.TOPOLOGY, resources.previews().runtimeTopology());
         this.environment = environment;
         this.dispatcher = dispatcher;
         this.progress = progress;

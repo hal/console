@@ -56,30 +56,30 @@ public class ConfigurationColumn extends StaticItemColumn {
             } else {
                 items.add(new StaticItem.Builder(Names.PROFILES)
                         .nextColumn(Ids.PROFILE)
-                        .onPreview(new PreviewContent(Names.PROFILES, resources.previews().profiles()))
+                        .onPreview(new PreviewContent(Names.PROFILES, resources.previews().configurationProfiles()))
                         .build());
             }
 
             items.addAll(asList(
                     new StaticItem.Builder(Names.INTERFACES)
                             .nextColumn(Ids.INTERFACE)
-                            .onPreview(new PreviewContent(Names.INTERFACES, resources.previews().interfaces()))
+                            .onPreview(new PreviewContent(Names.INTERFACES, resources.previews().configurationInterfaces()))
                             .build(),
 
                     new StaticItem.Builder(Names.SOCKET_BINDINGS)
                             .nextColumn(Ids.SOCKET_BINDING)
-                            .onPreview(new PreviewContent(Names.SOCKET_BINDINGS, resources.previews().socketBindings()))
+                            .onPreview(new PreviewContent(Names.SOCKET_BINDINGS, resources.previews().configurationSocketBindings()))
                             .build(),
 
                     new StaticItem.Builder(Names.PATHS)
                             .tokenAction(resources.constants().view(), placeManager, NameTokens.PATH)
-                            .onPreview(new PreviewContent(Names.PATHS, resources.previews().paths()))
+                            .onPreview(new PreviewContent(Names.PATHS, resources.previews().configurationPaths()))
                             .build(),
 
                     new StaticItem.Builder(Names.SYSTEM_PROPERTIES)
                             .tokenAction(resources.constants().view(), placeManager, NameTokens.SYSTEM_PROPERTIES)
                             .onPreview(new PreviewContent(Names.SYSTEM_PROPERTIES,
-                                    resources.previews().systemProperties()))
+                                    resources.previews().configurationSystemProperties()))
                             .build()
             ));
 

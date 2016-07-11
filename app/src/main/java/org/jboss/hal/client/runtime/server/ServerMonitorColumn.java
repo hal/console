@@ -48,7 +48,7 @@ public class ServerMonitorColumn extends StaticItemColumn {
                         .build(),
 
                 new StaticItem.Builder(resources.constants().logFiles())
-                        .onPreview(new PreviewContent(resources.constants().logFiles(), resources.previews().logFiles()))
+                        .onPreview(new PreviewContent(resources.constants().logFiles(), resources.previews().runtimeLogFiles()))
                         .nextColumn(Ids.LOG_FILE)
                         .build(),
 

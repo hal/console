@@ -277,9 +277,19 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             }
 
             @Override
+            public Element asElement() {
+                return ItemDisplay.withSubtitle(item.getName(),
+                        BrowseByColumn.browseByHosts(finder.getContext())
+                                ? item.getServerGroup()
+                                : item.getHost());
+            }
+
+            @Override
             public String getFilterData() {
                 List<String> data = new ArrayList<>();
                 data.add(item.getName());
+                data.add(item.getHost());
+                data.add(item.getServerGroup());
                 data.add(ModelNodeHelper.asAttributeValue(item.getServerConfigStatus()));
                 if (item.isStarted()) {
                     data.add(ModelNodeHelper.asAttributeValue(item.getServerState()));

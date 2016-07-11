@@ -124,6 +124,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         editingRoot = new Elements.Builder().div().css(formGroup).end().build();
         inputLabelElement = new Elements.Builder()
                 .label(label)
+                .title(label)
                 .css(column(labelColumns, columnLg, columnMd, columnSm), controlLabel)
                 .end()
                 .build();
@@ -181,9 +182,9 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         // readonly elements
         readonlyRoot = new Elements.Builder().div().css(formGroup).end().build();
         readonlyLabelElement = new Elements.Builder()
-                .label()
+                .label(label)
+                .title(label)
                 .css(column(labelColumns, columnLg, columnMd, columnSm), controlLabel)
-                .textContent(label)
                 .end()
                 .build();
         valueContainer = new Elements.Builder()
