@@ -34,18 +34,18 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.client.GenericSubsystemPresenter;
+import org.jboss.hal.core.subsystem.GenericSubsystemPresenter;
+import org.jboss.hal.client.runtime.BrowseByColumn;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.core.finder.FinderContext;
-import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.finder.ItemsProvider;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.host.HostSelectionEvent;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActionEvent;
@@ -56,7 +56,6 @@ import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.core.runtime.server.ServerSelectionEvent;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -66,7 +65,6 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -85,22 +83,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-@Column(SERVER)
+@Column(Ids.SERVER)
 @Requires(value = {"/host=*/server-config=*", "/host=*/server=*"}, recursive = false)
 public class ServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
-
-    public static boolean browseByHosts(FinderContext context) {
-        FinderSegment firstSegment = context.getPath().iterator().next();
-        return firstSegment.getValue().equals(IdBuilder.asId(Names.HOSTS));
-    }
-
-    public static boolean browseByServerGroups(FinderContext context) {
-        if (!context.getPath().isEmpty()) {
-            FinderSegment firstSegment = context.getPath().iterator().next();
-            return firstSegment.getValue().equals(IdBuilder.asId(Names.SERVER_GROUPS));
-        }
-        return false;
-    }
 
     private final Finder finder;
 
@@ -111,14 +96,15 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             final @Footer Provider<Progress> progress,
             final StatementContext statementContext,
             final PlaceManager placeManager,
+            final Places places,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
             final ServerActions serverActions,
             final Resources resources) {
-        super(new Builder<Server>(finder, SERVER, Names.SERVER)
+        super(new Builder<Server>(finder, Ids.SERVER, Names.SERVER)
 
                 .onItemSelect(server -> {
-                    if (browseByServerGroups(finder.getContext())) {
+                    if (BrowseByColumn.browseByServerGroups(finder.getContext())) {
                         // if we browse by server groups we still need to have a valid {selected.host}
                         eventBus.fireEvent(new HostSelectionEvent(server.getHost()));
                     }
@@ -126,38 +112,24 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 })
 
                 .onBreadcrumbItem((item, context) -> {
+                    PlaceRequest.Builder builder = null;
                     PlaceRequest current = placeManager.getCurrentPlaceRequest();
-                    PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(current.getNameToken());
 
                     if (NameTokens.GENERIC_SUBSYSTEM.equals(current.getNameToken())) {
                         // switch server in address parameter of generic presenter
+                        builder = new PlaceRequest.Builder().nameToken(current.getNameToken());
                         String addressParam = current.getParameter(GenericSubsystemPresenter.ADDRESS_PARAM, null);
                         if (addressParam != null) {
                             ResourceAddress currentAddress = AddressTemplate.of(addressParam).resolve(statementContext);
-                            ResourceAddress newAddress = new ResourceAddress();
-                            for (Property property : currentAddress.asPropertyList()) {
-                                if (SERVER.equals(property.getName())) {
-                                    newAddress.add(SERVER, item.getName());
-                                } else if (SERVER_CONFIG.equals(property.getName())) {
-                                    newAddress.add(SERVER_CONFIG, item.getName());
-                                } else {
-                                    newAddress.add(property.getName(), property.getValue().asString());
-                                }
-                            }
+                            ResourceAddress newAddress = currentAddress.replaceValue(SERVER, item.getName())
+                                    .replaceValue(SERVER_CONFIG, item.getName());
                             builder.with(GenericSubsystemPresenter.ADDRESS_PARAM, newAddress.toString());
                         }
 
                     } else {
                         // switch server in place request parameter of specific presenter
-                        for (String parameter : current.getParameterNames()) {
-                            if (SERVER.equals(parameter)) {
-                                builder.with(SERVER, item.getName());
-                            } else if (SERVER_CONFIG.equals(parameter)) {
-                                builder.with(SERVER_CONFIG, item.getName());
-                            } else {
-                                builder.with(parameter, current.getParameter(parameter, ""));
-                            }
-                        }
+                        PlaceRequest place = places.replaceParameter(current, SERVER, item.getName()).build();
+                        builder = places.replaceParameter(place, SERVER_CONFIG, item.getName());
                     }
                     placeManager.revealPlace(builder.build());
                 })
@@ -172,7 +144,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
         ItemsProvider<Server> itemsProvider = (context, callback) -> {
             Function<FunctionContext> serverConfigsFn;
             Function<FunctionContext> startedServersFn;
-            boolean browseByHosts = browseByHosts(context);
+            boolean browseByHosts = BrowseByColumn.browseByHosts(context);
 
             if (browseByHosts) {
                 serverConfigsFn = control -> {
@@ -264,7 +236,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                             // Restore pending servers visualization
                             servers.stream()
                                     .filter(serverActions::isPending)
-                                    .forEach(server -> ItemMonitor.startProgress(Server.id(server.getName())));
+                                    .forEach(server -> ItemMonitor.startProgress(Ids.serverId(server.getName())));
                         }
                     },
                     serverConfigsFn, startedServersFn);
@@ -296,7 +268,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
         setItemRenderer(item -> new ItemDisplay<Server>() {
             @Override
             public String getId() {
-                return Server.id(item.getName());
+                return Ids.serverId(item.getName());
             }
 
             @Override
@@ -305,9 +277,19 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             }
 
             @Override
+            public Element asElement() {
+                return ItemDisplay.withSubtitle(item.getName(),
+                        BrowseByColumn.browseByHosts(finder.getContext())
+                                ? item.getServerGroup()
+                                : item.getHost());
+            }
+
+            @Override
             public String getFilterData() {
                 List<String> data = new ArrayList<>();
                 data.add(item.getName());
+                data.add(item.getHost());
+                data.add(item.getServerGroup());
                 data.add(ModelNodeHelper.asAttributeValue(item.getServerConfigStatus()));
                 if (item.isStarted()) {
                     data.add(ModelNodeHelper.asAttributeValue(item.getServerState()));
@@ -371,7 +353,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         .with(SERVER_CONFIG, item.getName())
                         .build();
                 List<ItemAction<Server>> actions = new ArrayList<>();
-                actions.add(itemActionFactory.viewAndMonitor(Server.id(item.getName()), placeRequest));
+                actions.add(itemActionFactory.viewAndMonitor(Ids.serverId(item.getName()), placeRequest));
                 if (!serverActions.isPending(item)) {
                     if (!item.isStarted()) {
                         AddressTemplate template = AddressTemplate
@@ -380,7 +362,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                 itemActionFactory.remove(Names.SERVER, item.getName(), template, ServerColumn.this));
                     }
                     actions.add(new ItemAction<>(resources.constants().copy(),
-                            itm -> copyServer(itm, browseByHosts(finder.getContext()))));
+                            itm -> copyServer(itm, BrowseByColumn.browseByHosts(finder.getContext()))));
                     if (!item.isStarted()) {
                         actions.add(new ItemAction<>(resources.constants().start(), serverActions::start));
                     } else {
@@ -400,13 +382,13 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
             @Override
             public String nextColumn() {
-                return item.isStarted() ? Ids.SERVER_MONITOR_COLUMN : null;
+                return item.isStarted() ? Ids.SERVER_MONITOR : null;
             }
         });
 
-        addColumnAction(columnActionFactory.add(IdBuilder.build(SERVER, "add"), Names.SERVER,
-                column -> addServer(browseByHosts(finder.getContext()))));
-        addColumnAction(columnActionFactory.refresh(IdBuilder.build(SERVER, "refresh")));
+        addColumnAction(columnActionFactory.add(Ids.SERVER_ADD, Names.SERVER,
+                column -> addServer(BrowseByColumn.browseByHosts(finder.getContext()))));
+        addColumnAction(columnActionFactory.refresh(Ids.SERVER_REFRESH));
 
         eventBus.addHandler(ServerActionEvent.getType(), this);
         eventBus.addHandler(ServerResultEvent.getType(), this);
@@ -422,13 +404,13 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
     private boolean serverIsLastSegment() {
         FinderSegment segment = Iterables.getLast(finder.getContext().getPath(), null);
-        return segment != null && SERVER.equals(segment.getKey());
+        return segment != null && Ids.SERVER.equals(segment.getColumnId());
     }
 
     @Override
     public void onServerAction(final ServerActionEvent event) {
         if (isVisible()) {
-            ItemMonitor.startProgress(Server.id(event.getServer().getName()));
+            ItemMonitor.startProgress(Ids.serverId(event.getServer().getName()));
             refresh(RESTORE_SELECTION);
         }
     }
@@ -437,18 +419,11 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     public void onServerResult(final ServerResultEvent event) {
         if (isVisible()) {
             Server server = event.getServer();
-            String itemId = Server.id(server.getName());
+            String itemId = Ids.serverId(server.getName());
             ItemMonitor.stopProgress(itemId);
 
-            // Remove the 'Browse By' segment
-            FinderPath refreshPath = new FinderPath();
-            for (FinderSegment segment : finder.getContext().getPath()) {
-                if (segment.getKey().equals(Ids.DOMAIN_BROWSE_BY_COLUMN)) {
-                    continue;
-                }
-                refreshPath.append(segment.getKey(), segment.getValue());
-            }
-            finder.refresh(refreshPath);
+            // 'Browse By' does not need to be refreshed
+            finder.refresh(finder.getContext().getPath().subPathAfter(Ids.DOMAIN_BROWSE_BY));
         }
     }
 }

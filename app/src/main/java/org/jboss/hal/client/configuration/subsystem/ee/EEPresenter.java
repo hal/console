@@ -27,6 +27,7 @@ import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
@@ -89,6 +90,7 @@ public class EEPresenter extends ApplicationPresenter<EEPresenter.MyView, EEPres
         return new Metadata(metadata.getSecurityContext(), globalModulesDescription, metadata.getCapabilities());
     }
 
+    private final FinderPathFactory finderPathFactory;
     private final Resources resources;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
@@ -101,11 +103,13 @@ public class EEPresenter extends ApplicationPresenter<EEPresenter.MyView, EEPres
             final MyView view,
             final MyProxy proxy,
             final Finder finder,
+            final FinderPathFactory finderPathFactory,
             final Resources resources,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
             final MetadataRegistry metadataRegistry) {
         super(eventBus, view, proxy, finder);
+        this.finderPathFactory = finderPathFactory;
 
         this.resources = resources;
         this.dispatcher = dispatcher;
@@ -129,8 +133,7 @@ public class EEPresenter extends ApplicationPresenter<EEPresenter.MyView, EEPres
 
     @Override
     protected FinderPath finderPath() {
-        return FinderPath
-                .configurationSubsystemPath(statementContext.selectedProfile(), AddressTemplates.EE_SUBSYSTEM_TEMPLATE.lastValue());
+        return finderPathFactory.configurationSubsystemPath(AddressTemplates.EE_SUBSYSTEM_TEMPLATE.lastValue());
     }
 
     void loadEESubsystem() {

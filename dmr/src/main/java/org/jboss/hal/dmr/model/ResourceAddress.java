@@ -82,6 +82,18 @@ public class ResourceAddress extends ModelNode {
         return isDefined() ? asList().size() : 0;
     }
 
+    public ResourceAddress replaceValue(String name, String newValue) {
+        ResourceAddress newAddress = new ResourceAddress();
+        for (Property property : asPropertyList()) {
+            if (name.equals(property.getName())) {
+                newAddress.add(name, newValue);
+            } else {
+                newAddress.add(property.getName(), property.getValue().asString());
+            }
+        }
+        return newAddress;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

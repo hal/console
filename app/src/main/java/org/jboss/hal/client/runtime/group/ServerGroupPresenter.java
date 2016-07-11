@@ -24,6 +24,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
@@ -67,6 +68,7 @@ public class ServerGroupPresenter extends MbuiPresenter<ServerGroupPresenter.MyV
     // @formatter:on
 
 
+    private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
 
@@ -75,9 +77,11 @@ public class ServerGroupPresenter extends MbuiPresenter<ServerGroupPresenter.MyV
             final ServerGroupPresenter.MyView view,
             final ServerGroupPresenter.MyProxy proxy,
             final Finder finder,
+            final FinderPathFactory finderPathFactory,
             final StatementContext statementContext,
             final Dispatcher dispatcher) {
         super(eventBus, view, proxy, finder);
+        this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
     }
@@ -90,7 +94,7 @@ public class ServerGroupPresenter extends MbuiPresenter<ServerGroupPresenter.MyV
 
     @Override
     protected FinderPath finderPath() {
-        return FinderPath.runtimeServerGroupPath(statementContext.selectedServerGroup());
+        return finderPathFactory.runtimeServerGroupPath();
     }
 
     @Override

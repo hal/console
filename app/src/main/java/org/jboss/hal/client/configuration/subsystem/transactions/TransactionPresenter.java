@@ -31,6 +31,7 @@ import org.jboss.hal.client.configuration.PathsTypeahead;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
@@ -78,6 +79,7 @@ public class TransactionPresenter extends MbuiPresenter<TransactionPresenter.MyV
     static final String PROCESS_ID_SOCKET_MAX_PORTS = "process-id-socket-max-ports";
     private final static ValidationResult invalid = ValidationResult.invalid("Validation error, see error messages below.");
 
+    private final FinderPathFactory finderPathFactory;
     private final Environment environment;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
@@ -88,11 +90,13 @@ public class TransactionPresenter extends MbuiPresenter<TransactionPresenter.MyV
             final MyView view,
             final MyProxy proxy,
             final Finder finder,
+            final FinderPathFactory finderPathFactory,
             final Environment environment,
             final StatementContext statementContext,
             final Dispatcher dispatcher,
             final Resources resources) {
         super(eventBus, view, proxy, finder);
+        this.finderPathFactory = finderPathFactory;
         this.environment = environment;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
@@ -107,8 +111,7 @@ public class TransactionPresenter extends MbuiPresenter<TransactionPresenter.MyV
 
     @Override
     protected FinderPath finderPath() {
-        return FinderPath
-            .configurationSubsystemPath(statementContext.selectedProfile(), ModelDescriptionConstants.TRANSACTIONS);
+        return finderPathFactory.configurationSubsystemPath(ModelDescriptionConstants.TRANSACTIONS);
     }
 
     @Override

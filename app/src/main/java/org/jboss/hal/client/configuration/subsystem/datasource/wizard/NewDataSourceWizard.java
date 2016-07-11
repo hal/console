@@ -25,7 +25,7 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -33,7 +33,6 @@ import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTem
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.JDBC_DRIVER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.State.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DATA_SOURCE;
 
 /**
  * @author Harald Pehl
@@ -49,7 +48,7 @@ public class NewDataSourceWizard extends Wizard<Context, State> {
             final boolean xa,
             final FinishCallback<Context> finishCallback) {
 
-        super(IdBuilder.build(DATA_SOURCE, "wizard"),
+        super(Ids.DATA_SOURCE_WIZARD,
                 resources.messages().addResourceTitle(xa ? Names.XA_DATASOURCE : Names.DATASOURCE),
                 new Context(environment.isStandalone(), xa), finishCallback);
 

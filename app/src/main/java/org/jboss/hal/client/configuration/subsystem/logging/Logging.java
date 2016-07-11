@@ -15,10 +15,10 @@
  */
 package org.jboss.hal.client.configuration.subsystem.logging;
 
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FILE;
@@ -31,10 +31,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
  * @author Harald Pehl
  */
 final class Logging {
-
-    static String profileId(final String name) {
-        return IdBuilder.build(ModelDescriptionConstants.LOGGING_PROFILE, name);
-    }
 
     /**
      * Helper method to build the filename using the nested ({@code relative-to/path}) attributes.

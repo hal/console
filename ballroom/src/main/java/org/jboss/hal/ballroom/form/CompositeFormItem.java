@@ -28,7 +28,7 @@ import elemental.html.HRElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
@@ -164,8 +164,8 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
 
     @Override
     public void setId(final String id) {
-        String editId = IdBuilder.build(id, EDITING.name().toLowerCase());
-        String readonlyId = IdBuilder.build(id, READONLY.name().toLowerCase());
+        String editId = Ids.build(id, EDITING.name().toLowerCase());
+        String readonlyId = Ids.build(id, READONLY.name().toLowerCase());
         editContainer.setId(editId);
         readonlyContainer.setId(readonlyId);
     }

@@ -31,7 +31,7 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -51,7 +51,7 @@ class DriverStep extends WizardStep<Context, State> {
         super(wizard, resources.constants().jdbcDriver());
 
         this.drivers = Maps.uniqueIndex(drivers, JdbcDriver::getName);
-        this.form = new ModelNodeForm.Builder<JdbcDriver>(IdBuilder.build(id(), "driver", "step"),
+        this.form = new ModelNodeForm.Builder<JdbcDriver>(Ids.build(id(), "driver", "step"),
                 adjustMetadata(metadata))
                 .include(DRIVER_NAME, DRIVER_MODULE_NAME, DRIVER_CLASS_NAME, DRIVER_MAJOR_VERSION,
                         DRIVER_MINOR_VERSION)

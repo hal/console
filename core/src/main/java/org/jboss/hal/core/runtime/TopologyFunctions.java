@@ -38,7 +38,7 @@ import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 
 import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
@@ -271,7 +271,7 @@ public class TopologyFunctions {
                     if (!composite.isEmpty()) {
                         Map<String, Server> serverConfigsByHostAndServerName = hosts.stream()
                                 .flatMap(host -> host.getServers().stream().filter(Server::isStarted))
-                                .collect(toMap(server -> IdBuilder.build(server.getHost(), server.getName()),
+                                .collect(toMap(server -> Ids.hostServerId(server.getHost(), server.getName()),
                                         identity()));
                         //noinspection Duplicates
                         dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
@@ -279,7 +279,7 @@ public class TopologyFunctions {
                                 ModelNode payload = step.get(RESULT);
                                 String hostName = payload.get(ModelDescriptionConstants.HOST).asString();
                                 String serverName = payload.get(NAME).asString();
-                                String id = IdBuilder.build(hostName, serverName);
+                                String id = Ids.hostServerId(hostName, serverName);
                                 Server server = serverConfigsByHostAndServerName.get(id);
                                 if (server != null) {
                                     server.addServerAttributes(payload);
@@ -438,7 +438,8 @@ public class TopologyFunctions {
                     if (!composite.isEmpty()) {
                         Map<String, Server> serverConfigsByServerGroupAndServerName = serverGroups.stream()
                                 .flatMap(serverGroup -> serverGroup.getServers().stream().filter(Server::isStarted))
-                                .collect(toMap(server -> IdBuilder.build(server.getServerGroup(), server.getName()),
+                                .collect(toMap(
+                                        server -> Ids.serverGroupServerId(server.getServerGroup(), server.getName()),
                                         identity()));
                         //noinspection Duplicates
                         dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
@@ -446,7 +447,7 @@ public class TopologyFunctions {
                                 ModelNode payload = step.get(RESULT);
                                 String serverGroupName = payload.get(ModelDescriptionConstants.SERVER_GROUP).asString();
                                 String serverName = payload.get(NAME).asString();
-                                String id = IdBuilder.build(serverGroupName, serverName);
+                                String id = Ids.serverGroupServerId(serverGroupName, serverName);
                                 Server server = serverConfigsByServerGroupAndServerName.get(id);
                                 if (server != null) {
                                     server.addServerAttributes(payload);
@@ -635,7 +636,8 @@ public class TopologyFunctions {
         });
     }
 
-    private static void addServersToServerGroups(final List<ServerGroup> serverGroups, final Collection<Server> servers) {
+    private static void addServersToServerGroups(final List<ServerGroup> serverGroups,
+            final Collection<Server> servers) {
         Map<String, List<Server>> serversByServerGroup = servers.stream()
                 .collect(groupingBy(Server::getServerGroup));
         serverGroups.forEach(serverGroup -> {

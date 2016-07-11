@@ -15,33 +15,34 @@
  */
 package org.jboss.hal.client.configuration;
 
-import org.jboss.hal.resources.IdBuilder;
+import java.util.List;
+import javax.inject.Inject;
+
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
-import javax.inject.Inject;
-import java.util.List;
-
 import static java.util.Arrays.asList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 
 /**
  * @author Harald Pehl
  */
-@AsyncColumn(ModelDescriptionConstants.SOCKET_BINDING)
+@AsyncColumn(Ids.SOCKET_BINDING)
 @Requires(SocketBindingPresenter.ROOT_ADDRESS)
 public class SocketBindingColumn extends FinderColumn<Property> {
 
@@ -51,13 +52,12 @@ public class SocketBindingColumn extends FinderColumn<Property> {
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory) {
 
-        super(new FinderColumn.Builder<Property>(finder, ModelDescriptionConstants.SOCKET_BINDING, Names.SOCKET_BINDING)
+        super(new FinderColumn.Builder<Property>(finder, Ids.SOCKET_BINDING, Names.SOCKET_BINDING)
                 .columnAction(columnActionFactory.add(
-                        IdBuilder.build(ModelDescriptionConstants.SOCKET_BINDING, "add"),
+                        Ids.SOCKET_BINDING_ADD,
                         Names.SOCKET_BINDING,
                         SocketBindingPresenter.ROOT_TEMPLATE))
-                .columnAction(columnActionFactory
-                        .refresh(IdBuilder.build(ModelDescriptionConstants.SOCKET_BINDING, "refresh")))
+                .columnAction(columnActionFactory.refresh(Ids.SOCKET_BINDING_REFRESH))
                 .itemsProvider((context, callback) -> {
                     Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
                             .param(CHILD_TYPE, "socket-binding-group").build();

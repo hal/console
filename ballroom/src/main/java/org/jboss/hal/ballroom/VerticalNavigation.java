@@ -25,7 +25,6 @@ import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 import org.jetbrains.annotations.NonNls;
@@ -270,7 +269,7 @@ public class VerticalNavigation {
 
             if (secondaryUl == null) {
                 // seems to be the first secondary entry -> setup the secondary containers
-                String secondaryContainerId = IdBuilder.build(primaryId, "secondary");
+                String secondaryContainerId = Ids.build(primaryId, "secondary");
                 primaryEntry.asElement().getClassList().add(persistentSecondary);
                 primaryEntry.asElement().getDataset().setAt(UIConstants.TARGET, "#" + secondaryContainerId);
 

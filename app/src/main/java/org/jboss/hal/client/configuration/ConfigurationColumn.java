@@ -25,8 +25,8 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
@@ -36,7 +36,7 @@ import static java.util.Arrays.asList;
 /**
  * @author Harald Pehl
  */
-@Column(ModelDescriptionConstants.CONFIGURATION)
+@Column(Ids.CONFIGURATION)
 public class ConfigurationColumn extends StaticItemColumn {
 
     @Inject
@@ -45,41 +45,41 @@ public class ConfigurationColumn extends StaticItemColumn {
             final PlaceManager placeManager,
             final Environment environment) {
 
-        super(finder, ModelDescriptionConstants.CONFIGURATION, Names.CONFIGURATION, (context, callback) -> {
+        super(finder, Ids.CONFIGURATION, Names.CONFIGURATION, (context, callback) -> {
             List<StaticItem> items = new ArrayList<>();
             if (environment.isStandalone()) {
                 items.add(new StaticItem.Builder(Names.SUBSYSTEMS)
-                        .nextColumn(ModelDescriptionConstants.SUBSYSTEM)
+                        .nextColumn(Ids.CONFIGURATION_SUBSYSTEM)
                         .onPreview(new PreviewContent(Names.SUBSYSTEMS, resources.previews().configurationSubsystems()))
                         .build());
 
             } else {
                 items.add(new StaticItem.Builder(Names.PROFILES)
-                        .nextColumn(ModelDescriptionConstants.PROFILE)
-                        .onPreview(new PreviewContent(Names.PROFILES, resources.previews().profiles()))
+                        .nextColumn(Ids.PROFILE)
+                        .onPreview(new PreviewContent(Names.PROFILES, resources.previews().configurationProfiles()))
                         .build());
             }
 
             items.addAll(asList(
                     new StaticItem.Builder(Names.INTERFACES)
-                            .nextColumn(ModelDescriptionConstants.INTERFACE)
-                            .onPreview(new PreviewContent(Names.INTERFACES, resources.previews().interfaces()))
+                            .nextColumn(Ids.INTERFACE)
+                            .onPreview(new PreviewContent(Names.INTERFACES, resources.previews().configurationInterfaces()))
                             .build(),
 
                     new StaticItem.Builder(Names.SOCKET_BINDINGS)
-                            .nextColumn(ModelDescriptionConstants.SOCKET_BINDING)
-                            .onPreview(new PreviewContent(Names.SOCKET_BINDINGS, resources.previews().socketBindings()))
+                            .nextColumn(Ids.SOCKET_BINDING)
+                            .onPreview(new PreviewContent(Names.SOCKET_BINDINGS, resources.previews().configurationSocketBindings()))
                             .build(),
 
                     new StaticItem.Builder(Names.PATHS)
                             .tokenAction(resources.constants().view(), placeManager, NameTokens.PATH)
-                            .onPreview(new PreviewContent(Names.PATHS, resources.previews().paths()))
+                            .onPreview(new PreviewContent(Names.PATHS, resources.previews().configurationPaths()))
                             .build(),
 
                     new StaticItem.Builder(Names.SYSTEM_PROPERTIES)
                             .tokenAction(resources.constants().view(), placeManager, NameTokens.SYSTEM_PROPERTIES)
                             .onPreview(new PreviewContent(Names.SYSTEM_PROPERTIES,
-                                    resources.previews().systemProperties()))
+                                    resources.previews().configurationSystemProperties()))
                             .build()
             ));
 

@@ -26,14 +26,14 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Ids;
 
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.formControl;
 import static org.jboss.hal.resources.CSS.tagManagerContainer;
 import static org.jboss.hal.resources.CSS.tags;
-import static org.jboss.hal.resources.IdBuilder.build;
-import static org.jboss.hal.resources.IdBuilder.uniqueId;
+import static org.jboss.hal.resources.Ids.uniqueId;
 
 /**
  * @author Harald Pehl
@@ -75,7 +75,7 @@ public class ListItem extends AbstractFormItem<List<String>> {
 
         //noinspection DuplicateStringLiteralInspection
         tagsContainer = new Elements.Builder().div()
-                .id(build("tags", "container", uniqueId()))
+                .id(Ids.build("tags", "container", uniqueId()))
                 .css(tagManagerContainer)
                 .end()
                 .build();

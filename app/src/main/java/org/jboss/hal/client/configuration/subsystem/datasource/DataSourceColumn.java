@@ -49,7 +49,7 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
@@ -68,7 +68,7 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
  *
  * @author Harald Pehl
  */
-@AsyncColumn(DATA_SOURCE)
+@AsyncColumn(Ids.DATA_SOURCE)
 @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS, JDBC_DRIVER_ADDRESS})
 public class DataSourceColumn extends FinderColumn<DataSource> {
 
@@ -95,7 +95,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory) {
 
-        super(new Builder<DataSource>(finder, DATA_SOURCE, Names.DATASOURCE)
+        super(new Builder<DataSource>(finder, Ids.DATA_SOURCE, Names.DATASOURCE)
                 .withFilter()
                 .useFirstActionAsBreadcrumbHandler());
 
@@ -108,11 +108,11 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         this.resources = resources;
         this.templates = templates;
 
-        addColumnAction(columnActionFactory.add(IdBuilder.build(DATA_SOURCE, "add"), Names.DATASOURCE,
+        addColumnAction(columnActionFactory.add(Ids.DATA_SOURCE_ADD, Names.DATASOURCE,
                 column -> launchNewDataSourceWizard(false)));
-        addColumnAction(columnActionFactory.add(IdBuilder.build(XA_DATA_SOURCE, "add"), Names.XA_DATASOURCE,
+        addColumnAction(columnActionFactory.add(Ids.XA_DATA_SOURCE_ADD, Names.XA_DATASOURCE,
                 fontAwesome("credit-card"), column -> launchNewDataSourceWizard(true)));
-        addColumnAction(columnActionFactory.refresh(IdBuilder.build(DATA_SOURCE, "refresh")));
+        addColumnAction(columnActionFactory.refresh(Ids.DATA_SOURCE_REFRESH));
 
         setItemsProvider((context, callback) -> {
             ResourceAddress dataSourceAddress = DATA_SOURCE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
@@ -134,7 +134,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         setItemRenderer(dataSource -> new ItemDisplay<DataSource>() {
             @Override
             public String getId() {
-                return DataSource.id(dataSource.getName(), dataSource.isXa());
+                return Ids.dataSourceId(dataSource.getName(), dataSource.isXa());
             }
 
             @Override
@@ -215,7 +215,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                     dispatcher.execute(operation, result -> {
                         MessageEvent.fire(eventBus, Message.success(
                                 resources.messages().addResourceSuccess(Names.DATASOURCE, dataSource.getName())));
-                        refresh(DataSource.id(dataSource.getName(), dataSource.isXa()));
+                        refresh(Ids.dataSourceId(dataSource.getName(), dataSource.isXa()));
                     });
                 });
                 wizard.show();

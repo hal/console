@@ -19,10 +19,16 @@ import javax.inject.Inject;
 
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 
 /**
  * Helper class for place management.
@@ -33,42 +39,65 @@ public class Places {
 
     private final Environment environment;
     private final StatementContext statementContext;
+    private final Finder finder;
 
     @Inject
-    public Places(final Environment environment, final StatementContext statementContext) {
+    public Places(final Environment environment,
+            final StatementContext statementContext,
+            final Finder finder) {
         this.environment = environment;
         this.statementContext = statementContext;
+        this.finder = finder;
     }
 
     /**
      * Returns a place request builder which adds a parameter for the selected profile (when running domain mode).
-     *
-     * @throws IllegalStateException if there's no selected profile and operation mode is domain.
      */
     public PlaceRequest.Builder selectedProfile(final String token) throws IllegalStateException {
         PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(token);
         if (!environment.isStandalone()) {
-            if (statementContext.selectedProfile() == null) {
-                throw new IllegalStateException("No selected profile");
-            }
             builder.with(PROFILE, statementContext.selectedProfile());
         }
         return builder;
     }
 
     /**
-     * Returns a place request builder which adds a parameter for the selected host (when running domain mode).
-     *
-     * @throws IllegalStateException if there's no selected host and operation mode is domain.
+     * Returns a place request builder which adds parameters for the selected host and server (when running domain
+     * mode).
      */
-    public PlaceRequest.Builder selectedHost(final String token) throws IllegalStateException {
+    public PlaceRequest.Builder selectedServer(final String token) throws IllegalStateException {
         PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(token);
         if (!environment.isStandalone()) {
-            if (statementContext.selectedHost() == null) {
-                throw new IllegalStateException("No selected host");
+            if (browseByServerGroups()) {
+                builder.with(SERVER_GROUP, statementContext.selectedServerGroup());
+            } else {
+                builder.with(HOST, statementContext.selectedHost());
             }
-            builder.with(HOST, statementContext.selectedHost());
+            builder.with(SERVER, statementContext.selectedServer());
         }
         return builder;
+    }
+
+    /**
+     * Replaces a parameter in an existing place request with a new value.
+     */
+    public PlaceRequest.Builder replaceParameter(PlaceRequest placeRequest, String parameter, String newValue) {
+        PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(placeRequest.getNameToken());
+        for (String p : placeRequest.getParameterNames()) {
+            if (parameter.equals(p)) {
+                builder.with(parameter, newValue);
+            } else {
+                builder.with(p, placeRequest.getParameter(p, ""));
+            }
+        }
+        return builder;
+    }
+
+    private boolean browseByServerGroups() {
+        if (!finder.getContext().getPath().isEmpty()) {
+            FinderSegment firstSegment = finder.getContext().getPath().iterator().next();
+            return firstSegment.getItemId().equals(Ids.asId(Names.SERVER_GROUPS));
+        }
+        return false;
     }
 }

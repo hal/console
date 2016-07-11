@@ -26,6 +26,7 @@ import org.jboss.hal.client.configuration.PathsTypeahead;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
@@ -36,6 +37,7 @@ import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
@@ -82,6 +84,7 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
     // @formatter:on
 
 
+    private final FinderPathFactory finderPathFactory;
     private final Environment environment;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
@@ -91,10 +94,12 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
             final MyView view,
             final MyProxy proxy,
             final Finder finder,
+            final FinderPathFactory finderPathFactory,
             final Environment environment,
             final StatementContext statementContext,
             final Dispatcher dispatcher) {
         super(eventBus, view, proxy, finder);
+        this.finderPathFactory = finderPathFactory;
         this.environment = environment;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
@@ -108,10 +113,8 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
 
     @Override
     protected FinderPath finderPath() {
-        return FinderPath
-                .configurationSubsystemPath(statementContext.selectedProfile(), ModelDescriptionConstants.LOGGING)
-                .append(ModelDescriptionConstants.LOGGING, NameTokens.LOGGING_CONFIGURATION,
-                        Names.LOGGING, Names.CONFIGURATION);
+        return finderPathFactory.configurationSubsystemPath(ModelDescriptionConstants.LOGGING)
+                .append(Ids.LOGGING, NameTokens.LOGGING_CONFIGURATION, Names.LOGGING, Names.CONFIGURATION);
     }
 
     @Override

@@ -42,7 +42,6 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.user.client.ui.Widget;
 import org.jetbrains.annotations.NonNls;
 
 import static java.util.stream.Collectors.joining;
@@ -54,54 +53,6 @@ import static java.util.stream.StreamSupport.stream;
  * @author Harald Pehl
  */
 public final class IdBuilder {
-
-    public static String build(@NonNls String id, @NonNls String... additionalIds) {
-        return build(id, '-', additionalIds);
-    }
-
-    public static String build(@NonNls String id, char separator, @NonNls String... additionalIds) {
-        if (Strings.emptyToNull(id) == null) {
-            throw new IllegalArgumentException("Id must not be null");
-        }
-        List<String> ids = Lists.newArrayList(id);
-        if (additionalIds != null) {
-            for (String additionalId : additionalIds) {
-                ids.add(Strings.emptyToNull(additionalId));
-            }
-        }
-        return Joiner.on(separator).skipNulls().join(ids);
-    }
-
-    /**
-     * Turns a label which can whitespace and upper/lower case characters into an all lowercase id separated with "-".
-     */
-    public static String asId(@NonNls String text) {
-        Iterable<String> parts = Splitter
-                .on(CharMatcher.whitespace().or(CharMatcher.is('-')))
-                .omitEmptyStrings()
-                .trimResults()
-                .split(text);
-        return stream(parts.spliterator(), false)
-                .map(String::toLowerCase)
-                .map(CharMatcher.javaLetterOrDigit()::retainFrom)
-                .collect(joining("-"));
-    }
-
-    public static void set(Widget widget, @NonNls String id) {
-        set(widget.getElement(), id);
-    }
-
-    public static void set(com.google.gwt.dom.client.Element element, @NonNls String id) {
-        element.setId(id);
-    }
-
-    public static void set(elemental.dom.Element element, @NonNls String id) {
-        element.setId(id);
-    }
-
-    public static String uniqueId() {
-        return Document.get().createUniqueId();
-    }
 
     private IdBuilder() {}
 }

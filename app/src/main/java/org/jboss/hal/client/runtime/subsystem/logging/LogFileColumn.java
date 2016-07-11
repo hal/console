@@ -19,7 +19,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.client.runtime.server.ServerColumn;
+import org.jboss.hal.client.runtime.BrowseByColumn;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -30,7 +30,6 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
@@ -49,7 +48,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 /**
  * @author Harald Pehl
  */
-@Column(Ids.LOG_FILE_COLUMN)
+@Column(Ids.LOG_FILE)
 @Requires(value = {LOGGING_SUBSYSTEM_ADDRESS, LOG_FILE_ADDRESS}, recursive = false)
 public class LogFileColumn extends FinderColumn<LogFile> {
 
@@ -61,9 +60,9 @@ public class LogFileColumn extends FinderColumn<LogFile> {
             final ItemActionFactory itemActionFactory,
             final LogFiles logFiles,
             final Resources resources) {
-        super(new Builder<LogFile>(finder, Ids.LOG_FILE_COLUMN, resources.constants().logFile())
+        super(new Builder<LogFile>(finder, Ids.LOG_FILE, resources.constants().logFile())
 
-                .columnAction(columnActionFactory.refresh(IdBuilder.build(SERVER, "refresh")))
+                .columnAction(columnActionFactory.refresh(Ids.LOG_FILE_REFRESH))
                 .itemsProvider((context, callback) -> {
                     Operation operation = new Operation.Builder("list-log-files", //NON-NLS
                             AddressTemplates.LOGGING_SUBSYSTEM_TEMPLATE.resolve(statementContext)).build();
@@ -91,7 +90,7 @@ public class LogFileColumn extends FinderColumn<LogFile> {
                     @Override
                     public List<ItemAction<LogFile>> actions() {
                         PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(NameTokens.LOG_FILE);
-                        if (ServerColumn.browseByServerGroups(finder.getContext())) {
+                        if (BrowseByColumn.browseByServerGroups(finder.getContext())) {
                             builder.with(SERVER_GROUP, statementContext.selectedServerGroup());
                         } else {
                             builder.with(HOST, statementContext.selectedHost());

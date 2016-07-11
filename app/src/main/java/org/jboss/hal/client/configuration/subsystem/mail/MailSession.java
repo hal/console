@@ -18,22 +18,19 @@ package org.jboss.hal.client.configuration.subsystem.mail;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.resources.Names;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+
 /**
  * @author Claudio Miranda
  */
 class MailSession extends NamedNode {
-
-    static final String SMTP = "smtp";
-    static final String IMAP = "imap";
-    static final String POP3 = "pop3";
-    static final String SERVER = "server";
-    static final String OUTBOUND_SOCKET_BINDING_REF = "outbound-socket-binding-ref";
 
     public MailSession(final String name, final ModelNode node) {
         super(name, node);
@@ -45,14 +42,14 @@ class MailSession extends NamedNode {
 
     List<String> getServers() {
         List<String> servers = new ArrayList<>();
-        if (hasServer(SMTP)) {
-            servers.add(SMTP.toUpperCase());
+        if (hasServer(ModelDescriptionConstants.SMTP)) {
+            servers.add(ModelDescriptionConstants.SMTP.toUpperCase());
         }
-        if (hasServer(IMAP)) {
-            servers.add(IMAP.toUpperCase());
+        if (hasServer(ModelDescriptionConstants.IMAP)) {
+            servers.add(ModelDescriptionConstants.IMAP.toUpperCase());
         }
-        if (hasServer(POP3)) {
-            servers.add(POP3.toUpperCase());
+        if (hasServer(ModelDescriptionConstants.POP3)) {
+            servers.add(ModelDescriptionConstants.POP3.toUpperCase());
         }
         return servers;
     }
@@ -62,7 +59,7 @@ class MailSession extends NamedNode {
     }
 
     String getServerSocketBinding(String name) {
-        ModelNode node = ModelNodeHelper.failSafeGet(this, SERVER + "." + name + "." + OUTBOUND_SOCKET_BINDING_REF);
+        ModelNode node = ModelNodeHelper.failSafeGet(this, SERVER + "." + name + "." + ModelDescriptionConstants.OUTBOUND_SOCKET_BINDING_REF);
         return node.isDefined() ? node.asString() : Names.NOT_AVAILABLE;
     }
 }

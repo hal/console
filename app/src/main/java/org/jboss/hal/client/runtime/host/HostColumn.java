@@ -44,12 +44,11 @@ import org.jboss.hal.core.runtime.host.HostActions;
 import org.jboss.hal.core.runtime.host.HostResultEvent;
 import org.jboss.hal.core.runtime.host.HostResultEvent.HostResultHandler;
 import org.jboss.hal.core.runtime.host.HostSelectionEvent;
-import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
@@ -63,7 +62,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 /**
  * @author Harald Pehl
  */
-@Column(HOST)
+@Column(Ids.HOST)
 @Requires(value = "/host=*", recursive = false)
 public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {
 
@@ -78,9 +77,9 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
             final HostActions hostActions,
             final Resources resources) {
 
-        super(new Builder<Host>(finder, HOST, Names.HOST)
+        super(new Builder<Host>(finder, Ids.HOST, Names.HOST)
 
-                .columnAction(columnActionFactory.refresh(IdBuilder.build(HOST, "refresh")))
+                .columnAction(columnActionFactory.refresh(Ids.HOST_REFRESH))
 
                 .itemsProvider((context, callback) ->
                         new Async<FunctionContext>(progress.get()).waterfall(
@@ -99,7 +98,8 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                                         // Restore pending visualization
                                         hosts.stream()
                                                 .filter(hostActions::isPending)
-                                                .forEach(host -> ItemMonitor.startProgress(Host.id(host)));
+                                                .forEach(host -> ItemMonitor
+                                                        .startProgress(Ids.hostId(host.getAddressName())));
                                     }
                                 },
                                 new TopologyFunctions.HostsWithServerConfigs(environment, dispatcher),
@@ -110,6 +110,9 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                 .onPreview(item -> new HostPreview(hostActions, item, resources))
                 .pinnable()
                 .showCount()
+                // Unlike other columns the host column does not have a custom breadcrumb item handler.
+                // It makes no sense to replace the host in a finder path like
+                // "host => master / server => server-one / subsystem => logging / log-file => server.log"
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
         );
@@ -117,7 +120,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
         setItemRenderer(item -> new ItemDisplay<Host>() {
             @Override
             public String getId() {
-                return Host.id(item);
+                return Ids.hostId(item.getAddressName());
             }
 
             @Override
@@ -182,7 +185,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                 PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(NameTokens.HOST_CONFIGURATION)
                         .with(HOST, item.getAddressName()).build();
                 List<ItemAction<Host>> actions = new ArrayList<>();
-                actions.add(itemActionFactory.viewAndMonitor(Host.id(item), placeRequest));
+                actions.add(itemActionFactory.viewAndMonitor(Ids.hostId(item.getAddressName()), placeRequest));
                 if (!hostActions.isPending(item)) {
                     actions.add(new ItemAction<>(resources.constants().reload(), hostActions::reload));
                     actions.add(new ItemAction<>(resources.constants().restart(), hostActions::restart));
@@ -200,8 +203,8 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
     public void onHostAction(final HostActionEvent event) {
         if (isVisible()) {
             Host host = event.getHost();
-            ItemMonitor.startProgress(Host.id(host));
-            event.getServers().forEach(server -> ItemMonitor.startProgress(Server.id(server.getName())));
+            ItemMonitor.startProgress(Ids.hostId(host.getAddressName()));
+            event.getServers().forEach(server -> ItemMonitor.startProgress(Ids.serverId(server.getName())));
         }
     }
 
@@ -209,8 +212,8 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
     public void onHostResult(final HostResultEvent event) {
         if (isVisible()) {
             Host host = event.getHost();
-            ItemMonitor.stopProgress(Host.id(host));
-            event.getServers().forEach(server -> ItemMonitor.stopProgress(Server.id(server.getName())));
+            ItemMonitor.stopProgress(Ids.hostId(host.getAddressName()));
+            event.getServers().forEach(server -> ItemMonitor.stopProgress(Ids.serverId(server.getName())));
             refresh(RESTORE_SELECTION);
         }
     }

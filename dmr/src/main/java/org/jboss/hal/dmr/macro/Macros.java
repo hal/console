@@ -27,7 +27,6 @@ import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -39,7 +38,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 public class Macros {
 
-    private static final String KEY_PREFIX = IdBuilder.build(Ids.STORAGE_PREFIX, '.', "macros");
+    private static final String KEY_PREFIX = Ids.build(Ids.STORAGE_PREFIX, '.', "macros");
 
     private final Map<String, Macro> macros;
     private final Storage storage;
@@ -135,7 +134,7 @@ public class Macros {
             current.seal();
             macros.put(current.getName(), current);
             if (storage != null) {
-                storage.setItem(IdBuilder.build(KEY_PREFIX, '.', current.getName()), serialize(current));
+                storage.setItem(Ids.build(KEY_PREFIX, '.', current.getName()), serialize(current));
             }
 
             current = null;

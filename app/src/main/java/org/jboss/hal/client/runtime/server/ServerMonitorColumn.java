@@ -33,7 +33,7 @@ import static java.util.Arrays.asList;
 /**
  * @author Harald Pehl
  */
-@Column(Ids.SERVER_MONITOR_COLUMN)
+@Column(Ids.SERVER_MONITOR)
 public class ServerMonitorColumn extends StaticItemColumn {
 
     @Inject
@@ -41,19 +41,20 @@ public class ServerMonitorColumn extends StaticItemColumn {
             final Dispatcher dispatcher,
             final StatementContext statementContext,
             final Resources resources) {
-        super(finder, Ids.SERVER_MONITOR_COLUMN, resources.constants().monitor(), asList(
+        super(finder, Ids.SERVER_MONITOR, resources.constants().monitor(), asList(
 
                 new StaticItem.Builder(resources.constants().status())
                         .onPreview(new ServerStatusPreview(dispatcher, statementContext, resources))
                         .build(),
 
                 new StaticItem.Builder(resources.constants().logFiles())
-                        .onPreview(new PreviewContent(resources.constants().logFiles(), resources.previews().logFiles()))
-                        .nextColumn(Ids.LOG_FILE_COLUMN)
+                        .onPreview(new PreviewContent(resources.constants().logFiles(), resources.previews().runtimeLogFiles()))
+                        .nextColumn(Ids.LOG_FILE)
                         .build(),
 
                 new StaticItem.Builder(Names.SUBSYSTEMS)
                         .onPreview(new PreviewContent(Names.SUBSYSTEMS, resources.previews().runtimeSubsystems()))
+                        .nextColumn(Ids.RUNTIME_SUBSYSTEM)
                         .build()
         ));
     }

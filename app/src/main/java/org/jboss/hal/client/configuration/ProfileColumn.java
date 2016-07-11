@@ -20,27 +20,27 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.client.GenericSubsystemPresenter;
+import org.jboss.hal.core.subsystem.GenericSubsystemPresenter;
 import org.jboss.hal.core.configuration.ProfileSelectionEvent;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.PreviewContent;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Requires;
 
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
@@ -48,9 +48,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OP
 /**
  * @author Harald Pehl
  */
-@Column(ModelDescriptionConstants.PROFILE)
+@Column(Ids.PROFILE)
 @Requires(value = "/profile=*", recursive = false)
-public class ProfileColumn extends FinderColumn<ModelNode> {
+public class ProfileColumn extends FinderColumn<String> {
 
     private static final AddressTemplate PROFILE_TEMPLATE = AddressTemplate.of("/profile=*");
 
@@ -58,71 +58,60 @@ public class ProfileColumn extends FinderColumn<ModelNode> {
     public ProfileColumn(final Finder finder,
             final Dispatcher dispatcher,
             final EventBus eventBus,
-            final ColumnActionFactory columnActionFactory,
             final PlaceManager placeManager,
+            final Places places,
+            final ColumnActionFactory columnActionFactory,
             final StatementContext statementContext) {
 
-        super(new Builder<ModelNode>(finder, ModelDescriptionConstants.PROFILE, Names.PROFILE)
+        super(new Builder<String>(finder, Ids.PROFILE, Names.PROFILE)
                 .columnAction(columnActionFactory.add(
-                        IdBuilder.build(ModelDescriptionConstants.PROFILE, "add"),
+                        Ids.PROFILE_ADD,
                         Names.PROFILE,
                         PROFILE_TEMPLATE))
-                .columnAction(
-                        columnActionFactory.refresh(IdBuilder.build(ModelDescriptionConstants.PROFILE, "refresh")))
-
-                .itemRenderer(modelNode -> new ItemDisplay<ModelNode>() {
-                    @Override
-                    public String getTitle() {
-                        return modelNode.asString();
-                    }
-
-                    @Override
-                    public String nextColumn() {
-                        return ModelDescriptionConstants.SUBSYSTEM;
-                    }
-                })
-
-                .onItemSelect(modelNode -> eventBus.fireEvent(new ProfileSelectionEvent(modelNode.asString())))
+                .columnAction(columnActionFactory.refresh(Ids.PROFILE_REFRESH))
 
                 .itemsProvider((context, callback) -> {
                     Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION,
                             ResourceAddress.ROOT)
                             .param(CHILD_TYPE, PROFILE)
                             .build();
-                    dispatcher.execute(operation, result -> callback.onSuccess(result.asList()));
+                    dispatcher.execute(operation, result ->
+                            callback.onSuccess(result.asList().stream().map(ModelNode::asString).collect(toList())));
                 })
 
-                .onPreview(item -> new PreviewContent<>(item.asString()))
+                .itemRenderer(profile -> new ItemDisplay<String>() {
+                    @Override
+                    public String getTitle() {
+                        return profile;
+                    }
+
+                    @Override
+                    public String nextColumn() {
+                        return Ids.CONFIGURATION_SUBSYSTEM;
+                    }
+                })
+
+                .onItemSelect(profile -> eventBus.fireEvent(new ProfileSelectionEvent(profile)))
+
+                .onPreview(PreviewContent::new)
 
                 .onBreadcrumbItem((item, context) -> {
+                    PlaceRequest.Builder builder = null;
                     PlaceRequest current = placeManager.getCurrentPlaceRequest();
-                    PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(current.getNameToken());
 
                     if (NameTokens.GENERIC_SUBSYSTEM.equals(current.getNameToken())) {
                         // switch profile in address parameter of generic presenter
+                        builder = new PlaceRequest.Builder().nameToken(current.getNameToken());
                         String addressParam = current.getParameter(GenericSubsystemPresenter.ADDRESS_PARAM, null);
                         if (addressParam != null) {
                             ResourceAddress currentAddress = AddressTemplate.of(addressParam).resolve(statementContext);
-                            ResourceAddress newAddress = new ResourceAddress();
-                            for (Property property : currentAddress.asPropertyList()) {
-                                if (PROFILE.equals(property.getName())) {
-                                    newAddress.add(PROFILE, item.asString());
-                                } else {
-                                    newAddress.add(property.getName(), property.getValue().asString());
-                                }
-                            }
+                            ResourceAddress newAddress = currentAddress.replaceValue(PROFILE, item);
                             builder.with(GenericSubsystemPresenter.ADDRESS_PARAM, newAddress.toString());
                         }
 
                     } else {
                         // switch profile in place request parameter of specific presenter
-                        for (String parameter : current.getParameterNames()) {
-                            if (PROFILE.equals(parameter)) {
-                                builder.with(PROFILE, item.asString());
-                            } else {
-                                builder.with(parameter, current.getParameter(parameter, ""));
-                            }
-                        }
+                        builder = places.replaceParameter(current, PROFILE, item);
                     }
                     placeManager.revealPlace(builder.build());
                 }));

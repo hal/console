@@ -26,8 +26,8 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.FinderPresenter;
 import org.jboss.hal.core.mvp.FinderView;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -62,7 +62,7 @@ public class ConfigurationPresenter
 
     @Override
     protected String initialColumn() {
-        return ModelDescriptionConstants.CONFIGURATION;
+        return Ids.CONFIGURATION;
     }
 
     @Override

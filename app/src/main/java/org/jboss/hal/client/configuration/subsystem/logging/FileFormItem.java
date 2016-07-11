@@ -23,7 +23,7 @@ import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.client.configuration.PathsTypeahead;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FILE;
@@ -46,9 +46,9 @@ public class FileFormItem extends CompositeFormItem {
     protected List<FormItem> createFormItems() {
         path = new TextBoxItem(PATH, new LabelBuilder().label(PATH));
         path.setRequired(true);
-        path.setId(IdBuilder.uniqueId());
+        path.setId(Ids.uniqueId());
         relativeTo = new TextBoxItem(RELATIVE_TO, new LabelBuilder().label(RELATIVE_TO));
-        relativeTo.setId(IdBuilder.uniqueId());
+        relativeTo.setId(Ids.uniqueId());
         relativeTo.registerSuggestHandler(new PathsTypeahead());
         return asList(path, relativeTo);
     }

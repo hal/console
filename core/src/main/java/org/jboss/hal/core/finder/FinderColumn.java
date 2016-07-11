@@ -42,7 +42,7 @@ import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
@@ -65,6 +65,9 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
  * <p>
  * The idea is that columns are self-contained and don't need direct references to other columns. References are only
  * provided by id. The {@link ColumnRegistry} will then resolve the id against an existing column.
+ * <p>
+ * Please do not use constants from {@code ModelDescriptionConstants} for the column ids (it makes refactoring harder).
+ * Instead add an id to {@link org.jboss.hal.resources.Ids}.
  *
  * @param <T> The columns type.
  *
@@ -83,7 +86,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         private boolean withFilter;
         private boolean pinnable;
         private PreviewCallback<T> previewCallback;
-        private BreadcrumbItemsProvider<T> breadcrumbItemsProvider;
         private BreadcrumbItemHandler<T> breadcrumbItemHandler;
         private boolean firstActionAsBreadcrumbHandler;
         private List<T> items;
@@ -122,7 +124,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             return this;
         }
 
-        public Builder<T> initialItems(List<T> items) {
+        Builder<T> initialItems(List<T> items) {
             if (items != null && !items.isEmpty()) {
                 this.items.addAll(items);
             }
@@ -146,11 +148,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
         public Builder<T> onPreview(PreviewCallback<T> previewCallback) {
             this.previewCallback = previewCallback;
-            return this;
-        }
-
-        public Builder<T> breadcrumbItemsProvider(BreadcrumbItemsProvider<T> breadcrumbItemsProvider) {
-            this.breadcrumbItemsProvider = breadcrumbItemsProvider;
             return this;
         }
 
@@ -230,7 +227,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         this.itemRenderer = builder.itemRenderer;
         this.selectionHandler = builder.selectionHandler;
         this.previewCallback = builder.previewCallback;
-        this.breadcrumbItemsProvider = builder.breadcrumbItemsProvider;
         this.breadcrumbItemHandler = builder.breadcrumbItemHandler;
         this.firstActionAsBreadcrumbHandler = builder.firstActionAsBreadcrumbHandler;
         this.asElement = false;
@@ -271,11 +267,11 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
         // filter box
         if (builder.withFilter) {
-            String iconId = IdBuilder.build(id, filter, "icon");
+            String iconId = Ids.build(id, filter, "icon");
             // @formatter:off
             eb.div().css(inputGroup, filter)
                 .input(text)
-                    .id(IdBuilder.build(id, filter))
+                    .id(Ids.build(id, filter))
                     .css(formControl)
                     .aria("describedby", iconId)
                     .attr("placeholder", CONSTANTS.filter())
@@ -499,7 +495,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         return element;
     }
 
-    Element nextVisibleElement(Element start) {
+    private Element nextVisibleElement(Element start) {
         Element element = start == null ? ulElement.getFirstElementChild() : start.getNextElementSibling();
         while (element != null && !Elements.isVisible(element)) {
             element = element.getNextElementSibling();
@@ -509,10 +505,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
     private FinderRow<T> row(Element element) {
         return rows.get(element.getId());
-    }
-
-    private FinderRow<T> row(String id) {
-        return rows.get(id);
     }
 
     FinderRow<T> selectedRow() {
@@ -777,11 +769,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         return breadcrumbItemsProvider;
     }
 
-    protected void setBreadcrumbItemHandler(final BreadcrumbItemHandler<T> breadcrumbItemHandler) {
-        // No UI related property, so no need to call assertNotAsElement()
-        this.breadcrumbItemHandler = breadcrumbItemHandler;
-    }
-
     BreadcrumbItemHandler<T> getBreadcrumbItemHandler() {
         return breadcrumbItemHandler;
     }
@@ -854,6 +841,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                         FinderRow<T> updatedRow = rows.get(oldRow.getId());
                         if (updatedRow != null) {
                             updatedRow.click();
+                            updatedRow.asElement().scrollIntoView(false);
                         } else {
                             finder.selectPreviousColumn(id);
                         }

@@ -21,7 +21,6 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -32,21 +31,21 @@ import static java.util.Arrays.asList;
 /**
  * @author Harald Pehl
  */
-@AsyncColumn(Ids.DATA_SOURCE_DRIVER_COLUMN)
+@AsyncColumn(Ids.DATA_SOURCE_DRIVER)
 public class DataSourcesDriversColumn extends StaticItemColumn {
 
     @Inject
     public DataSourcesDriversColumn(final Finder finder,
             Resources resources) {
 
-        super(finder, Ids.DATA_SOURCE_DRIVER_COLUMN, Names.DATASOURCES_DRIVERS, asList(
+        super(finder, Ids.DATA_SOURCE_DRIVER, Names.DATASOURCES_DRIVERS, asList(
                 new StaticItem.Builder(Names.DATASOURCES)
-                        .nextColumn(ModelDescriptionConstants.DATA_SOURCE)
-                        .onPreview(new PreviewContent(Names.DATASOURCES, resources.previews().datasourcesOnly()))
+                        .nextColumn(Ids.DATA_SOURCE)
+                        .onPreview(new PreviewContent(Names.DATASOURCES, resources.previews().configurationDatasources()))
                         .build(),
                 new StaticItem.Builder(Names.JDBC_DRIVERS)
-                        .nextColumn(ModelDescriptionConstants.JDBC_DRIVER)
-                        .onPreview(new PreviewContent(Names.JDBC_DRIVERS, resources.previews().jdbcDrivers()))
+                        .nextColumn(Ids.JDBC_DRIVER)
+                        .onPreview(new PreviewContent(Names.JDBC_DRIVERS, resources.previews().configurationJdbcDrivers()))
                         .build()
         ));
     }

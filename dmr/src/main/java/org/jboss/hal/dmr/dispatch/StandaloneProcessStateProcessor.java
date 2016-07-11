@@ -20,6 +20,7 @@ import java.util.List;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.ServerState.State;
+import org.jboss.hal.resources.Names;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROCESS_STATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD_REQUIRED;
@@ -31,9 +32,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART_REQUIRED;
  * @date 1/17/12
  */
 public class StandaloneProcessStateProcessor implements ProcessStateProcessor {
-
-    private static final String STANDALONE_SERVER = "Standalone Server";
-    private static final String STANDALONE_HOST = "";
 
     @Override
     public boolean accepts(ModelNode response) {
@@ -50,11 +48,11 @@ public class StandaloneProcessStateProcessor implements ProcessStateProcessor {
 
                 String headerValue = header.getValue().asString();
                 if (RESTART_REQUIRED.equals(headerValue)) {
-                    ServerState state = new ServerState(STANDALONE_HOST, STANDALONE_SERVER, State.RESTART_REQUIRED);
+                    ServerState state = new ServerState("", Names.STANDALON_SERVER, State.RESTART_REQUIRED);
                     processState.add(state);
 
                 } else if (RELOAD_REQUIRED.equals(headerValue)) {
-                    ServerState state = new ServerState(STANDALONE_HOST, STANDALONE_SERVER, State.RELOAD_REQUIRED);
+                    ServerState state = new ServerState("", Names.STANDALON_SERVER, State.RELOAD_REQUIRED);
                     processState.add(state);
                 }
             }

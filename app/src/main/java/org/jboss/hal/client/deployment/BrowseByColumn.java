@@ -35,13 +35,13 @@ import org.jboss.hal.spi.Column;
  *
  * @author Harald Pehl
  */
-@Column(Ids.DEPLOYMENT_BROWSE_BY_COLUMN)
+@Column(Ids.DEPLOYMENT_BROWSE_BY)
 public class BrowseByColumn extends StaticItemColumn {
 
     private static class ContentRepositoryPreview extends PreviewContent<StaticItem> {
 
         ContentRepositoryPreview(Resources resources) {
-            super(resources.constants().contentRepository(), resources.previews().contentRepository());
+            super(resources.constants().contentRepository(), resources.previews().deploymentsContentRepository());
         }
 
         @Override
@@ -54,11 +54,11 @@ public class BrowseByColumn extends StaticItemColumn {
     @Inject
     public BrowseByColumn(final Finder finder,
             final Resources resources) {
-        super(finder, Ids.DEPLOYMENT_BROWSE_BY_COLUMN, resources.constants().browseBy(),
+        super(finder, Ids.DEPLOYMENT_BROWSE_BY, resources.constants().browseBy(),
                 Arrays.asList(
                         new StaticItem.Builder(resources.constants().contentRepository())
                                 .onPreview(new ContentRepositoryPreview(resources))
-                                .nextColumn(Ids.CONTENT_COLUMN)
+                                .nextColumn(Ids.CONTENT)
                                 .build(),
                         new StaticItem.Builder(Names.SERVER_GROUPS)
                                 .onPreview(new PreviewContent(Names.SERVER_GROUPS,

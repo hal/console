@@ -15,22 +15,45 @@
  */
 package org.jboss.hal.client.runtime.server;
 
+import java.util.Collections;
 import javax.inject.Inject;
 
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Column;
 
 /**
  * @author Harald Pehl
  */
-@Column(Ids.STANDALONE_SERVER_COLUMN)
+@Column(Ids.STANDALONE_SERVER)
 public class StandaloneServerColumn extends FinderColumn<Server> {
 
     @Inject
     public StandaloneServerColumn(final Finder finder) {
-        super(new Builder<>(finder, Ids.STANDALONE_SERVER_COLUMN, "Standalone Server")); //NON-NLS
+        super(new Builder<Server>(finder, Ids.STANDALONE_SERVER, Names.STANDALON_SERVER)
+
+                .itemsProvider((context, callback) -> callback.onSuccess(Collections.singletonList(Server.STANDALONE)))
+
+                .itemRenderer(item -> new ItemDisplay<Server>() {
+                    @Override
+                    public String getId() {
+                        return Ids.serverId(item.getName());
+                    }
+
+                    @Override
+                    public String getTitle() {
+                        return item.getName();
+                    }
+
+                    @Override
+                    public String nextColumn() {
+                        return Ids.SERVER_MONITOR;
+                    }
+                })
+        );
     }
 }

@@ -39,7 +39,7 @@ import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandl
 import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -124,6 +124,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         editingRoot = new Elements.Builder().div().css(formGroup).end().build();
         inputLabelElement = new Elements.Builder()
                 .label(label)
+                .title(label)
                 .css(column(labelColumns, columnLg, columnMd, columnSm), controlLabel)
                 .end()
                 .build();
@@ -140,7 +141,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         if (hint != null) {
             inputAddonContainer = new Elements.Builder()
                     .span()
-                    .id(IdBuilder.build(name, "addon", "hint"))
+                    .id(Ids.build(name, "addon", "hint"))
                     .css(inputGroupAddon)
                     .textContent(hint)
                     .end().build();
@@ -164,7 +165,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
         Elements.Builder restrictedBuilder = new Elements.Builder()
             .div().css(inputGroup)
-                .input(text).id(IdBuilder.build(name, RESTRICTED))
+                .input(text).id(Ids.build(name, RESTRICTED))
                     .css(formControl, CSS.restricted)
                     .rememberAs(RESTRICTED_ELEMENT)
                 .span().css(inputGroupAddon)
@@ -181,9 +182,9 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         // readonly elements
         readonlyRoot = new Elements.Builder().div().css(formGroup).end().build();
         readonlyLabelElement = new Elements.Builder()
-                .label()
+                .label(label)
+                .title(label)
                 .css(column(labelColumns, columnLg, columnMd, columnSm), controlLabel)
-                .textContent(label)
                 .end()
                 .build();
         valueContainer = new Elements.Builder()
@@ -200,7 +201,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
                 .build();
 
         assembleUI();
-        setId(IdBuilder.build(name));
+        setId(Ids.build(name));
         setName(name);
     }
 
@@ -421,10 +422,10 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
     @Override
     public void setId(String id) {
-        String editId = IdBuilder.build(id, EDITING.name().toLowerCase());
-        String readonlyId = IdBuilder.build(id, READONLY.name().toLowerCase());
+        String editId = Ids.build(id, EDITING.name().toLowerCase());
+        String readonlyId = Ids.build(id, READONLY.name().toLowerCase());
 
-        IdBuilder.set(inputElement.asElement(), editId);
+        inputElement.asElement().setId(editId);
         inputLabelElement.setHtmlFor(editId);
         valueElement.setId(readonlyId);
 

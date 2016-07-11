@@ -43,7 +43,7 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
-import org.jboss.hal.resources.IdBuilder;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
@@ -194,7 +194,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     // ------------------------------------------------------ logger / categories
 
     void addLogger() {
-        addResource("logger=*", IdBuilder.build("logging-profile-categories-table", "add"), "Category",
+        addResource("logger=*", Ids.build("logging-profile-categories-table", "add"), "Category",
                 "level", "handlers", "use-parent-handlers");
     }
 
@@ -218,7 +218,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     // ------------------------------------------------------ console handler
 
     void addConsoleHandler() {
-        addResource("console-handler=*", IdBuilder.build("logging-profile-handler-console-table", "add"),
+        addResource("console-handler=*", Ids.build("logging-profile-handler-console-table", "add"),
                 "Console Handler", "level", "target", "formatter");
     }
 
@@ -243,7 +243,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     // ------------------------------------------------------ file handler
 
     void addFileHandler() {
-        addFileHandlerResource("file-handler=*", IdBuilder.build("logging-profile-handler-file-table", "add"),
+        addFileHandlerResource("file-handler=*", Ids.build("logging-profile-handler-file-table", "add"),
                 "File Handler", "level", "formatter");
     }
 
@@ -269,7 +269,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     void addPeriodicHandler() {
         addFileHandlerResource("periodic-rotating-file-handler=*",
-                IdBuilder.build("logging-profile-handler-periodic-rotating-file-table", "add"),
+                Ids.build("logging-profile-handler-periodic-rotating-file-table", "add"),
                 "Periodic Handler", "suffix", "level", "formatter");
     }
 
@@ -295,7 +295,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     void addPeriodicSizeHandler() {
         addFileHandlerResource("periodic-size-rotating-file-handler=*",
-                IdBuilder.build("logging-profile-handler-periodic-size-rotating-file-table", "add"),
+                Ids.build("logging-profile-handler-periodic-size-rotating-file-table", "add"),
                 "Periodic Size Handler", "suffix", "level", "formatter", "rotate-size", "max-backup-index");
     }
 
@@ -321,7 +321,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     void addSizeHandler() {
         addFileHandlerResource("size-rotating-file-handler=*",
-                IdBuilder.build("logging-profile-handler-size-rotating-file-table", "add"),
+                Ids.build("logging-profile-handler-size-rotating-file-table", "add"),
                 "Size Handler", "suffix", "level", "formatter", "rotate-size", "max-backup-index");
     }
 
@@ -350,7 +350,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         Metadata metadata = mbuiContext.metadataRegistry().lookup(metadataTemplate);
         AddressTemplate selectionTemplate = SELECTED_LOGGING_PROFILE_TEMPLATE.append("async-handler=*");
 
-        AddResourceDialog dialog = new AddResourceDialog(IdBuilder.build("logging-profile-handler-async-table", "add"),
+        AddResourceDialog dialog = new AddResourceDialog(Ids.build("logging-profile-handler-async-table", "add"),
                 mbuiContext.resources().messages().addResourceTitle("Async Handler"),
                 metadata, asList("level", "subhandlers", "queue-length", "overflow-action"),
                 (name, modelNode) -> {
@@ -396,7 +396,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     // ------------------------------------------------------ custom handler
 
     void addCustomHandler() {
-        addResource("custom-handler=*", IdBuilder.build("logging-profile-handler-custom-table", "add"),
+        addResource("custom-handler=*", Ids.build("logging-profile-handler-custom-table", "add"),
                 "Custom Handler", "level", "module", "class", "formatter");
     }
 
@@ -421,7 +421,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     // ------------------------------------------------------ syslog handler
 
     void addSyslogHandler() {
-        addResource("syslog-handler=*", IdBuilder.build("logging-profile-handler-syslog-table", "add"),
+        addResource("syslog-handler=*", Ids.build("logging-profile-handler-syslog-table", "add"),
                 "Syslog Handler", "level", "syslog-format", "hostname", "server-address", "port", "app-name",
                 "facility");
     }
@@ -447,7 +447,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     // ------------------------------------------------------ custom formatter
 
     void addCustomFormatter() {
-        addResource("custom-formatter=*", IdBuilder.build("logging-profile-formatter-custom-table", "add"),
+        addResource("custom-formatter=*", Ids.build("logging-profile-formatter-custom-table", "add"),
                 "Custom Formatter");
     }
 
@@ -472,7 +472,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     // ------------------------------------------------------ pattern formatter
 
     void addPatternFormatter() {
-        addResource("pattern-formatter=*", IdBuilder.build("logging-profile-formatter-pattern-table", "add"),
+        addResource("pattern-formatter=*", Ids.build("logging-profile-formatter-pattern-table", "add"),
                 "Pattern Formatter");
     }
 

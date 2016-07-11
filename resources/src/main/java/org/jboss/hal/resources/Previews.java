@@ -15,16 +15,60 @@
  */
 package org.jboss.hal.resources;
 
-import com.google.gwt.resources.client.ClientBundleWithLookup;
+import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ExternalTextResource;
 
 /**
  * @author Harald Pehl
  */
-public interface Previews extends ClientBundleWithLookup {
+public interface Previews extends ClientBundle {
+
+    // ------------------------------------------------------ configuration
+
+    @Source("previews/configuration/subsystems/datasources.html")
+    ExternalTextResource configurationDatasources();
+
+    @Source("previews/configuration/subsystems/datasources-drivers.html")
+    ExternalTextResource configurationDatasourcesDrivers();
+
+    @Source("previews/configuration/subsystems/deployment-scanner.html")
+    ExternalTextResource configurationDeploymentScanner();
 
     @Source("previews/configuration/domain.html")
     ExternalTextResource configurationDomain();
+
+    @Source("previews/configuration/subsystems/ee.html")
+    ExternalTextResource configurationEe();
+
+    @Source("previews/configuration/interfaces.html")
+    ExternalTextResource configurationInterfaces();
+
+    @Source("previews/configuration/subsystems/io.html")
+    ExternalTextResource configurationIo();
+
+    @Source("previews/configuration/subsystems/jdbc-drivers.html")
+    ExternalTextResource configurationJdbcDrivers();
+
+    @Source("previews/configuration/subsystems/logging.html")
+    ExternalTextResource configurationLogging();
+
+    @Source("previews/configuration/subsystems/logging-configuration.html")
+    ExternalTextResource configurationLoggingConfiguration();
+
+    @Source("previews/configuration/subsystems/logging-profiles.html")
+    ExternalTextResource configurationLoggingProfiles();
+
+    @Source("previews/configuration/subsystems/mail.html")
+    ExternalTextResource configurationMail();
+
+    @Source("previews/configuration/paths.html")
+    ExternalTextResource configurationPaths();
+
+    @Source("previews/configuration/profiles.html")
+    ExternalTextResource configurationProfiles();
+
+    @Source("previews/configuration/socket-bindings.html")
+    ExternalTextResource configurationSocketBindings();
 
     @Source("previews/configuration/standalone.html")
     ExternalTextResource configurationStandalone();
@@ -32,14 +76,14 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/subsystems.html")
     ExternalTextResource configurationSubsystems();
 
+    @Source("previews/configuration/system-properties.html")
+    ExternalTextResource configurationSystemProperties();
+
+
+    // ------------------------------------------------------ deployments
+
     @Source("previews/deployments/content-repository.html")
-    ExternalTextResource contentRepository();
-
-    @Source("previews/configuration/subsystems/datasources.html")
-    ExternalTextResource datasources();
-
-    @Source("previews/configuration/subsystems/datasources-only.html")
-    ExternalTextResource datasourcesOnly();
+    ExternalTextResource deploymentsContentRepository();
 
     @Source("previews/deployments/domain.html")
     ExternalTextResource deploymentsDomain();
@@ -50,63 +94,27 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/deployments/standalone.html")
     ExternalTextResource deploymentsStandalone();
 
-    @Source("previews/subsystems/deployment-scanner.html")
-    ExternalTextResource deploymentScanner();
 
-    @Source("previews/subsystems/ee.html")
-    ExternalTextResource ee();
-
-    @Source("previews/runtime/hosts.html")
-    ExternalTextResource hosts();
-
-    @Source("previews/configuration/interfaces.html")
-    ExternalTextResource interfaces();
-
-    @Source("previews/subsystems/io.html")
-    ExternalTextResource io();
-
-    @Source("previews/configuration/subsystems/jdbc-drivers.html")
-    ExternalTextResource jdbcDrivers();
-
-    @Source("previews/runtime/logfiles.html")
-    ExternalTextResource logFiles();
-
-    @Source("previews/subsystems/logging.html")
-    ExternalTextResource logging();
-
-    @Source("previews/subsystems/logging-configuration.html")
-    ExternalTextResource loggingConfiguration();
-
-    @Source("previews/subsystems/logging-profiles.html")
-    ExternalTextResource loggingProfiles();
-
-    @Source("previews/subsystems/mail.html")
-    ExternalTextResource mail();
-
-    @Source("previews/configuration/paths.html")
-    ExternalTextResource paths();
-
-    @Source("previews/configuration/profiles.html")
-    ExternalTextResource profiles();
+    // ------------------------------------------------------ runtime
 
     @Source("previews/runtime/domain.html")
     ExternalTextResource runtimeDomain();
 
-    @Source("previews/runtime/standalone.html")
-    ExternalTextResource runtimeStandalone();
+    @Source("previews/runtime/hosts.html")
+    ExternalTextResource runtimeHosts();
+
+    @Source("previews/runtime/logfiles.html")
+    ExternalTextResource runtimeLogFiles();
 
     @Source("previews/runtime/server-groups.html")
     ExternalTextResource runtimeServerGroups();
 
+    @Source("previews/runtime/standalone.html")
+    ExternalTextResource runtimeStandalone();
+
     @Source("previews/runtime/subsystems.html")
     ExternalTextResource runtimeSubsystems();
 
-    @Source("previews/configuration/socket-bindings.html")
-    ExternalTextResource socketBindings();
-
-    @Source("previews/configuration/system-properties.html")
-    ExternalTextResource systemProperties();
-
     @Source("previews/runtime/topology.html")
-    ExternalTextResource topology();
+    ExternalTextResource runtimeTopology();
 }

@@ -38,14 +38,13 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CONFIGURATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.INTERFACE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
@@ -106,8 +105,8 @@ public class InterfacePresenter extends MbuiPresenter<InterfacePresenter.MyView,
     @Override
     protected FinderPath finderPath() {
         return new FinderPath()
-                .append(CONFIGURATION, Names.INTERFACES.toLowerCase(), Names.CONFIGURATION, Names.INTERFACES)
-                .append(INTERFACE, interfce, Names.INTERFACE);
+                .append(Ids.CONFIGURATION, Ids.asId(Names.INTERFACE), Names.CONFIGURATION, Names.INTERFACES)
+                .append(Ids.INTERFACE, interfce, Names.INTERFACE, interfce);
     }
 
     @Override

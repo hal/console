@@ -27,10 +27,10 @@ import org.jboss.hal.client.configuration.PathsTypeahead;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
@@ -39,6 +39,7 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
@@ -52,7 +53,8 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 /**
  * @author Harald Pehl
  */
-public class LoggingProfilePresenter extends MbuiPresenter<LoggingProfilePresenter.MyView, LoggingProfilePresenter.MyProxy> {
+public class LoggingProfilePresenter
+        extends MbuiPresenter<LoggingProfilePresenter.MyView, LoggingProfilePresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -80,6 +82,7 @@ public class LoggingProfilePresenter extends MbuiPresenter<LoggingProfilePresent
     // @formatter:on
 
 
+    private final FinderPathFactory finderPathFactory;
     private final Environment environment;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
@@ -90,10 +93,12 @@ public class LoggingProfilePresenter extends MbuiPresenter<LoggingProfilePresent
             final MyView view,
             final MyProxy myProxy,
             final Finder finder,
+            final FinderPathFactory finderPathFactory,
             final Environment environment,
             final StatementContext statementContext,
             final Dispatcher dispatcher) {
         super(eventBus, view, myProxy, finder);
+        this.finderPathFactory = finderPathFactory;
         this.environment = environment;
         this.statementContext = new SelectionAwareStatementContext(statementContext, () -> loggingProfile);
         this.dispatcher = dispatcher;
@@ -117,9 +122,8 @@ public class LoggingProfilePresenter extends MbuiPresenter<LoggingProfilePresent
 
     @Override
     protected FinderPath finderPath() {
-        return FinderPath
-                .configurationSubsystemPath(statementContext.selectedProfile(), LOGGING_SUBSYSTEM_TEMPLATE.lastValue())
-                .append(ModelDescriptionConstants.LOGGING_PROFILE, Logging.profileId(loggingProfile),
+        return finderPathFactory.configurationSubsystemPath(LOGGING_SUBSYSTEM_TEMPLATE.lastValue())
+                .append(Ids.LOGGING_PROFILE, Ids.loggingProfileId(loggingProfile),
                         Names.LOGGING_PROFILE, loggingProfile);
     }
 

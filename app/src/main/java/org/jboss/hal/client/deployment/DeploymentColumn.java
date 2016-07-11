@@ -30,18 +30,16 @@ import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.client.deployment.Deployment.Status;
-import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.Icons;
-import org.jboss.hal.resources.IdBuilder;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -61,7 +59,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  *
  * @author Harald Pehl
  */
-@Column(ModelDescriptionConstants.DEPLOYMENT)
+@Column(Ids.DEPLOYMENT)
 public class DeploymentColumn extends FinderColumn<Deployment> {
 
     private final Dispatcher dispatcher;
@@ -77,9 +75,9 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
             @Footer final Provider<Progress> progress,
             final Resources resources) {
 
-        super(new Builder<Deployment>(finder, ModelDescriptionConstants.DEPLOYMENT, Names.DEPLOYMENT)
+        super(new Builder<Deployment>(finder, Ids.DEPLOYMENT, Names.DEPLOYMENT)
 
-                .columnAction(columnActionFactory.add(IdBuilder.build(Ids.CONTENT_COLUMN, "add"),
+                .columnAction(columnActionFactory.add(Ids.DEPLOYMENT_ADD,
                         resources.constants().content(), column -> Browser.getWindow().alert(Names.NYI)))
 
                 .itemsProvider((context, callback) -> {

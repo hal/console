@@ -66,6 +66,7 @@ public interface Names {
     String SERVER_GROUPS = "Server Groups";
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDINGS = "Socket Bindings";
+    String STANDALON_SERVER = "Standalone Server";
     String SUBSYSTEM = "Subsystem";
     String SUBSYSTEMS = "Subsystems";
     String SYSTEM_PROPERTIES = "System Properties";
