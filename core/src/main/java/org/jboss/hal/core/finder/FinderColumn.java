@@ -86,7 +86,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         private boolean withFilter;
         private boolean pinnable;
         private PreviewCallback<T> previewCallback;
-        private BreadcrumbItemsProvider<T> breadcrumbItemsProvider;
         private BreadcrumbItemHandler<T> breadcrumbItemHandler;
         private boolean firstActionAsBreadcrumbHandler;
         private List<T> items;
@@ -125,7 +124,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             return this;
         }
 
-        public Builder<T> initialItems(List<T> items) {
+        Builder<T> initialItems(List<T> items) {
             if (items != null && !items.isEmpty()) {
                 this.items.addAll(items);
             }
@@ -149,11 +148,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
         public Builder<T> onPreview(PreviewCallback<T> previewCallback) {
             this.previewCallback = previewCallback;
-            return this;
-        }
-
-        public Builder<T> breadcrumbItemsProvider(BreadcrumbItemsProvider<T> breadcrumbItemsProvider) {
-            this.breadcrumbItemsProvider = breadcrumbItemsProvider;
             return this;
         }
 
@@ -233,7 +227,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         this.itemRenderer = builder.itemRenderer;
         this.selectionHandler = builder.selectionHandler;
         this.previewCallback = builder.previewCallback;
-        this.breadcrumbItemsProvider = builder.breadcrumbItemsProvider;
         this.breadcrumbItemHandler = builder.breadcrumbItemHandler;
         this.firstActionAsBreadcrumbHandler = builder.firstActionAsBreadcrumbHandler;
         this.asElement = false;
@@ -502,7 +495,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         return element;
     }
 
-    Element nextVisibleElement(Element start) {
+    private Element nextVisibleElement(Element start) {
         Element element = start == null ? ulElement.getFirstElementChild() : start.getNextElementSibling();
         while (element != null && !Elements.isVisible(element)) {
             element = element.getNextElementSibling();
@@ -512,10 +505,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
     private FinderRow<T> row(Element element) {
         return rows.get(element.getId());
-    }
-
-    private FinderRow<T> row(String id) {
-        return rows.get(id);
     }
 
     FinderRow<T> selectedRow() {
@@ -780,11 +769,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         return breadcrumbItemsProvider;
     }
 
-    protected void setBreadcrumbItemHandler(final BreadcrumbItemHandler<T> breadcrumbItemHandler) {
-        // No UI related property, so no need to call assertNotAsElement()
-        this.breadcrumbItemHandler = breadcrumbItemHandler;
-    }
-
     BreadcrumbItemHandler<T> getBreadcrumbItemHandler() {
         return breadcrumbItemHandler;
     }
@@ -857,6 +841,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                         FinderRow<T> updatedRow = rows.get(oldRow.getId());
                         if (updatedRow != null) {
                             updatedRow.click();
+                            updatedRow.asElement().scrollIntoView(false);
                         } else {
                             finder.selectPreviousColumn(id);
                         }
