@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.core.finder;
 
+import java.util.Map;
 import javax.inject.Inject;
 
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -72,7 +73,8 @@ public class FinderPathFactory {
                     .append(Ids.PROFILE, profile, Names.PROFILES, profile);
 
         }
-        path.append(Ids.CONFIGURATION_SUBSYSTEM, subsystem, Names.SUBSYSTEM, subsystemTitle(subsystem));
+        path.append(Ids.CONFIGURATION_SUBSYSTEM, subsystem,
+                Names.SUBSYSTEM, subsystemTitle(subsystem, subsystems.getConfigurationSubsystems()));
         return path;
     }
 
@@ -119,8 +121,8 @@ public class FinderPathFactory {
      * group when running domain mode.
      */
     public FinderPath runtimeSubsystemPath(String subsystem) {
-        return runtimeServerPath()
-                .append(Ids.RUNTIME_SUBSYSTEM, subsystem, Names.SUBSYSTEM, subsystemTitle(subsystem));
+        return runtimeServerPath().append(Ids.RUNTIME_SUBSYSTEM, subsystem,
+                Names.SUBSYSTEM, subsystemTitle(subsystem, subsystems.getRuntimeSubsystems()));
     }
 
 
@@ -134,8 +136,8 @@ public class FinderPathFactory {
         return false;
     }
 
-    private String subsystemTitle(String subsystem) {
-        SubsystemMetadata subsystemMetadata = subsystems.getConfigurationSubsystems().get(subsystem);
+    private String subsystemTitle(String subsystem, Map<String, SubsystemMetadata> subsystems) {
+        SubsystemMetadata subsystemMetadata = subsystems.get(subsystem);
         return subsystemMetadata != null ? subsystemMetadata.getTitle() : new LabelBuilder().label(subsystem);
     }
 }

@@ -98,10 +98,12 @@ public class GenericSubsystemPresenter
 
     @Override
     protected FinderPath finderPath() {
-        if (NameTokens.RUNTIME.equals(finder.getContext().getToken())) {
+        if (NameTokens.CONFIGURATION.equals(finder.getContext().getToken())) {
+            return finderPathFactory.configurationSubsystemPath(address.lastValue());
+        } else if (NameTokens.RUNTIME.equals(finder.getContext().getToken())) {
             return finderPathFactory.runtimeSubsystemPath(address.lastValue());
         } else {
-            return finderPathFactory.configurationSubsystemPath(address.lastValue());
+            return new FinderPath();
         }
     }
 }

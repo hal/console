@@ -66,7 +66,7 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                     continue;
                 }
 
-                ModelNode value = model.get(formItem.getName());
+                ModelNode value = model.get(name);
                 ModelType valueType = value.getType();
                 if (valueType == EXPRESSION) {
                     if (formItem.supportsExpressions()) {
@@ -90,11 +90,24 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
 
                         case INT:
                             // NumberFormItem uses *always* long
-                            formItem.setValue((long) value.asInt());
+                            try {
+                                formItem.setValue((long) value.asInt());
+                            } catch (IllegalArgumentException e) {
+                                logger.error(
+                                        "{}: Unable to populate form item '{}': Metadata says it's an INT, but value is not '{}'",
+                                        id(form), name, value.asString());
+
+                            }
                             break;
                         case BIG_INTEGER:
                         case LONG:
-                            formItem.setValue(value.asLong());
+                            try {
+                                formItem.setValue(value.asLong());
+                            } catch (IllegalArgumentException e) {
+                                logger.error(
+                                        "{}: Unable to populate form item '{}': Metadata says it's a {}, but value is not '{}'",
+                                        id(form), name, descriptionType.name(), value.asString());
+                            }
                             break;
 
                         case LIST:
