@@ -32,7 +32,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 /**
  * @author Harald Pehl
  */
-class NestedTokenizer implements DataTokenizer {
+final class NestedTokenizer implements DataTokenizer {
 
     @Override
     public String[] tokenize(final JsJsonObject data) {

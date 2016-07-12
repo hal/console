@@ -29,7 +29,7 @@ import static org.jboss.hal.resources.CSS.ttNested;
 /**
  * @author Harald Pehl
  */
-class NestedSuggestionTemplate implements Templates.SuggestionTemplate {
+final class NestedSuggestionTemplate implements Templates.SuggestionTemplate {
 
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
