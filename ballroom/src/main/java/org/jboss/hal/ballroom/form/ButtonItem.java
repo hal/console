@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import com.google.common.base.Splitter;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.events.EventListener;
@@ -25,8 +24,8 @@ import org.jboss.hal.ballroom.form.InputElement.Context;
 
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
-import static org.jboss.hal.resources.CSS.labelColumns;
-import static org.jboss.hal.resources.CSS.offset;
+import static org.jboss.hal.resources.CSS.halFormInput;
+import static org.jboss.hal.resources.CSS.halFormOffset;
 import static org.jboss.hal.resources.Names.NOT_SUPPORTED;
 
 /**
@@ -65,9 +64,8 @@ public class ButtonItem extends AbstractFormItem<Void> {
 
     @Override
     protected void assembleUI() {
-        for (String cls : Splitter.on(' ').split(offset(labelColumns))) {
-            inputContainer.getClassList().add(cls);
-        }
+        inputContainer.getClassList().remove(halFormInput);
+        inputContainer.getClassList().add(halFormOffset);
         inputContainer.appendChild(inputElement().asElement());
         editingRoot.appendChild(inputContainer);
     }
@@ -87,13 +85,14 @@ public class ButtonItem extends AbstractFormItem<Void> {
     }
 
 
-    static class ButtonElement extends InputElement<Void> {
+    private static class ButtonElement extends InputElement<Void> {
 
         static final String DATA_NAME = "data-name";
         final elemental.html.ButtonElement element;
 
         ButtonElement() {
             element = Browser.getDocument().createButtonElement();
+            element.setAttribute("type", "button"); //NON-NLS
         }
 
         @Override

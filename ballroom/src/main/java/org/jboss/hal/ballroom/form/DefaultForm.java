@@ -219,8 +219,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             // @formatter:off
             editPanel.appendChild(new Elements.Builder()
                 .div().css(formGroup)
-                    .div().css(column(inputColumns, columnLg, columnMd, columnSm),
-                               offset(labelColumns, columnLg, columnMd, columnSm))
+                    .div().css(halFormOffset)
                         .span().css(helpBlock)
                             .innerHtml(MESSAGES.requiredHelp())
                         .end()
@@ -233,7 +232,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         // @formatter:off
         Element buttons = new Elements.Builder()
             .div().css(formGroup, formButtons)
-                .div().css(offset(labelColumns), column(inputColumns, columnLg, columnMd, columnSm))
+                .div().css(halFormOffset)
                     .div().css(pullRight)
                         .button().css(btn, btnHal, btnDefault).on(click, event -> cancel())
                             .textContent(CONSTANTS.cancel())

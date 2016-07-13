@@ -1,7 +1,25 @@
 .modal-md {
-  /*
-   * Nothing attached to medium size. But still an own class to make it easier to add / remove size classes
-   */
+
+  .hal-form-label {
+    .make-lg-column(@hal-dialog-md-label-columns);
+    .make-md-column(@hal-dialog-md-label-columns);
+    .make-sm-column(@hal-dialog-md-label-columns);
+  }
+
+  .hal-form-input {
+    .make-lg-column(@hal-dialog-md-input-columns);
+    .make-md-column(@hal-dialog-md-input-columns);
+    .make-sm-column(@hal-dialog-md-input-columns);
+  }
+
+  .hal-form-offset {
+    .make-lg-column(@hal-dialog-md-input-columns);
+    .make-md-column(@hal-dialog-md-input-columns);
+    .make-sm-column(@hal-dialog-md-input-columns);
+    .make-lg-column-offset(@hal-dialog-md-label-columns);
+    .make-md-column-offset(@hal-dialog-md-label-columns);
+    .make-sm-column-offset(@hal-dialog-md-label-columns);
+  }
 }
 
 .modal-mx {

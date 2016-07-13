@@ -125,12 +125,12 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         inputLabelElement = new Elements.Builder()
                 .label(label)
                 .title(label)
-                .css(column(labelColumns, columnLg, columnMd, columnSm), controlLabel)
+                .css(controlLabel, halFormLabel)
                 .end()
                 .build();
         inputContainer = new Elements.Builder()
                 .div()
-                .css(column(inputColumns, columnLg, columnMd, columnSm))
+                .css(halFormInput)
                 .end()
                 .build();
         errorText = new Elements.Builder().span().css(helpBlock).end().build();
@@ -184,12 +184,12 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         readonlyLabelElement = new Elements.Builder()
                 .label(label)
                 .title(label)
-                .css(column(labelColumns, columnLg, columnMd, columnSm), controlLabel)
+                .css(controlLabel, halFormLabel)
                 .end()
                 .build();
         valueContainer = new Elements.Builder()
                 .div()
-                .css(column(inputColumns, columnLg, columnMd, columnSm))
+                .css(halFormInput)
                 .end()
                 .build();
         valueElement = new Elements.Builder().p().css(formControlStatic).end().build();

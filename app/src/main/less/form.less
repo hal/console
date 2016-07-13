@@ -5,6 +5,27 @@
   margin-top: 20px;
 }
 
+.hal-form-label {
+  .make-lg-column(@hal-form-label-columns);
+  .make-md-column(@hal-form-label-columns);
+  .make-sm-column(@hal-form-label-columns);
+}
+
+.hal-form-input {
+  .make-lg-column(@hal-form-input-columns);
+  .make-md-column(@hal-form-input-columns);
+  .make-sm-column(@hal-form-input-columns);
+}
+
+.hal-form-offset {
+  .make-lg-column(@hal-form-input-columns);
+  .make-md-column(@hal-form-input-columns);
+  .make-sm-column(@hal-form-input-columns);
+  .make-lg-column-offset(@hal-form-label-columns);
+  .make-md-column-offset(@hal-form-label-columns);
+  .make-sm-column-offset(@hal-form-label-columns);
+}
+
 .form {
   &.readonly {
     .separator {

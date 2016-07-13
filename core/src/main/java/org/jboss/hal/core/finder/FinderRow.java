@@ -29,7 +29,6 @@ import org.jboss.hal.resources.UIConstants;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.core.finder.Finder.DATA_BREADCRUMB;
-import static org.jboss.hal.core.finder.Finder.DATA_FILTER;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
 
@@ -96,7 +95,7 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         root.setId(display.getId());
         root.getDataset().setAt(DATA_BREADCRUMB, display.getTitle());
         // TODO getFilterData() causes a ReferenceError in SuperDevMode WTF?
-        root.getDataset().setAt(DATA_FILTER, display.getFilterData());
+        // root.getDataset().setAt(DATA_FILTER, display.getFilterData());
 
         Element icon = display.getIcon();
         if (icon != null) {
