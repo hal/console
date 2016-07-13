@@ -119,7 +119,10 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                             resources.messages().addResourceTitle(Names.JDBC_DRIVER), form,
                             (name, modelNode) -> {
                                 if (modelNode != null) {
-                                    ResourceAddress address = JDBC_DRIVER_TEMPLATE.resolve(statementContext, name);
+                                    // name is null - the form does not have a name field!
+                                    String driverName = modelNode.get(DRIVER_NAME).asString();
+                                    ResourceAddress address = JDBC_DRIVER_TEMPLATE
+                                            .resolve(statementContext, driverName);
                                     Operation operation = new Operation.Builder(ADD, address)
                                             .payload(modelNode)
                                             .build();
@@ -128,7 +131,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                                                 Message.success(resources.messages()
                                                         .addResourceSuccess(Names.JDBC_DRIVER,
                                                                 modelNode.get(DRIVER_NAME).asString())));
-                                        column.refresh(name);
+                                        column.refresh(driverName);
                                     });
                                 }
                             });
@@ -159,7 +162,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
 
             @Override
             public String getFilterData() {
-                if ((driver.getProvider() == DEPLOYMENT || driver.getProvider()== MODULE)) {
+                if ((driver.getProvider() == DEPLOYMENT || driver.getProvider() == MODULE)) {
                     return getTitle() + " " + driver.getProvider().text();
                 }
                 return getTitle();
