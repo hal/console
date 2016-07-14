@@ -39,6 +39,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 /**
  * Presenter for subsystems w/o a specific implementation in HAL. Relies on the model browser to manage a (sub)tree of
  * the management model starting at the resource specified as place request parameter.
+ * <p>
+ * Used in configuration and subsystem perspective.
  *
  * @author Harald Pehl
  */

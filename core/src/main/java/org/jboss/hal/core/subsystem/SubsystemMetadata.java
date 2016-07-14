@@ -47,22 +47,6 @@ public class SubsystemMetadata {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof SubsystemMetadata)) { return false; }
-
-        SubsystemMetadata that = (SubsystemMetadata) o;
-
-        return name.equals(that.name);
-
-    }
-
-    @Override
-    public int hashCode() {
-        return name.hashCode();
-    }
-
-    @Override
     public String toString() {
         return "Subsystem(" + name + ")";
     }

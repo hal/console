@@ -75,11 +75,12 @@ public interface Ids {
     String CONTENT = "content";
     String CONTENT_ADD = build(Ids.CONTENT, ADD_SUFFIX);
 
-    String DATA_SOURCE = "data-source";
-    String DATA_SOURCE_ADD = build(DATA_SOURCE, ADD_SUFFIX);
+    String DATA_SOURCE_CONFIGURATION = "c-data-source";
+    String DATA_SOURCE_ADD = build(DATA_SOURCE_CONFIGURATION, ADD_SUFFIX);
     String DATA_SOURCE_DRIVER = "data-source-driver"; // can't be replaced with IdBuilder.build(...)
-    String DATA_SOURCE_REFRESH = build(DATA_SOURCE, REFRESH_SUFFIX);
-    String DATA_SOURCE_WIZARD = build(DATA_SOURCE, WIZARD_SUFFIX);
+    String DATA_SOURCE_REFRESH = build(DATA_SOURCE_CONFIGURATION, REFRESH_SUFFIX);
+    String DATA_SOURCE_RUNTIME = "r-data-source";
+    String DATA_SOURCE_WIZARD = build(DATA_SOURCE_CONFIGURATION, WIZARD_SUFFIX);
     String DEPLOYMENT = "deployment";
     String DEPLOYMENT_ADD = build(Ids.DEPLOYMENT, ADD_SUFFIX);
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by"; // can't be replaced with IdBuilder.build(...)
@@ -230,8 +231,12 @@ public interface Ids {
         return Joiner.on(separator).skipNulls().join(ids);
     }
 
-    static String dataSourceId(String name, boolean xa) {
-        return build(xa ? "xa" : "non-xa", DATA_SOURCE, name);
+    static String dataSourceConfigurationId(String name, boolean xa) {
+        return build(xa ? "xa" : "non-xa", DATA_SOURCE_CONFIGURATION, name);
+    }
+
+    static String dataSourceRuntimeId(String name, boolean xa) {
+        return build(xa ? "xa" : "non-xa", DATA_SOURCE_RUNTIME, name);
     }
 
     static String hostId(final String name) {

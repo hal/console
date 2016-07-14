@@ -194,12 +194,12 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
                     .filter(attribute -> attribute.scope == BOTH || attribute.scope == NON_XA)
                     .map(attribute -> attribute.name)
                     .collect(toList());
-            form = new ModelNodeForm.Builder<DataSource>(Ids.build(Ids.DATA_SOURCE, "form", sectionId), nonXaMeta)
+            form = new ModelNodeForm.Builder<DataSource>(Ids.build(Ids.DATA_SOURCE_CONFIGURATION, "form", sectionId), nonXaMeta)
                     .include(nonXaNames)
                     .onSave(saveCallback)
                     .build();
             nonXaForms.add(form);
-            nonXaTabs.add(Ids.build(Ids.DATA_SOURCE, "tab", sectionId), section, form.asElement());
+            nonXaTabs.add(Ids.build(Ids.DATA_SOURCE_CONFIGURATION, "tab", sectionId), section, form.asElement());
 
             // xa form and tab
             List<String> xaNames = sectionAttributes.stream()

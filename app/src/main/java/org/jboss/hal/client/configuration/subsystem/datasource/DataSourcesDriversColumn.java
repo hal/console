@@ -40,7 +40,7 @@ public class DataSourcesDriversColumn extends StaticItemColumn {
 
         super(finder, Ids.DATA_SOURCE_DRIVER, Names.DATASOURCES_DRIVERS, asList(
                 new StaticItem.Builder(Names.DATASOURCES)
-                        .nextColumn(Ids.DATA_SOURCE)
+                        .nextColumn(Ids.DATA_SOURCE_CONFIGURATION)
                         .onPreview(new PreviewContent(Names.DATASOURCES, resources.previews().configurationDatasources()))
                         .build(),
                 new StaticItem.Builder(Names.JDBC_DRIVERS)

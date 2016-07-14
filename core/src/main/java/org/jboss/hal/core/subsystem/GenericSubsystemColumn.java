@@ -127,9 +127,8 @@ public abstract class GenericSubsystemColumn extends FinderColumn<SubsystemMetad
                         combined.add(subsystems.get(name));
 
                     } else {
-                        String title1 = new LabelBuilder().label(name);
-                        SubsystemMetadata subsystem = new SubsystemMetadata(name, title1, null, null, null,
-                                false);
+                        String title = new LabelBuilder().label(name);
+                        SubsystemMetadata subsystem = new SubsystemMetadata(name, title, null, null, null, false);
                         combined.add(subsystem);
                     }
                 }

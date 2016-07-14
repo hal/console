@@ -26,6 +26,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.resources.Names.DATASOURCE;
 
 /**
  * TODO set customImplementation flags to true once the subsystems are implemented
@@ -67,7 +68,7 @@ public class Subsystems {
         addConfiguration(new SubsystemMetadata(WEBSERVICES, "Web Services", null, NameTokens.WEBSERVICES, null, false));
 
         // ------------------------------------------------------ runtime
-        addRuntime(new SubsystemMetadata(BATCH_JBERET, "Batch", "JBeret", NameTokens.BATCH_RUNTIME, null, false));
+        addRuntime(new SubsystemMetadata(DATASOURCES, DATASOURCE, null, null, Ids.DATA_SOURCE_RUNTIME, true));
         // @formatter:on
     }
 

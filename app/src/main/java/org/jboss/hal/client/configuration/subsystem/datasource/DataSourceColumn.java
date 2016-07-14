@@ -68,7 +68,7 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
  *
  * @author Harald Pehl
  */
-@AsyncColumn(Ids.DATA_SOURCE)
+@AsyncColumn(Ids.DATA_SOURCE_CONFIGURATION)
 @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS, JDBC_DRIVER_ADDRESS})
 public class DataSourceColumn extends FinderColumn<DataSource> {
 
@@ -95,7 +95,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory) {
 
-        super(new Builder<DataSource>(finder, Ids.DATA_SOURCE, Names.DATASOURCE)
+        super(new Builder<DataSource>(finder, Ids.DATA_SOURCE_CONFIGURATION, Names.DATASOURCE)
                 .withFilter()
                 .useFirstActionAsBreadcrumbHandler());
 
@@ -134,7 +134,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         setItemRenderer(dataSource -> new ItemDisplay<DataSource>() {
             @Override
             public String getId() {
-                return Ids.dataSourceId(dataSource.getName(), dataSource.isXa());
+                return Ids.dataSourceConfigurationId(dataSource.getName(), dataSource.isXa());
             }
 
             @Override
@@ -215,7 +215,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                     dispatcher.execute(operation, result -> {
                         MessageEvent.fire(eventBus, Message.success(
                                 resources.messages().addResourceSuccess(Names.DATASOURCE, dataSource.getName())));
-                        refresh(Ids.dataSourceId(dataSource.getName(), dataSource.isXa()));
+                        refresh(Ids.dataSourceConfigurationId(dataSource.getName(), dataSource.isXa()));
                     });
                 });
                 wizard.show();
