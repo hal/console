@@ -52,7 +52,8 @@ import static java.util.stream.StreamSupport.stream;
  * equivalent or similar constant in {@code ModelDescriptionConstants} (SoC).
  * <p>
  * The IDs defined here are reused by QA. So please make sure that IDs are not spread over the complete code base but
- * gathered in this interface.
+ * gathered in this interface. This is not always possible - for instance if the ID contains dynamic parts like a
+ * resource name or selected server. But IDs which only contain static strings should be part of this interface.
  */
 @SuppressWarnings("DuplicateStringLiteralInspection")
 public interface Ids {
@@ -69,21 +70,21 @@ public interface Ids {
 
 
     // ------------------------------------------------------ ids (a-z)
+    // Try to compose IDs by making use of the build() method, except the ID is used in an annotation.
 
     String CONFIGURATION = "configuration";
-    String CONFIGURATION_SUBSYSTEM = "c-subsystem";
     String CONTENT = "content";
     String CONTENT_ADD = build(Ids.CONTENT, ADD_SUFFIX);
 
-    String DATA_SOURCE_CONFIGURATION = "c-data-source";
+    String DATA_SOURCE_CONFIGURATION = "data-source-configuration";
     String DATA_SOURCE_ADD = build(DATA_SOURCE_CONFIGURATION, ADD_SUFFIX);
-    String DATA_SOURCE_DRIVER = "data-source-driver"; // can't be replaced with IdBuilder.build(...)
+    String DATA_SOURCE_DRIVER = "data-source-driver";
     String DATA_SOURCE_REFRESH = build(DATA_SOURCE_CONFIGURATION, REFRESH_SUFFIX);
-    String DATA_SOURCE_RUNTIME = "r-data-source";
+    String DATA_SOURCE_RUNTIME = "data-source-runtime";
     String DATA_SOURCE_WIZARD = build(DATA_SOURCE_CONFIGURATION, WIZARD_SUFFIX);
     String DEPLOYMENT = "deployment";
     String DEPLOYMENT_ADD = build(Ids.DEPLOYMENT, ADD_SUFFIX);
-    String DEPLOYMENT_BROWSE_BY = "deployment-browse-by"; // can't be replaced with IdBuilder.build(...)
+    String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
     String DOMAIN_BROWSE_BY = "domain-browse-by";
     String DRAG_AND_DROP_DEPLOYMENT = "drag-and-drop-deployment";
 
@@ -166,7 +167,6 @@ public interface Ids {
     String PROFILE_REFRESH = build(PROFILE, REFRESH_SUFFIX);
 
     String ROOT_CONTAINER = "hal-root-container";
-    String RUNTIME_SUBSYSTEM = "r-subsystem";
 
     String SERVER = "server";
     String SERVER_ADD = build(SERVER, ADD_SUFFIX);
@@ -180,6 +180,7 @@ public interface Ids {
     String SOCKET_BINDING_REFRESH = build(SOCKET_BINDING, REFRESH_SUFFIX);
     String STANDALONE_SERVER = "standalone-server";
     String STORAGE_PREFIX = "org.jboss.hal";
+    String SUBSYSTEM = "subsystem";
 
     String TLC_ACCESS_CONTROL = "tlc-access-control";
     String TLC_CONFIGURATION = "tlc-configuration";
@@ -200,7 +201,8 @@ public interface Ids {
     // ------------------------------------------------------ methods
 
     /**
-     * Turns a label which can whitespace and upper/lower case characters into an all lowercase id separated with "-".
+     * Turns a label which can contain whitespace and upper/lower case characters into an all lowercase id separated
+     * with "-".
      */
     static String asId(@NonNls String text) {
         Iterable<String> parts = Splitter
@@ -231,35 +233,35 @@ public interface Ids {
         return Joiner.on(separator).skipNulls().join(ids);
     }
 
-    static String dataSourceConfigurationId(String name, boolean xa) {
+    static String dataSourceConfiguration(String name, boolean xa) {
         return build(xa ? "xa" : "non-xa", DATA_SOURCE_CONFIGURATION, name);
     }
 
-    static String dataSourceRuntimeId(String name, boolean xa) {
+    static String dataSourceRuntime(String name, boolean xa) {
         return build(xa ? "xa" : "non-xa", DATA_SOURCE_RUNTIME, name);
     }
 
-    static String hostId(final String name) {
+    static String host(final String name) {
         return build(HOST, name);
     }
 
-    static String loggingProfileId(final String name) {
+    static String loggingProfile(final String name) {
         return build(LOGGING, name);
     }
 
-    static String serverId(final String name) {
+    static String server(final String name) {
         return build(SERVER, name);
     }
 
-    static String hostServerId(final String host, final String server) {
+    static String hostServer(final String host, final String server) {
         return build(host, server);
     }
 
-    static String serverGroupServerId(final String serverGroup, final String server) {
+    static String serverGroupServer(final String serverGroup, final String server) {
         return build(serverGroup, server);
     }
 
-    static String serverGroupId(final String name) {
+    static String serverGroup(final String name) {
         return build(SERVER_GROUP, name);
     }
 

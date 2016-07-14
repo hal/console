@@ -41,7 +41,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> {
                 .itemRenderer(item -> new ItemDisplay<Server>() {
                     @Override
                     public String getId() {
-                        return Ids.serverId(item.getName());
+                        return Ids.server(item.getName());
                     }
 
                     @Override

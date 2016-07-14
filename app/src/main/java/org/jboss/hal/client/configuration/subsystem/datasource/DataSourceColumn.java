@@ -134,7 +134,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         setItemRenderer(dataSource -> new ItemDisplay<DataSource>() {
             @Override
             public String getId() {
-                return Ids.dataSourceConfigurationId(dataSource.getName(), dataSource.isXa());
+                return Ids.dataSourceConfiguration(dataSource.getName(), dataSource.isXa());
             }
 
             @Override
@@ -215,7 +215,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                     dispatcher.execute(operation, result -> {
                         MessageEvent.fire(eventBus, Message.success(
                                 resources.messages().addResourceSuccess(Names.DATASOURCE, dataSource.getName())));
-                        refresh(Ids.dataSourceConfigurationId(dataSource.getName(), dataSource.isXa()));
+                        refresh(Ids.dataSourceConfiguration(dataSource.getName(), dataSource.isXa()));
                     });
                 });
                 wizard.show();

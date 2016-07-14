@@ -330,17 +330,17 @@ public class ServerActions {
         MessageEvent.fire(eventBus, message);
     }
     public void markAsPending(Server server) {
-        pendingServers.put(Ids.hostServerId(server.getHost(), server.getName()), server);
+        pendingServers.put(Ids.hostServer(server.getHost(), server.getName()), server);
         logger.debug("Mark server {} as pending", server.getName());
     }
 
     public void clearPending(Server server) {
-        pendingServers.remove(Ids.hostServerId(server.getHost(), server.getName()));
+        pendingServers.remove(Ids.hostServer(server.getHost(), server.getName()));
         logger.debug("Clear pending state for server {}", server.getName());
     }
 
     public boolean isPending(Server server) {
-        return pendingServers.containsKey(Ids.hostServerId(server.getHost(), server.getName()));
+        return pendingServers.containsKey(Ids.hostServer(server.getHost(), server.getName()));
     }
 
     private Operation readServerConfigStatus(Server server) {

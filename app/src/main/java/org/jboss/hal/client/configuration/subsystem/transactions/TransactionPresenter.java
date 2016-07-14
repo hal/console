@@ -111,7 +111,7 @@ public class TransactionPresenter extends MbuiPresenter<TransactionPresenter.MyV
 
     @Override
     protected FinderPath finderPath() {
-        return finderPathFactory.configurationSubsystemPath(ModelDescriptionConstants.TRANSACTIONS);
+        return finderPathFactory.subsystemPath(ModelDescriptionConstants.TRANSACTIONS);
     }
 
     @Override

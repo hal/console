@@ -75,8 +75,8 @@ import org.jboss.hal.client.utb.UnderTheBridgePresenter;
 import org.jboss.hal.client.utb.UnderTheBridgeView;
 import org.jboss.hal.core.gin.AbstractTemplatedPresenterModule;
 import org.jboss.hal.core.mvp.HalPlaceManager;
-import org.jboss.hal.core.subsystem.GenericSubsystemPresenter;
-import org.jboss.hal.core.subsystem.GenericSubsystemView;
+import org.jboss.hal.client.configuration.subsystem.SubsystemPresenter;
+import org.jboss.hal.client.configuration.subsystem.SubsystemView;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.GinModule;
 
@@ -151,10 +151,10 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 EEView.class,
                 EEPresenter.MyProxy.class);
 
-        bindPresenter(GenericSubsystemPresenter.class,
-                GenericSubsystemPresenter.MyView.class,
-                GenericSubsystemView.class,
-                GenericSubsystemPresenter.MyProxy.class);
+        bindPresenter(SubsystemPresenter.class,
+                SubsystemPresenter.MyView.class,
+                SubsystemView.class,
+                SubsystemPresenter.MyProxy.class);
 
         bindPresenter(HomepagePresenter.class,
                 HomepagePresenter.MyView.class,

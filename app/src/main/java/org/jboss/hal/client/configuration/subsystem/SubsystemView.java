@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.subsystem;
+package org.jboss.hal.client.configuration.subsystem;
 
 import javax.inject.Inject;
 
@@ -24,12 +24,12 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 /**
  * @author Harald Pehl
  */
-public class GenericSubsystemView extends PatternFlyViewImpl implements GenericSubsystemPresenter.MyView {
+public class SubsystemView extends PatternFlyViewImpl implements SubsystemPresenter.MyView {
 
     private final ModelBrowser modelBrowser;
 
     @Inject
-    public GenericSubsystemView(ModelBrowser modelBrowser) {
+    public SubsystemView(ModelBrowser modelBrowser) {
         this.modelBrowser = modelBrowser;
         initElements(modelBrowser);
     }
