@@ -21,6 +21,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
@@ -40,6 +41,8 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.server.Server;
+import org.jboss.hal.core.datasource.DataSource;
+import org.jboss.hal.core.datasource.JdbcDriver;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -127,6 +130,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                         .map(property -> new DataSource(property, false)).collect(toList()));
                 combined.addAll(result.step(1).get(RESULT).asPropertyList().stream()
                         .map(property -> new DataSource(property, true)).collect(toList()));
+                Collections.sort(combined, (d1, d2) -> d1.getName().compareTo(d2.getName()));
                 callback.onSuccess(combined);
             });
         });
@@ -139,7 +143,6 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
             @Override
             public Element asElement() {
-                //noinspection HardCodedStringLiteral
                 return dataSource.isXa() ? ItemDisplay.withSubtitle(dataSource.getName(), Names.XA_DATASOURCE) : null;
             }
 
@@ -250,21 +253,20 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     }
 
     void disable(final DataSource dataSource) {
-        ResourceAddress address = dataSourceAddress(dataSource);
-        Operation operation = new Operation.Builder("disable", address).build();
-        dispatcher.execute(operation, result -> {
-            MessageEvent.fire(eventBus,
-                    Message.success(resources.messages().databaseDisabled(dataSource.getName())));
-            refresh(RefreshMode.RESTORE_SELECTION);
-        });
+        setEnabled(dataSourceAddress(dataSource), false, resources.messages().dataSourceDisabled(dataSource.getName()));
     }
 
     void enable(final DataSource dataSource) {
-        ResourceAddress address = dataSourceAddress(dataSource);
-        Operation operation = new Operation.Builder("enable", address).build();
+        setEnabled(dataSourceAddress(dataSource), true, resources.messages().dataSourceEnabled(dataSource.getName()));
+    }
+
+    private void setEnabled(ResourceAddress address, boolean enabled, SafeHtml message) {
+        Operation operation = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
+                .param(NAME, ENABLED)
+                .param(VALUE, enabled)
+                .build();
         dispatcher.execute(operation, result -> {
-            MessageEvent.fire(eventBus,
-                    Message.success(resources.messages().databaseEnabled(dataSource.getName())));
+            MessageEvent.fire(eventBus, Message.success(message));
             refresh(RefreshMode.RESTORE_SELECTION);
         });
     }

@@ -25,6 +25,7 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.resources.Names;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OUTBOUND_SOCKET_BINDING_REF;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 
 /**
@@ -59,7 +60,7 @@ class MailSession extends NamedNode {
     }
 
     String getServerSocketBinding(String name) {
-        ModelNode node = ModelNodeHelper.failSafeGet(this, SERVER + "." + name + "." + ModelDescriptionConstants.OUTBOUND_SOCKET_BINDING_REF);
+        ModelNode node = ModelNodeHelper.failSafeGet(this, SERVER + "/" + name + "/" + OUTBOUND_SOCKET_BINDING_REF);
         return node.isDefined() ? node.asString() : Names.NOT_AVAILABLE;
     }
 }

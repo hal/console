@@ -20,7 +20,7 @@ import java.util.List;
 
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.wizard.WizardStep;
-import org.jboss.hal.client.configuration.subsystem.datasource.DataSource;
+import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;

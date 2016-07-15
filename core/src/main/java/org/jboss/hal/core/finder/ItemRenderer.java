@@ -16,7 +16,7 @@
 package org.jboss.hal.core.finder;
 
 /**
- * Function which turns an item into an {@link ItemRenderer}.
+ * Function which turns an item into an {@link ItemDisplay}.
  *
  * @author Harald Pehl
  */

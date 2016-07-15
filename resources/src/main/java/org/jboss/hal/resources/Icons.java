@@ -21,6 +21,8 @@ import elemental.dom.Element;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
+ * Collection of common icons
+ *
  * @author Harald Pehl
  */
 public interface Icons {
@@ -32,7 +34,8 @@ public interface Icons {
     String DISABLED = pfIcon(disabledCircleO);
     String STOPPED = fontAwesome(stopCircleO) + " " + grey;
     String ERROR = pfIcon(errorCircleO);
-    String UNKNOWN = fontAwesome("question-circle"); // TODO replace with questionsCircleO once PatternFly uses FontAwesome 4.6
+    String UNKNOWN = fontAwesome(
+            "question-circle"); // TODO replace with questionsCircleO once PatternFly uses FontAwesome 4.6
 
     static Element ok() {
         Element icon = Browser.getDocument().createSpanElement();

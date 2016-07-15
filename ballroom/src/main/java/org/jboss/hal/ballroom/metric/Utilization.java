@@ -20,7 +20,10 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.Tooltip;
+import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Messages;
+import org.jboss.hal.resources.Names;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +73,7 @@ public class Utilization implements IsElement {
             .div().css(progressContainer, containerCss)
                 .div().css(progressDescription).title(label).textContent(label).end()
                 .div().css(progress, progressCss)
-                    .div().rememberAs(VALUE_BAR).css(progressBar)
+                    .div().rememberAs(VALUE_BAR).css(progressBar).title(Names.NOT_AVAILABLE)
                             .attr(ROLE, PROGRESSBAR)
                             .aria(VALUE_MIN, "0")
                             .aria(VALUE_NOW, "0")
@@ -78,7 +81,7 @@ public class Utilization implements IsElement {
                             .data(TOGGLE, TOOLTIP)
                         .span().rememberAs(VALUE_ELEMENT).end()
                     .end()
-                    .div().rememberAs(REMAINING_BAR).css(progressBar, progressBarRemaining)
+                    .div().rememberAs(REMAINING_BAR).css(progressBar, progressBarRemaining).title(Names.NOT_AVAILABLE)
                             .attr(ROLE, PROGRESSBAR)
                             .aria(VALUE_MIN, "0")
                             .aria(VALUE_NOW, "0")
@@ -115,8 +118,8 @@ public class Utilization implements IsElement {
 
             valueBar.setAttribute(aria(VALUE_NOW), String.valueOf(current));
             valueBar.setAttribute(aria(VALUE_MAX), String.valueOf(total));
-            valueBar.setTitle(MESSAGES.used(currentPercent));
             valueBar.getStyle().setWidth(currentPercent, PCT);
+            Tooltip.element(valueBar).setTitle(MESSAGES.used(currentPercent));
             //noinspection HardCodedStringLiteral
             valueElement.setInnerHTML(new SafeHtmlBuilder()
                     .appendHtmlConstant("<strong>")
@@ -127,8 +130,8 @@ public class Utilization implements IsElement {
 
             remainingBar.setAttribute(aria(VALUE_NOW), String.valueOf(remaining));
             remainingBar.setAttribute(aria(VALUE_MAX), String.valueOf(total));
-            remainingBar.setTitle(MESSAGES.available(remainingPercent));
             remainingBar.getStyle().setWidth(remainingPercent, PCT);
+            Tooltip.element(remainingBar).setTitle(MESSAGES.available(remainingPercent));
             remainingElement.setTextContent(MESSAGES.available(remainingPercent));
 
             if (thresholds) {
@@ -151,5 +154,13 @@ public class Utilization implements IsElement {
 
     private String aria(String name) {
         return "aria-" + name; //NON-NLS
+    }
+
+    public void setDisabled(boolean disabled) {
+        if (disabled) {
+            root.getClassList().add(CSS.disabled);
+        } else {
+            root.getClassList().remove(CSS.disabled);
+        }
     }
 }

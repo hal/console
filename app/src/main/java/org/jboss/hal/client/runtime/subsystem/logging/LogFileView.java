@@ -214,8 +214,11 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
     }
 
     private void statusUpdate(int lines) {
-        status.setTextContent(resources().messages().logFileStatus(lines, Format.time(new Date())));
-        status.setTitle(resources().messages().logFileStatus(lines, Format.time(new Date())));
+        String statusText = lines < LogFiles.LINES
+                ? resources().messages().logFileFullStatus(lines, Format.time(new Date()))
+                : resources().messages().logFilePartStatus(lines, Format.time(new Date()));
+        status.setTextContent(statusText);
+        status.setTitle(statusText);
         editorContainer.getClassList().remove(logFileLoading);
         searchInput.setValue("");
     }

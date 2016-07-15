@@ -29,6 +29,7 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;

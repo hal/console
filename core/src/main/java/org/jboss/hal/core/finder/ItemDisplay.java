@@ -37,9 +37,12 @@ import static org.jboss.hal.resources.CSS.itemText;
 public interface ItemDisplay<T> extends IsElement, HasTitle {
 
     /**
-     * An unique id for this item
+     * An unique id for this item.
+     * <p>
+     * Please make sure the id returned by this method matches the id which is part of the {@link FinderPath} returned
+     * by {@link org.jboss.hal.core.mvp.ApplicationPresenter#finderPath()}
      *
-     * @return an id based on {@link #getTitle()}
+     * @return an id based on {@link #getTitle()}: {@code Ids.asId(getTitle())}
      */
     default String getId() {
         return Ids.asId(getTitle());
@@ -57,15 +60,15 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
     /**
      * Whether a tooltip should be shown for the item.
      *
-     * @return {@code null} by default
+     * @return {@code null} by default (no tooltip)
      */
     default String getTooltip() {
         return null;
     }
 
     /**
-     * Whether to show an icon left to the item text. The icon should be an PatternFly or FontAwesome icon in normal
-     * size.
+     * Whether to show an icon left to the item text. The icon should be a PatternFly or FontAwesome icon in normal
+     * size. See {@link org.jboss.hal.resources.Icons} for a list of common icons.
      *
      * @return {@code null} by default
      */
@@ -100,6 +103,15 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
         return null;
     }
 
+    /**
+     * Factory methods which can be used when overriding {@link #asElement()}. Creates a {@code <div>} element with two
+     * nested {@code <span>} elements. One for the title and a smaller one for the subtitle.
+     *
+     * @param title
+     * @param subtitle
+     *
+     * @return
+     */
     static Element withSubtitle(String title, String subtitle) {
         return new Elements.Builder()
                 .span().css(itemText)

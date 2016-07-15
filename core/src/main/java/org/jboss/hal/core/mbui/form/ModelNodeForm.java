@@ -165,7 +165,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
          */
         public Builder<T> addFromRequestProperties() {
             this.addOnly = true;
-            this.attributePath = OPERATIONS + "." + ADD + "." + REQUEST_PROPERTIES;
+            this.attributePath = OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES;
             return this;
         }
 

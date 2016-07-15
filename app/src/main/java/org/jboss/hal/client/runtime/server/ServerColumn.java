@@ -39,6 +39,7 @@ import org.jboss.hal.client.runtime.BrowseByColumn;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
@@ -88,6 +89,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 public class ServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
     private final Finder finder;
+    private FinderPath refreshPath;
 
     @Inject
     public ServerColumn(final Finder finder,
@@ -410,6 +412,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     @Override
     public void onServerAction(final ServerActionEvent event) {
         if (isVisible()) {
+            refreshPath = finder.getContext().getPath().copy();
             ItemMonitor.startProgress(Ids.server(event.getServer().getName()));
             refresh(RESTORE_SELECTION);
         }
@@ -422,8 +425,9 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             String itemId = Ids.server(server.getName());
             ItemMonitor.stopProgress(itemId);
 
-            // 'Browse By' does not need to be refreshed
-            finder.refresh(finder.getContext().getPath().subPathAfter(Ids.DOMAIN_BROWSE_BY));
+            FinderPath path = refreshPath != null ? refreshPath : finder.getContext().getPath();
+            refreshPath = null;
+            finder.refresh(path);
         }
     }
 }

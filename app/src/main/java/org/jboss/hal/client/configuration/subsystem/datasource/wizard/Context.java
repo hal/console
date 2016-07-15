@@ -15,9 +15,9 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
-import org.jboss.hal.client.configuration.subsystem.datasource.DataSource;
+import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplate;
-import org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver;
+import org.jboss.hal.core.datasource.JdbcDriver;
 
 /**
  * @author Harald Pehl

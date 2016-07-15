@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;

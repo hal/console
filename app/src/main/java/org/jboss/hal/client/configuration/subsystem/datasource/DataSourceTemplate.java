@@ -15,6 +15,9 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
+import org.jboss.hal.core.datasource.DataSource;
+import org.jboss.hal.core.datasource.JdbcDriver;
+
 /**
  * Datasource template for a quick and easy ways to setup vendor specific datasources.
  *
@@ -37,11 +40,6 @@ public class DataSourceTemplate {
         Vendor(String label) {
             this.label = label;
         }
-
-        String label() {
-            return label;
-        }
-
     }
 
 

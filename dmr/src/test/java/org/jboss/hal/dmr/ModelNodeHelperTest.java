@@ -42,14 +42,14 @@ public class ModelNodeHelperTest {
 
     @Test
     public void invalidPath() {
-        assertFalse(ModelNodeHelper.failSafeGet(modelNode, ".").isDefined());
+        assertFalse(ModelNodeHelper.failSafeGet(modelNode, "/").isDefined());
     }
 
     @Test
     public void wrongPath() {
         assertFalse(ModelNodeHelper.failSafeGet(modelNode, "a").isDefined());
-        assertFalse(ModelNodeHelper.failSafeGet(modelNode, "a.b").isDefined());
-        assertFalse(ModelNodeHelper.failSafeGet(modelNode, "foo.bar.baz").isDefined());
+        assertFalse(ModelNodeHelper.failSafeGet(modelNode, "a/b").isDefined());
+        assertFalse(ModelNodeHelper.failSafeGet(modelNode, "foo/bar/baz").isDefined());
     }
 
     @Test
@@ -61,7 +61,7 @@ public class ModelNodeHelperTest {
 
     @Test
     public void nestedPath() {
-        ModelNode node = ModelNodeHelper.failSafeGet(modelNode, "foo.bar");
+        ModelNode node = ModelNodeHelper.failSafeGet(modelNode, "foo/bar");
         assertTrue(node.isDefined());
         assertEquals(bar, node);
     }

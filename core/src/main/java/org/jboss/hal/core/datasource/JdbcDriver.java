@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration.subsystem.datasource;
+package org.jboss.hal.core.datasource;
 
 import java.util.ArrayList;
 import java.util.List;

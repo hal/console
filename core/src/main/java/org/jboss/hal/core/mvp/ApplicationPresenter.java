@@ -84,6 +84,9 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
      * using the breadcrumb dropdown or by entering the URL directly this information is crucial to restore the path
      * in the finder context.
      * <p>
+     * Please make sure that the IDs for selected items in the finder path match to the IDs returned by {@link
+     * org.jboss.hal.core.finder.ItemDisplay#getId()}
+     * <p>
      * If this method returns {@code null} the path in the finder context is not touched.
      * <p>
      * Lifecycle: The method is called in {@link #onReset()}.

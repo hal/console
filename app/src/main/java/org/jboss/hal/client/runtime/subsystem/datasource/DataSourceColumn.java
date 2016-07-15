@@ -16,41 +16,43 @@
 package org.jboss.hal.client.runtime.subsystem.datasource;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import elemental.client.Browser;
 import elemental.dom.Element;
-import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.client.configuration.subsystem.datasource.DataSource;
-import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
-import org.jboss.hal.config.Environment;
-import org.jboss.hal.core.finder.ColumnActionFactory;
+import org.jboss.hal.ballroom.dialog.DialogFactory;
+import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.core.runtime.server.Server;
+import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
-import org.jboss.hal.spi.Footer;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_ADDRESS;
-import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_SUBSYSTEM_TEMPLATE;
-import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
@@ -60,57 +62,62 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS})
 public class DataSourceColumn extends FinderColumn<DataSource> {
 
-    private final MetadataRegistry metadataRegistry;
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
     private final StatementContext statementContext;
-    private final Environment environment;
-    private final Provider<Progress> progress;
     private final Resources resources;
-    private final DataSourceTemplates templates;
+    private Server server;
 
     @Inject
-    public DataSourceColumn(final MetadataRegistry metadataRegistry,
+    public DataSourceColumn(final ServerActions serverActions,
             final Dispatcher dispatcher,
             final EventBus eventBus,
             final StatementContext statementContext,
-            final Environment environment,
-            final @Footer Provider<Progress> progress,
             final Resources resources,
             final Places places,
-            final DataSourceTemplates templates,
             final Finder finder,
-            final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory) {
 
         super(new Builder<DataSource>(finder, Ids.DATA_SOURCE_RUNTIME, Names.DATASOURCE)
                 .withFilter()
                 .useFirstActionAsBreadcrumbHandler());
 
-        this.metadataRegistry = metadataRegistry;
         this.dispatcher = dispatcher;
         this.eventBus = eventBus;
         this.statementContext = statementContext;
-        this.environment = environment;
-        this.progress = progress;
         this.resources = resources;
-        this.templates = templates;
 
         setItemsProvider((context, callback) -> {
+            ResourceAddress serverAddress = AddressTemplate.of("/{selected.host}/{selected.server}")
+                    .resolve(statementContext);
             ResourceAddress dataSourceAddress = DATA_SOURCE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
-            Operation dataSourceOperation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, dataSourceAddress)
-                    .param(CHILD_TYPE, DATA_SOURCE).build();
+            Operation serverOperation = new Operation.Builder(READ_RESOURCE_OPERATION, serverAddress)
+                    .param(INCLUDE_RUNTIME, true)
+                    .param(ATTRIBUTES_ONLY, true)
+                    .build();
+            Operation dataSourceOperation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
+                    dataSourceAddress)
+                    .param(CHILD_TYPE, DATA_SOURCE)
+                    .param(INCLUDE_RUNTIME, true)
+                    .param(RECURSIVE, true)
+                    .build();
             Operation xaDataSourceOperation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
                     dataSourceAddress)
-                    .param(CHILD_TYPE, XA_DATA_SOURCE).build();
-            dispatcher.execute(new Composite(dataSourceOperation, xaDataSourceOperation), (CompositeResult result) -> {
-                List<DataSource> combined = new ArrayList<>();
-                combined.addAll(result.step(0).get(RESULT).asPropertyList().stream()
-                        .map(property -> new DataSource(property, false)).collect(toList()));
-                combined.addAll(result.step(1).get(RESULT).asPropertyList().stream()
-                        .map(property -> new DataSource(property, true)).collect(toList()));
-                callback.onSuccess(combined);
-            });
+                    .param(CHILD_TYPE, XA_DATA_SOURCE)
+                    .param(INCLUDE_RUNTIME, true)
+                    .param(RECURSIVE, true)
+                    .build();
+            dispatcher.execute(new Composite(serverOperation, dataSourceOperation, xaDataSourceOperation),
+                    (CompositeResult result) -> {
+                        List<DataSource> combined = new ArrayList<>();
+                        server = new Server(statementContext.selectedHost(), result.step(0).get(RESULT));
+                        combined.addAll(result.step(1).get(RESULT).asPropertyList().stream()
+                                .map(property -> new DataSource(property, false)).collect(toList()));
+                        combined.addAll(result.step(2).get(RESULT).asPropertyList().stream()
+                                .map(property -> new DataSource(property, true)).collect(toList()));
+                        Collections.sort(combined, (d1, d2) -> d1.getName().compareTo(d2.getName()));
+                        callback.onSuccess(combined);
+                    });
         });
 
         setItemRenderer(dataSource -> new ItemDisplay<DataSource>() {
@@ -121,7 +128,6 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
             @Override
             public Element asElement() {
-                //noinspection HardCodedStringLiteral
                 return dataSource.isXa() ? ItemDisplay.withSubtitle(dataSource.getName(), Names.XA_DATASOURCE) : null;
             }
 
@@ -147,6 +153,77 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                         (dataSource.isXa() ? "xa" : "normal") + " " +
                         (dataSource.isEnabled() ? ENABLED : DISABLED);
             }
+
+            @Override
+            @SuppressWarnings("HardCodedStringLiteral")
+            public List<ItemAction<DataSource>> actions() {
+                PlaceRequest.Builder builder = places.selectedServer(NameTokens.DATA_SOURCE_RUNTIME)
+                        .with(NAME, dataSource.getName());
+
+                List<ItemAction<DataSource>> actions = new ArrayList<>();
+                actions.add(itemActionFactory.view(builder.build()));
+                if (dataSource.isEnabled()) {
+                    actions.add(new ItemAction<>(resources.constants().testConnection(), item -> testConnection(item)));
+                    actions.add(new ItemAction<>(resources.constants().flushGracefully(),
+                            item -> flush(item, "flush-gracefully-connection-in-pool")));
+                    actions.add(new ItemAction<>(resources.constants().flushIdle(),
+                            item -> flush(item, "flush-idle-connection-in-pool")));
+                    actions.add(new ItemAction<>(resources.constants().flushInvalid(),
+                            item -> flush(item, "flush-invalid-connection-in-pool")));
+                    actions.add(new ItemAction<>(resources.constants().flushAll(),
+                            item -> flush(item, "flush-all-connection-in-pool")));
+                }
+                return actions;
+            }
         });
+
+        setPreviewCallback(item -> new DataSourcePreview(this, server, item, dispatcher, serverActions, resources));
+    }
+
+    private void testConnection(DataSource dataSource) {
+        //noinspection HardCodedStringLiteral
+        Operation operation = new Operation.Builder("test-connection-in-pool", dataSourceAddress(dataSource)).build();
+        dispatcher.execute(operation,
+                result -> MessageEvent.fire(eventBus, Message.success(resources.messages().testConnectionSuccess())),
+                (o1, failure) -> MessageEvent.fire(eventBus, Message.error(resources.messages().testConnectionError(),
+                        failure)),
+                (o2, exception) -> MessageEvent.fire(eventBus, Message.error(resources.messages().testConnectionError(),
+                        exception.getMessage())));
+    }
+
+    private void flush(DataSource dataSource, String flushMode) {
+        Operation operation = new Operation.Builder(flushMode, dataSourceAddress(dataSource)).build();
+        dispatcher.execute(operation,
+                result -> MessageEvent.fire(eventBus, Message.success(resources.messages().flushConnectionSuccess())));
+    }
+
+    ResourceAddress dataSourceAddress(DataSource dataSource) {
+        return dataSource.isXa()
+                ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName())
+                : DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName());
+    }
+
+    void enableDataSource(DataSource dataSource) {
+        Browser.getWindow().alert(Names.NYI);
+    }
+
+    void enableStatistics(DataSource dataSource) {
+        if (dataSource.isEnabled()) {
+            DialogFactory.confirmation(resources.constants().enableStatistics(),
+                    resources.messages().enableStatisticsOnEnabledDataSource(dataSource.getName(),
+                            statementContext.selectedServer()),
+                    () -> {
+                        Browser.getWindow().alert(Names.NYI);
+                        return true;
+                    });
+        } else {
+            DialogFactory.confirmation(resources.constants().enableStatistics(),
+                    resources.messages().enableStatisticsOnDisabledDataSource(dataSource.getName(),
+                            statementContext.selectedServer()),
+                    () -> {
+                        Browser.getWindow().alert(Names.NYI);
+                        return true;
+                    });
+        }
     }
 }

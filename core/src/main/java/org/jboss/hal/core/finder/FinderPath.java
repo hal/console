@@ -97,19 +97,12 @@ public class FinderPath implements Iterable<FinderSegment> {
 
     public void clear() {segments.clear();}
 
-    public FinderPath subPathAfter(String columnId) {
-        FinderPath subPath = new FinderPath();
-        boolean hit = false;
-        for (Iterator<FinderSegment> iterator = iterator(); iterator.hasNext(); ) {
-            FinderSegment segment = iterator.next();
-            if (hit) {
-                subPath.append(segment.getColumnId(), segment.getItemId());
-            }
-            if (segment.getColumnId().equals(columnId)) {
-                hit = true;
-            }
+    public FinderPath copy() {
+        List<FinderSegment> copy = new ArrayList<>();
+        for (FinderSegment segment : this) {
+            copy.add(segment.copy());
         }
-        return subPath;
+        return new FinderPath(copy);
     }
 
     /**

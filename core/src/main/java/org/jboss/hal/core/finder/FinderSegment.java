@@ -133,6 +133,10 @@ public class FinderSegment<T> {
         return columnId + "=" + itemId;
     }
 
+    FinderSegment<T> copy() {
+        return new FinderSegment<T>(columnId, itemId, columnTitle, itemTitle);
+    }
+
     public void connect(FinderColumn<T> column) {
         this.column = column;
     }

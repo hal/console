@@ -61,7 +61,8 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
 
 /**
  * Describes a column in a finder. A column has an unique id, a title, a number of optional column actions
- * and an {@link ItemRenderer} which defines how the items of this column are rendered.
+ * and an {@link ItemRenderer} which defines how the items of this column are rendered. All items of a column must have
+ * the same type parameter which is the type parameter of this column.
  * <p>
  * The idea is that columns are self-contained and don't need direct references to other columns. References are only
  * provided by id. The {@link ColumnRegistry} will then resolve the id against an existing column.
@@ -69,7 +70,7 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
  * Please do not use constants from {@code ModelDescriptionConstants} for the column ids (it makes refactoring harder).
  * Instead add an id to {@link org.jboss.hal.resources.Ids}.
  *
- * @param <T> The columns type.
+ * @param <T> The column and items type.
  *
  * @author Harald Pehl
  */

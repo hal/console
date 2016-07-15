@@ -87,8 +87,8 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                     columns.containsKey(columnElement.getId()) &&
                     segment.getColumnId().equals(columnElement.getId())) {
                 // column is already in place just select the item
-                FinderColumn finderColumn = columns.get(columnElement.getId());
-                selectItem(finderColumn, control);
+                FinderColumn column = columns.get(columnElement.getId());
+                selectItem(column, control);
 
             } else {
                 // append the column
@@ -106,14 +106,15 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             }
         }
 
-        private void selectItem(FinderColumn finderColumn, Control<FunctionContext> control) {
-            if (finderColumn.contains(segment.getItemId())) {
-                finderColumn.markSelected(segment.getItemId());
+        private void selectItem(FinderColumn column, Control<FunctionContext> control) {
+            if (column.contains(segment.getItemId())) {
+                column.markSelected(segment.getItemId());
                 updateContext();
-                control.getContext().push(finderColumn);
+                control.getContext().push(column);
                 control.proceed();
             } else {
-                logger.error("Unable to select item '{}'", segment.getItemId()); //NON-NLS
+                logger.error("Error in Finder.SelectFunction: Unable to select item '{}' in column '{}'",
+                        segment.getItemId(), segment.getColumnId());
                 control.abort();
             }
         }
@@ -131,12 +132,18 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             FinderColumn column = getColumn(segment.getColumnId());
             if (column != null) {
                 column.refresh(() -> {
-                    column.markSelected(segment.getItemId());
-                    column.selectedRow().click();
-                    control.proceed();
+                    if (column.contains(segment.getItemId())) {
+                        column.markSelected(segment.getItemId());
+                        column.selectedRow().click();
+                        control.proceed();
+                    } else {
+                        logger.error("Error in Finder.RefreshFunction: Unable to select item '{}' in column '{}'",
+                                segment.getItemId(), segment.getColumnId());
+                        control.abort();
+                    }
                 });
             } else {
-                logger.error("Unable to find column '{}'", segment.getColumnId()); //NON-NLS
+                logger.error("Error in Finder.RefreshFunction: Unable to find column '{}'", segment.getColumnId());
                 control.abort();
             }
         }
@@ -144,10 +151,8 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
 
     static final String DATA_BREADCRUMB = "breadcrumb";
-    static final String DATA_FILTER = "filter";
     /**
-     * The maximum number of visible columns. If there are more columns, the first column is hidden when column
-     * {@code MAX_VISIBLE_COLUMNS + 1} is shown.
+     * The maximum number of simultaneously visible columns. If there are more columns, the left-most column is hidden.
      * TODO Reduce this if the viewport gets smaller and change col-??-2 to col-??-3
      */
     private static final int MAX_VISIBLE_COLUMNS = 4;
@@ -380,6 +385,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             for (Element element : elements) {
                 previewColumn.appendChild(element);
             }
+            preview.attach();
         }
     }
 
@@ -421,47 +427,27 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     }
 
     /**
-     * Refreshes the specified path. The path needs to match the currently selected path or a sub-path of the
-     * currently selected path.
+     * Refreshes the specified path.
      * <p>
      * Please note that this might be a complex and long running operation since each segment in the path is turned
      * into a function which reloads and re-selects the items.
      */
     public void refresh(FinderPath path) {
         if (!path.isEmpty()) {
-
-            // Find the first column which is different between the new and the current path
-            boolean finished = false;
-            FinderPath refreshPath = new FinderPath();
-            Iterator<FinderSegment> newPathIterator = path.reversed().iterator();
-            Iterator<FinderSegment> currentPathIterator = context.getPath().reversed().iterator();
-            while (!finished && newPathIterator.hasNext() && currentPathIterator.hasNext()) {
-                FinderSegment newSegment = newPathIterator.next();
-                FinderSegment currentSegment = currentPathIterator.next();
-                if (newSegment.equals(currentSegment)) {
-                    refreshPath.append(newSegment.getColumnId(), newSegment.getItemId());
-                } else {
-                    finished = true;
-                }
+            int index = 0;
+            Function[] functions = new Function[path.size()];
+            for (FinderSegment segment : path) {
+                functions[index] = new RefreshFunction(segment);
+                index++;
             }
+            new Async<FunctionContext>(progress.get())
+                    .waterfall(new FunctionContext(), new Outcome<FunctionContext>() {
+                        @Override
+                        public void onFailure(final FunctionContext context) {}
 
-            refreshPath = refreshPath.reversed();
-            if (!refreshPath.isEmpty()) {
-                int index = 0;
-                Function[] functions = new Function[refreshPath.size()];
-                for (FinderSegment segment : refreshPath) {
-                    functions[index] = new RefreshFunction(segment);
-                    index++;
-                }
-                new Async<FunctionContext>(progress.get())
-                        .waterfall(new FunctionContext(), new Outcome<FunctionContext>() {
-                            @Override
-                            public void onFailure(final FunctionContext context) {}
-
-                            @Override
-                            public void onSuccess(final FunctionContext context) {}
-                        }, functions);
-            }
+                        @Override
+                        public void onSuccess(final FunctionContext context) {}
+                    }, functions);
         }
     }
 
