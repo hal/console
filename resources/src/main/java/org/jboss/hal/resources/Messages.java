@@ -68,8 +68,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String duplicateResource(String type);
 
     SafeHtml emptyModelNodeForm();
-    SafeHtml enableStatisticsOnDisabledDataSource(String name, String server);
-    SafeHtml enableStatisticsOnEnabledDataSource(String name, String server);
     SafeHtml endpointError(String url);
     SafeHtml endpointOk(String url);
 
@@ -176,10 +174,14 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml serverTimeout(String name);
     SafeHtml serverUndefined(String name);
 
+    SafeHtml staleStatistics();
+
     SafeHtml startServerGroupError(String name);
     SafeHtml startServerGroupSuccess(String name);
     SafeHtml startServerError(String name);
     SafeHtml startServerSuccess(String name);
+
+    SafeHtml statisticsEnabled(String name);
 
     String stop(String name);
     SafeHtml stopServerGroupError(String name);
@@ -196,8 +198,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml suspendServerError(String name);
     SafeHtml suspendServerQuestion(String name);
     SafeHtml suspendServerSuccess(String name);
-
-    SafeHtml staleStatistics();
 
     SafeHtml testConnectionError();
     SafeHtml testConnectionSuccess();

@@ -59,6 +59,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
 
 /**
+ * TODO Support standalone mode
  * @author Harald Pehl
  */
 public class ServerActions {

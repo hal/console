@@ -85,20 +85,12 @@ class DataSourcePreview extends PreviewContent<DataSource> {
         previewBuilder().add(needsRestartWarning);
 
         noStatisticsWarning = new Alert(Icons.WARNING,
-                new SafeHtmlBuilder()
-                        .append(resources.messages().dataSourceStatisticsDisabled(dataSource.getName()))
-                        .appendEscaped(" ")
-                        .append(resources.messages().staleStatistics())
-                        .toSafeHtml(),
+                resources.messages().dataSourceStatisticsDisabled(dataSource.getName()),
                 resources.constants().enableStatistics(), event -> column.enableStatistics(dataSource));
         previewBuilder().add(noStatisticsWarning);
 
         disabledWarning = new Alert(Icons.WARNING,
-                new SafeHtmlBuilder()
-                        .append(resources.messages().dataSourceDisabledNoStatistics(dataSource.getName()))
-                        .appendEscaped(" ")
-                        .append(resources.messages().staleStatistics())
-                        .toSafeHtml(),
+                resources.messages().dataSourceDisabledNoStatistics(dataSource.getName()),
                 resources.constants().enable(), event -> column.enableDataSource(dataSource));
         previewBuilder().add(disabledWarning);
 

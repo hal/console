@@ -22,9 +22,7 @@ import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.client.Browser;
 import elemental.dom.Element;
-import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -66,6 +64,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     private final EventBus eventBus;
     private final StatementContext statementContext;
     private final Resources resources;
+    private final Finder finder;
     private Server server;
 
     @Inject
@@ -86,8 +85,10 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         this.eventBus = eventBus;
         this.statementContext = statementContext;
         this.resources = resources;
+        this.finder = finder;
 
         setItemsProvider((context, callback) -> {
+            // TODO Support standalone mode
             ResourceAddress serverAddress = AddressTemplate.of("/{selected.host}/{selected.server}")
                     .resolve(statementContext);
             ResourceAddress dataSourceAddress = DATA_SOURCE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
@@ -203,27 +204,33 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 : DATA_SOURCE_TEMPLATE.resolve(statementContext, dataSource.getName());
     }
 
+    private ResourceAddress dataSourceConfigurationAddress(DataSource dataSource) {
+        String profile = server.get(PROFILE_NAME).asString();
+        return AddressTemplate.of("/profile=*/subsystem=datasources/data-source=*")
+                .resolve(statementContext, profile, dataSource.getName());
+    }
+
     void enableDataSource(DataSource dataSource) {
-        Browser.getWindow().alert(Names.NYI);
+        ResourceAddress address = dataSourceConfigurationAddress(dataSource);
+        Operation operation = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
+                .param(NAME, ENABLED)
+                .param(VALUE, true)
+                .build();
+        dispatcher.execute(operation, result -> {
+            MessageEvent.fire(eventBus, Message.success(resources.messages().dataSourceEnabled(dataSource.getName())));
+            finder.refresh();
+        });
     }
 
     void enableStatistics(DataSource dataSource) {
-        if (dataSource.isEnabled()) {
-            DialogFactory.confirmation(resources.constants().enableStatistics(),
-                    resources.messages().enableStatisticsOnEnabledDataSource(dataSource.getName(),
-                            statementContext.selectedServer()),
-                    () -> {
-                        Browser.getWindow().alert(Names.NYI);
-                        return true;
-                    });
-        } else {
-            DialogFactory.confirmation(resources.constants().enableStatistics(),
-                    resources.messages().enableStatisticsOnDisabledDataSource(dataSource.getName(),
-                            statementContext.selectedServer()),
-                    () -> {
-                        Browser.getWindow().alert(Names.NYI);
-                        return true;
-                    });
-        }
+        ResourceAddress address = dataSourceConfigurationAddress(dataSource);
+        Operation operation = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
+                .param(NAME, STATISTICS_ENABLED)
+                .param(VALUE, true)
+                .build();
+        dispatcher.execute(operation, result -> {
+            MessageEvent.fire(eventBus, Message.success(resources.messages().statisticsEnabled(dataSource.getName())));
+            finder.refresh();
+        });
     }
 }

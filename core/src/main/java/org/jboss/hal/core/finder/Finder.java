@@ -131,19 +131,32 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         public void execute(final Control<FunctionContext> control) {
             FinderColumn column = getColumn(segment.getColumnId());
             if (column != null) {
-                column.refresh(() -> {
-                    if (column.contains(segment.getItemId())) {
-                        column.markSelected(segment.getItemId());
-                        column.selectedRow().click();
-                        control.proceed();
-                    } else {
-                        logger.error("Error in Finder.RefreshFunction: Unable to select item '{}' in column '{}'",
-                                segment.getItemId(), segment.getColumnId());
+                // refresh the existing column
+                column.refresh(() -> selectItem(column, control));
+            } else {
+                // append the column
+                appendColumn(segment.getColumnId(), new AsyncCallback<FinderColumn>() {
+                    @Override
+                    public void onFailure(final Throwable throwable) {
                         control.abort();
                     }
+
+                    @Override
+                    public void onSuccess(final FinderColumn finderColumn) {
+                        selectItem(finderColumn, control);
+                    }
                 });
+            }
+        }
+
+        private void selectItem(FinderColumn column, Control<FunctionContext> control) {
+            if (column.contains(segment.getItemId())) {
+                column.markSelected(segment.getItemId());
+                control.getContext().push(column);
+                control.proceed();
             } else {
-                logger.error("Error in Finder.RefreshFunction: Unable to find column '{}'", segment.getColumnId());
+                logger.error("Error in Finder.RefreshFunction: Unable to select item '{}' in column '{}'",
+                        segment.getItemId(), segment.getColumnId());
                 control.abort();
             }
         }
@@ -427,6 +440,13 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     }
 
     /**
+     * Refreshes the current path.
+     */
+    public void refresh() {
+        refresh(getContext().getPath());
+    }
+
+    /**
      * Refreshes the specified path.
      * <p>
      * Please note that this might be a complex and long running operation since each segment in the path is turned
@@ -434,6 +454,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
      */
     public void refresh(FinderPath path) {
         if (!path.isEmpty()) {
+
             int index = 0;
             Function[] functions = new Function[path.size()];
             for (FinderSegment segment : path) {
@@ -446,7 +467,14 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                         public void onFailure(final FunctionContext context) {}
 
                         @Override
-                        public void onSuccess(final FunctionContext context) {}
+                        public void onSuccess(final FunctionContext context) {
+                            if (!context.emptyStack()) {
+                                FinderColumn column = context.pop();
+                                if (column.selectedRow() != null) {
+                                    column.selectedRow().click();
+                                }
+                            }
+                        }
                     }, functions);
         }
     }
