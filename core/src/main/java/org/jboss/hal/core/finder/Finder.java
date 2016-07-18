@@ -166,7 +166,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     static final String DATA_BREADCRUMB = "breadcrumb";
     /**
      * The maximum number of simultaneously visible columns. If there are more columns, the left-most column is hidden.
-     * TODO Reduce this if the viewport gets smaller and change col-??-2 to col-??-3
+     * TODO Reduce the number of visible columns if the viewport gets smaller and change col-??-2 to col-??-3
      */
     private static final int MAX_VISIBLE_COLUMNS = 4;
 
@@ -248,8 +248,8 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     }
 
     private void resizePreview() {
-        int columns = root.getChildren().length() - 1;
-        int previewSize = MAX_COLUMNS - 2 * min(columns, MAX_VISIBLE_COLUMNS);
+        long visibleColumns = Elements.stream(root).filter(Elements::isVisible).count() - 1;
+        int previewSize = MAX_COLUMNS - 2 * min((int) visibleColumns, MAX_VISIBLE_COLUMNS);
         previewColumn.setClassName(finderPreview + " " + column(previewSize));
     }
 
@@ -275,8 +275,27 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     private void appendColumn(FinderColumn<?> column, AsyncCallback<FinderColumn> callback) {
         column.resetSelection();
+        column.markHiddenColumns(false);
+        Elements.setVisible(column.asElement(), true);
+
         columns.put(column.getId(), column);
-        showHideColumns();
+        if (columns.size() > MAX_VISIBLE_COLUMNS) {
+            int index = 0;
+            int hideUntilHere = columns.size() - MAX_VISIBLE_COLUMNS;
+            for (FinderColumn c : columns.values()) {
+                Elements.setVisible(c.asElement(), index >= hideUntilHere);
+                c.markHiddenColumns(false);
+                index++;
+            }
+            if (hideUntilHere > 0) {
+                for (FinderColumn c : columns.values()) {
+                    if (Elements.isVisible(c.asElement())) {
+                        c.markHiddenColumns(true);
+                        break;
+                    }
+                }
+            }
+        }
 
         root.insertBefore(column.asElement(), previewColumn);
         column.setItems(callback);
@@ -310,26 +329,8 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 iterator.remove();
             }
         }
-        showHideColumns();
+        // hideColumns();
         resizePreview();
-    }
-
-    private void showHideColumns() {
-        int index = 0;
-        int hideUntilHere = columns.size() - MAX_VISIBLE_COLUMNS;
-        for (FinderColumn column : columns.values()) {
-            Elements.setVisible(column.asElement(), index >= hideUntilHere);
-            column.markHiddenColumns(false);
-            index++;
-        }
-        if (hideUntilHere > 0) {
-            for (FinderColumn column : columns.values()) {
-                if (Elements.isVisible(column.asElement())) {
-                    column.markHiddenColumns(true);
-                    break;
-                }
-            }
-        }
     }
 
     void updateContext() {
@@ -480,7 +481,8 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     }
 
     /**
-     * Selects the columns as specified in the finder path.
+     * Shows the finder associated with the specified token and selects the columns and items according to the given
+     * finder path.
      * <p>
      * Please note that this might be a complex and long running operation since each segment in the path is turned
      * into a function. The function will load and initialize the column and select the item as specified in the

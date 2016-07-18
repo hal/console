@@ -140,6 +140,7 @@ public interface Ids {
     String LOG_FILE_EDITOR = build(LOG_FILE, "editor");
     String LOG_FILE_REFRESH = build(LOG_FILE, REFRESH_SUFFIX);
     String LOGGING = "logging";
+    String LOGGING_CONFIGURATION = "logging-configuration";
     String LOGGING_PROFILE = "logging-profile";
     String LOGGING_PROFILE_ADD = build(LOGGING_PROFILE, ADD_SUFFIX);
 

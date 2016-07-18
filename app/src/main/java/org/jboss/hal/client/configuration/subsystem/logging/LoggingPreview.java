@@ -23,7 +23,6 @@ import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -39,7 +38,7 @@ import static org.jboss.hal.resources.Names.ROOT_LOGGER;
  *
  * @author Harald Pehl
  */
-class LoggingPreview extends PreviewContent<NamedNode> {
+class LoggingPreview<T> extends PreviewContent<T> {
 
     private final Dispatcher dispatcher;
     private final Operation operation;
@@ -76,7 +75,7 @@ class LoggingPreview extends PreviewContent<NamedNode> {
     }
 
     @Override
-    public void update(NamedNode whatever) {
+    public void update(T whatever) {
         dispatcher.execute(operation,
                 (model) -> {
                     for (Element element : attributes.asElements()) {
