@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -284,7 +285,6 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             int hideUntilHere = columns.size() - MAX_VISIBLE_COLUMNS;
             for (FinderColumn c : columns.values()) {
                 Elements.setVisible(c.asElement(), index >= hideUntilHere);
-                c.markHiddenColumns(false);
                 index++;
             }
             if (hideUntilHere > 0) {
@@ -300,6 +300,18 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         root.insertBefore(column.asElement(), previewColumn);
         column.setItems(callback);
         resizePreview();
+    }
+
+    private void markHiddenColumns() {
+        Optional<FinderColumn> hiddenColumn = columns.values().stream()
+                .filter(column -> !Elements.isVisible(column.asElement()))
+                .findAny();
+        if (hiddenColumn.isPresent()) {
+            columns.values().stream()
+                    .filter(column -> Elements.isVisible(column.asElement()))
+                    .findFirst()
+                    .ifPresent(firstVisibleColumn -> firstVisibleColumn.markHiddenColumns(true));
+        }
     }
 
     private void reduceAll() {
@@ -522,6 +534,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 FinderColumn lastCommonColumn = match != null ? columns.get(match) : initialColumn();
                 if (lastCommonColumn != null) {
                     reduceTo(lastCommonColumn);
+                    Elements.setVisible(lastCommonColumn.asElement(), true);
                 }
             }
 
@@ -542,18 +555,19 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
                     } else if (!context.emptyStack()) {
                         FinderColumn column = context.pop();
-                        processLastColumnSelection(column);
+                        f1nally(column);
                     }
                 }
 
                 @Override
                 public void onSuccess(final FunctionContext context) {
                     FinderColumn column = context.pop();
-                    processLastColumnSelection(column);
+                    f1nally(column);
                 }
 
-                private void processLastColumnSelection(FinderColumn column) {
-                    selectColumn(column.getId());
+                @SuppressWarnings("SpellCheckingInspection")
+                private void f1nally(FinderColumn column) {
+                    // markHiddenColumns();
                     column.refresh(RefreshMode.RESTORE_SELECTION);
                 }
             }, functions);
