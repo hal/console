@@ -59,9 +59,9 @@ public class RhcpPresenter extends FinderPresenter<RhcpPresenter.MyView, RhcpPre
         Element element = new Elements.Builder()
                 .div()
                 .p().textContent(
-                        "W00t you found a secret page! The main purpose of this page is to test deeply nested columns. As content the discography of the Red Hot Chili Peppers is used (obviously the developer is a big RHCP fan :-).")
+                        "w00t you found a secret page! The main purpose of this page is to test deeply nested columns. Therefore the discography of the Red Hot Chili Peppers is used (obviously one of the developers is a big RHCP fan ;-)")
                 .end()
-                .p().textContent("So have fun browsing through the albums.").end()
+                .p().textContent("Have fun browsing through the albums (and don't forget to look under the bridge).").end()
                 .add("img").css(preview).attr("src",
                         "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Redgotchilipeppers-logo.svg/240px-Redgotchilipeppers-logo.svg.png")
                 .end()

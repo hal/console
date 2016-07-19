@@ -282,7 +282,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         Elements.setVisible(column.asElement(), true);
 
         columns.put(column.getId(), column);
-        if (columns.size() > MAX_VISIBLE_COLUMNS) {
+        if (visibleColumns() >= MAX_VISIBLE_COLUMNS) {
             int index = 0;
             int hideUntilHere = columns.size() - MAX_VISIBLE_COLUMNS;
             for (FinderColumn c : columns.values()) {
@@ -302,6 +302,10 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         root.insertBefore(column.asElement(), previewColumn);
         column.setItems(callback);
         resizePreview();
+    }
+
+    private long visibleColumns() {
+        return columns.values().stream().filter(column -> Elements.isVisible(column.asElement())).count();
     }
 
     private void markHiddenColumns() {
