@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.utb;
+package org.jboss.hal.client.rhcp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,9 +43,6 @@ import org.jboss.hal.resources.Ids;
 
 import static org.jboss.hal.meta.security.SecurityContext.RWX;
 
-/**
- * @author Harald Pehl
- */
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class UnderTheBridgeView extends PatternFlyViewImpl implements UnderTheBridgePresenter.MyView {
 
@@ -109,13 +106,11 @@ public class UnderTheBridgeView extends PatternFlyViewImpl implements UnderTheBr
     private UnderTheBridgePresenter presenter;
 
     @Inject
-    public UnderTheBridgeView(final StatementContext statementContext,
-            final UnderTheBridgeResources resources,
-            final Capabilities capabilities) {
+    public UnderTheBridgeView(final StatementContext statementContext, final Capabilities capabilities) {
         this.forms = new ArrayList<>();
 
         Tabs tabs = new Tabs();
-        ResourceDescription description = StaticResourceDescription.from(resources.underTheBridge());
+        ResourceDescription description = StaticResourceDescription.from(RhcpResources.INSTANCE.underTheBridge());
         Form.SaveCallback<ModelNode> saveCallback = (form, changedValues) -> presenter.saveModel(form.getModel());
 
         for (Map.Entry<String, String[]> entry : ATTRIBUTES.entrySet()) {

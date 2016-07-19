@@ -249,6 +249,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                             .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
                             .data(UIConstants.PLACEMENT, "bottom")
                             .rememberAs(HIDDEN_COLUMNS_ELEMENT)
+                            .on(click, event -> finder.revealHiddenColumns(FinderColumn.this))
                         .end()
                         .h(1).textContent(builder.title).title(builder.title).rememberAs(HEADER_ELEMENT).end();
         // @formatter:on
@@ -404,6 +405,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                             event.preventDefault();
                             event.stopPropagation();
 
+                            Elements.setVisible(previousElement, true);
                             finder.reduceTo(previousColumn);
                             finder.selectColumn(previousColumn.getId());
                             FinderRow selectedRow = previousColumn.selectedRow();

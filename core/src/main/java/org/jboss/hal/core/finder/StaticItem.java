@@ -15,11 +15,11 @@
  */
 package org.jboss.hal.core.finder;
 
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 /**
  * A customizable finder item useful when you need full control over each and every item.
@@ -39,6 +39,7 @@ public class StaticItem {
         public Builder(final String title) {
             this.title = title;
             this.actions = new ArrayList<>();
+            this.previewContent = new PreviewContent(title);
         }
 
         public Builder id(String id) {

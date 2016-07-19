@@ -25,6 +25,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import com.google.common.collect.Iterables;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -54,6 +55,7 @@ import org.slf4j.LoggerFactory;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.lang.Math.min;
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.resources.CSS.column;
 import static org.jboss.hal.resources.CSS.finder;
 import static org.jboss.hal.resources.CSS.finderPreview;
@@ -314,6 +316,19 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         }
     }
 
+    void revealHiddenColumns(FinderColumn firstVisibleColumn) {
+        // show the last hidden column
+        List<FinderColumn> hiddenColumns = columns.values().stream()
+                .filter(column -> !Elements.isVisible(column.asElement()))
+                .collect(toList());
+        if (!hiddenColumns.isEmpty()) {
+            Elements.setVisible(Iterables.getLast(hiddenColumns).asElement(), true);
+        }
+        firstVisibleColumn.markHiddenColumns(false);
+        firstVisibleColumn.selectedRow().click();
+        markHiddenColumns();
+    }
+
     private void reduceAll() {
         for (Iterator<Element> iterator = Elements.children(root).iterator(); iterator.hasNext(); ) {
             Element element = iterator.next();
@@ -341,7 +356,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 iterator.remove();
             }
         }
-        // hideColumns();
+        Elements.setVisible(column.asElement(), true);
         resizePreview();
     }
 
@@ -374,7 +389,9 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     void selectColumn(String columnId) {
         FinderColumn finderColumn = columns.get(columnId);
-        finderColumn.asElement().focus();
+        if (finderColumn != null) {
+            finderColumn.asElement().focus();
+        }
     }
 
     void selectPreviousColumn(final String columnId) {
@@ -534,7 +551,6 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 FinderColumn lastCommonColumn = match != null ? columns.get(match) : initialColumn();
                 if (lastCommonColumn != null) {
                     reduceTo(lastCommonColumn);
-                    Elements.setVisible(lastCommonColumn.asElement(), true);
                 }
             }
 
@@ -555,6 +571,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
                     } else if (!context.emptyStack()) {
                         FinderColumn column = context.pop();
+                        markHiddenColumns(); // only in case of an error!
                         f1nally(column);
                     }
                 }
@@ -567,7 +584,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
                 @SuppressWarnings("SpellCheckingInspection")
                 private void f1nally(FinderColumn column) {
-                    // markHiddenColumns();
+                    column.asElement().focus();
                     column.refresh(RefreshMode.RESTORE_SELECTION);
                 }
             }, functions);

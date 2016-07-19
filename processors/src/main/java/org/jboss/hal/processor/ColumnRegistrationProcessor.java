@@ -15,23 +15,26 @@
  */
 package org.jboss.hal.processor;
 
-import com.google.auto.service.AutoService;
-import org.jboss.auto.AbstractProcessor;
-import org.jboss.hal.spi.AsyncColumn;
-import org.jboss.hal.spi.Column;
-
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
 
-import static org.jboss.hal.processor.TemplateNames.*;
+import com.google.auto.service.AutoService;
+import org.jboss.auto.AbstractProcessor;
+import org.jboss.hal.spi.AsyncColumn;
+import org.jboss.hal.spi.Column;
+
+import static org.jboss.hal.processor.TemplateNames.CLASS_NAME;
+import static org.jboss.hal.processor.TemplateNames.GENERATED_WITH;
+import static org.jboss.hal.processor.TemplateNames.PACKAGE_NAME;
+import static org.jboss.hal.processor.TemplateNames.TEMPLATES;
 
 /**
  * Processor which automates registration of finder columns marked with either {@code @Column} or {@code @AsyncColumn}.
@@ -105,7 +108,6 @@ public class ColumnRegistrationProcessor extends AbstractProcessor {
     }
 
     private ColumnInfo columnInfo(TypeElement element, boolean async) {
-        PackageElement packageElement = (PackageElement) element.getEnclosingElement();
         String columnClass = element.getQualifiedName().toString();
         String id;
         if (async) {

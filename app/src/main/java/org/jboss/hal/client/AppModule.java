@@ -28,6 +28,8 @@ import org.jboss.hal.client.configuration.InterfacePresenter;
 import org.jboss.hal.client.configuration.Mbui_InterfaceView_Provider;
 import org.jboss.hal.client.configuration.Mbui_PathsView_Provider;
 import org.jboss.hal.client.configuration.PathsPresenter;
+import org.jboss.hal.client.configuration.subsystem.SubsystemPresenter;
+import org.jboss.hal.client.configuration.subsystem.SubsystemView;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourcePresenter;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceView;
@@ -53,16 +55,20 @@ import org.jboss.hal.client.homepage.HomepagePresenter;
 import org.jboss.hal.client.homepage.HomepageView;
 import org.jboss.hal.client.patching.PatchingPresenter;
 import org.jboss.hal.client.patching.PatchingView;
+import org.jboss.hal.client.rhcp.RhcpPresenter;
+import org.jboss.hal.client.rhcp.RhcpView;
+import org.jboss.hal.client.rhcp.UnderTheBridgePresenter;
+import org.jboss.hal.client.rhcp.UnderTheBridgeView;
 import org.jboss.hal.client.runtime.RuntimePresenter;
 import org.jboss.hal.client.runtime.RuntimeView;
 import org.jboss.hal.client.runtime.group.Mbui_ServerGroupView_Provider;
 import org.jboss.hal.client.runtime.group.ServerGroupPresenter;
 import org.jboss.hal.client.runtime.host.HostPresenter;
 import org.jboss.hal.client.runtime.host.Mbui_HostView_Provider;
-import org.jboss.hal.client.runtime.subsystem.logging.LogFilePresenter;
-import org.jboss.hal.client.runtime.subsystem.logging.Templated_LogFileView_Provider;
 import org.jboss.hal.client.runtime.server.Mbui_ServerView_Provider;
 import org.jboss.hal.client.runtime.server.ServerPresenter;
+import org.jboss.hal.client.runtime.subsystem.logging.LogFilePresenter;
+import org.jboss.hal.client.runtime.subsystem.logging.Templated_LogFileView_Provider;
 import org.jboss.hal.client.skeleton.FooterPresenter;
 import org.jboss.hal.client.skeleton.HeaderPresenter;
 import org.jboss.hal.client.skeleton.Templated_FooterView_Provider;
@@ -71,12 +77,8 @@ import org.jboss.hal.client.tools.MacroEditorPresenter;
 import org.jboss.hal.client.tools.MacroEditorView;
 import org.jboss.hal.client.tools.ModelBrowserPresenter;
 import org.jboss.hal.client.tools.ModelBrowserView;
-import org.jboss.hal.client.utb.UnderTheBridgePresenter;
-import org.jboss.hal.client.utb.UnderTheBridgeView;
 import org.jboss.hal.core.gin.AbstractTemplatedPresenterModule;
 import org.jboss.hal.core.mvp.HalPlaceManager;
-import org.jboss.hal.client.configuration.subsystem.SubsystemPresenter;
-import org.jboss.hal.client.configuration.subsystem.SubsystemView;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.GinModule;
 
@@ -230,6 +232,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 RuntimePresenter.MyView.class,
                 RuntimeView.class,
                 RuntimePresenter.MyProxy.class);
+
+        bindPresenter(RhcpPresenter.class,
+                RhcpPresenter.MyView.class,
+                RhcpView.class,
+                RhcpPresenter.MyProxy.class);
 
         bindTemplatedPresenter(ServerPresenter.class,
                 ServerPresenter.MyView.class,
