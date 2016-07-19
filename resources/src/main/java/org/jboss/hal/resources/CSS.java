@@ -210,6 +210,7 @@ public interface CSS {
     String pin = "pin";
     String pinned = "pinned";
     String pinnable = "pinnable";
+    String preview = "preview";
     String progress = "progress";
     String progressBar = "progress-bar";
     String progressBarDanger = "progress-bar-danger";

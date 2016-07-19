@@ -56,7 +56,7 @@ public class LoggingColumn extends StaticItemColumn {
         super(finder, Ids.LOGGING, Names.LOGGING, asList(
 
                 new StaticItem.Builder(Names.CONFIGURATION)
-                        .id(NameTokens.LOGGING_CONFIGURATION)
+                        .id(Ids.LOGGING_CONFIGURATION)
                         .action(resources.constants().view(), item ->
                                 itemMonitor.monitorPlaceRequest(item.getId(), NameTokens.LOGGING_CONFIGURATION, () -> {
                                     PlaceRequest placeRequest = places
@@ -65,7 +65,7 @@ public class LoggingColumn extends StaticItemColumn {
                                     placeManager.revealPlace(placeRequest);
                                 }).execute(item)
                         )
-                        .onPreview(new LoggingPreview(dispatcher, resources, Names.CONFIGURATION,
+                        .onPreview(new LoggingPreview<StaticItem>(dispatcher, resources, Names.CONFIGURATION,
                                 resources.previews().configurationLoggingConfiguration(),
                                 new Operation.Builder(READ_RESOURCE_OPERATION,
                                         ROOT_LOGGER_TEMPLATE.resolve(statementContext)).build()))

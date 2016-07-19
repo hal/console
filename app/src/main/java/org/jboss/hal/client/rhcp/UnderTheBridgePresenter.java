@@ -13,29 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.utb;
+package org.jboss.hal.client.rhcp;
+
+import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
-import org.jboss.hal.core.mvp.TopLevelPresenter;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.meta.token.NameTokens;
 
-import javax.inject.Inject;
-
-/**
- * @author Harald Pehl
- */
+@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection", "SpellCheckingInspection"})
 public class UnderTheBridgePresenter
-        extends TopLevelPresenter<UnderTheBridgePresenter.MyView, UnderTheBridgePresenter.MyProxy> {
+        extends ApplicationPresenter<UnderTheBridgePresenter.MyView, UnderTheBridgePresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(NameTokens.UNDER_THE_BRIDGE)
+    @NameToken("utb")
     public interface MyProxy extends ProxyPlace<UnderTheBridgePresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<UnderTheBridgePresenter> {
@@ -46,10 +45,9 @@ public class UnderTheBridgePresenter
     private ModelNode model;
 
     @Inject
-    public UnderTheBridgePresenter(final EventBus eventBus,
-            final MyView view,
-            final MyProxy proxy) {
-        super(eventBus, view, proxy);
+    public UnderTheBridgePresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
+            final Finder finder) {
+        super(eventBus, view, proxy, finder);
         model = new ModelNode();
     }
 
@@ -65,7 +63,20 @@ public class UnderTheBridgePresenter
         getView().show(model);
     }
 
-    public void saveModel(final ModelNode model) {
+    @Override
+    protected FinderPath finderPath() {
+        return new FinderPath()
+                .append("rhcp-color", "red", "Color", "Red")
+                .append("rhcp-temperature", "hot", "Temperature", "Hot")
+                .append("rhcp-vegetables", "chili", "Vegetables", "Chili")
+                .append("rhcp-spice", "peppers", "Spice", "Peppers")
+                .append("rhcp-decade", "1990-1999", "Decade", "1990 - 1999")
+                .append("rhcp-album", "blood-sugar-sex-magik", "Album", "Blood Sugar Sex Magik")
+                .append("rhcp-track", "under-the-bridge", "Track", "Under the Bridge")
+                ;
+    }
+
+    void saveModel(final ModelNode model) {
         this.model = model;
         getView().show(model);
     }
