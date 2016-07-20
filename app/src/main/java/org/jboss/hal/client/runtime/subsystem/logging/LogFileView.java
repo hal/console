@@ -37,7 +37,7 @@ import org.jboss.hal.ballroom.editor.Options;
 import org.jboss.hal.ballroom.form.SwitchBridge;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
-import org.jboss.hal.core.runtime.server.StandaloneServer;
+import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
@@ -188,7 +188,7 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
                         .append(statementContext().selectedServer())
                         .append(" / ");
             } else {
-                builder.append(StandaloneServer.INSTANCE.getName())
+                builder.append(Server.STANDALONE.getName())
                         .append(" / ");
             }
         }

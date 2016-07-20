@@ -19,14 +19,23 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
+import com.google.web.bindery.event.shared.EventBus;
 import elemental.dom.Element;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.runtime.server.Server;
+import org.jboss.hal.core.runtime.server.ServerActionEvent;
+import org.jboss.hal.core.runtime.server.ServerActionEvent.ServerActionHandler;
 import org.jboss.hal.core.runtime.server.ServerActions;
-import org.jboss.hal.core.runtime.server.StandaloneServer;
+import org.jboss.hal.core.runtime.server.ServerResultEvent;
+import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -34,19 +43,40 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 
 import static java.util.Collections.singletonList;
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
 /**
  * @author Harald Pehl
  */
 @Column(Ids.STANDALONE_SERVER)
-public class StandaloneServerColumn extends FinderColumn<Server> {
+public class StandaloneServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
+
+    private final Finder finder;
+    private FinderPath refreshPath;
 
     @Inject
-    public StandaloneServerColumn(final Finder finder, final ServerActions serverActions,
-            final Resources resources) {
+    public StandaloneServerColumn(final Finder finder, final EventBus eventBus, final Dispatcher dispatcher,
+            final ServerActions serverActions, final Resources resources) {
         super(new Builder<Server>(finder, Ids.STANDALONE_SERVER, Names.SERVER)
 
-                .itemsProvider((context, callback) -> callback.onSuccess(singletonList(StandaloneServer.INSTANCE)))
+                .itemsProvider((context, callback) -> {
+                    Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, ResourceAddress.ROOT)
+                            .param(INCLUDE_RUNTIME, true)
+                            .param(ATTRIBUTES_ONLY, true)
+                            .build();
+                    dispatcher.execute(operation, result -> {
+                        Server.STANDALONE.addServerAttributes(result);
+                        callback.onSuccess(singletonList(Server.STANDALONE));
+
+                        // Restore pending servers visualization
+                        if (serverActions.isPending(Server.STANDALONE)) {
+                            ItemMonitor.startProgress(Ids.server(Server.STANDALONE.getName()));
+                        }
+                    });
+                })
 
                 .itemRenderer(item -> new ItemDisplay<Server>() {
                     @Override
@@ -125,5 +155,32 @@ public class StandaloneServerColumn extends FinderColumn<Server> {
 
                 .onPreview(item -> new ServerPreview(serverActions, item, resources))
         );
+
+        this.finder = finder;
+        eventBus.addHandler(ServerActionEvent.getType(), this);
+        eventBus.addHandler(ServerResultEvent.getType(), this);
+    }
+
+    @Override
+    public void onServerAction(final ServerActionEvent event) {
+        if (isVisible()) {
+            refreshPath = finder.getContext().getPath().copy();
+            ItemMonitor.startProgress(Ids.server(event.getServer().getName()));
+            refresh(RESTORE_SELECTION);
+        }
+    }
+
+    @Override
+    public void onServerResult(final ServerResultEvent event) {
+        //noinspection Duplicates
+        if (isVisible()) {
+            Server server = event.getServer();
+            String itemId = Ids.server(server.getName());
+            ItemMonitor.stopProgress(itemId);
+
+            FinderPath path = refreshPath != null ? refreshPath : finder.getContext().getPath();
+            refreshPath = null;
+            finder.refresh(path);
+        }
     }
 }

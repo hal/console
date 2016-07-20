@@ -31,6 +31,7 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.form.OperationFormBuilder;
 import org.jboss.hal.core.runtime.Action;
 import org.jboss.hal.core.runtime.Result;
+import org.jboss.hal.core.runtime.RunningState;
 import org.jboss.hal.core.runtime.SuspendState;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -38,6 +39,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher.ExceptionCallback;
 import org.jboss.hal.dmr.dispatch.Dispatcher.FailedCallback;
 import org.jboss.hal.dmr.dispatch.TimeoutHandler;
 import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
@@ -50,6 +52,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.jboss.hal.core.runtime.RunningState.RUNNING;
 import static org.jboss.hal.core.runtime.SuspendState.SUSPENDED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.DISABLED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STARTED;
@@ -60,6 +63,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
 
 /**
  * TODO Support standalone mode
+ *
  * @author Harald Pehl
  */
 public class ServerActions {
@@ -176,8 +180,8 @@ public class ServerActions {
             prepare(server, action);
             dispatcher.execute(operation,
                     result -> new TimeoutHandler(dispatcher, timeout).execute(
-                            readServerConfigStatus(server),
-                            checkServerConfigStatus(STARTED),
+                            server.isStandalone() ? readServerState(server) : readServerConfigStatus(server),
+                            server.isStandalone() ? checkServerState(RUNNING) : checkServerConfigStatus(STARTED),
                             new ServerTimeoutCallback(server, successMessage)),
                     new ServerFailedCallback(server, errorMessage),
                     new ServerExceptionCallback(server, errorMessage));
@@ -187,7 +191,7 @@ public class ServerActions {
     }
 
     public void suspend(Server server) {
-        AddressTemplate template = AddressTemplate
+        AddressTemplate template = server.isStandalone() ? AddressTemplate.of("/") : AddressTemplate
                 .of("/host=" + server.getHost() + "/server-config=" + server.getName());
         metadataProcessor.lookup(template, progress.get(), new MetadataProcessor.MetadataCallback() {
             @Override
@@ -242,11 +246,12 @@ public class ServerActions {
 
     public void resume(Server server) {
         prepare(server, Action.RESUME);
-        Operation operation = new Operation.Builder(RESUME, server.getServerConfigAddress()).build();
+        ResourceAddress address = server.isStandalone() ? server.getServerAddress() : server.getServerConfigAddress();
+        Operation operation = new Operation.Builder(RESUME, address).build();
         dispatcher.execute(operation,
                 result -> new TimeoutHandler(dispatcher, SERVER_START_TIMEOUT).execute(
-                        readServerConfigStatus(server),
-                        checkServerConfigStatus(STARTED),
+                        server.isStandalone() ? readServerState(server) : readServerConfigStatus(server),
+                        server.isStandalone() ? checkServerState(RUNNING) : checkServerConfigStatus(STARTED),
                         new ServerTimeoutCallback(server, resources.messages().resumeServerSuccess(server.getName()))),
                 new ServerFailedCallback(server, resources.messages().resumeServerError(server.getName())),
                 new ServerExceptionCallback(server, resources.messages().resumeServerError(server.getName())));
@@ -330,6 +335,7 @@ public class ServerActions {
         eventBus.fireEvent(new ServerResultEvent(server, result));
         MessageEvent.fire(eventBus, message);
     }
+
     public void markAsPending(Server server) {
         pendingServers.put(Ids.hostServer(server.getHost(), server.getName()), server);
         logger.debug("Mark server {} as pending", server.getName());
@@ -350,10 +356,24 @@ public class ServerActions {
                 .build();
     }
 
+    private Operation readServerState(Server server) {
+        return new Operation.Builder(READ_ATTRIBUTE_OPERATION, server.getServerAddress())
+                .param(NAME, SERVER_STATE)
+                .build();
+    }
+
     private Predicate<ModelNode> checkServerConfigStatus(ServerConfigStatus first, ServerConfigStatus... rest) {
         return result -> {
             ServerConfigStatus status = asEnumValue(result, ServerConfigStatus::valueOf, ServerConfigStatus.UNDEFINED);
             return EnumSet.of(first, rest).contains(status);
+        };
+    }
+
+    private Predicate<ModelNode> checkServerState(RunningState first, RunningState... rest) {
+        return result -> {
+            //noinspection Convert2MethodRef (method reference leads to an error!)
+            RunningState state = asEnumValue(result, (name) -> RunningState.valueOf(name), RunningState.UNDEFINED);
+            return EnumSet.of(first, rest).contains(state);
         };
     }
 

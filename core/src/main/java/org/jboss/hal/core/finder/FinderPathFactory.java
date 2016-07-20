@@ -19,7 +19,7 @@ import javax.inject.Inject;
 
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.core.runtime.server.StandaloneServer;
+import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.subsystem.SubsystemMetadata;
 import org.jboss.hal.core.subsystem.Subsystems;
 import org.jboss.hal.meta.StatementContext;
@@ -106,7 +106,7 @@ public class FinderPathFactory {
      */
     public FinderPath runtimeServerPath() {
         if (environment.isStandalone()) {
-            return new FinderPath().append(Ids.STANDALONE_SERVER, Ids.server(StandaloneServer.INSTANCE.getName()),
+            return new FinderPath().append(Ids.STANDALONE_SERVER, Ids.server(Server.STANDALONE.getName()),
                     Names.SERVER, Names.STANDALON_SERVER);
         } else {
             String server = statementContext.selectedServer();

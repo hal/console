@@ -33,7 +33,6 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
-import org.jboss.hal.core.runtime.server.StandaloneServer;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -123,7 +122,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                         .map(property -> new DataSource(property, true)).collect(toList()));
                 Collections.sort(combined, (d1, d2) -> d1.getName().compareTo(d2.getName()));
                 server = environment.isStandalone()
-                        ? StandaloneServer.INSTANCE
+                        ? Server.STANDALONE
                         : new Server(statementContext.selectedHost(), result.step(2).get(RESULT));
                 callback.onSuccess(combined);
             });

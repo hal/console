@@ -420,6 +420,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
     @Override
     public void onServerResult(final ServerResultEvent event) {
+        //noinspection Duplicates
         if (isVisible()) {
             Server server = event.getServer();
             String itemId = Ids.server(server.getName());

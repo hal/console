@@ -22,11 +22,10 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.resources.Ids;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
-import static org.jboss.hal.resources.Ids.STANDALONE_HOST;
-import static org.jboss.hal.resources.Ids.STANDALONE_SERVER;
 
 /**
  * Combination of the two resources {@code server-config} and {@code server}. Make sure to check {@link #isStarted()}
@@ -36,18 +35,29 @@ import static org.jboss.hal.resources.Ids.STANDALONE_SERVER;
  */
 public class Server extends NamedNode {
 
+    public static final Server STANDALONE = new Server(Ids.STANDALONE_HOST, Ids.STANDALONE_SERVER, new ModelNode(),
+            true);
+
+    private final boolean standalone;
+
     public Server(final String host, final ModelNode node) {
-        super(node.get(NAME).asString(), node);
-        get(HOST).set(host);
+        this(host, node.get(NAME).asString(), node, false);
     }
 
     public Server(final String host, final Property property) {
-        super(property);
+        this(host, property.getName(), property.getValue(), false);
+    }
+
+    private Server(final String host, final String server, final ModelNode modelNode, final boolean standalone) {
+        super(server, modelNode);
+        this.standalone = standalone;
         get(HOST).set(host);
+        get(STATUS).set(ServerConfigStatus.STARTED.name().toLowerCase());
+        get(SERVER_STATE).set(RunningState.RUNNING.name());
     }
 
     public boolean isStandalone() {
-        return STANDALONE_SERVER.equals(getName()) && STANDALONE_HOST.equals(getHost());
+        return standalone;
     }
 
     public String getServerGroup() {

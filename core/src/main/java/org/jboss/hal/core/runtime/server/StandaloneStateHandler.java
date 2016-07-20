@@ -20,12 +20,17 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.dispatch.ProcessStateEvent;
+import org.jboss.hal.dmr.dispatch.ProcessStateEvent.ProcessStateHandler;
 import org.jboss.hal.dmr.dispatch.ServerState;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD_REQUIRED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART_REQUIRED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_STATE;
 
 /**
  * @author Harald Pehl
  */
-public class StandaloneStateHandler implements ProcessStateEvent.ProcessStateHandler {
+public class StandaloneStateHandler implements ProcessStateHandler {
 
     private final Environment environment;
 
@@ -40,9 +45,9 @@ public class StandaloneStateHandler implements ProcessStateEvent.ProcessStateHan
         if (environment.isStandalone() && !event.getProcessState().isEmpty()) {
             ServerState.State state = event.getProcessState().first().getState();
             if (state == ServerState.State.RELOAD_REQUIRED) {
-                // StandaloneServer.INSTANCE.set(SERVER_STATE, RELOAD_REQUIRED);
+                Server.STANDALONE.get(SERVER_STATE).set(RELOAD_REQUIRED);
             } else if (state == ServerState.State.RESTART_REQUIRED) {
-                // StandaloneServer.INSTANCE.set(SERVER_STATE, RESTART_REQUIRED);
+                Server.STANDALONE.get(SERVER_STATE).set(RESTART_REQUIRED);
             }
         }
     }

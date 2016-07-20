@@ -35,7 +35,7 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
-import org.jboss.hal.core.runtime.server.StandaloneServer;
+import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -88,7 +88,7 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
                             .build();
                     dispatcher.execute(operation, result -> {
                         List<Deployment> deployments = result.asPropertyList().stream()
-                                .map(property -> new Deployment(StandaloneServer.INSTANCE, property.getValue()))
+                                .map(property -> new Deployment(Server.STANDALONE, property.getValue()))
                                 .collect(toList());
                         callback.onSuccess(deployments);
                     });
