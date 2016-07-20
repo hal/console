@@ -35,7 +35,9 @@ import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
 import org.jboss.hal.ballroom.form.SwitchBridge;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.runtime.server.StandaloneServer;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
@@ -56,11 +58,12 @@ import static org.jboss.hal.resources.CSS.logFileLoading;
 public abstract class LogFileView extends PatternFlyViewImpl implements LogFilePresenter.MyView {
 
     // @formatter:off
-    public static LogFileView create(final StatementContext statementContext, final LogFiles logFiles,
-            final Resources resources) {
-        return new Templated_LogFileView(statementContext, logFiles, resources);
+    public static LogFileView create(final Environment environment, final StatementContext statementContext,
+            final LogFiles logFiles, final Resources resources) {
+        return new Templated_LogFileView(environment, statementContext, logFiles, resources);
     }
 
+    public abstract Environment environment();
     public abstract StatementContext statementContext();
     public abstract LogFiles logFiles();
     public abstract Resources resources();
@@ -179,10 +182,15 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
         statusUpdate(lines);
         StringBuilder builder = new StringBuilder();
         if (presenter.isExternal()) {
-            builder.append(statementContext().selectedHost())
-                    .append(" / ")
-                    .append(statementContext().selectedServer())
-                    .append(" / ");
+            if (!environment().isStandalone()) {
+                builder.append(statementContext().selectedHost())
+                        .append(" / ")
+                        .append(statementContext().selectedServer())
+                        .append(" / ");
+            } else {
+                builder.append(StandaloneServer.INSTANCE.getName())
+                        .append(" / ");
+            }
         }
         builder.append(logFile.getFilename());
         header.setTextContent(builder.toString());

@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.runtime.server;
 
+import java.util.List;
+
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.client.runtime.RuntimePreview;
@@ -41,13 +43,13 @@ class ServerPreview extends RuntimePreview<Server> {
     private static final String STOP_LINK = "stop-link";
     private static final String RESUME_LINK = "resume-link";
 
+    private final ServerActions serverActions;
     private final Element startLink;
     private final Element stopLink;
     private final Element reloadLink;
     private final Element restartLink;
     private final Element resumeLink;
     private final PreviewAttributes<Server> attributes;
-    private final ServerActions serverActions;
 
     ServerPreview(final ServerActions serverActions, final Server server,
             final Resources resources) {
@@ -92,12 +94,15 @@ class ServerPreview extends RuntimePreview<Server> {
         restartLink = previewBuilder().referenceFor(RESTART_LINK);
         resumeLink = previewBuilder().referenceFor(RESUME_LINK);
 
-        //noinspection HardCodedStringLiteral
-        attributes = new PreviewAttributes<>(server,
-                asList(HOST, GROUP, PROFILE_NAME, AUTO_START, SOCKET_BINDING_PORT_OFFSET, STATUS, RUNNING_MODE,
-                        SERVER_STATE, SUSPEND_STATE))
-                .end();
-        previewBuilder().addAll(attributes);
+        List<String> attributes;
+        if (server.isStandalone()) {
+            attributes = asList(STATUS, RUNNING_MODE, SERVER_STATE, SUSPEND_STATE);
+        } else {
+            attributes = asList(HOST, GROUP, PROFILE_NAME, AUTO_START, SOCKET_BINDING_PORT_OFFSET,
+                    STATUS, RUNNING_MODE, SERVER_STATE, SUSPEND_STATE);
+        }
+        this.attributes = new PreviewAttributes<>(server, attributes).end();
+        previewBuilder().addAll(this.attributes);
 
         update(server);
     }
@@ -106,27 +111,39 @@ class ServerPreview extends RuntimePreview<Server> {
     public void update(final Server server) {
         boolean pending = serverActions.isPending(server);
         if (pending) {
-            pending(resources.messages().serverPending(server.getName()));
+            pending(server.isStandalone() ? resources.messages().standalonePending() : resources.messages()
+                    .serverPending(server.getName()));
         } else if (server.isAdminMode()) {
-            adminOnly(resources.messages().serverAdminMode(server.getName()));
+            adminOnly(server.isStandalone() ? resources.messages().standaloneAdminMode() : resources.messages()
+                    .serverAdminMode(server.getName()));
         } else if (server.isStarting()) {
-            starting(resources.messages().serverStarting(server.getName()));
+            starting(server.isStandalone() ? resources.messages().standaloneStarting() : resources.messages()
+                    .serverStarting(server.getName()));
         } else if (server.isSuspended()) {
-            suspended(resources.messages().serverSuspended(server.getName()));
+            suspended(server.isStandalone() ? resources.messages().standaloneSuspended() : resources.messages()
+                    .serverSuspended(server.getName()));
         } else if (server.needsReload()) {
-            needsReload(resources.messages().serverNeedsReload(server.getName()));
+            needsReload(server.isStandalone() ? resources.messages().standaloneNeedsReload() : resources.messages()
+                    .serverNeedsReload(server.getName()));
         } else if (server.needsRestart()) {
-            needsRestart(resources.messages().serverNeedsRestart(server.getName()));
+            needsRestart(
+                    server.isStandalone() ? resources.messages().standaloneNeedsRestart() : resources.messages()
+                            .serverNeedsRestart(server.getName()));
         } else if (server.isRunning()) {
-            running(resources.messages().serverRunning(server.getName()));
+            running(server.isStandalone() ? resources.messages().standaloneRunning() : resources.messages()
+                    .serverRunning(server.getName()));
         } else if (server.isFailed()) {
-            timeout(resources.messages().serverFailed(server.getName()));
+            timeout(server.isStandalone() ? resources.messages().standaloneTimeout() : resources.messages()
+                    .serverFailed(server.getName()));
         } else if (server.isStopped()) {
             alertContainer.setClassName(alert + " " + alertInfo);
             alertIcon.setClassName(Icons.STOPPED);
-            alertText.setInnerHTML(resources.messages().serverStopped(server.getName()).asString());
+            alertText.setInnerHTML(
+                    server.isStandalone() ? resources.messages().standaloneStopped().asString() : resources.messages()
+                            .serverStopped(server.getName()).asString());
         } else {
-            unknown(resources.messages().serverUndefined(server.getName()));
+            unknown(server.isStandalone() ? resources.messages().standaloneUndefined() : resources.messages()
+                    .serverUndefined(server.getName()));
         }
 
         if (pending) {
@@ -144,14 +161,14 @@ class ServerPreview extends RuntimePreview<Server> {
             Elements.setVisible(restartLink, server.needsRestart());
             Elements.setVisible(resumeLink, false);
         } else if (server.isStopped() || server.isFailed()) {
-            Elements.setVisible(startLink, true);
+            Elements.setVisible(startLink, !server.isStandalone());
             Elements.setVisible(stopLink, false);
             Elements.setVisible(reloadLink, false);
             Elements.setVisible(restartLink, false);
             Elements.setVisible(resumeLink, false);
         } else if (server.isRunning()) {
             Elements.setVisible(startLink, false);
-            Elements.setVisible(stopLink, true);
+            Elements.setVisible(stopLink, !server.isStandalone());
             Elements.setVisible(reloadLink, false);
             Elements.setVisible(restartLink, false);
             Elements.setVisible(resumeLink, false);

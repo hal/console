@@ -53,6 +53,7 @@ import static org.jboss.gwt.elemento.core.EventType.keydown;
 import static org.jboss.gwt.elemento.core.EventType.keyup;
 import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.core.finder.Finder.DATA_BREADCRUMB;
+import static org.jboss.hal.core.finder.Finder.DATA_FILTER;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
 import static org.jboss.hal.resources.UIConstants.GROUP;
@@ -350,7 +351,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             if (li == noItems) {
                 continue;
             }
-            Object filterData = li.getDataset().at(CSS.filter);
+            Object filterData = li.getDataset().at(DATA_FILTER);
             boolean match = filter == null
                     || filter.trim().length() == 0
                     || filterData == null

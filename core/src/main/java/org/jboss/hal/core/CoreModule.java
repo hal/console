@@ -32,6 +32,8 @@ import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.group.ServerGroupActions;
 import org.jboss.hal.core.runtime.host.HostActions;
 import org.jboss.hal.core.runtime.server.ServerActions;
+import org.jboss.hal.core.runtime.server.StandaloneServer;
+import org.jboss.hal.core.runtime.server.StandaloneStateHandler;
 import org.jboss.hal.core.subsystem.Subsystems;
 import org.jboss.hal.core.ui.UIRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -55,6 +57,8 @@ public class CoreModule extends AbstractGinModule {
         bind(Places.class).in(Singleton.class);
         bind(ServerActions.class).in(Singleton.class);
         bind(ServerGroupActions.class).in(Singleton.class);
+        bind(StandaloneServer.class).asEagerSingleton();
+        bind(StandaloneStateHandler.class).asEagerSingleton(); // to register the event
         bind(StatementContext.class).to(CoreStatementContext.class).asEagerSingleton(); // to register the event
         bind(Subsystems.class).in(Singleton.class);
         bind(TableButtonFactory.class).in(Singleton.class);

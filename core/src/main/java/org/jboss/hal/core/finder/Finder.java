@@ -167,6 +167,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
 
     static final String DATA_BREADCRUMB = "breadcrumb";
+    static final String DATA_FILTER = "filter";
     /**
      * The maximum number of simultaneously visible columns. If there are more columns, the left-most column is hidden.
      * TODO Reduce the number of visible columns if the viewport gets smaller and change col-??-2 to col-??-3

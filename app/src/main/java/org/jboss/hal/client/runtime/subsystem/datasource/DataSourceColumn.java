@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -32,6 +33,7 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
+import org.jboss.hal.core.runtime.server.StandaloneServer;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -63,6 +65,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
     private final StatementContext statementContext;
+    private final Environment environment;
     private final Resources resources;
     private final Finder finder;
     private Server server;
@@ -72,6 +75,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             final Dispatcher dispatcher,
             final EventBus eventBus,
             final StatementContext statementContext,
+            final Environment environment,
             final Resources resources,
             final Places places,
             final Finder finder,
@@ -84,41 +88,45 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         this.dispatcher = dispatcher;
         this.eventBus = eventBus;
         this.statementContext = statementContext;
+        this.environment = environment;
         this.resources = resources;
         this.finder = finder;
 
         setItemsProvider((context, callback) -> {
-            // TODO Support standalone mode
-            ResourceAddress serverAddress = AddressTemplate.of("/{selected.host}/{selected.server}")
-                    .resolve(statementContext);
+            List<Operation> operations = new ArrayList<>();
             ResourceAddress dataSourceAddress = DATA_SOURCE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
-            Operation serverOperation = new Operation.Builder(READ_RESOURCE_OPERATION, serverAddress)
-                    .param(INCLUDE_RUNTIME, true)
-                    .param(ATTRIBUTES_ONLY, true)
-                    .build();
-            Operation dataSourceOperation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
+            operations.add(new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
                     dataSourceAddress)
                     .param(CHILD_TYPE, DATA_SOURCE)
                     .param(INCLUDE_RUNTIME, true)
                     .param(RECURSIVE, true)
-                    .build();
-            Operation xaDataSourceOperation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
+                    .build());
+            operations.add(new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
                     dataSourceAddress)
                     .param(CHILD_TYPE, XA_DATA_SOURCE)
                     .param(INCLUDE_RUNTIME, true)
                     .param(RECURSIVE, true)
-                    .build();
-            dispatcher.execute(new Composite(serverOperation, dataSourceOperation, xaDataSourceOperation),
-                    (CompositeResult result) -> {
-                        List<DataSource> combined = new ArrayList<>();
-                        server = new Server(statementContext.selectedHost(), result.step(0).get(RESULT));
-                        combined.addAll(result.step(1).get(RESULT).asPropertyList().stream()
-                                .map(property -> new DataSource(property, false)).collect(toList()));
-                        combined.addAll(result.step(2).get(RESULT).asPropertyList().stream()
-                                .map(property -> new DataSource(property, true)).collect(toList()));
-                        Collections.sort(combined, (d1, d2) -> d1.getName().compareTo(d2.getName()));
-                        callback.onSuccess(combined);
-                    });
+                    .build());
+            if (!environment.isStandalone()) {
+                ResourceAddress serverAddress = AddressTemplate.of("/{selected.host}/{selected.server}")
+                        .resolve(statementContext);
+                operations.add(new Operation.Builder(READ_RESOURCE_OPERATION, serverAddress)
+                        .param(INCLUDE_RUNTIME, true)
+                        .param(ATTRIBUTES_ONLY, true)
+                        .build());
+            }
+            dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
+                List<DataSource> combined = new ArrayList<>();
+                combined.addAll(result.step(0).get(RESULT).asPropertyList().stream()
+                        .map(property -> new DataSource(property, false)).collect(toList()));
+                combined.addAll(result.step(1).get(RESULT).asPropertyList().stream()
+                        .map(property -> new DataSource(property, true)).collect(toList()));
+                Collections.sort(combined, (d1, d2) -> d1.getName().compareTo(d2.getName()));
+                server = environment.isStandalone()
+                        ? StandaloneServer.INSTANCE
+                        : new Server(statementContext.selectedHost(), result.step(2).get(RESULT));
+                callback.onSuccess(combined);
+            });
         });
 
         setItemRenderer(dataSource -> new ItemDisplay<DataSource>() {
@@ -178,7 +186,8 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             }
         });
 
-        setPreviewCallback(item -> new DataSourcePreview(this, server, item, dispatcher, serverActions, resources));
+        setPreviewCallback(item ->
+                new DataSourcePreview(this, server, item, dispatcher, serverActions, resources));
     }
 
     private void testConnection(DataSource dataSource) {
@@ -205,9 +214,14 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     }
 
     private ResourceAddress dataSourceConfigurationAddress(DataSource dataSource) {
-        String profile = server.get(PROFILE_NAME).asString();
-        return AddressTemplate.of("/profile=*/subsystem=datasources/data-source=*")
-                .resolve(statementContext, profile, dataSource.getName());
+        if (environment.isStandalone()) {
+            return AddressTemplate.of("/subsystem=datasources/data-source=*")
+                    .resolve(statementContext, dataSource.getName());
+        } else {
+            String profile = server.get(PROFILE_NAME).asString();
+            return AddressTemplate.of("/profile=*/subsystem=datasources/data-source=*")
+                    .resolve(statementContext, profile, dataSource.getName());
+        }
     }
 
     void enableDataSource(DataSource dataSource) {

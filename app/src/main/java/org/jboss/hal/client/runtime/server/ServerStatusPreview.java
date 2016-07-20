@@ -68,7 +68,7 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
 
         this.usedHeap = new Utilization(resources.constants().used(), Names.MB, true, true);
         this.committedHeap = new Utilization(resources.constants().commited(), Names.MB, true, true);
-        this.threads = new Utilization("Daemon", Names.THREADS, true, false);
+        this.threads = new Utilization("Daemon", Names.THREADS, true, false); //NON-NLS
 
         // @formatter:off
         previewBuilder()
@@ -106,8 +106,7 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
     public void update(final StaticItem item) {
-        AddressTemplate mbean = AddressTemplate
-                .of("/{selected.host}/server=" + statementContext.selectedServer() + "/core-service=platform-mbean");
+        AddressTemplate mbean = AddressTemplate.of("/{selected.host}/{selected.server}/core-service=platform-mbean");
         AddressTemplate osTmpl = mbean.append("type=operating-system");
         AddressTemplate runtimeTmpl = mbean.append("type=runtime");
         AddressTemplate memoryTmpl = mbean.append("type=memory");

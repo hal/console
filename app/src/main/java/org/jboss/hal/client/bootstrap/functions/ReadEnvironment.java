@@ -44,6 +44,7 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
+import org.jboss.hal.core.runtime.server.StandaloneServer;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
@@ -94,6 +95,9 @@ public class ReadEnvironment implements BootstrapFunction {
                             node.get(PRODUCT_VERSION).asString(),
                             node.get(RELEASE_CODENAME).asString(), node.get(RELEASE_VERSION).asString(),
                             node.get(NAME).asString());
+                    if (environment.isStandalone()) {
+                        StandaloneServer.INSTANCE.setName(environment.getInstanceInfo().serverName());
+                    }
 
                     // operation mode
                     environment.setOperationMode(node.get(LAUNCH_TYPE).asString());

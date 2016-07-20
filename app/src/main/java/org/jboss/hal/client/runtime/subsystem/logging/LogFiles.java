@@ -21,6 +21,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 import elemental.client.Browser;
 import org.jboss.hal.config.Endpoints;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
@@ -51,14 +52,17 @@ public class LogFiles {
     public static final int LINES = 2000;
 
     private final Endpoints endpoints;
+    private final Environment environment;
     private final StatementContext statementContext;
     private final TokenFormatter tokenFormatter;
 
     @Inject
     public LogFiles(final Endpoints endpoints,
+            final Environment environment,
             final StatementContext statementContext,
             final TokenFormatter tokenFormatter) {
         this.endpoints = endpoints;
+        this.environment = environment;
         this.statementContext = statementContext;
         this.tokenFormatter = tokenFormatter;
     }
@@ -67,7 +71,7 @@ public class LogFiles {
         Browser.getWindow().open(downloadUrl(logFile), "", "");
     }
 
-    public String downloadUrl(String name) {
+    String downloadUrl(String name) {
         ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, name);
         StringBuilder url = new StringBuilder();
 
@@ -79,7 +83,7 @@ public class LogFiles {
         return url.toString();
     }
 
-    public String externalUrl(String name) {
+    String externalUrl(String name) {
         PlaceRequest request = new PlaceRequest.Builder().nameToken(NameTokens.LOG_FILE)
                 .with(HOST, statementContext.selectedHost())
                 .with(SERVER, statementContext.selectedServer())
@@ -92,6 +96,7 @@ public class LogFiles {
     }
 
     public String target(String name) {
-        return Ids.build(statementContext.selectedHost(), statementContext.selectedServer(), Ids.asId(name));
+        return environment.isStandalone() ? Ids.asId(name) : Ids
+                .build(statementContext.selectedHost(), statementContext.selectedServer(), Ids.asId(name));
     }
 }

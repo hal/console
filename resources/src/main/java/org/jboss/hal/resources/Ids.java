@@ -179,6 +179,7 @@ public interface Ids {
     String SOCKET_BINDING = "socket-binding";
     String SOCKET_BINDING_ADD = build(SOCKET_BINDING, ADD_SUFFIX);
     String SOCKET_BINDING_REFRESH = build(SOCKET_BINDING, REFRESH_SUFFIX);
+    String STANDALONE_HOST = "standalone-host";
     String STANDALONE_SERVER = "standalone-server";
     String STORAGE_PREFIX = "org.jboss.hal";
     String SUBSYSTEM = "subsystem";

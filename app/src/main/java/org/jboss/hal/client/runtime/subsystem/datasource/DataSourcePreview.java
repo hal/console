@@ -68,7 +68,8 @@ class DataSourcePreview extends PreviewContent<DataSource> {
 
         needsReloadWarning = new Alert(Icons.WARNING,
                 new SafeHtmlBuilder()
-                        .append(resources.messages().serverNeedsReload(server.getName()))
+                        .append(server.isStandalone() ? resources.messages().standaloneNeedsReload() : resources
+                                .messages().serverNeedsReload(server.getName()))
                         .appendEscaped(" ")
                         .append(resources.messages().staleStatistics())
                         .toSafeHtml(),
@@ -77,7 +78,8 @@ class DataSourcePreview extends PreviewContent<DataSource> {
 
         needsRestartWarning = new Alert(Icons.WARNING,
                 new SafeHtmlBuilder()
-                        .append(resources.messages().serverNeedsRestart(server.getName()))
+                        .append(server.isStandalone() ? resources.messages().standaloneNeedsRestart() : resources
+                                .messages().serverNeedsRestart(server.getName()))
                         .appendEscaped(" ")
                         .append(resources.messages().staleStatistics())
                         .toSafeHtml(),

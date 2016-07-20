@@ -25,6 +25,8 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
+import static org.jboss.hal.resources.Ids.STANDALONE_HOST;
+import static org.jboss.hal.resources.Ids.STANDALONE_SERVER;
 
 /**
  * Combination of the two resources {@code server-config} and {@code server}. Make sure to check {@link #isStarted()}
@@ -33,20 +35,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  * @author Harald Pehl
  */
 public class Server extends NamedNode {
-
-    private static final String STANDALONE_SERVER = "standalone-server";
-    private static final String STANDALONE_HOST = "standalone-host";
-
-    public static final Server STANDALONE = new Server(STANDALONE_HOST, STANDALONE_SERVER,
-            ServerConfigStatus.STARTED, RunningState.RUNNING);
-
-    private Server(String host, String server, ServerConfigStatus serverConfigStatus,
-            RunningState serverState) {
-        super(server, new ModelNode());
-        get(HOST).set(host);
-        get(STATUS).set(serverConfigStatus.name().toLowerCase());
-        get(SERVER_STATE).set(serverState.name());
-    }
 
     public Server(final String host, final ModelNode node) {
         super(node.get(NAME).asString(), node);

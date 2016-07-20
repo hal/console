@@ -176,6 +176,17 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml staleStatistics();
 
+    SafeHtml standaloneAdminMode();
+    SafeHtml standaloneNeedsReload();
+    SafeHtml standaloneNeedsRestart();
+    SafeHtml standalonePending();
+    SafeHtml standaloneRunning();
+    SafeHtml standaloneUndefined();
+    SafeHtml standaloneStarting();
+    SafeHtml standaloneStopped();
+    SafeHtml standaloneSuspended();
+    SafeHtml standaloneTimeout();
+
     SafeHtml startServerGroupError(String name);
     SafeHtml startServerGroupSuccess(String name);
     SafeHtml startServerError(String name);
