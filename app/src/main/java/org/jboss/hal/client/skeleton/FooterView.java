@@ -147,7 +147,7 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
 
     @EventHandler(element = "modelBrowser", on = click)
     void onModelBrowser() {
-        presenter.onModelBrowser(false);
+        presenter.onModelBrowser();
     }
 
     @EventHandler(element = "expressionResolver", on = click)

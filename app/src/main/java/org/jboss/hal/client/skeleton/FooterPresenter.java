@@ -35,7 +35,6 @@ import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.client.tools.MacroEditorPresenter;
 import org.jboss.hal.client.tools.MacroOptionsDialog;
-import org.jboss.hal.client.tools.ModelBrowserPresenter;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.mvp.HasPresenter;
@@ -161,10 +160,8 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
         environmentForm.view(environment);
     }
 
-    void onModelBrowser(boolean external) {
-        placeManager.revealPlace(new PlaceRequest.Builder().nameToken(NameTokens.MODEL_BROWSER)
-                .with(ModelBrowserPresenter.EXTERNAL_PARAM, String.valueOf(external))
-                .build());
+    void onModelBrowser() {
+        placeManager.revealPlace(new PlaceRequest.Builder().nameToken(NameTokens.MODEL_BROWSER).build());
     }
 
     void onExpressionResolver() {
