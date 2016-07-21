@@ -15,29 +15,30 @@
  */
 package org.jboss.hal.processor;
 
-import com.google.auto.service.AutoService;
-import com.google.common.collect.ImmutableList;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
-import org.jboss.auto.AbstractProcessor;
-import org.jboss.hal.spi.Requires;
-import org.jboss.hal.spi.Scope;
-import org.jboss.hal.spi.Keywords;
-
-import javax.annotation.processing.Processor;
-import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
+import javax.annotation.processing.Processor;
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
+
+import com.google.auto.service.AutoService;
+import com.google.common.collect.ImmutableList;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import org.jboss.auto.AbstractProcessor;
+import org.jboss.hal.spi.Keywords;
+import org.jboss.hal.spi.Scope;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.processor.TemplateNames.*;
+import static org.jboss.hal.processor.TemplateNames.CLASS_NAME;
+import static org.jboss.hal.processor.TemplateNames.GENERATED_WITH;
+import static org.jboss.hal.processor.TemplateNames.PACKAGE_NAME;
+import static org.jboss.hal.processor.TemplateNames.TEMPLATES;
 
 /**
  * Processor which scans all {@code @NameToken} annotations and generates several registry and helper classes based
@@ -76,13 +77,6 @@ public class NameTokenProcessor extends AbstractProcessor {
             NameToken nameToken = tokenElement.getAnnotation(NameToken.class);
             TokenInfo tokenInfo = new TokenInfo(nameToken.value()[0]);
             tokenInfos.add(tokenInfo);
-
-            Requires requires = tokenElement.getAnnotation(Requires.class);
-            NoGatekeeper noGatekeeper = tokenElement.getAnnotation(NoGatekeeper.class);
-            if (requires == null && noGatekeeper == null) {
-                warning(e, "Proxy with token \"#%s\" is missing @%s annotation.",
-                        tokenInfo.getToken(), Requires.class.getSimpleName());
-            }
 
             Keywords keywords = tokenElement.getAnnotation(Keywords.class);
             if (keywords != null) {
@@ -210,10 +204,6 @@ public class NameTokenProcessor extends AbstractProcessor {
 
         public Set<String> getResources() {
             return resources;
-        }
-
-        public void addResources(String[] resources) {
-            this.resources.addAll(asList(resources));
         }
 
         public String getToken() {

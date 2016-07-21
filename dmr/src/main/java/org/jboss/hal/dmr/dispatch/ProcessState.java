@@ -40,4 +40,13 @@ public class ProcessState implements Iterable<ServerState> {
     public Iterator<ServerState> iterator() {
         return serverStates.iterator();
     }
+
+    public boolean isEmpty() {return serverStates.isEmpty();}
+
+    public ServerState first() {
+        if (!serverStates.isEmpty()) {
+            return serverStates.iterator().next();
+        }
+        return null;
+    }
 }

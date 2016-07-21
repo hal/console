@@ -39,10 +39,10 @@ public final class ModelNodeHelper {
     private ModelNodeHelper() {}
 
     /**
-     * Tries to get a deeply nested model node from the specified model node. Nested paths must be separated with ".".
+     * Tries to get a deeply nested model node from the specified model node. Nested paths must be separated with "/".
      *
      * @param modelNode The model node to read from
-     * @param path      A path separated with "."
+     * @param path      A path separated with "/"
      *
      * @return The nested node or an empty / undefined model node
      */
@@ -50,7 +50,7 @@ public final class ModelNodeHelper {
         ModelNode undefined = new ModelNode();
 
         if (Strings.emptyToNull(path) != null) {
-            Iterable<String> keys = Splitter.on('.').omitEmptyStrings().trimResults().split(path);
+            Iterable<String> keys = Splitter.on('/').omitEmptyStrings().trimResults().split(path);
             if (!Iterables.isEmpty(keys)) {
                 ModelNode context = modelNode;
                 for (String key : keys) {

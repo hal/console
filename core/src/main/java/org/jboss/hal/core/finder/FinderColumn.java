@@ -53,6 +53,7 @@ import static org.jboss.gwt.elemento.core.EventType.keydown;
 import static org.jboss.gwt.elemento.core.EventType.keyup;
 import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.core.finder.Finder.DATA_BREADCRUMB;
+import static org.jboss.hal.core.finder.Finder.DATA_FILTER;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
 import static org.jboss.hal.resources.UIConstants.GROUP;
@@ -61,7 +62,8 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
 
 /**
  * Describes a column in a finder. A column has an unique id, a title, a number of optional column actions
- * and an {@link ItemRenderer} which defines how the items of this column are rendered.
+ * and an {@link ItemRenderer} which defines how the items of this column are rendered. All items of a column must have
+ * the same type parameter which is the type parameter of this column.
  * <p>
  * The idea is that columns are self-contained and don't need direct references to other columns. References are only
  * provided by id. The {@link ColumnRegistry} will then resolve the id against an existing column.
@@ -69,7 +71,7 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
  * Please do not use constants from {@code ModelDescriptionConstants} for the column ids (it makes refactoring harder).
  * Instead add an id to {@link org.jboss.hal.resources.Ids}.
  *
- * @param <T> The columns type.
+ * @param <T> The column and items type.
  *
  * @author Harald Pehl
  */
@@ -248,6 +250,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                             .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
                             .data(UIConstants.PLACEMENT, "bottom")
                             .rememberAs(HIDDEN_COLUMNS_ELEMENT)
+                            .on(click, event -> finder.revealHiddenColumns(FinderColumn.this))
                         .end()
                         .h(1).textContent(builder.title).title(builder.title).rememberAs(HEADER_ELEMENT).end();
         // @formatter:on
@@ -348,7 +351,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             if (li == noItems) {
                 continue;
             }
-            Object filterData = li.getDataset().at(CSS.filter);
+            Object filterData = li.getDataset().at(DATA_FILTER);
             boolean match = filter == null
                     || filter.trim().length() == 0
                     || filterData == null
@@ -403,6 +406,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                             event.preventDefault();
                             event.stopPropagation();
 
+                            Elements.setVisible(previousElement, true);
                             finder.reduceTo(previousColumn);
                             finder.selectColumn(previousColumn.getId());
                             FinderRow selectedRow = previousColumn.selectedRow();

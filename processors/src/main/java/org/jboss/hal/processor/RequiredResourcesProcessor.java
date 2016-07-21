@@ -15,6 +15,18 @@
  */
 package org.jboss.hal.processor;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Supplier;
+import javax.annotation.processing.Processor;
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
+
 import com.google.auto.service.AutoService;
 import com.google.common.collect.ImmutableList;
 import com.gwtplatform.mvp.client.annotations.NameToken;
@@ -23,20 +35,11 @@ import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Requires;
 
-import javax.annotation.processing.Processor;
-import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Supplier;
-
 import static java.util.Arrays.asList;
-import static org.jboss.hal.processor.TemplateNames.*;
+import static org.jboss.hal.processor.TemplateNames.CLASS_NAME;
+import static org.jboss.hal.processor.TemplateNames.GENERATED_WITH;
+import static org.jboss.hal.processor.TemplateNames.PACKAGE_NAME;
+import static org.jboss.hal.processor.TemplateNames.TEMPLATES;
 
 /**
  * Processor which scans all {@code @Requires} annotations and generates the {@code RequiredResources} registry.
@@ -138,7 +141,7 @@ public class RequiredResourcesProcessor extends AbstractProcessor {
         private final Set<String> resources;
         private boolean recursive;
 
-        public RequiredInfo(String id) {
+        RequiredInfo(String id) {
             this.id = id;
             this.resources = new HashSet<>();
             this.recursive = false;

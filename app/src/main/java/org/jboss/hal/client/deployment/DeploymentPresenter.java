@@ -48,7 +48,7 @@ public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyV
     // @formatter:on
 
 
-    private class InitialPreview extends PreviewContent {
+    private class InitialPreview extends PreviewContent<Void> {
 
         InitialPreview() {
             super(Names.DEPLOYMENTS, environment.isStandalone()
@@ -57,7 +57,7 @@ public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyV
         }
 
         @Override
-        public void update(Object whatever) {
+        public void update(Void whatever) {
             if (environment.isStandalone()) {
                 Elements.setVisible(Browser.getDocument().getElementById(Ids.DRAG_AND_DROP_DEPLOYMENT),
                         JsHelper.supportsAdvancedUpload());

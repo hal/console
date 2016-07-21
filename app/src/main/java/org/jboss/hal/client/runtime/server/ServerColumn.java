@@ -34,11 +34,12 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.core.subsystem.GenericSubsystemPresenter;
+import org.jboss.hal.client.configuration.subsystem.SubsystemPresenter;
 import org.jboss.hal.client.runtime.BrowseByColumn;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
@@ -88,6 +89,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 public class ServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
     private final Finder finder;
+    private FinderPath refreshPath;
 
     @Inject
     public ServerColumn(final Finder finder,
@@ -118,12 +120,12 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     if (NameTokens.GENERIC_SUBSYSTEM.equals(current.getNameToken())) {
                         // switch server in address parameter of generic presenter
                         builder = new PlaceRequest.Builder().nameToken(current.getNameToken());
-                        String addressParam = current.getParameter(GenericSubsystemPresenter.ADDRESS_PARAM, null);
+                        String addressParam = current.getParameter(SubsystemPresenter.ADDRESS_PARAM, null);
                         if (addressParam != null) {
                             ResourceAddress currentAddress = AddressTemplate.of(addressParam).resolve(statementContext);
                             ResourceAddress newAddress = currentAddress.replaceValue(SERVER, item.getName())
                                     .replaceValue(SERVER_CONFIG, item.getName());
-                            builder.with(GenericSubsystemPresenter.ADDRESS_PARAM, newAddress.toString());
+                            builder.with(SubsystemPresenter.ADDRESS_PARAM, newAddress.toString());
                         }
 
                     } else {
@@ -236,7 +238,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                             // Restore pending servers visualization
                             servers.stream()
                                     .filter(serverActions::isPending)
-                                    .forEach(server -> ItemMonitor.startProgress(Ids.serverId(server.getName())));
+                                    .forEach(server -> ItemMonitor.startProgress(Ids.server(server.getName())));
                         }
                     },
                     serverConfigsFn, startedServersFn);
@@ -268,7 +270,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
         setItemRenderer(item -> new ItemDisplay<Server>() {
             @Override
             public String getId() {
-                return Ids.serverId(item.getName());
+                return Ids.server(item.getName());
             }
 
             @Override
@@ -353,7 +355,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         .with(SERVER_CONFIG, item.getName())
                         .build();
                 List<ItemAction<Server>> actions = new ArrayList<>();
-                actions.add(itemActionFactory.viewAndMonitor(Ids.serverId(item.getName()), placeRequest));
+                actions.add(itemActionFactory.viewAndMonitor(Ids.server(item.getName()), placeRequest));
                 if (!serverActions.isPending(item)) {
                     if (!item.isStarted()) {
                         AddressTemplate template = AddressTemplate
@@ -410,20 +412,23 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     @Override
     public void onServerAction(final ServerActionEvent event) {
         if (isVisible()) {
-            ItemMonitor.startProgress(Ids.serverId(event.getServer().getName()));
+            refreshPath = finder.getContext().getPath().copy();
+            ItemMonitor.startProgress(Ids.server(event.getServer().getName()));
             refresh(RESTORE_SELECTION);
         }
     }
 
     @Override
     public void onServerResult(final ServerResultEvent event) {
+        //noinspection Duplicates
         if (isVisible()) {
             Server server = event.getServer();
-            String itemId = Ids.serverId(server.getName());
+            String itemId = Ids.server(server.getName());
             ItemMonitor.stopProgress(itemId);
 
-            // 'Browse By' does not need to be refreshed
-            finder.refresh(finder.getContext().getPath().subPathAfter(Ids.DOMAIN_BROWSE_BY));
+            FinderPath path = refreshPath != null ? refreshPath : finder.getContext().getPath();
+            refreshPath = null;
+            finder.refresh(path);
         }
     }
 }

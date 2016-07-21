@@ -77,19 +77,6 @@ public class FinderPathTest {
     }
 
     @Test
-    public void subPathAfter() {
-        FinderPath path = new FinderPath().append("1", "one").append("2", "two");
-        FinderPath subPath = path.subPathAfter("1");
-        assertFalse(subPath.isEmpty());
-        assertEquals(1, subPath.size());
-        assertSegment(subPath.iterator().next(), "2", "two");
-
-        subPath = path.subPathAfter("3");
-        assertTrue(subPath.isEmpty());
-        assertEquals(0, subPath.size());
-    }
-
-    @Test
     public void reversed() {
         FinderPath path = new FinderPath().append("1", "one").append("2", "two").reversed();
         assertFalse(path.isEmpty());

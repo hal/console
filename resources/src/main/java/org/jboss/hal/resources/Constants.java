@@ -41,6 +41,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String accessControlProvider();
     String accessType();
     String action();
+    String active();
     String add();
     String adminOnly();
     String assign();
@@ -61,6 +62,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String close();
     String commited();
     String connection();
+    String connections();
+    String connectionPool();
     String connectToServer();
     String consoleVersion();
     String content();
@@ -68,6 +71,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String copied();
     String copy();
     String copyToClipboard();
+    String count();
     String custom();
 
     String data();
@@ -84,6 +88,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String edit();
     String enable();
     String enabled();
+    String enableStatistics();
     String endpointSelectTitle();
     String endpointSelectDescription();
     String endpointConnect();
@@ -94,11 +99,16 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String failed();
     String filter();
     String finish();
+    String flushAll();
+    String flushGracefully();
+    String flushIdle();
+    String flushInvalid();
     String formErrors();
     String formResetDesc();
 
     String help();
     String hiddenColumns();
+    String hitCount();
     String homepageNewToEap();
     String homepageTakeATour();
     String homepageDeploymentsSubHeader();
@@ -190,9 +200,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String macroEditor();
     String mainAttributes();
     String managementVersion();
+    String maxUsed();
     String message();
     String minute();
     String minutes();
+    String missCount();
     String modelBrowser();
     String monitor();
 
@@ -223,6 +235,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String platform();
     String play();
     String pool();
+    String preparedStatementCache();
     String processors();
     String productName();
     String productVersion();

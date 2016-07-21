@@ -13,16 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.utb;
+package org.jboss.hal.client.rhcp;
 
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.TextResource;
+import org.jboss.hal.core.mvp.FinderViewImpl;
 
-/**
- * @author Harald Pehl
- */
-public interface UnderTheBridgeResources extends ClientBundle {
-
-    @Source("underTheBridge.base64")
-    TextResource underTheBridge();
+public class RhcpView extends FinderViewImpl implements RhcpPresenter.MyView {
 }

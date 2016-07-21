@@ -27,7 +27,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 /**
  * @author Harald Pehl
  */
-class NestedIdentifier implements Identifier {
+final class NestedIdentifier implements Identifier {
 
     @Override
     public String identify(final JsJsonObject data) {

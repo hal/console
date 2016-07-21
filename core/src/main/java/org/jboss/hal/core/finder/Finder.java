@@ -21,9 +21,11 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import com.google.common.collect.Iterables;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -53,6 +55,7 @@ import org.slf4j.LoggerFactory;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.lang.Math.min;
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.resources.CSS.column;
 import static org.jboss.hal.resources.CSS.finder;
 import static org.jboss.hal.resources.CSS.finderPreview;
@@ -87,8 +90,8 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                     columns.containsKey(columnElement.getId()) &&
                     segment.getColumnId().equals(columnElement.getId())) {
                 // column is already in place just select the item
-                FinderColumn finderColumn = columns.get(columnElement.getId());
-                selectItem(finderColumn, control);
+                FinderColumn column = columns.get(columnElement.getId());
+                selectItem(column, control);
 
             } else {
                 // append the column
@@ -106,14 +109,15 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             }
         }
 
-        private void selectItem(FinderColumn finderColumn, Control<FunctionContext> control) {
-            if (finderColumn.contains(segment.getItemId())) {
-                finderColumn.markSelected(segment.getItemId());
+        private void selectItem(FinderColumn column, Control<FunctionContext> control) {
+            if (column.contains(segment.getItemId())) {
+                column.markSelected(segment.getItemId());
                 updateContext();
-                control.getContext().push(finderColumn);
+                control.getContext().push(column);
                 control.proceed();
             } else {
-                logger.error("Unable to select item '{}'", segment.getItemId()); //NON-NLS
+                logger.error("Error in Finder.SelectFunction: Unable to select item '{}' in column '{}'",
+                        segment.getItemId(), segment.getColumnId());
                 control.abort();
             }
         }
@@ -130,13 +134,32 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         public void execute(final Control<FunctionContext> control) {
             FinderColumn column = getColumn(segment.getColumnId());
             if (column != null) {
-                column.refresh(() -> {
-                    column.markSelected(segment.getItemId());
-                    column.selectedRow().click();
-                    control.proceed();
-                });
+                // refresh the existing column
+                column.refresh(() -> selectItem(column, control));
             } else {
-                logger.error("Unable to find column '{}'", segment.getColumnId()); //NON-NLS
+                // append the column
+                appendColumn(segment.getColumnId(), new AsyncCallback<FinderColumn>() {
+                    @Override
+                    public void onFailure(final Throwable throwable) {
+                        control.abort();
+                    }
+
+                    @Override
+                    public void onSuccess(final FinderColumn finderColumn) {
+                        selectItem(finderColumn, control);
+                    }
+                });
+            }
+        }
+
+        private void selectItem(FinderColumn column, Control<FunctionContext> control) {
+            if (column.contains(segment.getItemId())) {
+                column.markSelected(segment.getItemId());
+                control.getContext().push(column);
+                control.proceed();
+            } else {
+                logger.error("Error in Finder.RefreshFunction: Unable to select item '{}' in column '{}'",
+                        segment.getItemId(), segment.getColumnId());
                 control.abort();
             }
         }
@@ -146,9 +169,8 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     static final String DATA_BREADCRUMB = "breadcrumb";
     static final String DATA_FILTER = "filter";
     /**
-     * The maximum number of visible columns. If there are more columns, the first column is hidden when column
-     * {@code MAX_VISIBLE_COLUMNS + 1} is shown.
-     * TODO Reduce this if the viewport gets smaller and change col-??-2 to col-??-3
+     * The maximum number of simultaneously visible columns. If there are more columns, the left-most column is hidden.
+     * TODO Reduce the number of visible columns if the viewport gets smaller and change col-??-2 to col-??-3
      */
     private static final int MAX_VISIBLE_COLUMNS = 4;
 
@@ -230,8 +252,8 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     }
 
     private void resizePreview() {
-        int columns = root.getChildren().length() - 1;
-        int previewSize = MAX_COLUMNS - 2 * min(columns, MAX_VISIBLE_COLUMNS);
+        long visibleColumns = Elements.stream(root).filter(Elements::isVisible).count() - 1;
+        int previewSize = MAX_COLUMNS - 2 * min((int) visibleColumns, MAX_VISIBLE_COLUMNS);
         previewColumn.setClassName(finderPreview + " " + column(previewSize));
     }
 
@@ -257,12 +279,59 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     private void appendColumn(FinderColumn<?> column, AsyncCallback<FinderColumn> callback) {
         column.resetSelection();
+        column.markHiddenColumns(false);
+        Elements.setVisible(column.asElement(), true);
+
         columns.put(column.getId(), column);
-        showHideColumns();
+        if (visibleColumns() >= MAX_VISIBLE_COLUMNS) {
+            int index = 0;
+            int hideUntilHere = columns.size() - MAX_VISIBLE_COLUMNS;
+            for (FinderColumn c : columns.values()) {
+                Elements.setVisible(c.asElement(), index >= hideUntilHere);
+                index++;
+            }
+            if (hideUntilHere > 0) {
+                for (FinderColumn c : columns.values()) {
+                    if (Elements.isVisible(c.asElement())) {
+                        c.markHiddenColumns(true);
+                        break;
+                    }
+                }
+            }
+        }
 
         root.insertBefore(column.asElement(), previewColumn);
         column.setItems(callback);
         resizePreview();
+    }
+
+    private long visibleColumns() {
+        return columns.values().stream().filter(column -> Elements.isVisible(column.asElement())).count();
+    }
+
+    private void markHiddenColumns() {
+        Optional<FinderColumn> hiddenColumn = columns.values().stream()
+                .filter(column -> !Elements.isVisible(column.asElement()))
+                .findAny();
+        if (hiddenColumn.isPresent()) {
+            columns.values().stream()
+                    .filter(column -> Elements.isVisible(column.asElement()))
+                    .findFirst()
+                    .ifPresent(firstVisibleColumn -> firstVisibleColumn.markHiddenColumns(true));
+        }
+    }
+
+    void revealHiddenColumns(FinderColumn firstVisibleColumn) {
+        // show the last hidden column
+        List<FinderColumn> hiddenColumns = columns.values().stream()
+                .filter(column -> !Elements.isVisible(column.asElement()))
+                .collect(toList());
+        if (!hiddenColumns.isEmpty()) {
+            Elements.setVisible(Iterables.getLast(hiddenColumns).asElement(), true);
+        }
+        firstVisibleColumn.markHiddenColumns(false);
+        firstVisibleColumn.selectedRow().click();
+        markHiddenColumns();
     }
 
     private void reduceAll() {
@@ -292,26 +361,8 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
                 iterator.remove();
             }
         }
-        showHideColumns();
+        Elements.setVisible(column.asElement(), true);
         resizePreview();
-    }
-
-    private void showHideColumns() {
-        int index = 0;
-        int hideUntilHere = columns.size() - MAX_VISIBLE_COLUMNS;
-        for (FinderColumn column : columns.values()) {
-            Elements.setVisible(column.asElement(), index >= hideUntilHere);
-            column.markHiddenColumns(false);
-            index++;
-        }
-        if (hideUntilHere > 0) {
-            for (FinderColumn column : columns.values()) {
-                if (Elements.isVisible(column.asElement())) {
-                    column.markHiddenColumns(true);
-                    break;
-                }
-            }
-        }
     }
 
     void updateContext() {
@@ -343,7 +394,9 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
     void selectColumn(String columnId) {
         FinderColumn finderColumn = columns.get(columnId);
-        finderColumn.asElement().focus();
+        if (finderColumn != null) {
+            finderColumn.asElement().focus();
+        }
     }
 
     void selectPreviousColumn(final String columnId) {
@@ -380,6 +433,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
             for (Element element : elements) {
                 previewColumn.appendChild(element);
             }
+            preview.attach();
         }
     }
 
@@ -421,8 +475,14 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     }
 
     /**
-     * Refreshes the specified path. The path needs to match the currently selected path or a sub-path of the
-     * currently selected path.
+     * Refreshes the current path.
+     */
+    public void refresh() {
+        refresh(getContext().getPath());
+    }
+
+    /**
+     * Refreshes the specified path.
      * <p>
      * Please note that this might be a complex and long running operation since each segment in the path is turned
      * into a function which reloads and re-selects the items.
@@ -430,43 +490,33 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     public void refresh(FinderPath path) {
         if (!path.isEmpty()) {
 
-            // Find the first column which is different between the new and the current path
-            boolean finished = false;
-            FinderPath refreshPath = new FinderPath();
-            Iterator<FinderSegment> newPathIterator = path.reversed().iterator();
-            Iterator<FinderSegment> currentPathIterator = context.getPath().reversed().iterator();
-            while (!finished && newPathIterator.hasNext() && currentPathIterator.hasNext()) {
-                FinderSegment newSegment = newPathIterator.next();
-                FinderSegment currentSegment = currentPathIterator.next();
-                if (newSegment.equals(currentSegment)) {
-                    refreshPath.append(newSegment.getColumnId(), newSegment.getItemId());
-                } else {
-                    finished = true;
-                }
+            int index = 0;
+            Function[] functions = new Function[path.size()];
+            for (FinderSegment segment : path) {
+                functions[index] = new RefreshFunction(segment);
+                index++;
             }
+            new Async<FunctionContext>(progress.get())
+                    .waterfall(new FunctionContext(), new Outcome<FunctionContext>() {
+                        @Override
+                        public void onFailure(final FunctionContext context) {}
 
-            refreshPath = refreshPath.reversed();
-            if (!refreshPath.isEmpty()) {
-                int index = 0;
-                Function[] functions = new Function[refreshPath.size()];
-                for (FinderSegment segment : refreshPath) {
-                    functions[index] = new RefreshFunction(segment);
-                    index++;
-                }
-                new Async<FunctionContext>(progress.get())
-                        .waterfall(new FunctionContext(), new Outcome<FunctionContext>() {
-                            @Override
-                            public void onFailure(final FunctionContext context) {}
-
-                            @Override
-                            public void onSuccess(final FunctionContext context) {}
-                        }, functions);
-            }
+                        @Override
+                        public void onSuccess(final FunctionContext context) {
+                            if (!context.emptyStack()) {
+                                FinderColumn column = context.pop();
+                                if (column.selectedRow() != null) {
+                                    column.selectedRow().click();
+                                }
+                            }
+                        }
+                    }, functions);
         }
     }
 
     /**
-     * Selects the columns as specified in the finder path.
+     * Shows the finder associated with the specified token and selects the columns and items according to the given
+     * finder path.
      * <p>
      * Please note that this might be a complex and long running operation since each segment in the path is turned
      * into a function. The function will load and initialize the column and select the item as specified in the
@@ -526,18 +576,20 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
                     } else if (!context.emptyStack()) {
                         FinderColumn column = context.pop();
-                        processLastColumnSelection(column);
+                        markHiddenColumns(); // only in case of an error!
+                        f1nally(column);
                     }
                 }
 
                 @Override
                 public void onSuccess(final FunctionContext context) {
                     FinderColumn column = context.pop();
-                    processLastColumnSelection(column);
+                    f1nally(column);
                 }
 
-                private void processLastColumnSelection(FinderColumn column) {
-                    selectColumn(column.getId());
+                @SuppressWarnings("SpellCheckingInspection")
+                private void f1nally(FinderColumn column) {
+                    column.asElement().focus();
                     column.refresh(RefreshMode.RESTORE_SELECTION);
                 }
             }, functions);

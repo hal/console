@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.subsystem;
+package org.jboss.hal.client.configuration.subsystem;
 
 import javax.inject.Inject;
 
@@ -39,16 +39,18 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 /**
  * Presenter for subsystems w/o a specific implementation in HAL. Relies on the model browser to manage a (sub)tree of
  * the management model starting at the resource specified as place request parameter.
+ * <p>
+ * Used in configuration and subsystem perspective.
  *
  * @author Harald Pehl
  */
-public class GenericSubsystemPresenter
-        extends ApplicationPresenter<GenericSubsystemPresenter.MyView, GenericSubsystemPresenter.MyProxy> {
+public class SubsystemPresenter
+        extends ApplicationPresenter<SubsystemPresenter.MyView, SubsystemPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyStandard
     @NameToken(NameTokens.GENERIC_SUBSYSTEM)
-    public interface MyProxy extends ProxyPlace<GenericSubsystemPresenter> {}
+    public interface MyProxy extends ProxyPlace<SubsystemPresenter> {}
 
     public interface MyView extends PatternFlyView {
         void setRoot(ResourceAddress root);
@@ -63,7 +65,7 @@ public class GenericSubsystemPresenter
     private ResourceAddress address;
 
     @Inject
-    public GenericSubsystemPresenter(final EventBus eventBus,
+    public SubsystemPresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy proxy,
             final Finder finder,
@@ -98,12 +100,6 @@ public class GenericSubsystemPresenter
 
     @Override
     protected FinderPath finderPath() {
-        if (NameTokens.CONFIGURATION.equals(finder.getContext().getToken())) {
-            return finderPathFactory.configurationSubsystemPath(address.lastValue());
-        } else if (NameTokens.RUNTIME.equals(finder.getContext().getToken())) {
-            return finderPathFactory.runtimeSubsystemPath(address.lastValue());
-        } else {
-            return new FinderPath();
-        }
+        return finderPathFactory.subsystemPath(address.lastValue());
     }
 }

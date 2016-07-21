@@ -20,7 +20,7 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.core.subsystem.GenericSubsystemPresenter;
+import org.jboss.hal.client.configuration.subsystem.SubsystemPresenter;
 import org.jboss.hal.core.configuration.ProfileSelectionEvent;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -87,7 +87,7 @@ public class ProfileColumn extends FinderColumn<String> {
 
                     @Override
                     public String nextColumn() {
-                        return Ids.CONFIGURATION_SUBSYSTEM;
+                        return Ids.SUBSYSTEM;
                     }
                 })
 
@@ -102,11 +102,11 @@ public class ProfileColumn extends FinderColumn<String> {
                     if (NameTokens.GENERIC_SUBSYSTEM.equals(current.getNameToken())) {
                         // switch profile in address parameter of generic presenter
                         builder = new PlaceRequest.Builder().nameToken(current.getNameToken());
-                        String addressParam = current.getParameter(GenericSubsystemPresenter.ADDRESS_PARAM, null);
+                        String addressParam = current.getParameter(SubsystemPresenter.ADDRESS_PARAM, null);
                         if (addressParam != null) {
                             ResourceAddress currentAddress = AddressTemplate.of(addressParam).resolve(statementContext);
                             ResourceAddress newAddress = currentAddress.replaceValue(PROFILE, item);
-                            builder.with(GenericSubsystemPresenter.ADDRESS_PARAM, newAddress.toString());
+                            builder.with(SubsystemPresenter.ADDRESS_PARAM, newAddress.toString());
                         }
 
                     } else {

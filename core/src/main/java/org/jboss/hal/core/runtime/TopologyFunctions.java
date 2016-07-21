@@ -271,7 +271,7 @@ public class TopologyFunctions {
                     if (!composite.isEmpty()) {
                         Map<String, Server> serverConfigsByHostAndServerName = hosts.stream()
                                 .flatMap(host -> host.getServers().stream().filter(Server::isStarted))
-                                .collect(toMap(server -> Ids.hostServerId(server.getHost(), server.getName()),
+                                .collect(toMap(server -> Ids.hostServer(server.getHost(), server.getName()),
                                         identity()));
                         //noinspection Duplicates
                         dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
@@ -279,7 +279,7 @@ public class TopologyFunctions {
                                 ModelNode payload = step.get(RESULT);
                                 String hostName = payload.get(ModelDescriptionConstants.HOST).asString();
                                 String serverName = payload.get(NAME).asString();
-                                String id = Ids.hostServerId(hostName, serverName);
+                                String id = Ids.hostServer(hostName, serverName);
                                 Server server = serverConfigsByHostAndServerName.get(id);
                                 if (server != null) {
                                     server.addServerAttributes(payload);
@@ -439,7 +439,7 @@ public class TopologyFunctions {
                         Map<String, Server> serverConfigsByServerGroupAndServerName = serverGroups.stream()
                                 .flatMap(serverGroup -> serverGroup.getServers().stream().filter(Server::isStarted))
                                 .collect(toMap(
-                                        server -> Ids.serverGroupServerId(server.getServerGroup(), server.getName()),
+                                        server -> Ids.serverGroupServer(server.getServerGroup(), server.getName()),
                                         identity()));
                         //noinspection Duplicates
                         dispatcher.executeInFunction(control, composite, (CompositeResult result) -> {
@@ -447,7 +447,7 @@ public class TopologyFunctions {
                                 ModelNode payload = step.get(RESULT);
                                 String serverGroupName = payload.get(ModelDescriptionConstants.SERVER_GROUP).asString();
                                 String serverName = payload.get(NAME).asString();
-                                String id = Ids.serverGroupServerId(serverGroupName, serverName);
+                                String id = Ids.serverGroupServer(serverGroupName, serverName);
                                 Server server = serverConfigsByServerGroupAndServerName.get(id);
                                 if (server != null) {
                                     server.addServerAttributes(payload);

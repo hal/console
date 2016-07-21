@@ -133,7 +133,7 @@ public class EEPresenter extends ApplicationPresenter<EEPresenter.MyView, EEPres
 
     @Override
     protected FinderPath finderPath() {
-        return finderPathFactory.configurationSubsystemPath(AddressTemplates.EE_SUBSYSTEM_TEMPLATE.lastValue());
+        return finderPathFactory.subsystemPath(AddressTemplates.EE_SUBSYSTEM_TEMPLATE.lastValue());
     }
 
     void loadEESubsystem() {

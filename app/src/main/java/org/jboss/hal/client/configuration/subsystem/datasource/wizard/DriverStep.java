@@ -26,7 +26,7 @@ import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.ballroom.wizard.WizardStep;
-import org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver;
+import org.jboss.hal.core.datasource.JdbcDriver;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;

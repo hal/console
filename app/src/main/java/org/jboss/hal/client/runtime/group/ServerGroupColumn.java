@@ -116,7 +116,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
         setItemRenderer(item -> new ItemDisplay<ServerGroup>() {
             @Override
             public String getId() {
-                return Ids.serverGroupId(item.getName());
+                return Ids.serverGroup(item.getName());
             }
 
             @Override
@@ -144,7 +144,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                 PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(NameTokens.SERVER_GROUP_CONFIGURATION)
                         .with(SERVER_GROUP, item.getName()).build();
                 List<ItemAction<ServerGroup>> actions = new ArrayList<>();
-                actions.add(itemActionFactory.viewAndMonitor(Ids.serverGroupId(item.getName()), placeRequest));
+                actions.add(itemActionFactory.viewAndMonitor(Ids.serverGroup(item.getName()), placeRequest));
 
                 // Order is: reload, restart, suspend, resume, stop, start
                 if (item.hasServers(Server::isStarted)) {
@@ -175,14 +175,14 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
     @Override
     public void onServerGroupAction(final ServerGroupActionEvent event) {
         if (isVisible()) {
-            event.getServers().forEach(server -> ItemMonitor.startProgress(Ids.serverId(server.getName())));
+            event.getServers().forEach(server -> ItemMonitor.startProgress(Ids.server(server.getName())));
         }
     }
 
     @Override
     public void onServerGroupResult(final ServerGroupResultEvent event) {
         if (isVisible()) {
-            event.getServers().forEach(server -> ItemMonitor.stopProgress(Ids.serverId(server.getName())));
+            event.getServers().forEach(server -> ItemMonitor.stopProgress(Ids.server(server.getName())));
             refresh(RESTORE_SELECTION);
         }
     }

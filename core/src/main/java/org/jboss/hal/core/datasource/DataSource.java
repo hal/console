@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration.subsystem.datasource;
+package org.jboss.hal.core.datasource;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
@@ -23,6 +23,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
 
 /**
  * @author Harald Pehl
@@ -35,7 +36,7 @@ public class DataSource extends NamedNode {
         this("", xa);
     }
 
-    DataSource(final String name, final boolean xa) {
+    public DataSource(final String name, final boolean xa) {
         super(name, new ModelNode());
         this.xa = xa;
     }
@@ -56,6 +57,10 @@ public class DataSource extends NamedNode {
 
     public boolean isEnabled() {
         return hasDefined(ENABLED) && get(ENABLED).asBoolean();
+    }
+
+    public boolean isStatisticsEnabled() {
+        return hasDefined(STATISTICS_ENABLED) && get(STATISTICS_ENABLED).asBoolean();
     }
 
     public void setDriver(final JdbcDriver driver) {

@@ -284,7 +284,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                                     .findFirst()
                                     .ifPresent(updatedServer -> {
                                         String serverId = Ids
-                                                .hostServerId(updatedServer.getHost(), updatedServer.getName());
+                                                .hostServer(updatedServer.getHost(), updatedServer.getName());
                                         replaceElement(document.getElementById(serverId),
                                                 () -> serverElement(updatedServer),
                                                 whatever -> serverDetails(updatedServer));
@@ -374,7 +374,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private void buildHost(final Elements.Builder builder, final Host host) {
         // @formatter:off
-        String hostDropDownId = Ids.hostId(host.getAddressName());
+        String hostDropDownId = Ids.host(host.getAddressName());
         builder.th().css(rowHeader, statusCss(host))
                 .on(click, event -> hostDetails(host))
                 .data("host", host.getName())
@@ -416,7 +416,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private void buildServerGroup(final Elements.Builder builder, final ServerGroup serverGroup) {
         // @formatter:off
-        String serverGroupDropDownId = Ids.serverGroupId(serverGroup.getName());
+        String serverGroupDropDownId = Ids.serverGroup(serverGroup.getName());
         builder.th()
                 .on(click, event -> serverGroupDetails(serverGroup))
                 .data("serverGroup", serverGroup.getName())
@@ -454,11 +454,11 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
     private void buildServer(Elements.Builder builder, Server srv) {
         // @formatter:off
-        String serverDropDownId = Ids.serverId(srv.getName());
+        String serverDropDownId = Ids.server(srv.getName());
         builder.div()
                 .css(server, statusCss(srv))
                 .on(click, event -> serverDetails(srv))
-                .id(Ids.hostServerId(srv.getHost(), srv.getName()))
+                .id(Ids.hostServer(srv.getHost(), srv.getName()))
                 .data(SERVER, srv.getName())
             .div().css(dropdown);
                 if (!serverActions.isPending(srv)) {
@@ -587,11 +587,11 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         if (isVisible()) {
             Host host = event.getHost();
 
-            disableDropdown(Ids.hostId(host.getAddressName()), host.getName());
+            disableDropdown(Ids.host(host.getAddressName()), host.getName());
             startProgress(hostSelector(host));
 
             event.getServers().forEach(server -> {
-                disableDropdown(Ids.serverId(server.getName()), server.getName());
+                disableDropdown(Ids.server(server.getName()), server.getName());
                 startProgress(serverSelector(server));
             });
         }
@@ -653,9 +653,9 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     public void onServerGroupAction(final ServerGroupActionEvent event) {
         if (isVisible()) {
             ServerGroup serverGroup = event.getServerGroup();
-            disableDropdown(Ids.serverGroupId(serverGroup.getName()), serverGroup.getName());
+            disableDropdown(Ids.serverGroup(serverGroup.getName()), serverGroup.getName());
             event.getServers().forEach(server -> {
-                disableDropdown(Ids.serverId(server.getName()), server.getName());
+                disableDropdown(Ids.server(server.getName()), server.getName());
                 startProgress(serverSelector(server));
             });
         }
@@ -734,7 +734,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     public void onServerAction(final ServerActionEvent event) {
         if (isVisible()) {
             Server server = event.getServer();
-            disableDropdown(Ids.serverId(server.getName()), server.getName());
+            disableDropdown(Ids.server(server.getName()), server.getName());
             startProgress(serverSelector(server));
         }
     }

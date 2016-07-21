@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.core.finder;
 
-import java.util.Map;
 import javax.inject.Inject;
 
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -62,7 +61,7 @@ public class FinderPathFactory {
     /**
      * Create a finder path for the specified subsystem. Includes the selected profile when running in domain mode.
      */
-    public FinderPath configurationSubsystemPath(String subsystem) {
+    public FinderPath subsystemPath(String subsystem) {
         FinderPath path = new FinderPath();
 
         if (environment.isStandalone()) {
@@ -73,8 +72,8 @@ public class FinderPathFactory {
                     .append(Ids.PROFILE, profile, Names.PROFILES, profile);
 
         }
-        path.append(Ids.CONFIGURATION_SUBSYSTEM, subsystem,
-                Names.SUBSYSTEM, subsystemTitle(subsystem, subsystems.getConfigurationSubsystems()));
+        path.append(Ids.SUBSYSTEM, subsystem,
+                Names.SUBSYSTEM, subsystemTitle(subsystem, subsystems.get(subsystem)));
         return path;
     }
 
@@ -88,7 +87,7 @@ public class FinderPathFactory {
         String host = statementContext.selectedHost();
         return new FinderPath()
                 .append(Ids.DOMAIN_BROWSE_BY, Ids.asId(Names.HOSTS), resources.constants().browseBy(), Names.HOSTS)
-                .append(Ids.HOST, Ids.hostId(host), Names.HOST, host);
+                .append(Ids.HOST, Ids.host(host), Names.HOST, host);
     }
 
     /**
@@ -99,7 +98,7 @@ public class FinderPathFactory {
         return new FinderPath()
                 .append(Ids.DOMAIN_BROWSE_BY, Ids.asId(Names.SERVER_GROUPS),
                         resources.constants().browseBy(), Names.SERVER_GROUPS)
-                .append(SERVER_GROUP, Ids.serverGroupId(serverGroup), Names.SERVER_GROUP, serverGroup);
+                .append(SERVER_GROUP, Ids.serverGroup(serverGroup), Names.SERVER_GROUP, serverGroup);
     }
 
     /**
@@ -107,22 +106,13 @@ public class FinderPathFactory {
      */
     public FinderPath runtimeServerPath() {
         if (environment.isStandalone()) {
-            return new FinderPath().append(Ids.STANDALONE_SERVER, Ids.serverId(Server.STANDALONE.getName()),
+            return new FinderPath().append(Ids.STANDALONE_SERVER, Ids.server(Server.STANDALONE.getName()),
                     Names.SERVER, Names.STANDALON_SERVER);
         } else {
             String server = statementContext.selectedServer();
             FinderPath path = browseByServerGroups() ? runtimeServerGroupPath() : runtimeHostPath();
-            return path.append(Ids.SERVER, Ids.serverId(server), Names.SERVER, server);
+            return path.append(Ids.SERVER, Ids.server(server), Names.SERVER, server);
         }
-    }
-
-    /**
-     * Create a finder path for the specified subsystem of the selected server. Includes the selected host / server
-     * group when running domain mode.
-     */
-    public FinderPath runtimeSubsystemPath(String subsystem) {
-        return runtimeServerPath().append(Ids.RUNTIME_SUBSYSTEM, subsystem,
-                Names.SUBSYSTEM, subsystemTitle(subsystem, subsystems.getRuntimeSubsystems()));
     }
 
 
@@ -136,8 +126,7 @@ public class FinderPathFactory {
         return false;
     }
 
-    private String subsystemTitle(String subsystem, Map<String, SubsystemMetadata> subsystems) {
-        SubsystemMetadata subsystemMetadata = subsystems.get(subsystem);
+    private String subsystemTitle(String subsystem, SubsystemMetadata subsystemMetadata) {
         return subsystemMetadata != null ? subsystemMetadata.getTitle() : new LabelBuilder().label(subsystem);
     }
 }

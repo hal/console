@@ -47,14 +47,15 @@ public class ServerMonitorColumn extends StaticItemColumn {
                         .onPreview(new ServerStatusPreview(dispatcher, statementContext, resources))
                         .build(),
 
-                new StaticItem.Builder(resources.constants().logFiles())
-                        .onPreview(new PreviewContent(resources.constants().logFiles(), resources.previews().runtimeLogFiles()))
-                        .nextColumn(Ids.LOG_FILE)
+                new StaticItem.Builder(Names.DATASOURCES)
+                        .onPreview(new PreviewContent(Names.DATASOURCES, resources.previews().runtimeDatasources()))
+                        .nextColumn(Ids.DATA_SOURCE_RUNTIME)
                         .build(),
 
-                new StaticItem.Builder(Names.SUBSYSTEMS)
-                        .onPreview(new PreviewContent(Names.SUBSYSTEMS, resources.previews().runtimeSubsystems()))
-                        .nextColumn(Ids.RUNTIME_SUBSYSTEM)
+                new StaticItem.Builder(resources.constants().logFiles())
+                        .onPreview(new PreviewContent(resources.constants().logFiles(),
+                                resources.previews().runtimeLogFiles()))
+                        .nextColumn(Ids.LOG_FILE)
                         .build()
         ));
     }

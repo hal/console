@@ -29,6 +29,7 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -120,9 +121,9 @@ public class DataSourcePresenter extends
 
     @Override
     protected FinderPath finderPath() {
-        return finderPathFactory.configurationSubsystemPath(DATASOURCES)
+        return finderPathFactory.subsystemPath(DATASOURCES)
                 .append(Ids.DATA_SOURCE_DRIVER, DATASOURCES, Names.DATASOURCES_DRIVERS, Names.DATASOURCES)
-                .append(Ids.DATA_SOURCE, Ids.dataSourceId(name, xa), Names.DATASOURCE, name);
+                .append(Ids.DATA_SOURCE_CONFIGURATION, Ids.dataSourceConfiguration(name, xa), Names.DATASOURCE, name);
     }
 
     private void loadDataSource() {

@@ -66,7 +66,7 @@ public class OperationFormBuilder<T extends ModelNode> {
 
     public ModelNodeForm<T> build() {
         ModelNode modelNode = ModelNodeHelper.failSafeGet(metadata.getDescription(),
-                Joiner.on('.').join(OPERATIONS, operation, REQUEST_PROPERTIES));
+                Joiner.on('/').join(OPERATIONS, operation, REQUEST_PROPERTIES));
         ModelNode repackaged = new ModelNode();
         repackaged.get(ATTRIBUTES).set(modelNode);
         ResourceDescription reloadDescription = new ResourceDescription(repackaged);

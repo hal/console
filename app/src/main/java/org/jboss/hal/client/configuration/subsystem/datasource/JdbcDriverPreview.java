@@ -19,11 +19,12 @@ import com.google.common.base.Joiner;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.core.datasource.JdbcDriver;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver.Provider.DEPLOYMENT;
-import static org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver.Provider.MODULE;
+import static org.jboss.hal.core.datasource.JdbcDriver.Provider.DEPLOYMENT;
+import static org.jboss.hal.core.datasource.JdbcDriver.Provider.MODULE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_VERSION;
 
 /**

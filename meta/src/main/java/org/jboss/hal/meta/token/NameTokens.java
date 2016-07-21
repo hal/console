@@ -27,7 +27,6 @@ public interface NameTokens {
 
     String ACCESS_CONTROL = "access-control";
     String BATCH_CONFIGURATION = ModelDescriptionConstants.BATCH_JBERET +  CONFIGURATION_SUFFIX;
-    String BATCH_RUNTIME = ModelDescriptionConstants.BATCH_JBERET +  RUNTIME_SUFFIX;
     String CONFIGURATION = "configuration";
     String DATA_SOURCE_CONFIGURATION = ModelDescriptionConstants.DATA_SOURCE + CONFIGURATION_SUFFIX;
     String DATA_SOURCE_RUNTIME = ModelDescriptionConstants.DATA_SOURCE +  RUNTIME_SUFFIX;
@@ -44,7 +43,6 @@ public interface NameTokens {
     String JCA = ModelDescriptionConstants.JCA;
     String JMX = ModelDescriptionConstants.JMX;
     String JPA_CONFIGURATION = ModelDescriptionConstants.JPA +  CONFIGURATION_SUFFIX;
-    String JPA_RUNTIME = ModelDescriptionConstants.JPA + RUNTIME_SUFFIX;
     String LOG_FILE = "log-file";
     String LOGGING_CONFIGURATION = "logging-configuration";
     String LOGGING_PROFILE = "logging-profile";
@@ -61,7 +59,6 @@ public interface NameTokens {
     String SOCKET_BINDING = ModelDescriptionConstants.SOCKET_BINDING;
     String SYSTEM_PROPERTIES = "system-properties";
     String TRANSACTIONS = ModelDescriptionConstants.TRANSACTIONS;
-    String UNDER_THE_BRIDGE = "utb";
     String WEBSERVICES = ModelDescriptionConstants.WEBSERVICES;
 
     Set<String> getTokens();

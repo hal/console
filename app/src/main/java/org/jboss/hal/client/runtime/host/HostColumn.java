@@ -99,7 +99,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                                         hosts.stream()
                                                 .filter(hostActions::isPending)
                                                 .forEach(host -> ItemMonitor
-                                                        .startProgress(Ids.hostId(host.getAddressName())));
+                                                        .startProgress(Ids.host(host.getAddressName())));
                                     }
                                 },
                                 new TopologyFunctions.HostsWithServerConfigs(environment, dispatcher),
@@ -120,7 +120,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
         setItemRenderer(item -> new ItemDisplay<Host>() {
             @Override
             public String getId() {
-                return Ids.hostId(item.getAddressName());
+                return Ids.host(item.getAddressName());
             }
 
             @Override
@@ -185,7 +185,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                 PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(NameTokens.HOST_CONFIGURATION)
                         .with(HOST, item.getAddressName()).build();
                 List<ItemAction<Host>> actions = new ArrayList<>();
-                actions.add(itemActionFactory.viewAndMonitor(Ids.hostId(item.getAddressName()), placeRequest));
+                actions.add(itemActionFactory.viewAndMonitor(Ids.host(item.getAddressName()), placeRequest));
                 if (!hostActions.isPending(item)) {
                     actions.add(new ItemAction<>(resources.constants().reload(), hostActions::reload));
                     actions.add(new ItemAction<>(resources.constants().restart(), hostActions::restart));
@@ -203,8 +203,8 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
     public void onHostAction(final HostActionEvent event) {
         if (isVisible()) {
             Host host = event.getHost();
-            ItemMonitor.startProgress(Ids.hostId(host.getAddressName()));
-            event.getServers().forEach(server -> ItemMonitor.startProgress(Ids.serverId(server.getName())));
+            ItemMonitor.startProgress(Ids.host(host.getAddressName()));
+            event.getServers().forEach(server -> ItemMonitor.startProgress(Ids.server(server.getName())));
         }
     }
 
@@ -212,8 +212,8 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
     public void onHostResult(final HostResultEvent event) {
         if (isVisible()) {
             Host host = event.getHost();
-            ItemMonitor.stopProgress(Ids.hostId(host.getAddressName()));
-            event.getServers().forEach(server -> ItemMonitor.stopProgress(Ids.serverId(server.getName())));
+            ItemMonitor.stopProgress(Ids.host(host.getAddressName()));
+            event.getServers().forEach(server -> ItemMonitor.stopProgress(Ids.server(server.getName())));
             refresh(RESTORE_SELECTION);
         }
     }

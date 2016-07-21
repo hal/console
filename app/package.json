@@ -1,6 +1,6 @@
 {
   "name": "org.jboss.hal.npm",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Node / NPM setup for HAL",
   "license": "Apache-2.0",
   "private": true,

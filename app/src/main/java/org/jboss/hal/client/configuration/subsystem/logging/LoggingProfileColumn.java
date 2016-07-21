@@ -76,7 +76,7 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
                     dispatcher.execute(operation, result -> callback.onSuccess(asNamedNodes(result.asPropertyList())));
                 })
 
-                .onPreview(item -> new LoggingPreview(dispatcher, resources,
+                .onPreview(item -> new LoggingPreview<>(dispatcher, resources,
                         item.getName(), resources.previews().configurationLoggingProfiles(),
                         new Operation.Builder(READ_RESOURCE_OPERATION,
                                 LOGGING_PROFILE_TEMPLATE.append("root-logger=ROOT")
@@ -89,7 +89,7 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
         setItemRenderer(item -> new ItemDisplay<NamedNode>() {
             @Override
             public String getId() {
-                return Ids.loggingProfileId(item.getName());
+                return Ids.loggingProfile(item.getName());
             }
 
             @Override
@@ -103,7 +103,7 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
                         .with(NAME, item.getName())
                         .build();
                 return Arrays.asList(
-                        itemActionFactory.viewAndMonitor(Ids.loggingProfileId(item.getName()), placeRequest),
+                        itemActionFactory.viewAndMonitor(Ids.loggingProfile(item.getName()), placeRequest),
                         itemActionFactory.remove(Names.LOGGING_PROFILE, item.getName(),
                                 AddressTemplates.LOGGING_PROFILE_TEMPLATE, LoggingProfileColumn.this));
             }

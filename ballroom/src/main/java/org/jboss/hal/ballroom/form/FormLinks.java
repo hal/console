@@ -127,10 +127,10 @@ class FormLinks<T> implements IsElement {
         // @formatter:off
         return new Elements.Builder()
             .div().css(formGroup)
-                .label().css(column(labelColumns, columnLg, columnMd, columnSm), controlLabel)
+                .label().css(controlLabel, halFormLabel)
                     .textContent(label)
                 .end()
-                .div().css(column(inputColumns, columnLg, columnMd, columnSm))
+                .div().css(halFormInput)
                     .p().css(formControlStatic)
                         .innerHtml(description)
                     .end()

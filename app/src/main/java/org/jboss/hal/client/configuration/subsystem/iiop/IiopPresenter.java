@@ -90,7 +90,7 @@ public class IiopPresenter extends MbuiPresenter<IiopPresenter.MyView, IiopPrese
 
     @Override
     protected FinderPath finderPath() {
-        return finderPathFactory.configurationSubsystemPath(ROOT_TEMPLATE.lastValue());
+        return finderPathFactory.subsystemPath(ROOT_TEMPLATE.lastValue());
     }
 
     @Override

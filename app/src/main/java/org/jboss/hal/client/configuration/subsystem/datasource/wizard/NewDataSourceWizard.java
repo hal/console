@@ -18,9 +18,9 @@ package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 import java.util.List;
 
 import org.jboss.hal.ballroom.wizard.Wizard;
-import org.jboss.hal.client.configuration.subsystem.datasource.DataSource;
+import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
-import org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver;
+import org.jboss.hal.core.datasource.JdbcDriver;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;

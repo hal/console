@@ -49,7 +49,7 @@ public class ConfigurationColumn extends StaticItemColumn {
             List<StaticItem> items = new ArrayList<>();
             if (environment.isStandalone()) {
                 items.add(new StaticItem.Builder(Names.SUBSYSTEMS)
-                        .nextColumn(Ids.CONFIGURATION_SUBSYSTEM)
+                        .nextColumn(Ids.SUBSYSTEM)
                         .onPreview(new PreviewContent(Names.SUBSYSTEMS, resources.previews().configurationSubsystems()))
                         .build());
 

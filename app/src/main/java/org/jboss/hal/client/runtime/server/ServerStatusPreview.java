@@ -17,7 +17,6 @@ package org.jboss.hal.client.runtime.server;
 
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.Format;
-import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.metric.Utilization;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
@@ -28,7 +27,6 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -70,7 +68,7 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
 
         this.usedHeap = new Utilization(resources.constants().used(), Names.MB, true, true);
         this.committedHeap = new Utilization(resources.constants().commited(), Names.MB, true, true);
-        this.threads = new Utilization("Daemon", Names.THREADS, true, false);
+        this.threads = new Utilization("Daemon", Names.THREADS, true, false); //NON-NLS
 
         // @formatter:off
         previewBuilder()
@@ -103,15 +101,12 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
         this.jvm = previewBuilder().referenceFor(JVM);
         this.jvmVersion = previewBuilder().referenceFor(JVM_VERSION);
         this.uptime = previewBuilder().referenceFor(UPTIME);
-
-        PatternFly.initComponents("#" + Ids.PREVIEW_ID);
     }
 
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
     public void update(final StaticItem item) {
-        AddressTemplate mbean = AddressTemplate
-                .of("/{selected.host}/server=" + statementContext.selectedServer() + "/core-service=platform-mbean");
+        AddressTemplate mbean = AddressTemplate.of("/{selected.host}/{selected.server}/core-service=platform-mbean");
         AddressTemplate osTmpl = mbean.append("type=operating-system");
         AddressTemplate runtimeTmpl = mbean.append("type=runtime");
         AddressTemplate memoryTmpl = mbean.append("type=memory");
@@ -161,9 +156,6 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
             long threadCount = threadsNode.get("thread-count").asLong();
             long daemonCount = threadsNode.get("daemon-thread-count").asLong();
             threads.update(daemonCount, threadCount);
-
-            // init the tooltips for the utilization bars
-            PatternFly.initComponents("." + finderPreview);
         });
     }
 }

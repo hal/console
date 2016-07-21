@@ -29,9 +29,6 @@ import static java.util.stream.Collectors.joining;
  */
 public interface CSS {
 
-    int labelColumns = 3;
-    int inputColumns = 9;
-
     String active = "active";
     String alert = "alert";
     String alertDanger = "alert-danger";
@@ -116,6 +113,9 @@ public interface CSS {
 
     String grey = "grey";
 
+    String halFormLabel = "hal-form-label";
+    String halFormInput = "hal-form-input";
+    String halFormOffset = "hal-form-offset";
     String hasError = "has-error";
     String hasFeedback = "has-feedback";
     String helpBlock = "help-block";
@@ -210,6 +210,7 @@ public interface CSS {
     String pin = "pin";
     String pinned = "pinned";
     String pinnable = "pinnable";
+    String preview = "preview";
     String progress = "progress";
     String progressBar = "progress-bar";
     String progressBarDanger = "progress-bar-danger";

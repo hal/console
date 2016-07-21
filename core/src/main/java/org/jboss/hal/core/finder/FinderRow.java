@@ -243,10 +243,10 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
     }
 
     void updatePreview() {
-        previewContent.update(item);
         if (isSelected()) {
             finder.showPreview(previewContent);
         }
+        previewContent.update(item);
     }
 
     private boolean isSelected() {

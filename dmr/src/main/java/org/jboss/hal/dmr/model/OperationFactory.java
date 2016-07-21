@@ -105,7 +105,9 @@ public class OperationFactory {
         } else if (HashMap.class == type) {
             valueNode.clear();
             Map map = (Map) value;
-            for (Object k : map.keySet()) { valueNode.add(String.valueOf(k), String.valueOf(map.get(k))); }
+            for (Object k : map.keySet()) {
+                valueNode.get(String.valueOf(k)).set(String.valueOf(map.get(k)));
+            }
         } else if (ModelNode.class == type) {
             valueNode.set((ModelNode) value);
         } else {

@@ -54,8 +54,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String connectedTo(String url);
     String currentOfTottal(long current, long total);
 
-    SafeHtml databaseDisabled(String name);
-    SafeHtml databaseEnabled(String name);
+    SafeHtml dataSourceDisabled(String name);
+    SafeHtml dataSourceDisabledNoStatistics(String name);
+    SafeHtml dataSourceEnabled(String name);
+    SafeHtml dataSourceStatisticsDisabled(String name);
     SafeHtml deploymentAdded(@PluralCount int count);
     SafeHtml deploymentDisabled(String name);
     SafeHtml deploymentEnabled(String name);
@@ -68,6 +70,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml emptyModelNodeForm();
     SafeHtml endpointError(String url);
     SafeHtml endpointOk(String url);
+
+    SafeHtml flushConnectionSuccess();
 
     String homepagePatchingSubHeader(String name);
     String homepagePatchingStandaloneStepIntro(String name);
@@ -91,7 +95,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml lastOperationFailed();
     SafeHtml listHint();
     SafeHtml logFileError(String name);
-    String logFileStatus(int lines, String lastUpdate);
+    String logFileFullStatus(int lines, String lastUpdate);
+    String logFilePartStatus(int lines, String lastUpdate);
 
     SafeHtml macroPlaybackError();
     SafeHtml macroPlaybackSuccessful();
@@ -147,6 +152,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml restartServerError(String name);
     SafeHtml restartServerQuestion(String name);
     SafeHtml restartServerSuccess(String name);
+    SafeHtml restartStandalonePending(String name);
+    SafeHtml restartStandaloneQuestion(String name);
+    SafeHtml restartStandaloneTimeout(String name);
 
     SafeHtml resumeServerGroupError(String name);
     SafeHtml resumeServerGroupSuccess(String name);
@@ -169,10 +177,14 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml serverTimeout(String name);
     SafeHtml serverUndefined(String name);
 
+    SafeHtml staleStatistics();
+
     SafeHtml startServerGroupError(String name);
     SafeHtml startServerGroupSuccess(String name);
     SafeHtml startServerError(String name);
     SafeHtml startServerSuccess(String name);
+
+    SafeHtml statisticsEnabled(String name);
 
     String stop(String name);
     SafeHtml stopServerGroupError(String name);

@@ -39,6 +39,7 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.runtime.TopologyFunctions;
+import org.jboss.hal.core.datasource.JdbcDriver;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -57,9 +58,9 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.JDBC_DRIVER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.JDBC_DRIVER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver.Provider.DEPLOYMENT;
-import static org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver.Provider.MODULE;
-import static org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver.Provider.UNKNOWN;
+import static org.jboss.hal.core.datasource.JdbcDriver.Provider.DEPLOYMENT;
+import static org.jboss.hal.core.datasource.JdbcDriver.Provider.MODULE;
+import static org.jboss.hal.core.datasource.JdbcDriver.Provider.UNKNOWN;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
@@ -119,7 +120,10 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                             resources.messages().addResourceTitle(Names.JDBC_DRIVER), form,
                             (name, modelNode) -> {
                                 if (modelNode != null) {
-                                    ResourceAddress address = JDBC_DRIVER_TEMPLATE.resolve(statementContext, name);
+                                    // name is null - the form does not have a name field!
+                                    String driverName = modelNode.get(DRIVER_NAME).asString();
+                                    ResourceAddress address = JDBC_DRIVER_TEMPLATE
+                                            .resolve(statementContext, driverName);
                                     Operation operation = new Operation.Builder(ADD, address)
                                             .payload(modelNode)
                                             .build();
@@ -128,7 +132,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                                                 Message.success(resources.messages()
                                                         .addResourceSuccess(Names.JDBC_DRIVER,
                                                                 modelNode.get(DRIVER_NAME).asString())));
-                                        column.refresh(name);
+                                        column.refresh(driverName);
                                     });
                                 }
                             });
@@ -159,7 +163,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
 
             @Override
             public String getFilterData() {
-                if ((driver.getProvider() == DEPLOYMENT || driver.getProvider()== MODULE)) {
+                if ((driver.getProvider() == DEPLOYMENT || driver.getProvider() == MODULE)) {
                     return getTitle() + " " + driver.getProvider().text();
                 }
                 return getTitle();

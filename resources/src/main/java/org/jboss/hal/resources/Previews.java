@@ -25,40 +25,40 @@ public interface Previews extends ClientBundle {
 
     // ------------------------------------------------------ configuration
 
-    @Source("previews/configuration/subsystems/datasources.html")
+    @Source("previews/configuration/datasources.html")
     ExternalTextResource configurationDatasources();
 
-    @Source("previews/configuration/subsystems/datasources-drivers.html")
+    @Source("previews/configuration/datasources-drivers.html")
     ExternalTextResource configurationDatasourcesDrivers();
 
-    @Source("previews/configuration/subsystems/deployment-scanner.html")
+    @Source("previews/configuration/deployment-scanner.html")
     ExternalTextResource configurationDeploymentScanner();
 
     @Source("previews/configuration/domain.html")
     ExternalTextResource configurationDomain();
 
-    @Source("previews/configuration/subsystems/ee.html")
+    @Source("previews/configuration/ee.html")
     ExternalTextResource configurationEe();
 
     @Source("previews/configuration/interfaces.html")
     ExternalTextResource configurationInterfaces();
 
-    @Source("previews/configuration/subsystems/io.html")
+    @Source("previews/configuration/io.html")
     ExternalTextResource configurationIo();
 
-    @Source("previews/configuration/subsystems/jdbc-drivers.html")
+    @Source("previews/configuration/jdbc-drivers.html")
     ExternalTextResource configurationJdbcDrivers();
 
-    @Source("previews/configuration/subsystems/logging.html")
+    @Source("previews/configuration/logging.html")
     ExternalTextResource configurationLogging();
 
-    @Source("previews/configuration/subsystems/logging-configuration.html")
+    @Source("previews/configuration/logging-configuration.html")
     ExternalTextResource configurationLoggingConfiguration();
 
-    @Source("previews/configuration/subsystems/logging-profiles.html")
+    @Source("previews/configuration/logging-profiles.html")
     ExternalTextResource configurationLoggingProfiles();
 
-    @Source("previews/configuration/subsystems/mail.html")
+    @Source("previews/configuration/mail.html")
     ExternalTextResource configurationMail();
 
     @Source("previews/configuration/paths.html")
@@ -97,6 +97,9 @@ public interface Previews extends ClientBundle {
 
     // ------------------------------------------------------ runtime
 
+    @Source("previews/runtime/datasources.html")
+    ExternalTextResource runtimeDatasources();
+
     @Source("previews/runtime/domain.html")
     ExternalTextResource runtimeDomain();
 
@@ -111,9 +114,6 @@ public interface Previews extends ClientBundle {
 
     @Source("previews/runtime/standalone.html")
     ExternalTextResource runtimeStandalone();
-
-    @Source("previews/runtime/subsystems.html")
-    ExternalTextResource runtimeSubsystems();
 
     @Source("previews/runtime/topology.html")
     ExternalTextResource runtimeTopology();
