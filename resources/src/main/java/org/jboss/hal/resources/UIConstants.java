@@ -27,6 +27,11 @@ public interface UIConstants {
      */
     int PROGRESS_TIMEOUT = 333;
 
+    /**
+     * The time in milliseconds after one modal dialog is closed and the next one is shown.
+     */
+    int DIALOG_TIMEOUT = 111;
+
     String BUTTON = "button";
     String COLLAPSE = "collapse";
     String CONTROLS = "controls";

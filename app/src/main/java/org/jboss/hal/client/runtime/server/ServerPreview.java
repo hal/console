@@ -111,39 +111,27 @@ class ServerPreview extends RuntimePreview<Server> {
     public void update(final Server server) {
         boolean pending = serverActions.isPending(server);
         if (pending) {
-            pending(server.isStandalone() ? resources.messages().standalonePending() : resources.messages()
-                    .serverPending(server.getName()));
+            pending(resources.messages().serverPending(server.getName()));
         } else if (server.isAdminMode()) {
-            adminOnly(server.isStandalone() ? resources.messages().standaloneAdminMode() : resources.messages()
-                    .serverAdminMode(server.getName()));
+            adminOnly(resources.messages().serverAdminMode(server.getName()));
         } else if (server.isStarting()) {
-            starting(server.isStandalone() ? resources.messages().standaloneStarting() : resources.messages()
-                    .serverStarting(server.getName()));
+            starting(resources.messages().serverStarting(server.getName()));
         } else if (server.isSuspended()) {
-            suspended(server.isStandalone() ? resources.messages().standaloneSuspended() : resources.messages()
-                    .serverSuspended(server.getName()));
+            suspended(resources.messages().serverSuspended(server.getName()));
         } else if (server.needsReload()) {
-            needsReload(server.isStandalone() ? resources.messages().standaloneNeedsReload() : resources.messages()
-                    .serverNeedsReload(server.getName()));
+            needsReload(resources.messages().serverNeedsReload(server.getName()));
         } else if (server.needsRestart()) {
-            needsRestart(
-                    server.isStandalone() ? resources.messages().standaloneNeedsRestart() : resources.messages()
-                            .serverNeedsRestart(server.getName()));
+            needsRestart(resources.messages().serverNeedsRestart(server.getName()));
         } else if (server.isRunning()) {
-            running(server.isStandalone() ? resources.messages().standaloneRunning() : resources.messages()
-                    .serverRunning(server.getName()));
+            running(resources.messages().serverRunning(server.getName()));
         } else if (server.isFailed()) {
-            timeout(server.isStandalone() ? resources.messages().standaloneTimeout() : resources.messages()
-                    .serverFailed(server.getName()));
+            timeout(resources.messages().serverFailed(server.getName()));
         } else if (server.isStopped()) {
             alertContainer.setClassName(alert + " " + alertInfo);
             alertIcon.setClassName(Icons.STOPPED);
-            alertText.setInnerHTML(
-                    server.isStandalone() ? resources.messages().standaloneStopped().asString() : resources.messages()
-                            .serverStopped(server.getName()).asString());
+            alertText.setInnerHTML(resources.messages().serverStopped(server.getName()).asString());
         } else {
-            unknown(server.isStandalone() ? resources.messages().standaloneUndefined() : resources.messages()
-                    .serverUndefined(server.getName()));
+            unknown(resources.messages().serverUndefined(server.getName()));
         }
 
         if (pending) {

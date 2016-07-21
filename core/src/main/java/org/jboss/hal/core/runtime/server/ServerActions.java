@@ -24,7 +24,9 @@ import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
+import elemental.client.Browser;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
@@ -60,6 +62,7 @@ import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STOPPED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
+import static org.jboss.hal.resources.UIConstants.DIALOG_TIMEOUT;
 
 /**
  * TODO Support standalone mode
@@ -164,13 +167,68 @@ public class ServerActions {
     }
 
     public void restart(Server server) {
-        reloadRestart(server,
-                new Operation.Builder(RESTART, server.getServerConfigAddress()).param(BLOCKING, false).build(),
-                Action.RESTART, SERVER_RESTART_TIMEOUT,
-                resources.messages().restart(server.getName()),
-                resources.messages().restartServerQuestion(server.getName()),
-                resources.messages().restartServerSuccess(server.getName()),
-                resources.messages().restartServerError(server.getName()));
+        if (server.isStandalone()) {
+            restartStandalone(server);
+        } else {
+            reloadRestart(server,
+                    new Operation.Builder(RESTART, server.getServerConfigAddress()).param(BLOCKING, false).build(),
+                    Action.RESTART, SERVER_RESTART_TIMEOUT,
+                    resources.messages().restart(server.getName()),
+                    resources.messages().restartServerQuestion(server.getName()),
+                    resources.messages().restartServerSuccess(server.getName()),
+                    resources.messages().restartServerError(server.getName()));
+        }
+    }
+
+    private void restartStandalone(Server server) {
+        String title = resources.messages().restart(server.getName());
+        DialogFactory.confirmation(title,
+                resources.messages().restartStandaloneQuestion(server.getName()), () -> {
+                    // execute the restart with a little delay to ensure the confirmation dialog is closed
+                    // before the next dialog is opened (only one modal can be open at a time!)
+                    Browser.getWindow().setTimeout(() -> {
+
+                        prepare(server, Action.RESTART);
+                        BlockingDialog pendingDialog = DialogFactory
+                                .longRunning(title,
+                                        resources.messages().restartStandalonePending(server.getName()));
+                        pendingDialog.show();
+                        Operation operation = new Operation.Builder(SHUTDOWN, ResourceAddress.ROOT)
+                                .param(RESTART, true)
+                                .build();
+                        Operation ping = new Operation.Builder(READ_RESOURCE_OPERATION, ResourceAddress.ROOT).build();
+                        dispatcher.execute(operation,
+
+                                result -> new TimeoutHandler(dispatcher, SERVER_RESTART_TIMEOUT)
+                                        .execute(ping, new TimeoutHandler.Callback() {
+                                            @Override
+                                            public void onSuccess() {
+                                                // wait a little bit before event handlers try to use the restarted server
+                                                Browser.getWindow().setTimeout(() -> {
+                                                    pendingDialog.close();
+                                                    finish(Server.STANDALONE, Result.SUCCESS, Message.success(
+                                                            resources.messages()
+                                                                    .restartServerSuccess(server.getName())));
+                                                }, 666);
+                                            }
+
+                                            @Override
+                                            public void onTimeout() {
+                                                pendingDialog.close();
+                                                DialogFactory.blocking(title,
+                                                        resources.messages().restartStandaloneTimeout(server.getName()))
+                                                        .show();
+                                                finish(Server.STANDALONE, Result.TIMEOUT, null);
+                                            }
+                                        }),
+                                (o1, failure) -> finish(Server.STANDALONE, Result.ERROR,
+                                        Message.error(resources.messages().restartServerError(server.getName()))),
+                                (o2, exception) -> finish(Server.STANDALONE, Result.ERROR,
+                                        Message.error(resources.messages().restartServerError(server.getName()))));
+
+                    }, DIALOG_TIMEOUT);
+                    return true;
+                }).show();
     }
 
     private void reloadRestart(Server server, Operation operation, Action action, int timeout,

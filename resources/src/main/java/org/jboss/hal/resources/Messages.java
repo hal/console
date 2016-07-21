@@ -152,6 +152,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml restartServerError(String name);
     SafeHtml restartServerQuestion(String name);
     SafeHtml restartServerSuccess(String name);
+    SafeHtml restartStandalonePending(String name);
+    SafeHtml restartStandaloneQuestion(String name);
+    SafeHtml restartStandaloneTimeout(String name);
 
     SafeHtml resumeServerGroupError(String name);
     SafeHtml resumeServerGroupSuccess(String name);
@@ -175,17 +178,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml serverUndefined(String name);
 
     SafeHtml staleStatistics();
-
-    SafeHtml standaloneAdminMode();
-    SafeHtml standaloneNeedsReload();
-    SafeHtml standaloneNeedsRestart();
-    SafeHtml standalonePending();
-    SafeHtml standaloneRunning();
-    SafeHtml standaloneUndefined();
-    SafeHtml standaloneStarting();
-    SafeHtml standaloneStopped();
-    SafeHtml standaloneSuspended();
-    SafeHtml standaloneTimeout();
 
     SafeHtml startServerGroupError(String name);
     SafeHtml startServerGroupSuccess(String name);

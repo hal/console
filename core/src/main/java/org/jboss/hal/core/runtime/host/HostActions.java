@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.resources.UIConstants.DIALOG_TIMEOUT;
 
 /**
  * @author Harald Pehl
@@ -100,7 +101,6 @@ public class HostActions {
     }
 
 
-    private static final int DIALOG_TIMEOUT = 111;
     private static final int RELOAD_TIMEOUT = 10; // seconds w/o servers
     private static final int RESTART_TIMEOUT = 15; // seconds w/o servers
     @NonNls private static final Logger logger = LoggerFactory.getLogger(HostActions.class);
