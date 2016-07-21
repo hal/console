@@ -16,8 +16,10 @@
 package org.jboss.hal.core.ui;
 
 import elemental.client.Browser;
+import elemental.dom.Document;
 import elemental.dom.Element;
 
+import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static org.jboss.hal.resources.CSS.navbar;
 
 /**
@@ -30,7 +32,7 @@ public final class Skeleton {
 
     public static int navigationHeight() {
         int navigation = 0;
-        Element element = Browser.getDocument().querySelector("nav." + navbar); //NON-NLS
+        Element element = Browser.getDocument().querySelector("body > nav." + navbar); //NON-NLS
         if (element != null) {
             navigation = element.getOffsetHeight();
         }
@@ -48,6 +50,20 @@ public final class Skeleton {
 
     public static int applicationHeight() {
         return Browser.getWindow().getInnerHeight() - navigationHeight() - footerHeight();
+    }
+
+    public static void externalWindowMode() {
+        Document document = Browser.getDocument();
+        Element body = document.getBody();
+        Element element = document.querySelector("body > nav." + navbar); //NON-NLS
+        if (element != null) {
+            body.removeChild(element);
+        }
+        element = document.querySelector("body > footer.footer"); //NON-NLS
+        if (element != null) {
+            body.removeChild(element);
+        }
+        body.getStyle().setPadding(0, PX);
     }
 
     private Skeleton() {}

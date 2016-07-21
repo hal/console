@@ -18,6 +18,9 @@ package org.jboss.hal.client.skeleton;
 import javax.annotation.PostConstruct;
 
 import com.gwtplatform.mvp.client.ViewImpl;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
+import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.DataElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -25,15 +28,19 @@ import org.jboss.gwt.elemento.core.EventHandler;
 import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.ballroom.ProgressElement;
 import org.jboss.hal.ballroom.Tooltip;
+import org.jboss.hal.client.tools.ModelBrowserPresenter;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.ui.UIRegistry;
+import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Collections.singletonList;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.disabled;
 import static org.jboss.hal.resources.CSS.pulse;
@@ -45,10 +52,11 @@ import static org.jboss.hal.resources.CSS.pulse;
 public abstract class FooterView extends ViewImpl implements FooterPresenter.MyView {
 
     // @formatter:off
-    public static FooterView create(final UIRegistry uiRegistry, final Resources resources) {
-        return new Templated_FooterView(uiRegistry, resources);
+    public static FooterView create(final TokenFormatter tokenFormatter, final UIRegistry uiRegistry, final Resources resources) {
+        return new Templated_FooterView(tokenFormatter, uiRegistry, resources);
     }
 
+    public abstract TokenFormatter tokenFormatter();
     public abstract UIRegistry uiRegistry();
     public abstract Resources resources();
     // @formatter:on
@@ -67,12 +75,22 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
     @DataElement Element recordingContainer;
     @DataElement Element steps;
     @DataElement Element recording;
+    @DataElement Element externalModelBrowser;
 
     @PostConstruct
     void init() {
         uiRegistry().register(progress);
         Elements.setVisible(recordingContainer, false);
         Elements.setVisible(updateAvailable, false);
+
+        PlaceRequest request = new PlaceRequest.Builder().nameToken(NameTokens.MODEL_BROWSER)
+                .with(ModelBrowserPresenter.EXTERNAL_PARAM, "true") //NON-NLS
+                .build();
+        String href = Browser.getWindow().getLocation().getHref();
+        href = href.substring(0, href.indexOf('#'));
+        href += "#" + tokenFormatter().toHistoryToken(singletonList(request));
+        externalModelBrowser.setAttribute(UIConstants.HREF, href);
+        externalModelBrowser.setAttribute(UIConstants.TARGET, Ids.MODEL_BROWSER);
     }
 
     @Override
@@ -129,7 +147,7 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
 
     @EventHandler(element = "modelBrowser", on = click)
     void onModelBrowser() {
-        presenter.onModelBrowser();
+        presenter.onModelBrowser(false);
     }
 
     @EventHandler(element = "expressionResolver", on = click)

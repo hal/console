@@ -20,7 +20,6 @@ import javax.annotation.PostConstruct;
 
 import com.google.common.base.Strings;
 import elemental.client.Browser;
-import elemental.dom.Document;
 import elemental.dom.Element;
 import elemental.events.KeyboardEvent;
 import elemental.events.KeyboardEvent.KeyCode;
@@ -154,17 +153,7 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
 
     @Override
     public void externalMode() {
-        Document document = Browser.getDocument();
-        Element body = document.getBody();
-        Element element = document.querySelector("body > nav.navbar"); //NON-NLS
-        if (element != null) {
-            body.removeChild(element);
-        }
-        element = document.querySelector("body > footer.footer"); //NON-NLS
-        if (element != null) {
-            body.removeChild(element);
-        }
-        body.getStyle().setPadding(0, PX);
+        Skeleton.externalWindowMode();
         Elements.setVisible(external, false);
     }
 
