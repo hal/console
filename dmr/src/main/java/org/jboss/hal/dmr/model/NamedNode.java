@@ -82,4 +82,8 @@ public class NamedNode extends ModelNode {
     public ModelNode asModelNode() {
         return node;
     }
+
+    public void update(ModelNode node) {
+        set(node);
+    }
 }

@@ -186,7 +186,8 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         });
 
         setPreviewCallback(item ->
-                new DataSourcePreview(this, server, item, dispatcher, serverActions, resources));
+                new DataSourcePreview(this, server, item, environment, dispatcher, statementContext, serverActions,
+                        resources));
     }
 
     private void testConnection(DataSource dataSource) {
