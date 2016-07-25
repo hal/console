@@ -21,7 +21,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.datasource.DataSource;
@@ -40,7 +39,6 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -165,13 +163,9 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             @Override
             @SuppressWarnings("HardCodedStringLiteral")
             public List<ItemAction<DataSource>> actions() {
-                PlaceRequest.Builder builder = places.selectedServer(NameTokens.DATA_SOURCE_RUNTIME)
-                        .with(NAME, dataSource.getName());
-
                 List<ItemAction<DataSource>> actions = new ArrayList<>();
-                actions.add(itemActionFactory.view(builder.build()));
                 if (dataSource.isEnabled()) {
-                    actions.add(new ItemAction<>(resources.constants().testConnection(), item -> testConnection(item)));
+                    actions.add(new ItemAction<>(resources.constants().test(), item -> testConnection(item)));
                     actions.add(new ItemAction<>(resources.constants().flushGracefully(),
                             item -> flush(item, "flush-gracefully-connection-in-pool")));
                     actions.add(new ItemAction<>(resources.constants().flushIdle(),

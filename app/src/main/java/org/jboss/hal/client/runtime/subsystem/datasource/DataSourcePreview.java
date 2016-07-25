@@ -161,7 +161,7 @@ class DataSourcePreview extends PreviewContent<DataSource> {
             if (ds == null) {
                 dataSource.update(result.step(1).get(RESULT));
             }
-            
+
             Elements.setVisible(needsReloadWarning.asElement(), false);
             Elements.setVisible(needsRestartWarning.asElement(), false);
             Elements.setVisible(noStatisticsWarning.asElement(), false);
