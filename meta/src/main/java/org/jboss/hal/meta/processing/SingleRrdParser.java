@@ -83,7 +83,6 @@ public class SingleRrdParser {
         if (modelNode.hasDefined(CAPABILITIES)) {
             for (ModelNode capabilityNode : modelNode.get(CAPABILITIES).asList()) {
                 String capabilityName = capabilityNode.get(NAME).asString();
-                boolean dynamic = capabilityNode.get("dynamic").asBoolean(true); //NON-NLS
                 AddressTemplate template;
                 if (address.size() == 1) {
                     // do not replace "/profile=*" with "{selected.profile}"
@@ -110,7 +109,7 @@ public class SingleRrdParser {
                         return segment;
                     });
                 }
-                Capability capability = new Capability(capabilityName, dynamic);
+                Capability capability = new Capability(capabilityName);
                 capability.addTemplate(template);
                 rr.capabilities.add(capability);
             }

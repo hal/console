@@ -38,6 +38,7 @@ public abstract class AbstractEnvironment implements Environment {
     private final List<String> locales;
     private final InstanceInfo instanceInfo;
     private OperationMode operationMode;
+    private String domainController;
     private Version managementVersion;
     private AccessControlProvider accessControlProvider;
 
@@ -46,6 +47,7 @@ public abstract class AbstractEnvironment implements Environment {
         this.locales = locales;
         this.instanceInfo = WILDFLY;
         this.operationMode = STANDALONE;
+        this.domainController = null;
         this.managementVersion = Version.forIntegers(0, 0, 0);
         this.accessControlProvider = AccessControlProvider.SIMPLE;
     }
@@ -85,6 +87,16 @@ public abstract class AbstractEnvironment implements Environment {
     @Override
     public void setOperationMode(final String launchType) {
         operationMode = (STANDALONE.name().equals(launchType)) ? STANDALONE : DOMAIN;
+    }
+
+    @Override
+    public String getDomainController() {
+        return domainController;
+    }
+
+    @Override
+    public void setDomainController(final String domainController) {
+        this.domainController = domainController;
     }
 
     @Override

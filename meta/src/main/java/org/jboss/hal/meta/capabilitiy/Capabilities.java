@@ -17,21 +17,55 @@ package org.jboss.hal.meta.capabilitiy;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import javax.inject.Inject;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.StatementContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
  * @author Harald Pehl
  */
 public class Capabilities {
 
+    @FunctionalInterface
+    public interface CapabilitiesCallback extends AsyncCallback<Iterable<AddressTemplate>> {
+
+        @Override
+        default void onFailure(Throwable caught) {
+            logger.error(caught.getMessage(), caught);
+        }
+    }
+
+
+    private static final Logger logger = LoggerFactory.getLogger(Capabilities.class);
+
+    private final Dispatcher dispatcher;
+    private final StatementContext statementContext;
     private final Map<String, Capability> registry;
 
-    public Capabilities() {
+    @Inject
+    public Capabilities(final Dispatcher dispatcher,
+            final StatementContext statementContext) {
+        this.dispatcher = dispatcher;
+        this.statementContext = statementContext;
         this.registry = new HashMap<>();
     }
 
+    /**
+     * Looks up a capability from the local cache. Returns an empty collection if no such capability was found.
+     */
     public Iterable<AddressTemplate> lookup(final String name) {
         if (contains(name)) {
             return registry.get(name).getTemplates();
@@ -39,15 +73,46 @@ public class Capabilities {
         return Collections.emptyList();
     }
 
+    /**
+     * Looks up a capability from the remote capability registry.
+     */
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    public void lookup(final String name, final CapabilitiesCallback callback) {
+        ResourceAddress address = AddressTemplate.of("{domain.controller}/core-service=capability-registry")
+                .resolve(statementContext);
+        Operation operation = new Operation.Builder("get-provider-points", address) //NON-NLS
+                .param(NAME, name)
+                .build();
+        dispatcher.execute(operation,
+                result -> {
+                    List<AddressTemplate> templates = result.asList().stream()
+                            .map(ModelNode::asString)
+                            .map(AddressTemplate::of)
+                            .collect(Collectors.toList());
+                    register(name, templates);
+                    callback.onSuccess(lookup(name));
+                },
+                (op, failure) -> callback.onFailure(new RuntimeException(
+                        "Error reading capabilities for " + name + " using " + op + ": " + failure)),
+                (op, exception) -> callback.onFailure(new RuntimeException(
+                        "Error reading capabilities for " + name + " using " + op + ": " + exception.getMessage(),
+                        exception)));
+    }
+
     public boolean contains(final String name) {return registry.containsKey(name);}
 
-    public void register(final String name, final boolean dynamic,
-            final AddressTemplate first, AddressTemplate... rest) {
-        safeGet(name, dynamic).addTemplate(first);
+    public void register(final String name, final AddressTemplate first, final AddressTemplate... rest) {
+        safeGet(name).addTemplate(first);
         if (rest != null) {
             for (AddressTemplate template : rest) {
-                safeGet(name, dynamic).addTemplate(template);
+                safeGet(name).addTemplate(template);
             }
+        }
+    }
+
+    public void register(final String name, final Iterable<AddressTemplate> templates) {
+        for (AddressTemplate template : templates) {
+            safeGet(name).addTemplate(template);
         }
     }
 
@@ -62,11 +127,11 @@ public class Capabilities {
         }
     }
 
-    private Capability safeGet(String name, final boolean dynamic) {
+    private Capability safeGet(final String name) {
         if (registry.containsKey(name)) {
             return registry.get(name);
         } else {
-            Capability capability = new Capability(name, dynamic);
+            Capability capability = new Capability(name);
             registry.put(name, capability);
             return capability;
         }
