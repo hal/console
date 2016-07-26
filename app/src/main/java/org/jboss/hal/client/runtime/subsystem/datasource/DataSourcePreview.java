@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.metric.Utilization;
@@ -52,6 +53,8 @@ import static org.jboss.hal.resources.CSS.*;
  */
 class DataSourcePreview extends PreviewContent<DataSource> {
 
+    private static final String REFRESH_ELEMENT = "refreshElement";
+
     private final Server server;
     private final DataSource dataSource;
     private final Environment environment;
@@ -63,6 +66,7 @@ class DataSourcePreview extends PreviewContent<DataSource> {
     private final Alert needsRestartWarning;
     private final Alert disabledWarning;
     private final Alert noStatisticsWarning;
+    private final Element refresh;
     private final Utilization activeConnections;
     private final Utilization maxUsedConnections;
     private final Utilization hitCount;
@@ -86,7 +90,6 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                         .append(resources.messages().staleStatistics())
                         .toSafeHtml(),
                 resources.constants().reload(), event -> serverActions.reload(server));
-        previewBuilder().add(needsReloadWarning);
 
         needsRestartWarning = new Alert(Icons.WARNING,
                 new SafeHtmlBuilder()
@@ -95,17 +98,14 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                         .append(resources.messages().staleStatistics())
                         .toSafeHtml(),
                 resources.constants().restart(), event -> serverActions.restart(server));
-        previewBuilder().add(needsRestartWarning);
 
         noStatisticsWarning = new Alert(Icons.WARNING,
                 resources.messages().dataSourceStatisticsDisabled(dataSource.getName()),
                 resources.constants().enableStatistics(), event -> column.enableStatistics(dataSource));
-        previewBuilder().add(noStatisticsWarning);
 
         disabledWarning = new Alert(Icons.WARNING,
                 resources.messages().dataSourceDisabledNoStatistics(dataSource.getName()),
                 resources.constants().enable(), event -> column.enableDataSource(dataSource));
-        previewBuilder().add(disabledWarning);
 
         activeConnections = new Utilization(resources.constants().active(), resources.constants().connections(), false,
                 true);
@@ -116,8 +116,12 @@ class DataSourcePreview extends PreviewContent<DataSource> {
 
         // @formatter:off
         previewBuilder()
+            .add(needsReloadWarning)
+            .add(needsRestartWarning)
+            .add(noStatisticsWarning)
+            .add(disabledWarning)
             .p()
-                .a().css(clickable, pullRight).on(click, event -> update(null))
+                .a().rememberAs(REFRESH_ELEMENT).css(clickable, pullRight).on(click, event -> update(null))
                     .span().css(fontAwesome("refresh"), marginRight4).end()
                     .span().textContent(resources.constants().refresh()).end()
                 .end()
@@ -129,6 +133,8 @@ class DataSourcePreview extends PreviewContent<DataSource> {
             .add(hitCount)
             .add(missCount);
         // @formatter:on
+
+        refresh = previewBuilder().referenceFor(REFRESH_ELEMENT);
     }
 
     @Override
@@ -175,14 +181,15 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                 Elements.setVisible(needsReloadWarning.asElement(), server.needsReload());
                 Elements.setVisible(needsRestartWarning.asElement(), server.needsRestart());
             }
+            Elements.setVisible(refresh, dataSource.isStatisticsEnabled());
 
             // pool statistics
             ModelNode pool = ModelNodeHelper.failSafeGet(dataSource, "statistics/pool");
             if (pool.isDefined()) {
                 int available = pool.get("AvailableCount").asInt(0);
-                int active1 = pool.get("ActiveCount").asInt(0);
+                int active = pool.get("ActiveCount").asInt(0);
                 int maxUsed = pool.get("MaxUsedCount").asInt(0);
-                activeConnections.update(active1, available);
+                activeConnections.update(active, available);
                 maxUsedConnections.update(maxUsed, available);
             } else {
                 activeConnections.update(0, 0);

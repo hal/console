@@ -106,6 +106,9 @@ public interface Previews extends ClientBundle {
     @Source("previews/runtime/hosts.html")
     ExternalTextResource runtimeHosts();
 
+    @Source("previews/runtime/jpa.html")
+    ExternalTextResource runtimeJpa();
+
     @Source("previews/runtime/logfiles.html")
     ExternalTextResource runtimeLogFiles();
 
@@ -114,6 +117,9 @@ public interface Previews extends ClientBundle {
 
     @Source("previews/runtime/standalone.html")
     ExternalTextResource runtimeStandalone();
+
+    @Source("previews/runtime/subsystems.html")
+    ExternalTextResource runtimeSubsystems();
 
     @Source("previews/runtime/topology.html")
     ExternalTextResource runtimeTopology();

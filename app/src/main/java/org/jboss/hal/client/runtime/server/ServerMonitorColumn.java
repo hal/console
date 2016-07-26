@@ -52,6 +52,11 @@ public class ServerMonitorColumn extends StaticItemColumn {
                         .nextColumn(Ids.DATA_SOURCE_RUNTIME)
                         .build(),
 
+                new StaticItem.Builder(Names.JPA)
+                        .onPreview(new PreviewContent(Names.JPA, resources.previews().runtimeJpa()))
+                        .nextColumn(Ids.JPA_RUNTIME)
+                        .build(),
+
                 new StaticItem.Builder(resources.constants().logFiles())
                         .onPreview(new PreviewContent(resources.constants().logFiles(),
                                 resources.previews().runtimeLogFiles()))

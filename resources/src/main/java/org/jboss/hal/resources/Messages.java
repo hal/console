@@ -87,6 +87,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml jdbcDriverDeploymentHint();
     SafeHtml jdbcDriverProvidedByPreview(String type, String value);
+    SafeHtml jpaStatisticsDisabled(String name);
 
     String invalidRange(long value, long min, long max);
 

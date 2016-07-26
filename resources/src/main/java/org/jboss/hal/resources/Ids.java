@@ -135,6 +135,7 @@ public interface Ids {
     String JDBC_DRIVER_ADD = build(JDBC_DRIVER, ADD_SUFFIX);
     String JDBC_DRIVER_ADD_FORM = build(JDBC_DRIVER, ADD_SUFFIX, FORM_SUFFIX);
     String JDBC_DRIVER_REFRESH = build(JDBC_DRIVER, REFRESH_SUFFIX);
+    String JPA_RUNTIME = "jpa-runtime";
 
     String LOG_FILE = "log-file";
     String LOG_FILE_EDITOR = build(LOG_FILE, "editor");
@@ -168,6 +169,7 @@ public interface Ids {
     String PROFILE_REFRESH = build(PROFILE, REFRESH_SUFFIX);
 
     String ROOT_CONTAINER = "hal-root-container";
+    String RUNTIME_SUBSYSTEMS = "runtime-subsystems";
 
     String SERVER = "server";
     String SERVER_ADD = build(SERVER, ADD_SUFFIX);
@@ -198,6 +200,45 @@ public interface Ids {
 
     String XA_DATA_SOURCE = "xa-data-source";
     String XA_DATA_SOURCE_ADD = build(XA_DATA_SOURCE, ADD_SUFFIX);
+
+
+    // ------------------------------------------------------ resource ids (a-z)
+
+    static String dataSourceConfiguration(String name, boolean xa) {
+        return build(xa ? "xa" : "non-xa", DATA_SOURCE_CONFIGURATION, name);
+    }
+
+    static String dataSourceRuntime(String name, boolean xa) {
+        return build(xa ? "xa" : "non-xa", DATA_SOURCE_RUNTIME, name);
+    }
+
+    static String host(final String name) {
+        return build(HOST, name);
+    }
+
+    static String hostServer(final String host, final String server) {
+        return build(host, server);
+    }
+
+    static String jpaStatistic(final String deployment, final String persistenceUnit) {
+        return build(deployment, persistenceUnit);
+    }
+
+    static String loggingProfile(final String name) {
+        return build(LOGGING, name);
+    }
+
+    static String server(final String name) {
+        return build(SERVER, name);
+    }
+
+    static String serverGroup(final String name) {
+        return build(SERVER_GROUP, name);
+    }
+
+    static String serverGroupServer(final String serverGroup, final String server) {
+        return build(serverGroup, server);
+    }
 
 
     // ------------------------------------------------------ methods
@@ -233,38 +274,6 @@ public interface Ids {
             }
         }
         return Joiner.on(separator).skipNulls().join(ids);
-    }
-
-    static String dataSourceConfiguration(String name, boolean xa) {
-        return build(xa ? "xa" : "non-xa", DATA_SOURCE_CONFIGURATION, name);
-    }
-
-    static String dataSourceRuntime(String name, boolean xa) {
-        return build(xa ? "xa" : "non-xa", DATA_SOURCE_RUNTIME, name);
-    }
-
-    static String host(final String name) {
-        return build(HOST, name);
-    }
-
-    static String loggingProfile(final String name) {
-        return build(LOGGING, name);
-    }
-
-    static String server(final String name) {
-        return build(SERVER, name);
-    }
-
-    static String hostServer(final String host, final String server) {
-        return build(host, server);
-    }
-
-    static String serverGroupServer(final String serverGroup, final String server) {
-        return build(serverGroup, server);
-    }
-
-    static String serverGroup(final String name) {
-        return build(SERVER_GROUP, name);
     }
 
     static String uniqueId() {

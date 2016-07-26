@@ -60,6 +60,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String clear();
     String clearMessages();
     String close();
+    String closed();
     String commited();
     String connection();
     String connections();
@@ -224,6 +225,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String nothingSelected();
 
     String ok();
+    String opened();
     String openInExternalWindow();
     String operationMode();
     String operations();
@@ -266,6 +268,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String seconds();
     String security();
     String serverName();
+    String sessions();
     String settings();
     String showAll();
     String size();

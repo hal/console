@@ -27,9 +27,7 @@ import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
-import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
-import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -74,9 +72,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             final StatementContext statementContext,
             final Environment environment,
             final Resources resources,
-            final Places places,
-            final Finder finder,
-            final ItemActionFactory itemActionFactory) {
+            final Finder finder) {
 
         super(new Builder<DataSource>(finder, Ids.DATA_SOURCE_RUNTIME, Names.DATASOURCE)
                 .withFilter()

@@ -20,7 +20,9 @@ package org.jboss.hal.core;
  */
 public final class Strings {
 
-    public static final String ELLIPSIS = "...";
+    private static final String ELLIPSIS = "...";
+    private static final String EMPTY = "";
+    private static final int INDEX_NOT_FOUND = -1;
 
     public static String abbreviateMiddle(String string, int maxLength) {
         if (string == null || maxLength >= string.length()) {
@@ -32,6 +34,20 @@ public final class Strings {
         final int endOffset = string.length() - targetSting / 2;
 
         return string.substring(0, startOffset) + ELLIPSIS + string.substring(endOffset);
+    }
+
+    public static String substringAfterLast(final String str, final String separator) {
+        if (com.google.common.base.Strings.isNullOrEmpty(str)) {
+            return str;
+        }
+        if (com.google.common.base.Strings.isNullOrEmpty(separator)) {
+            return EMPTY;
+        }
+        final int pos = str.lastIndexOf(separator);
+        if (pos == INDEX_NOT_FOUND || pos == str.length() - separator.length()) {
+            return EMPTY;
+        }
+        return str.substring(pos + separator.length());
     }
 
     private Strings() {
