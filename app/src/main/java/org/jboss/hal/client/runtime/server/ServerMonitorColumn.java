@@ -17,6 +17,7 @@ package org.jboss.hal.client.runtime.server;
 
 import javax.inject.Inject;
 
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
@@ -26,25 +27,26 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.spi.Column;
+import org.jboss.hal.spi.AsyncColumn;
 
 import static java.util.Arrays.asList;
 
 /**
  * @author Harald Pehl
  */
-@Column(Ids.SERVER_MONITOR)
+@AsyncColumn(Ids.SERVER_MONITOR)
 public class ServerMonitorColumn extends StaticItemColumn {
 
     @Inject
     public ServerMonitorColumn(final Finder finder,
+            final Environment environment,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
             final Resources resources) {
         super(finder, Ids.SERVER_MONITOR, resources.constants().monitor(), asList(
 
                 new StaticItem.Builder(resources.constants().status())
-                        .onPreview(new ServerStatusPreview(dispatcher, statementContext, resources))
+                        .onPreview(new ServerStatusPreview(environment, dispatcher, statementContext, resources))
                         .build(),
 
                 new StaticItem.Builder(Names.DATASOURCES)

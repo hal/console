@@ -30,8 +30,8 @@ import org.jboss.hal.resources.Ids;
 
 import static java.util.Collections.singletonList;
 import static org.jboss.hal.client.runtime.subsystem.logging.LogFilePresenter.EXTERNAL_PARAM;
-import static org.jboss.hal.client.runtime.subsystem.logging.LogFilePresenter.LOG_FILE_PARAM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 
 /**
@@ -87,7 +87,7 @@ public class LogFiles {
         PlaceRequest request = new PlaceRequest.Builder().nameToken(NameTokens.LOG_FILE)
                 .with(HOST, statementContext.selectedHost())
                 .with(SERVER, statementContext.selectedServer())
-                .with(LOG_FILE_PARAM, name)
+                .with(NAME, name)
                 .with(EXTERNAL_PARAM, String.valueOf(true))
                 .build();
         String href = Browser.getWindow().getLocation().getHref();

@@ -98,6 +98,10 @@ public class Utilization implements IsElement {
         this.remainingBar = builder.referenceFor(REMAINING_BAR);
         this.remainingElement = builder.referenceFor(REMAINING_ELEMENT);
         this.root = builder.build();
+
+        if (inline) {
+            valueElement.setTitle(unit);
+        }
     }
 
     @Override

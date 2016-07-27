@@ -27,28 +27,31 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
 /**
  * @author Harald Pehl
  */
-public class JpaStatistic extends NamedNode {
+class JpaStatistic extends NamedNode {
 
     private final ResourceAddress address;
+    private final String deployment;
 
-    public JpaStatistic(final ResourceAddress address, final ModelNode node) {
+    @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
+    JpaStatistic(final ResourceAddress address, final ModelNode node) {
         super(Strings.substringAfterLast(node.get("hibernate-persistence-unit").asString(), "#"), node);
         this.address = address;
-    }
-
-    public boolean isStatisticsEnabled() {
-        return hasDefined(STATISTICS_ENABLED) && get(STATISTICS_ENABLED).asBoolean();
-    }
-
-    public String getDeployment() {
-        return address.asPropertyList().stream()
+        this.deployment = address.asPropertyList().stream()
                 .filter(property -> DEPLOYMENT.equals(property.getName()))
                 .findFirst()
                 .map((property) -> property.getValue().asString())
                 .orElse(Names.NOT_AVAILABLE);
     }
 
-    public ResourceAddress getAddress() {
+    boolean isStatisticsEnabled() {
+        return hasDefined(STATISTICS_ENABLED) && get(STATISTICS_ENABLED).asBoolean();
+    }
+
+    public String getDeployment() {
+        return deployment;
+    }
+
+    ResourceAddress getAddress() {
         return address;
     }
 }

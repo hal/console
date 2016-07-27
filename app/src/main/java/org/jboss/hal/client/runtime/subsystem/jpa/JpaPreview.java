@@ -15,14 +15,23 @@
  */
 package org.jboss.hal.client.runtime.subsystem.jpa;
 
+import java.util.Collections;
+
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.metric.Utilization;
+import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Resources;
 
@@ -47,7 +56,9 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
     private final Element refresh;
 
     @SuppressWarnings("HardCodedStringLiteral")
-    JpaPreview(final JpaStatistic jpaStatistic, final Dispatcher dispatcher, final Resources resources) {
+    JpaPreview(final JpaStatistic jpaStatistic, final Environment environment, final Dispatcher dispatcher,
+            final FinderPathFactory finderPathFactory, final Places places, final TokenFormatter tokenFormatter,
+            final Resources resources) {
 
         super(jpaStatistic.getName(), jpaStatistic.getDeployment());
         this.dispatcher = dispatcher;
@@ -56,10 +67,19 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
         noStatisticsWarning = new Alert(Icons.WARNING,
                 resources.messages().jpaStatisticsDisabled(jpaStatistic.getName()));
 
-        openedSessions = new Utilization(resources.constants().opened(), resources.constants().sessions(), false,
-                false);
-        closedSessions = new Utilization(resources.constants().closed(), resources.constants().sessions(), false,
-                false);
+        FinderPath path = finderPathFactory.deployment(jpaStatistic.getDeployment());
+        PlaceRequest placeRequest = places.finderPlace(NameTokens.DEPLOYMENTS, path);
+        String linkToDeployment = "#" + tokenFormatter.toHistoryToken(Collections.singletonList(placeRequest));
+        previewBuilder().p()
+                .innerHtml(resources.messages()
+                        .jpaStatisticsPreview(jpaStatistic.getName(), jpaStatistic.getDeployment(), linkToDeployment,
+                                resources.constants().view()))
+                .end();
+
+        openedSessions = new Utilization(resources.constants().opened(), resources.constants().sessions(),
+                environment.isStandalone(), false);
+        closedSessions = new Utilization(resources.constants().closed(), resources.constants().sessions(),
+                environment.isStandalone(), false);
 
         // @formatter:off
         previewBuilder()

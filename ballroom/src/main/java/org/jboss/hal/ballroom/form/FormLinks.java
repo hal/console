@@ -94,7 +94,7 @@ class FormLinks<T> implements IsElement {
             helpLink = new Elements.Builder()
                 .li()
                     .a().attr("href", "#" + helpId + "")
-                            .data(UIConstants.TOGGLE,  UIConstants.COLLAPSE) //NON-NLS
+                            .data(UIConstants.TOGGLE,  UIConstants.COLLAPSE)
                             .aria(UIConstants.EXPANDED, String.valueOf(false))
                             .aria(UIConstants.CONTROLS, helpId)
                         .start("i").css(pfIcon("help")).end()

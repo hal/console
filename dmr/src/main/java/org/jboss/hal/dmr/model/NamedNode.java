@@ -85,5 +85,6 @@ public class NamedNode extends ModelNode {
 
     public void update(ModelNode node) {
         set(node);
+        setName(name); // restore name!
     }
 }

@@ -83,6 +83,7 @@ public interface Ids {
     String DATA_SOURCE_RUNTIME = "data-source-runtime";
     String DATA_SOURCE_WIZARD = build(DATA_SOURCE_CONFIGURATION, WIZARD_SUFFIX);
     String DEPLOYMENT = "deployment";
+    String DEPLOYMENT_SERVER_GROUP = "deployment-sg";
     String DEPLOYMENT_ADD = build(Ids.DEPLOYMENT, ADD_SUFFIX);
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
     String DOMAIN_BROWSE_BY = "domain-browse-by";
@@ -276,6 +277,9 @@ public interface Ids {
         return Joiner.on(separator).skipNulls().join(ids);
     }
 
+    /**
+     * Only available in GWT!
+     */
     static String uniqueId() {
         return Document.get().createUniqueId();
     }

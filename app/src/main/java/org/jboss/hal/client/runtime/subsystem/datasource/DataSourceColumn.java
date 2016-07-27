@@ -48,6 +48,7 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.*;
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
@@ -194,7 +195,10 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     private void flush(DataSource dataSource, String flushMode) {
         Operation operation = new Operation.Builder(flushMode, dataSourceAddress(dataSource)).build();
         dispatcher.execute(operation,
-                result -> MessageEvent.fire(eventBus, Message.success(resources.messages().flushConnectionSuccess())));
+                result -> {
+                    refresh(RESTORE_SELECTION);
+                    MessageEvent.fire(eventBus, Message.success(resources.messages().flushConnectionSuccess()));
+                });
     }
 
     ResourceAddress dataSourceAddress(DataSource dataSource) {

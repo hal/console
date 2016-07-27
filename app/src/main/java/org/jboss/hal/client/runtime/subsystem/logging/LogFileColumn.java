@@ -42,6 +42,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.LOGGING_SUBSYSTEM_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.LOG_FILE_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 
@@ -96,7 +97,7 @@ public class LogFileColumn extends FinderColumn<LogFile> {
                             builder.with(HOST, statementContext.selectedHost());
                         }
                         builder.with(SERVER, statementContext.selectedServer())
-                                .with(LogFilePresenter.LOG_FILE_PARAM, item.getFilename());
+                                .with(NAME, item.getFilename());
 
                         ItemAction<LogFile> download = new ItemAction<>(resources.constants().download(),
                                 logFiles.downloadUrl(item.getFilename()),

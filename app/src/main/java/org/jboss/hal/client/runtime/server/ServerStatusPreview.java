@@ -18,6 +18,7 @@ package org.jboss.hal.client.runtime.server;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.metric.Utilization;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.dmr.ModelNode;
@@ -59,16 +60,17 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
     private final Utilization committedHeap;
     private final Utilization threads;
 
-    ServerStatusPreview(final Dispatcher dispatcher, final StatementContext statementContext,
-            final Resources resources) {
+    ServerStatusPreview(final Environment environment, final Dispatcher dispatcher,
+            final StatementContext statementContext, final Resources resources) {
         super(resources.constants().status());
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
         this.resources = resources;
 
-        this.usedHeap = new Utilization(resources.constants().used(), Names.MB, true, true);
-        this.committedHeap = new Utilization(resources.constants().commited(), Names.MB, true, true);
-        this.threads = new Utilization("Daemon", Names.THREADS, true, false); //NON-NLS
+        this.usedHeap = new Utilization(resources.constants().used(), Names.MB, environment.isStandalone(), true);
+        this.committedHeap = new Utilization(resources.constants().commited(), Names.MB, environment.isStandalone(),
+                true);
+        this.threads = new Utilization("Daemon", Names.THREADS, environment.isStandalone(), false); //NON-NLS
 
         // @formatter:off
         previewBuilder()

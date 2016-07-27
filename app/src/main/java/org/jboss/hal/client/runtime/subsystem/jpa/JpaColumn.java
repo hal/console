@@ -15,17 +15,24 @@
  */
 package org.jboss.hal.client.runtime.subsystem.jpa;
 
+import java.util.List;
 import javax.inject.Inject;
 
+import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 import elemental.dom.Element;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.finder.FinderPathFactory;
+import org.jboss.hal.core.finder.ItemAction;
+import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -33,23 +40,28 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.JPA_RUNTIME)
-@Requires(value = JpaColumn.JPA_ADDRESS)
+@Requires(value = JPA_ADDRESS)
 public class JpaColumn extends FinderColumn<JpaStatistic> {
-
-    static final String JPA_ADDRESS = "/{selected.host}/{selected.server}/deployment=*/subsystem=jpa/hibernate-persistence-unit=*";
-    private static final AddressTemplate JPA_TEMPLATE = AddressTemplate.of(JPA_ADDRESS);
 
     @Inject
     public JpaColumn(final Finder finder,
+            final ItemActionFactory itemActionFactory,
+            final Environment environment,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
+            final FinderPathFactory finderPathFactory,
+            final Places places,
+            final TokenFormatter tokenFormatter,
             final Resources resources) {
 
         super(new Builder<JpaStatistic>(finder, Ids.JPA_RUNTIME, Names.JPA)
@@ -86,11 +98,20 @@ public class JpaColumn extends FinderColumn<JpaStatistic> {
                     public Element getIcon() {
                         return item.isStatisticsEnabled() ? Icons.ok() : Icons.disabled();
                     }
+
+                    @Override
+                    public List<ItemAction<JpaStatistic>> actions() {
+                        //noinspection HardCodedStringLiteral
+                        return singletonList(itemActionFactory
+                                .view(NameTokens.JPA_RUNTIME, NAME, item.get("scoped-unit-name").asString()));
+                    }
                 })
 
                 .withFilter()
                 .useFirstActionAsBreadcrumbHandler()
-                .onPreview(item -> new JpaPreview(item, dispatcher, resources))
+                .onPreview(
+                        item -> new JpaPreview(item, environment, dispatcher, finderPathFactory, places, tokenFormatter,
+                                resources))
         );
     }
 }

@@ -107,12 +107,14 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                 resources.messages().dataSourceDisabledNoStatistics(dataSource.getName()),
                 resources.constants().enable(), event -> column.enableDataSource(dataSource));
 
-        activeConnections = new Utilization(resources.constants().active(), resources.constants().connections(), false,
-                true);
+        activeConnections = new Utilization(resources.constants().active(), resources.constants().connections(),
+                environment.isStandalone(), true);
         maxUsedConnections = new Utilization(resources.constants().maxUsed(), resources.constants().connections(),
-                false, true);
-        hitCount = new Utilization(resources.constants().hitCount(), resources.constants().count(), false, false);
-        missCount = new Utilization(resources.constants().missCount(), resources.constants().count(), false, false);
+                environment.isStandalone(), true);
+        hitCount = new Utilization(resources.constants().hitCount(), resources.constants().count(),
+                environment.isStandalone(), false);
+        missCount = new Utilization(resources.constants().missCount(), resources.constants().count(),
+                environment.isStandalone(), false);
 
         // @formatter:off
         previewBuilder()

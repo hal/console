@@ -48,6 +48,7 @@ import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.LOG_FILE_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.logging.LogFiles.LINES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.meta.token.NameTokens.LOG_FILE;
@@ -73,7 +74,6 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
     // @formatter:on
 
 
-    static final String LOG_FILE_PARAM = "log-file";
     static final String EXTERNAL_PARAM = "external";
     private static final int REFRESH_INTERVAL = 1000;
 
@@ -117,7 +117,7 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
     @Override
     public void prepareFromRequest(final PlaceRequest request) {
         super.prepareFromRequest(request);
-        logFileName = request.getParameter(LOG_FILE_PARAM, null);
+        logFileName = request.getParameter(NAME, null);
         external = Boolean.parseBoolean(request.getParameter(EXTERNAL_PARAM, "false")); //NON-NLS
     }
 

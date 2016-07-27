@@ -20,11 +20,13 @@ import javax.inject.Inject;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
+import static org.jboss.hal.core.finder.FinderContext.PATH_PARAM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
@@ -99,5 +101,9 @@ public class Places {
             return firstSegment.getItemId().equals(Ids.asId(Names.SERVER_GROUPS));
         }
         return false;
+    }
+
+    public PlaceRequest finderPlace(final String token, final FinderPath path) {
+        return new PlaceRequest.Builder().nameToken(token).with(PATH_PARAM, path.toString()).build();
     }
 }
