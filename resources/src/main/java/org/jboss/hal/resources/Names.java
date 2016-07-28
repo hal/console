@@ -23,7 +23,9 @@ package org.jboss.hal.resources;
 public interface Names {
 
     String ACCESS_CONTROL = "Access Control";
+    String COLLECTION = "Collection";
     String CONFIGURATION = "Configuration";
+    String CONNECTION = "Connection";
     String DATASOURCE = "Datasource";
     String DATASOURCES = "Datasources";
     String DATASOURCES_DRIVERS = "Datasources & Drivers";
@@ -31,6 +33,8 @@ public interface Names {
     String DEPLOYMENTS = "Deployments";
     String DOMAIN_CONTROLLER = "Domain Controller";
     String EE = "EE";
+    String ENTITY = "Entity";
+    String ENTITY_CACHE = "Entity Cache";
     String GLOBAL_MODULES = "Global Modules";
     String HAL = "HAL";
     String HEAP = "Heap";
@@ -39,6 +43,7 @@ public interface Names {
     String HOSTS = "Hosts";
     String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";
+    String JDBC = "JDBC";
     String JDBC_DRIVER = "JDBC Driver";
     String JDBC_DRIVERS = "JDBC Drivers";
     String JPA = "JPA";
@@ -59,9 +64,12 @@ public interface Names {
     String PATHS = "Paths";
     String PROFILE = "Profile";
     String PROFILES = "Profiles";
+    String QUERY = "Query";
+    String QUERY_CACHE = "Query Cache";
     String RESOURCE = "Resource";
     String ROOT_LOGGER = "Root Logger";
     String RUNTIME = "Runtime";
+    String SECOND_LEVEL_CACHE = "Second Level Cache";
     String SERVER = "Server";
     String SERVER_GROUP = "Server Group";
     String SERVER_GROUPS = "Server Groups";

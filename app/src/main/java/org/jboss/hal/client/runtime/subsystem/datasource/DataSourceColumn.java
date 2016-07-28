@@ -27,6 +27,7 @@ import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
+import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
@@ -37,6 +38,7 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -48,6 +50,7 @@ import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.*;
+import static org.jboss.hal.client.runtime.subsystem.datasource.DataSourcePresenter.XA_PARAM;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -73,7 +76,8 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             final StatementContext statementContext,
             final Environment environment,
             final Resources resources,
-            final Finder finder) {
+            final Finder finder,
+            final ItemActionFactory itemActionFactory) {
 
         super(new Builder<DataSource>(finder, Ids.DATA_SOURCE_RUNTIME, Names.DATASOURCE)
                 .withFilter()
@@ -161,8 +165,10 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             @SuppressWarnings("HardCodedStringLiteral")
             public List<ItemAction<DataSource>> actions() {
                 List<ItemAction<DataSource>> actions = new ArrayList<>();
+                actions.add(itemActionFactory.view(NameTokens.DATA_SOURCE_RUNTIME, NAME, dataSource.getName(), XA_PARAM,
+                        String.valueOf(dataSource.isXa())));
                 if (dataSource.isEnabled()) {
-                    actions.add(new ItemAction<>(resources.constants().test(), item -> testConnection(item)));
+                    actions.add(new ItemAction<>(resources.constants().testConnection(), item -> testConnection(item)));
                     actions.add(new ItemAction<>(resources.constants().flushGracefully(),
                             item -> flush(item, "flush-gracefully-connection-in-pool")));
                     actions.add(new ItemAction<>(resources.constants().flushIdle(),
@@ -208,12 +214,13 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     }
 
     private ResourceAddress dataSourceConfigurationAddress(DataSource dataSource) {
+        String resourceName = dataSource.isXa() ? XA_DATA_SOURCE : DATA_SOURCE;
         if (environment.isStandalone()) {
-            return AddressTemplate.of("/subsystem=datasources/data-source=*")
+            return AddressTemplate.of("/subsystem=datasources/" + resourceName + "=*")
                     .resolve(statementContext, dataSource.getName());
         } else {
             String profile = server.get(PROFILE_NAME).asString();
-            return AddressTemplate.of("/profile=*/subsystem=datasources/data-source=*")
+            return AddressTemplate.of("/profile=*/subsystem=datasources/" + resourceName + "=*")
                     .resolve(statementContext, profile, dataSource.getName());
         }
     }

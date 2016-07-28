@@ -26,10 +26,10 @@ public interface NameTokens {
     String RUNTIME_SUFFIX = "-runtime";
 
     String ACCESS_CONTROL = "access-control";
-    String BATCH_CONFIGURATION = ModelDescriptionConstants.BATCH_JBERET +  CONFIGURATION_SUFFIX;
+    String BATCH_CONFIGURATION = ModelDescriptionConstants.BATCH_JBERET + CONFIGURATION_SUFFIX;
     String CONFIGURATION = "configuration";
     String DATA_SOURCE_CONFIGURATION = ModelDescriptionConstants.DATA_SOURCE + CONFIGURATION_SUFFIX;
-    String DATA_SOURCE_RUNTIME = ModelDescriptionConstants.DATA_SOURCE +  RUNTIME_SUFFIX;
+    String DATA_SOURCE_RUNTIME = ModelDescriptionConstants.DATA_SOURCE + RUNTIME_SUFFIX;
     String DEPLOYMENT_SCANNERS = ModelDescriptionConstants.DEPLOYMENT_SCANNER;
     String DEPLOYMENTS = "deployments";
     String EE = ModelDescriptionConstants.EE;
@@ -42,8 +42,8 @@ public interface NameTokens {
     String IO = ModelDescriptionConstants.IO;
     String JCA = ModelDescriptionConstants.JCA;
     String JMX = ModelDescriptionConstants.JMX;
-    String JPA_CONFIGURATION = ModelDescriptionConstants.JPA +  CONFIGURATION_SUFFIX;
-    String JPA_RUNTIME = ModelDescriptionConstants.JPA +  RUNTIME_SUFFIX;
+    String JPA_CONFIGURATION = ModelDescriptionConstants.JPA + CONFIGURATION_SUFFIX;
+    String JPA_RUNTIME = ModelDescriptionConstants.JPA + RUNTIME_SUFFIX;
     String LOG_FILE = "log-file";
     String LOGGING_CONFIGURATION = "logging-configuration";
     String LOGGING_PROFILE = "logging-profile";

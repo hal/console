@@ -180,21 +180,6 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
     }
 
     @Override
-    public void attach() {
-        super.attach();
-        bindFormToTable(ModelDescriptionConstants.CONTEXT_SERVICE);
-        bindFormToTable(MANAGED_EXECUTOR_SERVICE);
-        bindFormToTable(MANAGED_SCHEDULED_EXECUTOR_SERVICE);
-        bindFormToTable(MANAGED_THREAD_FACTORY);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void bindFormToTable(String formName) {
-        DataTable<ModelNode> table = tables.get(formName);
-        table.api().bindForm(forms.get(formName));
-    }
-
-    @Override
     public void setPresenter(final EEPresenter presenter) {
         this.presenter = presenter;
     }
@@ -225,7 +210,7 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
             formDefaultBindings.view(defaultBindings);
         }
         // update the context-service table
-        update(eeData, ModelDescriptionConstants.CONTEXT_SERVICE, EE_CONTEXT_SERVICE);
+        update(eeData, CONTEXT_SERVICE, EE_CONTEXT_SERVICE);
 
         // update the managed-executor-service table
         update(eeData, MANAGED_EXECUTOR_SERVICE, EE_MANAGED_EXECUTOR);
@@ -285,7 +270,7 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
         registerAttachable(form);
 
         return new Elements.Builder()
-                .div()
+                .section()
                 .h(1).textContent(type).end()
                 .p().textContent(metadata.getDescription().getDescription()).end()
                 .add(table.asElement())

@@ -84,7 +84,7 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
         // @formatter:off
         previewBuilder()
             .add(noStatisticsWarning)
-            .p()
+            .div().css(clearfix)
                 .a().rememberAs(REFRESH_ELEMENT).css(clickable, pullRight).on(click, event -> update(null))
                     .span().css(fontAwesome("refresh"), marginRight4).end()
                     .span().textContent(resources.constants().refresh()).end()

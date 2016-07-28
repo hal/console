@@ -103,7 +103,7 @@ public class JpaColumn extends FinderColumn<JpaStatistic> {
                     public List<ItemAction<JpaStatistic>> actions() {
                         //noinspection HardCodedStringLiteral
                         return singletonList(itemActionFactory
-                                .view(NameTokens.JPA_RUNTIME, NAME, item.get("scoped-unit-name").asString()));
+                                .view(NameTokens.JPA_RUNTIME, DEPLOYMENT, item.getDeployment(), NAME, item.getName()));
                     }
                 })
 

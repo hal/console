@@ -58,12 +58,12 @@ import org.jetbrains.annotations.NonNls;
  * To get a fully qualified address from an address template use the {@link #resolve(StatementContext, String...)}
  * method.
  *
+ * TODO Handle special characters like '/' inside the value part of a segment
+ * /foo=bar/special=java:jboss/x/y/z/another=segment
+ *
  * @author Harald Pehl
  */
 public final class AddressTemplate {
-
-    // ------------------------------------------------------ factories
-
 
     @FunctionalInterface
     public interface Unresolver {

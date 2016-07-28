@@ -144,6 +144,19 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
                 event -> reset());
         section.appendChild(formLinks.asElement());
 
+        // @formatter:off
+        Elements.Builder errorPanelBuilder = new Elements.Builder()
+            .div().css(alert, alertDanger).rememberAs("errorPanel")
+                .span().css(Icons.ERROR).end()
+                .span().rememberAs(ERROR_MESSAGE).end()
+                .ul().rememberAs(ERROR_MESSAGES).end()
+            .end();
+        // @formatter:on
+        errorMessage = errorPanelBuilder.referenceFor(ERROR_MESSAGE);
+        errorMessages = errorPanelBuilder.referenceFor(ERROR_MESSAGES);
+        errorPanel = errorPanelBuilder.build();
+        clearErrors();
+
         if (stateMachine.supports(VIEW)) {
             panels.put(READONLY, viewPanel());
         }
@@ -193,19 +206,6 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     }
 
     private Element editPanel() {
-        // @formatter:off
-        Elements.Builder errorPanelBuilder = new Elements.Builder()
-            .div().css(alert, alertDanger).rememberAs("errorPanel")
-                .span().css(Icons.ERROR).end()
-                .span().rememberAs(ERROR_MESSAGE).end()
-                .ul().rememberAs(ERROR_MESSAGES).end()
-            .end();
-        // @formatter:on
-        errorMessage = errorPanelBuilder.referenceFor(ERROR_MESSAGE);
-        errorMessages = errorPanelBuilder.referenceFor(ERROR_MESSAGES);
-        errorPanel = errorPanelBuilder.build();
-        clearErrors();
-
         Element editPanel = new Elements.Builder()
                 .div().id(Ids.build(id, EDITING.name().toLowerCase())).css(form, formHorizontal, editing).end()
                 .build();

@@ -131,12 +131,18 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         }
 
         public Builder<T> include(final Iterable<String> attributes) {
+            //noinspection ResultOfMethodCallIgnored
             Iterables.addAll(includes, attributes);
             return this;
         }
 
         public Builder<T> include(@NonNls final String first, @NonNls final String... rest) {
             includes.addAll(Lists.asList(first, rest));
+            return this;
+        }
+
+        public Builder<T> exclude(final String[] attributes) {
+            excludes.addAll(Arrays.asList(attributes));
             return this;
         }
 
@@ -242,7 +248,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                 throw new IllegalStateException(ILLEGAL_COMBINATION + formId() + ": viewOnly && addOnly");
             }
 
-            if (!excludes.isEmpty()) {
+            if (!excludes.isEmpty() && !viewOnly) {
                 List<Property> requiredAttributes = metadata.getDescription().getRequiredAttributes(attributePath);
                 for (Property attribute : requiredAttributes) {
                     if (excludes.contains(attribute.getName())) {

@@ -36,6 +36,10 @@ public class ViewOnlyStateMachine extends AbstractStateMachine implements StateM
     public void execute(final Form.Operation operation) {
         switch (operation) {
 
+            case CLEAR:
+                transitionTo(READONLY);
+                break;
+
             case VIEW:
                 if (current != null) {
                     assertState(READONLY);

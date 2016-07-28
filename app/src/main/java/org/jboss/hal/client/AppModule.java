@@ -30,9 +30,7 @@ import org.jboss.hal.client.configuration.Mbui_PathsView_Provider;
 import org.jboss.hal.client.configuration.PathsPresenter;
 import org.jboss.hal.client.configuration.subsystem.SubsystemPresenter;
 import org.jboss.hal.client.configuration.subsystem.SubsystemView;
-import org.jboss.hal.client.configuration.subsystem.datasource.DataSourcePresenter;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
-import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceView;
 import org.jboss.hal.client.configuration.subsystem.deploymentscanner.DeploymentScannerPresenter;
 import org.jboss.hal.client.configuration.subsystem.deploymentscanner.Mbui_DeploymentScannerView_Provider;
 import org.jboss.hal.client.configuration.subsystem.ee.EEPresenter;
@@ -135,10 +133,15 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 ConfigurationView.class,
                 ConfigurationPresenter.MyProxy.class);
 
-        bindPresenter(DataSourcePresenter.class,
-                DataSourcePresenter.MyView.class,
-                DataSourceView.class,
-                DataSourcePresenter.MyProxy.class);
+        bindPresenter(org.jboss.hal.client.configuration.subsystem.datasource.DataSourcePresenter.class,
+                org.jboss.hal.client.configuration.subsystem.datasource.DataSourcePresenter.MyView.class,
+                org.jboss.hal.client.configuration.subsystem.datasource.DataSourceView.class,
+                org.jboss.hal.client.configuration.subsystem.datasource.DataSourcePresenter.MyProxy.class);
+
+        bindPresenter(org.jboss.hal.client.runtime.subsystem.datasource.DataSourcePresenter.class,
+                org.jboss.hal.client.runtime.subsystem.datasource.DataSourcePresenter.MyView.class,
+                org.jboss.hal.client.runtime.subsystem.datasource.DataSourceView.class,
+                org.jboss.hal.client.runtime.subsystem.datasource.DataSourcePresenter.MyProxy.class);
 
         bindPresenter(DeploymentPresenter.class,
                 DeploymentPresenter.MyView.class,

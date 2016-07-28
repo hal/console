@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.subsystem.jpa;
+package org.jboss.hal.client.runtime.subsystem.datasource;
 
 import javax.inject.Inject;
 
@@ -22,12 +22,12 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -38,43 +38,42 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_ADDRESS;
-import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
+import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
-import static org.jboss.hal.meta.token.NameTokens.JPA_RUNTIME;
+import static org.jboss.hal.meta.token.NameTokens.DATA_SOURCE_RUNTIME;
 
 /**
  * @author Harald Pehl
  */
-
-public class JpaPresenter extends ApplicationPresenter<JpaPresenter.MyView, JpaPresenter.MyProxy> {
+public class DataSourcePresenter  extends ApplicationPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(JPA_RUNTIME)
-    @Requires(JPA_ADDRESS)
-    public interface MyProxy extends ProxyPlace<JpaPresenter> {}
+    @NameToken(DATA_SOURCE_RUNTIME)
+    @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS})
+    public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
 
-    public interface MyView extends PatternFlyView, HasPresenter<JpaPresenter>, HasVerticalNavigation {
-        void update(JpaStatistic statistic);
+    public interface MyView extends PatternFlyView, HasPresenter<DataSourcePresenter> {
+        void setup();
+        void update(DataSource dataSource);
     }
     // @formatter:on
 
+
+    static final String XA_PARAM = "xa";
 
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final Resources resources;
-    private String resourceName;
-    private String deployment;
-    private String persistenceUnit;
+    private String name;
+    private boolean xa;
 
     @Inject
-    public JpaPresenter(final EventBus eventBus,
+    public DataSourcePresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy myProxy,
             final Finder finder,
@@ -98,16 +97,17 @@ public class JpaPresenter extends ApplicationPresenter<JpaPresenter.MyView, JpaP
     @Override
     public void prepareFromRequest(final PlaceRequest request) {
         super.prepareFromRequest(request);
-        persistenceUnit = request.getParameter(NAME, null);
-        deployment = request.getParameter(DEPLOYMENT, null);
-        resourceName = deployment + "#" + persistenceUnit;
+        name = request.getParameter(NAME, null);
+        xa = Boolean.valueOf(request.getParameter(XA_PARAM, String.valueOf(false)));
+        getView().setup();
     }
 
     @Override
     protected FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.SERVER_MONITOR, Ids.asId(Names.JPA), resources.constants().monitor(), Names.JPA)
-                .append(Ids.JPA_RUNTIME, Ids.jpaStatistic(deployment, persistenceUnit), Names.JPA, persistenceUnit);
+                .append(Ids.SERVER_MONITOR, Ids.asId(Names.DATASOURCES),
+                        resources.constants().monitor(), Names.DATASOURCES)
+                .append(Ids.DATA_SOURCE_RUNTIME, Ids.dataSourceRuntime(name, xa), Names.DATASOURCE, name);
     }
 
     @Override
@@ -117,11 +117,20 @@ public class JpaPresenter extends ApplicationPresenter<JpaPresenter.MyView, JpaP
     }
 
     void load() {
-        ResourceAddress address = JPA_TEMPLATE.resolve(statementContext, deployment, resourceName);
+        ResourceAddress address = xa ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, name) : DATA_SOURCE_TEMPLATE
+                .resolve(statementContext, name);
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
                 .param(INCLUDE_RUNTIME, true)
                 .param(RECURSIVE, true)
                 .build();
-        dispatcher.execute(operation, result -> getView().update(new JpaStatistic(address, result)));
+        dispatcher.execute(operation, result -> getView().update(new DataSource(name, result, xa)));
+    }
+
+    String getDataSource() {
+        return name;
+    }
+
+    boolean isXa() {
+        return xa;
     }
 }

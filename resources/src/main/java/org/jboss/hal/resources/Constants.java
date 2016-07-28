@@ -96,7 +96,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String endpointConnect();
     String endpointAddTitle();
     String endpointAddDescription();
-    String entity();
     String expressionResolver();
 
     String failed();
@@ -244,8 +243,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String productName();
     String productVersion();
 
-    String query();
-
     String refresh();
     String releaseName();
     String releaseVersion();
@@ -269,7 +266,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String save();
     String search();
     String second();
-    String secondLevelCache();
     String seconds();
     String security();
     String serverName();
@@ -293,7 +289,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String tags();
     String tailMode();
-    String test();
     String testConnection();
     String timeout();
     String timeouts();
