@@ -142,12 +142,14 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
         jdbcForm = new ModelNodeForm.Builder<>(Ids.DATA_SOURCE_RUNTIME_JDBC_FORM, jdbcMeta)
                 .viewOnly()
                 .includeRuntime()
+                .exclude(STATISTICS_ENABLED)
                 .build();
         nonXaTabs.add(Ids.DATA_SOURCE_RUNTIME_JDBC_TAB, Names.JDBC, jdbcForm.asElement());
 
         xaJdbcForm = new ModelNodeForm.Builder<>(Ids.XA_DATA_SOURCE_RUNTIME_JDBC_FORM, jdbcMeta)
                 .viewOnly()
                 .includeRuntime()
+                .exclude(STATISTICS_ENABLED)
                 .build();
         xaTabs.add(Ids.XA_DATA_SOURCE_RUNTIME_JDBC_TAB, Names.JDBC, xaJdbcForm.asElement());
 
