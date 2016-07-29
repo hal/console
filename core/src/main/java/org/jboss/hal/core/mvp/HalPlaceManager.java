@@ -79,8 +79,9 @@ public class HalPlaceManager extends DefaultPlaceManager {
     @Override
     protected void doRevealPlace(final PlaceRequest request, final boolean updateBrowserUrl) {
         // Special treatment for statement context relevant parameters: The {selected.*} tokens in the @Requires
-        // annotations need to have a value in the statement context *before* the metadata processor kicks in.
-        // Thus we look into the place request for well-known parameters and trigger a selection.
+        // annotations on presenters and proxy places need to have a value in the statement context *before*
+        // the metadata processor kicks in. Thus we need to look into the place request for well-known parameters
+        // and trigger a selection.
         for (Map.Entry<Tuple, Consumer<String>> entry : selectFunctions.entrySet()) {
             String param = request.getParameter(entry.getKey().resource(), null);
             if (param != null) {
