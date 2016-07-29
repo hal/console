@@ -71,6 +71,10 @@
             <artifactId>gwt-elemental</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.google.jsinterop</groupId>
+            <artifactId>jsinterop-annotations</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.gwtplatform</groupId>
             <artifactId>gwtp-processors</artifactId>
         </dependency>
