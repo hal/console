@@ -67,23 +67,23 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
         noStatisticsWarning = new Alert(Icons.WARNING,
                 resources.messages().jpaStatisticsDisabled(jpaStatistic.getName()));
 
-        FinderPath path = finderPathFactory.deployment(jpaStatistic.getDeployment());
-        PlaceRequest placeRequest = places.finderPlace(NameTokens.DEPLOYMENTS, path);
-        String linkToDeployment = "#" + tokenFormatter.toHistoryToken(Collections.singletonList(placeRequest));
-        previewBuilder().p()
-                .innerHtml(resources.messages()
-                        .jpaStatisticsPreview(jpaStatistic.getName(), jpaStatistic.getDeployment(), linkToDeployment,
-                                resources.constants().view()))
-                .end();
-
         openedSessions = new Utilization(resources.constants().opened(), resources.constants().sessions(),
                 environment.isStandalone(), false);
         closedSessions = new Utilization(resources.constants().closed(), resources.constants().sessions(),
                 environment.isStandalone(), false);
 
+        FinderPath path = finderPathFactory.deployment(jpaStatistic.getDeployment());
+        PlaceRequest placeRequest = places.finderPlace(NameTokens.DEPLOYMENTS, path);
+        String linkToDeployment = "#" + tokenFormatter.toHistoryToken(Collections.singletonList(placeRequest));
+
         // @formatter:off
         previewBuilder()
             .add(noStatisticsWarning)
+            .p()
+                .innerHtml(resources.messages()
+                    .jpaStatisticsPreview(jpaStatistic.getName(), jpaStatistic.getDeployment(), linkToDeployment,
+                            resources.constants().view()))
+            .end()
             .div().css(clearfix)
                 .a().rememberAs(REFRESH_ELEMENT).css(clickable, pullRight).on(click, event -> update(null))
                     .span().css(fontAwesome("refresh"), marginRight4).end()
