@@ -31,6 +31,21 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
 
 /**
+ * Form item used in the logging subsystem to configure the complex attribute {@code file} which is roughly defined as
+ * <pre>
+ * "file" => {
+ *   "type" => OBJECT,
+ *   "value-type" => {
+ *     "relative-to" => {
+ *       "type" => STRING,
+ *     },
+ *     "path" => {
+ *       "type" => STRING,
+ *     }
+ *   }
+ * }
+ * </pre>
+ *
  * @author Harald Pehl
  */
 public class FileFormItem extends CompositeFormItem {

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.runtime.subsystem.datasource;
+package org.jboss.hal.client.runtime.server;
 
 import javax.inject.Inject;
 
@@ -21,62 +21,66 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
-import org.jboss.hal.core.mvp.HasPresenter;
+import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_ADDRESS;
-import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_TEMPLATE;
-import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_ADDRESS;
-import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
-import static org.jboss.hal.meta.token.NameTokens.DATA_SOURCE_RUNTIME;
+import static org.jboss.hal.meta.token.NameTokens.SERVER_STATUS;
 
 /**
  * @author Harald Pehl
  */
-public class DataSourcePresenter extends ApplicationPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy> {
+public class ServerStatusPresenter extends
+        ApplicationPresenter<ServerStatusPresenter.MyView, ServerStatusPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(DATA_SOURCE_RUNTIME)
-    @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS})
-    public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
+    @NameToken(SERVER_STATUS)
+    @Requires(SERVER_STATUS_ADDRESS)
+    public interface MyProxy extends ProxyPlace<ServerStatusPresenter> {}
 
-    public interface MyView extends PatternFlyView, HasPresenter<DataSourcePresenter> {
-        void setup();
-        void update(DataSource dataSource);
+    public interface MyView extends PatternFlyView, HasVerticalNavigation {
+        void update(ModelNode modelNode);
     }
     // @formatter:on
 
 
-    static final String XA_PARAM = "xa";
+    static final String SERVER_STATUS_ADDRESS = "/{selected.host}/{selected.server}/core-service=platform-mbean/type=runtime";
+    static final AddressTemplate SERVER_STATUS_TEMPLATE = AddressTemplate.of(SERVER_STATUS_ADDRESS);
+
+    static final String BOOT_CLASS_PATH = "boot-class-path";
+    static final String CLASS_PATH = "class-path";
+    static final String INPUT_ARGUMENTS = "input-arguments";
+    static final String JVM_VERSION = "jvm-version";
+    static final String LIBRARY_PATH = "library-path";
+    static final String OS_NAME = "os";
+    static final String OS_VERSION = "os-version";
+    static final String PROCESSORS = "processors";
+    static final String START_TIME = "start-time";
+    static final String SYSTEM_PROPERTIES = "system-properties";
+    static final String UPTIME = "uptime";
 
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final Resources resources;
-    private String name;
-    private boolean xa;
 
     @Inject
-    public DataSourcePresenter(final EventBus eventBus,
+    public ServerStatusPresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy myProxy,
             final Finder finder,
@@ -92,25 +96,10 @@ public class DataSourcePresenter extends ApplicationPresenter<DataSourcePresente
     }
 
     @Override
-    protected void onBind() {
-        super.onBind();
-        getView().setPresenter(this);
-    }
-
-    @Override
-    public void prepareFromRequest(final PlaceRequest request) {
-        super.prepareFromRequest(request);
-        name = request.getParameter(NAME, null);
-        xa = Boolean.valueOf(request.getParameter(XA_PARAM, String.valueOf(false)));
-        getView().setup();
-    }
-
-    @Override
     protected FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
-                .append(Ids.SERVER_MONITOR, Ids.asId(Names.DATASOURCES),
-                        resources.constants().monitor(), Names.DATASOURCES)
-                .append(Ids.DATA_SOURCE_RUNTIME, Ids.dataSourceRuntime(name, xa), Names.DATASOURCE, name);
+                .append(Ids.SERVER_MONITOR, Ids.asId(resources.constants().status()),
+                        resources.constants().monitor(), resources.constants().status());
     }
 
     @Override
@@ -120,20 +109,10 @@ public class DataSourcePresenter extends ApplicationPresenter<DataSourcePresente
     }
 
     void load() {
-        ResourceAddress address = xa ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, name) : DATA_SOURCE_TEMPLATE
-                .resolve(statementContext, name);
+        ResourceAddress address = SERVER_STATUS_TEMPLATE.resolve(statementContext);
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
                 .param(INCLUDE_RUNTIME, true)
-                .param(RECURSIVE, true)
                 .build();
-        dispatcher.execute(operation, result -> getView().update(new DataSource(name, result, xa)));
-    }
-
-    String getDataSource() {
-        return name;
-    }
-
-    boolean isXa() {
-        return xa;
+        dispatcher.execute(operation, result -> getView().update(result));
     }
 }

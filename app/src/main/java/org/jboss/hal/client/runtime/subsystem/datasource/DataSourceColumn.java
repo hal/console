@@ -20,7 +20,9 @@ import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.datasource.DataSource;
@@ -29,6 +31,8 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.finder.ItemsProvider;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -77,7 +81,8 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             final Environment environment,
             final Resources resources,
             final Finder finder,
-            final ItemActionFactory itemActionFactory) {
+            final ItemActionFactory itemActionFactory,
+            final Places places) {
 
         super(new Builder<DataSource>(finder, Ids.DATA_SOURCE_RUNTIME, Names.DATASOURCE)
                 .withFilter()
@@ -90,7 +95,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         this.resources = resources;
         this.finder = finder;
 
-        setItemsProvider((context, callback) -> {
+        ItemsProvider<DataSource> itemsProvider = (context, callback) -> {
             List<Operation> operations = new ArrayList<>();
             ResourceAddress dataSourceAddress = DATA_SOURCE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
             operations.add(new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
@@ -125,7 +130,26 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                         : new Server(statementContext.selectedHost(), result.step(2).get(RESULT));
                 callback.onSuccess(combined);
             });
-        });
+        };
+        setItemsProvider(itemsProvider);
+
+        // reuse the items provider to filter breadcrumb items
+        setBreadcrumbItemsProvider((context, callback) ->
+                itemsProvider.get(context, new AsyncCallback<List<DataSource>>() {
+                    @Override
+                    public void onFailure(final Throwable caught) {
+                        callback.onFailure(caught);
+                    }
+
+                    @Override
+                    public void onSuccess(final List<DataSource> result) {
+                        // only datasources w/ enabled statistics will show up in the breadcrumb dropdown
+                        List<DataSource> dataSourceWithStatistics = result.stream()
+                                .filter(DataSource::isStatisticsEnabled)
+                                .collect(toList());
+                        callback.onSuccess(dataSourceWithStatistics);
+                    }
+                }));
 
         setItemRenderer(dataSource -> new ItemDisplay<DataSource>() {
             @Override
@@ -145,12 +169,22 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
             @Override
             public Element getIcon() {
-                return dataSource.isEnabled() ? Icons.ok() : Icons.disabled();
+                if (!dataSource.isStatisticsEnabled()) {
+                    return Icons.unknown();
+                } else if (!dataSource.isEnabled()) {
+                    return Icons.disabled();
+                } else {
+                    return Icons.ok();
+                }
             }
 
             @Override
             public String getTooltip() {
-                return dataSource.isEnabled() ? resources.constants().enabled() : resources.constants().disabled();
+                if (!dataSource.isStatisticsEnabled()) {
+                    return resources.constants().statisticsDisabled();
+                } else {
+                    return dataSource.isEnabled() ? resources.constants().enabled() : resources.constants().disabled();
+                }
             }
 
             @Override
@@ -165,10 +199,15 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             @SuppressWarnings("HardCodedStringLiteral")
             public List<ItemAction<DataSource>> actions() {
                 List<ItemAction<DataSource>> actions = new ArrayList<>();
-                actions.add(itemActionFactory.view(NameTokens.DATA_SOURCE_RUNTIME, NAME, dataSource.getName(), XA_PARAM,
-                        String.valueOf(dataSource.isXa())));
+                if (dataSource.isStatisticsEnabled()) {
+                    PlaceRequest placeRequest = places.selectedServer(NameTokens.DATA_SOURCE_RUNTIME)
+                            .with(NAME, dataSource.getName())
+                            .with(XA_PARAM, String.valueOf(dataSource.isXa()))
+                            .build();
+                    actions.add(itemActionFactory.view(placeRequest));
+                }
                 if (dataSource.isEnabled()) {
-                    actions.add(new ItemAction<>(resources.constants().testConnection(), item -> testConnection(item)));
+                    actions.add(new ItemAction<>(resources.constants().test(), item -> testConnection(item)));
                     actions.add(new ItemAction<>(resources.constants().flushGracefully(),
                             item -> flush(item, "flush-gracefully-connection-in-pool")));
                     actions.add(new ItemAction<>(resources.constants().flushIdle(),
@@ -183,7 +222,9 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         });
 
         setPreviewCallback(item ->
-                new DataSourcePreview(this, server, item, environment, dispatcher, statementContext, serverActions,
+                new
+
+                        DataSourcePreview(this, server, item, environment, dispatcher, statementContext, serverActions,
                         resources));
     }
 

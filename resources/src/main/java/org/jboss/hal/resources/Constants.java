@@ -96,6 +96,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String endpointConnect();
     String endpointAddTitle();
     String endpointAddDescription();
+
+    String environment();
     String expressionResolver();
 
     String failed();
@@ -107,6 +109,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String flushInvalid();
     String formErrors();
     String formResetDesc();
+
+    String gotoDeployment();
 
     String help();
     String hiddenColumns();
@@ -277,6 +281,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String starting();
     String startMacro();
     String statements();
+
+    String statisticsDisabled();
+
+    String statisticsDisabledHeader();
     String status();
     String stop();
     String stopMacro();
@@ -289,6 +297,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String tags();
     String tailMode();
+
+    String test();
     String testConnection();
     String timeout();
     String timeouts();

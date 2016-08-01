@@ -107,8 +107,9 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
         }
 
         // For some reason the statistic resources are returned with the DS name in it.
-        // That's why we cannot setup the UI in the constructor like in other views.
-        // As a workaround we defer the UI setup until the DS name is known.
+        // That's why we cannot setup the UI in the constructor like in other views and
+        // using wildcards in the address templates. As a workaround we defer the UI setup
+        // until the DS name is known and replace the wildcards with the DS name.
         Metadata poolMeta;
         Metadata jdbcMeta;
         if (presenter.isXa()) {

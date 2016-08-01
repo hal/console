@@ -23,6 +23,7 @@ package org.jboss.hal.resources;
 public interface Names {
 
     String ACCESS_CONTROL = "Access Control";
+    String BOOTSTRAP = "Bootstrap";
     String COLLECTION = "Collection";
     String CONFIGURATION = "Configuration";
     String CONNECTION = "Connection";
@@ -81,6 +82,7 @@ public interface Names {
     String SYSTEM_PROPERTIES = "System Properties";
     String THREADS = "Threads";
     String TOPOLOGY = "Topology";
-    String UNKNOWN= "unknown";
+    String UNKNOWN = "unknown";
+    String VALUE = "Value";
     String XA_DATASOURCE = "XA Datasource";
 }

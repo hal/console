@@ -18,7 +18,9 @@ package org.jboss.hal.client.runtime.subsystem.jpa;
 import java.util.List;
 import javax.inject.Inject;
 
-import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
@@ -27,13 +29,13 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.finder.ItemsProvider;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -60,23 +62,11 @@ public class JpaColumn extends FinderColumn<JpaStatistic> {
             final Dispatcher dispatcher,
             final StatementContext statementContext,
             final FinderPathFactory finderPathFactory,
+            final PlaceManager placeManager,
             final Places places,
-            final TokenFormatter tokenFormatter,
             final Resources resources) {
 
         super(new Builder<JpaStatistic>(finder, Ids.JPA_RUNTIME, Names.JPA)
-
-                .itemsProvider((context, callback) -> {
-                    ResourceAddress address = JPA_TEMPLATE.resolve(statementContext);
-                    Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
-                            .param(INCLUDE_RUNTIME, true)
-                            .param(RECURSIVE, true)
-                            .build();
-                    dispatcher.execute(operation, result -> callback.onSuccess(result.asList().stream()
-                            .filter(node -> !node.isFailure())
-                            .map(node -> new JpaStatistic(new ResourceAddress(node.get(ADDRESS)), node.get(RESULT)))
-                            .collect(toList())));
-                })
 
                 .itemRenderer(item -> new ItemDisplay<JpaStatistic>() {
                     @Override
@@ -95,23 +85,62 @@ public class JpaColumn extends FinderColumn<JpaStatistic> {
                     }
 
                     @Override
-                    public Element getIcon() {
-                        return item.isStatisticsEnabled() ? Icons.ok() : Icons.disabled();
+                    public String getTooltip() {
+                        if (!item.isStatisticsEnabled()) {
+                            return resources.constants().statisticsDisabled();
+                        }
+                        return null;
                     }
 
                     @Override
                     public List<ItemAction<JpaStatistic>> actions() {
-                        //noinspection HardCodedStringLiteral
-                        return singletonList(itemActionFactory
-                                .view(NameTokens.JPA_RUNTIME, DEPLOYMENT, item.getDeployment(), NAME, item.getName()));
+                        if (item.isStatisticsEnabled()) {
+                            PlaceRequest placeRequest = places.selectedServer(NameTokens.JPA_RUNTIME)
+                                    .with(DEPLOYMENT, item.getDeployment())
+                                    .with(NAME, item.getName())
+                                    .build();
+                            return singletonList(itemActionFactory.view(placeRequest));
+                        }
+                        return ItemDisplay.super.actions();
                     }
                 })
 
                 .withFilter()
                 .useFirstActionAsBreadcrumbHandler()
                 .onPreview(
-                        item -> new JpaPreview(item, environment, dispatcher, finderPathFactory, places, tokenFormatter,
+                        item -> new JpaPreview(item, environment, dispatcher, finderPathFactory, placeManager, places,
                                 resources))
         );
+
+        ItemsProvider<JpaStatistic> itemsProvider = (context, callback) -> {
+            ResourceAddress address = JPA_TEMPLATE.resolve(statementContext);
+            Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
+                    .param(INCLUDE_RUNTIME, true)
+                    .param(RECURSIVE, true)
+                    .build();
+            dispatcher.execute(operation, result -> callback.onSuccess(result.asList().stream()
+                    .filter(node -> !node.isFailure())
+                    .map(node -> new JpaStatistic(new ResourceAddress(node.get(ADDRESS)), node.get(RESULT)))
+                    .collect(toList())));
+        };
+        setItemsProvider(itemsProvider);
+
+        // reuse the items provider to filter breadcrumb items
+        setBreadcrumbItemsProvider((context, callback) ->
+                itemsProvider.get(context, new AsyncCallback<List<JpaStatistic>>() {
+                    @Override
+                    public void onFailure(final Throwable caught) {
+                        callback.onFailure(caught);
+                    }
+
+                    @Override
+                    public void onSuccess(final List<JpaStatistic> result) {
+                        // only persistence units w/ enabled statistics will show up in the breadcrumb dropdown
+                        List<JpaStatistic> puWithStatistics = result.stream()
+                                .filter(JpaStatistic::isStatisticsEnabled)
+                                .collect(toList());
+                        callback.onSuccess(puWithStatistics);
+                    }
+                }));
     }
 }

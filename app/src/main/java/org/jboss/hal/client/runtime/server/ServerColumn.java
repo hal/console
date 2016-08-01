@@ -133,7 +133,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         }
 
                     } else {
-                        // switch server in place request parameter of specific presenter
+                        // try to replace 'server' and 'server-config' request parameter
                         PlaceRequest place = places.replaceParameter(current, SERVER, item.getName()).build();
                         builder = places.replaceParameter(place, SERVER_CONFIG, item.getName());
                     }

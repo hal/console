@@ -60,68 +60,15 @@ public class JpaView extends PatternFlyViewImpl implements JpaPresenter.MyView {
     private static final String LEAD_ELEMENT = "leadElement";
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static LinkedListMultimap<String, String> mainAttributes = LinkedListMultimap.create();
-
-    static {
-        mainAttributes.putAll(CONSTANTS.attributes(), asList(
-                "hibernate-persistence-unit",
-                "enabled",
-                "statistics-enabled"
-        ));
-
-        mainAttributes.putAll(CONSTANTS.counter(), asList(
-                "session-open-count",
-                "session-close-count",
-                "completed-transaction-count",
-                "successful-transaction-count",
-                "prepared-statement-count",
-                "close-statement-count",
-                "flush-count",
-                "connect-count",
-                "optimistic-failure-count"
-        ));
-
-        mainAttributes.putAll(Names.ENTITY, asList(
-                "entity-delete-count",
-                "entity-fetch-count",
-                "entity-insert-count",
-                "entity-load-count",
-                "entity-update-count"
-        ));
-
-        mainAttributes.putAll(Names.CONNECTION, asList(
-                "collection-fetch-count",
-                "collection-load-count",
-                "collection-recreated-count",
-                "collection-remove-count",
-                "collection-update-count"
-        ));
-
-        mainAttributes.putAll(Names.QUERY, asList(
-                "query-cache-hit-count",
-                "query-cache-miss-count",
-                "query-cache-put-count",
-                "query-execution-count",
-                "query-execution-max-time",
-                "query-execution-max-time-query-string"
-        ));
-
-        mainAttributes.putAll(Names.SECOND_LEVEL_CACHE, asList(
-                "second-level-cache-hit-count",
-                "second-level-cache-miss-count",
-                "second-level-cache-put-count"
-        ));
-    }
-
     private final MetadataRegistry metadataRegistry;
     private final Resources resources;
     private final VerticalNavigation navigation;
     private final List<Form<JpaStatistic>> mainForms;
     private final Map<String, DataTable<NamedNode>> childTables;
     private final Map<String, Form<NamedNode>> childForms;
-    private final Element headerElelenmt;
+    private final Element headerElement;
     private final Element leadElement;
     private JpaPresenter presenter;
-
     @Inject
     public JpaView(MetadataRegistry metadataRegistry, Resources resources) {
         this.metadataRegistry = metadataRegistry;
@@ -166,7 +113,7 @@ public class JpaView extends PatternFlyViewImpl implements JpaPresenter.MyView {
             .end();
         // @formatter:on
 
-        headerElelenmt = builder.referenceFor(HEADER_ELEMENT);
+        headerElement = builder.referenceFor(HEADER_ELEMENT);
         leadElement = builder.referenceFor(LEAD_ELEMENT);
 
         navigation = new VerticalNavigation();
@@ -258,7 +205,7 @@ public class JpaView extends PatternFlyViewImpl implements JpaPresenter.MyView {
 
     @Override
     public void update(final JpaStatistic statistic) {
-        headerElelenmt.setTextContent(statistic.getName());
+        headerElement.setTextContent(statistic.getName());
         leadElement.setTextContent(statistic.getDeployment());
 
         mainForms.forEach(form -> form.view(statistic));
@@ -283,5 +230,56 @@ public class JpaView extends PatternFlyViewImpl implements JpaPresenter.MyView {
         if (presenter != null) {
             presenter.load();
         }
+    }
+
+    static {
+        mainAttributes.putAll(CONSTANTS.attributes(), asList(
+                "hibernate-persistence-unit",
+                "enabled",
+                "statistics-enabled"
+        ));
+
+        mainAttributes.putAll(CONSTANTS.counter(), asList(
+                "session-open-count",
+                "session-close-count",
+                "completed-transaction-count",
+                "successful-transaction-count",
+                "prepared-statement-count",
+                "close-statement-count",
+                "flush-count",
+                "connect-count",
+                "optimistic-failure-count"
+        ));
+
+        mainAttributes.putAll(Names.ENTITY, asList(
+                "entity-delete-count",
+                "entity-fetch-count",
+                "entity-insert-count",
+                "entity-load-count",
+                "entity-update-count"
+        ));
+
+        mainAttributes.putAll(Names.CONNECTION, asList(
+                "collection-fetch-count",
+                "collection-load-count",
+                "collection-recreated-count",
+                "collection-remove-count",
+                "collection-update-count"
+        ));
+
+        mainAttributes.putAll(Names.QUERY, asList(
+                "query-cache-hit-count",
+                "query-cache-miss-count",
+                "query-cache-put-count",
+                "query-execution-count",
+                "query-execution-max-time",
+                "query-execution-max-time-query-string"
+        ));
+
+        mainAttributes.putAll(Names.SECOND_LEVEL_CACHE, asList(
+                "second-level-cache-hit-count",
+                "second-level-cache-miss-count",
+                "second-level-cache-put-count"
+        ));
     }
 }

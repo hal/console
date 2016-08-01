@@ -87,8 +87,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml jdbcDriverDeploymentHint();
     SafeHtml jdbcDriverProvidedByPreview(String type, String value);
-    SafeHtml jpaStatisticsDisabled(String name);
-    SafeHtml jpaStatisticsPreview(String name, String deployment, String linkToDeployment, String viewLabel);
+
+    SafeHtml jpaStatisticsDisabled(String name, String deployment);
 
     String invalidRange(long value, long min, long max);
 
@@ -167,6 +167,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml serverGroupNoStoppedServers(String name);
     SafeHtml serverGroupNoSuspendedServers(String name);
     SafeHtml serverGroupTimeout(String name);
+
     SafeHtml serverAdminMode(String name);
     SafeHtml serverFailed(String name);
     SafeHtml serverNeedsReload(String name);
@@ -221,6 +222,5 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String unknownResourceDetails(String address, String reason);
     String uptime(String uptime);
     String used(double value);
-
     //@formatter:on
 }

@@ -165,7 +165,6 @@ public interface Ids {
     String MAIL_SERVER_DIALOG = build(MAIL_SERVER, ADD_SUFFIX, FORM_SUFFIX);
     String MAIL_SERVER_FORM = build(MAIL_SERVER, FORM_SUFFIX);
     String MAIL_SERVER_TABLE = build(MAIL_SERVER, TABLE_SUFFIX);
-    ;
     String MAIL_SESSION = "mail-session";
     String MAIL_SESSION_ADD = build(MAIL_SESSION, ADD_SUFFIX);
     String MAIL_SESSION_ATTRIBUTES_ENTRY = build(MAIL_SESSION, "attributes", ENTRY_SUFFIX);
@@ -188,6 +187,14 @@ public interface Ids {
     String SERVER_GROUP_ADD = build(SERVER_GROUP, ADD_SUFFIX);
     String SERVER_GROUP_REFRESH = build(SERVER_GROUP, REFRESH_SUFFIX);
     String SERVER_MONITOR = "server-monitor";
+    String SERVER_STATUS = "server-status";
+    String SERVER_STATUS_BOOTSTRAP_ENTRY = build(SERVER_STATUS, "bootstrap", ENTRY_SUFFIX);
+    String SERVER_STATUS_BOOTSTRAP_FORM = build(SERVER_STATUS, "bootstrap", FORM_SUFFIX);
+    String SERVER_STATUS_MAIN_ATTRIBUTES_ENTRY = build(SERVER_STATUS, "main-attributes", ENTRY_SUFFIX);
+    String SERVER_STATUS_MAIN_ATTRIBUTES_FORM = build(SERVER_STATUS, "main-attributes", FORM_SUFFIX);
+    String SERVER_STATUS_SYSTEM_PROPERTIES_ENTRY = build(SERVER_STATUS, "system-properties", ENTRY_SUFFIX);
+    String SERVER_STATUS_SYSTEM_PROPERTIES_TABLE = build(SERVER_STATUS, "system-properties", TABLE_SUFFIX);
+
     String SERVER_REFRESH = build(SERVER, REFRESH_SUFFIX);
     String SOCKET_BINDING = "socket-binding";
     String SOCKET_BINDING_ADD = build(SOCKET_BINDING, ADD_SUFFIX);

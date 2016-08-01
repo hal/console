@@ -32,6 +32,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.client.runtime.server.ServerStatusPresenter.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.*;
 
@@ -39,13 +40,6 @@ import static org.jboss.hal.resources.CSS.*;
  * @author Harald Pehl
  */
 class ServerStatusPreview extends PreviewContent<StaticItem> {
-
-    private static final String OS_NAME = "os";
-    private static final String OS_VERSION = "os-version";
-    private static final String PROCESSORS = "processors";
-    private static final String JVM = "jvm";
-    private static final String JVM_VERSION = "jvm-version";
-    private static final String UPTIME = "uptime";
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
