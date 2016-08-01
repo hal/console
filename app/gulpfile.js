@@ -60,6 +60,8 @@ gulp.task('copy', function () {
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
     gulp.src('bower_components/datatables.net-buttons/js/dataTables.buttons.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
+    gulp.src('bower_components/datatables.net-keytable/js/dataTables.keyTable.*')
+        .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
     gulp.src('bower_components/datatables.net-select/js/dataTables.select.*')
         .pipe(copy('src/main/resources/org/jboss/hal/public/js', {prefix: 3}));
 

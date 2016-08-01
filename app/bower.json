@@ -1,6 +1,6 @@
 {
   "name": "org.jboss.hal.bower",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Bower setup for HAL",
   "license": "LGPL",
   "private": true,
@@ -12,6 +12,7 @@
     "ace-builds": "^1.2.3",
     "datatables.net": "~1.10.11",
     "datatables.net-buttons": "~1.1.2",
+    "datatables.net-keytable": "^2.1.2",
     "datatables.net-select": "~1.1.2",
     "jquery": "~2.2.2",
     "jstree": "~3.2.1",

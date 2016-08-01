@@ -55,6 +55,10 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.model.ResourceAddress.ROOT;
 
+/**
+ * Reads important information from the root resource like product name and version, operation mode and management
+ * version. Executes the {@code :whoami} operation to get the current user / roles.
+ */
 @SuppressWarnings("HardCodedStringLiteral")
 public class ReadEnvironment implements BootstrapFunction {
 

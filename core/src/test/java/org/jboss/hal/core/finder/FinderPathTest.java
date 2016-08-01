@@ -89,7 +89,9 @@ public class FinderPathTest {
 
     @Test
     public void asString() {
-        assertEquals("1=one/2=two", new FinderPath().append("1", "one").append("2", "two").toString());
+        assertEquals(
+                "1" + FinderSegment.SEPARATOR + "one" + FinderPath.SEPARATOR + "2" + FinderSegment.SEPARATOR + "two",
+                new FinderPath().append("1", "one").append("2", "two").toString());
     }
 
     private void assertSegment(FinderSegment segment, String columnId, String itemId) {

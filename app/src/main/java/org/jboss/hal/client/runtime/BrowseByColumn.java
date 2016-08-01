@@ -70,9 +70,8 @@ public class BrowseByColumn extends StaticItemColumn {
         super(finder, Ids.DOMAIN_BROWSE_BY, resources.constants().browseBy(),
                 Arrays.asList(
                         new StaticItem.Builder(Names.TOPOLOGY)
-                                .onPreview(
-                                        new TopologyPreview(environment, dispatcher, progress, eventBus,
-                                                hostActions, serverGroupActions, serverActions, resources))
+                                .onPreview(new TopologyPreview(environment, dispatcher, progress, eventBus,
+                                        hostActions, serverGroupActions, serverActions, resources))
                                 .build(),
                         new StaticItem.Builder(Names.HOSTS)
                                 .nextColumn(Ids.HOST)
@@ -82,6 +81,11 @@ public class BrowseByColumn extends StaticItemColumn {
                                 .nextColumn(Ids.SERVER_GROUP)
                                 .onPreview(new PreviewContent(Names.SERVER_GROUPS,
                                         resources.previews().runtimeServerGroups()))
+                                .build(),
+                        new StaticItem.Builder(Names.SUBSYSTEMS)
+                                .nextColumn(Ids.RUNTIME_SUBSYSTEMS)
+                                .onPreview(new PreviewContent(Names.SUBSYSTEMS,
+                                        resources.previews().runtimeSubsystems()))
                                 .build()
                 ));
     }

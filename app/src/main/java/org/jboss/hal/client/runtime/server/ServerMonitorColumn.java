@@ -17,45 +17,58 @@ package org.jboss.hal.client.runtime.server;
 
 import javax.inject.Inject;
 
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.spi.Column;
+import org.jboss.hal.spi.AsyncColumn;
 
 import static java.util.Arrays.asList;
 
 /**
  * @author Harald Pehl
  */
-@Column(Ids.SERVER_MONITOR)
+@AsyncColumn(Ids.SERVER_MONITOR)
 public class ServerMonitorColumn extends StaticItemColumn {
 
     @Inject
     public ServerMonitorColumn(final Finder finder,
+            final Environment environment,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
+            final ItemActionFactory itemActionFactory,
+            final Places places,
             final Resources resources) {
         super(finder, Ids.SERVER_MONITOR, resources.constants().monitor(), asList(
 
                 new StaticItem.Builder(resources.constants().status())
-                        .onPreview(new ServerStatusPreview(dispatcher, statementContext, resources))
+                        .action(itemActionFactory.view(places.selectedServer(NameTokens.SERVER_STATUS).build()))
+                        .onPreview(new ServerStatusPreview(environment, dispatcher, statementContext, resources))
                         .build(),
 
                 new StaticItem.Builder(Names.DATASOURCES)
-                        .onPreview(new PreviewContent(Names.DATASOURCES, resources.previews().runtimeDatasources()))
                         .nextColumn(Ids.DATA_SOURCE_RUNTIME)
+                        .onPreview(new PreviewContent(Names.DATASOURCES, resources.previews().runtimeDatasources()))
+                        .build(),
+
+                new StaticItem.Builder(Names.JPA)
+                        .nextColumn(Ids.JPA_RUNTIME)
+                        .onPreview(new PreviewContent(Names.JPA, resources.previews().runtimeJpa()))
                         .build(),
 
                 new StaticItem.Builder(resources.constants().logFiles())
+                        .nextColumn(Ids.LOG_FILE)
                         .onPreview(new PreviewContent(resources.constants().logFiles(),
                                 resources.previews().runtimeLogFiles()))
-                        .nextColumn(Ids.LOG_FILE)
                         .build()
         ));
     }

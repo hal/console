@@ -44,6 +44,22 @@ import org.jboss.hal.spi.MessageEvent;
 
 import static org.jboss.hal.meta.StatementContext.Tuple.*;
 
+/**
+ * Custom place manager for HAL. The most important task of this place manager is to extract well-known place request
+ * parameters and to process required resources associated with the name token.
+ * <p>
+ * It's crucial that this happens <strong>before</strong> the place is revealed. Therefore this place manager intercepts
+ * the {@link #doRevealPlace(PlaceRequest, boolean)} method and
+ * <ol>
+ * <li>looks for place request parameters which match the the {@linkplain Tuple#resource() resource names} in the
+ * statement context tuple enum. </li>
+ * <li>if found, fires the related selection events ({@link ProfileSelectionEvent}, {@link ServerGroupSelectionEvent},
+ * {@link HostSelectionEvent} or {@link ServerSelectionEvent})</li>
+ * <li>processes the required resources according to the value of the {@code @Requires} annotation on the proxy
+ * place</li>
+ * <li>finally calls {@code super.doRevealPlace(request, updateBrowserUrl)}</li>
+ * </ol>
+ */
 public class HalPlaceManager extends DefaultPlaceManager {
 
     private final MetadataProcessor metadataProcessor;
@@ -79,8 +95,8 @@ public class HalPlaceManager extends DefaultPlaceManager {
     @Override
     protected void doRevealPlace(final PlaceRequest request, final boolean updateBrowserUrl) {
         // Special treatment for statement context relevant parameters: The {selected.*} tokens in the @Requires
-        // annotations need to have a value in the statement context *before* the metadata processor kicks in.
-        // Thus we look into the place request for well-known parameters and trigger a selection.
+        // annotations on proxy places need to have a value in the statement context *before* the metadata processor
+        // kicks in. Thus we need to look into the place request for well-known parameters and trigger a selection.
         for (Map.Entry<Tuple, Consumer<String>> entry : selectFunctions.entrySet()) {
             String param = request.getParameter(entry.getKey().resource(), null);
             if (param != null) {

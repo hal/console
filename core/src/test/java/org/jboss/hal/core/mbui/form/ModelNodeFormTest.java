@@ -14,6 +14,7 @@ import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.core.mbui.ResourceDescriptionBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.junit.Assert;
@@ -224,6 +225,6 @@ public class ModelNodeFormTest {
     }
 
     private Metadata metadata(ResourceDescription description) {
-        return new Metadata(RWX, description, new Capabilities());
+        return new Metadata(RWX, description, new Capabilities(null, StatementContext.NOOP));
     }
 }

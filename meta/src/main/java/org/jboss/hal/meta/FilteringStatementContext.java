@@ -54,6 +54,11 @@ public class FilteringStatementContext implements StatementContext {
     }
 
     @Override
+    public String domainController() {
+        return delegate.domainController();
+    }
+
+    @Override
     public String selectedProfile() {
         return delegate.selectedProfile();
     }

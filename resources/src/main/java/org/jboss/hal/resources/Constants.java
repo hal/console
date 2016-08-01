@@ -60,6 +60,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String clear();
     String clearMessages();
     String close();
+    String closed();
     String commited();
     String connection();
     String connections();
@@ -72,6 +73,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String copy();
     String copyToClipboard();
     String count();
+    String counter();
     String custom();
 
     String data();
@@ -94,6 +96,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String endpointConnect();
     String endpointAddTitle();
     String endpointAddDescription();
+
+    String environment();
     String expressionResolver();
 
     String failed();
@@ -105,6 +109,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String flushInvalid();
     String formErrors();
     String formResetDesc();
+
+    String gotoDeployment();
 
     String help();
     String hiddenColumns();
@@ -224,6 +230,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String nothingSelected();
 
     String ok();
+    String opened();
     String openInExternalWindow();
     String operationMode();
     String operations();
@@ -266,6 +273,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String seconds();
     String security();
     String serverName();
+    String sessions();
     String settings();
     String showAll();
     String size();
@@ -273,6 +281,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String starting();
     String startMacro();
     String statements();
+
+    String statisticsDisabled();
+
+    String statisticsDisabledHeader();
     String status();
     String stop();
     String stopMacro();
@@ -285,6 +297,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String tags();
     String tailMode();
+
+    String test();
     String testConnection();
     String timeout();
     String timeouts();

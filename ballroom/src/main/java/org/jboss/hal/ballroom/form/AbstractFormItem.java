@@ -61,18 +61,33 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
  */
 public abstract class AbstractFormItem<T> implements FormItem<T> {
 
+    static final Constants CONSTANTS = GWT.create(Constants.class);
+    static final Messages MESSAGES = GWT.create(Messages.class);
     private static final String ARIA_DESCRIBEDBY = "aria-describedby";
     private static final String FORM_ITEM_GROUP = "formItemGroup";
     private static final String RESTRICTED = "restricted";
     private static final String RESTRICTED_ELEMENT = "restrictedElement";
-
-    static final Constants CONSTANTS = GWT.create(Constants.class);
-    static final Messages MESSAGES = GWT.create(Messages.class);
-
+    protected final DivElement valueContainer;
+    protected final ParagraphElement valueElement;
+    final DivElement inputGroupContainer;
+    final DivElement editingRoot;
+    final DivElement inputContainer;
+    final SpanElement errorText;
     private final EventBus eventBus;
     private final List<FormItemValidation<T>> validationHandlers;
     private final String label;
     private final String hint;
+    // Form.State#EDITING elements
+    private final LabelElement inputLabelElement;
+    private final SpanElement inputButtonContainer;
+    private final ButtonElement expressionButton;
+    private final ButtonElement showAllButton;
+    private final DivElement editingRestricted;
+    private final InputElement<T> inputElement;
+    // Form.State#READONLY elements
+    private final LabelElement readonlyLabelElement;
+    private final DivElement readonlyRoot;
+    private final SpanElement readonlyRestricted;
     private boolean required;
     private boolean modified;
     private boolean undefined;
@@ -80,26 +95,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     private boolean expressionAllowed;
     private SuggestHandler suggestHandler;
     private T defaultValue;
-
-    // Form.State#EDITING elements
-    private final LabelElement inputLabelElement;
-    private final SpanElement inputButtonContainer;
     private SpanElement inputAddonContainer;
-    private final ButtonElement expressionButton;
-    private final ButtonElement showAllButton;
-    private final DivElement editingRestricted;
-    private final InputElement<T> inputElement;
-    final DivElement inputGroupContainer;
-    final DivElement editingRoot;
-    final DivElement inputContainer;
-    final SpanElement errorText;
-
-    // Form.State#READONLY elements
-    private final LabelElement readonlyLabelElement;
-    private final DivElement valueContainer;
-    private final DivElement readonlyRoot;
-    private final SpanElement readonlyRestricted;
-    final ParagraphElement valueElement;
 
 
     // ------------------------------------------------------ initialization
@@ -535,19 +531,19 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     @Override
-    public void setExpressionValue(String expressionValue) {
-        if (supportsExpressions()) {
-            toggleExpressionSupport(true);
-            setText(expressionValue);
-        }
-    }
-
-    @Override
     public String getExpressionValue() {
         if (supportsExpressions()) {
             return getText();
         }
         return null;
+    }
+
+    @Override
+    public void setExpressionValue(String expressionValue) {
+        if (supportsExpressions()) {
+            toggleExpressionSupport(true);
+            setText(expressionValue);
+        }
     }
 
     @Override

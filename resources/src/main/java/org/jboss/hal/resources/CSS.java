@@ -159,6 +159,7 @@ public interface CSS {
 
     String macroEditor = "macro-editor";
     String macroList = "macro-list";
+    String marginBottom5 = "margin-bottom-5";
     String marginRight4 = "margin-right-4";
     String marginTop20 = "margin-top-20";
     String messageDetails = "message-details";

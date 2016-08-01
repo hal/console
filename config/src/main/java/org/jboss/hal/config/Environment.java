@@ -50,6 +50,10 @@ public interface Environment {
 
     void setOperationMode(String launchType);
 
+    String getDomainController();
+
+    void setDomainController(String domainController);
+
     Version getManagementVersion();
 
     void setManagementVersion(String major, String micro, String minor);

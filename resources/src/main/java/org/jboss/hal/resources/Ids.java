@@ -81,8 +81,13 @@ public interface Ids {
     String DATA_SOURCE_DRIVER = "data-source-driver";
     String DATA_SOURCE_REFRESH = build(DATA_SOURCE_CONFIGURATION, REFRESH_SUFFIX);
     String DATA_SOURCE_RUNTIME = "data-source-runtime";
+    String DATA_SOURCE_RUNTIME_JDBC_FORM = build(DATA_SOURCE_RUNTIME, "jdbc", FORM_SUFFIX);
+    String DATA_SOURCE_RUNTIME_JDBC_TAB = build(DATA_SOURCE_RUNTIME, "jdbc", TAB_SUFFIX);
+    String DATA_SOURCE_RUNTIME_POOL_FORM = build(DATA_SOURCE_RUNTIME, "pool", FORM_SUFFIX);
+    String DATA_SOURCE_RUNTIME_POOL_TAB = build(DATA_SOURCE_RUNTIME, "pool", TAB_SUFFIX);
     String DATA_SOURCE_WIZARD = build(DATA_SOURCE_CONFIGURATION, WIZARD_SUFFIX);
     String DEPLOYMENT = "deployment";
+    String DEPLOYMENT_SERVER_GROUP = "deployment-sg";
     String DEPLOYMENT_ADD = build(Ids.DEPLOYMENT, ADD_SUFFIX);
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
     String DOMAIN_BROWSE_BY = "domain-browse-by";
@@ -136,6 +141,13 @@ public interface Ids {
     String JDBC_DRIVER_ADD_FORM = build(JDBC_DRIVER, ADD_SUFFIX, FORM_SUFFIX);
     String JDBC_DRIVER_REFRESH = build(JDBC_DRIVER, REFRESH_SUFFIX);
 
+    String JPA_RUNTIME = "jpa-runtime";
+    String JPA_RUNTIME_MAIN_ATTRIBUTES_ENTRY = build(JPA_RUNTIME, "main", "attributes", ENTRY_SUFFIX);
+    String JPA_RUNTIME_ENTITY_ENTRY = build(JPA_RUNTIME, "entity", ENTRY_SUFFIX);
+    String JPA_RUNTIME_ENTITY_CACHE_ENTRY = build(JPA_RUNTIME, "entity-cache", ENTRY_SUFFIX);
+    String JPA_RUNTIME_QUERY_CACHE_ENTRY = build(JPA_RUNTIME, "query-cache", ENTRY_SUFFIX);
+    String JPA_RUNTIME_COLLECTION_ENTRY = build(JPA_RUNTIME, "collection", ENTRY_SUFFIX);
+
     String LOG_FILE = "log-file";
     String LOG_FILE_EDITOR = build(LOG_FILE, "editor");
     String LOG_FILE_REFRESH = build(LOG_FILE, REFRESH_SUFFIX);
@@ -153,7 +165,6 @@ public interface Ids {
     String MAIL_SERVER_DIALOG = build(MAIL_SERVER, ADD_SUFFIX, FORM_SUFFIX);
     String MAIL_SERVER_FORM = build(MAIL_SERVER, FORM_SUFFIX);
     String MAIL_SERVER_TABLE = build(MAIL_SERVER, TABLE_SUFFIX);
-    ;
     String MAIL_SESSION = "mail-session";
     String MAIL_SESSION_ADD = build(MAIL_SESSION, ADD_SUFFIX);
     String MAIL_SESSION_ATTRIBUTES_ENTRY = build(MAIL_SESSION, "attributes", ENTRY_SUFFIX);
@@ -168,6 +179,7 @@ public interface Ids {
     String PROFILE_REFRESH = build(PROFILE, REFRESH_SUFFIX);
 
     String ROOT_CONTAINER = "hal-root-container";
+    String RUNTIME_SUBSYSTEMS = "runtime-subsystems";
 
     String SERVER = "server";
     String SERVER_ADD = build(SERVER, ADD_SUFFIX);
@@ -175,6 +187,14 @@ public interface Ids {
     String SERVER_GROUP_ADD = build(SERVER_GROUP, ADD_SUFFIX);
     String SERVER_GROUP_REFRESH = build(SERVER_GROUP, REFRESH_SUFFIX);
     String SERVER_MONITOR = "server-monitor";
+    String SERVER_STATUS = "server-status";
+    String SERVER_STATUS_BOOTSTRAP_ENTRY = build(SERVER_STATUS, "bootstrap", ENTRY_SUFFIX);
+    String SERVER_STATUS_BOOTSTRAP_FORM = build(SERVER_STATUS, "bootstrap", FORM_SUFFIX);
+    String SERVER_STATUS_MAIN_ATTRIBUTES_ENTRY = build(SERVER_STATUS, "main-attributes", ENTRY_SUFFIX);
+    String SERVER_STATUS_MAIN_ATTRIBUTES_FORM = build(SERVER_STATUS, "main-attributes", FORM_SUFFIX);
+    String SERVER_STATUS_SYSTEM_PROPERTIES_ENTRY = build(SERVER_STATUS, "system-properties", ENTRY_SUFFIX);
+    String SERVER_STATUS_SYSTEM_PROPERTIES_TABLE = build(SERVER_STATUS, "system-properties", TABLE_SUFFIX);
+
     String SERVER_REFRESH = build(SERVER, REFRESH_SUFFIX);
     String SOCKET_BINDING = "socket-binding";
     String SOCKET_BINDING_ADD = build(SOCKET_BINDING, ADD_SUFFIX);
@@ -198,6 +218,50 @@ public interface Ids {
 
     String XA_DATA_SOURCE = "xa-data-source";
     String XA_DATA_SOURCE_ADD = build(XA_DATA_SOURCE, ADD_SUFFIX);
+    String XA_DATA_SOURCE_RUNTIME = "xa-data-source-runtime";
+    String XA_DATA_SOURCE_RUNTIME_JDBC_FORM = build(XA_DATA_SOURCE_RUNTIME, "jdbc", FORM_SUFFIX);
+    String XA_DATA_SOURCE_RUNTIME_JDBC_TAB = build(XA_DATA_SOURCE_RUNTIME, "jdbc", TAB_SUFFIX);
+    String XA_DATA_SOURCE_RUNTIME_POOL_FORM = build(XA_DATA_SOURCE_RUNTIME, "pool", FORM_SUFFIX);
+    String XA_DATA_SOURCE_RUNTIME_POOL_TAB = build(XA_DATA_SOURCE_RUNTIME, "pool", TAB_SUFFIX);
+
+
+    // ------------------------------------------------------ resource ids (a-z)
+
+    static String dataSourceConfiguration(String name, boolean xa) {
+        return build(xa ? "xa" : "non-xa", DATA_SOURCE_CONFIGURATION, name);
+    }
+
+    static String dataSourceRuntime(String name, boolean xa) {
+        return build(xa ? "xa" : "non-xa", DATA_SOURCE_RUNTIME, name);
+    }
+
+    static String host(final String name) {
+        return build(HOST, name);
+    }
+
+    static String hostServer(final String host, final String server) {
+        return build(host, server);
+    }
+
+    static String jpaStatistic(final String deployment, final String persistenceUnit) {
+        return build(deployment, persistenceUnit);
+    }
+
+    static String loggingProfile(final String name) {
+        return build(LOGGING, name);
+    }
+
+    static String server(final String name) {
+        return build(SERVER, name);
+    }
+
+    static String serverGroup(final String name) {
+        return build(SERVER_GROUP, name);
+    }
+
+    static String serverGroupServer(final String serverGroup, final String server) {
+        return build(serverGroup, server);
+    }
 
 
     // ------------------------------------------------------ methods
@@ -235,38 +299,9 @@ public interface Ids {
         return Joiner.on(separator).skipNulls().join(ids);
     }
 
-    static String dataSourceConfiguration(String name, boolean xa) {
-        return build(xa ? "xa" : "non-xa", DATA_SOURCE_CONFIGURATION, name);
-    }
-
-    static String dataSourceRuntime(String name, boolean xa) {
-        return build(xa ? "xa" : "non-xa", DATA_SOURCE_RUNTIME, name);
-    }
-
-    static String host(final String name) {
-        return build(HOST, name);
-    }
-
-    static String loggingProfile(final String name) {
-        return build(LOGGING, name);
-    }
-
-    static String server(final String name) {
-        return build(SERVER, name);
-    }
-
-    static String hostServer(final String host, final String server) {
-        return build(host, server);
-    }
-
-    static String serverGroupServer(final String serverGroup, final String server) {
-        return build(serverGroup, server);
-    }
-
-    static String serverGroup(final String name) {
-        return build(SERVER_GROUP, name);
-    }
-
+    /**
+     * Only available in GWT!
+     */
     static String uniqueId() {
         return Document.get().createUniqueId();
     }

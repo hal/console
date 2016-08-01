@@ -23,11 +23,11 @@ import org.jboss.hal.meta.AddressTemplate;
 public interface AddressTemplates {
 
     String EE_ADDRESS                           = "/{selected.profile}/subsystem=ee";
-    String SERVICE_DEFAULT_BINDINGS_ADDRESS     = "/{selected.profile}/subsystem=ee/service=default-bindings";
-    String CONTEXT_SERVICE_ADDRESS              = "/{selected.profile}/subsystem=ee/context-service=*";
-    String MANAGED_EXECUTOR_ADDRESS             = "/{selected.profile}/subsystem=ee/managed-executor-service=*";
-    String MANAGED_EXECUTOR_SCHEDULED_ADDRESS   = "/{selected.profile}/subsystem=ee/managed-scheduled-executor-service=*";
-    String MANAGED_THREAD_FACTORY_ADDRESS       = "/{selected.profile}/subsystem=ee/managed-thread-factory=*";
+    String SERVICE_DEFAULT_BINDINGS_ADDRESS     = EE_ADDRESS + "/service=default-bindings";
+    String CONTEXT_SERVICE_ADDRESS              = EE_ADDRESS + "/context-service=*";
+    String MANAGED_EXECUTOR_ADDRESS             = EE_ADDRESS + "/managed-executor-service=*";
+    String MANAGED_EXECUTOR_SCHEDULED_ADDRESS   = EE_ADDRESS + "/managed-scheduled-executor-service=*";
+    String MANAGED_THREAD_FACTORY_ADDRESS       = EE_ADDRESS + "/managed-thread-factory=*";
 
     AddressTemplate SERVICE_DEFAULT_BINDINGS_TEMPLATE   = AddressTemplate.of(SERVICE_DEFAULT_BINDINGS_ADDRESS);
     AddressTemplate CONTEXT_SERVICE_TEMPLATE            = AddressTemplate.of(CONTEXT_SERVICE_ADDRESS);

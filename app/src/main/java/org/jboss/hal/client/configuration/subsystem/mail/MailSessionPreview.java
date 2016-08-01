@@ -35,22 +35,19 @@ class MailSessionPreview extends PreviewContent<MailSession> {
         PreviewAttributes<MailSession> attributes = new PreviewAttributes<>(mailSession);
         attributes.append(ModelDescriptionConstants.JNDI_NAME);
         if (mailSession.hasServer(ModelDescriptionConstants.SMTP)) {
-            attributes.append(model -> {
-                return new String[]{ModelDescriptionConstants.SMTP.toUpperCase() + " " + Names.SOCKET_BINDING,
-                        model.getServerSocketBinding(ModelDescriptionConstants.SMTP)};
-            });
+            attributes.append(model -> new String[]{
+                    ModelDescriptionConstants.SMTP.toUpperCase() + " " + Names.SOCKET_BINDING,
+                    model.getServerSocketBinding(ModelDescriptionConstants.SMTP)});
         }
         if (mailSession.hasServer(ModelDescriptionConstants.IMAP)) {
-            attributes.append(model -> {
-                return new String[]{ModelDescriptionConstants.IMAP.toUpperCase() + " " + Names.SOCKET_BINDING,
-                        model.getServerSocketBinding(ModelDescriptionConstants.IMAP)};
-            });
+            attributes.append(model -> new String[]{
+                    ModelDescriptionConstants.IMAP.toUpperCase() + " " + Names.SOCKET_BINDING,
+                    model.getServerSocketBinding(ModelDescriptionConstants.IMAP)});
         }
         if (mailSession.hasServer(ModelDescriptionConstants.POP3)) {
-            attributes.append(model -> {
-                return new String[]{ModelDescriptionConstants.POP3.toUpperCase() + " " + Names.SOCKET_BINDING,
-                        model.getServerSocketBinding(ModelDescriptionConstants.POP3)};
-            });
+            attributes.append(model -> new String[]{
+                    ModelDescriptionConstants.POP3.toUpperCase() + " " + Names.SOCKET_BINDING,
+                    model.getServerSocketBinding(ModelDescriptionConstants.POP3)});
         }
         attributes.end();
         previewBuilder().addAll(attributes);

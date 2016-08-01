@@ -34,6 +34,7 @@ public class Options<T> {
     public Buttons<T> buttons;
     public Column<T>[] columns;
     public String dom;
+    public boolean keys;
     public boolean paging;
     public int pageLength;
     public boolean searching;

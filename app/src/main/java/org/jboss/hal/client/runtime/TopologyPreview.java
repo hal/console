@@ -544,7 +544,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             if (parent != null && ul != null) {
                 Element noLink = new Elements.Builder().span().css(CSS.name).title(name).textContent(name).end()
                         .build();
-                parent.getClassList().remove("open"); //NON-NLS
+                parent.getClassList().remove("opened"); //NON-NLS
                 parent.replaceChild(noLink, link);
                 parent.removeChild(ul);
             }

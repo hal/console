@@ -49,19 +49,19 @@ public final class Format {
         return SIZE_FORMAT.format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
 
-    public static String humanReadableDuration(long uptime) {
-        uptime = uptime / 1000;
+    public static String humanReadableDuration(long duration) {
+        duration = duration / 1000;
 
-        int sec = (int) uptime % 60;
-        uptime /= 60;
+        int sec = (int) duration % 60;
+        duration /= 60;
 
-        int min = (int) uptime % 60;
-        uptime /= 60;
+        int min = (int) duration % 60;
+        duration /= 60;
 
-        int hour = (int) uptime % 24;
-        uptime /= 24;
+        int hour = (int) duration % 24;
+        duration /= 24;
 
-        int day = (int) uptime;
+        int day = (int) duration;
 
         String str = "";
         if (day > 0) {

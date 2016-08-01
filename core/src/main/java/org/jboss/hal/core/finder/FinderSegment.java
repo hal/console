@@ -72,6 +72,7 @@ public class FinderSegment<T> {
     }
 
 
+    static final String SEPARATOR = "~";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(FinderSegment.class);
 
     private final String columnId;
@@ -130,7 +131,7 @@ public class FinderSegment<T> {
     @Override
     public String toString() {
         // Do not change this implementation as the place management relies on it!
-        return columnId + "=" + itemId;
+        return columnId + SEPARATOR + itemId;
     }
 
     FinderSegment<T> copy() {

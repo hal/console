@@ -20,18 +20,20 @@ import javax.inject.Inject;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
+import static org.jboss.hal.core.finder.FinderContext.PATH_PARAM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 
 /**
- * Helper class for place management.
+ * Factory methods for place requests.
  *
  * @author Harald Pehl
  */
@@ -51,7 +53,8 @@ public class Places {
     }
 
     /**
-     * Returns a place request builder which adds a parameter for the selected profile (when running domain mode).
+     * Returns a place request builder for the specified token with parameters for the selected profile
+     * (when running domain mode).
      */
     public PlaceRequest.Builder selectedProfile(final String token) throws IllegalStateException {
         PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(token);
@@ -62,8 +65,8 @@ public class Places {
     }
 
     /**
-     * Returns a place request builder which adds parameters for the selected host and server (when running domain
-     * mode).
+     * Returns a place request builder for the specified token with parameters for the selected host and server
+     * (when running domain mode).
      */
     public PlaceRequest.Builder selectedServer(final String token) throws IllegalStateException {
         PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(token);
@@ -79,7 +82,7 @@ public class Places {
     }
 
     /**
-     * Replaces a parameter in an existing place request with a new value.
+     * Returns a new place request with the a new value for the specified parameter.
      */
     public PlaceRequest.Builder replaceParameter(PlaceRequest placeRequest, String parameter, String newValue) {
         PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(placeRequest.getNameToken());
@@ -99,5 +102,12 @@ public class Places {
             return firstSegment.getItemId().equals(Ids.asId(Names.SERVER_GROUPS));
         }
         return false;
+    }
+
+    /**
+     * Returns a place request builder for the specified finder path.
+     */
+    public PlaceRequest.Builder finderPlace(final String token, final FinderPath path) {
+        return new PlaceRequest.Builder().nameToken(token).with(PATH_PARAM, path.toString());
     }
 }

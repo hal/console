@@ -47,6 +47,7 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.finder.ItemsProvider;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.core.runtime.group.ServerGroupSelectionEvent;
 import org.jboss.hal.core.runtime.host.HostSelectionEvent;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActionEvent;
@@ -109,6 +110,9 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     if (BrowseByColumn.browseByServerGroups(finder.getContext())) {
                         // if we browse by server groups we still need to have a valid {selected.host}
                         eventBus.fireEvent(new HostSelectionEvent(server.getHost()));
+                    } else if (BrowseByColumn.browseByHosts(finder.getContext())) {
+                        // if we browse by hosts we still need to have a valid {selected.group}
+                        eventBus.fireEvent(new ServerGroupSelectionEvent(server.getServerGroup()));
                     }
                     eventBus.fireEvent(new ServerSelectionEvent(server.getName()));
                 })
@@ -129,7 +133,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                         }
 
                     } else {
-                        // switch server in place request parameter of specific presenter
+                        // try to replace 'server' and 'server-config' request parameter
                         PlaceRequest place = places.replaceParameter(current, SERVER, item.getName()).build();
                         builder = places.replaceParameter(place, SERVER_CONFIG, item.getName());
                     }

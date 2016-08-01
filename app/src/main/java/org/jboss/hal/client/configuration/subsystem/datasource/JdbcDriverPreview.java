@@ -17,9 +17,9 @@ package org.jboss.hal.client.configuration.subsystem.datasource;
 
 import com.google.common.base.Joiner;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.core.datasource.JdbcDriver;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
-import org.jboss.hal.core.datasource.JdbcDriver;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -49,15 +49,11 @@ class JdbcDriverPreview extends PreviewContent<JdbcDriver> {
         LabelBuilder labelBuilder = new LabelBuilder();
         PreviewAttributes<JdbcDriver> attributes = new PreviewAttributes<>(driver)
 
-                .append(model -> {
-                    return new String[]{labelBuilder.label("driver-classes"), //NON-NLS
-                            model.getDriverClasses().isEmpty() ? Names.NOT_AVAILABLE : Joiner.on(',')
-                                    .skipNulls().join(model.getDriverClasses())};
-                })
+                .append(model -> new String[]{labelBuilder.label("driver-classes"), //NON-NLS
+                        model.getDriverClasses().isEmpty() ? Names.NOT_AVAILABLE : Joiner.on(',')
+                                .skipNulls().join(model.getDriverClasses())})
 
-                .append(model -> {
-                    return new String[]{labelBuilder.label(DRIVER_VERSION), model.getDriverVersion()};
-                })
+                .append(model -> new String[]{labelBuilder.label(DRIVER_VERSION), model.getDriverVersion()})
 
                 .append("jdbc-compliant") //NON-NLS
                 .end();

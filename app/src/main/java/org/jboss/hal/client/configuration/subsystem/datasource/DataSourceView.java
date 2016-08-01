@@ -51,6 +51,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  *
  * @author Harald Pehl
  */
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class DataSourceView extends PatternFlyViewImpl implements DataSourcePresenter.MyView {
 
     private static final String HEADER_ELEMENT = "headerElement";
@@ -59,7 +60,7 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
 
     static {
         // main attributes
-        attributes.putAll(CONSTANTS.attribute(), asList(
+        attributes.putAll(CONSTANTS.attributes(), asList(
                 new Attribute(JNDI_NAME),
                 new Attribute(DRIVER_NAME),
                 new Attribute(ENABLED),

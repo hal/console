@@ -21,7 +21,7 @@ public interface StatementContext {
 
     @SuppressWarnings("HardCodedStringLiteral")
     enum Tuple {
-
+        DOMAIN_CONTROLLER("domain.controller", HOST),
         SELECTED_PROFILE("selected.profile", PROFILE),
         SELECTED_GROUP("selected.group", SERVER_GROUP),
         SELECTED_HOST("selected.host", HOST),
@@ -74,6 +74,11 @@ public interface StatementContext {
         }
 
         @Override
+        public String domainController() {
+            return null;
+        }
+
+        @Override
         public String selectedProfile() {
             return null;
         }
@@ -109,6 +114,8 @@ public interface StatementContext {
      * Resolves a tuple.
      */
     String[] resolveTuple(String tuple);
+
+    String domainController();
 
     String selectedProfile();
 

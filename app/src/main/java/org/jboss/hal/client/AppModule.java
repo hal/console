@@ -30,9 +30,7 @@ import org.jboss.hal.client.configuration.Mbui_PathsView_Provider;
 import org.jboss.hal.client.configuration.PathsPresenter;
 import org.jboss.hal.client.configuration.subsystem.SubsystemPresenter;
 import org.jboss.hal.client.configuration.subsystem.SubsystemView;
-import org.jboss.hal.client.configuration.subsystem.datasource.DataSourcePresenter;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
-import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceView;
 import org.jboss.hal.client.configuration.subsystem.deploymentscanner.DeploymentScannerPresenter;
 import org.jboss.hal.client.configuration.subsystem.deploymentscanner.Mbui_DeploymentScannerView_Provider;
 import org.jboss.hal.client.configuration.subsystem.ee.EEPresenter;
@@ -67,6 +65,10 @@ import org.jboss.hal.client.runtime.host.HostPresenter;
 import org.jboss.hal.client.runtime.host.Mbui_HostView_Provider;
 import org.jboss.hal.client.runtime.server.Mbui_ServerView_Provider;
 import org.jboss.hal.client.runtime.server.ServerPresenter;
+import org.jboss.hal.client.runtime.server.ServerStatusPresenter;
+import org.jboss.hal.client.runtime.server.ServerStatusView;
+import org.jboss.hal.client.runtime.subsystem.jpa.JpaPresenter;
+import org.jboss.hal.client.runtime.subsystem.jpa.JpaView;
 import org.jboss.hal.client.runtime.subsystem.logging.LogFilePresenter;
 import org.jboss.hal.client.runtime.subsystem.logging.Templated_LogFileView_Provider;
 import org.jboss.hal.client.skeleton.FooterPresenter;
@@ -133,10 +135,15 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 ConfigurationView.class,
                 ConfigurationPresenter.MyProxy.class);
 
-        bindPresenter(DataSourcePresenter.class,
-                DataSourcePresenter.MyView.class,
-                DataSourceView.class,
-                DataSourcePresenter.MyProxy.class);
+        bindPresenter(org.jboss.hal.client.configuration.subsystem.datasource.DataSourcePresenter.class,
+                org.jboss.hal.client.configuration.subsystem.datasource.DataSourcePresenter.MyView.class,
+                org.jboss.hal.client.configuration.subsystem.datasource.DataSourceView.class,
+                org.jboss.hal.client.configuration.subsystem.datasource.DataSourcePresenter.MyProxy.class);
+
+        bindPresenter(org.jboss.hal.client.runtime.subsystem.datasource.DataSourcePresenter.class,
+                org.jboss.hal.client.runtime.subsystem.datasource.DataSourcePresenter.MyView.class,
+                org.jboss.hal.client.runtime.subsystem.datasource.DataSourceView.class,
+                org.jboss.hal.client.runtime.subsystem.datasource.DataSourcePresenter.MyProxy.class);
 
         bindPresenter(DeploymentPresenter.class,
                 DeploymentPresenter.MyView.class,
@@ -182,6 +189,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 InterfacePresenter.MyView.class,
                 Mbui_InterfaceView_Provider.class,
                 InterfacePresenter.MyProxy.class);
+
+        bindPresenter(JpaPresenter.class,
+                JpaPresenter.MyView.class,
+                JpaView.class,
+                JpaPresenter.MyProxy.class);
 
         bindTemplatedPresenter(LogFilePresenter.class,
                 LogFilePresenter.MyView.class,
@@ -247,6 +259,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 ServerGroupPresenter.MyView.class,
                 Mbui_ServerGroupView_Provider.class,
                 ServerGroupPresenter.MyProxy.class);
+
+        bindPresenter(ServerStatusPresenter.class,
+                ServerStatusPresenter.MyView.class,
+                ServerStatusView.class,
+                ServerStatusPresenter.MyProxy.class);
 
         bindPresenter(UnderTheBridgePresenter.class,
                 UnderTheBridgePresenter.MyView.class,

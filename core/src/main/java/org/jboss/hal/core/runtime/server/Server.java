@@ -52,8 +52,10 @@ public class Server extends NamedNode {
         super(server, modelNode);
         this.standalone = standalone;
         get(HOST).set(host);
-        get(STATUS).set(ServerConfigStatus.STARTED.name().toLowerCase());
-        get(SERVER_STATE).set(RunningState.RUNNING.name());
+        if (standalone) {
+            get(STATUS).set(ServerConfigStatus.STARTED.name().toLowerCase());
+            get(SERVER_STATE).set(RunningState.RUNNING.name());
+        }
     }
 
     public boolean isStandalone() {

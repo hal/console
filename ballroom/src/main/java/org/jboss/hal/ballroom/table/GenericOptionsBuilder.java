@@ -40,6 +40,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     protected List<Button<T>> buttons;
     protected List<Column<T>> columns;
     protected int pageLength;
+    protected boolean keys;
     protected boolean paging;
     protected boolean searching;
     protected Select select;
@@ -48,6 +49,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         this.buttons = new ArrayList<>();
         this.columns = new ArrayList<>();
         this.pageLength = 10;
+        this.keys = true;
         this.paging = true;
         this.searching = true;
         this.select = Select.build(false);
@@ -111,6 +113,11 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         return that();
     }
 
+    public B keys(boolean keys) {
+        this.keys = keys;
+        return that();
+    }
+
     public B paging(boolean paging) {
         this.paging = paging;
         return that();
@@ -141,6 +148,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
             options.buttons.buttons = buttons.toArray(new Button[buttons.size()]);
         }
         options.columns = columns.toArray(new Column[columns.size()]);
+        options.keys = keys;
         options.paging = paging;
         options.pageLength = pageLength;
         options.searching = searching;

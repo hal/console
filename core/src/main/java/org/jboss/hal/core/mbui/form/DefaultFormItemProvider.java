@@ -206,6 +206,11 @@ class DefaultFormItemProvider implements FormItemProvider {
             if (capabilities.contains(reference)) {
                 SuggestHandler suggestHandler = new Typeahead(capabilities.lookup(reference), statementContext);
                 formItem.registerSuggestHandler(suggestHandler);
+            } else {
+                capabilities.lookup(reference, result -> {
+                    SuggestHandler suggestHandler = new Typeahead(result, statementContext);
+                    formItem.registerSuggestHandler(suggestHandler);
+                });
             }
         }
     }

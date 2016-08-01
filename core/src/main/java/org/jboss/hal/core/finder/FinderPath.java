@@ -42,13 +42,19 @@ import static com.google.common.base.Strings.nullToEmpty;
  */
 public class FinderPath implements Iterable<FinderSegment> {
 
+    static final String SEPARATOR = "!";
+
+
     // ------------------------------------------------------ static methods
 
     public static FinderPath from(String path) {
         List<FinderSegment> segments = new ArrayList<>();
 
         if (nullToEmpty(path).trim().length() != 0) {
-            Map<String, String> parts = Splitter.on('/').withKeyValueSeparator('=').split(path);
+            Map<String, String> parts = Splitter
+                    .on(FinderPath.SEPARATOR)
+                    .withKeyValueSeparator(FinderSegment.SEPARATOR)
+                    .split(path);
             for (Map.Entry<String, String> entry : parts.entrySet()) {
                 segments.add(new FinderSegment(entry.getKey(), entry.getValue()));
             }
@@ -117,6 +123,6 @@ public class FinderPath implements Iterable<FinderSegment> {
         return segments.stream()
                 .filter(segment -> segment.getItemId() != null)
                 .map(FinderSegment::toString)
-                .collect(Collectors.joining("/"));
+                .collect(Collectors.joining(SEPARATOR));
     }
 }

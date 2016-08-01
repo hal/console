@@ -26,6 +26,9 @@ import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.meta.resource.RequiredResources;
 import org.jboss.hal.spi.Footer;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Registry for finder columns. Manages both sync and async columns behind a split point.
@@ -41,6 +44,8 @@ public class ColumnRegistry {
         void error(String failure);
     }
 
+
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(ColumnRegistry.class);
 
     private final MetadataProcessor metadataProcessor;
     private final RequiredResources requiredResources;
@@ -68,19 +73,16 @@ public class ColumnRegistry {
         asyncColumns.put(id, column);
     }
 
-    @SuppressWarnings("unchecked")
     void lookup(String id, LookupCallback callback) {
         if (resolvedColumns.containsKey(id)) {
             callback.found(resolvedColumns.get(id));
 
-        } else if (columns.containsKey(id)) {
-            FinderColumn column = columns.get(id);
-            if (requiredResources.getResources(id).isEmpty()) {
-                resolve(id, column);
-                callback.found(column);
-
-            } else {
-                // process the required resource attached to this column
+        } else {
+            logger.debug("Try to lookup column '{}'", id);
+            if (!requiredResources.getResources(id).isEmpty()) {
+                // first of all process the required resources attached to this column
+                logger.debug("Column '{}' has the following required resources attached to it: {}", id,
+                        requiredResources.getResources(id));
                 metadataProcessor.process(id, progress.get(), new AsyncCallback<Void>() {
                     @Override
                     public void onFailure(final Throwable throwable) {
@@ -91,13 +93,28 @@ public class ColumnRegistry {
 
                     @Override
                     public void onSuccess(final Void aVoid) {
-                        resolve(id, column);
-                        callback.found(column);
+                        lookupInternal(id, callback);
                     }
                 });
+
+            } else {
+                logger.debug("No required resources attached to column '{}'", id);
+                lookupInternal(id, callback);
             }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void lookupInternal(String id, LookupCallback callback) {
+        if (columns.containsKey(id)) {
+            // this is a regular column: we're ready to go
+            FinderColumn column = columns.get(id);
+            resolve(id, column);
+            callback.found(column);
 
         } else if (asyncColumns.containsKey(id)) {
+            // the column sits behind a split point: load it asynchronously
+            logger.debug("Load async column '{}'", id);
             AsyncProvider<FinderColumn> asyncProvider = asyncColumns.get(id);
             asyncProvider.get(new AsyncCallback<FinderColumn>() {
                 @Override
@@ -107,9 +124,8 @@ public class ColumnRegistry {
 
                 @Override
                 public void onSuccess(final FinderColumn column) {
-                    asyncColumns.remove(id);
-                    columns.put(id, column);
-                    lookup(id, callback);
+                    resolve(id, column);
+                    callback.found(column);
                 }
             });
 
@@ -120,7 +136,9 @@ public class ColumnRegistry {
     }
 
     private void resolve(String id, FinderColumn column) {
+        logger.info("Successfully resolved column '{}'", id);
         columns.remove(id);
+        asyncColumns.remove(id);
         resolvedColumns.put(id, column);
     }
 }

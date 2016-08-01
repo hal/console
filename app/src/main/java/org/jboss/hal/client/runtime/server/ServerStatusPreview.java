@@ -18,6 +18,7 @@ package org.jboss.hal.client.runtime.server;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.metric.Utilization;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.dmr.ModelNode;
@@ -31,6 +32,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.hal.client.runtime.server.ServerStatusPresenter.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.*;
 
@@ -38,13 +40,6 @@ import static org.jboss.hal.resources.CSS.*;
  * @author Harald Pehl
  */
 class ServerStatusPreview extends PreviewContent<StaticItem> {
-
-    private static final String OS_NAME = "os";
-    private static final String OS_VERSION = "os-version";
-    private static final String PROCESSORS = "processors";
-    private static final String JVM = "jvm";
-    private static final String JVM_VERSION = "jvm-version";
-    private static final String UPTIME = "uptime";
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
@@ -59,16 +54,17 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
     private final Utilization committedHeap;
     private final Utilization threads;
 
-    ServerStatusPreview(final Dispatcher dispatcher, final StatementContext statementContext,
-            final Resources resources) {
+    ServerStatusPreview(final Environment environment, final Dispatcher dispatcher,
+            final StatementContext statementContext, final Resources resources) {
         super(resources.constants().status());
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
         this.resources = resources;
 
-        this.usedHeap = new Utilization(resources.constants().used(), Names.MB, true, true);
-        this.committedHeap = new Utilization(resources.constants().commited(), Names.MB, true, true);
-        this.threads = new Utilization("Daemon", Names.THREADS, true, false); //NON-NLS
+        this.usedHeap = new Utilization(resources.constants().used(), Names.MB, environment.isStandalone(), true);
+        this.committedHeap = new Utilization(resources.constants().commited(), Names.MB, environment.isStandalone(),
+                true);
+        this.threads = new Utilization("Daemon", Names.THREADS, environment.isStandalone(), false); //NON-NLS
 
         // @formatter:off
         previewBuilder()
@@ -82,7 +78,7 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
                 .add("br")
                 .span().rememberAs(UPTIME).end()
             .end()
-            .p()
+            .div().css(clearfix)
                 .a().css(clickable, pullRight).on(click, event -> update(null))
                     .span().css(fontAwesome("refresh"), marginRight4).end()
                     .span().textContent(resources.constants().refresh()).end()

@@ -34,11 +34,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER_CONFIG;
+import static org.jboss.hal.meta.StatementContext.Tuple.*;
 
 /**
  * @author Harald Pehl
@@ -81,10 +77,14 @@ public class CoreStatementContext implements StatementContext,
     public String[] resolveTuple(final String tuple) {
         if (!environment.isStandalone()) {
             Tuple validTuple = Tuple.from(tuple);
-            if (validTuple != null && context.containsKey(validTuple)) {
-                String value = context.get(validTuple);
-                if (value != null) {
-                    return new String[]{validTuple.resource(), value};
+            if (validTuple != null) {
+                if (validTuple == DOMAIN_CONTROLLER) {
+                    return new String[]{validTuple.resource(), environment.getDomainController()};
+                } else if (context.containsKey(validTuple)) {
+                    String value = context.get(validTuple);
+                    if (value != null) {
+                        return new String[]{validTuple.resource(), value};
+                    }
                 }
             }
         }
@@ -114,6 +114,11 @@ public class CoreStatementContext implements StatementContext,
         context.put(SELECTED_SERVER_CONFIG, event.getServer());
         context.put(SELECTED_SERVER, event.getServer());
         logger.info("Selected server {}", event.getServer());
+    }
+
+    @Override
+    public String domainController() {
+        return environment.getDomainController();
     }
 
     @Override

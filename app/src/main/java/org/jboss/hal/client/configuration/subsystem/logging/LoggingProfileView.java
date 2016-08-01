@@ -52,11 +52,13 @@ import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGING_PROFILE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.SELECTED_LOGGING_PROFILE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LEVEL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.marginTop20;
 
 /**
@@ -73,6 +75,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         return new Mbui_LoggingProfileView(mbuiContext);
     }
 
+    final SelectionAwareStatementContext selectionAwareStatementContext;
+    final SuggestHandler suggestHandlers;
     @MbuiElement("logging-profile-vertical-navigation") VerticalNavigation navigation;
     @MbuiElement("logging-profile-root-logger-form") Form<ModelNode> rootLoggerForm;
     @MbuiElement("logging-profile-categories-table") DataTable<NamedNode> loggerTable;
@@ -97,9 +101,6 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     @MbuiElement("logging-profile-formatter-custom-form") Form<NamedNode> customFormatterForm;
     @MbuiElement("logging-profile-formatter-pattern-table") DataTable<NamedNode> patternFormatterTable;
     @MbuiElement("logging-profile-formatter-pattern-form") Form<NamedNode> patternFormatterForm;
-
-    final SelectionAwareStatementContext selectionAwareStatementContext;
-    final SuggestHandler suggestHandlers;
     EmptyState noRootLogger;
 
     LoggingProfileView(final MbuiContext mbuiContext) {
@@ -122,7 +123,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     void init() {
         noRootLogger = new EmptyState.Builder(mbuiContext.resources().constants().noRootLogger())
                 .description(mbuiContext.resources().constants().noRootLoggerDescription())
-                .icon("fa fa-sitemap")
+                .icon(fontAwesome("sitemap"))
                 .primaryAction(mbuiContext.resources().constants().add(), event -> addRootLogger())
                 .build();
         noRootLogger.asElement().getClassList().add(marginTop20);

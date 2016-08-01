@@ -72,7 +72,7 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
 
     @Inject
-    protected JdbcDriverColumn(final Finder finder,
+    public JdbcDriverColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
             final Environment environment,

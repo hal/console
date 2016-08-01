@@ -62,6 +62,7 @@ public interface ModelDescriptionConstants {
 
     String CAPABILITIES = "capabilities";
     String CAPABILITY_REFERENCE = "capability-reference";
+    String CAPABILITY_REGISTRY = "capability-registry";
     String CHILD_TYPE = "child-type";
     String CHILDREN = "children";
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
@@ -69,6 +70,7 @@ public interface ModelDescriptionConstants {
     String CONNECTION_URL = "connection-url";
     String CONFIGURATION = "configuration";
     String CONTEXT_SERVICE = "context-service";
+    String CORE_SERVICE = "core-service";
     String CRITERIA = "criteria";
 
     String DATA_SOURCE = "data-source";
