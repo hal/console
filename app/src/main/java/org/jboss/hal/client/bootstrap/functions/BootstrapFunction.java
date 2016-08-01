@@ -22,6 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Interface for bootstrap functions.
+ *
  * @author Harald Pehl
  */
 public interface BootstrapFunction extends Function<FunctionContext> {

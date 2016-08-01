@@ -19,53 +19,41 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.google.common.collect.Iterables;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
 
 /**
  * @author Harald Pehl
  */
-public class Capability {
+public class Capability extends NamedNode {
 
-    private final String name;
+    private static final String REGISTRATION_POINTS = "registration-points";
+
     private final Set<AddressTemplate> templates;
-    private final boolean dynamic;
 
-    public Capability(final String name, final boolean dynamic) {
-        this.name = name;
-        this.dynamic = dynamic;
+    public Capability(ModelNode node) {
+        super(node);
+        this.templates = new LinkedHashSet<>();
+        if (hasDefined(REGISTRATION_POINTS)) {
+            for (ModelNode registrationPoint : get(REGISTRATION_POINTS).asList()) {
+                addTemplate(AddressTemplate.of(registrationPoint.asString()));
+            }
+        }
+    }
+
+    public Capability(final String name) {
+        super(name, new ModelNode());
         this.templates = new LinkedHashSet<>();
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof Capability)) { return false; }
-
-        Capability that = (Capability) o;
-
-        return name.equals(that.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return name.hashCode();
-    }
-
-    @Override
     public String toString() {
-        return "Capability(" + name + " -> " + templates + ")";
+        return "Capability(" + getName() + " -> " + templates + ")";
     }
 
     public void addTemplate(final AddressTemplate template) {
         templates.add(template);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public boolean isDynamic() {
-        return dynamic;
     }
 
     public Iterable<AddressTemplate> getTemplates() {
