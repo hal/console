@@ -23,6 +23,45 @@ import com.google.gwt.resources.client.ExternalTextResource;
  */
 public interface Previews extends ClientBundle {
 
+    // ------------------------------------------------------ access control (rbac)
+
+    @Source("previews/rbac/administrator.html")
+    ExternalTextResource rbacAdministrator();
+
+    @Source("previews/rbac/auditor.html")
+    ExternalTextResource rbacAuditor();
+
+    @Source("previews/rbac/deployer.html")
+    ExternalTextResource rbacDeployer();
+
+    @Source("previews/rbac/groups.html")
+    ExternalTextResource rbacGroups();
+
+    @Source("previews/rbac/maintainer.html")
+    ExternalTextResource rbacMaintainer();
+
+    @Source("previews/rbac/monitor.html")
+    ExternalTextResource rbacMonitor();
+
+    @Source("previews/rbac/operator.html")
+    ExternalTextResource rbacOperator();
+
+    @Source("previews/rbac/overview.html")
+    ExternalTextResource rbacOverview();
+
+    @Source("previews/rbac/roles-domain.html")
+    ExternalTextResource rbacRolesDomain();
+
+    @Source("previews/rbac/roles-standalone.html")
+    ExternalTextResource rbacRolesStandalone();
+
+    @Source("previews/rbac/superuser.html")
+    ExternalTextResource rbacSuperUser();
+
+    @Source("previews/rbac/users.html")
+    ExternalTextResource rbacUsers();
+
+
     // ------------------------------------------------------ configuration
 
     @Source("previews/configuration/datasources.html")

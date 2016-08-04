@@ -6,6 +6,7 @@ package ${packageName};
 
 import javax.annotation.Generated;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.gwt.inject.client.AsyncProvider;
 
@@ -19,14 +20,14 @@ public class ${className} {
 
     @Inject
     public ${className}(ColumnRegistry registry,
-            <#list columnInfos as columnInfo><#if columnInfo.async>AsyncProvider<${columnInfo.fqClassName}> column${columnInfo_index}<#else>${columnInfo.fqClassName} column${columnInfo_index}</#if><#if columnInfo_has_next>,
+            <#list columnInfos as columnInfo><#if columnInfo.async>AsyncProvider<${columnInfo.fqClassName}> column${columnInfo_index}<#else>Provider<${columnInfo.fqClassName}> column${columnInfo_index}</#if><#if columnInfo_has_next>,
             </#if></#list>) {
 
         <#list columnInfos as columnInfo>
         <#if columnInfo.async>
         registry.registerColumn("${columnInfo.id}", column${columnInfo_index});
         <#else>
-        registry.registerColumn(column${columnInfo_index});
+        registry.registerColumn("${columnInfo.id}", column${columnInfo_index});
         </#if>
         </#list>
     }

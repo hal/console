@@ -15,9 +15,22 @@
  */
 package org.jboss.hal.client.accesscontrol;
 
-import org.jboss.hal.core.mvp.FinderViewImpl;
+import javax.inject.Inject;
+
+import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.AsyncColumn;
 
 /**
  * @author Harald Pehl
  */
-public class AccessControlView extends FinderViewImpl implements AccessControlPresenter.MyView {}
+@AsyncColumn(Ids.ROLE)
+public class RoleColumn extends FinderColumn<Role> {
+
+    @Inject
+    public RoleColumn(final Finder finder, final Resources resources) {
+        super(new Builder<>(finder, Ids.ROLE, resources.constants().role()));
+    }
+}

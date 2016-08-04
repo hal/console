@@ -47,7 +47,7 @@ import static org.jboss.hal.resources.CSS.finderPreview;
  */
 public class PreviewContent<T> implements HasElements, Attachable, SecurityContextAware {
 
-    static final String CONTENT_ELEMENT = "contentElement";
+    protected static final String CONTENT_ELEMENT = "contentElement";
 
     private static final String ERROR_MESSAGE = "Unable to get preview content from '{}': {}";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(PreviewContent.class);

@@ -52,8 +52,7 @@ public class BrowseByColumn extends StaticItemColumn {
     }
 
     @Inject
-    public BrowseByColumn(final Finder finder,
-            final Resources resources) {
+    public BrowseByColumn(final Finder finder, final Resources resources) {
         super(finder, Ids.DEPLOYMENT_BROWSE_BY, resources.constants().browseBy(),
                 Arrays.asList(
                         new StaticItem.Builder(resources.constants().contentRepository())

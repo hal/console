@@ -72,6 +72,9 @@ public interface Ids {
     // ------------------------------------------------------ ids (a-z)
     // Try to compose IDs by making use of the build() method, except the ID is used in an annotation.
 
+    String ACCESS_CONTROL_BROWSE_BY = "access-control-browse-by";
+    String ACCESS_CONTROL_SWITCH_PROVIDER = "access-control-switch-provider";
+
     String CONFIGURATION = "configuration";
     String CONTENT = "content";
     String CONTENT_ADD = build(Ids.CONTENT, ADD_SUFFIX);
@@ -87,9 +90,9 @@ public interface Ids {
     String DATA_SOURCE_RUNTIME_POOL_TAB = build(DATA_SOURCE_RUNTIME, "pool", TAB_SUFFIX);
     String DATA_SOURCE_WIZARD = build(DATA_SOURCE_CONFIGURATION, WIZARD_SUFFIX);
     String DEPLOYMENT = "deployment";
-    String DEPLOYMENT_SERVER_GROUP = "deployment-sg";
     String DEPLOYMENT_ADD = build(Ids.DEPLOYMENT, ADD_SUFFIX);
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
+    String DEPLOYMENT_SERVER_GROUP = "deployment-sg";
     String DOMAIN_BROWSE_BY = "domain-browse-by";
     String DRAG_AND_DROP_DEPLOYMENT = "drag-and-drop-deployment";
 
@@ -113,6 +116,8 @@ public interface Ids {
     String ENDPOINT_SELECT = build(ENDPOINT, "select");
 
     String FINDER = "hal-finder";
+
+    String GROUP = "group";
 
     String HEADER = "header";
     String HEADER_CONNECTED_TO = build(HEADER, "connected-to");
@@ -178,6 +183,7 @@ public interface Ids {
     String PROFILE_ADD = build(PROFILE, ADD_SUFFIX);
     String PROFILE_REFRESH = build(PROFILE, REFRESH_SUFFIX);
 
+    String ROLE = "role";
     String ROOT_CONTAINER = "hal-root-container";
     String RUNTIME_SUBSYSTEMS = "runtime-subsystems";
 
@@ -210,6 +216,8 @@ public interface Ids {
     String TLC_HOMEPAGE = "tlc-homepage";
     String TLC_PATCHING = "tlc-patching";
     String TLC_RUNTIME = "tlc-runtime";
+
+    String USER = "user";
 
     String VERSION_INFO = "version-info";
     String VERSION_INFO_FORM = build(VERSION_INFO, FORM_SUFFIX);

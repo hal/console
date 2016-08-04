@@ -36,7 +36,7 @@
         <annotations.version>15.0</annotations.version>
         <apt-tools.version>0.0.3</apt-tools.version>
         <auto-service.version>1.0-rc2</auto-service.version>
-        <circuit.version>0.1.6</circuit.version>
+        <circuit.version>0.2.1</circuit.version>
         <elemento.version>0.2.4</elemento.version>
         <flow.version>0.1.0</flow.version>
         <gin.version>2.1.2</gin.version>
@@ -105,6 +105,11 @@
                 <groupId>com.google.gwt.inject</groupId>
                 <artifactId>gin</artifactId>
                 <version>${gin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.gwt.circuit</groupId>
+                <artifactId>circuit-core</artifactId>
+                <version>${circuit.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.gwt.circuit</groupId>

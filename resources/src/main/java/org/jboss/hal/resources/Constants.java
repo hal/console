@@ -90,13 +90,13 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String edit();
     String enable();
     String enabled();
+    String enableRbac();
     String enableStatistics();
     String endpointSelectTitle();
     String endpointSelectDescription();
     String endpointConnect();
     String endpointAddTitle();
     String endpointAddDescription();
-
     String environment();
     String expressionResolver();
 
@@ -111,6 +111,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String formResetDesc();
 
     String gotoDeployment();
+    String group();
+    String groups();
 
     String help();
     String hiddenColumns();
@@ -264,6 +266,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String restartResourceServices();
     String restricted();
     String resume();
+    String role();
+    String roles();
     String running();
 
     String sameOrigin();
@@ -294,6 +298,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String supportsExpressions();
     String suspend();
     String suspended();
+    String switchProvider();
 
     String tags();
     String tailMode();
@@ -313,6 +318,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String unknownState();
     String unpin();
     String used();
+    String user();
+    String users();
 
     String validation();
     String view();

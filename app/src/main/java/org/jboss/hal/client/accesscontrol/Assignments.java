@@ -15,9 +15,25 @@
  */
 package org.jboss.hal.client.accesscontrol;
 
-import org.jboss.hal.core.mvp.FinderViewImpl;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * @author Harald Pehl
  */
-public class AccessControlView extends FinderViewImpl implements AccessControlPresenter.MyView {}
+class Assignments implements Iterable<Assignment> {
+
+    private final Set<Assignment> assignments;
+
+    Assignments() {assignments = new HashSet<>();}
+
+    boolean add(final Assignment assignment) {return assignments.add(assignment);}
+
+    void clear() {assignments.clear();}
+
+    @Override
+    public Iterator<Assignment> iterator() {
+        return assignments.iterator();
+    }
+}

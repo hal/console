@@ -163,6 +163,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml resumeServerError(String name);
     SafeHtml resumeServerSuccess(String name);
 
+    SafeHtml simpleProviderWarning();
+
     SafeHtml serverGroupNoStartedServers(String name);
     SafeHtml serverGroupNoStoppedServers(String name);
     SafeHtml serverGroupNoSuspendedServers(String name);
@@ -204,6 +206,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml suspendServerError(String name);
     SafeHtml suspendServerQuestion(String name);
     SafeHtml suspendServerSuccess(String name);
+
+    SafeHtml switchProviderSuccess();
+    SafeHtml switchToRbacProvider();
+    SafeHtml switchToSimpleProvider();
 
     SafeHtml testConnectionError();
     SafeHtml testConnectionSuccess();

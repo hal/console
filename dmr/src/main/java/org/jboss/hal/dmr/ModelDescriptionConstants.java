@@ -47,18 +47,16 @@ public interface ModelDescriptionConstants {
     String ACCESS_CONTROL = "access-control";
     String ACCESS_TYPE = "access-type";
     String ADD = "add";
-    String ADD_OPERATION = "add-operation";
     String ADDRESS = "address";
-    String ALLOW_RESOURCE_SERVICE_RESTART = "allow-resource-service-restart";
     String ALLOWED = "allowed";
     String ANY = "any";
     String ATTRIBUTES = "attributes";
     String ATTRIBUTES_ONLY = "attributes-only";
     String AUTO_START = "auto-start";
 
+    String BASE_ROLE = "base-role";
     String BATCH_JBERET = "batch-jberet";
     String BLOCKING = "blocking";
-    String BYTES = "bytes";
 
     String CAPABILITIES = "capabilities";
     String CAPABILITY_REFERENCE = "capability-reference";
@@ -71,7 +69,6 @@ public interface ModelDescriptionConstants {
     String CONFIGURATION = "configuration";
     String CONTEXT_SERVICE = "context-service";
     String CORE_SERVICE = "core-service";
-    String CRITERIA = "criteria";
 
     String DATA_SOURCE = "data-source";
     String DATASOURCES = "datasources";
@@ -80,7 +77,6 @@ public interface ModelDescriptionConstants {
     String DEPLOYMENT = "deployment";
     String DEPLOYMENT_NAME = "deployment-name";
     String DEPLOYMENT_SCANNER = "deployment-scanner";
-    String DESCRIBE = "describe";
     String DESCRIPTION = "description";
     String DISABLED = "disabled";
     String DRIVER_CLASS = "driver-class";
@@ -97,9 +93,8 @@ public interface ModelDescriptionConstants {
     String EJB3 = "ejb3";
     String ENABLED = "enabled";
     String EXCEPTIONS = "exceptions";
-    String EXECUTE = "execute";
+    String EXCLUDE = "exclude";
     String EXPRESSIONS_ALLOWED = "expressions-allowed";
-    String EXTENSION = "extension";
 
     String FAILED = "failed";
     String FAILURE_DESCRIPTION = "failure-description";
@@ -107,29 +102,23 @@ public interface ModelDescriptionConstants {
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
 
     String GLOBAL_MODULES = "global-modules";
-    String GRACEFUL_SHUTDOWN_TIMEOUT = "graceful-shutdown-timeout";
     String GROUP = "group";
 
     String HANDLERS = "handlers";
-    String HASH = "hash";
-    String HEAD_COMMENT_ALLOWED = "head-comment-allowed";
     String HOST = "host";
-    String HOST_FAILURE_DESCRIPTION = "host-failure-description";
-    String HOST_FAILURE_DESCRIPTIONS = "host-failure-descriptions";
+    String HOSTS = "hosts";
     String HOST_STATE = "host-state";
 
-    String IGNORED = "ignored";
     String IIOP_OPENJDK = "iiop-openjdk";
     String IMAP = "imap";
     String INCLUDE = "include";
-    String INCLUDES = "includes";
     String INCLUDE_ALIASES = "include-aliases";
+    String INCLUDE_ALL = "include-all";
     String INCLUDE_DEFAULTS = "include-defaults";
     String INCLUDE_RUNTIME = "include-runtime";
     String INCLUDE_SINGLETONS = "include-singletons";
     String INFINISPAN = "infinispan";
     String INHERITED = "inherited";
-    String INPUT_STREAM_INDEX = "input-stream-index";
     String INTERFACE = "interface";
     String IO = "io";
 
@@ -159,25 +148,15 @@ public interface ModelDescriptionConstants {
     String MANAGEMENT_MINOR_VERSION = "management-minor-version";
     String MASK = "mask";
     String MAX = "max";
-    String MAX_LENGTH = "max-length";
-    String MAX_OCCURS = "max-occurs";
-    String MAX_THREADS = "max-threads";
     String MESSAGING_ACTIVEMQ = "messaging-activemq";
-    String MESSAGING_SERVER = "messaging-server";
     String METRIC = "metric";
     String MIN = "min";
-    String MIN_LENGTH = "min-length";
-    String MIN_OCCURS = "min-occurs";
     String MIN_VALUE = "min-value";
     String MODEL_DESCRIPTION = "model-description";
-    String MODULE_SLOT = "module-slot";
 
     String NAME = "name";
-    String NAMESPACE = "namespace";
-    String NAMESPACES = "namespaces";
     String NILLABLE = "nillable";
     String NOT = "not";
-    String NOT_SET = "not-set";
 
     String OP = "operation";
     String OPERATIONS = "operations";
@@ -194,22 +173,20 @@ public interface ModelDescriptionConstants {
     String PRODUCT_VERSION = "product-version";
     String PROFILE = "profile";
     String PROFILE_NAME = "profile-name";
+    String PROVIDER = "provider";
     String PROXIES = "proxies";
 
     String QUERY = "query";
 
-    String READ = "read";
     String READ_ATTRIBUTE_OPERATION = "read-attribute";
     String READ_CHILDREN_NAMES_OPERATION = "read-children-names";
     String READ_CHILDREN_TYPES_OPERATION = "read-children-types";
     String READ_CHILDREN_RESOURCES_OPERATION = "read-children-resources";
-    String READ_OPERATION_DESCRIPTION_OPERATION = "read-operation-description";
-    String READ_OPERATION_NAMES_OPERATION = "read-operation-names";
     String READ_ONLY = "read-only";
     String READ_RESOURCE_DESCRIPTION_OPERATION = "read-resource-description";
-    String READ_RESOURCE_METRICS = "read-resource-metrics";
     String READ_RESOURCE_OPERATION = "read-resource";
     String READ_WRITE = "read-write";
+    String REALM = "realm";
     String RELATIVE_TO = "relative-to";
     String REMOTING = "remoting";
     String REMOVE = "remove";
@@ -225,9 +202,7 @@ public interface ModelDescriptionConstants {
     String REPLY_PROPERTIES = "reply-properties";
     String REQUEST_CONTROLLER = "request-controller";
     String REQUIRED = "required";
-    String REQUIRES = "requires";
     String RESPONSE = "response";
-    String RESOURCE_ADAPTER = "resource-adapter";
     String RESOURCE_ADAPTERS = "resource-adapters";
     String RESPONSE_HEADERS = "response-headers";
     String RESTART = "restart";
@@ -245,11 +220,9 @@ public interface ModelDescriptionConstants {
     String SECURITY_DOMAIN = "security-domain";
     String SELECT = "select";
     String SERVER = "server";
-    String SERVERS = "servers";
     String SERVER_CONFIG = "server-config";
     String SERVER_GROUP = "server-group";
     String SERVER_GROUPS = "server-groups";
-    String SERVER_OPERATIONS = "server-operations";
     String SERVER_STATE = "server-state";
     String SERVER_TYPE = "server-type";
     String SERVICE = "service";
@@ -260,6 +233,7 @@ public interface ModelDescriptionConstants {
     String SHUTDOWN = "shutdown";
     String SMTP = "smtp";
     String STANDALONE = "standalone";
+    String STANDARD_ROLE_NAMES = "standard-role-names";
     String START = "start";
     String START_SERVERS = "start-servers";
     String STATUS = "status";
@@ -291,7 +265,6 @@ public interface ModelDescriptionConstants {
     String WEBSERVICES = "webservices";
     String WHERE = "where";
     String WHOAMI = "whoami";
-    String WRITE = "write";
     String WRITE_ATTRIBUTE_OPERATION = "write-attribute";
 
     String UNDEFINE_ATTRIBUTE_OPERATION = "undefine-attribute";
