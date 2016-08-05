@@ -17,20 +17,25 @@ package org.jboss.hal.client.accesscontrol;
 
 import javax.inject.Inject;
 
+import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
+
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.GROUP)
-public class GroupColumn extends FinderColumn<Principal> {
+public class GroupColumn extends PrincipalColumn {
 
     @Inject
-    public GroupColumn(final Finder finder, final Resources resources) {
-        super(new Builder<>(finder, Ids.GROUP, resources.constants().group()));
+    public GroupColumn(final Finder finder, final ColumnActionFactory columnActionFactory,
+            final AccessControl accessControl, final AccessControlTokens tokens, final Resources resources) {
+        super(finder, Ids.GROUP, resources.constants().group(), columnActionFactory, accessControl, tokens, resources,
+                accessControl.principals().groups().stream().sorted(comparing(Principal::getName)).collect(toList()));
     }
 }

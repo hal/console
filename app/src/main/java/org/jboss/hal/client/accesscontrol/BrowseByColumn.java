@@ -18,13 +18,16 @@ package org.jboss.hal.client.accesscontrol;
 import java.util.Arrays;
 import javax.inject.Inject;
 
+import com.google.gwt.resources.client.ExternalTextResource;
+import elemental.client.Browser;
+import elemental.dom.Element;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Previews;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
@@ -34,30 +37,41 @@ import org.jboss.hal.spi.AsyncColumn;
 @AsyncColumn(Ids.ACCESS_CONTROL_BROWSE_BY)
 public class BrowseByColumn extends StaticItemColumn {
 
+    private static class TopLevelPreview extends PreviewContent<StaticItem> {
+
+        TopLevelPreview(final String header, final ExternalTextResource resource,
+                final AccessControl accessControl, final Environment environment, final Resources resources) {
+            super(header);
+            previewBuilder().add(AccessControlPreview.simpleProviderWarning(accessControl, environment, resources));
+            Element content = Browser.getDocument().createDivElement();
+            Previews.innerHtml(content, resource);
+            previewBuilder().add(content);
+        }
+    }
+
+
     @Inject
     public BrowseByColumn(final Finder finder, final AccessControl accessControl, final Environment environment,
             final Resources resources) {
         super(finder, Ids.ACCESS_CONTROL_BROWSE_BY, resources.constants().browseBy(),
                 Arrays.asList(
                         new StaticItem.Builder(resources.constants().users())
-                                .onPreview(new PreviewContent(resources.constants().users(),
-                                        resources.previews().rbacUsers()))
+                                .onPreview(new TopLevelPreview(resources.constants().users(),
+                                        resources.previews().rbacUsers(), accessControl, environment, resources))
                                 .nextColumn(Ids.USER)
                                 .build(),
                         new StaticItem.Builder(resources.constants().groups())
-                                .onPreview(new PreviewContent(resources.constants().groups(),
-                                        resources.previews().rbacGroups()))
+                                .onPreview(new TopLevelPreview(resources.constants().groups(),
+                                        resources.previews().rbacGroups(), accessControl, environment, resources))
                                 .nextColumn(Ids.GROUP)
                                 .build(),
                         new StaticItem.Builder(resources.constants().roles())
-                                .onPreview(new PreviewContent(resources.constants().roles(),
+                                .onPreview(new TopLevelPreview(resources.constants().roles(),
                                         environment.isStandalone() ? resources.previews()
-                                                .rbacRolesStandalone() : resources.previews().rbacRolesDomain()))
+                                                .rbacRolesStandalone() : resources.previews().rbacRolesDomain(),
+                                        accessControl, environment, resources))
                                 .nextColumn(Ids.ROLE)
                                 .build()
                 ));
-
-        addColumnAction(new ColumnAction<>(Ids.ACCESS_CONTROL_SWITCH_PROVIDER,
-                resources.constants().switchProvider(), column -> accessControl.switchProvider()));
     }
 }

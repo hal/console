@@ -20,11 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.resources.client.ExternalTextResource;
-import com.google.gwt.resources.client.ResourceCallback;
-import com.google.gwt.resources.client.ResourceException;
-import com.google.gwt.resources.client.TextResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
@@ -34,9 +30,7 @@ import org.jboss.hal.core.Strings;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
-import org.jetbrains.annotations.NonNls;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.hal.resources.Previews;
 
 import static org.jboss.hal.resources.CSS.finderPreview;
 
@@ -47,10 +41,7 @@ import static org.jboss.hal.resources.CSS.finderPreview;
  */
 public class PreviewContent<T> implements HasElements, Attachable, SecurityContextAware {
 
-    protected static final String CONTENT_ELEMENT = "contentElement";
-
-    private static final String ERROR_MESSAGE = "Unable to get preview content from '{}': {}";
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(PreviewContent.class);
+    private static final String CONTENT_ELEMENT = "contentElement";
     private static final int MAX_HEADER_LENGTH = 30;
 
     private final List<Attachable> attachables;
@@ -115,25 +106,7 @@ public class PreviewContent<T> implements HasElements, Attachable, SecurityConte
         }
         builder.section().rememberAs(CONTENT_ELEMENT).end();
         Element content = builder.referenceFor(CONTENT_ELEMENT);
-
-        if (resource != null) {
-            try {
-                resource.getText(new ResourceCallback<TextResource>() {
-                    @Override
-                    public void onError(final ResourceException e) {
-                        logger.error(ERROR_MESSAGE, resource.getName(), e.getMessage());
-                    }
-
-                    @Override
-                    public void onSuccess(final TextResource textResource) {
-                        SafeHtml html = SafeHtmlUtils.fromSafeConstant(textResource.getText());
-                        content.setInnerHTML(html.asString());
-                    }
-                });
-            } catch (ResourceException e) {
-                logger.error(ERROR_MESSAGE, resource.getName(), e.getMessage());
-            }
-        }
+        Previews.innerHtml(content, resource);
     }
 
     private Elements.Builder header(final String header) {

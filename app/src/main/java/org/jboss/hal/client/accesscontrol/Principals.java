@@ -44,29 +44,9 @@ class Principals implements Iterable<Principal> {
     void add(Principal principal) {
         if (principal != null) {
             Set<Principal> set = principals.get(principal.getType());
-            if (set != null) {
-                set.add(principal);
-            }
-            // Principal.getId() already encodes the type
-            lookup.put(principal.getResourceName(), principal);
+            set.add(principal);
+            lookup.put(principal.getId(), principal);
         }
-    }
-
-    boolean contains(final Principal principal) {
-        return lookup.containsKey(principal.getResourceName());
-    }
-
-    Principal get(final String id) {
-        return lookup.get(id);
-    }
-
-    Set<Principal> get(Principal.Type type) {
-        return principals.get(type);
-    }
-
-    void remove(final Principal principal) {
-        principals.get(principal.getType()).remove(principal);
-        lookup.remove(principal.getResourceName());
     }
 
     void clear() {
@@ -77,6 +57,18 @@ class Principals implements Iterable<Principal> {
             principals.get(USER).clear();
         }
         lookup.clear();
+    }
+
+    Principal get(final String id) {
+        return lookup.get(id);
+    }
+
+    Set<Principal> users() {
+        return principals.get(USER);
+    }
+
+    Set<Principal> groups() {
+        return principals.get(GROUP);
     }
 
     @Override

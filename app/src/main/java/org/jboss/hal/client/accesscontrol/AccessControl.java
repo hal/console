@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.config.AccessControlProvider;
@@ -32,6 +33,7 @@ import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -88,17 +90,19 @@ public class AccessControl {
         if (environment.getAccessControlProvider() == SIMPLE) {
             DialogFactory.confirmation(resources.constants().switchProvider(),
                     resources.messages().switchToRbacProvider(), () -> {
-                        dispatcher.execute(builder.param(VALUE, SIMPLE.name().toLowerCase()).build(),
-                                result -> MessageEvent
-                                        .fire(eventBus, Message.success(resources.messages().switchProviderSuccess())));
+                        dispatcher.execute(builder.param(VALUE, RBAC.name().toLowerCase()).build(), result -> {
+                            environment.setAccessControlProvider(RBAC);
+                            MessageEvent.fire(eventBus, Message.success(resources.messages().switchProviderSuccess()));
+                        });
                         return true;
                     }).show();
         } else {
             DialogFactory.confirmation(resources.constants().switchProvider(),
                     resources.messages().switchToSimpleProvider(), () -> {
-                        dispatcher.execute(builder.param(VALUE, RBAC.name().toLowerCase()).build(),
-                                result -> MessageEvent
-                                        .fire(eventBus, Message.success(resources.messages().switchProviderSuccess())));
+                        dispatcher.execute(builder.param(VALUE, SIMPLE.name().toLowerCase()).build(), result -> {
+                            environment.setAccessControlProvider(SIMPLE);
+                            MessageEvent.fire(eventBus, Message.success(resources.messages().switchProviderSuccess()));
+                        });
                         return true;
                     }).show();
         }
@@ -110,7 +114,7 @@ public class AccessControl {
         assignments.clear();
     }
 
-    void update() {
+    void reload(Scheduler.ScheduledCommand andThen) {
         reset();
 
         List<Operation> operations = new ArrayList<>();
@@ -155,7 +159,7 @@ public class AccessControl {
             }
 
             result.step(step++).get(RESULT).asPropertyList().forEach(p1 -> {
-                Role role = roles.get(p1.getName());
+                Role role = roles.get(Ids.role(p1.getName()));
                 if (role != null) {
                     ModelNode assignmentNode = p1.getValue();
                     if (assignmentNode.hasDefined(INCLUDE_ALL)) {
@@ -172,11 +176,13 @@ public class AccessControl {
                     logger.error("Cannot add assignment for role {}: No matching role found!", p1.getName());
                 }
             });
+
+            andThen.execute();
         });
     }
 
     private Role scopedRole(Property property, Role.Type type, String scopeAttribute) {
-        Role baseRole = roles.get(property.getValue().get(BASE_ROLE).asString());
+        Role baseRole = roles.get(Ids.role(property.getValue().get(BASE_ROLE).asString()));
         Set<String> scope = property.getValue().get(scopeAttribute).asList().stream()
                 .map(ModelNode::asString).collect(toSet());
         return new Role(property.getName(), baseRole, type, scope);
@@ -199,15 +205,15 @@ public class AccessControl {
         assignments.add(assignment);
     }
 
-    Roles getRoles() {
+    Roles roles() {
         return roles;
     }
 
-    Principals getPrincipals() {
+    Principals principals() {
         return principals;
     }
 
-    Assignments getAssignments() {
+    Assignments assignments() {
         return assignments;
     }
 }

@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.accesscontrol;
 
+import org.jboss.hal.resources.Ids;
+
 /**
  * A user or a group with an optional realm.
  *
@@ -31,15 +33,6 @@ class Principal {
     private final String resourceName;
     private final String name;
     private final String realm;
-
-    static String generateId(final Type type, final String name, final String realm) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(type.name().toLowerCase()).append("-").append(name);
-        if (realm != null) {
-            builder.append("@").append(realm);
-        }
-        return builder.toString();
-    }
 
     Principal(final Type type, final String resourceName, final String name, final String realm) {
         this.type = type;
@@ -77,6 +70,14 @@ class Principal {
         return type + "(" + getNameAndRealm() + ")";
     }
 
+    private String getNameAndRealm() {
+        return realm == null ? name : name + "@" + realm;
+    }
+
+    String getId() {
+        return Ids.principal(getType().name().toLowerCase(), getName());
+    }
+
     String getResourceName() {
         return resourceName;
     }
@@ -87,10 +88,6 @@ class Principal {
 
     String getRealm() {
         return realm;
-    }
-
-    String getNameAndRealm() {
-        return realm == null ? name : name + "@" + realm;
     }
 
     Type getType() {

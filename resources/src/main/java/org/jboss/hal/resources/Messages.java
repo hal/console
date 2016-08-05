@@ -46,6 +46,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml addSingleResourceSuccess(String type);
     SafeHtml allMailServersExist();
     SafeHtml allSingletonsExist();
+    String assignedToOtherRoles(String type, @PluralCount int count);
     String available(double value);
 
     String blacklist(String blacklist);
@@ -76,6 +77,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String homepagePatchingSubHeader(String name);
     String homepagePatchingStandaloneStepIntro(String name);
     String homepagePatchingDomainStepIntro(String name);
+    String hostScopedRole(String name, String scope);
+
     SafeHtml hostAdminMode(String name);
     SafeHtml hostControllerTimeout(String name);
     SafeHtml hostNeedsReload(String name);
@@ -164,6 +167,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml resumeServerSuccess(String name);
 
     SafeHtml simpleProviderWarning();
+    String serverGroupScopedRole(String name, String scope);
 
     SafeHtml serverGroupNoStartedServers(String name);
     SafeHtml serverGroupNoStoppedServers(String name);

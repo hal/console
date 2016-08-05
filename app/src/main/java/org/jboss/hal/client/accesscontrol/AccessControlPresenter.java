@@ -58,6 +58,11 @@ public class AccessControlPresenter extends
     }
 
     @Override
+    protected void onReset() {
+        accessControl.reload(() -> super.onReset());
+    }
+
+    @Override
     protected String initialColumn() {
         return Ids.ACCESS_CONTROL_BROWSE_BY;
     }

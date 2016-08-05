@@ -74,6 +74,7 @@ public interface Ids {
 
     String ACCESS_CONTROL_BROWSE_BY = "access-control-browse-by";
     String ACCESS_CONTROL_SWITCH_PROVIDER = "access-control-switch-provider";
+    String ASSIGNMENT = "assignement";
 
     String CONFIGURATION = "configuration";
     String CONTENT = "content";
@@ -176,6 +177,7 @@ public interface Ids {
     String MAIL_SESSION_ATTRIBUTES_FORM = build(MAIL_SESSION, "attributes", FORM_SUFFIX);
     String MAIL_SESSION_DIALOG = build(MAIL_SESSION, FORM_SUFFIX);
     String MAIL_SESSION_REFRESH = build(MAIL_SESSION, REFRESH_SUFFIX);
+    String MEMBERSHIP = "membership";
     String MODEL_BROWSER = "model-browser";
 
     String PREVIEW_ID = build(FINDER, "preview");
@@ -257,6 +259,17 @@ public interface Ids {
 
     static String loggingProfile(final String name) {
         return build(LOGGING, name);
+    }
+
+    /**
+     * @param type must be one of "user" or "group"
+     */
+    static String principal(final String type, final String name) {
+        return build(type, name);
+    }
+
+    static String role(String name) {
+        return asId(name);
     }
 
     static String server(final String name) {

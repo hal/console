@@ -15,11 +15,14 @@
  */
 package org.jboss.hal.client.accesscontrol;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import static java.util.Comparator.comparing;
 
 /**
  * Contains the list of standard roles plus the custom defined scoped roles.
@@ -27,6 +30,9 @@ import java.util.Set;
  * @author Harald Pehl
  */
 class Roles implements Iterable<Role> {
+
+    static final Comparator<Role> STANDARD_FIRST = comparing(Role::getType);
+    static final Comparator<Role> BY_NAME = comparing(Role::getName);
 
     private final Map<String, Role> lookup;
     private final Set<Role> standardRoles;
@@ -40,7 +46,7 @@ class Roles implements Iterable<Role> {
 
     void add(Role role) {
         if (role != null) {
-            lookup.put(role.getName(), role);
+            lookup.put(role.getId(), role);
             if (role.isStandard()) {
                 standardRoles.add(role);
             } else if (role.isScoped()) {
@@ -49,25 +55,25 @@ class Roles implements Iterable<Role> {
         }
     }
 
-    Role get(String name) {
-        if (name != null) {
-            return lookup.get(name);
-        }
-        return null;
-    }
-
-    Set<Role> getStandardRoles() {
-        return standardRoles;
-    }
-
-    Set<Role> getScopedRoles() {
-        return scopedRoles;
-    }
-
     void clear() {
         lookup.clear();
         standardRoles.clear();
         scopedRoles.clear();
+    }
+
+    Role get(String id) {
+        if (id != null) {
+            return lookup.get(id);
+        }
+        return null;
+    }
+
+    Set<Role> standardRoles() {
+        return standardRoles;
+    }
+
+    Set<Role> scopedRoles() {
+        return scopedRoles;
     }
 
     @Override

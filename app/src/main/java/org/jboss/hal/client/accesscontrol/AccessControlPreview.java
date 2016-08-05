@@ -15,11 +15,6 @@
  */
 package org.jboss.hal.client.accesscontrol;
 
-import com.google.gwt.resources.client.ResourceCallback;
-import com.google.gwt.resources.client.ResourceException;
-import com.google.gwt.resources.client.TextResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
@@ -28,6 +23,7 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Previews;
 import org.jboss.hal.resources.Resources;
 
 /**
@@ -35,29 +31,23 @@ import org.jboss.hal.resources.Resources;
  */
 class AccessControlPreview extends PreviewContent<Void> {
 
-    AccessControlPreview(AccessControl accessControl, Environment environment, Resources resources) {
-        super(Names.ACCESS_CONTROL);
+    private static final String CONTENT_ELEMENT = "contentElement";
 
+    static Alert simpleProviderWarning(final AccessControl accessControl, final Environment environment,
+            final Resources resources) {
         Alert warning = new Alert(Icons.WARNING, resources.messages().simpleProviderWarning(),
                 resources.constants().enableRbac(),
                 event -> accessControl.switchProvider());
-        Elements.setVisible(warning.asElement(),
-                environment.getAccessControlProvider() == AccessControlProvider.SIMPLE);
-        previewBuilder().add(warning.asElement());
+        Elements.setVisible(warning.asElement(), environment.getAccessControlProvider() == AccessControlProvider.SIMPLE);
+        return warning;
+    }
 
+    AccessControlPreview(AccessControl accessControl, Environment environment, Resources resources) {
+        super(Names.ACCESS_CONTROL);
+
+        previewBuilder().add(simpleProviderWarning(accessControl, environment, resources));
         previewBuilder().section().rememberAs(CONTENT_ELEMENT).end();
         Element content = previewBuilder().referenceFor(CONTENT_ELEMENT);
-        try {
-            resources.previews().rbacOverview().getText(new ResourceCallback<TextResource>() {
-                @Override
-                public void onError(final ResourceException e) {}
-
-                @Override
-                public void onSuccess(final TextResource textResource) {
-                    SafeHtml html = SafeHtmlUtils.fromSafeConstant(textResource.getText());
-                    content.setInnerHTML(html.asString());
-                }
-            });
-        } catch (ResourceException ignored) {}
+        Previews.innerHtml(content, resources.previews().rbacOverview());
     }
 }

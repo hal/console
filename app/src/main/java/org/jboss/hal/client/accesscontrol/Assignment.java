@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.client.accesscontrol;
 
-import com.google.common.base.Joiner;
-
 /**
  * An assignment between a principal and a role.
  *
@@ -61,19 +59,15 @@ class Assignment {
         return (include ? "Include " : "Exclude ") + principal + " -> " + role;
     }
 
-     String getId() {
-        return Joiner.on('-').join(principal.getResourceName(), role.getName(), include ? "include" : "exclude"); //NON-NLS
-    }
-
-     Principal getPrincipal() {
+    Principal getPrincipal() {
         return principal;
     }
 
-     Role getRole() {
+    Role getRole() {
         return role;
     }
 
-     boolean isInclude() {
+    boolean isInclude() {
         return include;
     }
 }

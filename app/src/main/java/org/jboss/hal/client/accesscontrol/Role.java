@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.jboss.hal.resources.Ids;
+
 /**
  * @author Harald Pehl
  */
@@ -89,6 +91,10 @@ class Role {
 
     boolean isScoped() {
         return type != Type.STANDARD;
+    }
+
+    String getId() {
+        return Ids.role(name);
     }
 
     String getName() {

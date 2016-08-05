@@ -67,6 +67,7 @@ public interface Names {
     String PROFILES = "Profiles";
     String QUERY = "Query";
     String QUERY_CACHE = "Query Cache";
+    String REALM = "Realm";
     String RESOURCE = "Resource";
     String ROOT_LOGGER = "Root Logger";
     String RUNTIME = "Runtime";

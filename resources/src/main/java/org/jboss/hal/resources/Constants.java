@@ -46,6 +46,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String adminOnly();
     String assign();
     String assignedContentDesc();
+    String assignment();
+    String assignmentsOfGroup();
+    String assignmentsOfUser();
     String attribute();
     String attributes();
 
@@ -81,6 +84,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String days();
     String defaultValue();
     String deploymentAttributes();
+    String description();
     String details();
     String disable();
     String disabled();
@@ -98,6 +102,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String endpointAddTitle();
     String endpointAddDescription();
     String environment();
+    String excludes();
     String expressionResolver();
 
     String failed();
@@ -194,6 +199,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String hour();
     String hours();
 
+    String includes();
     String input();
 
     String jdbcDriver();
@@ -209,6 +215,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String mainAttributes();
     String managementVersion();
     String maxUsed();
+    String membership();
+    String membershipOfRole();
     String message();
     String minute();
     String minutes();
@@ -225,6 +233,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noDetails();
     String noItems();
     String noMacros();
+    String noPrincipalsExcluded();
+    String noPrincipalsIncluded();
+    String noRolesExcluded();
+    String noRolesIncluded();
     String noRootLogger();
     String noRootLoggerDescription();
     String noRunningServers();

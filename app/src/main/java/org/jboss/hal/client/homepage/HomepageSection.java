@@ -15,6 +15,9 @@
  */
 package org.jboss.hal.client.homepage;
 
+import java.util.Collections;
+import javax.annotation.PostConstruct;
+
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 import elemental.client.Browser;
@@ -25,10 +28,8 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventHandler;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.resources.Resources;
-
-import javax.annotation.PostConstruct;
-import java.util.Collections;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.in;
@@ -41,13 +42,13 @@ import static org.jboss.hal.resources.CSS.in;
 abstract class HomepageSection implements IsElement {
 
     // @formatter:off
-    static HomepageSection create(final TokenFormatter tokenFormatter, final Resources resources,
+    static HomepageSection create(final Places places, final Resources resources,
             final String id, final String token, final String header, final String intro,
             final Iterable<String> steps, final boolean open) {
-        return new Templated_HomepageSection(tokenFormatter, resources, id, token, header, intro, steps, open);
+        return new Templated_HomepageSection(places, resources, id, token, header, intro, steps, open);
     }
 
-    abstract TokenFormatter tokenFormatter();
+    abstract Places places();
     abstract Resources resources();
     abstract String id();
     abstract String token();
@@ -90,7 +91,7 @@ abstract class HomepageSection implements IsElement {
 
     String historyToken() {
         PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token()).build();
-        return "#" + tokenFormatter().toHistoryToken(Collections.singletonList(placeRequest));
+        return places().historyToken(placeRequest);
     }
 
     @EventHandler(element = "toggleSection", on = click)
