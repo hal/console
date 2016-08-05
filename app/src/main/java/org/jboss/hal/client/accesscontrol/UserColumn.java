@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
@@ -33,9 +34,14 @@ import static java.util.stream.Collectors.toList;
 public class UserColumn extends PrincipalColumn {
 
     @Inject
-    public UserColumn(final Finder finder, final ColumnActionFactory columnActionFactory,
-            final AccessControl accessControl, final AccessControlTokens tokens, final Resources resources) {
-        super(finder, Ids.USER, resources.constants().user(), columnActionFactory, accessControl, tokens, resources,
-                accessControl.principals().users().stream().sorted(comparing(Principal::getName)).collect(toList()));
+    public UserColumn(final Finder finder,
+            final ColumnActionFactory columnActionFactory,
+            final ItemActionFactory itemActionFactory,
+            final AccessControl accessControl,
+            final AccessControlTokens tokens,
+            final Resources resources) {
+        super(finder, Ids.USER, resources.constants().user(),
+                accessControl.principals().users().stream().sorted(comparing(Principal::getName)).collect(toList()),
+                columnActionFactory, itemActionFactory, accessControl, tokens, resources);
     }
 }

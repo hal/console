@@ -20,11 +20,11 @@ import java.util.List;
 
 import elemental.client.Browser;
 import elemental.dom.Element;
-import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
+import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -46,10 +46,9 @@ class PrincipalColumn extends FinderColumn<Principal> {
         return data;
     }
 
-    PrincipalColumn(final Finder finder, final String id, final String title,
-            final ColumnActionFactory columnActionFactory,
-            final AccessControl accessControl, final AccessControlTokens tokens,
-            final Resources resources,  final List<Principal> principals) {
+    PrincipalColumn(final Finder finder, final String id, final String title, final List<Principal> principals,
+            final ColumnActionFactory columnActionFactory, final ItemActionFactory itemActionFactory,
+            final AccessControl accessControl, final AccessControlTokens tokens, final Resources resources) {
         super(new Builder<Principal>(finder, id, title)
 
                 .itemsProvider((context, callback) -> callback.onSuccess(principals))
@@ -80,15 +79,8 @@ class PrincipalColumn extends FinderColumn<Principal> {
 
                     @Override
                     public List<ItemAction<Principal>> actions() {
-                        return singletonList(new ItemAction<>(resources.constants().remove(),
-                                itm -> DialogFactory.confirmation(
-                                        resources.messages().removeResourceConfirmationTitle(itm.getName()),
-                                        resources.messages().removeResourceConfirmationQuestion(itm.getName()),
-                                        () -> {
-                                            Browser.getWindow().alert(Names.NYI);
-                                            return true;
-                                        }).show()
-                        ));
+                        return singletonList(itemActionFactory
+                                .remove(title, item.getName(), itm -> Browser.getWindow().alert(Names.NYI)));
                     }
 
                     @Override
@@ -102,6 +94,8 @@ class PrincipalColumn extends FinderColumn<Principal> {
                 .withFilter()
         );
 
+        addColumnAction(columnActionFactory.add(Ids.ROLE_ADD, title,
+                column -> Browser.getWindow().alert(Names.NYI)));
         addColumnAction(columnActionFactory.refresh(Ids.build(id, "refresh"),
                 column -> accessControl.reload(() -> refresh(RefreshMode.RESTORE_SELECTION))));
     }

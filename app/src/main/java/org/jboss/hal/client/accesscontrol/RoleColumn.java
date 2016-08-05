@@ -21,12 +21,12 @@ import javax.inject.Inject;
 
 import elemental.client.Browser;
 import elemental.dom.Element;
-import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
+import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -55,9 +55,13 @@ public class RoleColumn extends FinderColumn<Role> {
     }
 
     @Inject
-    public RoleColumn(final Finder finder, final ColumnActionFactory columnActionFactory,
-            final AccessControl accessControl, final AccessControlTokens tokens,
-            final Environment environment, final Resources resources) {
+    public RoleColumn(final Finder finder,
+            final ColumnActionFactory columnActionFactory,
+            final ItemActionFactory itemActionFactory,
+            final AccessControl accessControl,
+            final AccessControlTokens tokens,
+            final Environment environment,
+            final Resources resources) {
         super(new Builder<Role>(finder, Ids.ROLE, resources.constants().role())
 
                 .itemsProvider((context, callback) -> {
@@ -104,14 +108,8 @@ public class RoleColumn extends FinderColumn<Role> {
                         actions.add(new ItemAction<>(resources.constants().edit(),
                                 itm -> Browser.getWindow().alert(Names.NYI)));
                         if (item.isScoped()) {
-                            actions.add(new ItemAction<>(resources.constants().remove(),
-                                    itm -> DialogFactory.confirmation(
-                                            resources.messages().removeResourceConfirmationTitle(itm.getName()),
-                                            resources.messages().removeResourceConfirmationQuestion(itm.getName()),
-                                            () -> {
-                                                Browser.getWindow().alert(Names.NYI);
-                                                return true;
-                                            }).show()));
+                            actions.add(itemActionFactory.remove(resources.constants().role(), item.getName(),
+                                    itm -> Browser.getWindow().alert(Names.NYI)));
                         }
                         return actions;
                     }
@@ -127,7 +125,11 @@ public class RoleColumn extends FinderColumn<Role> {
                 .withFilter()
         );
 
-        addColumnAction(columnActionFactory.refresh(Ids.build(Ids.ROLE, "refresh"),
+        if (!environment.isStandalone()) {
+            addColumnAction(columnActionFactory.add(Ids.ROLE_ADD, resources.constants().role(),
+                    column -> Browser.getWindow().alert(Names.NYI)));
+        }
+        addColumnAction(columnActionFactory.refresh(Ids.ROLE_REFRESH,
                 column -> accessControl.reload(() -> refresh(RefreshMode.RESTORE_SELECTION))));
     }
 }

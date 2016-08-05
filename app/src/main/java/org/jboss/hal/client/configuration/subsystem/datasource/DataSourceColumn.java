@@ -25,6 +25,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
@@ -32,6 +33,9 @@ import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.client.configuration.subsystem.datasource.wizard.NewDataSourceWizard;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.datasource.DataSource;
+import org.jboss.hal.core.datasource.JdbcDriver;
+import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -41,8 +45,6 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.core.datasource.DataSource;
-import org.jboss.hal.core.datasource.JdbcDriver;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -55,6 +57,7 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
@@ -64,7 +67,7 @@ import org.jboss.hal.spi.Requires;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.pfIcon;
 
 /**
  * Column which is used for both XA and normal data sources.
@@ -111,10 +114,20 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         this.resources = resources;
         this.templates = templates;
 
-        addColumnAction(columnActionFactory.add(Ids.DATA_SOURCE_ADD, Names.DATASOURCE,
+        List<ColumnAction<DataSource>> addActions = new ArrayList<>();
+        addActions.add(new ColumnAction<>(Ids.DATA_SOURCE_ADD,
+                resources.messages().addResourceTitle(Names.DATASOURCE),
                 column -> launchNewDataSourceWizard(false)));
-        addColumnAction(columnActionFactory.add(Ids.XA_DATA_SOURCE_ADD, Names.XA_DATASOURCE,
-                fontAwesome("credit-card"), column -> launchNewDataSourceWizard(true)));
+        addActions.add(new ColumnAction<>(Ids.XA_DATA_SOURCE_ADD,
+                resources.messages().addResourceTitle(Names.XA_DATASOURCE),
+                column -> launchNewDataSourceWizard(true)));
+        Element element = new Elements.Builder().span()
+                .css(pfIcon("add-circle-o"))
+                .title(resources.constants().add())
+                .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
+                .data(UIConstants.PLACEMENT, "bottom")
+                .end().build();
+        addColumnActions(Ids.DATA_SOURCE_ADD_ACTIONS, element, addActions);
         addColumnAction(columnActionFactory.refresh(Ids.DATA_SOURCE_REFRESH));
 
         setItemsProvider((context, callback) -> {

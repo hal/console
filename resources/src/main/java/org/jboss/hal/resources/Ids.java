@@ -73,8 +73,9 @@ public interface Ids {
     // Try to compose IDs by making use of the build() method, except the ID is used in an annotation.
 
     String ACCESS_CONTROL_BROWSE_BY = "access-control-browse-by";
-    String ACCESS_CONTROL_SWITCH_PROVIDER = "access-control-switch-provider";
     String ASSIGNMENT = "assignement";
+    String ASSIGNMENT_INCLUDE = build(ASSIGNMENT, "include");
+    String ASSIGNMENT_EXCLUDE = build(ASSIGNMENT, "exclude");
 
     String CONFIGURATION = "configuration";
     String CONTENT = "content";
@@ -82,6 +83,7 @@ public interface Ids {
 
     String DATA_SOURCE_CONFIGURATION = "data-source-configuration";
     String DATA_SOURCE_ADD = build(DATA_SOURCE_CONFIGURATION, ADD_SUFFIX);
+    String DATA_SOURCE_ADD_ACTIONS = build(DATA_SOURCE_CONFIGURATION, "add-actions");
     String DATA_SOURCE_DRIVER = "data-source-driver";
     String DATA_SOURCE_REFRESH = build(DATA_SOURCE_CONFIGURATION, REFRESH_SUFFIX);
     String DATA_SOURCE_RUNTIME = "data-source-runtime";
@@ -178,6 +180,8 @@ public interface Ids {
     String MAIL_SESSION_DIALOG = build(MAIL_SESSION, FORM_SUFFIX);
     String MAIL_SESSION_REFRESH = build(MAIL_SESSION, REFRESH_SUFFIX);
     String MEMBERSHIP = "membership";
+    String MEMBERSHIP_INCLUDE = build(MEMBERSHIP, "include");
+    String MEMBERSHIP_EXCLUDE = build(MEMBERSHIP, "exclude");
     String MODEL_BROWSER = "model-browser";
 
     String PREVIEW_ID = build(FINDER, "preview");
@@ -186,6 +190,8 @@ public interface Ids {
     String PROFILE_REFRESH = build(PROFILE, REFRESH_SUFFIX);
 
     String ROLE = "role";
+    String ROLE_ADD = build(ROLE, ADD_SUFFIX);
+    String ROLE_REFRESH = build(ROLE, REFRESH_SUFFIX);
     String ROOT_CONTAINER = "hal-root-container";
     String RUNTIME_SUBSYSTEMS = "runtime-subsystems";
 

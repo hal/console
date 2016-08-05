@@ -102,6 +102,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String endpointAddTitle();
     String endpointAddDescription();
     String environment();
+    String excludeRole();
+    String excludeUserGroup();
     String excludes();
     String expressionResolver();
 
@@ -199,6 +201,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String hour();
     String hours();
 
+    String includeRole();
+    String includeUserGroup();
     String includes();
     String input();
 
