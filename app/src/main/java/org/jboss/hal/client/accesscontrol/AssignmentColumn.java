@@ -41,6 +41,7 @@ import org.jboss.hal.spi.AsyncColumn;
 
 import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 /**
@@ -154,37 +155,25 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
             callback.onSuccess(assignments);
         });
 
-        // Setup column actions to include *all* roles.
-        // Already included roles will be filtered out later in the ItemsProvider
-        Element include = new Elements.Builder().span()
-                .css(fontAwesome("plus"))
-                .title(resources.constants().includeRole())
-                .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                .data(UIConstants.PLACEMENT, "bottom")
-                .end().build();
-        List<ColumnAction<Assignment>> includeActions = new ArrayList<>();
-        StreamSupport.stream(accessControl.roles().spliterator(), false)
-                .sorted(comparing(Role::getType)
-                        .thenComparing(comparing(Role::getName)))
-                .forEach(role -> includeActions.add(new ColumnAction<Assignment>(includeId(role), role.getName(),
-                        column -> Browser.getWindow().alert(Names.NYI))));
-        addColumnActions(Ids.ASSIGNMENT_INCLUDE, include, includeActions);
+        // Setup column actions to include / exclude *all* roles.
+        // Already included / excluded roles will be filtered out later in the ItemsProvider
+        List<Role> roles = new ArrayList<>();
+        accessControl.roles().standardRoles().stream().sorted(comparing(Role::getName)).forEach(roles::add);
+        accessControl.roles().scopedRoles().stream().sorted(comparing(Role::getName)).forEach(roles::add);
 
-        // Setup column actions to exclude *all* roles.
-        // Already excluded roles will be filtered out later in the ItemsProvider
-        Element exclude = new Elements.Builder().span()
-                .css(fontAwesome("minus"))
-                .title(resources.constants().excludeRole())
-                .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                .data(UIConstants.PLACEMENT, "bottom")
-                .end().build();
-        List<ColumnAction<Assignment>> excludeActions = new ArrayList<>();
-        StreamSupport.stream(accessControl.roles().spliterator(), false)
-                .sorted(comparing(Role::getType)
-                        .thenComparing(comparing(Role::getName)))
-                .forEach(role -> excludeActions.add(new ColumnAction<Assignment>(excludeId(role), role.getName(),
-                        column -> Browser.getWindow().alert(Names.NYI))));
-        addColumnActions(Ids.ASSIGNMENT_EXCLUDE, exclude, excludeActions);
+        List<ColumnAction<Assignment>> includeActions = roles.stream()
+                .map(role -> new ColumnAction<Assignment>(includeId(role), role.getName(),
+                        column -> Browser.getWindow().alert(Names.NYI)))
+                .collect(toList());
+        addColumnActions(Ids.ASSIGNMENT_INCLUDE, fontAwesome("plus"), resources.constants().includeRole(),
+                includeActions);
+
+        List<ColumnAction<Assignment>> excludeActions = roles.stream()
+                .map(role -> new ColumnAction<Assignment>(excludeId(role), role.getName(),
+                        column -> Browser.getWindow().alert(Names.NYI)))
+                .collect(toList());
+        addColumnActions(Ids.ASSIGNMENT_EXCLUDE, fontAwesome("minus"), resources.constants().excludeRole(),
+                excludeActions);
     }
 
     private String includeId(Role role) {

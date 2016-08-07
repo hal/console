@@ -41,6 +41,7 @@ import org.jboss.hal.spi.AsyncColumn;
 
 import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 /**
@@ -153,39 +154,25 @@ public class MembershipColumn extends FinderColumn<Assignment> {
             callback.onSuccess(assignments);
         });
 
-        // Setup column actions to include *all* principals.
-        // Already included principals will be filtered out later in the ItemsProvider
-        Element include = new Elements.Builder().span()
-                .css(fontAwesome("plus"))
-                .title(resources.constants().includeUserGroup())
-                .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                .data(UIConstants.PLACEMENT, "bottom")
-                .end().build();
-        List<ColumnAction<Assignment>> includeActions = new ArrayList<>();
-        StreamSupport.stream(accessControl.principals().spliterator(), false)
-                .sorted(comparing(Principal::getType)
-                        .thenComparing(comparing(Principal::getName)))
-                .forEach(principal -> includeActions.add(new ColumnAction<>(
-                        includeId(principal), typeAndName(principal),
-                        column -> Browser.getWindow().alert(Names.NYI))));
-        addColumnActions(Ids.MEMBERSHIP_INCLUDE, include, includeActions);
+        // Setup column actions to include / exclude *all* principals.
+        // Already included / excluded principals will be filtered out later in the ItemsProvider
+        List<Principal> principals = new ArrayList<>();
+        accessControl.principals().users().stream().sorted(comparing(Principal::getName)).forEach(principals::add);
+        accessControl.principals().groups().stream().sorted(comparing(Principal::getName)).forEach(principals::add);
 
-        // Setup column actions to exclude *all* principals.
-        // Already excluded principals will be filtered out later in the ItemsProvider
-        Element exclude = new Elements.Builder().span()
-                .css(fontAwesome("minus"))
-                .title(resources.constants().excludeUserGroup())
-                .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                .data(UIConstants.PLACEMENT, "bottom")
-                .end().build();
-        List<ColumnAction<Assignment>> excludeActions = new ArrayList<>();
-        StreamSupport.stream(accessControl.principals().spliterator(), false)
-                .sorted(comparing(Principal::getType)
-                        .thenComparing(comparing(Principal::getName)))
-                .forEach(principal -> excludeActions.add(new ColumnAction<>(
-                        excludeId(principal), typeAndName(principal),
-                        column -> Browser.getWindow().alert(Names.NYI))));
-        addColumnActions(Ids.MEMBERSHIP_EXCLUDE, exclude, excludeActions);
+        List<ColumnAction<Assignment>> includeActions = principals.stream()
+                .map(principal -> new ColumnAction<Assignment>(includeId(principal), typeAndName(principal),
+                        column -> Browser.getWindow().alert(Names.NYI)))
+                .collect(toList());
+        addColumnActions(Ids.MEMBERSHIP_INCLUDE, fontAwesome("plus"), resources.constants().includeUserGroup(),
+                includeActions);
+
+        List<ColumnAction<Assignment>> excludeActions = principals.stream()
+                .map(principal -> new ColumnAction<Assignment>(excludeId(principal), typeAndName(principal),
+                        column -> Browser.getWindow().alert(Names.NYI)))
+                .collect(toList());
+        addColumnActions(Ids.MEMBERSHIP_EXCLUDE, fontAwesome("minus"), resources.constants().excludeUserGroup(),
+                excludeActions);
     }
 
     private String includeId(Principal principal) {

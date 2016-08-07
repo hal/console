@@ -19,21 +19,35 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
+import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.Comparator.comparing;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.resources.CSS.pfIcon;
 
 /**
  * @author Harald Pehl
@@ -58,6 +72,10 @@ public class RoleColumn extends FinderColumn<Role> {
     public RoleColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
+            final MetadataRegistry metadataRegistry,
+            final StatementContext statementContext,
+            final Dispatcher dispatcher,
+            final EventBus eventBus,
             final AccessControl accessControl,
             final AccessControlTokens tokens,
             final Environment environment,
@@ -126,8 +144,50 @@ public class RoleColumn extends FinderColumn<Role> {
         );
 
         if (!environment.isStandalone()) {
-            addColumnAction(columnActionFactory.add(Ids.ROLE_ADD, resources.constants().role(),
-                    column -> Browser.getWindow().alert(Names.NYI)));
+            // add host scoped role (hsr)
+            AddressTemplate hsrTemplate = AddressTemplate
+                    .of("/core-service=management/access=authorization/host-scoped-role=*");
+            Metadata hsrMeta = metadataRegistry.lookup(hsrTemplate);
+            AddResourceDialog hsrDialog = new AddResourceDialog(Ids.ROLE_HOST_SCOPED_FORM,
+                    resources.messages().addResourceTitle(resources.constants().hostScopedRole()),
+                    hsrMeta, (name, model) -> {
+                ResourceAddress address = hsrTemplate.resolve(statementContext, name);
+                Operation operation = new Operation.Builder(ADD, address)
+                        .payload(model)
+                        .build();
+                dispatcher.execute(operation, result -> {
+                    MessageEvent.fire(eventBus, Message.success(
+                            resources.messages().addResourceSuccess(resources.constants().hostScopedRole(), name)));
+                    refresh(name);
+                });
+            });
+            ColumnAction<Role> hsrAction = new ColumnAction<>(Ids.ROLE_HOST_SCOPED_ADD,
+                    resources.constants().hostScopedRole(), column -> hsrDialog.show());
+
+            // add server group scoped role (sgsr)
+            AddressTemplate sgsrTemplate = AddressTemplate
+                    .of("/core-service=management/access=authorization/server-group-scoped-role=*");
+            Metadata sgsrMeta = metadataRegistry.lookup(sgsrTemplate);
+            AddResourceDialog sgsrDialog = new AddResourceDialog(Ids.ROLE_SERVER_GROUP_SCOPED_FORM,
+                    resources.messages().addResourceTitle(resources.constants().hostScopedRole()),
+                    sgsrMeta, (name, model) -> {
+                ResourceAddress address = sgsrTemplate.resolve(statementContext, name);
+                Operation operation = new Operation.Builder(ADD, address)
+                        .payload(model)
+                        .build();
+                dispatcher.execute(operation, result -> {
+                    MessageEvent.fire(eventBus, Message.success(resources.messages()
+                            .addResourceSuccess(resources.constants().serverGroupScopedRole(), name)));
+                    refresh(name);
+                });
+            });
+            ColumnAction<Role> sgsrAction = new ColumnAction<>(Ids.ROLE_SERVER_GROUP_SCOPED_ADD,
+                    resources.constants().serverGroupScopedRole(), column -> sgsrDialog.show());
+
+            List<ColumnAction<Role>> actions = new ArrayList<>();
+            actions.add(hsrAction);
+            actions.add(sgsrAction);
+            addColumnActions(Ids.ROLE_ADD, pfIcon("add-circle-o"), resources.constants().add(), actions);
         }
         addColumnAction(columnActionFactory.refresh(Ids.ROLE_REFRESH,
                 column -> accessControl.reload(() -> refresh(RefreshMode.RESTORE_SELECTION))));

@@ -754,8 +754,14 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
     }
 
-    protected void addColumnActions(String id, Element element, List<ColumnAction<T>> actions) {
+    protected void addColumnActions(String id, String iconsCss, String title, List<ColumnAction<T>> actions) {
         assertNotAsElement("addColumnActions()");
+        Element element = new Elements.Builder().span()
+                .css(iconsCss)
+                .title(title)
+                .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
+                .data(UIConstants.PLACEMENT, "bottom")
+                .end().build();
         columnActions.appendChild(newColumnButton(new DropdownColumnAction<>(id, element, actions)));
         if (columnActions.getChildElementCount() > 1) {
             columnActions.getClassList().add(btnGroup);

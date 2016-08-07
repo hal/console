@@ -29,6 +29,7 @@ import org.jboss.hal.core.mvp.FinderView;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Requires;
 
 /**
  * @author Harald Pehl
@@ -39,6 +40,11 @@ public class AccessControlPresenter extends
     // @formatter:off
     @ProxyStandard
     @NameToken(NameTokens.ACCESS_CONTROL)
+    @Requires(value = {
+        "/core-service=management/access=authorization/role-mapping=*",
+        "/core-service=management/access=authorization/host-scoped-role=*",
+        "/core-service=management/access=authorization/server-group-scoped-role=*"},
+        recursive = false)
     public interface MyProxy extends ProxyPlace<AccessControlPresenter> {}
 
     public interface MyView extends FinderView {}

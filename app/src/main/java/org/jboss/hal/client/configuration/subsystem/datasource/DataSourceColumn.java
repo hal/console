@@ -25,7 +25,6 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
@@ -57,7 +56,6 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
@@ -121,13 +119,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         addActions.add(new ColumnAction<>(Ids.XA_DATA_SOURCE_ADD,
                 resources.messages().addResourceTitle(Names.XA_DATASOURCE),
                 column -> launchNewDataSourceWizard(true)));
-        Element element = new Elements.Builder().span()
-                .css(pfIcon("add-circle-o"))
-                .title(resources.constants().add())
-                .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                .data(UIConstants.PLACEMENT, "bottom")
-                .end().build();
-        addColumnActions(Ids.DATA_SOURCE_ADD_ACTIONS, element, addActions);
+        addColumnActions(Ids.DATA_SOURCE_ADD_ACTIONS, pfIcon("add-circle-o"), resources.constants().add(), addActions);
         addColumnAction(columnActionFactory.refresh(Ids.DATA_SOURCE_REFRESH));
 
         setItemsProvider((context, callback) -> {

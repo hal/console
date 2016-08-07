@@ -191,6 +191,10 @@ public interface Ids {
 
     String ROLE = "role";
     String ROLE_ADD = build(ROLE, ADD_SUFFIX);
+    String ROLE_HOST_SCOPED_ADD = build(ROLE, HOST, ADD_SUFFIX);
+    String ROLE_HOST_SCOPED_FORM = build(ROLE, HOST, FORM_SUFFIX);
+    String ROLE_SERVER_GROUP_SCOPED_ADD = build(ROLE, "server-group", ADD_SUFFIX);
+    String ROLE_SERVER_GROUP_SCOPED_FORM = build(ROLE, "server-group", FORM_SUFFIX);
     String ROLE_REFRESH = build(ROLE, REFRESH_SUFFIX);
     String ROOT_CONTAINER = "hal-root-container";
     String RUNTIME_SUBSYSTEMS = "runtime-subsystems";
