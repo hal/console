@@ -74,7 +74,6 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
     private static final String INCLUDE_LI_SELECTOR = "[aria-" + UIConstants.LABELLED_BY + "=" + Ids.ASSIGNMENT_INCLUDE + "] > li";
     private static final String EXCLUDE_LI_SELECTOR = "[aria-" + UIConstants.LABELLED_BY + "=" + Ids.ASSIGNMENT_EXCLUDE + "] > li";
 
-    private final Finder finder;
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
     private final Provider<Progress> progress;
@@ -94,7 +93,6 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
         super(new Builder<Assignment>(finder, Ids.ASSIGNMENT, resources.constants().assignment())
                 .withFilter()
                 .onPreview(item -> new AssignmentPreview(tokens, item.getRole(), resources)));
-        this.finder = finder;
         this.dispatcher = dispatcher;
         this.eventBus = eventBus;
         this.progress = progress;
@@ -201,24 +199,26 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
             }
         });
 
-        // TODO This code sometimes breaks the SuperDevMode!?
         // Setup column actions to include / exclude *all* roles.
         // Already included / excluded roles will be filtered out later in the ItemsProvider
-        // List<Role> roles = new ArrayList<>();
-        // accessControl.roles().standardRoles().stream().sorted(comparing(Role::getName)).forEach(roles::add);
-        // accessControl.roles().scopedRoles().stream().sorted(comparing(Role::getName)).forEach(roles::add);
-        //
-        // List<ColumnAction<Assignment>> includeActions = roles.stream()
-        //         .map(role -> new ColumnAction<>(includeId(role), role.getName(), columnActionHandler(role, true)))
-        //         .collect(toList());
-        // addColumnActions(Ids.ASSIGNMENT_INCLUDE, fontAwesome("plus"), resources.constants().includeRole(),
-        //         includeActions);
-        //
-        // List<ColumnAction<Assignment>> excludeActions = roles.stream()
-        //         .map(role -> new ColumnAction<>(excludeId(role), role.getName(), columnActionHandler(role, false)))
-        //         .collect(toList());
-        // addColumnActions(Ids.ASSIGNMENT_EXCLUDE, fontAwesome("minus"), resources.constants().excludeRole(),
-        //         excludeActions);
+        List<Role> roles = new ArrayList<>();
+        // Please do not refactor this to a method reference! It seems that the GWT compiler cannot cope with
+        // two method references. Although the MembershipColumn does use two method refs. Very strange!?
+        //noinspection Convert2MethodRef
+        accessControl.roles().standardRoles().stream().sorted(comparing(Role::getName)).forEach(r -> roles.add(r));
+        accessControl.roles().scopedRoles().stream().sorted(comparing(Role::getName)).forEach(roles::add);
+
+        List<ColumnAction<Assignment>> includeActions = roles.stream()
+                .map(role -> new ColumnAction<>(includeId(role), role.getName(), columnActionHandler(role, true)))
+                .collect(toList());
+        addColumnActions(Ids.ASSIGNMENT_INCLUDE, fontAwesome("plus"), resources.constants().includeRole(),
+                includeActions);
+
+        List<ColumnAction<Assignment>> excludeActions = roles.stream()
+                .map(role -> new ColumnAction<>(excludeId(role), role.getName(), columnActionHandler(role, false)))
+                .collect(toList());
+        addColumnActions(Ids.ASSIGNMENT_EXCLUDE, fontAwesome("minus"), resources.constants().excludeRole(),
+                excludeActions);
     }
 
     private Principal findPrincipal(FinderPath path) {
@@ -239,7 +239,7 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
 
     private ColumnActionHandler<Assignment> columnActionHandler(Role role, boolean include) {
         return column -> {
-            Principal principal = findPrincipal(finder.getContext().getPath());
+            Principal principal = findPrincipal(getFinder().getContext().getPath());
             if (principal != null) {
                 new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
                         new SuccessfulOutcome(eventBus, resources) {
@@ -250,7 +250,7 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
                                         ? resources.messages().assignmentIncludeSuccess(type, role.getName())
                                         : resources.messages().assignmentExcludeSuccess(type, role.getName());
                                 MessageEvent.fire(eventBus, Message.success(message));
-                                accessControl.reload(() -> refresh(principal.getId()));
+                                accessControl.reload(() -> refresh(RefreshMode.RESTORE_SELECTION));
                             }
                         },
                         new CheckRoleMapping(dispatcher, role),

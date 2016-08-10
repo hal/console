@@ -259,7 +259,7 @@ public class MembershipColumn extends FinderColumn<Assignment> {
                                         ? resources.messages().assignmentIncludeSuccess(type, principal.getName())
                                         : resources.messages().assignmentExcludeSuccess(type, principal.getName());
                                 MessageEvent.fire(eventBus, Message.success(message));
-                                accessControl.reload(() -> refresh(principal.getId()));
+                                accessControl.reload(() -> refresh(RefreshMode.RESTORE_SELECTION));
                             }
                         },
                         new CheckRoleMapping(dispatcher, role),
