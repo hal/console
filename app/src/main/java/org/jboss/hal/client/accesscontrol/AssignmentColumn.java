@@ -204,21 +204,21 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
         // TODO This code sometimes breaks the SuperDevMode!?
         // Setup column actions to include / exclude *all* roles.
         // Already included / excluded roles will be filtered out later in the ItemsProvider
-        List<Role> roles = new ArrayList<>();
-        accessControl.roles().standardRoles().stream().sorted(comparing(Role::getName)).forEach(roles::add);
-        accessControl.roles().scopedRoles().stream().sorted(comparing(Role::getName)).forEach(roles::add);
-
-        List<ColumnAction<Assignment>> includeActions = roles.stream()
-                .map(role -> new ColumnAction<>(includeId(role), role.getName(), columnActionHandler(role, true)))
-                .collect(toList());
-        addColumnActions(Ids.ASSIGNMENT_INCLUDE, fontAwesome("plus"), resources.constants().includeRole(),
-                includeActions);
-
-        List<ColumnAction<Assignment>> excludeActions = roles.stream()
-                .map(role -> new ColumnAction<>(excludeId(role), role.getName(), columnActionHandler(role, false)))
-                .collect(toList());
-        addColumnActions(Ids.ASSIGNMENT_EXCLUDE, fontAwesome("minus"), resources.constants().excludeRole(),
-                excludeActions);
+        // List<Role> roles = new ArrayList<>();
+        // accessControl.roles().standardRoles().stream().sorted(comparing(Role::getName)).forEach(roles::add);
+        // accessControl.roles().scopedRoles().stream().sorted(comparing(Role::getName)).forEach(roles::add);
+        //
+        // List<ColumnAction<Assignment>> includeActions = roles.stream()
+        //         .map(role -> new ColumnAction<>(includeId(role), role.getName(), columnActionHandler(role, true)))
+        //         .collect(toList());
+        // addColumnActions(Ids.ASSIGNMENT_INCLUDE, fontAwesome("plus"), resources.constants().includeRole(),
+        //         includeActions);
+        //
+        // List<ColumnAction<Assignment>> excludeActions = roles.stream()
+        //         .map(role -> new ColumnAction<>(excludeId(role), role.getName(), columnActionHandler(role, false)))
+        //         .collect(toList());
+        // addColumnActions(Ids.ASSIGNMENT_EXCLUDE, fontAwesome("minus"), resources.constants().excludeRole(),
+        //         excludeActions);
     }
 
     private Principal findPrincipal(FinderPath path) {

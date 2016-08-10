@@ -17,6 +17,7 @@ package org.jboss.hal.client.accesscontrol;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -87,7 +88,6 @@ class PrincipalColumn extends FinderColumn<Principal> {
             final String id,
             final String title,
             final Principal.Type type,
-            final List<Principal> principals,
             final ColumnActionFactory columnActionFactory,
             final Dispatcher dispatcher,
             final EventBus eventBus,
@@ -99,7 +99,6 @@ class PrincipalColumn extends FinderColumn<Principal> {
             final Resources resources) {
 
         super(new Builder<Principal>(finder, id, title)
-                .itemsProvider((context, callback) -> callback.onSuccess(principals))
                 .onPreview(item -> new PrincipalPreview(accessControl, tokens, item, resources))
                 .showCount()
                 .withFilter());
@@ -144,6 +143,12 @@ class PrincipalColumn extends FinderColumn<Principal> {
 
         addColumnAction(columnActionFactory.refresh(Ids.build(id, "refresh"),
                 column -> accessControl.reload(() -> refresh(RESTORE_SELECTION))));
+
+        setItemsProvider((context, callback) -> {
+            Set<Principal> principals = type == Principal.Type.USER ? accessControl.principals()
+                    .users() : accessControl.principals().groups();
+            callback.onSuccess(principals.stream().sorted(comparing(Principal::getName)).collect(toList()));
+        });
 
         setItemRenderer(item -> new ItemDisplay<Principal>() {
             @Override

@@ -30,8 +30,6 @@ import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
-import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.EXCLUDE_ADDRESS;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.INCLUDE_ADDRESS;
 
@@ -54,7 +52,6 @@ public class GroupColumn extends PrincipalColumn {
             final AccessControlResources accessControlResources,
             final Resources resources) {
         super(finder, Ids.GROUP, resources.constants().group(), Principal.Type.GROUP,
-                accessControl.principals().groups().stream().sorted(comparing(Principal::getName)).collect(toList()),
                 columnActionFactory, dispatcher, eventBus, capabilities, progress, accessControl, tokens,
                 accessControlResources, resources);
     }
