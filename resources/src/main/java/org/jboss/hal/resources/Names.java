@@ -48,7 +48,6 @@ public interface Names {
     String JDBC_DRIVER = "JDBC Driver";
     String JDBC_DRIVERS = "JDBC Drivers";
     String JPA = "JPA";
-    String JVM = "JVM";
     String LOGGING = "Logging";
     String LOGGING_PROFILE = "Logging Profile";
     String LOGGING_PROFILES = "Logging Profiles";
@@ -67,6 +66,7 @@ public interface Names {
     String PROFILES = "Profiles";
     String QUERY = "Query";
     String QUERY_CACHE = "Query Cache";
+    String REALM = "Realm";
     String RESOURCE = "Resource";
     String ROOT_LOGGER = "Root Logger";
     String RUNTIME = "Runtime";

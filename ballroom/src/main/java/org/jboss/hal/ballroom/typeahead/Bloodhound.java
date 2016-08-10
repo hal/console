@@ -40,7 +40,6 @@ public class Bloodhound {
         public QueryTokenizer queryTokenizer;
         public Identifier identify;
         public int sufficient;
-        public Comparator sorter;
         public RemoteOptions remote;
         public JsArrayOf<JsJsonObject> local;
     }

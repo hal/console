@@ -2,6 +2,18 @@ h2.underline {
   border-bottom: 1px solid #ededed;
 }
 
+.btn-group > .dropdown:first-child {
+  margin-left: 0;
+}
+
+.btn-group .dropdown + .dropdown,
+.btn-group .dropdown + .btn,
+.btn-group .dropdown + .btn-group,
+.btn-group .btn + .dropdown,
+.btn-group .btn-group + .dropdown {
+  margin-left: -1px;
+}
+
 .layout-pf.layout-pf-fixed body {
   padding-top: @hal-header-height;
   @media (max-width: @screen-sm) {

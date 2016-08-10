@@ -15,13 +15,61 @@
  */
 package org.jboss.hal.resources;
 
-import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.ClientBundleWithLookup;
 import com.google.gwt.resources.client.ExternalTextResource;
+import com.google.gwt.resources.client.ResourceCallback;
+import com.google.gwt.resources.client.ResourceException;
+import com.google.gwt.resources.client.TextResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import elemental.dom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Harald Pehl
  */
-public interface Previews extends ClientBundle {
+public interface Previews extends ClientBundleWithLookup {
+
+    // ------------------------------------------------------ access control (rbac)
+
+    @Source("previews/rbac/administrator.html")
+    ExternalTextResource rbacAdministrator();
+
+    @Source("previews/rbac/auditor.html")
+    ExternalTextResource rbacAuditor();
+
+    @Source("previews/rbac/deployer.html")
+    ExternalTextResource rbacDeployer();
+
+    @Source("previews/rbac/groups.html")
+    ExternalTextResource rbacGroups();
+
+    @Source("previews/rbac/maintainer.html")
+    ExternalTextResource rbacMaintainer();
+
+    @Source("previews/rbac/monitor.html")
+    ExternalTextResource rbacMonitor();
+
+    @Source("previews/rbac/operator.html")
+    ExternalTextResource rbacOperator();
+
+    @Source("previews/rbac/overview.html")
+    ExternalTextResource rbacOverview();
+
+    @Source("previews/rbac/roles-domain.html")
+    ExternalTextResource rbacRolesDomain();
+
+    @Source("previews/rbac/roles-standalone.html")
+    ExternalTextResource rbacRolesStandalone();
+
+    @Source("previews/rbac/superuser.html")
+    ExternalTextResource rbacSuperUser();
+
+    @Source("previews/rbac/users.html")
+    ExternalTextResource rbacUsers();
+
 
     // ------------------------------------------------------ configuration
 
@@ -123,4 +171,31 @@ public interface Previews extends ClientBundle {
 
     @Source("previews/runtime/topology.html")
     ExternalTextResource runtimeTopology();
+
+
+    // ------------------------------------------------------ helper methods
+
+    @NonNls Logger logger = LoggerFactory.getLogger(Previews.class);
+
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    static void innerHtml(Element element, ExternalTextResource resource) {
+        if (resource != null) {
+            try {
+                resource.getText(new ResourceCallback<TextResource>() {
+                    @Override
+                    public void onError(final ResourceException e) {
+                        logger.error("Unable to get preview content from '{}': {}", resource.getName(), e.getMessage());
+                    }
+
+                    @Override
+                    public void onSuccess(final TextResource textResource) {
+                        SafeHtml html = SafeHtmlUtils.fromSafeConstant(textResource.getText());
+                        element.setInnerHTML(html.asString());
+                    }
+                });
+            } catch (ResourceException e) {
+                logger.error("Unable to get preview content from '{}': {}", resource.getName(), e.getMessage());
+            }
+        }
+    }
 }

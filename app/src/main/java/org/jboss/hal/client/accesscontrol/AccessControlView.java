@@ -15,29 +15,9 @@
  */
 package org.jboss.hal.client.accesscontrol;
 
-import elemental.dom.Element;
-import org.jboss.hal.ballroom.LayoutBuilder;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
-import org.jboss.hal.resources.Names;
-
-import static org.jboss.hal.resources.Names.NYI;
+import org.jboss.hal.core.mvp.FinderViewImpl;
 
 /**
  * @author Harald Pehl
  */
-public class AccessControlView extends PatternFlyViewImpl implements AccessControlPresenter.MyView {
-
-    public AccessControlView() {
-        // @formatter:off
-        Element root = new LayoutBuilder()
-            .row()
-                .column()
-                    .header(Names.ACCESS_CONTROL).end()
-                    .p().textContent(NYI).end()
-                .end()
-            .end()
-        .build();
-        // @formatter:on
-        initElement(root);
-    }
-}
+public class AccessControlView extends FinderViewImpl implements AccessControlPresenter.MyView {}

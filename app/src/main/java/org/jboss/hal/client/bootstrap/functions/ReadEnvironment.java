@@ -46,12 +46,14 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 
+import static org.jboss.hal.config.AccessControlProvider.SIMPLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.model.ResourceAddress.ROOT;
 
@@ -88,7 +90,7 @@ public class ReadEnvironment implements BootstrapFunction {
         ops.add(new Operation.Builder(WHOAMI, ROOT).param(VERBOSE, true).build());
         ResourceAddress address = new ResourceAddress().add("core-service", "management")
                 .add("access", "authorization");
-        ops.add(new Operation.Builder(READ_ATTRIBUTE_OPERATION, address).param(NAME, "provider").build());
+        ops.add(new Operation.Builder(READ_ATTRIBUTE_OPERATION, address).param(NAME, PROVIDER).build());
 
         dispatcher.executeInFunction(control, new Composite(ops),
                 (CompositeResult result) -> {
@@ -125,8 +127,8 @@ public class ReadEnvironment implements BootstrapFunction {
                     }
 
                     // access control provider
-                    AccessControlProvider accessControlProvider = AccessControlProvider
-                            .valueOf(result.step(2).get(RESULT).asString().toUpperCase());
+                    AccessControlProvider accessControlProvider = ModelNodeHelper
+                            .asEnumValue(result.step(2).get(RESULT), AccessControlProvider::valueOf, SIMPLE);
                     environment.setAccessControlProvider(accessControlProvider);
 
                     logDone();

@@ -106,6 +106,9 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             this.items = new ArrayList<>();
         }
 
+        /**
+         * Adds a single column action button in the header of the column
+         */
         public Builder<T> columnAction(ColumnAction<T> action) {
             columnActions.add(action);
             return this;
@@ -306,21 +309,66 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         ulElement = eb.referenceFor(UL_ELEMENT);
     }
 
+    @SuppressWarnings("Duplicates")
     private Element newColumnButton(final ColumnAction<T> action) {
-        Elements.Builder builder = new Elements.Builder().button()
-                .id(action.id)
-                .css(btn, btnFinder)
-                .on(click, event -> action.handler.execute(this));
+        Elements.Builder builder = new Elements.Builder();
+        if (action instanceof DropdownColumnAction) {
+            DropdownColumnAction<T> ddAction = ((DropdownColumnAction<T>) action);
+            // @formatter:off
+            builder.div().css(dropdown)
+                .button().css(btn, btnFinder, dropdownToggle).id(ddAction.id)
+                        .data(UIConstants.TOGGLE, UIConstants.DROPDOWN)
+                        .aria(UIConstants.EXPANDED, "false"); //NON-NLS
+                    if (ddAction.title != null) {
+                        builder.textContent(ddAction.title);
+                    } else if (ddAction.element != null) {
+                        builder.add(ddAction.element);
+                    } else {
+                        builder.textContent(NOT_AVAILABLE);
+                    }
+                    builder.span().css(caret).end()
+                .end()
+                .ul().css(dropdownMenu)
+                        .attr(UIConstants.ROLE, UIConstants.MENU)
+                        .aria(UIConstants.LABELLED_BY, ddAction.id);
+                    for (ColumnAction<T> actn : ddAction.actions) {
+                        builder.li().attr(UIConstants.ROLE, UIConstants.PRESENTATION)
+                            .a()
+                                .id(actn.id)
+                                .attr(UIConstants.ROLE, UIConstants.MENUITEM)
+                                .attr(UIConstants.TABINDEX, "-1")
+                                .on(click, event -> actn.handler.execute(this));
+                                if (actn.title != null){
+                                    builder.textContent(actn.title);
+                                } else if (actn.element != null) {
+                                    builder.add(actn.element);
+                                } else {
+                                    builder.textContent(NOT_AVAILABLE);
+                                }
+                            builder.end()
+                        .end();
+                    }
+                builder.end()
+            .end();
+            // @formatter:on
 
-        if (action.title != null) {
-            builder.textContent(action.title);
-        } else if (action.element != null) {
-            builder.add(action.element);
         } else {
-            builder.textContent(NOT_AVAILABLE);
+            builder.button()
+                    .id(action.id)
+                    .css(btn, btnFinder)
+                    .on(click, event -> action.handler.execute(this));
+
+            if (action.title != null) {
+                builder.textContent(action.title);
+            } else if (action.element != null) {
+                builder.add(action.element);
+            } else {
+                builder.textContent(NOT_AVAILABLE);
+            }
+            builder.end();
         }
 
-        return builder.end().build();
+        return builder.build();
     }
 
     private void updateHeader(int matched) {
@@ -706,6 +754,21 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
         }
     }
 
+    protected void addColumnActions(String id, String iconsCss, String title, List<ColumnAction<T>> actions) {
+        assertNotAsElement("addColumnActions()");
+        Element element = new Elements.Builder().span()
+                .css(iconsCss)
+                .title(title)
+                .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
+                .data(UIConstants.PLACEMENT, "bottom")
+                .end().build();
+        columnActions.appendChild(newColumnButton(new DropdownColumnAction<>(id, element, actions)));
+        if (columnActions.getChildElementCount() > 1) {
+            columnActions.getClassList().add(btnGroup);
+            columnActions.setAttribute(ROLE, GROUP);
+        }
+    }
+
     /**
      * Sometimes you need to reference {@code this} in the actions created by {@link ItemDisplay#actions()}. This is
      * not possible if they're part of the builder which is passed to {@code super()}. In this case the item renderer
@@ -902,5 +965,9 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
 
     public String getTitle() {
         return title;
+    }
+
+    protected Finder getFinder() {
+        return finder;
     }
 }
