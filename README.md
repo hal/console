@@ -81,6 +81,7 @@ The package is also available on npmjs.com: https://www.npmjs.com/package/hal-ne
 
 The `docker` module is used to build a docker image with WildFly 11.0.0.Alpha1 and HAL.next.
 
+1. `cd docker`
 1. `mvn install`
 1. `docker run -p 9990:9990 -it hpehl/hal-next /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0` or 
 1. `docker run -p 9990:9990 -it hpehl/hal-next /opt/jboss/wildfly/bin/domain.sh -b 0.0.0.0 -bmanagement 0.0.0.0` 
