@@ -136,8 +136,10 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         }
 
         boolean su = user().isSuperuser() || user().isAdministrator();
-        Elements.setVisible(accessControl, su);
-        Elements.setVisible(patching, su);
+        if (!su) {
+            topLevelTabs.removeChild(patching);
+            topLevelTabs.removeChild(accessControl);
+        }
         Elements.setVisible(breadcrumbs, false);
     }
 

@@ -18,6 +18,8 @@ package org.jboss.hal.core.mvp;
 import javax.inject.Inject;
 
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
+import elemental.client.Browser;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -26,6 +28,7 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
+import static java.util.Collections.singletonList;
 import static org.jboss.hal.core.finder.FinderContext.PATH_PARAM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
@@ -42,14 +45,17 @@ public class Places {
     private final Environment environment;
     private final StatementContext statementContext;
     private final Finder finder;
+    private final TokenFormatter tokenFormatter;
 
     @Inject
     public Places(final Environment environment,
             final StatementContext statementContext,
-            final Finder finder) {
+            final Finder finder,
+            final TokenFormatter tokenFormatter) {
         this.environment = environment;
         this.statementContext = statementContext;
         this.finder = finder;
+        this.tokenFormatter = tokenFormatter;
     }
 
     /**
@@ -109,5 +115,11 @@ public class Places {
      */
     public PlaceRequest.Builder finderPlace(final String token, final FinderPath path) {
         return new PlaceRequest.Builder().nameToken(token).with(PATH_PARAM, path.toString());
+    }
+
+    public String historyToken(PlaceRequest placeRequest) {
+        String href = Browser.getWindow().getLocation().getHref();
+        href = href.substring(0, href.indexOf('#'));
+        return href + "#" + tokenFormatter.toHistoryToken(singletonList(placeRequest));
     }
 }

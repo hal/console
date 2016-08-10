@@ -121,7 +121,7 @@ public class ColumnActionFactory {
                 attributes.addAll(asList(otherAttributes));
             }
             AddResourceDialog dialog = new AddResourceDialog(Ids.build(id, Ids.FORM_SUFFIX),
-                    resources.messages().addResourceTitle(type), metadata,  attributes,
+                    resources.messages().addResourceTitle(type), metadata, attributes,
                     new ColumnAddResourceCallback<>(column, type, template));
             dialog.show();
         });
@@ -142,12 +142,16 @@ public class ColumnActionFactory {
     }
 
     public <T> ColumnAction<T> refresh(String id) {
+        return refresh(id, column -> column.refresh(RESTORE_SELECTION));
+    }
+
+    public <T> ColumnAction<T> refresh(String id, ColumnActionHandler<T> handler) {
         Element element = new Elements.Builder().span()
                 .css(fontAwesome(CSS.refresh))
                 .title(resources.constants().refresh())
                 .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
                 .data(UIConstants.PLACEMENT, "bottom")
                 .end().build();
-        return new ColumnAction<>(id, element, column -> column.refresh(RESTORE_SELECTION));
+        return new ColumnAction<>(id, element, handler);
     }
 }

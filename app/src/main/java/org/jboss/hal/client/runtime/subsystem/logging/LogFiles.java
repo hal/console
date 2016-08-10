@@ -18,17 +18,16 @@ package org.jboss.hal.client.runtime.subsystem.logging;
 import javax.inject.Inject;
 
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 import elemental.client.Browser;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 
-import static java.util.Collections.singletonList;
 import static org.jboss.hal.client.runtime.subsystem.logging.LogFilePresenter.EXTERNAL_PARAM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
@@ -54,17 +53,17 @@ public class LogFiles {
     private final Endpoints endpoints;
     private final Environment environment;
     private final StatementContext statementContext;
-    private final TokenFormatter tokenFormatter;
+    private final Places places;
 
     @Inject
     public LogFiles(final Endpoints endpoints,
             final Environment environment,
             final StatementContext statementContext,
-            final TokenFormatter tokenFormatter) {
+            final Places places) {
         this.endpoints = endpoints;
         this.environment = environment;
         this.statementContext = statementContext;
-        this.tokenFormatter = tokenFormatter;
+        this.places = places;
     }
 
     public void download(final String logFile) {
@@ -90,9 +89,7 @@ public class LogFiles {
                 .with(NAME, name)
                 .with(EXTERNAL_PARAM, String.valueOf(true))
                 .build();
-        String href = Browser.getWindow().getLocation().getHref();
-        href = href.substring(0, href.indexOf('#'));
-        return href + "#" + tokenFormatter.toHistoryToken(singletonList(request));
+        return places.historyToken(request);
     }
 
     public String target(String name) {

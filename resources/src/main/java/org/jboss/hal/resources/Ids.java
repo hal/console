@@ -37,7 +37,6 @@ package org.jboss.hal.resources;
 import java.util.List;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -72,12 +71,18 @@ public interface Ids {
     // ------------------------------------------------------ ids (a-z)
     // Try to compose IDs by making use of the build() method, except the ID is used in an annotation.
 
+    String ACCESS_CONTROL_BROWSE_BY = "access-control-browse-by";
+    String ASSIGNMENT = "assignement";
+    String ASSIGNMENT_INCLUDE = build(ASSIGNMENT, "include");
+    String ASSIGNMENT_EXCLUDE = build(ASSIGNMENT, "exclude");
+
     String CONFIGURATION = "configuration";
     String CONTENT = "content";
     String CONTENT_ADD = build(Ids.CONTENT, ADD_SUFFIX);
 
     String DATA_SOURCE_CONFIGURATION = "data-source-configuration";
     String DATA_SOURCE_ADD = build(DATA_SOURCE_CONFIGURATION, ADD_SUFFIX);
+    String DATA_SOURCE_ADD_ACTIONS = build(DATA_SOURCE_CONFIGURATION, "add-actions");
     String DATA_SOURCE_DRIVER = "data-source-driver";
     String DATA_SOURCE_REFRESH = build(DATA_SOURCE_CONFIGURATION, REFRESH_SUFFIX);
     String DATA_SOURCE_RUNTIME = "data-source-runtime";
@@ -87,9 +92,9 @@ public interface Ids {
     String DATA_SOURCE_RUNTIME_POOL_TAB = build(DATA_SOURCE_RUNTIME, "pool", TAB_SUFFIX);
     String DATA_SOURCE_WIZARD = build(DATA_SOURCE_CONFIGURATION, WIZARD_SUFFIX);
     String DEPLOYMENT = "deployment";
-    String DEPLOYMENT_SERVER_GROUP = "deployment-sg";
     String DEPLOYMENT_ADD = build(Ids.DEPLOYMENT, ADD_SUFFIX);
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
+    String DEPLOYMENT_SERVER_GROUP = "deployment-sg";
     String DOMAIN_BROWSE_BY = "domain-browse-by";
     String DRAG_AND_DROP_DEPLOYMENT = "drag-and-drop-deployment";
 
@@ -113,6 +118,8 @@ public interface Ids {
     String ENDPOINT_SELECT = build(ENDPOINT, "select");
 
     String FINDER = "hal-finder";
+
+    String GROUP = "group";
 
     String HEADER = "header";
     String HEADER_CONNECTED_TO = build(HEADER, "connected-to");
@@ -171,6 +178,9 @@ public interface Ids {
     String MAIL_SESSION_ATTRIBUTES_FORM = build(MAIL_SESSION, "attributes", FORM_SUFFIX);
     String MAIL_SESSION_DIALOG = build(MAIL_SESSION, FORM_SUFFIX);
     String MAIL_SESSION_REFRESH = build(MAIL_SESSION, REFRESH_SUFFIX);
+    String MEMBERSHIP = "membership";
+    String MEMBERSHIP_INCLUDE = build(MEMBERSHIP, "include");
+    String MEMBERSHIP_EXCLUDE = build(MEMBERSHIP, "exclude");
     String MODEL_BROWSER = "model-browser";
 
     String PREVIEW_ID = build(FINDER, "preview");
@@ -178,6 +188,14 @@ public interface Ids {
     String PROFILE_ADD = build(PROFILE, ADD_SUFFIX);
     String PROFILE_REFRESH = build(PROFILE, REFRESH_SUFFIX);
 
+    String ROLE = "role";
+    String ROLE_ADD = build(ROLE, ADD_SUFFIX);
+    String ROLE_HOST_SCOPED_ADD = build(ROLE, HOST, ADD_SUFFIX);
+    String ROLE_HOST_SCOPED_FORM = build(ROLE, HOST, FORM_SUFFIX);
+    String ROLE_MAPPING_FORM = build("role-mapping", FORM_SUFFIX);
+    String ROLE_SERVER_GROUP_SCOPED_ADD = build(ROLE, "server-group", ADD_SUFFIX);
+    String ROLE_SERVER_GROUP_SCOPED_FORM = build(ROLE, "server-group", FORM_SUFFIX);
+    String ROLE_REFRESH = build(ROLE, REFRESH_SUFFIX);
     String ROOT_CONTAINER = "hal-root-container";
     String RUNTIME_SUBSYSTEMS = "runtime-subsystems";
 
@@ -210,6 +228,8 @@ public interface Ids {
     String TLC_HOMEPAGE = "tlc-homepage";
     String TLC_PATCHING = "tlc-patching";
     String TLC_RUNTIME = "tlc-runtime";
+
+    String USER = "user";
 
     String VERSION_INFO = "version-info";
     String VERSION_INFO_FORM = build(VERSION_INFO, FORM_SUFFIX);
@@ -249,6 +269,17 @@ public interface Ids {
 
     static String loggingProfile(final String name) {
         return build(LOGGING, name);
+    }
+
+    /**
+     * @param type must be one of "user" or "group"
+     */
+    static String principal(final String type, final String name) {
+        return build(type, name);
+    }
+
+    static String role(String name) {
+        return asId(name);
     }
 
     static String server(final String name) {
@@ -293,10 +324,12 @@ public interface Ids {
         List<String> ids = Lists.newArrayList(id);
         if (additionalIds != null) {
             for (String additionalId : additionalIds) {
-                ids.add(Strings.emptyToNull(additionalId));
+                if (!Strings.isNullOrEmpty(additionalId)) {
+                    ids.add(additionalId);
+                }
             }
         }
-        return Joiner.on(separator).skipNulls().join(ids);
+        return ids.stream().map(Ids::asId).collect(joining(String.valueOf(separator)));
     }
 
     /**

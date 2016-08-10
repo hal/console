@@ -92,6 +92,21 @@ public class ItemActionFactory {
     }
 
     /**
+     * Wraps the specified handler inside a confirmation dialog. The action is executed when upon confirmation.
+     */
+    public <T> ItemAction<T> remove(String type, String name, ItemActionHandler<T> handler) {
+        return new ItemAction<>(resources.constants().remove(), item -> {
+            Dialog dialog = DialogFactory.confirmation(resources.messages().removeResourceConfirmationTitle(type),
+                    resources.messages().removeResourceConfirmationQuestion(name),
+                    () -> {
+                        handler.execute(item);
+                        return true;
+                    });
+            dialog.show();
+        });
+    }
+
+    /**
      * Creates a 'remove' action which removes the specified resource from the given address. The address can contain a
      * wildcard which is replaced by the resource name. The action wil bring up a confirmation dialog. If confirmed the
      * resource is removed and {@link FinderColumn#refresh(FinderColumn.RefreshMode)} is called.

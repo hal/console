@@ -50,7 +50,10 @@ public class ColumnRegistry {
     private final MetadataProcessor metadataProcessor;
     private final RequiredResources requiredResources;
     private final Provider<Progress> progress;
-    private final Map<String, FinderColumn> columns;
+    // Do not use columns directly instead use providers to ensure late initialization. Background: Some columns use
+    // Environment.isStandalone() in their constructors. If they were referenced by instance this flag would not yet
+    // be initialized.
+    private final Map<String, Provider<?>> columns;
     private final Map<String, AsyncProvider> asyncColumns;
     private final Map<String, FinderColumn> resolvedColumns;
 
@@ -65,8 +68,8 @@ public class ColumnRegistry {
         this.resolvedColumns = new HashMap<>();
     }
 
-    public void registerColumn(FinderColumn column) {
-        columns.put(column.getId(), column);
+    public <C extends FinderColumn<T>, T> void registerColumn(String id, Provider<C> column) {
+        columns.put(id, column);
     }
 
     public void registerColumn(String id, AsyncProvider column) {
@@ -108,7 +111,7 @@ public class ColumnRegistry {
     private void lookupInternal(String id, LookupCallback callback) {
         if (columns.containsKey(id)) {
             // this is a regular column: we're ready to go
-            FinderColumn column = columns.get(id);
+            FinderColumn column = (FinderColumn) columns.get(id).get();
             resolve(id, column);
             callback.found(column);
 

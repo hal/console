@@ -17,6 +17,9 @@ package org.jboss.hal.resources;
 
 import javax.inject.Inject;
 
+import com.google.gwt.resources.client.ExternalTextResource;
+import org.jetbrains.annotations.NonNls;
+
 /**
  * Umbrella over all kind of resources in HAL.
  *
@@ -47,6 +50,10 @@ public class Resources implements Ids, Names, UIConstants, CSS, Icons {
 
     public Previews previews() {
         return previews;
+    }
+
+    public ExternalTextResource preview(@NonNls String name) {
+        return (ExternalTextResource) previews.getResource(name);
     }
 
     public Images images() {

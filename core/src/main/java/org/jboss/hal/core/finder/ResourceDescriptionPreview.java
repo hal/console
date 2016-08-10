@@ -31,6 +31,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
  */
 public class ResourceDescriptionPreview extends PreviewContent<SubsystemMetadata> {
 
+    private static final String CONTENT_ELEMENT = "contentElement";
+
     public ResourceDescriptionPreview(final String header, final Dispatcher dispatcher, final Operation rrd) {
         super(header);
         previewBuilder().section().rememberAs(CONTENT_ELEMENT).end();

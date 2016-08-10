@@ -67,10 +67,12 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
         final FormItem formItem;
         final int position;
+        final SafeHtml helpText;
 
-        private UnboundFormItem(final FormItem formItem, final int position) {
+        private UnboundFormItem(final FormItem formItem, final int position, final SafeHtml helpText) {
             this.formItem = formItem;
             this.position = position;
+            this.helpText = helpText;
         }
     }
 
@@ -195,7 +197,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             return this;
         }
 
-        public Builder<T> defaultFormItemProvider(FormItemProvider formItemProvider) {
+        Builder<T> defaultFormItemProvider(FormItemProvider formItemProvider) {
             this.defaultFormItemProvider = formItemProvider;
             return this;
         }
@@ -207,11 +209,15 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         }
 
         public Builder<T> unboundFormItem(final FormItem formItem) {
-            return unboundFormItem(formItem, -1);
+            return unboundFormItem(formItem, -1, null);
         }
 
         public Builder<T> unboundFormItem(final FormItem formItem, final int position) {
-            this.unboundFormItems.add(new UnboundFormItem(formItem, position));
+            return unboundFormItem(formItem, position, null);
+        }
+
+        public Builder<T> unboundFormItem(final FormItem formItem, final int position, final SafeHtml helpText) {
+            this.unboundFormItems.add(new UnboundFormItem(formItem, position, helpText));
             return this;
         }
 
@@ -227,11 +233,6 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
         public Builder<T> onReset(final ResetCallback<T> resetCallback) {
             this.resetCallback = resetCallback;
-            return this;
-        }
-
-        public Builder<T> dataMapping(DataMapping<T> dataMapping) {
-            this.dataMapping = dataMapping;
             return this;
         }
 
@@ -276,7 +277,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
 
     private final Map<String, ModelNode> attributeMetadata;
 
-    ModelNodeForm(final Builder<T> builder) {
+    private ModelNodeForm(final Builder<T> builder) {
         super(builder.id,
                 builder.stateMachine(),
                 builder.dataMapping != null ? builder.dataMapping : new ModelNodeMapping<>(
@@ -327,6 +328,9 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                 if (unboundFormItem.position == index) {
                     addFormItem(unboundFormItem.formItem);
                     markAsUnbound(unboundFormItem.formItem.getName());
+                    if (unboundFormItem.helpText != null) {
+                        addHelp(labelBuilder.label(unboundFormItem.formItem.getName()), unboundFormItem.helpText);
+                    }
                     iterator.remove();
                 }
             }
@@ -356,6 +360,9 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         for (UnboundFormItem unboundFormItem : builder.unboundFormItems) {
             addFormItem(unboundFormItem.formItem);
             markAsUnbound(unboundFormItem.formItem.getName());
+            if (unboundFormItem.helpText != null) {
+                addHelp(labelBuilder.label(unboundFormItem.formItem.getName()), unboundFormItem.helpText);
+            }
         }
     }
 

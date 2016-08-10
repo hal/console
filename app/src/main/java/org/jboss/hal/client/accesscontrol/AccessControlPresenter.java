@@ -15,33 +15,66 @@
  */
 package org.jboss.hal.client.accesscontrol;
 
+import javax.inject.Inject;
+
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.core.mvp.PatternFlyView;
-import org.jboss.hal.core.mvp.TopLevelPresenter;
+import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.core.mvp.FinderPresenter;
+import org.jboss.hal.core.mvp.FinderView;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Requires;
 
-import javax.inject.Inject;
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.HOST_SCOPED_ROLE_ADDRESS;
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.ROLE_MAPPING_ADDRESS;
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.SERVER_GROUP_SCOPED_ROLE_ADDRESS;
 
 /**
  * @author Harald Pehl
  */
-public class AccessControlPresenter extends TopLevelPresenter<AccessControlPresenter.MyView, AccessControlPresenter.MyProxy> {
+public class AccessControlPresenter extends
+        FinderPresenter<AccessControlPresenter.MyView, AccessControlPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyStandard
     @NameToken(NameTokens.ACCESS_CONTROL)
+    @Requires(value = {ROLE_MAPPING_ADDRESS, HOST_SCOPED_ROLE_ADDRESS, SERVER_GROUP_SCOPED_ROLE_ADDRESS})
     public interface MyProxy extends ProxyPlace<AccessControlPresenter> {}
 
-    public interface MyView extends PatternFlyView {}
+    public interface MyView extends FinderView {}
     // @formatter:on
 
+    private final Environment environment;
+    private final AccessControl accessControl;
 
     @Inject
     public AccessControlPresenter(final EventBus eventBus,
-            final MyView view, final MyProxy proxy) {
-        super(eventBus, view, proxy);
+            final MyView view, final MyProxy myProxy, final Finder finder,
+            final Environment environment, final AccessControl accessControl,
+            final Resources resources) {
+        super(eventBus, view, myProxy, finder, resources);
+        this.environment = environment;
+        this.accessControl = accessControl;
+    }
+
+    @Override
+    protected void onReset() {
+        accessControl.reload(() -> super.onReset());
+    }
+
+    @Override
+    protected String initialColumn() {
+        return Ids.ACCESS_CONTROL_BROWSE_BY;
+    }
+
+    @Override
+    protected PreviewContent initialPreview() {
+        return new AccessControlPreview(accessControl, environment, resources);
     }
 }

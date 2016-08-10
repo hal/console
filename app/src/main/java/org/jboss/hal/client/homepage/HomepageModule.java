@@ -15,6 +15,9 @@
  */
 package org.jboss.hal.client.homepage;
 
+import java.util.Collections;
+import javax.annotation.PostConstruct;
+
 import com.google.gwt.resources.client.ImageResource;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
@@ -23,9 +26,7 @@ import elemental.html.ImageElement;
 import org.jboss.gwt.elemento.core.DataElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
-
-import javax.annotation.PostConstruct;
-import java.util.Collections;
+import org.jboss.hal.core.mvp.Places;
 
 /**
  * @author Harald Pehl
@@ -34,13 +35,13 @@ import java.util.Collections;
 abstract class HomepageModule implements IsElement {
 
     // @formatter:off
-    static HomepageModule create(final TokenFormatter tokenFormatter,
+    static HomepageModule create(final Places places,
             final String token, final String header, final String intro,
             final ImageResource image, final Iterable<HomepageSection> sections) {
-        return new Templated_HomepageModule(tokenFormatter, token, header, intro, image, sections);
+        return new Templated_HomepageModule(places, token, header, intro, image, sections);
     }
 
-    abstract TokenFormatter tokenFormatter();
+    abstract Places places();
     abstract String token();
     abstract String header();
     abstract String intro();
@@ -72,6 +73,6 @@ abstract class HomepageModule implements IsElement {
 
     String historyToken() {
         PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(token()).build();
-        return "#" + tokenFormatter().toHistoryToken(Collections.singletonList(placeRequest));
+        return places().historyToken(placeRequest);
     }
 }

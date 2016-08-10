@@ -52,4 +52,18 @@ public class IdsTest {
         assertEquals("l0rem-ip5um", Ids.asId("l0rem-ip5um"));
         assertEquals("lorem--ipsum", Ids.asId("lorem §±!@#$%^&*()=_+[]{};'\\:\"|,./<>?`~ ipsum"));
     }
+
+    @Test
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    public void build() {
+        assertEquals("lorem-ipsum", Ids.build("lorem-ipsum"));
+        assertEquals("lorem-ipsum", Ids.build("Lorem Ipsum"));
+        assertEquals("lorem-ipsum", Ids.build("Lorem", "Ipsum"));
+        assertEquals("lorem-ipsum", Ids.build(" Lorem ", " Ipsum "));
+        assertEquals("l0rem-ip5um", Ids.build("l0rem ip5um"));
+        assertEquals("l0rem-ip5um", Ids.build("l0rem", "ip5um"));
+        assertEquals("l0rem-ip5um", Ids.build(" l0rem ", " ip5um "));
+        assertEquals("lorem--ipsum", Ids.build("lorem §±!@#$%^&*()=_+[]{};'\\:\"|,./<>?`~ ipsum"));
+        assertEquals("lorem--ipsum", Ids.build("lorem", "§±!@#$%^&*()=_+[]{};'\\:\"|,./<>?`~", "ipsum"));
+    }
 }

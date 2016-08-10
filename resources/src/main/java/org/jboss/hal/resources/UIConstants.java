@@ -43,7 +43,8 @@ public interface UIConstants {
     String HREF = "href";
     String HIDDEN = "hidden";
     String LABELLED_BY = "labelledby";
-    String MENU = "MENU";
+    String MENU = "menu";
+    String MENUITEM = "menuitem";
     String NBSP = "&nbsp;";
     String OBJECT = "Object";
     String PLACEMENT = "placement";

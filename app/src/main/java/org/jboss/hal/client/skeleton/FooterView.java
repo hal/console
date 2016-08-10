@@ -31,6 +31,7 @@ import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.client.tools.ModelBrowserPresenter;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.ui.UIRegistry;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -52,11 +53,11 @@ import static org.jboss.hal.resources.CSS.pulse;
 public abstract class FooterView extends ViewImpl implements FooterPresenter.MyView {
 
     // @formatter:off
-    public static FooterView create(final TokenFormatter tokenFormatter, final UIRegistry uiRegistry, final Resources resources) {
-        return new Templated_FooterView(tokenFormatter, uiRegistry, resources);
+    public static FooterView create(final Places places, final UIRegistry uiRegistry, final Resources resources) {
+        return new Templated_FooterView(places, uiRegistry, resources);
     }
 
-    public abstract TokenFormatter tokenFormatter();
+    public abstract Places places();
     public abstract UIRegistry uiRegistry();
     public abstract Resources resources();
     // @formatter:on
@@ -86,10 +87,7 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
         PlaceRequest request = new PlaceRequest.Builder().nameToken(NameTokens.MODEL_BROWSER)
                 .with(ModelBrowserPresenter.EXTERNAL_PARAM, "true") //NON-NLS
                 .build();
-        String href = Browser.getWindow().getLocation().getHref();
-        href = href.substring(0, href.indexOf('#'));
-        href += "#" + tokenFormatter().toHistoryToken(singletonList(request));
-        externalModelBrowser.setAttribute(UIConstants.HREF, href);
+        externalModelBrowser.setAttribute(UIConstants.HREF, places().historyToken(request));
         externalModelBrowser.setAttribute(UIConstants.TARGET, Ids.MODEL_BROWSER);
     }
 

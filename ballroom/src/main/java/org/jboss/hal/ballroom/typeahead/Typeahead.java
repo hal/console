@@ -161,6 +161,7 @@ public class Typeahead implements SuggestHandler, Attachable {
 
         dataset = new Dataset();
         dataset.async = false;
+        dataset.limit = jsItems.length();
         dataset.display = data -> data.getString(ITEM);
         dataset.source = (query, syncCallback, asyncCallback) -> {
             if (SHOW_ALL_VALUE.equals(query)) {

@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-dependencies</artifactId>
-        <version>0.3.5</version>
+        <version>0.3.6</version>
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
@@ -77,7 +77,7 @@
                             <alias>hal-next</alias>
                             <name>hpehl/hal-next</name>
                             <build>
-                                <from>jboss/wildfly</from>
+                                <from>hpehl/wildfly-upstream</from>
                                 <tags>
                                     <tag>${project.version}</tag>
                                     <tag>latest</tag>
