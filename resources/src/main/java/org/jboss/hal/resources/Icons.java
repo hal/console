@@ -34,8 +34,7 @@ public interface Icons {
     String DISABLED = pfIcon(disabledCircleO);
     String STOPPED = fontAwesome(stopCircleO) + " " + grey;
     String ERROR = pfIcon(errorCircleO);
-    String UNKNOWN = fontAwesome(
-            "question-circle"); // TODO replace with questionsCircleO once PatternFly uses FontAwesome 4.6
+    String UNKNOWN = fontAwesome(questionsCircleO);
 
     static Element ok() {
         Element icon = Browser.getDocument().createSpanElement();

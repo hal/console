@@ -92,17 +92,6 @@ public class FinderPath implements Iterable<FinderSegment> {
         return this;
     }
 
-    /**
-     * Returns a new finder path which is the parent of this path
-     */
-    public FinderPath parent() {
-        if (isEmpty()) {
-            return new FinderPath();
-        }
-        List<FinderSegment> sublist = new ArrayList<>(segments.subList(0, segments.size() - 1));
-        return new FinderPath(sublist);
-    }
-
     @Override
     public Iterator<FinderSegment> iterator() {
         return segments.iterator();
