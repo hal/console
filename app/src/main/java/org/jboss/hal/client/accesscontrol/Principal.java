@@ -29,6 +29,15 @@ class Principal {
     }
 
 
+    static String buildResourceName(final Type type, final String name, final String realm) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(type.name().toLowerCase()).append("-").append(name);
+        if (realm != null) {
+            builder.append("@").append(realm);
+        }
+        return builder.toString();
+    }
+
     private final Type type;
     private final String resourceName;
     private final String name;

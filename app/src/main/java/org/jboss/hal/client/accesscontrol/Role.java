@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.client.accesscontrol;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -32,10 +31,10 @@ class Role {
     }
 
 
-    private String name;
-    private Type type;
-    private Role baseRole;
-    private SortedSet<String> scope;
+    private final String name;
+    private final Type type;
+    private final Role baseRole;
+    private final SortedSet<String> scope;
     private boolean includeAll;
 
     Role(String name) {
@@ -49,7 +48,7 @@ class Role {
         this.type = type;
         this.scope = new TreeSet<>();
         if (scope != null) {
-            scope.forEach(s -> this.scope.add(s));
+            scope.forEach(this.scope::add);
         }
         this.includeAll = false;
     }
@@ -85,6 +84,10 @@ class Role {
                 .toLowerCase() + scope + ", includeAll: " + includeAll;
     }
 
+    String getId() {
+        return Ids.role(name);
+    }
+
     boolean isStandard() {
         return type == Type.STANDARD;
     }
@@ -93,41 +96,20 @@ class Role {
         return type != Type.STANDARD;
     }
 
-    String getId() {
-        return Ids.role(name);
-    }
-
     String getName() {
         return name;
-    }
-
-    void setName(final String name) {
-        this.name = name;
     }
 
     Role getBaseRole() {
         return baseRole;
     }
 
-    void setBaseRole(final Role baseRole) {
-        this.baseRole = baseRole;
-    }
-
     Type getType() {
         return type;
     }
 
-    void setType(final Type type) {
-        this.type = type;
-    }
-
     SortedSet<String> getScope() {
         return scope;
-    }
-
-    void setScope(final Collection<String> scope) {
-        this.scope.clear();
-        this.scope.addAll(scope);
     }
 
     boolean isIncludeAll() {

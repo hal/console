@@ -94,10 +94,6 @@
             <artifactId>circuit-meta</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jboss.gwt.circuit</groupId>
-            <artifactId>circuit-processor</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.gwt.elemento</groupId>
             <artifactId>elemento-core</artifactId>
         </dependency>

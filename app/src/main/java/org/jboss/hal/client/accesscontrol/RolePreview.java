@@ -48,28 +48,34 @@ class RolePreview extends PreviewContent<Role> {
         this.tokens = tokens;
         this.resources = resources;
 
-        Comparator<Principal> byType = (p1, p2) -> p1.getType().ordinal() - p2.getType().ordinal();
-        List<Principal> excludes = accessControl.assignments().excludes(role).map(Assignment::getPrincipal)
-                .sorted(byType.thenComparing(comparing(Principal::getName))).collect(toList());
-        List<Principal> includes = accessControl.assignments().includes(role).map(Assignment::getPrincipal)
-                .sorted(byType.thenComparing(comparing(Principal::getName))).collect(toList());
+        if (role.isIncludeAll()) {
+            previewBuilder().h(2).textContent(resources.constants().includesAllHeader()).end();
+            previewBuilder().p().textContent(resources.constants().includesAllDescription()).end();
 
-        previewBuilder().h(2).textContent(resources.constants().excludes()).end();
-        if (excludes.isEmpty()) {
-            previewBuilder().p().textContent(resources.constants().noPrincipalsExcluded()).end();
         } else {
-            previewBuilder().ul();
-            excludes.forEach(this::principal);
-            previewBuilder().end();
-        }
+            Comparator<Principal> byType = (p1, p2) -> p1.getType().ordinal() - p2.getType().ordinal();
+            List<Principal> excludes = accessControl.assignments().excludes(role).map(Assignment::getPrincipal)
+                    .sorted(byType.thenComparing(comparing(Principal::getName))).collect(toList());
+            List<Principal> includes = accessControl.assignments().includes(role).map(Assignment::getPrincipal)
+                    .sorted(byType.thenComparing(comparing(Principal::getName))).collect(toList());
 
-        previewBuilder().h(2).textContent(resources.constants().includes()).end();
-        if (includes.isEmpty()) {
-            previewBuilder().p().textContent(resources.constants().noPrincipalsIncluded()).end();
-        } else {
-            previewBuilder().ul();
-            includes.forEach(this::principal);
-            previewBuilder().end();
+            previewBuilder().h(2).textContent(resources.constants().excludes()).end();
+            if (excludes.isEmpty()) {
+                previewBuilder().p().textContent(resources.constants().noPrincipalsExcluded()).end();
+            } else {
+                previewBuilder().ul();
+                excludes.forEach(this::principal);
+                previewBuilder().end();
+            }
+
+            previewBuilder().h(2).textContent(resources.constants().includes()).end();
+            if (includes.isEmpty()) {
+                previewBuilder().p().textContent(resources.constants().noPrincipalsIncluded()).end();
+            } else {
+                previewBuilder().ul();
+                includes.forEach(this::principal);
+                previewBuilder().end();
+            }
         }
 
         Element roleDescription = Browser.getDocument().createElement("p"); //NON-NLS

@@ -31,6 +31,10 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.HOST_SCOPED_ROLE_ADDRESS;
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.ROLE_MAPPING_ADDRESS;
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.SERVER_GROUP_SCOPED_ROLE_ADDRESS;
+
 /**
  * @author Harald Pehl
  */
@@ -40,11 +44,7 @@ public class AccessControlPresenter extends
     // @formatter:off
     @ProxyStandard
     @NameToken(NameTokens.ACCESS_CONTROL)
-    @Requires(value = {
-        "/core-service=management/access=authorization/role-mapping=*",
-        "/core-service=management/access=authorization/host-scoped-role=*",
-        "/core-service=management/access=authorization/server-group-scoped-role=*"},
-        recursive = false)
+    @Requires(value = {ROLE_MAPPING_ADDRESS, HOST_SCOPED_ROLE_ADDRESS, SERVER_GROUP_SCOPED_ROLE_ADDRESS})
     public interface MyProxy extends ProxyPlace<AccessControlPresenter> {}
 
     public interface MyView extends FinderView {}

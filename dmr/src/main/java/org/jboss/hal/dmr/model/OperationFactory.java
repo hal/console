@@ -39,34 +39,30 @@ public class OperationFactory {
     @NonNls private static final Logger logger = LoggerFactory.getLogger(OperationFactory.class);
 
     /**
-     * Turns a changeset into a composite operation containing {@link org.jboss.hal.dmr.ModelDescriptionConstants#WRITE_ATTRIBUTE_OPERATION}
+     * Turns a change-set into a composite operation containing {@link org.jboss.hal.dmr.ModelDescriptionConstants#WRITE_ATTRIBUTE_OPERATION}
      * and {@link org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION} operations.
      */
     public Composite fromChangeSet(final ResourceAddress address, final Map<String, Object> changeSet) {
 
-        Operation writeAttribute = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address).build();
-        Operation undefineAttribute = new Operation.Builder(UNDEFINE_ATTRIBUTE_OPERATION, address).build();
-
         List<Operation> operations = new ArrayList<>();
         for (String name : changeSet.keySet()) {
-            Operation step;
-
             Object value = changeSet.get(name);
+
             if (value == null
                     || (value instanceof String && (Strings.isNullOrEmpty((String) value)))
                     || (value instanceof List && ((List) value).isEmpty())
                     || (value instanceof Map && ((Map) value).isEmpty())) {
-                step = undefineAttribute.clone();
-                step.get(NAME).set(name);
-                operations.add(step);
+                operations.add(new Operation.Builder(UNDEFINE_ATTRIBUTE_OPERATION, address)
+                        .param(NAME, name)
+                        .build());
 
             } else {
-                step = writeAttribute.clone();
-                step.get(NAME).set(name);
                 ModelNode valueNode = asValueNode(value);
                 if (valueNode != null) {
-                    step.get(VALUE).set(valueNode);
-                    operations.add(step);
+                    operations.add(new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, address)
+                            .param(NAME, name)
+                            .param(VALUE, valueNode)
+                            .build());
                 } else {
                     logger.error("Unsupported type {} when building composite operation for {} from changeset {}",
                             value.getClass(), address, changeSet);

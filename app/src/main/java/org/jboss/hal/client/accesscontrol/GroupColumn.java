@@ -16,32 +16,46 @@
 package org.jboss.hal.client.accesscontrol;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
+import com.google.web.bindery.event.shared.EventBus;
+import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.finder.ItemActionFactory;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
+import org.jboss.hal.spi.Footer;
+import org.jboss.hal.spi.Requires;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.EXCLUDE_ADDRESS;
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.INCLUDE_ADDRESS;
 
 /**
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.GROUP)
+@Requires({INCLUDE_ADDRESS, EXCLUDE_ADDRESS})
 public class GroupColumn extends PrincipalColumn {
 
     @Inject
     public GroupColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
+            final Dispatcher dispatcher,
+            final EventBus eventBus,
+            final Capabilities capabilities,
+            final @Footer Provider<Progress> progress,
             final AccessControl accessControl,
             final AccessControlTokens tokens,
+            final AccessControlResources accessControlResources,
             final Resources resources) {
-        super(finder, Ids.GROUP, resources.constants().group(),
+        super(finder, Ids.GROUP, resources.constants().group(), Principal.Type.GROUP,
                 accessControl.principals().groups().stream().sorted(comparing(Principal::getName)).collect(toList()),
-                columnActionFactory, itemActionFactory, accessControl, tokens, resources);
+                columnActionFactory, dispatcher, eventBus, capabilities, progress, accessControl, tokens,
+                accessControlResources, resources);
     }
 }

@@ -205,6 +205,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String includeRole();
     String includeUserGroup();
     String includes();
+    String includesAll();
+    String includesAllDescription();
+    String includesAllHeader();
     String input();
 
     String jdbcDriver();
@@ -242,6 +245,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noPrincipalsIncluded();
     String noRolesExcluded();
     String noRolesIncluded();
+    String noRolesIncludedOrExcluded();
     String noRootLogger();
     String noRootLoggerDescription();
     String noRunningServers();

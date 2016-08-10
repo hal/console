@@ -50,12 +50,8 @@ class Principals implements Iterable<Principal> {
     }
 
     void clear() {
-        if (principals.containsKey(GROUP)) {
-            principals.get(GROUP).clear();
-        }
-        if (principals.containsKey(USER)) {
-            principals.get(USER).clear();
-        }
+        principals.get(GROUP).clear();
+        principals.get(USER).clear();
         lookup.clear();
     }
 

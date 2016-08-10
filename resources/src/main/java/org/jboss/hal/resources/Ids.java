@@ -37,7 +37,6 @@ package org.jboss.hal.resources;
 import java.util.List;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -193,6 +192,7 @@ public interface Ids {
     String ROLE_ADD = build(ROLE, ADD_SUFFIX);
     String ROLE_HOST_SCOPED_ADD = build(ROLE, HOST, ADD_SUFFIX);
     String ROLE_HOST_SCOPED_FORM = build(ROLE, HOST, FORM_SUFFIX);
+    String ROLE_MAPPING_FORM = build("role-mapping", FORM_SUFFIX);
     String ROLE_SERVER_GROUP_SCOPED_ADD = build(ROLE, "server-group", ADD_SUFFIX);
     String ROLE_SERVER_GROUP_SCOPED_FORM = build(ROLE, "server-group", FORM_SUFFIX);
     String ROLE_REFRESH = build(ROLE, REFRESH_SUFFIX);
@@ -324,10 +324,12 @@ public interface Ids {
         List<String> ids = Lists.newArrayList(id);
         if (additionalIds != null) {
             for (String additionalId : additionalIds) {
-                ids.add(Strings.emptyToNull(additionalId));
+                if (!Strings.isNullOrEmpty(additionalId)) {
+                    ids.add(additionalId);
+                }
             }
         }
-        return Joiner.on(separator).skipNulls().join(ids);
+        return ids.stream().map(Ids::asId).collect(joining(String.valueOf(separator)));
     }
 
     /**

@@ -42,11 +42,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     //@formatter:off
     String activeRoles(String roles);
     SafeHtml addResourceSuccess(String type, String name);
-    String addResourceTitle(String text);
+    String addResourceTitle(String type);
     SafeHtml addSingleResourceSuccess(String type);
     SafeHtml allMailServersExist();
     SafeHtml allSingletonsExist();
-    String assignedToOtherRoles(String type, @PluralCount int count);
+    SafeHtml assignmentExcludeSuccess(String type, String name);
+    SafeHtml assignmentIncludeSuccess(String type, String name);
     String available(double value);
 
     String blacklist(String blacklist);
@@ -88,6 +89,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml hostStarting(String name);
     SafeHtml hostUndefined(String name);
 
+    SafeHtml includeAllHelpText();
+
     SafeHtml jdbcDriverDeploymentHint();
     SafeHtml jdbcDriverProvidedByPreview(String type, String value);
 
@@ -107,6 +110,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml macroPlaybackSuccessful();
     String messages(@PluralCount int count);
     SafeHtml metadataError();
+    String modifyResourceTitle(String type);
     SafeHtml modifyResourceSuccess(String type, String name);
     SafeHtml modifySingleResourceSuccess(String type);
 
@@ -136,9 +140,14 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml reloadServerQuestion(String name);
     SafeHtml reloadServerSuccess(String name);
 
+    SafeHtml removeGroupQuestion(String name);
+    SafeHtml removeGroupSuccess(String name);
     String removeResourceConfirmationTitle(String name);
     SafeHtml removeResourceConfirmationQuestion(String name);
     SafeHtml removeResourceSuccess(String type, String name);
+    SafeHtml removeRoleQuestion(String name);
+    SafeHtml removeUserQuestion(String name);
+    SafeHtml removeUserSuccess(String name);
     SafeHtml requiredHelp();
     SafeHtml requiredMarker();
     SafeHtml resourceNotFound(String type, String name);

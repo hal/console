@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.config.AccessControlProvider;
@@ -32,7 +32,6 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
@@ -55,11 +54,6 @@ public class AccessControl {
 
     private final static String LOCAL_USERNAME = "$local";
 
-    @SuppressWarnings("HardCodedStringLiteral")
-    private static final ResourceAddress RBAC_ROOT_ADDRESS = new ResourceAddress()
-            .add("core-service", "management")
-            .add("access", "authorization");
-
     @NonNls private static final Logger logger = LoggerFactory.getLogger(AccessControl.class);
 
     private final Environment environment;
@@ -72,7 +66,9 @@ public class AccessControl {
     private final Assignments assignments;
 
     @Inject
-    public AccessControl(final Environment environment, final EventBus eventBus, final Dispatcher dispatcher,
+    public AccessControl(final Environment environment,
+            final EventBus eventBus,
+            final Dispatcher dispatcher,
             final Resources resources) {
         this.environment = environment;
         this.eventBus = eventBus;
@@ -85,7 +81,7 @@ public class AccessControl {
     }
 
     void switchProvider() {
-        Operation.Builder builder = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, RBAC_ROOT_ADDRESS)
+        Operation.Builder builder = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, AddressTemplates.root())
                 .param(NAME, PROVIDER);
         if (environment.getAccessControlProvider() == SIMPLE) {
             DialogFactory.confirmation(resources.constants().switchProvider(),
@@ -114,26 +110,26 @@ public class AccessControl {
         assignments.clear();
     }
 
-    void reload(Scheduler.ScheduledCommand andThen) {
+    void reload(ScheduledCommand andThen) {
         reset();
 
         List<Operation> operations = new ArrayList<>();
-        operations.add(new Operation.Builder(READ_RESOURCE_OPERATION, RBAC_ROOT_ADDRESS)
+        operations.add(new Operation.Builder(READ_RESOURCE_OPERATION, AddressTemplates.root())
                 .param(INCLUDE_RUNTIME, true)
                 .param(ATTRIBUTES_ONLY, true)
                 .build());
         if (!environment.isStandalone()) {
-            operations.add(new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, RBAC_ROOT_ADDRESS)
-                    .param(CHILD_TYPE, "host-scoped-role")
+            operations.add(new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, AddressTemplates.root())
+                    .param(CHILD_TYPE, HOST_SCOPED_ROLE)
                     .param(RECURSIVE, true)
                     .build());
-            operations.add(new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, RBAC_ROOT_ADDRESS)
-                    .param(CHILD_TYPE, "server-group-scoped-role")
+            operations.add(new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, AddressTemplates.root())
+                    .param(CHILD_TYPE, SERVER_GROUP_SCOPED_ROLE)
                     .param(RECURSIVE, true)
                     .build());
         }
-        operations.add(new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, RBAC_ROOT_ADDRESS)
-                .param(CHILD_TYPE, "role-mapping")
+        operations.add(new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, AddressTemplates.root())
+                .param(CHILD_TYPE, ROLE_MAPPING)
                 .param(RECURSIVE, true)
                 .build());
         dispatcher.execute(new Composite(operations), (CompositeResult result) -> {

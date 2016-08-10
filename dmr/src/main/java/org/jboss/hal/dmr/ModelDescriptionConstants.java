@@ -107,6 +107,7 @@ public interface ModelDescriptionConstants {
     String HANDLERS = "handlers";
     String HOST = "host";
     String HOSTS = "hosts";
+    String HOST_SCOPED_ROLE = "host-scoped-role";
     String HOST_STATE = "host-state";
 
     String IIOP_OPENJDK = "iiop-openjdk";
@@ -133,7 +134,6 @@ public interface ModelDescriptionConstants {
     String LEVEL = "level";
     String LIST_ADD = "list-add";
     String LIST_REMOVE = "list-remove";
-    String LOCAL = "local";
     String LOCALE = "locale";
     String LOGGING = "logging";
     String LOGGING_PROFILE = "logging-profile";
@@ -146,7 +146,6 @@ public interface ModelDescriptionConstants {
     String MANAGEMENT_MAJOR_VERSION = "management-major-version";
     String MANAGEMENT_MICRO_VERSION = "management-micro-version";
     String MANAGEMENT_MINOR_VERSION = "management-minor-version";
-    String MASK = "mask";
     String MAX = "max";
     String MESSAGING_ACTIVEMQ = "messaging-activemq";
     String METRIC = "metric";
@@ -211,6 +210,7 @@ public interface ModelDescriptionConstants {
     String RESULT = "result";
     String RESUME = "resume";
     String RESUME_SERVERS = "resume-servers";
+    String ROLE_MAPPING = "role-mapping";
     String ROLES = "HEADER_ROLES";
     String RUNNING_MODE = "running-mode";
     String RUNTIME = "runtime";
@@ -222,6 +222,7 @@ public interface ModelDescriptionConstants {
     String SERVER = "server";
     String SERVER_CONFIG = "server-config";
     String SERVER_GROUP = "server-group";
+    String SERVER_GROUP_SCOPED_ROLE = "server-group-scoped-role";
     String SERVER_GROUPS = "server-groups";
     String SERVER_STATE = "server-state";
     String SERVER_TYPE = "server-type";

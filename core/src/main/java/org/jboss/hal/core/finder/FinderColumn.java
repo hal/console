@@ -966,4 +966,8 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     public String getTitle() {
         return title;
     }
+
+    protected Finder getFinder() {
+        return finder;
+    }
 }
