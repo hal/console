@@ -27,7 +27,7 @@
             "nillable" => true,
             "min" => 1L,
             "max" => 65535L,
-            "default" => 80
+            "default" => 9990
         }
     }
 }

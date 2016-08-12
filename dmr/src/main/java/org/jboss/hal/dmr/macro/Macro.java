@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.resources.Ids;
 
 import static java.util.stream.Collectors.joining;
 
@@ -58,6 +59,10 @@ public class Macro {
     @Override
     public String toString() {
         return "Macro(" + name + ", " + (sealed ? "sealed" : "recording") + ")";
+    }
+
+    String getId() {
+        return Ids.build(Ids.MACRO_STORAGE, name);
     }
 
     public String getName() {

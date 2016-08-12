@@ -63,6 +63,7 @@ public interface Ids {
     String ENTRY_SUFFIX = "entry";
     String FORM_SUFFIX = "form";
     String REFRESH_SUFFIX = "refresh";
+    String STORAGE_PREFIX = "hal-local-storage";
     String TAB_SUFFIX = "tab";
     String TABLE_SUFFIX = "table";
     String WIZARD_SUFFIX = "wizard";
@@ -116,6 +117,7 @@ public interface Ids {
     String ENDPOINT_ADD = build(ENDPOINT, "add");
     String ENDPOINT_PING = build(ENDPOINT, "ping");
     String ENDPOINT_SELECT = build(ENDPOINT, "select");
+    String ENDPOINT_STORAGE = build(STORAGE_PREFIX, ENDPOINT);
 
     String FINDER = "hal-finder";
 
@@ -167,6 +169,7 @@ public interface Ids {
     String MACRO_EDITOR = build(MACRO, "editor");
     String MACRO_LIST = build(MACRO, "list");
     String MACRO_OPTIONS = build(MACRO, "options");
+    String MACRO_STORAGE = build(STORAGE_PREFIX, MACRO);
     String MAIL_SERVER = "mail-server";
     String MAIL_SERVER_ENTRY = build(MAIL_SERVER, ENTRY_SUFFIX);
     String MAIL_SERVER_DIALOG = build(MAIL_SERVER, ADD_SUFFIX, FORM_SUFFIX);
@@ -219,7 +222,6 @@ public interface Ids {
     String SOCKET_BINDING_REFRESH = build(SOCKET_BINDING, REFRESH_SUFFIX);
     String STANDALONE_HOST = "standalone-host";
     String STANDALONE_SERVER = "standalone-server";
-    String STORAGE_PREFIX = "org.jboss.hal";
     String SUBSYSTEM = "subsystem";
 
     String TLC_ACCESS_CONTROL = "tlc-access-control";

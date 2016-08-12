@@ -42,8 +42,9 @@ import static org.jboss.hal.resources.Urls.MANAGEMENT;
  */
 public class EndpointManager {
 
-    private final static String CONNECT_PARAMETER = "connect";
-    @NonNls private final static Logger logger = LoggerFactory.getLogger(EndpointManager.class);
+    static final int DEFAULT_PORT = 9990; // must be in sync with the default value in endpoint.dmr!
+    private static final String CONNECT_PARAMETER = "connect";
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(EndpointManager.class);
 
     private final Endpoints endpoints;
     private final EndpointStorage storage;

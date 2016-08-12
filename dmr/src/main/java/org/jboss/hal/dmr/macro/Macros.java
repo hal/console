@@ -38,8 +38,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 public class Macros {
 
-    private static final String KEY_PREFIX = Ids.build(Ids.STORAGE_PREFIX, '.', "macros");
-
     private final Map<String, Macro> macros;
     private final Storage storage;
     private Macro current;
@@ -55,7 +53,7 @@ public class Macros {
         if (storage != null) {
             for (int i = 0; i < storage.getLength(); i++) {
                 String key = storage.key(i);
-                if (key.startsWith(KEY_PREFIX)) {
+                if (key.startsWith(Ids.MACRO_STORAGE)) {
                     Macro macro = deserialize(storage.getItem(key));
                     macros.put(macro.getName(), macro);
                 }
@@ -105,7 +103,7 @@ public class Macros {
     public void remove(final Macro macro) {
         macros.remove(macro.getName());
         if (storage != null) {
-            storage.removeItem(KEY_PREFIX + macro.getName());
+            storage.removeItem(macro.getId());
         }
 
     }
@@ -134,7 +132,7 @@ public class Macros {
             current.seal();
             macros.put(current.getName(), current);
             if (storage != null) {
-                storage.setItem(Ids.build(KEY_PREFIX, '.', current.getName()), serialize(current));
+                storage.setItem(current.getId(), serialize(current));
             }
 
             current = null;

@@ -27,7 +27,7 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
  * @see <a href="https://datatables.net/reference/type/selector-modifier">https://datatables.net/reference/type/selector-modifier</a>
  */
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-public class Selector {
+public class SelectorModifier {
 
     // @formatter:off
     public enum Order {current, index}

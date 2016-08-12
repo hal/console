@@ -34,7 +34,7 @@ class FinderColumnStorage {
     private final Storage storage;
 
     FinderColumnStorage(final String id) {
-        this.pinnedId = Ids.build(Ids.STORAGE_PREFIX, '.', id, "pinned");
+        this.pinnedId = Ids.build(Ids.STORAGE_PREFIX, id, "pinned");
         this.storage = Browser.getWindow().getLocalStorage();
     }
 

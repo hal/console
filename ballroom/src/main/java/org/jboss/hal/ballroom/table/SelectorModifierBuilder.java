@@ -15,62 +15,62 @@
  */
 package org.jboss.hal.ballroom.table;
 
-import org.jboss.hal.ballroom.table.Selector.Order;
-import org.jboss.hal.ballroom.table.Selector.Page;
-import org.jboss.hal.ballroom.table.Selector.Search;
+import org.jboss.hal.ballroom.table.SelectorModifier.Order;
+import org.jboss.hal.ballroom.table.SelectorModifier.Page;
+import org.jboss.hal.ballroom.table.SelectorModifier.Search;
 
 /**
- * Builder for a {@link Selector}.
+ * Builder for a {@link SelectorModifier}.
  *
  * @author Harald Pehl
  */
-public class SelectorBuilder {
+public class SelectorModifierBuilder {
 
     private Order order;
     private Page page;
     private Search search;
     private Boolean selected;
 
-    public SelectorBuilder() {
+    public SelectorModifierBuilder() {
         this.order = Order.current;
         this.page = Page.all;
         this.search = Search.none;
         this.selected = null;
     }
 
-    public SelectorBuilder order(Order order) {
+    public SelectorModifierBuilder order(Order order) {
         this.order = order;
         return this;
     }
 
-    public SelectorBuilder page(Page page) {
+    public SelectorModifierBuilder page(Page page) {
         this.page = page;
         return this;
     }
 
-    public SelectorBuilder search(Search search) {
+    public SelectorModifierBuilder search(Search search) {
         this.search = search;
         return this;
     }
 
-    public SelectorBuilder selected() {
+    public SelectorModifierBuilder selected() {
         this.selected = true;
         return this;
     }
 
-    public SelectorBuilder unselected() {
+    public SelectorModifierBuilder unselected() {
         this.selected = false;
         return this;
     }
 
-    public Selector build() {
-        Selector selector = new Selector();
-        selector.order = order.name();
-        selector.page = page.name();
-        selector.search = search.name();
+    public SelectorModifier build() {
+        SelectorModifier selectorModifier = new SelectorModifier();
+        selectorModifier.order = order.name();
+        selectorModifier.page = page.name();
+        selectorModifier.search = search.name();
         if (selected != null) {
-            selector.selected = selected;
+            selectorModifier.selected = selected;
         }
-        return selector;
+        return selectorModifier;
     }
 }
