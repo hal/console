@@ -47,7 +47,7 @@ public class Subsystems {
         add(new SubsystemMetadata(EE, "EE", null, NameTokens.EE, null, true, resources.previews().configurationEe()));
         add(new SubsystemMetadata(EJB3, "EJB3", null, NameTokens.EJB3, null, false));
         add(new SubsystemMetadata(IIOP_OPENJDK, "IIOP", "OpenJDK", NameTokens.IIOP, null, true));
-        add(new SubsystemMetadata(INFINISPAN, "Infinispan", null, null, null, true));
+        add(new SubsystemMetadata(INFINISPAN, "Infinispan", null, null, null, false));
         add(new SubsystemMetadata(IO, "IO", null, NameTokens.IO, null, true, resources.previews().configurationIo()));
         add(new SubsystemMetadata(JCA, "JCA", null, NameTokens.JCA, null, false));
         add(new SubsystemMetadata(JMX, "JMX", null, NameTokens.JMX, null, false));
@@ -57,10 +57,10 @@ public class Subsystems {
         add(new SubsystemMetadata(MESSAGING_ACTIVEMQ, "Messaging", "ActiveMQ", null, null, true));
         add(new SubsystemMetadata(REMOTING, "Remoting", null, NameTokens.REMOTING, null, false));
         add(new SubsystemMetadata(REQUEST_CONTROLLER, "Request Controller", null, NameTokens.REQUEST_CONTROLLER, null, false));
-        add(new SubsystemMetadata(RESOURCE_ADAPTERS, "Resource Adapters", null, null, null, true));
-        add(new SubsystemMetadata(SECURITY, "Security", null, null, null, true));
+        add(new SubsystemMetadata(RESOURCE_ADAPTERS, "Resource Adapters", null, null, null, false));
+        add(new SubsystemMetadata(SECURITY, "Security", null, null, null, false));
         add(new SubsystemMetadata(TRANSACTIONS, "Transactions", null, NameTokens.TRANSACTIONS, null, true));
-        add(new SubsystemMetadata(UNDERTOW, "Web", "Undertow", null, Ids.WEB_SETTINGS, true));
+        add(new SubsystemMetadata(UNDERTOW, "Web", "Undertow", null, null, false));
         add(new SubsystemMetadata(WEBSERVICES, "Web Services", null, NameTokens.WEBSERVICES, null, false));
         // @formatter:on
     }

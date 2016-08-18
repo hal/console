@@ -236,8 +236,6 @@ public interface Ids {
     String VERSION_INFO = "version-info";
     String VERSION_INFO_FORM = build(VERSION_INFO, FORM_SUFFIX);
 
-    String WEB_SETTINGS = "settings";
-
     String XA_DATA_SOURCE = "xa-data-source";
     String XA_DATA_SOURCE_ADD = build(XA_DATA_SOURCE, ADD_SUFFIX);
     String XA_DATA_SOURCE_RUNTIME = "xa-data-source-runtime";
