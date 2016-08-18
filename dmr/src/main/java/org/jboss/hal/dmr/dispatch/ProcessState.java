@@ -49,4 +49,6 @@ public class ProcessState implements Iterable<ServerState> {
         }
         return null;
     }
+
+    public int size() {return serverStates.size();}
 }

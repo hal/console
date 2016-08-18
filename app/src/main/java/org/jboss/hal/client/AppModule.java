@@ -24,8 +24,8 @@ import org.jboss.gwt.circuit.Dispatcher;
 import org.jboss.gwt.circuit.dag.DAGDispatcher;
 import org.jboss.hal.client.accesscontrol.AccessControl;
 import org.jboss.hal.client.accesscontrol.AccessControlPresenter;
-import org.jboss.hal.client.accesscontrol.AccessControlView;
 import org.jboss.hal.client.accesscontrol.AccessControlTokens;
+import org.jboss.hal.client.accesscontrol.AccessControlView;
 import org.jboss.hal.client.configuration.ConfigurationPresenter;
 import org.jboss.hal.client.configuration.ConfigurationView;
 import org.jboss.hal.client.configuration.InterfacePresenter;
@@ -61,6 +61,7 @@ import org.jboss.hal.client.rhcp.RhcpPresenter;
 import org.jboss.hal.client.rhcp.RhcpView;
 import org.jboss.hal.client.rhcp.UnderTheBridgePresenter;
 import org.jboss.hal.client.rhcp.UnderTheBridgeView;
+import org.jboss.hal.client.runtime.ProcessStateHandler;
 import org.jboss.hal.client.runtime.RuntimePresenter;
 import org.jboss.hal.client.runtime.RuntimeView;
 import org.jboss.hal.client.runtime.group.Mbui_ServerGroupView_Provider;
@@ -112,6 +113,7 @@ public class AppModule extends AbstractTemplatedPresenterModule {
         bind(AccessControlTokens.class).in(Singleton.class);
         bind(DataSourceTemplates.class).in(Singleton.class);
         bind(Dispatcher.class).to(DAGDispatcher.class).in(Singleton.class);
+        bind(ProcessStateHandler.class).in(Singleton.class);
 
 
         // ------------------------------------------------------ skeleton & root presenter

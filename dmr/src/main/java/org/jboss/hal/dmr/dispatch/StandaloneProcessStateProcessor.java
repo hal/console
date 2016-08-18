@@ -48,11 +48,11 @@ public class StandaloneProcessStateProcessor implements ProcessStateProcessor {
 
                 String headerValue = header.getValue().asString();
                 if (RESTART_REQUIRED.equals(headerValue)) {
-                    ServerState state = new ServerState("", Names.STANDALON_SERVER, State.RESTART_REQUIRED);
+                    ServerState state = new ServerState("", Names.STANDALONE_SERVER, State.RESTART_REQUIRED);
                     processState.add(state);
 
                 } else if (RELOAD_REQUIRED.equals(headerValue)) {
-                    ServerState state = new ServerState("", Names.STANDALON_SERVER, State.RELOAD_REQUIRED);
+                    ServerState state = new ServerState("", Names.STANDALONE_SERVER, State.RELOAD_REQUIRED);
                     processState.add(state);
                 }
             }

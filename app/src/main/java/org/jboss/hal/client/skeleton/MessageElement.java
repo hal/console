@@ -49,7 +49,13 @@ class MessageElement implements IsElement {
                     .span().css(pfIcon(close)).end()
                     .end();
         }
-        if (message.getDetails() != null) {
+        if (message.hasAction()) {
+            builder.div().css(pullRight, toastPfAction)
+                    .a().css(clickable).on(click, event -> message.getAction().execute())
+                    .textContent(message.getActionTitle()).end()
+                    .end();
+
+        } else if (message.getDetails() != null) {
             builder.div().css(pullRight, toastPfAction)
                     .a().css(clickable).on(click, event -> showMessage(message))
                     .textContent(CONSTANTS.details()).end()
