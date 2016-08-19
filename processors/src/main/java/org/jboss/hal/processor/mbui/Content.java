@@ -50,7 +50,8 @@ public class Content {
         }
         StringBuilder htmlBuilder = new StringBuilder();
         for (org.jdom2.Element childElement : contentElement.getChildren()) {
-            if (XmlTags.TABLE.equals(childElement.getName()) || XmlTags.FORM.equals(childElement.getName())) {
+            if (XmlTags.TABLE.equals(childElement.getName()) || XmlTags.FORM.equals(childElement.getName())
+                    || XmlTags.TAB.equals(childElement.getName())) {
                 if (htmlBuilder.length() != 0) {
                     String html = htmlBuilder.toString();
                     htmlBuilder.setLength(0);
@@ -59,21 +60,27 @@ public class Content {
                     }
                     content.add(new Content(null, html));
                 }
-                content.add(new Content(childElement.getAttributeValue("id"), null));
-
+                Content content1 = new Content(childElement.getAttributeValue("id"), null);
+                content.add(content1);
+                if (XmlTags.TAB.equals(childElement.getName())) {
+                    content1.setTab(true);
+                    // from the template perspective, registering only one tab is ok, 
+                    // as the tab id will be used to lookup the tab object name created at runtime
+                    // in MbuiViewProcessor.processTabs (TabsInfo class)
+                    break;
+                }
             } else {
                 // do not directly add the html, but collect it until a table or form is about to be processed
                 htmlBuilder.append(JAVA_STRING_ESCAPER.escape(xmlAsString(childElement)));
             }
         }
-
         return content;
     }
-
 
     private String reference;
     private final String name;
     private final String html;
+    private boolean tab;
     private final Map<String, String> handlebars;
 
     private Content(final String reference, final String html) {
@@ -81,6 +88,7 @@ public class Content {
         this.name = "html" + counter; //NON-NLS
         this.html = html;
         this.handlebars = Handlebars.parse(html);
+        tab = false;
         counter++;
     }
 
@@ -102,5 +110,23 @@ public class Content {
 
     public Map<String, String> getHandlebars() {
         return handlebars;
+    }
+
+    public boolean isTab() {
+        return tab;
+    }
+
+    public void setTab(final boolean tab) {
+        this.tab = tab;
+    }
+
+    @Override
+    public String toString() {
+        return "Content{" +
+                "reference=" + reference + 
+                ", name=" + name + 
+                ", tab=" + tab + 
+                ", html=" + html +
+                '}';
     }
 }
