@@ -159,28 +159,23 @@
                     <form id="logging-handler-console-form" auto-save="true"
                           name-resolver="{{form.getModel().getName()}}">
                         <attributes>
-                            <tab name="foo">
-                                <attribute name="level"/>
-                                <attribute name="target"/>
-                                <attribute name="autoflush"/>
-                            </tab>
-                            <tab name="bar">
-                                <attribute name="formatter"/>
-                                <attribute name="named-formatter">
-                                    <suggest-handler>
-                                        <templates>
-                                            <!-- @formatter:off -->
+                            <attribute name="level"/>
+                            <attribute name="target"/>
+                            <attribute name="autoflush"/>
+                            <attribute name="formatter"/>
+                            <attribute name="named-formatter">
+                                <suggest-handler>
+                                    <templates>
+                                        <!-- @formatter:off -->
                                         <template address="/{selected.profile}/subsystem=logging/pattern-formatter=*"/>
                                         <template address="/{selected.profile}/subsystem=logging/custom-formatter=*"/>
                                         <!-- @formatter:on -->
-                                        </templates>
-                                    </suggest-handler>
-                                </attribute>
-                                <attribute name="enabled"/>
-                                <attribute name="encoding"/>
-                                <attribute name="filter-spec"/>
-                            </tab>
-                            <tab name="bat" remaining="true"></tab>
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                            <attribute name="enabled"/>
+                            <attribute name="encoding"/>
+                            <attribute name="filter-spec"/>
                         </attributes>
                     </form>
                 </metadata>
