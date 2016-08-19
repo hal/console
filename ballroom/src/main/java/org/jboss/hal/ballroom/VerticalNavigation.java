@@ -42,7 +42,7 @@ import static org.jboss.hal.resources.CSS.*;
  * <p>
  * The vertical navigation consists of two parts:
  * <ol>
- * <li>The navigation entries which are child elements of the vertical navigation</li>
+ * <li>The actual menu / navigation entries which are child elements of the vertical navigation</li>
  * <li>The panes which visibility is controlled by the vertical navigation, but which are <strong>not</strong> children
  * of the vertical navigation. The panes are typically children of the root container.</li>
  * </ol>
@@ -115,7 +115,8 @@ public class VerticalNavigation {
 
 
     private static final int PRIMARY_VISIBLE_TEXT_LENGTH = 13;
-    private static final String UL_ELEMENT = "ul-element";
+    private static final int SECONDARY_VISIBLE_TEXT_LENGTH = 23;
+    private static final String UL_ELEMENT = "ulElement";
     private static VerticalNavigation singleton = null;
     @NonNls private static final Logger logger = LoggerFactory.getLogger(VerticalNavigation.class);
 
@@ -144,8 +145,8 @@ public class VerticalNavigation {
      */
     public void on() {
         if (singleton != null) {
-            logger.error(
-                    "There's another vertical navigation which is still attached to the DOM. Did you forget to call VerticalNavigation.off()?");
+            logger.error("There's another vertical navigation which is still attached to the DOM. " +
+                    "Did you forget to call VerticalNavigation.off()?");
             off();
         }
 
@@ -153,9 +154,11 @@ public class VerticalNavigation {
         if (rootContainer != null) {
             Browser.getDocument().getBody().insertBefore(root, rootContainer);
             rootContainer.getClassList().add(containerPfNavPfVertical);
-            if (!entries.values().stream().filter(entry -> !entry.primary).collect(toList()).isEmpty()) {
-                root.getClassList().add(navPfVerticalWithSecondaryNav);
-                rootContainer.getClassList().add(containerPfNavPfVerticalWithSecondary);
+            if (hasSecondary()) {
+                rootContainer.getClassList().add(containerPfNavPfVerticalWithSubMenus);
+                rootContainer.getClassList().add(navPfPersistentSecondary);
+                root.getClassList().add(navPfVerticalWithSubMenus);
+                root.getClassList().add(navPfPersistentSecondary);
             }
             VerticalNavigation.singleton = this;
             Bridge.select().setupVerticalNavigation(true);
@@ -172,9 +175,12 @@ public class VerticalNavigation {
         }
         Element rootContainer = Browser.getDocument().getElementById(Ids.ROOT_CONTAINER);
         if (rootContainer != null) {
-            rootContainer.getClassList().remove(secondaryVisiblePf);
             rootContainer.getClassList().remove(containerPfNavPfVertical);
-            rootContainer.getClassList().remove(containerPfNavPfVerticalWithSecondary);
+            rootContainer.getClassList().remove(containerPfNavPfVerticalWithSubMenus);
+            rootContainer.getClassList().remove(navPfPersistentSecondary);
+            rootContainer.getClassList().remove(secondaryVisiblePf);
+            root.getClassList().remove(navPfPersistentSecondary);
+            root.getClassList().remove(navPfVerticalWithSubMenus);
             root.getClassList().remove(secondaryVisiblePf);
         }
     }
@@ -231,7 +237,7 @@ public class VerticalNavigation {
                         builder.span().css(iconClass).end();
                     }
                     builder.span().css(listGroupItemValue).textContent(text);
-                    if (text.length() > PRIMARY_VISIBLE_TEXT_LENGTH){
+                    if (text.length() > PRIMARY_VISIBLE_TEXT_LENGTH) {
                         builder.title(text);
                     }
                     builder.end()
@@ -265,22 +271,26 @@ public class VerticalNavigation {
 
         if (primaryEntry != null) {
             Element secondaryUl = primaryEntry.asElement()
-                    .querySelector("." + navPfPersistentSecondary + " > ul." + listGroup); //NON-NLS
+                    .querySelector("." + navPfSecondaryNav + " > ul." + listGroup); //NON-NLS
 
             if (secondaryUl == null) {
                 // seems to be the first secondary entry -> setup the secondary containers
                 String secondaryContainerId = Ids.build(primaryId, "secondary");
-                primaryEntry.asElement().getClassList().add(persistentSecondary);
+                primaryEntry.asElement().getClassList().add(secondaryNavItemPf);
                 primaryEntry.asElement().getDataset().setAt(UIConstants.TARGET, "#" + secondaryContainerId);
 
                 // @formatter:off
                 Elements.Builder builder = new Elements.Builder()
-                    .div().id(secondaryContainerId).css(navPfPersistentSecondary, navPfPersistentSecondaryHal)
-                        .div().css(persistentSecondaryHeader)
-                            .a().css(clickable, fontAwesome("arrow-circle-o-left"))
+                    .div().id(secondaryContainerId).css(navPfSecondaryNav, navPfSecondaryNavHal)
+                        .div().css(navItemPfHeader)
+                            .a().css(secondaryCollapseTogglePf)
                                 .data(UIConstants.TOGGLE, "collapse-secondary-nav") //NON-NLS
                             .end()
-                            .span().textContent(primaryEntry.text).end()
+                            .span().textContent(primaryEntry.text);
+                            if (text.length() > SECONDARY_VISIBLE_TEXT_LENGTH) {
+                                builder.title(text);
+                            }
+                            builder.end()
                         .end()
                         .ul().css(listGroup).rememberAs(UL_ELEMENT).end()
                     .end();
@@ -368,5 +378,9 @@ public class VerticalNavigation {
      */
     public HasElements panes() {
         return () -> panes.values().stream().map(Pane::asElement).collect(toList());
+    }
+
+    private boolean hasSecondary() {
+        return entries.values().stream().filter(entry -> !entry.primary).findFirst().isPresent();
     }
 }

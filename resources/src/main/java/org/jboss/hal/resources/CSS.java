@@ -71,7 +71,7 @@ public interface CSS {
     String collapse = "collapse";
     String containerFluid = "container-fluid";
     String containerPfNavPfVertical = "container-pf-nav-pf-vertical";
-    String containerPfNavPfVerticalWithSecondary = "container-pf-nav-pf-vertical-with-secondary";
+    String containerPfNavPfVerticalWithSubMenus = "container-pf-nav-pf-vertical-with-sub-menus";
     String controlLabel = "control-label";
     String copy = "copy";
 
@@ -182,11 +182,13 @@ public interface CSS {
     String name = "name";
     String nav = "nav";
     String navbar = "navbar";
+    String navItemPfHeader = "nav-item-pf-header";
     String navPfPersistentSecondary = "nav-pf-persistent-secondary";
-    String navPfPersistentSecondaryHal = "nav-pf-persistent-secondary-hal";
+    String navPfSecondaryNav = "nav-pf-secondary-nav";
+    String navPfSecondaryNavHal = "nav-pf-secondary-nav-hal";
     String navPfVertical = "nav-pf-vertical";
     String navPfVerticalHal = "nav-pf-vertical-hal";
-    String navPfVerticalWithSecondaryNav = "nav-pf-vertical-with-secondary-nav";
+    String navPfVerticalWithSubMenus = "nav-pf-vertical-with-sub-menus";
     String navTabs = "nav-tabs";
     String navTabsHal = "nav-tabs-hal";
     String navTabsPf = "nav-tabs-pf";
@@ -199,15 +201,13 @@ public interface CSS {
     String operations = "operations";
 
     String panel = "panel";
-    String panelBody = "panel-default";
+    String panelBody = "panel-body";
     String panelCollapse = "panel-collapse";
     String panelDefault = "panel-default";
     String panelGroup = "panel-group";
     String panelHeading = "panel-heading";
     String panelTitle = "panel-title";
     String pauseCircle ="pause-circle-o";
-    String persistentSecondary = "persistent-secondary";
-    String persistentSecondaryHeader = "persistent-secondary-header";
     String pin = "pin";
     String pinned = "pinned";
     String pinnable = "pinnable";
@@ -239,6 +239,8 @@ public interface CSS {
     String row = "row";
     String rowHeader = "row-header";
 
+    String secondaryCollapseTogglePf = "secondary-collapse-toggle-pf";
+    String secondaryNavItemPf = "secondary-nav-item-pf";
     String secondaryVisiblePf = "secondary-visible-pf";
     String selected = "selected";
     String selectpicker = "selectpicker";
