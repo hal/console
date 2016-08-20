@@ -113,7 +113,7 @@ public class AppModule extends AbstractTemplatedPresenterModule {
         bind(AccessControlTokens.class).in(Singleton.class);
         bind(DataSourceTemplates.class).in(Singleton.class);
         bind(Dispatcher.class).to(DAGDispatcher.class).in(Singleton.class);
-        bind(ProcessStateHandler.class).in(Singleton.class);
+        bind(ProcessStateHandler.class).asEagerSingleton(); // to register the event
 
 
         // ------------------------------------------------------ skeleton & root presenter
