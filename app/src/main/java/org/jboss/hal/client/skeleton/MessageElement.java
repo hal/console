@@ -42,7 +42,7 @@ class MessageElement implements IsElement {
         }
 
         Elements.Builder builder = new Elements.Builder()
-                .div().css(toastPf, toastPfMaxWidth, toastPfTopRight, alert, cssIcon[0]);
+                .div().css(toastPf, alert, cssIcon[0]);
         if (message.isSticky()) {
             //noinspection HardCodedStringLiteral
             builder.button().css(close).data("dismiss", "alert").aria(UIConstants.HIDDEN, String.valueOf(true))

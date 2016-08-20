@@ -266,10 +266,9 @@ public interface CSS {
     String timestamp = "timestamp";
     String tmTag = "tm-tag";
     String tmTagRemove = "tm-tag-remove";
+    String toastNotificationsListPf = "toast-notifications-list-pf";
     String toastPf = "toast-pf";
     String toastPfAction = "toast-pf-action";
-    String toastPfMaxWidth = "toast-pf-max-width";
-    String toastPfTopRight = "toast-pf-top-right";
     String topology = "topology";
     String ttNested = "tt-nested";
 
