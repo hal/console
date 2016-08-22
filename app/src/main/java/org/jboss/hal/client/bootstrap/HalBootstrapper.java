@@ -17,6 +17,7 @@ package org.jboss.hal.client.bootstrap;
 
 import javax.inject.Inject;
 
+import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Bootstrapper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import elemental.client.Browser;
@@ -39,16 +40,19 @@ public class HalBootstrapper implements Bootstrapper {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(HalBootstrapper.class);
 
+    private final EventBus eventBus;
     private final PlaceManager placeManager;
     private final EndpointManager endpointManager;
     private final BootstrapFunctions bootstrapFunctions;
     private final Resources resources;
 
     @Inject
-    public HalBootstrapper(final PlaceManager placeManager,
+    public HalBootstrapper(final EventBus eventBus,
+            final PlaceManager placeManager,
             final EndpointManager endpointManager,
             final BootstrapFunctions bootstrapFunctions,
             final Resources resources) {
+        this.eventBus = eventBus;
         this.placeManager = placeManager;
         this.endpointManager = endpointManager;
         this.bootstrapFunctions = bootstrapFunctions;
@@ -70,7 +74,9 @@ public class HalBootstrapper implements Bootstrapper {
             @Override
             public void onSuccess(final FunctionContext context) {
                 LoadingPanel.get().off();
+                logger.info("Bootstrap finished");
                 placeManager.revealCurrentPlace();
+                eventBus.fireEvent(new BootstrapFinishedEvent());
             }
         };
 

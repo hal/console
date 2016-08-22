@@ -32,9 +32,11 @@ public interface UIConstants {
      */
     int DIALOG_TIMEOUT = 111;
 
+    String ALERT = "alert";
     String BUTTON = "button";
     String COLLAPSE = "collapse";
     String CONTROLS = "controls";
+    String DISMISS = "dismiss";
     String DROPDOWN = "dropdown";
     String DOWNLOAD = "download";
     String EXPANDED = "expanded";

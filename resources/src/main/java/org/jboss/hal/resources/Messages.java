@@ -66,6 +66,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml deploymentEnabledError(String name);
     SafeHtml deploymentFailed(@PluralCount int count);
     SafeHtml deploymentReplaced(@PluralCount int count);
+    SafeHtml domainConfigurationChanged();
     SafeHtml domainControllerTimeout(String name);
     String duplicateResource(String type);
 
@@ -176,6 +177,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml resumeServerSuccess(String name);
 
     SafeHtml simpleProviderWarning();
+    SafeHtml serverConfigurationChanged();
     String serverGroupScopedRole(String name, String scope);
 
     SafeHtml serverGroupNoStartedServers(String name);

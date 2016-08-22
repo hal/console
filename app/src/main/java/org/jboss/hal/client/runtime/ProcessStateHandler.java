@@ -17,112 +17,171 @@ package org.jboss.hal.client.runtime;
 
 import javax.inject.Inject;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.client.bootstrap.BootstrapFinishedEvent;
+import org.jboss.hal.client.bootstrap.BootstrapFinishedEvent.BootstrapFinishedHandler;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderPath;
-import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.core.runtime.Result;
+import org.jboss.hal.core.runtime.group.ServerGroupResultEvent;
+import org.jboss.hal.core.runtime.group.ServerGroupResultEvent.ServerGroupResultHandler;
+import org.jboss.hal.core.runtime.host.HostResultEvent;
+import org.jboss.hal.core.runtime.host.HostResultEvent.HostResultHandler;
+import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.core.runtime.server.ServerResultEvent;
+import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.dmr.dispatch.ProcessStateEvent;
 import org.jboss.hal.dmr.dispatch.ServerState;
+import org.jboss.hal.dmr.dispatch.ServerState.State;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-import org.jetbrains.annotations.NonNls;
 
-import static org.jboss.hal.dmr.dispatch.ServerState.State.RELOAD_REQUIRED;
-import static org.jboss.hal.dmr.dispatch.ServerState.State.RESTART_REQUIRED;
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD_REQUIRED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART_REQUIRED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_STATE;
 
 /**
  * Handles {@link org.jboss.hal.dmr.dispatch.ProcessState} events and emits {@linkplain org.jboss.hal.spi.Message
  * messages} if necessary.
+ * <p>
+ * In standalone mode the message contains an action link to reload / restart the standalone server. Whereas in domain
+ * mode there's no direct way to reload / restart the affected servers (they might just be too many of them). Instead
+ * the message contains a link to the topology.
  *
  * @author Harald Pehl
  */
-public class ProcessStateHandler implements ProcessStateEvent.ProcessStateHandler,
-        ServerResultEvent.ServerResultHandler {
+public class ProcessStateHandler implements BootstrapFinishedHandler, ProcessStateEvent.ProcessStateHandler,
+        HostResultHandler, ServerGroupResultHandler, ServerResultHandler {
 
-    private static final long MESSAGE_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+    /**
+     * Omit multiple message and wait MESSAGE_TIMEOUT ms until the message is emitted again.
+     */
+    private static final long MESSAGE_TIMEOUT = 2 * 60 * 1000;
 
     private final Environment environment;
     private final EventBus eventBus;
     private final ServerActions serverActions;
-    private final FinderPathFactory finderPathFactory;
+    private final PlaceManager placeManager;
     private final Places places;
+    private final Finder finder;
     private final Resources resources;
+    private boolean bootstrapFinished;
     private long lastMessage;
 
     @Inject
-    public ProcessStateHandler(final Environment environment, final EventBus eventBus,
-            final ServerActions serverActions, final FinderPathFactory finderPathFactory, final Places places,
+    public ProcessStateHandler(final Environment environment,
+            final EventBus eventBus,
+            final ServerActions serverActions,
+            final PlaceManager placeManager,
+            final Places places,
+            final Finder finder,
             final Resources resources) {
+
         this.environment = environment;
         this.eventBus = eventBus;
         this.serverActions = serverActions;
-        this.finderPathFactory = finderPathFactory;
+        this.placeManager = placeManager;
         this.places = places;
+        this.finder = finder;
         this.resources = resources;
+        this.bootstrapFinished = false;
+        resetTimeout();
 
+        this.eventBus.addHandler(BootstrapFinishedEvent.getType(), this);
+        this.eventBus.addHandler(ProcessStateEvent.getType(), this);
+        this.eventBus.addHandler(HostResultEvent.getType(), this);
+        this.eventBus.addHandler(ServerGroupResultEvent.getType(), this);
         this.eventBus.addHandler(ServerResultEvent.getType(), this);
-        this.lastMessage = 0;
+    }
+
+    @Override
+    public void onBootstrapFinished(final BootstrapFinishedEvent event) {
+        bootstrapFinished = true;
     }
 
     @Override
     public void onProcessState(final ProcessStateEvent event) {
-        if (!event.getProcessState().isEmpty() && showAgain()) {
-            resetTimeout();
-            SafeHtml message = null;
-            String actionTitle = null;
-            Message.Action action = null;
-            @NonNls SafeHtmlBuilder html = new SafeHtmlBuilder();
+        // adjust the standalone server's state
+        if (environment.isStandalone()) {
+            ServerState serverState = event.getProcessState().first();
+            if (serverState.getState() == State.RELOAD_REQUIRED) {
+                Server.STANDALONE.get(SERVER_STATE).set(RELOAD_REQUIRED);
+            } else if (serverState.getState() == State.RESTART_REQUIRED) {
+                Server.STANDALONE.get(SERVER_STATE).set(RESTART_REQUIRED);
+            }
+        }
+
+        if (!event.getProcessState().isEmpty() && shouldProcess()) {
+            rememberMessage();
 
             if (environment.isStandalone()) {
-                FinderPath path = finderPathFactory.runtimeServerPath();
-                PlaceRequest placeRequest = places.finderPlace(NameTokens.RUNTIME, path).build();
-                html.appendHtmlConstant("<a href=\">").appendHtmlConstant(places.historyToken(placeRequest))
-                        .appendEscaped(Names.SERVER).appendHtmlConstant("</a>");
                 ServerState serverState = event.getProcessState().first();
-                if (serverState.getState() == RELOAD_REQUIRED) {
-                    actionTitle = resources.constants().reload();
-                } else if (serverState.getState() == RESTART_REQUIRED) {
-                    actionTitle = resources.constants().restart();
-                }
-            } else {
-                html.appendHtmlConstant("<ul>");
-                event.getProcessState().forEach(serverState -> {
-                    FinderPath hostPath = finderPathFactory.runtimeHostPath(serverState.getHost());
-                    FinderPath serverPath = finderPathFactory
-                            .runtimeServerPath(serverState.getHost(), serverState.getServer());
-                    PlaceRequest hostPlace = places.finderPlace(NameTokens.RUNTIME, hostPath).build();
-                    PlaceRequest serverPlace = places.finderPlace(NameTokens.RUNTIME, serverPath).build();
-                    html.appendHtmlConstant("<li>")
-                            .appendEscaped(Names.HOST).appendEscaped(" ").appendEscaped(serverState.getHost())
-                            .appendEscaped(Names.SERVER).appendEscaped(" ").appendEscaped(serverState.getServer())
-                            .appendHtmlConstant("</li>");
-                });
-                html.appendHtmlConstant("</ul>");
-            }
+                if (serverState.getState() == State.RELOAD_REQUIRED) {
+                    MessageEvent.fire(eventBus, Message.warning(resources.messages().serverConfigurationChanged(),
+                            resources.constants().reload(), () -> serverActions.reload(Server.STANDALONE), true));
 
-            MessageEvent.fire(eventBus, Message.warning(message, actionTitle, action, true));
+                } else if (serverState.getState() == State.RESTART_REQUIRED) {
+                    MessageEvent.fire(eventBus, Message.warning(resources.messages().serverConfigurationChanged(),
+                            resources.constants().restart(), () -> serverActions.restart(Server.STANDALONE), true));
+                }
+
+            } else {
+                FinderPath path = new FinderPath().append(Ids.DOMAIN_BROWSE_BY, Ids.asId(Names.TOPOLOGY));
+                PlaceRequest place = places.finderPlace(NameTokens.RUNTIME, path).build();
+                MessageEvent.fire(eventBus, Message.warning(resources.messages().domainConfigurationChanged(),
+                        Names.TOPOLOGY, () -> placeManager.revealPlace(place), true));
+            }
+        }
+    }
+
+    @Override
+    public void onHostResult(final HostResultEvent event) {
+        if (event.getResult() == Result.SUCCESS) {
+            resetTimeout();
+        }
+    }
+
+    @Override
+    public void onServerGroupResult(final ServerGroupResultEvent event) {
+        if (event.getResult() == Result.SUCCESS) {
+            resetTimeout();
         }
     }
 
     @Override
     public void onServerResult(final ServerResultEvent event) {
-
+        if (event.getResult() == Result.SUCCESS) {
+            resetTimeout();
+        }
+        if (environment.isStandalone() && NameTokens.RUNTIME
+                .equals(placeManager.getCurrentPlaceRequest().getNameToken())) {
+            FinderColumn column = finder.getColumn(Ids.STANDALONE_SERVER);
+            if (column != null) {
+                column.refresh(RESTORE_SELECTION);
+            }
+        }
     }
 
-    private boolean showAgain() {
-        return lastMessage + MESSAGE_TIMEOUT < System.currentTimeMillis();
+    private boolean shouldProcess() {
+        return bootstrapFinished && lastMessage + MESSAGE_TIMEOUT < System.currentTimeMillis();
+    }
+
+    private void rememberMessage() {
+        lastMessage = System.currentTimeMillis();
     }
 
     private void resetTimeout() {
-        lastMessage = System.currentTimeMillis();
+        lastMessage = 0;
     }
 }

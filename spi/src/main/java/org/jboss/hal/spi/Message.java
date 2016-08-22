@@ -42,6 +42,10 @@ public class Message {
         return error(message, null, false);
     }
 
+    public static Message error(final SafeHtml message, boolean sticky) {
+        return error(message, null, sticky);
+    }
+
     public static Message error(final SafeHtml message, String details) {
         return error(message, details, false);
     }
@@ -63,6 +67,10 @@ public class Message {
 
     public static Message warning(final SafeHtml message) {
         return warning(message, null, false);
+    }
+
+    public static Message warning(final SafeHtml message, boolean sticky) {
+        return warning(message, null, sticky);
     }
 
     public static Message warning(final SafeHtml message, String details) {
@@ -89,6 +97,10 @@ public class Message {
         return info(message, null, false);
     }
 
+    public static Message info(final SafeHtml message, boolean sticky) {
+        return info(message, null, sticky);
+    }
+
     public static Message info(final SafeHtml message, final String details) {
         return info(message, details, false);
     }
@@ -110,6 +122,10 @@ public class Message {
 
     public static Message success(final SafeHtml message) {
         return success(message, null, false);
+    }
+
+    public static Message success(final SafeHtml message, boolean sticky) {
+        return success(message, null, sticky);
     }
 
     public static Message success(final SafeHtml message, final String details) {

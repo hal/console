@@ -114,6 +114,10 @@ public class ProfileColumn extends FinderColumn<String> {
                         builder = places.replaceParameter(current, PROFILE, item);
                     }
                     placeManager.revealPlace(builder.build());
-                }));
+                })
+
+                .withFilter()
+                .pinnable()
+        );
     }
 }
