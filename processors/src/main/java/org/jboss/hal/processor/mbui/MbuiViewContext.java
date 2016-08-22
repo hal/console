@@ -39,7 +39,8 @@ public class MbuiViewContext {
     private final List<MbuiElementInfo> attachables;
     private final List<AbstractPropertyInfo> abstractProperties;
     private final List<PostConstructInfo> postConstructs;
-
+    private final List<TabsInfo> tabs;
+    
     public MbuiViewContext(final String pkg, final String base, final String subclass, final String createMethod) {
         this.pkg = pkg;
         this.base = base;
@@ -55,6 +56,7 @@ public class MbuiViewContext {
         this.attachables = new ArrayList<>();
         this.abstractProperties = new ArrayList<>();
         this.postConstructs = new ArrayList<>();
+        this.tabs = new ArrayList<>();
     }
 
     @Override
@@ -163,5 +165,42 @@ public class MbuiViewContext {
 
     void addPostConstruct(PostConstructInfo postConstructInfo) {
         postConstructs.add(postConstructInfo);
+    }
+    
+    public boolean hasTabs() {
+        return tabs.size() > 0;
+    }
+
+    public List<TabsInfo> getTabs() {
+        return tabs;
+    }
+
+    public void addTab(TabsInfo tab) {
+        tabs.add(tab);
+    }
+
+    public String findFormById(String id) {
+        String found = null;
+        for (FormInfo form: forms) {
+            if (form.getSelector().equals(id)) {
+                found = form.getName();
+                break;
+            }
+        }
+        return found;
+    }
+    
+    public String findTabNameByTabId(String tabId) {
+        String found = null;
+        rootLoop:
+        for (TabsInfo tabsInfo: tabs) {
+            for (TabsInfo.TabItem tabItem: tabsInfo.getItems()) {
+                if (tabItem.getId().equals(tabId)) {
+                    found = tabsInfo.getName();
+                    break rootLoop;
+                }
+            }
+        }
+        return found;
     }
 }
