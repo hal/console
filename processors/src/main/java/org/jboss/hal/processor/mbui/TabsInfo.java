@@ -38,7 +38,7 @@ public class TabsInfo {
         // only forms are allowed
         private List<String> formChildren = new ArrayList<>();
 
-        public TabItem(final String title, final String id) {
+        TabItem(final String title, final String id) {
             this.title = title;
             this.id = id;
         }
@@ -54,8 +54,8 @@ public class TabsInfo {
         public List<String> getFormChildren() {
             return formChildren;
         }
-        
-        public void addChildId(String name) {
+
+        void addChildId(String name) {
             formChildren.add(name);
         }
 
@@ -74,8 +74,8 @@ public class TabsInfo {
             return  tostr.toString();
         }
     }
-    
-    public TabsInfo() {
+
+    TabsInfo() {
         this.name = "tabs" + counter; //NON-NLS
         counter++;
     }
@@ -87,8 +87,8 @@ public class TabsInfo {
     public List<TabItem> getItems() {
         return items;
     }
-    
-    public void addItem(TabItem item) {
+
+    void addItem(TabItem item) {
         items.add(item);
     }
 

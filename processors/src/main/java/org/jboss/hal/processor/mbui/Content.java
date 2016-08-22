@@ -26,6 +26,9 @@ import org.jdom2.Element;
 import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 
 /**
+ * An element which contains some 'content' such as tables, forms or tabs. Most often this is a {@code <metadata/>}
+ * element.
+ *
  * @author Harald Pehl
  */
 public class Content {
@@ -40,7 +43,7 @@ public class Content {
 
     @SuppressWarnings("HardCodedStringLiteral")
     static List<Content> parse(Element element, MbuiViewContext context) {
-        List<Content> content = new ArrayList<>();
+        List<Content> contents = new ArrayList<>();
 
         MetadataInfo metadataInfo = null;
         Element contentElement = element;
@@ -58,12 +61,12 @@ public class Content {
                     if (metadataInfo != null) {
                         html = html.replace("metadata", metadataInfo.getName());
                     }
-                    content.add(new Content(null, html));
+                    contents.add(new Content(null, html));
                 }
-                Content content1 = new Content(childElement.getAttributeValue("id"), null);
-                content.add(content1);
+                Content content = new Content(childElement.getAttributeValue("id"), null);
+                contents.add(content);
                 if (XmlTags.TAB.equals(childElement.getName())) {
-                    content1.setTab(true);
+                    content.setTab(true);
                     // from the template perspective, registering only one tab is ok, 
                     // as the tab id will be used to lookup the tab object name created at runtime
                     // in MbuiViewProcessor.processTabs (TabsInfo class)
@@ -74,7 +77,7 @@ public class Content {
                 htmlBuilder.append(JAVA_STRING_ESCAPER.escape(xmlAsString(childElement)));
             }
         }
-        return content;
+        return contents;
     }
 
     private String reference;

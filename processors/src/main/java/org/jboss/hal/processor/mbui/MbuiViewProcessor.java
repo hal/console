@@ -190,31 +190,31 @@ public class MbuiViewProcessor extends AbstractProcessor {
         info("Generated MBUI view implementation [%s] for [%s]", context.getSubclass(), context.getBase());
     }
 
-    /* Lookup all //metadata/tab elements and create TabsInfo objects, add them to the context
-       Later in the process, the MbuiView.ftl template is used to add support for tab objects
+    /**
+     * Lookup all //metadata/tab elements and create TabsInfo objects, add them to the context.
+     * Later in the process, the MbuiView.ftl template is used to add support for tab objects.
      */
     private void processTabs(final Document document, final MbuiViewContext context) {
         XPathExpression<org.jdom2.Element> expressionTabs = xPathFactory.compile("//metadata", Filters.element());
         for (org.jdom2.Element metadataElement : expressionTabs.evaluate(document)) {
             TabsInfo tab = new TabsInfo();
             boolean hasTabs = false;
-            for (org.jdom2.Element tabElement: metadataElement.getChildren("tab")) {
+            for (org.jdom2.Element tabElement : metadataElement.getChildren("tab")) {
                 hasTabs = true;
                 TabsInfo.TabItem tabItem = null;
                 for (org.jdom2.Element child : tabElement.getChildren("form")) {
-                    if (tabItem == null) 
+                    if (tabItem == null) {
                         tabItem = new TabsInfo.TabItem(tabElement.getAttributeValue("title"),
                                 tabElement.getAttributeValue("id"));
+                    }
                     tabItem.addChildId(child.getAttributeValue("id"));
                 }
-                if (tabItem != null)
-                    tab.addItem(tabItem);
+                if (tabItem != null) { tab.addItem(tabItem); }
             }
             if (hasTabs) {
                 context.addTab(tab);
             }
         }
-
     }
 
     String generatedClassName(TypeElement type, String prefix, String suffix) {

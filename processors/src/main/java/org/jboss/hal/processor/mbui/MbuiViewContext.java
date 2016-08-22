@@ -28,7 +28,7 @@ public class MbuiViewContext {
     private final String subclass;
     private final String createMethod;
 
-    // the root element is either a vertical navigation or a list of content (mix of HTML, forms and/or tables)
+    // the root element is either a vertical navigation or a list of content (mix of HTML, tabs, forms and/or tables)
     private VerticalNavigationInfo verticalNavigation;
     private final List<Content> content;
 
@@ -106,7 +106,7 @@ public class MbuiViewContext {
         return null;
     }
 
-    public MetadataInfo getMetadataInfo(String address) {
+    MetadataInfo getMetadataInfo(String address) {
         return metadataInfos.get(address);
     }
 
@@ -175,7 +175,7 @@ public class MbuiViewContext {
         return tabs;
     }
 
-    public void addTab(TabsInfo tab) {
+    void addTab(TabsInfo tab) {
         tabs.add(tab);
     }
 
