@@ -20,8 +20,8 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.client.bootstrap.BootstrapFinishedEvent;
-import org.jboss.hal.client.bootstrap.BootstrapFinishedEvent.BootstrapFinishedHandler;
+import org.jboss.hal.client.bootstrap.ApplicationReadyEvent;
+import org.jboss.hal.client.bootstrap.ApplicationReadyEvent.ApplicationReadyHandler;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -53,19 +53,20 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_STATE;
 
 /**
  * Handles {@link org.jboss.hal.dmr.dispatch.ProcessState} events and emits {@linkplain org.jboss.hal.spi.Message
- * messages} if necessary.
+ * messages} if necessary. Messages are emitted only if there was no message in the last {@value MESSAGE_TIMEOUT} ms and
+ * the server was not restarted recently (a server restart resets the timeout).
  * <p>
- * In standalone mode the message contains an action link to reload / restart the standalone server. Whereas in domain
- * mode there's no direct way to reload / restart the affected servers (they might just be too many of them). Instead
- * the message contains a link to the topology.
+ * In standalone mode the message contains an action link to reload / restart the server. Whereas in domain mode
+ * there's no direct way to reload / restart the affected servers (there might be just too many of them). Instead the
+ * message contains a link to the topology.
  *
  * @author Harald Pehl
  */
-public class ProcessStateHandler implements BootstrapFinishedHandler, ProcessStateEvent.ProcessStateHandler,
+public class ProcessStateHandler implements ApplicationReadyHandler, ProcessStateEvent.ProcessStateHandler,
         HostResultHandler, ServerGroupResultHandler, ServerResultHandler {
 
     /**
-     * Omit multiple message and wait MESSAGE_TIMEOUT ms until the message is emitted again.
+     * Omit multiple messages and wait MESSAGE_TIMEOUT ms until the message is emitted again.
      */
     private static final long MESSAGE_TIMEOUT = 2 * 60 * 1000;
 
@@ -76,7 +77,7 @@ public class ProcessStateHandler implements BootstrapFinishedHandler, ProcessSta
     private final Places places;
     private final Finder finder;
     private final Resources resources;
-    private boolean bootstrapFinished;
+    private boolean applicationReady;
     private long lastMessage;
 
     @Inject
@@ -95,10 +96,10 @@ public class ProcessStateHandler implements BootstrapFinishedHandler, ProcessSta
         this.places = places;
         this.finder = finder;
         this.resources = resources;
-        this.bootstrapFinished = false;
+        this.applicationReady = false;
         resetTimeout();
 
-        this.eventBus.addHandler(BootstrapFinishedEvent.getType(), this);
+        this.eventBus.addHandler(ApplicationReadyEvent.getType(), this);
         this.eventBus.addHandler(ProcessStateEvent.getType(), this);
         this.eventBus.addHandler(HostResultEvent.getType(), this);
         this.eventBus.addHandler(ServerGroupResultEvent.getType(), this);
@@ -106,8 +107,8 @@ public class ProcessStateHandler implements BootstrapFinishedHandler, ProcessSta
     }
 
     @Override
-    public void onBootstrapFinished(final BootstrapFinishedEvent event) {
-        bootstrapFinished = true;
+    public void onApplicationReady(final ApplicationReadyEvent event) {
+        applicationReady = true;
     }
 
     @Override
@@ -122,7 +123,7 @@ public class ProcessStateHandler implements BootstrapFinishedHandler, ProcessSta
             }
         }
 
-        if (!event.getProcessState().isEmpty() && shouldProcess()) {
+        if (shouldProcess() && !event.getProcessState().isEmpty()) {
             rememberMessage();
 
             if (environment.isStandalone()) {
@@ -174,7 +175,7 @@ public class ProcessStateHandler implements BootstrapFinishedHandler, ProcessSta
     }
 
     private boolean shouldProcess() {
-        return bootstrapFinished && lastMessage + MESSAGE_TIMEOUT < System.currentTimeMillis();
+        return applicationReady && lastMessage + MESSAGE_TIMEOUT < System.currentTimeMillis();
     }
 
     private void rememberMessage() {

@@ -18,6 +18,10 @@ package org.jboss.hal.dmr.dispatch;
 import com.google.common.base.Strings;
 
 /**
+ * Server state used to process state response headers. This duplicates {@code org.jboss.hal.core.runtime.RunningState}
+ * from module {@code core} to a certain degree, but since module {@code ballroom} cannot have dependencies to {@code
+ * core} this code duplication is necessary.
+ *
  * @author Heiko Braun
  * @date 1/18/12
  */
@@ -26,6 +30,7 @@ public class ServerState {
     public enum State {
         RELOAD_REQUIRED, RESTART_REQUIRED
     }
+
 
     private final String host;
     private final String server;

@@ -46,16 +46,18 @@ class RrdFunction implements Function<FunctionContext> {
     private final Capabilities capabilities;
     private final Dispatcher dispatcher;
     private final Composite composite;
+    private final boolean optional;
 
     RrdFunction(final MetadataRegistry metadataRegistry, final SecurityFramework securityFramework,
             final ResourceDescriptions resourceDescriptions, final Capabilities capabilities,
-            final Dispatcher dispatcher, final Composite composite) {
+            final Dispatcher dispatcher, final Composite composite, final boolean optional) {
         this.metadataRegistry = metadataRegistry;
         this.securityFramework = securityFramework;
         this.resourceDescriptions = resourceDescriptions;
         this.capabilities = capabilities;
         this.dispatcher = dispatcher;
         this.composite = composite;
+        this.optional = optional;
     }
 
     @Override
@@ -88,6 +90,15 @@ class RrdFunction implements Function<FunctionContext> {
                         control.proceed();
                     } catch (ParserException e) {
                         control.getContext().setError(e);
+                        control.abort();
+                    }
+                },
+                (operation, failure) -> {
+                    if (optional) {
+                        logger.debug("Ignore errors on optional resource operation {}", operation.asCli());
+                        control.proceed(); // ignore errors on optional resources!
+                    } else {
+                        control.getContext().setErrorMessage(failure);
                         control.abort();
                     }
                 });

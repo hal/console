@@ -76,7 +76,7 @@ public class HalBootstrapper implements Bootstrapper {
                 LoadingPanel.get().off();
                 logger.info("Bootstrap finished");
                 placeManager.revealCurrentPlace();
-                eventBus.fireEvent(new BootstrapFinishedEvent());
+                eventBus.fireEvent(new ApplicationReadyEvent());
             }
         };
 

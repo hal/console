@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -95,15 +94,10 @@ public class ItemActionFactory {
      * Wraps the specified handler inside a confirmation dialog. The action is executed when upon confirmation.
      */
     public <T> ItemAction<T> remove(String type, String name, ItemActionHandler<T> handler) {
-        return new ItemAction<>(resources.constants().remove(), item -> {
-            Dialog dialog = DialogFactory.confirmation(resources.messages().removeResourceConfirmationTitle(type),
-                    resources.messages().removeResourceConfirmationQuestion(name),
-                    () -> {
-                        handler.execute(item);
-                        return true;
-                    });
-            dialog.show();
-        });
+        return new ItemAction<>(resources.constants().remove(), item -> DialogFactory.showConfirmation(
+                resources.messages().removeResourceConfirmationTitle(type),
+                resources.messages().removeResourceConfirmationQuestion(name),
+                () -> handler.execute(item)));
     }
 
     /**
@@ -112,20 +106,17 @@ public class ItemActionFactory {
      * resource is removed and {@link FinderColumn#refresh(FinderColumn.RefreshMode)} is called.
      */
     public <T> ItemAction<T> remove(String type, String name, AddressTemplate addressTemplate, FinderColumn<T> column) {
-        return new ItemAction<>(resources.constants().remove(), item -> {
-            Dialog dialog = DialogFactory.confirmation(resources.messages().removeResourceConfirmationTitle(type),
-                    resources.messages().removeResourceConfirmationQuestion(name),
-                    () -> {
-                        ResourceAddress address = addressTemplate.resolve(statementContext, name);
-                        Operation operation = new Operation.Builder(REMOVE, address).build();
-                        dispatcher.execute(operation, result -> {
-                            MessageEvent.fire(eventBus,
-                                    Message.success(resources.messages().removeResourceSuccess(type, name)));
-                            column.refresh(CLEAR_SELECTION);
-                        });
-                        return true;
+        return new ItemAction<>(resources.constants().remove(), item -> DialogFactory.showConfirmation(
+                resources.messages().removeResourceConfirmationTitle(type),
+                resources.messages().removeResourceConfirmationQuestion(name),
+                () -> {
+                    ResourceAddress address = addressTemplate.resolve(statementContext, name);
+                    Operation operation = new Operation.Builder(REMOVE, address).build();
+                    dispatcher.execute(operation, result -> {
+                        MessageEvent.fire(eventBus,
+                                Message.success(resources.messages().removeResourceSuccess(type, name)));
+                        column.refresh(CLEAR_SELECTION);
                     });
-            dialog.show();
-        });
+                }));
     }
 }

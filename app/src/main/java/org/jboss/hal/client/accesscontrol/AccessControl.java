@@ -84,23 +84,20 @@ public class AccessControl {
         Operation.Builder builder = new Operation.Builder(WRITE_ATTRIBUTE_OPERATION, AddressTemplates.root())
                 .param(NAME, PROVIDER);
         if (environment.getAccessControlProvider() == SIMPLE) {
-            DialogFactory.confirmation(resources.constants().switchProvider(),
-                    resources.messages().switchToRbacProvider(), () -> {
-                        dispatcher.execute(builder.param(VALUE, RBAC.name().toLowerCase()).build(), result -> {
-                            environment.setAccessControlProvider(RBAC);
-                            MessageEvent.fire(eventBus, Message.success(resources.messages().switchProviderSuccess()));
-                        });
-                        return true;
-                    }).show();
+            DialogFactory.showConfirmation(resources.constants().switchProvider(),
+                    resources.messages().switchToRbacProvider(),
+                    () -> dispatcher.execute(builder.param(VALUE, RBAC.name().toLowerCase()).build(), result -> {
+                        environment.setAccessControlProvider(RBAC);
+                        MessageEvent
+                                .fire(eventBus, Message.success(resources.messages().switchProviderSuccess()));
+                    }));
         } else {
-            DialogFactory.confirmation(resources.constants().switchProvider(),
-                    resources.messages().switchToSimpleProvider(), () -> {
-                        dispatcher.execute(builder.param(VALUE, SIMPLE.name().toLowerCase()).build(), result -> {
-                            environment.setAccessControlProvider(SIMPLE);
-                            MessageEvent.fire(eventBus, Message.success(resources.messages().switchProviderSuccess()));
-                        });
-                        return true;
-                    }).show();
+            DialogFactory.showConfirmation(resources.constants().switchProvider(),
+                    resources.messages().switchToSimpleProvider(),
+                    () -> dispatcher.execute(builder.param(VALUE, SIMPLE.name().toLowerCase()).build(), result -> {
+                        environment.setAccessControlProvider(SIMPLE);
+                        MessageEvent.fire(eventBus, Message.success(resources.messages().switchProviderSuccess()));
+                    }));
         }
     }
 

@@ -182,7 +182,7 @@ public class ServerActions {
 
     private void restartStandalone(Server server) {
         String title = resources.messages().restart(server.getName());
-        DialogFactory.confirmation(title,
+        DialogFactory.showConfirmation(title,
                 resources.messages().restartStandaloneQuestion(server.getName()), () -> {
                     // execute the restart with a little delay to ensure the confirmation dialog is closed
                     // before the next dialog is opened (only one modal can be open at a time!)
@@ -190,7 +190,7 @@ public class ServerActions {
 
                         prepare(server, Action.RESTART);
                         BlockingDialog pendingDialog = DialogFactory
-                                .longRunning(title,
+                                .buildLongRunning(title,
                                         resources.messages().restartStandalonePending(server.getName()));
                         pendingDialog.show();
                         Operation operation = new Operation.Builder(SHUTDOWN, ResourceAddress.ROOT)
@@ -215,7 +215,7 @@ public class ServerActions {
                                             @Override
                                             public void onTimeout() {
                                                 pendingDialog.close();
-                                                DialogFactory.blocking(title,
+                                                DialogFactory.buildBlocking(title,
                                                         resources.messages().restartStandaloneTimeout(server.getName()))
                                                         .show();
                                                 finish(Server.STANDALONE, Result.TIMEOUT, null);
@@ -227,13 +227,12 @@ public class ServerActions {
                                         Message.error(resources.messages().restartServerError(server.getName()))));
 
                     }, DIALOG_TIMEOUT);
-                    return true;
-                }).show();
+                });
     }
 
     private void reloadRestart(Server server, Operation operation, Action action, int timeout,
             String title, SafeHtml question, SafeHtml successMessage, SafeHtml errorMessage) {
-        DialogFactory.confirmation(title, question, () -> {
+        DialogFactory.showConfirmation(title, question, () -> {
 
             prepare(server, action);
             dispatcher.execute(operation,
@@ -243,9 +242,8 @@ public class ServerActions {
                             new ServerTimeoutCallback(server, successMessage)),
                     new ServerFailedCallback(server, errorMessage),
                     new ServerExceptionCallback(server, errorMessage));
-            return true;
 
-        }).show();
+        });
     }
 
     public void suspend(Server server) {
@@ -257,34 +255,33 @@ public class ServerActions {
                 String id = Ids.build(SUSPEND, server.getName(), Ids.FORM_SUFFIX);
                 Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, SUSPEND).build();
 
-                Dialog dialog = DialogFactory
-                        .confirmation(resources.messages().suspend(server.getName()),
-                                resources.messages().suspendServerQuestion(server.getName()),
-                                form.asElement(),
-                                () -> {
+                Dialog dialog = DialogFactory.buildConfirmation(
+                        resources.messages().suspend(server.getName()),
+                        resources.messages().suspendServerQuestion(server.getName()),
+                        form.asElement(),
+                        () -> {
 
-                                    form.save();
-                                    int timeout = getOrDefault(form.getModel(), TIMEOUT,
-                                            () -> form.getModel().get(TIMEOUT).asInt(), 0);
-                                    int uiTimeout = timeout + SERVER_SUSPEND_TIMEOUT;
+                            form.save();
+                            int timeout = getOrDefault(form.getModel(), TIMEOUT,
+                                    () -> form.getModel().get(TIMEOUT).asInt(), 0);
+                            int uiTimeout = timeout + SERVER_SUSPEND_TIMEOUT;
 
-                                    prepare(server, Action.SUSPEND);
-                                    Operation operation = new Operation.Builder(SUSPEND,
-                                            server.getServerConfigAddress())
-                                            .param(TIMEOUT, timeout)
-                                            .build();
-                                    dispatcher.execute(operation,
-                                            result -> new TimeoutHandler(dispatcher, uiTimeout).execute(
-                                                    readSuspendState(server),
-                                                    checkSuspendState(SUSPENDED),
-                                                    new ServerTimeoutCallback(server, resources.messages()
-                                                            .suspendServerSuccess(server.getName()))),
-                                            new ServerFailedCallback(server,
-                                                    resources.messages().suspendServerError(server.getName())),
-                                            new ServerExceptionCallback(server,
-                                                    resources.messages().suspendServerError(server.getName())));
-                                    return true;
-                                });
+                            prepare(server, Action.SUSPEND);
+                            Operation operation = new Operation.Builder(SUSPEND,
+                                    server.getServerConfigAddress())
+                                    .param(TIMEOUT, timeout)
+                                    .build();
+                            dispatcher.execute(operation,
+                                    result -> new TimeoutHandler(dispatcher, uiTimeout).execute(
+                                            readSuspendState(server),
+                                            checkSuspendState(SUSPENDED),
+                                            new ServerTimeoutCallback(server, resources.messages()
+                                                    .suspendServerSuccess(server.getName()))),
+                                    new ServerFailedCallback(server,
+                                            resources.messages().suspendServerError(server.getName())),
+                                    new ServerExceptionCallback(server,
+                                            resources.messages().suspendServerError(server.getName())));
+                        });
 
                 dialog.registerAttachable(form);
                 dialog.show();
@@ -325,33 +322,33 @@ public class ServerActions {
                 Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, STOP)
                         .include(TIMEOUT).build();
 
-                Dialog dialog = DialogFactory
-                        .confirmation(resources.messages().stop(server.getName()),
-                                resources.messages().stopServerQuestion(server.getName()), form.asElement(),
-                                () -> {
+                Dialog dialog = DialogFactory.buildConfirmation(
+                        resources.messages().stop(server.getName()),
+                        resources.messages().stopServerQuestion(server.getName()),
+                        form.asElement(),
+                        () -> {
 
-                                    form.save();
-                                    int timeout = getOrDefault(form.getModel(), TIMEOUT,
-                                            () -> form.getModel().get(TIMEOUT).asInt(), 0);
-                                    int uiTimeout = timeout + SERVER_STOP_TIMEOUT;
+                            form.save();
+                            int timeout = getOrDefault(form.getModel(), TIMEOUT,
+                                    () -> form.getModel().get(TIMEOUT).asInt(), 0);
+                            int uiTimeout = timeout + SERVER_STOP_TIMEOUT;
 
-                                    prepare(server, Action.STOP);
-                                    Operation operation = new Operation.Builder(STOP, server.getServerConfigAddress())
-                                            .param(TIMEOUT, timeout)
-                                            .param(BLOCKING, false)
-                                            .build();
-                                    dispatcher.execute(operation,
-                                            result -> new TimeoutHandler(dispatcher, uiTimeout).execute(
-                                                    readServerConfigStatus(server),
-                                                    checkServerConfigStatus(STOPPED, DISABLED),
-                                                    new ServerTimeoutCallback(server,
-                                                            resources.messages().stopServerSuccess(server.getName()))),
-                                            new ServerFailedCallback(server,
-                                                    resources.messages().stopServerError(server.getName())),
-                                            new ServerExceptionCallback(server,
-                                                    resources.messages().stopServerError(server.getName())));
-                                    return true;
-                                });
+                            prepare(server, Action.STOP);
+                            Operation operation = new Operation.Builder(STOP, server.getServerConfigAddress())
+                                    .param(TIMEOUT, timeout)
+                                    .param(BLOCKING, false)
+                                    .build();
+                            dispatcher.execute(operation,
+                                    result -> new TimeoutHandler(dispatcher, uiTimeout).execute(
+                                            readServerConfigStatus(server),
+                                            checkServerConfigStatus(STOPPED, DISABLED),
+                                            new ServerTimeoutCallback(server,
+                                                    resources.messages().stopServerSuccess(server.getName()))),
+                                    new ServerFailedCallback(server,
+                                            resources.messages().stopServerError(server.getName())),
+                                    new ServerExceptionCallback(server,
+                                            resources.messages().stopServerError(server.getName())));
+                        });
 
                 dialog.registerAttachable(form);
                 dialog.show();

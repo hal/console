@@ -149,40 +149,39 @@ public class HostActions {
                 } else {
                     question = resources.messages().reloadHostControllerQuestion(host.getName());
                 }
-                Dialog dialog = DialogFactory
-                        .confirmation(resources.messages().reload(host.getName()), question, form.asElement(),
-                                () -> {
-                                    form.save();
-                                    boolean restartServers = form.getModel().get(RESTART_SERVERS).asBoolean();
-                                    prepare(host, restartServers ? host.getServers(Server::isStarted) : emptyList(),
-                                            Action.RELOAD);
-                                    Operation operation = new Operation.Builder(RELOAD, host.getAddress())
-                                            .param(RESTART_SERVERS, restartServers)
-                                            .build();
+                Dialog dialog = DialogFactory.buildConfirmation(
+                        resources.messages().reload(host.getName()), question, form.asElement(),
+                        () -> {
+                            form.save();
+                            boolean restartServers = form.getModel().get(RESTART_SERVERS).asBoolean();
+                            prepare(host, restartServers ? host.getServers(Server::isStarted) : emptyList(),
+                                    Action.RELOAD);
+                            Operation operation = new Operation.Builder(RELOAD, host.getAddress())
+                                    .param(RESTART_SERVERS, restartServers)
+                                    .build();
 
-                                    // execute the reload with a little delay to ensure the confirmation dialog is closed
-                                    // before the next dialog is opened (only one modal can be open at a time!)
-                                    Browser.getWindow().setTimeout(() -> {
+                            // execute the reload with a little delay to ensure the confirmation dialog is closed
+                            // before the next dialog is opened (only one modal can be open at a time!)
+                            Browser.getWindow().setTimeout(() -> {
 
-                                        if (host.isDomainController()) {
-                                            domainControllerOperation(host, operation, reloadTimeout(host),
-                                                    restartServers ? host.getServers(Server::isStarted) : emptyList(),
-                                                    resources.messages().reload(host.getName()),
-                                                    resources.messages().reloadDomainControllerPending(host.getName()),
-                                                    resources.messages().reloadHostSuccess(host.getName()),
-                                                    resources.messages().reloadHostError(host.getName()),
-                                                    resources.messages().domainControllerTimeout(host.getName()));
+                                if (host.isDomainController()) {
+                                    domainControllerOperation(host, operation, reloadTimeout(host),
+                                            restartServers ? host.getServers(Server::isStarted) : emptyList(),
+                                            resources.messages().reload(host.getName()),
+                                            resources.messages().reloadDomainControllerPending(host.getName()),
+                                            resources.messages().reloadHostSuccess(host.getName()),
+                                            resources.messages().reloadHostError(host.getName()),
+                                            resources.messages().domainControllerTimeout(host.getName()));
 
-                                        } else {
-                                            hostControllerOperation(host, operation, reloadTimeout(host),
-                                                    restartServers ? host.getServers(Server::isStarted) : emptyList(),
-                                                    resources.messages().reloadHostSuccess(host.getName()),
-                                                    resources.messages().reloadHostError(host.getName()),
-                                                    resources.messages().hostControllerTimeout(host.getName()));
-                                        }
-                                    }, DIALOG_TIMEOUT);
-                                    return true;
-                                });
+                                } else {
+                                    hostControllerOperation(host, operation, reloadTimeout(host),
+                                            restartServers ? host.getServers(Server::isStarted) : emptyList(),
+                                            resources.messages().reloadHostSuccess(host.getName()),
+                                            resources.messages().reloadHostError(host.getName()),
+                                            resources.messages().hostControllerTimeout(host.getName()));
+                                }
+                            }, DIALOG_TIMEOUT);
+                        });
                 dialog.registerAttachable(form);
                 dialog.show();
 
@@ -205,7 +204,7 @@ public class HostActions {
         SafeHtml question = host.isDomainController()
                 ? resources.messages().restartDomainControllerQuestion(host.getName())
                 : resources.messages().restartHostControllerQuestion(host.getName());
-        DialogFactory.confirmation(resources.messages().restart(host.getName()), question, () -> {
+        DialogFactory.showConfirmation(resources.messages().restart(host.getName()), question, () -> {
             // execute the restart with a little delay to ensure the confirmation dialog is closed
             // before the next dialog is opened (only one modal can be open at a time!)
             Browser.getWindow().setTimeout(() -> {
@@ -229,8 +228,7 @@ public class HostActions {
                             resources.messages().hostControllerTimeout(host.getName()));
                 }
             }, DIALOG_TIMEOUT);
-            return true;
-        }).show();
+        });
     }
 
 
@@ -239,7 +237,7 @@ public class HostActions {
     private void domainControllerOperation(Host host, Operation operation, int timeout, List<Server> servers,
             String title, SafeHtml pendingMessage, SafeHtml successMessage, SafeHtml errorMessage,
             SafeHtml timeoutMessage) {
-        BlockingDialog pendingDialog = DialogFactory.longRunning(title, pendingMessage);
+        BlockingDialog pendingDialog = DialogFactory.buildLongRunning(title, pendingMessage);
         pendingDialog.show();
 
         dispatcher.execute(operation,
@@ -256,7 +254,7 @@ public class HostActions {
                     @Override
                     public void onTimeout() {
                         pendingDialog.close();
-                        DialogFactory.blocking(title, timeoutMessage).show();
+                        DialogFactory.buildBlocking(title, timeoutMessage).show();
                         finish(host, servers, Result.TIMEOUT, null);
                     }
                 }),

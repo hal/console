@@ -68,7 +68,7 @@ public class ReadCapabilities implements BootstrapFunction {
                 for (ModelNode capabilityNode : result.get(POSSIBLE_CAPABILITIES).asList()) {
                     Capability capability = new Capability(capabilityNode);
                     capabilities.register(capability);
-                    logger.debug("Registered {}", capability); //NON-NLS
+                    logger.debug("Registered {}", capability);
                 }
             }
             logDone();

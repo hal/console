@@ -125,24 +125,21 @@ public class ContentColumn extends FinderColumn<Content> {
                         content -> Browser.getWindow().alert(Names.NYI)));
 
                 if (item.getAssignments().isEmpty()) {
-                    actions.add(new ItemAction<>(resources.constants().remove(),
-                            content -> {
-                                DialogFactory.confirmation(
-                                        resources.messages().removeResourceConfirmationTitle(item.getName()),
-                                        resources.messages().removeResourceConfirmationQuestion(item.getName()),
-                                        () -> {
-                                            ResourceAddress address = new ResourceAddress()
-                                                    .add(DEPLOYMENT, item.getName());
-                                            Operation operation = new Operation.Builder(REMOVE, address).build();
-                                            dispatcher.execute(operation, result -> {
-                                                MessageEvent.fire(eventBus, Message.success(resources.messages()
-                                                        .removeResourceSuccess(resources.constants().content(),
-                                                                item.getName())));
-                                                refresh(CLEAR_SELECTION);
-                                            });
-                                            return true;
-                                        }).show();
-                            }));
+                    actions.add(new ItemAction<>(resources.constants().remove(), content ->
+                            DialogFactory.showConfirmation(
+                                    resources.messages().removeResourceConfirmationTitle(item.getName()),
+                                    resources.messages().removeResourceConfirmationQuestion(item.getName()),
+                                    () -> {
+                                        ResourceAddress address = new ResourceAddress()
+                                                .add(DEPLOYMENT, item.getName());
+                                        Operation operation = new Operation.Builder(REMOVE, address).build();
+                                        dispatcher.execute(operation, result -> {
+                                            MessageEvent.fire(eventBus, Message.success(resources.messages()
+                                                    .removeResourceSuccess(resources.constants().content(),
+                                                            item.getName())));
+                                            refresh(CLEAR_SELECTION);
+                                        });
+                                    })));
                 } else {
                     actions.add(new ItemAction<>(resources.constants().unassign(),
                             itm -> Browser.getWindow().alert(Names.NYI)));

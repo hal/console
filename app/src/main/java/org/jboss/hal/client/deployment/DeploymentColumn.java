@@ -132,17 +132,14 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
                     actions.add(new ItemAction<>(resources.constants().enable(), deployment -> enable(deployment)));
                 }
                 actions.add(new ItemAction<>(resources.constants().remove(),
-                        content -> {
-                            DialogFactory.confirmation(
-                                    resources.messages().removeResourceConfirmationTitle(item.getName()),
-                                    resources.messages().removeResourceConfirmationQuestion(item.getName()),
-                                    () -> {
-                                        ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, item.getName());
-                                        Operation operation = new Operation.Builder(REMOVE, address).build();
-                                        dispatcher.execute(operation, result -> refresh(CLEAR_SELECTION));
-                                        return true;
-                                    }).show();
-                        }));
+                        content -> DialogFactory.showConfirmation(
+                                resources.messages().removeResourceConfirmationTitle(item.getName()),
+                                resources.messages().removeResourceConfirmationQuestion(item.getName()),
+                                () -> {
+                                    ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, item.getName());
+                                    Operation operation = new Operation.Builder(REMOVE, address).build();
+                                    dispatcher.execute(operation, result -> refresh(CLEAR_SELECTION));
+                                })));
                 return actions;
             }
         });

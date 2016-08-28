@@ -165,6 +165,11 @@ public class Dispatcher implements RecordingHandler {
         dmr(composite, callback, new FailedFunctionCallback<>(control), new ExceptionalFunctionCallback<>(control));
     }
 
+    public <T extends FunctionContext> void executeInFunction(final Control<T> control, final Composite composite,
+            final CompositeCallback callback, FailedCallback failedCallback) {
+        dmr(composite, callback, failedCallback, new ExceptionalFunctionCallback<>(control));
+    }
+
 
     // ------------------------------------------------------ execute operation
 

@@ -52,7 +52,7 @@ public class AddressTemplateTest {
         AddressTemplate at = AddressTemplate.of("a=b");
         assertFalse(at.isOptional());
 
-        at = AddressTemplate.of("opt:/a=b");
+        at = AddressTemplate.of("opt://a=b");
         assertTrue(at.isOptional());
     }
 

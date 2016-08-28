@@ -18,6 +18,7 @@ package org.jboss.hal.ballroom.dialog;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.dialog.Dialog.SimpleCallback;
 
 import static org.jboss.hal.ballroom.dialog.Dialog.Size.SMALL;
 import static org.jboss.hal.resources.CSS.centerBlock;
@@ -31,11 +32,30 @@ public final class DialogFactory {
 
     private DialogFactory() {}
 
-    public static Dialog confirmation(String title, SafeHtml question, Dialog.Callback confirm) {
-        return confirmation(title, question, null, confirm);
+    /**
+     * Creates and shows a confirmation dialog using the provided question. When confirmed the specified callback is
+     * executed.
+     */
+    public static void showConfirmation(String title, SafeHtml question, SimpleCallback confirm) {
+        showConfirmation(title, question, null, confirm);
     }
 
-    public static Dialog confirmation(String title, SafeHtml question, Element element, Dialog.Callback confirm) {
+    /**
+     * Creates and shows a confirmation dialog using the question and the provided element. When confirmed the specified
+     * callback is executed.
+     */
+    public static void showConfirmation(String title, SafeHtml question, Element element, SimpleCallback confirm) {
+        buildConfirmation(title, question, element, confirm).show();
+    }
+
+    /**
+     * Creates and returns a confirmation dialog using the question and the provided element. When confirmed the
+     * specified callback is executed.
+     * <p>
+     * Please note that the dialog is <strong>not</strong> shown by this method. You need to call {@link Dialog#show()}
+     * on the returned dialog.
+     */
+    public static Dialog buildConfirmation(String title, SafeHtml question, Element element, SimpleCallback confirm) {
         Element content;
         if (element != null) {
             content = new Elements.Builder().div().p().innerHtml(question).end().add(element).end().build();
@@ -52,7 +72,13 @@ public final class DialogFactory {
                 .build();
     }
 
-    public static BlockingDialog blocking(String title, SafeHtml message) {
+    /**
+     * Creates and returns a blocking dialog which can only be closed programmatically.
+     * <p>
+     * Please note that the dialog is <strong>not</strong> shown by this method. You need to call {@link Dialog#show()}
+     * on the returned dialog.
+     */
+    public static BlockingDialog buildBlocking(String title, SafeHtml message) {
         Element element = new Elements.Builder()
                 .div().css(centerBlock)
                 .p().style("text-align: center").innerHtml(message).end()
@@ -64,7 +90,13 @@ public final class DialogFactory {
                 .add(element));
     }
 
-    public static BlockingDialog longRunning(String title, SafeHtml message) {
+    /**
+     * Creates and returns a blocking dialog w/ a spinner which can only be closed programmatically.
+     * <p>
+     * Please note that the dialog is <strong>not</strong> shown by this method. You need to call {@link Dialog#show()}
+     * on the returned dialog.
+     */
+    public static BlockingDialog buildLongRunning(String title, SafeHtml message) {
         Element element = new Elements.Builder()
                 .div().css(centerBlock)
                 .p().style("text-align: center").innerHtml(message).end()

@@ -46,9 +46,10 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
 
 /**
  * A modal dialog with optional secondary and primary buttons. Only one dialog can be open at a time. The buttons can
- * be placed on the left or the right side. Each button has a callback which either returns {@code true} to indicate
- * that the dialog should be closed or {@code false} if it should stay open. You can add as many buttons as you like,
- * but only one of them should be a primary button.
+ * be placed on the left or the right side. Each button has a callback. The callback is either a {@link SimpleCallback}
+ * which always closes the dialog or a {@link ResultCallback} with a boolean return value. A value of {@code true}
+ * indicates that the dialog should be closed whereas {@code false} keeps the dialog open. You can add as many buttons
+ * as you like, but only one of them should be the primary button.
  * <p>
  * There are convenience methods to add primary and secondary buttons which come with pre-defined placements. If
  * you want to define the placement by yourself use negative numbers to place the buttons on the left side and positive
@@ -69,28 +70,42 @@ public class Dialog implements IsElement {
     }
 
 
+    /**
+     * A button callback which returns a boolean to indicate whether the dialog should be closed or stay open.
+     */
     @FunctionalInterface
-    public interface Callback {
+    public interface ResultCallback {
 
         /**
-         * A button callback
-         *
          * @return {@code true} if the dialog should be closed and {@code false} if the dialog should stay open.
          */
-        boolean execute();
+        boolean eval();
+    }
+
+
+    /**
+     * A simplified button callback w/o a return value. When using this callback the dialog is closed in any case.
+     */
+    @FunctionalInterface
+    public interface SimpleCallback {
+
+        void execute();
     }
 
 
     private static class Button {
 
         final String label;
-        final Callback callback;
+        final ResultCallback resultCallback;
+        final SimpleCallback simpleCallback;
         final boolean primary;
 
-        private Button(final String label, final Callback callback, final boolean primary) {
-            this.primary = primary;
+        private Button(final String label, final ResultCallback callback, final SimpleCallback simpleCallback,
+                boolean primary) {
             this.label = label;
-            this.callback = callback;
+            this.resultCallback = callback;
+            this.simpleCallback = simpleCallback;
+            this.primary = primary;
         }
     }
 
@@ -126,7 +141,7 @@ public class Dialog implements IsElement {
          */
         public Builder closeOnly() {
             buttons.clear();
-            buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.close(), () -> true, false));
+            buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.close(), null, null, false));
             closeIcon = true;
             return this;
         }
@@ -135,10 +150,10 @@ public class Dialog implements IsElement {
          * Shortcut for a dialog with a 'Save' and 'Cancel' button. Clicking on save will execute the specified
          * callback.
          */
-        public Builder saveCancel(Callback saveCallback) {
+        public Builder saveCancel(ResultCallback saveCallback) {
             buttons.clear();
-            buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.save(), saveCallback, true));
-            buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.close(), () -> true, false));
+            buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.save(), saveCallback, null, true));
+            buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.close(), null, null, false));
             return this;
         }
 
@@ -146,10 +161,10 @@ public class Dialog implements IsElement {
          * Shortcut for a dialog with a 'Yes' and 'No' button. Clicking on yes will execute the specified
          * callback.
          */
-        public Builder yesNo(Callback yesCallback) {
+        Builder yesNo(SimpleCallback yesCallback) {
             buttons.clear();
-            buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.yes(), yesCallback, true));
-            buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.no(), () -> true, false));
+            buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.yes(), null, yesCallback, true));
+            buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.no(), null, null, false));
             return this;
         }
 
@@ -157,42 +172,46 @@ public class Dialog implements IsElement {
          * Shortcut for a dialog with a 'Ok' and 'Cancel' button. Clicking on yes will execute the specified
          * callback.
          */
-        public Builder okCancel(Callback okCallback) {
+        public Builder okCancel(SimpleCallback okCallback) {
             buttons.clear();
-            buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.ok(), okCallback, true));
-            buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.cancel(), () -> true, false));
+            buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.ok(), null, okCallback, true));
+            buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.cancel(), null, null, false));
             return this;
         }
 
         /**
          * Adds a primary with label 'Save' and position {@value #PRIMARY_POSITION}.
          */
-        public Builder primary(Callback callback) {
+        public Builder primary(ResultCallback callback) {
             return primary(CONSTANTS.save(), callback);
         }
 
-        public Builder primary(String label, Callback callback) {
+        public Builder primary(String label, ResultCallback callback) {
             return primary(PRIMARY_POSITION, label, callback);
         }
 
-        public Builder primary(int position, String label, Callback callback) {
-            buttons.put(position, new Button(label, callback, true));
+        public Builder primary(int position, String label, ResultCallback callback) {
+            buttons.put(position, new Button(label, callback, null, true));
             return this;
+        }
+
+        public Builder cancel() {
+            return secondary(CONSTANTS.cancel(), null);
         }
 
         /**
          * Adds a secondary button with label 'Cancel' and position {@value #SECONDARY_POSITION}
          */
-        public Builder secondary(Callback callback) {
+        public Builder secondary(ResultCallback callback) {
             return secondary(CONSTANTS.cancel(), callback);
         }
 
-        public Builder secondary(String label, Callback callback) {
+        public Builder secondary(String label, ResultCallback callback) {
             return secondary(SECONDARY_POSITION, label, callback);
         }
 
-        public Builder secondary(int position, String label, Callback callback) {
-            buttons.put(position, new Button(label, callback, false));
+        public Builder secondary(int position, String label, ResultCallback callback) {
+            buttons.put(position, new Button(label, callback, null, false));
             return this;
         }
 
@@ -225,6 +244,7 @@ public class Dialog implements IsElement {
 
         public Builder add(Iterable<Element> elements) {
             if (elements != null) {
+                //noinspection ResultOfMethodCallIgnored
                 Iterables.addAll(this.elements, elements);
             }
             return this;
@@ -345,7 +365,14 @@ public class Dialog implements IsElement {
                         .button()
                         .css(css)
                         .on(click, event -> {
-                            if (button.callback.execute()) {
+                            if (button.resultCallback != null) {
+                                if (button.resultCallback.eval()) {
+                                    close();
+                                }
+                            } else if (button.simpleCallback != null) {
+                                button.simpleCallback.execute();
+                                close();
+                            } else {
                                 close();
                             }
                         })

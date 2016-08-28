@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.meta.processing;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
@@ -135,15 +136,29 @@ public class MetadataProcessor {
             callback.onSuccess(null);
         } else {
             logger.debug("{}", lookupResult);
-            List<Operation> operations = rrdOps.create(lookupResult);
+
+            // create and partition non-optional operations
+            List<Operation> operations = rrdOps.create(lookupResult, false);
             List<List<Operation>> piles = Lists.partition(operations, BATCH_SIZE);
             List<Composite> composites = piles.stream().map(Composite::new).collect(toList());
-
-            logger.debug("About to execute {} composite operations", composites.size());
             List<RrdFunction> functions = composites.stream()
                     .map(composite -> new RrdFunction(metadataRegistry, securityFramework, resourceDescriptions,
-                            capabilities, dispatcher, composite))
+                            capabilities, dispatcher, composite, false))
                     .collect(toList());
+
+            // create optional operations w/o partitioning!
+            List<Operation> optionalOperations = rrdOps.create(lookupResult, true);
+            // Do not refactor to
+            // List<Composite> optionalComposites = optionalOperations.stream().map(Composite::new).collect(toList());
+            // the GWT compiler will crash with an ArrayIndexOutOfBoundsException!
+            List<Composite> optionalComposites = new ArrayList<>();
+            optionalOperations.forEach(operation -> optionalComposites.add(new Composite(operations)));
+            List<RrdFunction> optionalFunctions = optionalComposites.stream()
+                    .map(composite -> new RrdFunction(metadataRegistry, securityFramework, resourceDescriptions,
+                            capabilities, dispatcher, composite, true))
+                    .collect(toList());
+
+            logger.debug("About to execute {} composite operations", composites.size() + optionalComposites.size());
             Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
                 @Override
                 public void onFailure(final FunctionContext context) {
@@ -157,12 +172,16 @@ public class MetadataProcessor {
                     callback.onSuccess(null);
                 }
             };
+
+            List<RrdFunction> allFunctions = new ArrayList<>();
+            allFunctions.addAll(functions);
+            allFunctions.addAll(optionalFunctions);
             if (functions.size() == 1) {
-                new Async<FunctionContext>(progress).single(new FunctionContext(), outcome, functions.get(0));
+                new Async<FunctionContext>(progress).single(new FunctionContext(), outcome, allFunctions.get(0));
             } else {
                 //noinspection SuspiciousToArrayCall
                 new Async<FunctionContext>(progress).waterfall(new FunctionContext(), outcome,
-                        (Function[]) functions.toArray(new RrdFunction[functions.size()]));
+                        (Function[]) allFunctions.toArray(new RrdFunction[allFunctions.size()]));
             }
         }
     }

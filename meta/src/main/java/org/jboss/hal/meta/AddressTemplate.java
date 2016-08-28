@@ -114,8 +114,8 @@ public final class AddressTemplate {
 
     // ------------------------------------------------------ template methods
 
+    public static final String OPTIONAL = "opt://";
     private static final String BLANK = "_blank";
-    private static final String OPT = "opt:/"; //NON-NLS
 
     private final String template;
     private final LinkedList<Token> tokens;
@@ -125,7 +125,7 @@ public final class AddressTemplate {
         assert template != null : "template must not be null";
 
         this.tokens = parse(template);
-        this.optional = template.startsWith(OPT);
+        this.optional = template.startsWith(OPTIONAL);
         this.template = join(optional, tokens);
     }
 
@@ -136,7 +136,7 @@ public final class AddressTemplate {
             return tokens;
         }
 
-        String normalized = template.startsWith(OPT) ? template.substring(5) : template;
+        String normalized = template.startsWith(OPTIONAL) ? template.substring(OPTIONAL.length()) : template;
         StringTokenizer tok = new StringTokenizer(normalized);
         while (tok.hasMoreTokens()) {
             String nextToken = tok.nextToken();
@@ -154,8 +154,9 @@ public final class AddressTemplate {
     private String join(boolean optional, LinkedList<Token> tokens) {
         StringBuilder builder = new StringBuilder();
         if (optional) {
-            builder.append(OPT);
+            builder.append(OPTIONAL);
         }
+        //noinspection ResultOfMethodCallIgnored
         Joiner.on('/').appendTo(builder, tokens);
         return builder.toString();
     }
@@ -217,7 +218,7 @@ public final class AddressTemplate {
      *                                   (<tt>fromIndex &lt; 0 || toIndex &gt; size ||
      *                                   fromIndex &gt; toIndex</tt>)
      */
-    public AddressTemplate subTemplate(int fromIndex, int toIndex) {
+    AddressTemplate subTemplate(int fromIndex, int toIndex) {
         LinkedList<Token> subTokens = new LinkedList<>();
         subTokens.addAll(this.tokens.subList(fromIndex, toIndex));
         return AddressTemplate.of(join(this.optional, subTokens));

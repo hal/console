@@ -18,8 +18,10 @@ package org.jboss.hal.client.bootstrap;
 import com.gwtplatform.dispatch.annotation.GenEvent;
 
 /**
+ * Event to signal the application is up and ready.
+ *
  * @author Harald Pehl
  */
 @GenEvent
-public class BootstrapFinished {
+public class ApplicationReady {
 }

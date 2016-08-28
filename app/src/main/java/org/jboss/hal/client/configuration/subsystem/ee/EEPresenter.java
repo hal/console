@@ -22,7 +22,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.finder.Finder;
@@ -181,7 +180,7 @@ public class EEPresenter extends ApplicationPresenter<EEPresenter.MyView, EEPres
 
     void removeGlobalModule(ModelNode globalModule) {
         String name = globalModule.get(NAME).asString();
-        Dialog dialog = DialogFactory.confirmation(
+        DialogFactory.showConfirmation(
                 resources.messages().removeResourceConfirmationTitle(Names.GLOBAL_MODULES),
                 resources.messages().removeResourceConfirmationQuestion(name),
                 () -> {
@@ -195,8 +194,6 @@ public class EEPresenter extends ApplicationPresenter<EEPresenter.MyView, EEPres
                                 resources.messages().removeResourceSuccess(Names.GLOBAL_MODULES, name)));
                         loadEESubsystem();
                     });
-                    return true;
                 });
-        dialog.show();
     }
 }
