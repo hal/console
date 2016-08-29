@@ -17,16 +17,11 @@ package org.jboss.hal.meta;
 
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jetbrains.annotations.NonNls;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Harald Pehl
  */
 public abstract class AbstractRegistry<T> implements Registry<T> {
-
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(AbstractRegistry.class);
 
     private final StatementContext statementContext;
     private final String type;
@@ -54,9 +49,7 @@ public abstract class AbstractRegistry<T> implements Registry<T> {
     }
 
     private ResourceAddress resolveTemplate(final AddressTemplate template) {
-        ResourceAddress resolved = template.resolve(statementContext);
-        logger.debug("Resolved {} {} -> {}", type, template, resolved);
-        return resolved;
+        return template.resolve(statementContext);
     }
 
     protected abstract T lookupAddress(final ResourceAddress address);

@@ -26,19 +26,19 @@ import org.jboss.hal.meta.security.SecurityContext;
 /**
  * @author Harald Pehl
  */
-public class RrdResult {
+class RrdResult {
 
-    public final ResourceAddress address;
-    public ResourceDescription resourceDescription;
-    public SecurityContext securityContext;
-    public Set<Capability> capabilities;
+    final ResourceAddress address;
+    ResourceDescription resourceDescription;
+    SecurityContext securityContext;
+    Set<Capability> capabilities;
 
-    public RrdResult(final ResourceAddress address) {
+    RrdResult(final ResourceAddress address) {
         this.address = address;
         this.capabilities = new HashSet<>();
     }
 
-    public boolean isDefined() {
+    boolean isDefined() {
         return resourceDescription != null || securityContext != null;
     }
 

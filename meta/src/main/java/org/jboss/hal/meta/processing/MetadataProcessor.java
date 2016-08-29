@@ -152,7 +152,7 @@ public class MetadataProcessor {
             // List<Composite> optionalComposites = optionalOperations.stream().map(Composite::new).collect(toList());
             // the GWT compiler will crash with an ArrayIndexOutOfBoundsException!
             List<Composite> optionalComposites = new ArrayList<>();
-            optionalOperations.forEach(operation -> optionalComposites.add(new Composite(operations)));
+            optionalOperations.forEach(operation -> optionalComposites.add(new Composite(operation)));
             List<RrdFunction> optionalFunctions = optionalComposites.stream()
                     .map(composite -> new RrdFunction(metadataRegistry, securityFramework, resourceDescriptions,
                             capabilities, dispatcher, composite, true))

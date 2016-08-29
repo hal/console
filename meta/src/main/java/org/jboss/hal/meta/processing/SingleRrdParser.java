@@ -35,7 +35,7 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 /**
  * @author Harald Pehl
  */
-public class SingleRrdParser {
+class SingleRrdParser {
 
     public Set<RrdResult> parse(ResourceAddress address, ModelNode modelNode) throws ParserException {
         Set<RrdResult> results = new HashSet<>();

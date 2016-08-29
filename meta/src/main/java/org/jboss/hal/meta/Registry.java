@@ -18,9 +18,20 @@ package org.jboss.hal.meta;
 import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
+ * A registry for meta data such as resource descriptions or security context information. The registry has the
+ * following contract for adding and resolving meta data:
+ * <ol>
+ * <li>The meta data is added using a concrete {@link ResourceAddress}</li>
+ * <li>The meta data needs to be resolved using a generic {@link AddressTemplate}</li>
+ * </ol>
+ * <p>
+ * It's up to the concrete implementation how to resolve the generic address template and lookup the associated meta
+ * data. The recommendation is to use a {@link StatementContext} together with {@link
+ * AddressTemplate#resolve(StatementContext, String...)} to turn the template into a concrete resource address.
+ *
  * @author Harald Pehl
  */
-public interface Registry<T> {
+interface Registry<T> {
 
     T lookup(final AddressTemplate template) throws MissingMetadataException;
 

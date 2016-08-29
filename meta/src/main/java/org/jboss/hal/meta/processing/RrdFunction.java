@@ -26,7 +26,6 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.capabilitiy.Capability;
 import org.jboss.hal.meta.description.ResourceDescriptions;
 import org.jboss.hal.meta.security.SecurityFramework;
 import org.jetbrains.annotations.NonNls;
@@ -82,9 +81,7 @@ class RrdFunction implements Function<FunctionContext> {
                             }
                             if (!rr.capabilities.isEmpty()) {
                                 logger.debug("Add capabilities {} for {}", rr.capabilities, rr.address);
-                                for (Capability capability : rr.capabilities) {
-                                    capabilities.register(capability);
-                                }
+                                rr.capabilities.forEach(capabilities::register);
                             }
                         }
                         control.proceed();
