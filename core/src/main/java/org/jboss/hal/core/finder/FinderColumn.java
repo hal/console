@@ -337,7 +337,11 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                                 .id(actn.id)
                                 .attr(UIConstants.ROLE, UIConstants.MENUITEM)
                                 .attr(UIConstants.TABINDEX, "-1")
-                                .on(click, event -> actn.handler.execute(this));
+                                .on(click, event -> {
+                                    if (actn.handler!= null) {
+                                        actn.handler.execute(this);
+                                    }
+                                });
                                 if (actn.title != null){
                                     builder.textContent(actn.title);
                                 } else if (actn.element != null) {
@@ -356,7 +360,11 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             builder.button()
                     .id(action.id)
                     .css(btn, btnFinder)
-                    .on(click, event -> action.handler.execute(this));
+                    .on(click, event -> {
+                        if (action.handler != null) {
+                            action.handler.execute(this);
+                        }
+                    });
 
             if (action.title != null) {
                 builder.textContent(action.title);
@@ -726,7 +734,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             ulElement.appendChild(row.asElement());
         }
         updateHeader(items.size());
-        Tooltip.select("#" + id + " [data-toggle=tooltip]").init(); //NON-NLS
+        Tooltip.select("#" + id + " [data-" + UIConstants.TOGGLE + "=" + UIConstants.TOOLTIP + "]").init(); //NON-NLS
 
         if (items.isEmpty()) {
             ulElement.appendChild(noItems);
@@ -741,12 +749,8 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
      * Sometimes you need to reference {@code this} in the column action handler. This is not possible if they're
      * part of the builder which is passed to {@code super()}. In this case you can use this method to add your column
      * actions <strong>after</strong> the call to {@code super()}.
-     * <p>
-     * However make sure to call this method <strong>before</strong> the column is used {@link #asElement()} and gets
-     * attached to the DOM!
      */
     protected void addColumnAction(ColumnAction<T> columnAction) {
-        assertNotAsElement("addColumnAction()");
         columnActions.appendChild(newColumnButton(columnAction));
         if (columnActions.getChildElementCount() > 1) {
             columnActions.getClassList().add(btnGroup);
@@ -755,7 +759,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     }
 
     protected void addColumnActions(String id, String iconsCss, String title, List<ColumnAction<T>> actions) {
-        assertNotAsElement("addColumnActions()");
         Element element = new Elements.Builder().span()
                 .css(iconsCss)
                 .title(title)
@@ -767,6 +770,10 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             columnActions.getClassList().add(btnGroup);
             columnActions.setAttribute(ROLE, GROUP);
         }
+    }
+
+    protected void resetColumnActions() {
+        Elements.removeChildrenFrom(columnActions);
     }
 
     /**

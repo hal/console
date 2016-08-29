@@ -23,12 +23,11 @@ import java.util.stream.StreamSupport;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import com.google.common.collect.Sets;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
-import elemental.dom.Document;
 import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Progress;
@@ -50,7 +49,6 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.dmr.model.SuccessfulOutcome;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
@@ -70,9 +68,6 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
  */
 @AsyncColumn(Ids.MEMBERSHIP)
 public class MembershipColumn extends FinderColumn<Assignment> {
-
-    private static final String INCLUDE_LI_SELECTOR = "[aria-" + UIConstants.LABELLED_BY + "=" + Ids.MEMBERSHIP_INCLUDE + "] > li";
-    private static final String EXCLUDE_LI_SELECTOR = "[aria-" + UIConstants.LABELLED_BY + "=" + Ids.MEMBERSHIP_EXCLUDE + "] > li";
 
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
@@ -110,31 +105,31 @@ public class MembershipColumn extends FinderColumn<Assignment> {
                         .forEach(assignments::add);
             }
 
-            // Show / hide the assigned roles from the include / exclude drop-downs
-            // The id is on the <a> element, but we need to show / hide the parent <li> element
-            Set<String> includeIds = assignments.stream()
-                    .map(assignment -> includeId(assignment.getPrincipal()))
-                    .collect(toSet());
-            Set<String> excludeIds = assignments.stream()
-                    .map(assignment -> excludeId(assignment.getPrincipal()))
-                    .collect(toSet());
+            // Add the missing principals to the include / exclude column action drop-downs
+            resetColumnActions();
+            Set<Principal> assignedPrincipals = assignments.stream().map(Assignment::getPrincipal).collect(toSet());
+            Set<Principal> missingPrincipals = Sets.newHashSet(accessControl.principals());
+            missingPrincipals.removeAll(assignedPrincipals);
 
-            Document document = Browser.getDocument();
-            Elements.stream(document.querySelectorAll(INCLUDE_LI_SELECTOR + " > a")) //NON-NLS
-                    .forEach(element -> Elements.setVisible(element.getParentElement(),
-                            !includeIds.contains(element.getId())));
-            Elements.stream(document.querySelectorAll(EXCLUDE_LI_SELECTOR + " > a")) //NON-NLS
-                    .forEach(element -> Elements.setVisible(element.getParentElement(),
-                            !excludeIds.contains(element.getId())));
+            List<ColumnAction<Assignment>> includeActions = missingPrincipals.stream()
+                    .sorted(comparing(Principal::getType).thenComparing(Principal::getName))
+                    .map(principal -> new ColumnAction<>(includeId(principal), typeAndName(principal),
+                            columnActionHandler(principal, true)))
+                    .collect(toList());
+            if (!includeActions.isEmpty()) {
+                addColumnActions(Ids.MEMBERSHIP_INCLUDE, fontAwesome("plus"), resources.constants().includeUserGroup(),
+                        includeActions);
+            }
 
-            long visibleIncludes = Elements.stream(document.querySelectorAll(INCLUDE_LI_SELECTOR))
-                    .filter(Elements::isVisible)
-                    .count();
-            Elements.setVisible(document.getElementById(Ids.MEMBERSHIP_INCLUDE), visibleIncludes != 0);
-            long visibleExcludes = Elements.stream(document.querySelectorAll(EXCLUDE_LI_SELECTOR))
-                    .filter(Elements::isVisible)
-                    .count();
-            Elements.setVisible(document.getElementById(Ids.MEMBERSHIP_EXCLUDE), visibleExcludes != 0);
+            List<ColumnAction<Assignment>> excludeActions = missingPrincipals.stream()
+                    .sorted(comparing(Principal::getType).thenComparing(Principal::getName))
+                    .map(principal -> new ColumnAction<>(excludeId(principal), typeAndName(principal),
+                            columnActionHandler(principal, false)))
+                    .collect(toList());
+            if (!excludeActions.isEmpty()) {
+                addColumnActions(Ids.MEMBERSHIP_EXCLUDE, fontAwesome("minus"), resources.constants().excludeUserGroup(),
+                        excludeActions);
+            }
 
             callback.onSuccess(assignments);
         });
@@ -197,26 +192,6 @@ public class MembershipColumn extends FinderColumn<Assignment> {
                         }));
             }
         });
-
-        // Setup column actions to include / exclude *all* principals.
-        // Already included / excluded principals will be filtered out later in the ItemsProvider
-        List<Principal> principals = new ArrayList<>();
-        accessControl.principals().users().stream().sorted(comparing(Principal::getName)).forEach(principals::add);
-        accessControl.principals().groups().stream().sorted(comparing(Principal::getName)).forEach(principals::add);
-
-        List<ColumnAction<Assignment>> includeActions = principals.stream()
-                .map(principal -> new ColumnAction<>(includeId(principal), typeAndName(principal),
-                        columnActionHandler(principal, true)))
-                .collect(toList());
-        addColumnActions(Ids.MEMBERSHIP_INCLUDE, fontAwesome("plus"), resources.constants().includeUserGroup(),
-                includeActions);
-
-        List<ColumnAction<Assignment>> excludeActions = principals.stream()
-                .map(principal -> new ColumnAction<>(excludeId(principal), typeAndName(principal),
-                        columnActionHandler(principal, false)))
-                .collect(toList());
-        addColumnActions(Ids.MEMBERSHIP_EXCLUDE, fontAwesome("minus"), resources.constants().excludeUserGroup(),
-                excludeActions);
     }
 
     private Role findRole(FinderPath path) {
