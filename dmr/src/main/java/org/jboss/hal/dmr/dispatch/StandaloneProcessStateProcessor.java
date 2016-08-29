@@ -33,7 +33,7 @@ public class StandaloneProcessStateProcessor implements ProcessStateProcessor {
 
     @Override
     public boolean accepts(ModelNode response) {
-        return response.hasDefined(RESPONSE_HEADERS);
+        return ModelNodeHelper.failSafeGet(response, RESPONSE_HEADERS + "/" + PROCESS_STATE).isDefined();
     }
 
     @Override
@@ -41,16 +41,14 @@ public class StandaloneProcessStateProcessor implements ProcessStateProcessor {
         ProcessState processState = new ProcessState();
 
         ModelNode processStateNode = ModelNodeHelper.failSafeGet(response, RESPONSE_HEADERS + "/" + PROCESS_STATE);
-        if (processStateNode.isDefined()) {
-            String processStateValue = processStateNode.asString();
-            if (RESTART_REQUIRED.equals(processStateValue)) {
-                ServerState state = new ServerState("", Names.STANDALONE_SERVER, State.RESTART_REQUIRED);
-                processState.add(state);
+        String processStateValue = processStateNode.asString();
+        if (RESTART_REQUIRED.equals(processStateValue)) {
+            ServerState state = new ServerState("", Names.STANDALONE_SERVER, State.RESTART_REQUIRED);
+            processState.add(state);
 
-            } else if (RELOAD_REQUIRED.equals(processStateValue)) {
-                ServerState state = new ServerState("", Names.STANDALONE_SERVER, State.RELOAD_REQUIRED);
-                processState.add(state);
-            }
+        } else if (RELOAD_REQUIRED.equals(processStateValue)) {
+            ServerState state = new ServerState("", Names.STANDALONE_SERVER, State.RELOAD_REQUIRED);
+            processState.add(state);
         }
         return processState;
     }
