@@ -73,6 +73,9 @@ public interface Previews extends ClientBundleWithLookup {
 
     // ------------------------------------------------------ configuration
 
+    @Source("previews/configuration/batch.html")
+    ExternalTextResource configurationBatch();
+
     @Source("previews/configuration/datasources.html")
     ExternalTextResource configurationDatasources();
 
