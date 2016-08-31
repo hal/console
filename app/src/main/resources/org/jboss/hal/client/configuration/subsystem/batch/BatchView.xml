@@ -27,7 +27,7 @@
             </metadata>
         </item>
 
-        <item id="in-memory-job-repo-item" title="In Memory" icon="fa fa-clipboard">
+        <item id="in-memory-job-repo-item" title="In Memory" icon="pficon pficon-memory">
             <metadata address="/{selected.profile}/subsystem=batch-jberet/in-memory-job-repository=*">
                 <h1>In Memory Job Repository</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
@@ -78,7 +78,7 @@
             </metadata>
         </item>
 
-        <item id="thread-factory-item" title="Thread Factory" icon="fa fa-bars">
+        <item id="thread-factory-item" title="Thread Factory" icon="pficon pficon-service">
             <metadata address="/{selected.profile}/subsystem=batch-jberet/thread-factory=*">
                 <h1>Thread Factory</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
@@ -99,7 +99,7 @@
             </metadata>
         </item>
 
-        <item id="thread-pool-item" title="Thread Pool" icon="fa fa-server">
+        <item id="thread-pool-item" title="Thread Pool" icon="pficon pficon-resource-pool">
             <metadata address="/{selected.profile}/subsystem=batch-jberet/thread-pool=*">
                 <h1>Thread Pool</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
