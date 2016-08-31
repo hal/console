@@ -39,8 +39,15 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 
 /**
- * Special typeahead class for paths.
- * TODO Listen for server start events and update operation
+ * Special typeahead class for paths. In standalone mode or in case there's no selected profile the paths are read
+ * using {@code :read-children-names(child-type=path)}.
+ * <p>
+ * In domain mode we try to get the first running server of the selected profile and use {@code
+ * /host=foo/server-bar:read-children-names(child-type=path)} or {@code :read-children-names(child-type=path)} in case
+ * there's no running server or no selected profile.
+ * <p>
+ * Since the operation is static it's important to update it when a profile is selected or a server is stopped or
+ * started.
  *
  * @author Harald Pehl
  */
@@ -49,7 +56,10 @@ public class PathsTypeahead extends Typeahead {
     @NonNls private static final Logger logger = LoggerFactory.getLogger(PathsTypeahead.class);
     private static Operation operation = defaultOperation();
 
-    public static void updateOperation(final Environment environment, final Dispatcher dispatcher,
+    /**
+     * Updates the static operation which is used by this typeahead.
+     */
+    static void updateOperation(final Environment environment, final Dispatcher dispatcher,
             final StatementContext statementContext) {
         if (environment.isStandalone() || statementContext.selectedProfile() == null) {
             operation = defaultOperation();

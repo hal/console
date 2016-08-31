@@ -27,8 +27,6 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormValidation;
 import org.jboss.hal.ballroom.form.ValidationResult;
-import org.jboss.hal.client.configuration.PathsTypeahead;
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -61,7 +59,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 public class TransactionPresenter extends MbuiPresenter<TransactionPresenter.MyView, TransactionPresenter.MyProxy> {
 
-    // datasource address is required to as there is typeahead declared in TransactionView.xml
+    // datasource address is required as there is a typeahead declared in TransactionView.xml
     // to lookup datasource subsystem
     // @formatter:off
     @ProxyCodeSplit
@@ -74,13 +72,12 @@ public class TransactionPresenter extends MbuiPresenter<TransactionPresenter.MyV
     }
     // @formatter:on
 
-    static final String PROCESS_ID_UUID = "process-id-uuid";
-    static final String PROCESS_ID_SOCKET_BINDING = "process-id-socket-binding";
-    static final String PROCESS_ID_SOCKET_MAX_PORTS = "process-id-socket-max-ports";
+    private static final String PROCESS_ID_UUID = "process-id-uuid";
+    private static final String PROCESS_ID_SOCKET_BINDING = "process-id-socket-binding";
+    private static final String PROCESS_ID_SOCKET_MAX_PORTS = "process-id-socket-max-ports";
     private final static ValidationResult invalid = ValidationResult.invalid("Validation error, see error messages below.");
 
     private final FinderPathFactory finderPathFactory;
-    private final Environment environment;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
     private final Resources resources;
@@ -91,13 +88,11 @@ public class TransactionPresenter extends MbuiPresenter<TransactionPresenter.MyV
             final MyProxy proxy,
             final Finder finder,
             final FinderPathFactory finderPathFactory,
-            final Environment environment,
             final StatementContext statementContext,
             final Dispatcher dispatcher,
             final Resources resources) {
         super(eventBus, view, proxy, finder);
         this.finderPathFactory = finderPathFactory;
-        this.environment = environment;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
         this.resources = resources;
@@ -121,8 +116,6 @@ public class TransactionPresenter extends MbuiPresenter<TransactionPresenter.MyV
                 .param(RECURSIVE_DEPTH, 1)
                 .build();
         dispatcher.execute(operation, result -> getView().updateConfiguration(result));
-
-        PathsTypeahead.updateOperation(environment, dispatcher, statementContext);
     }
 
     // The process form, contains attributes that must have some special treatment before save operation
@@ -306,9 +299,7 @@ public class TransactionPresenter extends MbuiPresenter<TransactionPresenter.MyV
         return processFormValidation;
     }
 
-
     FormValidation<ModelNode> getJdbcFormValidation() {
         return jdbcFormValidation;
     }
-
 }

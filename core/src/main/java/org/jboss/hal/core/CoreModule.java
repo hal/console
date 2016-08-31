@@ -55,7 +55,7 @@ public class CoreModule extends AbstractGinModule {
         bind(Places.class).in(Singleton.class);
         bind(ServerActions.class).in(Singleton.class);
         bind(ServerGroupActions.class).in(Singleton.class);
-        bind(StatementContext.class).to(CoreStatementContext.class).asEagerSingleton(); // to register the event
+        bind(StatementContext.class).to(CoreStatementContext.class).asEagerSingleton(); // to register the event handler
         bind(Subsystems.class).in(Singleton.class);
         bind(TableButtonFactory.class).in(Singleton.class);
         bind(UIRegistry.class).in(Singleton.class);

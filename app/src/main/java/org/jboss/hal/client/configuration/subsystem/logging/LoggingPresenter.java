@@ -22,8 +22,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.client.configuration.PathsTypeahead;
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -85,7 +83,6 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
 
 
     private final FinderPathFactory finderPathFactory;
-    private final Environment environment;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
 
@@ -95,12 +92,10 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
             final MyProxy proxy,
             final Finder finder,
             final FinderPathFactory finderPathFactory,
-            final Environment environment,
             final StatementContext statementContext,
             final Dispatcher dispatcher) {
         super(eventBus, view, proxy, finder);
         this.finderPathFactory = finderPathFactory;
-        this.environment = environment;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
     }
@@ -147,7 +142,5 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
             getView().updatePatternFormatter(asNamedNodes(failSafePropertyList(result, PATTERN_FORMATTER_TEMPLATE.lastKey())));
             // @formatter:on
         });
-
-        PathsTypeahead.updateOperation(environment, dispatcher, statementContext);
     }
 }
