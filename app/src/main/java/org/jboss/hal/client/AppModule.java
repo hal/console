@@ -34,6 +34,8 @@ import org.jboss.hal.client.configuration.Mbui_PathsView_Provider;
 import org.jboss.hal.client.configuration.PathsPresenter;
 import org.jboss.hal.client.configuration.subsystem.SubsystemPresenter;
 import org.jboss.hal.client.configuration.subsystem.SubsystemView;
+import org.jboss.hal.client.configuration.subsystem.batch.BatchPresenter;
+import org.jboss.hal.client.configuration.subsystem.batch.Mbui_BatchView_Provider;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
 import org.jboss.hal.client.configuration.subsystem.deploymentscanner.DeploymentScannerPresenter;
 import org.jboss.hal.client.configuration.subsystem.deploymentscanner.Mbui_DeploymentScannerView_Provider;
@@ -223,6 +225,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 TransactionPresenter.MyView.class,
                 Mbui_TransactionView_Provider.class,
                 TransactionPresenter.MyProxy.class);
+        
+        bindTemplatedPresenter(BatchPresenter.class,
+                BatchPresenter.MyView.class,
+                Mbui_BatchView_Provider.class,
+                BatchPresenter.MyProxy.class);
 
         bindPresenter(MacroEditorPresenter.class,
                 MacroEditorPresenter.MyView.class,
