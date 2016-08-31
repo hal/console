@@ -17,7 +17,7 @@
   -->
 <view>
     <vertical-navigation id="batch-vertical-navigation">
-        
+
         <item id="configuration-item" title="Configuration" icon="fa fa-cogs">
             <metadata address="/{selected.profile}/subsystem=batch-jberet">
                 <h1>Configuration</h1>
@@ -26,7 +26,7 @@
                 </form>
             </metadata>
         </item>
-        
+
         <item id="in-memory-job-repo-item" title="In Memory" icon="fa fa-clipboard">
             <metadata address="/{selected.profile}/subsystem=batch-jberet/in-memory-job-repository=*">
                 <h1>In Memory Job Repository</h1>
@@ -39,8 +39,6 @@
                                 name-resolver="{{api.selectedRow().getName()}}"/>
                     </actions>
                     <columns>
-                        <!-- custom formatter do not have a name attribute,
-                            so we need to provide a value using NamedNode.getName() -->
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
@@ -49,7 +47,7 @@
                 </form>
             </metadata>
         </item>
-        
+
         <item id="jdbc-job-repo-item" title="JDBC" icon="fa fa-database">
             <metadata address="/{selected.profile}/subsystem=batch-jberet/jdbc-job-repository=*">
                 <h1>JDBC Job Repository</h1>
@@ -62,8 +60,6 @@
                                 name-resolver="{{api.selectedRow().getName()}}"/>
                     </actions>
                     <columns>
-                        <!-- custom formatter do not have a name attribute,
-                            so we need to provide a value using NamedNode.getName() -->
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
@@ -73,18 +69,15 @@
                         <attribute name="data-source">
                             <suggest-handler>
                                 <templates>
-                                    <!-- @formatter:off -->
                                     <template address="/{selected.profile}/subsystem=datasources/data-source=*"/>
-                                    <!-- @formatter:on -->
                                 </templates>
                             </suggest-handler>
                         </attribute>
-
                     </attributes>
                 </form>
             </metadata>
         </item>
-        
+
         <item id="thread-factory-item" title="Thread Factory" icon="fa fa-bars">
             <metadata address="/{selected.profile}/subsystem=batch-jberet/thread-factory=*">
                 <h1>Thread Factory</h1>
@@ -97,8 +90,6 @@
                                 name-resolver="{{api.selectedRow().getName()}}"/>
                     </actions>
                     <columns>
-                        <!-- custom formatter do not have a name attribute,
-                            so we need to provide a value using NamedNode.getName() -->
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
@@ -107,7 +98,7 @@
                 </form>
             </metadata>
         </item>
-        
+
         <item id="thread-pool-item" title="Thread Pool" icon="fa fa-server">
             <metadata address="/{selected.profile}/subsystem=batch-jberet/thread-pool=*">
                 <h1>Thread Pool</h1>
@@ -120,30 +111,24 @@
                                 name-resolver="{{api.selectedRow().getName()}}"/>
                     </actions>
                     <columns>
-                        <!-- custom formatter do not have a name attribute,
-                            so we need to provide a value using NamedNode.getName() -->
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
                 <form id="thread-pool-form" title="Thread Pool" auto-save="true"
                       name-resolver="{{form.getModel().getName()}}">
                     <attributes>
-                        <attribute name="name" />
-                        <attribute name="max-threads" />
+                        <attribute name="name"/>
+                        <attribute name="max-threads"/>
                         <attribute name="thread-factory">
                             <suggest-handler>
                                 <templates>
-                                    <!-- @formatter:off -->
                                     <template address="/{selected.profile}/subsystem=batch-jberet/thread-factory=*"/>
-                                    <!-- @formatter:on -->
                                 </templates>
                             </suggest-handler>
                         </attribute>
-                        
                     </attributes>
                 </form>
             </metadata>
         </item>
-        
     </vertical-navigation>
 </view>

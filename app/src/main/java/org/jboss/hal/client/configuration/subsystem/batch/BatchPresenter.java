@@ -115,5 +115,4 @@ public class BatchPresenter extends MbuiPresenter<BatchPresenter.MyView, BatchPr
 
         PathsTypeahead.updateOperation(environment, dispatcher, statementContext);
     }
-
 }
