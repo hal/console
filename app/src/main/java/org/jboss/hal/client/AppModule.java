@@ -32,6 +32,7 @@ import org.jboss.hal.client.configuration.InterfacePresenter;
 import org.jboss.hal.client.configuration.Mbui_InterfaceView_Provider;
 import org.jboss.hal.client.configuration.Mbui_PathsView_Provider;
 import org.jboss.hal.client.configuration.PathsPresenter;
+import org.jboss.hal.client.configuration.UpdatePathTypeahead;
 import org.jboss.hal.client.configuration.subsystem.SubsystemPresenter;
 import org.jboss.hal.client.configuration.subsystem.SubsystemView;
 import org.jboss.hal.client.configuration.subsystem.batch.BatchPresenter;
@@ -115,7 +116,8 @@ public class AppModule extends AbstractTemplatedPresenterModule {
         bind(AccessControlTokens.class).in(Singleton.class);
         bind(DataSourceTemplates.class).in(Singleton.class);
         bind(Dispatcher.class).to(DAGDispatcher.class).in(Singleton.class);
-        bind(ProcessStateHandler.class).asEagerSingleton(); // to register the event
+        bind(ProcessStateHandler.class).asEagerSingleton(); // to register the event handler
+        bind(UpdatePathTypeahead.class).asEagerSingleton(); // to register the event handler
 
 
         // ------------------------------------------------------ skeleton & root presenter
@@ -140,6 +142,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 AccessControlPresenter.MyView.class,
                 AccessControlView.class,
                 AccessControlPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(BatchPresenter.class,
+                BatchPresenter.MyView.class,
+                Mbui_BatchView_Provider.class,
+                BatchPresenter.MyProxy.class);
 
         bindPresenter(ConfigurationPresenter.class,
                 ConfigurationPresenter.MyView.class,
@@ -170,11 +177,6 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 EEPresenter.MyView.class,
                 EEView.class,
                 EEPresenter.MyProxy.class);
-
-        bindPresenter(SubsystemPresenter.class,
-                SubsystemPresenter.MyView.class,
-                SubsystemView.class,
-                SubsystemPresenter.MyProxy.class);
 
         bindPresenter(HomepagePresenter.class,
                 HomepagePresenter.MyView.class,
@@ -221,16 +223,6 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 Mbui_LoggingProfileView_Provider.class,
                 LoggingProfilePresenter.MyProxy.class);
 
-        bindTemplatedPresenter(TransactionPresenter.class,
-                TransactionPresenter.MyView.class,
-                Mbui_TransactionView_Provider.class,
-                TransactionPresenter.MyProxy.class);
-        
-        bindTemplatedPresenter(BatchPresenter.class,
-                BatchPresenter.MyView.class,
-                Mbui_BatchView_Provider.class,
-                BatchPresenter.MyProxy.class);
-
         bindPresenter(MacroEditorPresenter.class,
                 MacroEditorPresenter.MyView.class,
                 MacroEditorView.class,
@@ -246,25 +238,25 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 MailSessionView.class,
                 MailSessionPresenter.MyProxy.class);
 
-        bindTemplatedPresenter(PathsPresenter.class,
-                PathsPresenter.MyView.class,
-                Mbui_PathsView_Provider.class,
-                PathsPresenter.MyProxy.class);
-
         bindPresenter(PatchingPresenter.class,
                 PatchingPresenter.MyView.class,
                 PatchingView.class,
                 PatchingPresenter.MyProxy.class);
 
-        bindPresenter(RuntimePresenter.class,
-                RuntimePresenter.MyView.class,
-                RuntimeView.class,
-                RuntimePresenter.MyProxy.class);
+        bindTemplatedPresenter(PathsPresenter.class,
+                PathsPresenter.MyView.class,
+                Mbui_PathsView_Provider.class,
+                PathsPresenter.MyProxy.class);
 
         bindPresenter(RhcpPresenter.class,
                 RhcpPresenter.MyView.class,
                 RhcpView.class,
                 RhcpPresenter.MyProxy.class);
+
+        bindPresenter(RuntimePresenter.class,
+                RuntimePresenter.MyView.class,
+                RuntimeView.class,
+                RuntimePresenter.MyProxy.class);
 
         bindTemplatedPresenter(ServerPresenter.class,
                 ServerPresenter.MyView.class,
@@ -280,6 +272,16 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 ServerStatusPresenter.MyView.class,
                 ServerStatusView.class,
                 ServerStatusPresenter.MyProxy.class);
+
+        bindPresenter(SubsystemPresenter.class,
+                SubsystemPresenter.MyView.class,
+                SubsystemView.class,
+                SubsystemPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(TransactionPresenter.class,
+                TransactionPresenter.MyView.class,
+                Mbui_TransactionView_Provider.class,
+                TransactionPresenter.MyProxy.class);
 
         bindPresenter(UnderTheBridgePresenter.class,
                 UnderTheBridgePresenter.MyView.class,
