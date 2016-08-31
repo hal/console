@@ -362,6 +362,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 actions.add(itemActionFactory.viewAndMonitor(Ids.server(item.getName()), placeRequest));
                 if (!serverActions.isPending(item)) {
                     if (!item.isStarted()) {
+                        actions.add(new ItemAction<>(resources.constants().start(), serverActions::start));
                         AddressTemplate template = AddressTemplate
                                 .of("/host=" + item.getHost() + "/item-config=" + item.getName());
                         actions.add(
@@ -369,9 +370,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     }
                     actions.add(new ItemAction<>(resources.constants().copy(),
                             itm -> copyServer(itm, BrowseByColumn.browseByHosts(finder.getContext()))));
-                    if (!item.isStarted()) {
-                        actions.add(new ItemAction<>(resources.constants().start(), serverActions::start));
-                    } else {
+                    if (item.isStarted()) {
                         // Order is: reload, restart, (resume | suspend), stop
                         actions.add(new ItemAction<>(resources.constants().reload(), serverActions::reload));
                         actions.add(new ItemAction<>(resources.constants().restart(), serverActions::restart));
