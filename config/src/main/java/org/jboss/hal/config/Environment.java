@@ -56,7 +56,7 @@ public interface Environment {
 
     Version getManagementVersion();
 
-    void setManagementVersion(String major, String micro, String minor);
+    void setManagementVersion(Version version);
 
     AccessControlProvider getAccessControlProvider();
 

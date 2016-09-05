@@ -85,8 +85,7 @@ class CompositeRrdParser {
     private ResourceAddress operationAddress(int index) {
         List<ModelNode> steps = composite.get(STEPS).asList();
         if (index >= steps.size()) {
-            throw new ParserException(
-                    "Cannot get operation at index " + index + " from composite " + composite);
+            throw new ParserException("Cannot get operation at index " + index + " from composite " + composite);
         }
         ModelNode operation = steps.get(index);
         return new ResourceAddress(operation.get(ADDRESS));

@@ -98,8 +98,8 @@ class ServerPreview extends RuntimePreview<Server> {
         if (server.isStandalone()) {
             attributes = asList(STATUS, RUNNING_MODE, SERVER_STATE, SUSPEND_STATE);
         } else {
-            attributes = asList(HOST, GROUP, PROFILE_NAME, AUTO_START, SOCKET_BINDING_PORT_OFFSET,
-                    STATUS, RUNNING_MODE, SERVER_STATE, SUSPEND_STATE);
+            attributes = asList(HOST, GROUP, PROFILE_NAME, AUTO_START, SOCKET_BINDING_PORT_OFFSET, STATUS, RUNNING_MODE,
+                    SERVER_STATE, SUSPEND_STATE);
         }
         this.attributes = new PreviewAttributes<>(server, attributes).end();
         previewBuilder().addAll(this.attributes);

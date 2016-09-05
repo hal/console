@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.core.runtime.server;
 
+import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.runtime.RunningMode;
 import org.jboss.hal.core.runtime.RunningState;
 import org.jboss.hal.core.runtime.SuspendState;
@@ -22,6 +23,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.resources.Ids;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -39,6 +41,7 @@ public class Server extends NamedNode {
             true);
 
     private final boolean standalone;
+    private Version managementVersion;
 
     public Server(final String host, final ModelNode node) {
         this(host, node.get(NAME).asString(), node, false);
@@ -51,6 +54,7 @@ public class Server extends NamedNode {
     private Server(final String host, final String server, final ModelNode modelNode, final boolean standalone) {
         super(server, modelNode);
         this.standalone = standalone;
+        this.managementVersion = ManagementModel.parseVersion(modelNode);
         get(HOST).set(host);
         if (standalone) {
             get(STATUS).set(ServerConfigStatus.STARTED.name().toLowerCase());
@@ -60,6 +64,10 @@ public class Server extends NamedNode {
 
     public boolean isStandalone() {
         return standalone;
+    }
+
+    public Version getManagementVersion() {
+        return managementVersion;
     }
 
     public String getServerGroup() {
@@ -166,5 +174,6 @@ public class Server extends NamedNode {
      */
     public void addServerAttributes(final ModelNode modelNode) {
         modelNode.asPropertyList().forEach(property -> get(property.getName()).set(property.getValue()));
+        managementVersion = ManagementModel.parseVersion(modelNode);
     }
 }

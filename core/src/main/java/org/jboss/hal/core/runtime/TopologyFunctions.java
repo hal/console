@@ -565,6 +565,9 @@ public class TopologyFunctions {
                 control.proceed();
 
             } else {
+                // Note for mixed domains with servers w/o support for SUSPEND_STATE attribute:
+                // The query operation won't fail, instead the unsupported attributes just won't be
+                // part of the response payload (kudos to the guy who implemented the query operation!)
                 ModelNode select = new ModelNode().add(ModelDescriptionConstants.HOST).add(LAUNCH_TYPE).add(NAME)
                         .add(PROFILE_NAME).add(RUNNING_MODE).add(ModelDescriptionConstants.SERVER_GROUP)
                         .add(SERVER_STATE).add(SUSPEND_STATE).add("uuid");

@@ -43,6 +43,7 @@ import org.jboss.hal.dmr.dispatch.TimeoutHandler;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.resources.Ids;
@@ -247,6 +248,12 @@ public class ServerActions {
     }
 
     public void suspend(Server server) {
+        if (!ManagementModel.supportsSuspend(server.getManagementVersion())) {
+            logger.error("Server {} using version {} does not support suspend operation", server.getName(),
+                    server.getManagementVersion());
+            return;
+        }
+
         AddressTemplate template = server.isStandalone() ? AddressTemplate.of("/") : AddressTemplate
                 .of("/host=" + server.getHost() + "/server-config=" + server.getName());
         metadataProcessor.lookup(template, progress.get(), new MetadataProcessor.MetadataCallback() {
@@ -300,6 +307,12 @@ public class ServerActions {
     }
 
     public void resume(Server server) {
+        if (!ManagementModel.supportsSuspend(server.getManagementVersion())) {
+            logger.error("Server {} using version {} does not support resume operation", server.getName(),
+                    server.getManagementVersion());
+            return;
+        }
+
         prepare(server, Action.RESUME);
         ResourceAddress address = server.isStandalone() ? server.getServerAddress() : server.getServerConfigAddress();
         Operation operation = new Operation.Builder(RESUME, address).build();
