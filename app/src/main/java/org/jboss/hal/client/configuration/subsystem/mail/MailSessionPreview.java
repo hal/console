@@ -17,10 +17,15 @@ package org.jboss.hal.client.configuration.subsystem.mail;
 
 import com.google.common.base.Joiner;
 import org.jboss.hal.core.finder.PreviewAttributes;
+import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.IMAP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JNDI_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.POP3;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SMTP;
 
 /**
  * @author Claudio Miranda
@@ -33,21 +38,21 @@ class MailSessionPreview extends PreviewContent<MailSession> {
                 : resources.messages().configuredMailServer(Joiner.on(", ").join(mailSession.getServers())).asString());
 
         PreviewAttributes<MailSession> attributes = new PreviewAttributes<>(mailSession);
-        attributes.append(ModelDescriptionConstants.JNDI_NAME);
-        if (mailSession.hasServer(ModelDescriptionConstants.SMTP)) {
-            attributes.append(model -> new String[]{
-                    ModelDescriptionConstants.SMTP.toUpperCase() + " " + Names.SOCKET_BINDING,
-                    model.getServerSocketBinding(ModelDescriptionConstants.SMTP)});
+        attributes.append(JNDI_NAME);
+        if (mailSession.hasServer(SMTP)) {
+            attributes.append(model -> new PreviewAttribute(
+                    SMTP.toUpperCase() + " " + Names.SOCKET_BINDING,
+                    model.getServerSocketBinding(SMTP)));
         }
-        if (mailSession.hasServer(ModelDescriptionConstants.IMAP)) {
-            attributes.append(model -> new String[]{
-                    ModelDescriptionConstants.IMAP.toUpperCase() + " " + Names.SOCKET_BINDING,
-                    model.getServerSocketBinding(ModelDescriptionConstants.IMAP)});
+        if (mailSession.hasServer(IMAP)) {
+            attributes.append(model -> new PreviewAttribute(
+                    IMAP.toUpperCase() + " " + Names.SOCKET_BINDING,
+                    model.getServerSocketBinding(IMAP)));
         }
-        if (mailSession.hasServer(ModelDescriptionConstants.POP3)) {
-            attributes.append(model -> new String[]{
-                    ModelDescriptionConstants.POP3.toUpperCase() + " " + Names.SOCKET_BINDING,
-                    model.getServerSocketBinding(ModelDescriptionConstants.POP3)});
+        if (mailSession.hasServer(POP3)) {
+            attributes.append(model -> new PreviewAttribute(
+                    POP3.toUpperCase() + " " + Names.SOCKET_BINDING,
+                    model.getServerSocketBinding(POP3)));
         }
         attributes.end();
         previewBuilder().addAll(attributes);

@@ -225,6 +225,6 @@ public class ModelNodeFormTest {
     }
 
     private Metadata metadata(ResourceDescription description) {
-        return new Metadata(RWX, description, new Capabilities(null, StatementContext.NOOP));
+        return new Metadata(RWX, description, new Capabilities(null, null, StatementContext.NOOP));
     }
 }

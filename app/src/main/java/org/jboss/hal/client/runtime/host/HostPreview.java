@@ -20,6 +20,7 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.client.runtime.RuntimePreview;
 import org.jboss.hal.core.finder.PreviewAttributes;
+import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.runtime.host.HostActions;
 import org.jboss.hal.resources.Names;
@@ -75,15 +76,13 @@ class HostPreview extends RuntimePreview<Host> {
         attributes = new PreviewAttributes<>(host,
                 asList(RELEASE_CODENAME, RELEASE_VERSION, PRODUCT_NAME, PRODUCT_VERSION,
                         HOST_STATE, RUNNING_MODE))
-                .append(model -> {
-                    return new String[]{
-                            "Management Version",
-                            Joiner.on('.').join(
-                                    model.get(MANAGEMENT_MAJOR_VERSION),
-                                    model.get(MANAGEMENT_MINOR_VERSION),
-                                    model.get(MANAGEMENT_MICRO_VERSION))
-                    };
-                })
+                .append(model -> new PreviewAttribute(
+                        "Management Version",
+                        Joiner.on('.').join(
+                                model.get(MANAGEMENT_MAJOR_VERSION),
+                                model.get(MANAGEMENT_MINOR_VERSION),
+                                model.get(MANAGEMENT_MICRO_VERSION))
+                ))
                 .end();
         previewBuilder().addAll(attributes);
 

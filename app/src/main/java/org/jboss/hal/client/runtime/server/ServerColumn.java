@@ -144,7 +144,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 .pinnable()
                 .showCount()
                 .withFilter()
-                .onPreview(item -> new ServerPreview(serverActions, item, resources))
+                .onPreview(item -> new ServerPreview(serverActions, item, places, resources))
         );
         this.finder = finder;
 

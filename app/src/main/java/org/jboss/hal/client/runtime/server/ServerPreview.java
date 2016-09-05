@@ -15,15 +15,19 @@
  */
 package org.jboss.hal.client.runtime.server;
 
-import java.util.List;
-
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.client.runtime.RuntimePreview;
+import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.PreviewAttributes;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
@@ -51,7 +55,7 @@ class ServerPreview extends RuntimePreview<Server> {
     private final Element resumeLink;
     private final PreviewAttributes<Server> attributes;
 
-    ServerPreview(final ServerActions serverActions, final Server server,
+    ServerPreview(final ServerActions serverActions, final Server server, final Places places,
             final Resources resources) {
         super(server.getName(), null, resources);
         this.serverActions = serverActions;
@@ -94,14 +98,28 @@ class ServerPreview extends RuntimePreview<Server> {
         restartLink = previewBuilder().referenceFor(RESTART_LINK);
         resumeLink = previewBuilder().referenceFor(RESUME_LINK);
 
-        List<String> attributes;
         if (server.isStandalone()) {
-            attributes = asList(STATUS, RUNNING_MODE, SERVER_STATE, SUSPEND_STATE);
+            this.attributes = new PreviewAttributes<>(server, asList(STATUS, RUNNING_MODE, SERVER_STATE, SUSPEND_STATE))
+                    .end();
         } else {
-            attributes = asList(HOST, GROUP, PROFILE_NAME, AUTO_START, SOCKET_BINDING_PORT_OFFSET, STATUS, RUNNING_MODE,
-                    SERVER_STATE, SUSPEND_STATE);
+            PlaceRequest profilePlaceRequest = places
+                    .finderPlace(NameTokens.CONFIGURATION, new FinderPath()
+                            .append(Ids.CONFIGURATION, Ids.asId(Names.PROFILES))
+                            .append(Ids.PROFILE, server.get(PROFILE_NAME).asString()))
+                    .build();
+            String profileHref = places.historyToken(profilePlaceRequest);
+            this.attributes = new PreviewAttributes<>(server)
+                    .append(HOST)
+                    .append(GROUP)
+                    .append(PROFILE_NAME, profileHref)
+                    .append(AUTO_START)
+                    .append(SOCKET_BINDING_PORT_OFFSET)
+                    .append(STATUS)
+                    .append(RUNNING_MODE)
+                    .append(SERVER_STATE)
+                    .append(SUSPEND_STATE)
+                    .end();
         }
-        this.attributes = new PreviewAttributes<>(server, attributes).end();
         previewBuilder().addAll(this.attributes);
 
         update(server);

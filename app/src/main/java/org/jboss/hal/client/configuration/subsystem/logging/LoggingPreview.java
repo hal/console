@@ -20,6 +20,7 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.core.finder.PreviewAttributes;
+import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -61,7 +62,7 @@ class LoggingPreview<T> extends PreviewContent<T> {
                                 .map(ModelNode::asString)
                                 .collect(joining(", "));
                     }
-                    return new String[]{labelBuilder.label(HANDLERS), handlers};
+                    return new PreviewAttribute(labelBuilder.label(HANDLERS), handlers);
                 })
                 .end();
         previewBuilder().addAll(attributes);
