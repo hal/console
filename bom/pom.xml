@@ -47,6 +47,18 @@
             -->
             <dependency>
                 <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-app</artifactId>
+                <version>${project.version}</version>
+                <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-app</artifactId>
+                <version>${project.version}</version>
+                <classifier>mbui</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-ballroom</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -95,6 +107,12 @@
                 <groupId>org.jboss.hal</groupId>
                 <artifactId>hal-resources</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.hal</groupId>
+                <artifactId>hal-resources</artifactId>
+                <version>${project.version}</version>
+                <classifier>testsuite</classifier>
             </dependency>
             <dependency>
                 <groupId>org.jboss.hal</groupId>

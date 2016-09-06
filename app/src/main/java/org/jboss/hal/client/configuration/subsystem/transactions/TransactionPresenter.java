@@ -59,7 +59,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 public class TransactionPresenter extends MbuiPresenter<TransactionPresenter.MyView, TransactionPresenter.MyProxy> {
 
-    // datasource address is required as there is a typeahead declared in TransactionView.xml
+    // datasource address is required as there is a typeahead declared in TransactionView.mbui.xml
     // to lookup datasource subsystem
     // @formatter:off
     @ProxyCodeSplit
@@ -120,7 +120,7 @@ public class TransactionPresenter extends MbuiPresenter<TransactionPresenter.MyV
 
     // The process form, contains attributes that must have some special treatment before save operation
     // the process-uuid and process-id-socket-binding are mutually exclusive
-    // this is called from process-form in TransactionView.xml
+    // this is called from process-form in TransactionView.mbui.xml
     void saveProcessForm(Form<ModelNode> form, Map<String, Object> changeSet) {
         if (!changeSet.isEmpty()) {
             Boolean uuid;

@@ -167,10 +167,8 @@ public class MbuiViewProcessor extends AbstractProcessor {
         Document document = parseXml(type, mbuiView);
         validateDocument(type, document);
 
-        // first process the metadata elements
+        // first process the metadata and tab elements
         processMetadata(type, document, context);
-
-        // process tabs
         processTabs(document, context);
 
         // then find and verify all @MbuiElement members
@@ -188,33 +186,6 @@ public class MbuiViewProcessor extends AbstractProcessor {
         code(TEMPLATE, context.getPackage(), context.getSubclass(),
                 () -> ImmutableMap.of("context", context));
         info("Generated MBUI view implementation [%s] for [%s]", context.getSubclass(), context.getBase());
-    }
-
-    /**
-     * Lookup all //metadata/tab elements and create TabsInfo objects, add them to the context.
-     * Later in the process, the MbuiView.ftl template is used to add support for tab objects.
-     */
-    private void processTabs(final Document document, final MbuiViewContext context) {
-        XPathExpression<org.jdom2.Element> expressionTabs = xPathFactory.compile("//metadata", Filters.element());
-        for (org.jdom2.Element metadataElement : expressionTabs.evaluate(document)) {
-            TabsInfo tab = new TabsInfo();
-            boolean hasTabs = false;
-            for (org.jdom2.Element tabElement : metadataElement.getChildren("tab")) {
-                hasTabs = true;
-                TabsInfo.TabItem tabItem = null;
-                for (org.jdom2.Element child : tabElement.getChildren("form")) {
-                    if (tabItem == null) {
-                        tabItem = new TabsInfo.TabItem(tabElement.getAttributeValue("title"),
-                                tabElement.getAttributeValue("id"));
-                    }
-                    tabItem.addChildId(child.getAttributeValue("id"));
-                }
-                if (tabItem != null) { tab.addItem(tabItem); }
-            }
-            if (hasTabs) {
-                context.addTab(tab);
-            }
-        }
     }
 
     String generatedClassName(TypeElement type, String prefix, String suffix) {
@@ -248,7 +219,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
     private Document parseXml(final TypeElement type, final MbuiView mbuiView) {
         String mbuiXml = Strings.isNullOrEmpty(mbuiView.value())
-                ? type.getSimpleName().toString() + ".xml"
+                ? type.getSimpleName().toString() + ".mbui.xml"
                 : mbuiView.value();
         String fq = TypeSimplifier.packageNameOf(type).replace('.', '/') + File.separator + mbuiXml;
 
@@ -295,6 +266,33 @@ public class MbuiViewProcessor extends AbstractProcessor {
                 error(type, "Missing address attribute in metadata element \"%s\"", xmlAsString(element));
             } else {
                 context.addMetadata(template);
+            }
+        }
+    }
+
+    /**
+     * Lookup all //metadata/tab elements and create TabsInfo objects, add them to the context.
+     * Later in the process, the MbuiView.ftl template is used to add support for tab objects.
+     */
+    private void processTabs(final Document document, final MbuiViewContext context) {
+        XPathExpression<org.jdom2.Element> expressionTabs = xPathFactory.compile("//metadata", Filters.element());
+        for (org.jdom2.Element metadataElement : expressionTabs.evaluate(document)) {
+            TabsInfo tab = new TabsInfo();
+            boolean hasTabs = false;
+            for (org.jdom2.Element tabElement : metadataElement.getChildren("tab")) {
+                hasTabs = true;
+                TabsInfo.TabItem tabItem = null;
+                for (org.jdom2.Element child : tabElement.getChildren("form")) {
+                    if (tabItem == null) {
+                        tabItem = new TabsInfo.TabItem(tabElement.getAttributeValue("title"),
+                                tabElement.getAttributeValue("id"));
+                    }
+                    tabItem.addChildId(child.getAttributeValue("id"));
+                }
+                if (tabItem != null) { tab.addItem(tabItem); }
+            }
+            if (hasTabs) {
+                context.addTab(tab);
             }
         }
     }
