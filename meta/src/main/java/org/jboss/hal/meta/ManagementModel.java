@@ -29,8 +29,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_MINOR_VERSI
  */
 public class ManagementModel {
 
-    private static final Version V_3_0_0 = Version.forIntegers(3, 0, 0);
-    private static final Version V_5_0_0 = Version.forIntegers(5, 0, 0);
+    private static final Version V_2_0_0 = Version.forIntegers(2, 0, 0); // WildFly 8
+    private static final Version V_3_0_0 = Version.forIntegers(3, 0, 0); // WildFly 9
+    private static final Version V_5_0_0 = Version.forIntegers(5, 0, 0); // WildFly 11
 
     public static Version parseVersion(ModelNode modelNode) {
         if (modelNode.hasDefined(MANAGEMENT_MAJOR_VERSION) &&
@@ -44,6 +45,9 @@ public class ManagementModel {
         return Version.UNDEFINED;
     }
 
+
+    // ------------------------------------------------------ supports methods (A-Z)
+
     /**
      * Checks support for the capabilities registry.
      *
@@ -51,7 +55,17 @@ public class ManagementModel {
      * equal {@code 5.0.0}
      */
     public static boolean supportsCapabilitiesRegistry(Version version) {
-        return version != Version.UNDEFINED && version.greaterThanOrEqualTo(V_5_0_0);
+        return ensureVersion(version, V_5_0_0);
+    }
+
+    /**
+     * Check support for {@code :list-log-files} operation.
+     *
+     * @return {@code true} if the provided version isn't {@linkplain Version#UNDEFINED undefined} and greater than or
+     * equal {@code 3.0.0}
+     */
+    public static boolean supportsListLogFiles(Version version) {
+        return ensureVersion(version, V_2_0_0);
     }
 
     /**
@@ -61,6 +75,13 @@ public class ManagementModel {
      * equal {@code 3.0.0}
      */
     public static boolean supportsSuspend(Version version) {
-        return version != Version.UNDEFINED && version.greaterThanOrEqualTo(V_3_0_0);
+        return ensureVersion(version, V_3_0_0);
+    }
+
+
+    // ------------------------------------------------------ helper methods
+
+    private static boolean ensureVersion(Version existing, Version expected) {
+        return existing != Version.UNDEFINED && existing.greaterThanOrEqualTo(expected);
     }
 }

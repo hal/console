@@ -15,9 +15,12 @@
  */
 package org.jboss.hal.client.runtime.server;
 
+import java.util.List;
 import javax.inject.Inject;
 
+import com.google.common.collect.Lists;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.PreviewContent;
@@ -25,6 +28,10 @@ import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -32,7 +39,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
-import static java.util.Arrays.asList;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
 /**
  * @author Harald Pehl
@@ -48,28 +56,42 @@ public class ServerMonitorColumn extends StaticItemColumn {
             final ItemActionFactory itemActionFactory,
             final Places places,
             final Resources resources) {
-        super(finder, Ids.SERVER_MONITOR, resources.constants().monitor(), asList(
+        super(finder, Ids.SERVER_MONITOR, resources.constants().monitor(), (context, callback) -> {
+            List<StaticItem> items = Lists.newArrayList(
 
-                new StaticItem.Builder(resources.constants().status())
-                        .action(itemActionFactory.view(places.selectedServer(NameTokens.SERVER_STATUS).build()))
-                        .onPreview(new ServerStatusPreview(environment, dispatcher, statementContext, resources))
-                        .build(),
+                    new StaticItem.Builder(resources.constants().status())
+                            .action(itemActionFactory.view(places.selectedServer(NameTokens.SERVER_STATUS).build()))
+                            .onPreview(
+                                    new ServerStatusPreview(environment, dispatcher, statementContext, resources))
+                            .build(),
 
-                new StaticItem.Builder(Names.DATASOURCES)
-                        .nextColumn(Ids.DATA_SOURCE_RUNTIME)
-                        .onPreview(new PreviewContent(Names.DATASOURCES, resources.previews().runtimeDatasources()))
-                        .build(),
+                    new StaticItem.Builder(Names.DATASOURCES)
+                            .nextColumn(Ids.DATA_SOURCE_RUNTIME)
+                            .onPreview(new PreviewContent(Names.DATASOURCES,
+                                    resources.previews().runtimeDatasources()))
+                            .build(),
 
-                new StaticItem.Builder(Names.JPA)
-                        .nextColumn(Ids.JPA_RUNTIME)
-                        .onPreview(new PreviewContent(Names.JPA, resources.previews().runtimeJpa()))
-                        .build(),
+                    new StaticItem.Builder(Names.JPA)
+                            .nextColumn(Ids.JPA_RUNTIME)
+                            .onPreview(new PreviewContent(Names.JPA, resources.previews().runtimeJpa()))
+                            .build());
 
-                new StaticItem.Builder(resources.constants().logFiles())
-                        .nextColumn(Ids.LOG_FILE)
-                        .onPreview(new PreviewContent(resources.constants().logFiles(),
-                                resources.previews().runtimeLogFiles()))
-                        .build()
-        ));
+            ResourceAddress address = AddressTemplate.of("/{selected.host}/{selected.server}")
+                    .resolve(statementContext);
+            Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
+                    .param(ATTRIBUTES_ONLY, true)
+                    .build();
+            dispatcher.execute(operation, result -> {
+                Version serverVersion = ManagementModel.parseVersion(result);
+                if (ManagementModel.supportsListLogFiles(serverVersion)) {
+                    items.add(new StaticItem.Builder(resources.constants().logFiles())
+                            .nextColumn(Ids.LOG_FILE)
+                            .onPreview(new PreviewContent(resources.constants().logFiles(),
+                                    resources.previews().runtimeLogFiles()))
+                            .build());
+                }
+                callback.onSuccess(items);
+            });
+        });
     }
 }
