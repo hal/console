@@ -62,7 +62,7 @@ public class ManagementModel {
      * Check support for {@code :list-log-files} operation.
      *
      * @return {@code true} if the provided version isn't {@linkplain Version#UNDEFINED undefined} and greater than or
-     * equal {@code 3.0.0}
+     * equal {@code 2.0.0}
      */
     public static boolean supportsListLogFiles(Version version) {
         return ensureVersion(version, V_2_0_0);
