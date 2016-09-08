@@ -34,11 +34,8 @@ public class Api<T> {
         void opened();
     }
 
-    @JsMethod(name = "get_node")
-    public native Node<T> getNode(String id);
-
-    @JsMethod
-    public native JsArrayOf<Node<T>> get_selected(boolean full);
+    @JsMethod(name = "close_node")
+    public native void closeNode(String id);
 
     @JsMethod(name = "open_node")
     public native void openNode(String id);
@@ -46,11 +43,14 @@ public class Api<T> {
     @JsMethod(name = "open_node")
     public native void openNode(String id, OpenCallback callback);
 
-    @JsMethod(name = "close_node")
-    public native void closeNode(String id);
-
     @JsMethod(name = "refresh_node")
     public native void refreshNode(String id);
+
+    @JsMethod(name = "get_node")
+    public native Node<T> getNode(String id);
+
+    @JsMethod
+    public native JsArrayOf<Node<T>> get_selected(boolean full);
 
     @JsOverlay
     public final Node<T> getSelected() {
@@ -63,6 +63,12 @@ public class Api<T> {
 
     @JsMethod(name = "deselect_all")
     public native void deselectAll(boolean suppressEvent);
+
+    @JsMethod
+    public native void search(String query);
+
+    @JsMethod(name = "clear_search")
+    public native void clearSearch();
 
     @JsMethod
     public native void destroy(boolean keepHtml);

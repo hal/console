@@ -94,6 +94,7 @@ public class Tree<T> implements IsElement, Attachable {
         options.core.themes.striped = false;
         options.core.themes.url = false;
         options.plugins = JsArrayOf.create();
+        options.plugins.push("search"); //NON-NLS
         options.plugins.push("wholerow"); //NON-NLS
         return options;
     }
