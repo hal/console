@@ -76,6 +76,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.Ids.MODEL_BROWSER_ROOT;
 import static org.jboss.hal.resources.Names.NYI;
 
 /**
@@ -143,7 +144,6 @@ public class ModelBrowser implements HasElements {
     private static final String REFRESH_ELEMENT = "refreshElement";
     private static final String COLLAPSE_ELEMENT = "collapseElement";
 
-    static final String ROOT_ID = Ids.build(Ids.MODEL_BROWSER, "root");
     static final Element PLACE_HOLDER_ELEMENT = Browser.getDocument().createDivElement();
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelBrowser.class);
@@ -204,7 +204,7 @@ public class ModelBrowser implements HasElements {
         refresh = buttonsBuilder.referenceFor(REFRESH_ELEMENT);
         collapse = buttonsBuilder.referenceFor(COLLAPSE_ELEMENT);
         buttonGroup = buttonsBuilder.build();
-        treeContainer = new Elements.Builder().div().css(modelBrowserTree).end().build();
+        treeContainer = new Elements.Builder().div().css(CSS.treeContainer).end().build();
         content = new Elements.Builder().div().css(modelBrowserContent).end().build();
 
         resourcePanel = new ResourcePanel(this, dispatcher, resources);
@@ -241,8 +241,8 @@ public class ModelBrowser implements HasElements {
 
     private void initTree(ResourceAddress address, String text) {
         Context context = new Context(address, Collections.emptySet());
-        Node<Context> rootNode = new Node.Builder<>(ROOT_ID, text, context)
-                .folder()
+        Node<Context> rootNode = new Node.Builder<>(MODEL_BROWSER_ROOT, text, context)
+                .asyncFolder()
                 .build();
         tree = new Tree<>(Ids.MODEL_BROWSER, rootNode, new ReadChildren(dispatcher));
         Elements.removeChildrenFrom(treeContainer);
@@ -255,8 +255,8 @@ public class ModelBrowser implements HasElements {
 
     private void emptyTree() {
         Context context = new Context(ResourceAddress.ROOT, Collections.emptySet());
-        Node<Context> rootNode = new Node.Builder<>(ROOT_ID, Names.NOT_AVAILABLE, context)
-                .folder()
+        Node<Context> rootNode = new Node.Builder<>(MODEL_BROWSER_ROOT, Names.NOT_AVAILABLE, context)
+                .asyncFolder()
                 .build();
 
         tree = new Tree<>(Ids.MODEL_BROWSER, rootNode, (node, callback) -> callback.result(JsArrayOf.create()));
@@ -276,7 +276,7 @@ public class ModelBrowser implements HasElements {
             FilterInfo filterInfo = new FilterInfo(parent, node);
             filterStack.add(filterInfo);
             filter(filterInfo);
-            tree.api().openNode(ROOT_ID, () -> select(ROOT_ID, false));
+            tree.api().openNode(MODEL_BROWSER_ROOT, () -> select(MODEL_BROWSER_ROOT, false));
         }
     }
 
@@ -356,7 +356,7 @@ public class ModelBrowser implements HasElements {
 
         filter.setDisabled(context.selected.isEmpty() ||
                 !context.node.data.isFullyQualified() ||
-                context.node.id.equals(ROOT_ID));
+                context.node.id.equals(MODEL_BROWSER_ROOT));
         refresh.setDisabled(context.selected.isEmpty());
         collapse.setDisabled(context.selected.isEmpty());
 
@@ -549,8 +549,8 @@ public class ModelBrowser implements HasElements {
         dispatcher.execute(ping,
                 result -> {
                     initTree(root, resource);
-                    tree.api().openNode(ROOT_ID, () -> resourcePanel.tabs.showTab(0));
-                    select(ROOT_ID, false);
+                    tree.api().openNode(MODEL_BROWSER_ROOT, () -> resourcePanel.tabs.showTab(0));
+                    select(MODEL_BROWSER_ROOT, false);
 
                     Browser.getWindow().setOnresize(event -> adjustHeight());
                     adjustHeight();

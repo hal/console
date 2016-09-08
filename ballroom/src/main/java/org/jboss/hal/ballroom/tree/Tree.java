@@ -51,25 +51,18 @@ public class Tree<T> implements IsElement, Attachable {
     private static final String CHANGED_EVENT = "changed.jstree";
 
     private final String id;
-    private final Options options;
     private final Element div;
+    private final Options options;
     private Bridge<T> bridge;
     private Api<T> api;
 
 
     public Tree(final String id, final Node<T> root, final DataFunction<T> data) {
         this.id = id;
-        this.options = initOptions(root, data);
         this.div = Browser.getDocument().createDivElement();
         this.div.setId(id);
-    }
-
-    private Options<T> initOptions(final Node<T> root, final DataFunction<T> data) {
-        Options<T> options = new Options<>();
-        options.core = new Options.Core<>();
-        options.core.animation = false;
-        options.core.multiple = false;
-        options.core.data = (node, callback) -> {
+        this.options = initOptions();
+        this.options.core.data = (DataFunction<T>) (node, callback) -> {
             if (ROOT_NODE.equals(node.id)) {
                 JsArrayOf<Node<T>> rootNodes = JsArrayOf.create();
                 rootNodes.push(root);
@@ -78,6 +71,21 @@ public class Tree<T> implements IsElement, Attachable {
                 data.load(node, callback);
             }
         };
+    }
+
+    public Tree(final String id, final JsArrayOf<Node<T>> nodes) {
+        this.id = id;
+        this.div = Browser.getDocument().createDivElement();
+        this.div.setId(id);
+        this.options = initOptions();
+        this.options.core.data = nodes;
+    }
+
+    private Options<T> initOptions() {
+        Options<T> options = new Options<>();
+        options.core = new Options.Core<>();
+        options.core.animation = false;
+        options.core.multiple = false;
         options.core.themes = new Options.Themes();
         options.core.themes.name = "hal"; //NON-NLS
         options.core.themes.dots= false;

@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom.tree;
+package org.jboss.hal.client.runtime.subsystem.jndi;
 
-import elemental.js.util.JsArrayOf;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -25,29 +24,10 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
  * @author Harald Pehl
  */
 @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-public class Options<T> {
+public class JndiContext {
 
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    public static class Themes {
-        public String name;
-        public boolean url;
-        public boolean dots;
-        public boolean icons;
-        public boolean striped;
-        public boolean responsive;
-    }
-
-
-    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    public static class Core<T> {
-
-        public boolean multiple;
-        public boolean animation;
-        public Themes themes;
-        public Object data; // can be a DataFunction<T> or JsArrayOf<Node<T>>
-    }
-
-
-    public JsArrayOf<String> plugins;
-    public Core<T> core;
+    public String uri;
+    public String className;
+    public String value;
+    public boolean hasDetails;
 }

@@ -23,14 +23,20 @@ package org.jboss.hal.resources;
 public interface UIConstants {
 
     /**
+     * The time in milliseconds after one modal dialog is closed and the next one is shown.
+     */
+    int DIALOG_TIMEOUT = 111;
+
+    /**
      * The timeout for long running operations / actions before a loading indicator is shown
      */
     int PROGRESS_TIMEOUT = 333;
 
     /**
-     * The time in milliseconds after one modal dialog is closed and the next one is shown.
+     * The timeout until a non-sticky message is hidden
      */
-    int DIALOG_TIMEOUT = 111;
+    int MESSAGE_TIMEOUT = 6000; // ms
+
 
     String ALERT = "alert";
     String BUTTON = "button";

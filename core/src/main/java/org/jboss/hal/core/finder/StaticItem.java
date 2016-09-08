@@ -18,9 +18,6 @@ package org.jboss.hal.core.finder;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-
 /**
  * A customizable finder item useful when you need full control over each and every item.
  *
@@ -57,14 +54,6 @@ public class StaticItem {
             return this;
         }
 
-        public Builder tokenAction(String title, PlaceManager placeManager, String token) {
-            return placeRequestAction(title, placeManager, new PlaceRequest.Builder().nameToken(token).build());
-        }
-
-        public Builder placeRequestAction(String title, PlaceManager placeManager, PlaceRequest placeRequest) {
-            return action(title, item -> placeManager.revealPlace(placeRequest));
-        }
-
         public Builder nextColumn(String nextColumn) {
             this.nextColumn = nextColumn;
             return this;
@@ -79,13 +68,15 @@ public class StaticItem {
             return new StaticItem(this);
         }
     }
+
+
     private final String title;
     private final List<ItemAction<StaticItem>> actions;
     private final String nextColumn;
     private final PreviewContent previewContent;
     private String id;
 
-    StaticItem(Builder builder) {
+    private StaticItem(Builder builder) {
         this.id = builder.id;
         this.title = builder.title;
         this.actions = builder.actions;

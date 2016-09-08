@@ -64,7 +64,6 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
 
 
     static final int MAX_BREADCRUMB_VALUE_LENGTH = 20;
-    static final int MESSAGE_TIMEOUT = 4321; // ms
 
     private final PlaceManager placeManager;
     private final Environment environment;

@@ -42,6 +42,7 @@ public interface NameTokens {
     String IO = ModelDescriptionConstants.IO;
     String JCA = ModelDescriptionConstants.JCA;
     String JMX = ModelDescriptionConstants.JMX;
+    String JNDI = "jndi";
     String JPA_CONFIGURATION = ModelDescriptionConstants.JPA + CONFIGURATION_SUFFIX;
     String JPA_RUNTIME = ModelDescriptionConstants.JPA + RUNTIME_SUFFIX;
     String LOG_FILE = "log-file";

@@ -1,6 +1,6 @@
 /**
  * jsTree
- * Override default theme at "../../..//bower_components/jstree/src/themes/default/style.less"
+ * Override default theme at "../../../bower_components/jstree/src/themes/default/style.less"
  */
 @theme-name:				hal;
 @hovered-bg-color:			@hover-color;
@@ -23,3 +23,9 @@
 @import "../../../bower_components/jstree/src/themes/mixins.less";
 @import "../../../bower_components/jstree/src/themes/base.less";
 @import "../../../bower_components/jstree/src/themes/main.less";
+
+.tree-container {
+  margin-top: @margin-small;
+  margin-bottom: @margin-small;
+  overflow: scroll;
+}

@@ -63,6 +63,7 @@ public interface ModelDescriptionConstants {
     String CAPABILITY_REGISTRY = "capability-registry";
     String CHILD_TYPE = "child-type";
     String CHILDREN = "children";
+    String CLASS_NAME = "class-name";
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
     String COMPOSITE = "composite";
     String CONNECTION_URL = "connection-url";

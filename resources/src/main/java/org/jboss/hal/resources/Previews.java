@@ -157,6 +157,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/runtime/hosts.html")
     ExternalTextResource runtimeHosts();
 
+    @Source("previews/runtime/jndi.html")
+    ExternalTextResource runtimeJndi();
+
     @Source("previews/runtime/jpa.html")
     ExternalTextResource runtimeJpa();
 
