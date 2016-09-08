@@ -78,7 +78,7 @@ public class ServerMonitorColumn extends StaticItemColumn {
 
                     new StaticItem.Builder(Names.JNDI)
                             .action(itemActionFactory.view(NameTokens.JNDI))
-                            .onPreview(new PreviewContent(Names.JPA, resources.previews().runtimeJndi()))
+                            .onPreview(new PreviewContent(Names.JNDI, resources.previews().runtimeJndi()))
                             .build());
 
             ResourceAddress address = AddressTemplate.of("/{selected.host}/{selected.server}")

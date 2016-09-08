@@ -106,8 +106,6 @@ public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView
         header = builder.referenceFor(HEADER);
         treeContainer = builder.referenceFor(TREE_CONTAINER);
         hint = builder.referenceFor(HINT);
-        Elements.setVisible(hint, true);
-        Elements.setVisible(details.asElement(), false);
         initElements(builder.elements());
     }
 
@@ -158,7 +156,7 @@ public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView
 
         tree.attach();
         tree.onSelectionChange((event, selectionContext) -> {
-            if (!"ready".equals(selectionContext.action)) { //NON-NLS
+            if (!"ready".equals(selectionContext.action)) {
                 boolean hasSelection = !selectionContext.selected.isEmpty();
                 boolean validSelection = hasSelection && selectionContext.node.data.hasDetails;
                 Elements.setVisible(hint, !validSelection);
@@ -180,5 +178,8 @@ public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView
             }
         });
         treeApi = tree.api();
+
+        Elements.setVisible(hint, true);
+        Elements.setVisible(details.asElement(), false);
     }
 }
