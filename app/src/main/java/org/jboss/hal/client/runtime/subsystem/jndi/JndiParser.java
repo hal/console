@@ -17,6 +17,7 @@ package org.jboss.hal.client.runtime.subsystem.jndi;
 
 import java.util.List;
 
+import com.google.common.base.Strings;
 import elemental.js.util.JsArrayOf;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.dmr.ModelNode;
@@ -25,6 +26,7 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.Ids;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILDREN;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
@@ -45,11 +47,12 @@ class JndiParser {
                 .forEach(child -> {
 
                     ModelNode modelNode = child.getValue();
+                    JndiContext jndiContext = jndiContext(parent, child.getName(), modelNode);
                     if (modelNode.hasDefined(VALUE)) {
-                        pushEntry(nodes, parent, child.getName(), new JndiContext());
+                        pushEntry(nodes, parent, child.getName(), jndiContext);
 
                     } else {
-                        Node<JndiContext> node = pushFolder(nodes, parent, child.getName(), new JndiContext());
+                        Node<JndiContext> node = pushFolder(nodes, parent, child.getName(), jndiContext);
                         if (modelNode.hasDefined(CHILDREN)) {
                             readChildren(nodes, node, modelNode.get(CHILDREN).asPropertyList());
 
@@ -60,7 +63,29 @@ class JndiParser {
                 });
     }
 
-    private Node<JndiContext>  pushFolder(JsArrayOf<Node<JndiContext>> nodes, Node<JndiContext> parent, String name,
+    private JndiContext jndiContext(final Node<JndiContext> parent, final String name, final ModelNode modelNode) {
+        JndiContext jndiContext = new JndiContext();
+        if (parent.id.equals(Ids.JNDI_TREE_APPLICATIONS_ROOT)) {
+            jndiContext.uri = "";
+        } else if (parent.id.equals(Ids.JNDI_TREE_JAVA_CONTEXTS_ROOT)) {
+            jndiContext.uri = name;
+        } else {
+            jndiContext.uri = parent.data.uri.length() == 0 ? name : parent.data.uri + "/" + name;
+        }
+
+        if (modelNode.hasDefined(CLASS_NAME)) {
+            jndiContext.className = modelNode.get(CLASS_NAME).asString();
+        }
+        if (modelNode.hasDefined(VALUE)) {
+            jndiContext.value = modelNode.get(VALUE).asString();
+        }
+        jndiContext.hasDetails = !Strings.isNullOrEmpty(jndiContext.uri)
+                || jndiContext.className != null
+                || jndiContext.value != null;
+        return jndiContext;
+    }
+
+    private Node<JndiContext> pushFolder(JsArrayOf<Node<JndiContext>> nodes, Node<JndiContext> parent, String name,
             JndiContext jndiContext) {
         Node<JndiContext> node = new Node.Builder<>(Ids.build(parent.id, Ids.uniqueId()), name, jndiContext)
                 .parent(parent.id)
@@ -70,7 +95,7 @@ class JndiParser {
         return node;
     }
 
-    private Node<JndiContext>  pushEntry(JsArrayOf<Node<JndiContext>> nodes, Node<JndiContext> parent, String name,
+    private Node<JndiContext> pushEntry(JsArrayOf<Node<JndiContext>> nodes, Node<JndiContext> parent, String name,
             JndiContext jndiContext) {
         Node<JndiContext> node = new Node.Builder<>(Ids.build(parent.id, Ids.uniqueId()), name, jndiContext)
                 .parent(parent.id)

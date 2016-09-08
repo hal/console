@@ -57,6 +57,14 @@ public class Node<T> {
             return this;
         }
 
+        public Builder<T> open() {
+            if (node.state == null) {
+                node.state = new State();
+            }
+            node.state.opened = true;
+            return this;
+        }
+
         public Builder<T> asyncFolder() {
             node.children = true;
             return folder();

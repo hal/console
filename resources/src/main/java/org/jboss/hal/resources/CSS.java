@@ -177,7 +177,6 @@ public interface CSS {
     String modalTitle = "modal-title";
     String modelBrowserButtons = "model-browser-buttons";
     String modelBrowserContent = "model-browser-content";
-    String modelBrowserTree = "model-browser-tree";
 
     String name = "name";
     String nav = "nav";
@@ -270,6 +269,7 @@ public interface CSS {
     String toastPf = "toast-pf";
     String toastPfAction = "toast-pf-action";
     String topology = "topology";
+    String treeContainer = "tree-container";
     String ttNested = "tt-nested";
 
     String underline = "underline";

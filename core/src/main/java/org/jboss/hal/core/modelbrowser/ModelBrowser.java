@@ -204,7 +204,7 @@ public class ModelBrowser implements HasElements {
         refresh = buttonsBuilder.referenceFor(REFRESH_ELEMENT);
         collapse = buttonsBuilder.referenceFor(COLLAPSE_ELEMENT);
         buttonGroup = buttonsBuilder.build();
-        treeContainer = new Elements.Builder().div().css(modelBrowserTree).end().build();
+        treeContainer = new Elements.Builder().div().css(CSS.treeContainer).end().build();
         content = new Elements.Builder().div().css(modelBrowserContent).end().build();
 
         resourcePanel = new ResourcePanel(this, dispatcher, resources);
