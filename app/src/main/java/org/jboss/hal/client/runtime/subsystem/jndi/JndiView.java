@@ -94,6 +94,13 @@ public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView
         initElements(builder.elements());
     }
 
+    @Override
+    protected void onAttach() {
+        super.onAttach();
+        Browser.getWindow().setOnresize(event -> adjustHeight());
+        adjustHeight();
+    }
+
     private void adjustHeight() {
         int height = Skeleton.applicationHeight();
         int headerHeight = header.getOffsetHeight();
@@ -158,8 +165,5 @@ public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView
                 }
             }
         });
-
-        Browser.getWindow().setOnresize(event -> adjustHeight());
-        adjustHeight();
     }
 }
