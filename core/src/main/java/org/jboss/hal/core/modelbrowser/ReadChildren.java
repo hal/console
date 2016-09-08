@@ -97,7 +97,7 @@ final class ReadChildren implements DataFunction<Context> {
                     Context context = new Context(address, singletons);
                     // ids need to be unique!
                     Node.Builder<Context> builder = new Node.Builder<>(uniqueId(node, name), name, context)
-                            .folder();
+                            .asyncFolder();
                     if (!singletons.isEmpty()) {
                         builder.icon(fontAwesome("list-ul"));
                     }
@@ -123,7 +123,7 @@ final class ReadChildren implements DataFunction<Context> {
                     ResourceAddress address = new ResourceAddress(parentAddress).add(node.text, name);
                     Context context = new Context(address, Collections.emptySet());
                     Node<Context> child = new Node.Builder<>(uniqueId(node, name), name, context)
-                            .folder()
+                            .asyncFolder()
                             .icon(fontAwesome("file-text-o"))
                             .build();
                     children.push(child);

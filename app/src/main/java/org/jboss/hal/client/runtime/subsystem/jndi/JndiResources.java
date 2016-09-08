@@ -13,38 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.modelbrowser;
+package org.jboss.hal.client.runtime.subsystem.jndi;
 
-import java.util.Set;
-
-import org.jboss.hal.dmr.model.ResourceAddress;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.TextResource;
 
 /**
  * @author Harald Pehl
  */
-class Context {
+public interface JndiResources extends ClientBundle {
 
-    private final Set<String> singletons;
-    private final ResourceAddress address;
-
-    Context(final ResourceAddress address, final Set<String> singletons) {
-        this.singletons = singletons;
-        this.address = address;
-    }
-
-    ResourceAddress getAddress() {
-        return address;
-    }
-
-    Set<String> getSingletons() {
-        return singletons;
-    }
-
-    boolean hasSingletons() {
-        return !singletons.isEmpty();
-    }
-
-    boolean isFullyQualified() {
-        return !"*".equals(address.lastValue());
-    }
+    @Source("jndi.base64")
+    TextResource jndi();
 }

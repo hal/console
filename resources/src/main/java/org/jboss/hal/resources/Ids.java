@@ -149,7 +149,11 @@ public interface Ids {
     String JDBC_DRIVER_ADD = build(JDBC_DRIVER, ADD_SUFFIX);
     String JDBC_DRIVER_ADD_FORM = build(JDBC_DRIVER, ADD_SUFFIX, FORM_SUFFIX);
     String JDBC_DRIVER_REFRESH = build(JDBC_DRIVER, REFRESH_SUFFIX);
-
+    String JNDI = "jndi";
+    String JNDI_DETAILS = build(JNDI, "details");
+    String JNDI_TREE = build(JNDI, "tree");
+    String JNDI_TREE_JAVA_CONTEXTS_ROOT = build(JNDI_TREE, "java-contexts-root");
+    String JNDI_TREE_APPLICATIONS_ROOT = build(JNDI_TREE, "applications-root");
     String JPA_RUNTIME = "jpa-runtime";
     String JPA_RUNTIME_MAIN_ATTRIBUTES_ENTRY = build(JPA_RUNTIME, "main", "attributes", ENTRY_SUFFIX);
     String JPA_RUNTIME_ENTITY_ENTRY = build(JPA_RUNTIME, "entity", ENTRY_SUFFIX);
@@ -185,6 +189,7 @@ public interface Ids {
     String MEMBERSHIP_INCLUDE = build(MEMBERSHIP, "include");
     String MEMBERSHIP_EXCLUDE = build(MEMBERSHIP, "exclude");
     String MODEL_BROWSER = "model-browser";
+    String MODEL_BROWSER_ROOT = build(MODEL_BROWSER, "root");
 
     String PREVIEW_ID = build(FINDER, "preview");
     String PROFILE = "profile";

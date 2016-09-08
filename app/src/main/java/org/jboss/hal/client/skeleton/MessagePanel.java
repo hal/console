@@ -24,8 +24,8 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Message;
 
-import static org.jboss.hal.client.skeleton.HeaderPresenter.MESSAGE_TIMEOUT;
 import static org.jboss.hal.resources.CSS.toastNotificationsListPf;
+import static org.jboss.hal.resources.UIConstants.MESSAGE_TIMEOUT;
 
 /**
  * A container around the messages / toast notifications to prevent overlapping of simultaneous messages.
