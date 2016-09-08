@@ -164,6 +164,7 @@ public interface Ids {
     String LOG_FILE = "log-file";
     String LOG_FILE_EDITOR = build(LOG_FILE, "editor");
     String LOG_FILE_REFRESH = build(LOG_FILE, REFRESH_SUFFIX);
+    String LOG_FILE_SEARCH = build(LOG_FILE, "search");
     String LOGGING = "logging";
     String LOGGING_CONFIGURATION = "logging-configuration";
     String LOGGING_PROFILE = "logging-profile";

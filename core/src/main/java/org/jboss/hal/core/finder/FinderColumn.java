@@ -280,7 +280,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                     .id(Ids.build(id, filter))
                     .css(formControl)
                     .aria("describedby", iconId)
-                    .attr("placeholder", CONSTANTS.filter())
+                    .attr(UIConstants.PLACEHOLDER, CONSTANTS.filter())
                     .on(keydown, this::onNavigation)
                     .on(keyup, this::onFilter)
                     .rememberAs(FILTER_ELEMENT)

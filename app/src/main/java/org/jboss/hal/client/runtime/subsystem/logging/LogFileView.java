@@ -21,15 +21,13 @@ import javax.annotation.PostConstruct;
 import com.google.common.base.Strings;
 import elemental.client.Browser;
 import elemental.dom.Element;
-import elemental.events.KeyboardEvent;
-import elemental.events.KeyboardEvent.KeyCode;
-import elemental.html.InputElement;
 import org.jboss.gwt.elemento.core.DataElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventHandler;
 import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.ballroom.Clipboard;
 import org.jboss.hal.ballroom.Format;
+import org.jboss.hal.ballroom.Search;
 import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
@@ -46,7 +44,6 @@ import org.jboss.hal.resources.UIConstants;
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.lang.Math.max;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.gwt.elemento.core.EventType.keyup;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.resources.CSS.logFileLoading;
 
@@ -71,13 +68,12 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
 
     private static final int MIN_HEIGHT = 70;
 
+    private Search search;
     private AceEditor editor;
     private LogFilePresenter presenter;
 
     @DataElement Element header;
     @DataElement Element logFileControls;
-    @DataElement InputElement searchInput;
-    @DataElement Element clearSearch;
     @DataElement Element status;
     @DataElement Element tailMode;
     @DataElement Element copyToClipboard;
@@ -90,10 +86,17 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
 
     // ------------------------------------------------------ init & ui
 
+    @DataElement("search")
+    Search setupSearch() {
+        search = new Search.Builder(Ids.LOG_FILE_SEARCH, query -> editor.getEditor().find(query))
+                .onPrevious(query -> editor.getEditor().findPrevious())
+                .onNext(query -> editor.getEditor().findNext())
+                .build();
+        return search;
+    }
+
     @PostConstruct
     void init() {
-        Elements.setVisible(clearSearch, false);
-
         Options editorOptions = new Options();
         editorOptions.readOnly = true;
         editorOptions.showGutter = true;
@@ -217,41 +220,11 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
         status.setTextContent(statusText);
         status.setTitle(statusText);
         editorContainer.getClassList().remove(logFileLoading);
-        searchInput.setValue("");
+        search.clear();
     }
 
 
     // ------------------------------------------------------ event handler
-
-    @EventHandler(element = "searchInput", on = keyup)
-    void onSearchInput(KeyboardEvent event) {
-        Elements.setVisible(clearSearch, !Strings.isNullOrEmpty(searchInput.getValue()));
-        if (event.getKeyCode() == KeyCode.ENTER) {
-            onSearch();
-        }
-    }
-
-    @EventHandler(element = "clearSearch", on = click)
-    void onClear() {
-        searchInput.setValue("");
-        searchInput.focus();
-        Elements.setVisible(clearSearch, false);
-    }
-
-    @EventHandler(element = "search", on = click)
-    void onSearch() {
-        editor.getEditor().find(searchInput.getValue());
-    }
-
-    @EventHandler(element = "previous", on = click)
-    void onPrevious() {
-        editor.getEditor().findPrevious();
-    }
-
-    @EventHandler(element = "next", on = click)
-    void onNext() {
-        editor.getEditor().findNext();
-    }
 
     @EventHandler(element = "refresh", on = click)
     void onRefresh() {

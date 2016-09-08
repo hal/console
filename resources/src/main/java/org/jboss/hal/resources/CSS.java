@@ -60,6 +60,7 @@ public interface CSS {
 
     String caret = "caret";
     String centerBlock = "center-block";
+    String clear = "clear";
     String clearfix = "clearfix";
     String clickable = "clickable";
     String close = "close";
@@ -116,6 +117,9 @@ public interface CSS {
     String halFormLabel = "hal-form-label";
     String halFormInput = "hal-form-input";
     String halFormOffset = "hal-form-offset";
+    String halSearch = "hal-search";
+    String hasButton = "has-button";
+    String hasClear = "has-clear";
     String hasError = "has-error";
     String hasFeedback = "has-feedback";
     String helpBlock = "help-block";
@@ -238,6 +242,7 @@ public interface CSS {
     String row = "row";
     String rowHeader = "row-header";
 
+    String searchPfInputGroup = "search-pf-input-group";
     String secondaryCollapseTogglePf = "secondary-collapse-toggle-pf";
     String secondaryNavItemPf = "secondary-nav-item-pf";
     String secondaryVisiblePf = "secondary-visible-pf";

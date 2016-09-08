@@ -55,6 +55,7 @@ public interface UIConstants {
     String MENUITEM = "menuitem";
     String NBSP = "&nbsp;";
     String OBJECT = "Object";
+    String PLACEHOLDER = "placeholder";
     String PLACEMENT = "placement";
     String PRESENTATION = "presentation";
     String PROGRESSBAR = "progressbar";
