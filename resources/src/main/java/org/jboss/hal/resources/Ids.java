@@ -151,6 +151,7 @@ public interface Ids {
     String JDBC_DRIVER_REFRESH = build(JDBC_DRIVER, REFRESH_SUFFIX);
     String JNDI = "jndi";
     String JNDI_DETAILS = build(JNDI, "details");
+    String JNDI_SEARCH = build(JNDI, "search");
     String JNDI_TREE = build(JNDI, "tree");
     String JNDI_TREE_JAVA_CONTEXTS_ROOT = build(JNDI_TREE, "java-contexts-root");
     String JNDI_TREE_APPLICATIONS_ROOT = build(JNDI_TREE, "applications-root");

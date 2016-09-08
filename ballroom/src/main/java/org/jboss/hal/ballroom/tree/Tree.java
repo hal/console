@@ -57,6 +57,9 @@ public class Tree<T> implements IsElement, Attachable {
     private Api<T> api;
 
 
+    /**
+     * Creates a tree with the specified root node. All other nodes are loaded on demand using the provided callback.
+     */
     public Tree(final String id, final Node<T> root, final DataFunction<T> data) {
         this.id = id;
         this.div = Browser.getDocument().createDivElement();
@@ -73,6 +76,12 @@ public class Tree<T> implements IsElement, Attachable {
         };
     }
 
+    /**
+     * Creates a tree and populates the tree with the specified nodes. This expects all nodes at construction time and
+     * does not load nodes on demand.
+     * <p>
+     * If you use this constructor you must ensure that {@code T} can be turned into JSON.
+     */
     public Tree(final String id, final JsArrayOf<Node<T>> nodes) {
         this.id = id;
         this.div = Browser.getDocument().createDivElement();
@@ -88,7 +97,7 @@ public class Tree<T> implements IsElement, Attachable {
         options.core.multiple = false;
         options.core.themes = new Options.Themes();
         options.core.themes.name = "hal"; //NON-NLS
-        options.core.themes.dots= false;
+        options.core.themes.dots = false;
         options.core.themes.icons = true;
         options.core.themes.responsive = true;
         options.core.themes.striped = false;
@@ -125,6 +134,7 @@ public class Tree<T> implements IsElement, Attachable {
 
     /**
      * Getter for the {@link org.jboss.hal.ballroom.tree.Api} instance.
+     *
      * @throws IllegalStateException if the API wasn't initialized using {@link #attach()}
      */
     public Api<T> api() {

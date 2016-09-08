@@ -22,7 +22,9 @@ import elemental.dom.Element;
 import elemental.js.util.JsArrayOf;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LayoutBuilder;
+import org.jboss.hal.ballroom.Search;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.tree.Api;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.tree.Tree;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -54,14 +56,28 @@ public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView
     private static final String TREE_CONTAINER = "treeContainer";
     private static final String HINT = "hint";
 
-    private JndiPresenter presenter;
     private Element header;
     private Element treeContainer;
     private Element hint;
+    private Search search;
+    private Api<JndiContext> treeApi;
     private Form<ModelNode> details;
 
     @Inject
     public JndiView(Capabilities capabilities, JndiResources jndiResources, Resources resources) {
+
+        search = new Search.Builder(Ids.JNDI_SEARCH,
+                query -> {
+                    if (treeApi != null) {
+                        treeApi.search(query);
+                    }
+                })
+                .onClear(() -> {
+                    if (treeApi != null) {
+                        treeApi.clearSearch();
+                    }
+                })
+                .build();
 
         Metadata metadata = new Metadata(RWX, StaticResourceDescription.from(jndiResources.jndi()), capabilities);
         details = new ModelNodeForm.Builder<>(Ids.JNDI_DETAILS, metadata)
@@ -76,6 +92,7 @@ public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView
             .row()
                 .column(4)
                     .h(1).rememberAs(HEADER).textContent(resources.constants().jndiTree()).end()
+                    .add(search)
                     .div().rememberAs(TREE_CONTAINER).css(CSS.treeContainer).end()
                 .end()
                 .column(8)
@@ -95,8 +112,8 @@ public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView
     }
 
     @Override
-    protected void onAttach() {
-        super.onAttach();
+    public void attach() {
+        super.attach();
         Browser.getWindow().setOnresize(event -> adjustHeight());
         adjustHeight();
     }
@@ -104,12 +121,9 @@ public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView
     private void adjustHeight() {
         int height = Skeleton.applicationHeight();
         int headerHeight = header.getOffsetHeight();
-        treeContainer.getStyle().setHeight(height - 2 * MARGIN_BIG - headerHeight - 2 * MARGIN_SMALL, PX);
-    }
-
-    @Override
-    public void setPresenter(final JndiPresenter presenter) {
-        this.presenter = presenter;
+        int searchHeight = search.asElement().getOffsetHeight();
+        treeContainer.getStyle()
+                .setHeight(height - 2 * MARGIN_BIG - headerHeight - searchHeight - 2 * MARGIN_SMALL, PX);
     }
 
     @Override
@@ -165,5 +179,6 @@ public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView
                 }
             }
         });
+        treeApi = tree.api();
     }
 }
