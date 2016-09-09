@@ -81,9 +81,9 @@ public class FinderPathFactory {
     // ------------------------------------------------------ deployment
 
     public FinderPath deployment(String deployment) {
-        return environment.isStandalone() ? new FinderPath()
-                .append(Ids.DEPLOYMENT, Ids.asId(deployment)) : new FinderPath()
-                .append(Ids.DEPLOYMENT_BROWSE_BY, Ids.asId(Names.SERVER_GROUPS))
+        return environment.isStandalone()
+                ? new FinderPath().append(Ids.DEPLOYMENT, Ids.asId(deployment))
+                : new FinderPath().append(Ids.DEPLOYMENT_BROWSE_BY, Ids.asId(Names.SERVER_GROUPS))
                 .append(Ids.DEPLOYMENT_SERVER_GROUP, Ids.serverGroup(statementContext.selectedServerGroup()))
                 .append(Ids.DEPLOYMENT, Ids.asId(deployment));
     }

@@ -46,6 +46,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml addSingleResourceSuccess(String type);
     SafeHtml allMailServersExist();
     SafeHtml allSingletonsExist();
+    SafeHtml assignByDragAndDrop();
+    String assignedTo(String serverGroups);
+    SafeHtml assignedToDescription(String name, String serverGroups);
     SafeHtml assignmentExcludeSuccess(String type, String name);
     SafeHtml assignmentIncludeSuccess(String type, String name);
     String available(double value);
@@ -66,6 +69,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml deploymentEnabledError(String name);
     SafeHtml deploymentFailed(@PluralCount int count);
     SafeHtml deploymentReplaced(@PluralCount int count);
+    String deployments(@PluralCount int count);
+    SafeHtml deploymentsDescription(String serverGroupName, @PluralCount int deployments);
     SafeHtml domainConfigurationChanged();
     SafeHtml domainControllerTimeout(String name);
     String duplicateResource(String type);
@@ -237,6 +242,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml updateHostError(String name);
     SafeHtml updateServerError(String name);
     SafeHtml updateServerGroupError(String name);
+    SafeHtml unassignedContent(String name);
     String unit(String unit);
     SafeHtml unknownError();
     SafeHtml unknownResource();

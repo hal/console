@@ -15,10 +15,15 @@
  */
 package org.jboss.hal.client.deployment;
 
+import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.hal.client.deployment.ContentColumn.serverGroups;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPLODED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
 
@@ -27,25 +32,25 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
  */
 class ContentPreview extends PreviewContent<Content> {
 
-    ContentPreview(final Content content, final Resources resources) {
+    ContentPreview(final ContentColumn column, final Content content, final Resources resources) {
         super(content.getName());
 
         if (content.getAssignments().isEmpty()) {
-            previewBuilder().p().textContent(resources.constants().unassignedContentDesc()).end();
+            previewBuilder().add(
+                    new Alert(Icons.DISABLED, resources.messages().unassignedContent(content.getName()),
+                            resources.constants().assign(), event -> column.assign(content)));
+
         } else {
-            previewBuilder().p().textContent(resources.constants().assignedContentDesc()).end();
-            previewBuilder().ul();
-            for (Assignment assignment : content.getAssignments()) {
-                previewBuilder().li()
-                        .start("code").textContent(assignment.getServerGroup()).end()
-                        .end();
-            }
-            previewBuilder().end();
+            previewBuilder().add(
+                    new Alert(Icons.INFO,
+                            resources.messages().assignedToDescription(content.getName(), serverGroups(content))));
         }
 
         PreviewAttributes<Content> attributes = new PreviewAttributes<>(content)
                 .append(NAME)
                 .append(RUNTIME_NAME)
+                .append(MANAGED)
+                .append(EXPLODED)
                 .end();
 
         previewBuilder().addAll(attributes);

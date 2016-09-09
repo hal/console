@@ -37,6 +37,7 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -45,16 +46,26 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
+import static java.util.Comparator.naturalOrder;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 
 /**
+ * Column used in domain mode to manage content in the content repository.
+ *
  * @author Harald Pehl
  */
 @Column(Ids.CONTENT)
 public class ContentColumn extends FinderColumn<Content> {
+
+    static String serverGroups(Content content) {
+        return content.getAssignments().stream()
+                .map(Assignment::getServerGroup)
+                .sorted(naturalOrder())
+                .collect(joining(" "));
+    }
 
     @Inject
     public ContentColumn(final Finder finder,
@@ -87,7 +98,6 @@ public class ContentColumn extends FinderColumn<Content> {
                 })
 
                 .withFilter()
-                .onPreview(item -> new ContentPreview(item, resources))
         );
 
         setItemRenderer(item -> new ItemDisplay<Content>() {
@@ -103,8 +113,26 @@ public class ContentColumn extends FinderColumn<Content> {
                             .map(Assignment::getServerGroup)
                             .collect(joining(", "));
                     return ItemDisplay.withSubtitle(item.getName(), serverGroups);
+                } else {
+                    return ItemDisplay.withSubtitle(item.getName(), resources.constants().unassigned());
                 }
-                return null;
+            }
+
+            @Override
+            public String getTooltip() {
+                if (item.getAssignments().isEmpty()) {
+                    return resources.constants().unassigned();
+                } else {
+                    String serverGroups = item.getAssignments().stream()
+                            .map(Assignment::getServerGroup)
+                            .collect(joining(", "));
+                    return resources.messages().assignedTo(serverGroups);
+                }
+            }
+
+            @Override
+            public Element getIcon() {
+                return item.getAssignments().isEmpty() ? Icons.disabled() : Icons.info();
             }
 
             @Override
@@ -115,14 +143,13 @@ public class ContentColumn extends FinderColumn<Content> {
                             .collect(joining(" "));
                     return getTitle() + " " + serverGroups;
                 }
-                return getTitle() + " unassigned"; //NON-NLS
+                return getTitle() + " " + resources.constants().unassigned();
             }
 
             @Override
             public List<ItemAction<Content>> actions() {
                 List<ItemAction<Content>> actions = new ArrayList<>();
-                actions.add(new ItemAction<>(resources.constants().assign(),
-                        content -> Browser.getWindow().alert(Names.NYI)));
+                actions.add(new ItemAction<>(resources.constants().assign(), content -> assign(content)));
 
                 if (item.getAssignments().isEmpty()) {
                     actions.add(new ItemAction<>(resources.constants().remove(), content ->
@@ -148,9 +175,15 @@ public class ContentColumn extends FinderColumn<Content> {
             }
         });
 
+        setPreviewCallback(item -> new ContentPreview(ContentColumn.this, item, resources));
+
         if (JsHelper.supportsAdvancedUpload()) {
             setOnDrop(event -> DeploymentFunctions.upload(this, dispatcher, eventBus, progress, resources,
                     event.dataTransfer.files));
         }
+    }
+
+    void assign(Content content) {
+        Browser.getWindow().alert(Names.NYI);
     }
 }

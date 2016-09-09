@@ -45,7 +45,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String add();
     String adminOnly();
     String assign();
-    String assignedContentDesc();
     String assignment();
     String assignmentsOfGroup();
     String assignmentsOfUser();
@@ -105,6 +104,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String excludeRole();
     String excludeUserGroup();
     String excludes();
+    String exploded();
     String expressionResolver();
 
     String failed();
@@ -337,8 +337,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String type();
 
     String unassign();
-    String unassignedContentDesc();
+    String unassigned();
     String unknownState();
+    String unmanaged();
     String unpin();
     String used();
     String user();
@@ -350,5 +351,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String xaProperties();
 
     String yes();
+
     //@formatter:on
 }

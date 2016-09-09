@@ -70,9 +70,11 @@ public interface Ids {
 
 
     // ------------------------------------------------------ ids (a-z)
-    // Try to compose IDs by making use of the build() method, except the ID is used in an annotation.
+    // Try to compose IDs by making use of the build() method,
+    // except the ID needs to be a constant expression (e.g. when used in an annotation).
 
     String ACCESS_CONTROL_BROWSE_BY = "access-control-browse-by";
+    String ASSIGNED_DEPLOYMENT = "assigned-deployment";
     String ASSIGNMENT = "assignement";
     String ASSIGNMENT_INCLUDE = build(ASSIGNMENT, "include");
     String ASSIGNMENT_EXCLUDE = build(ASSIGNMENT, "exclude");
@@ -112,7 +114,6 @@ public interface Ids {
     String EE_MANAGED_EXECUTOR_SCHEDULED = build(EE, "service", "scheduled-executor");
     String EE_MANAGED_THREAD_FACTORY = build(EE, "service", "thread-factories");
     String EE_SERVICES_ENTRY = build(Ids.EE, "services", ENTRY_SUFFIX);
-
     String ENDPOINT = "endpoint";
     String ENDPOINT_ADD = build(ENDPOINT, "add");
     String ENDPOINT_PING = build(ENDPOINT, "ping");
@@ -128,7 +129,6 @@ public interface Ids {
     String HEADER_MESSAGES = build(HEADER, "messages");
     String HEADER_ROLES = build(HEADER, "roles");
     String HEADER_USERNAME = build(HEADER, "username");
-
     String HOMEPAGE = "homepage";
     String HOMEPAGE_ACCESS_CONTROL_SECTION = build(HOMEPAGE, "access-control-section");
     String HOMEPAGE_CONFIGURATION_SECTION = build(HOMEPAGE, "configuration-section");
@@ -215,6 +215,7 @@ public interface Ids {
     String SERVER_GROUP_ADD = build(SERVER_GROUP, ADD_SUFFIX);
     String SERVER_GROUP_REFRESH = build(SERVER_GROUP, REFRESH_SUFFIX);
     String SERVER_MONITOR = "server-monitor";
+    String SERVER_REFRESH = build(SERVER, REFRESH_SUFFIX);
     String SERVER_STATUS = "server-status";
     String SERVER_STATUS_BOOTSTRAP_ENTRY = build(SERVER_STATUS, "bootstrap", ENTRY_SUFFIX);
     String SERVER_STATUS_BOOTSTRAP_FORM = build(SERVER_STATUS, "bootstrap", FORM_SUFFIX);
@@ -222,8 +223,6 @@ public interface Ids {
     String SERVER_STATUS_MAIN_ATTRIBUTES_FORM = build(SERVER_STATUS, "main-attributes", FORM_SUFFIX);
     String SERVER_STATUS_SYSTEM_PROPERTIES_ENTRY = build(SERVER_STATUS, "system-properties", ENTRY_SUFFIX);
     String SERVER_STATUS_SYSTEM_PROPERTIES_TABLE = build(SERVER_STATUS, "system-properties", TABLE_SUFFIX);
-
-    String SERVER_REFRESH = build(SERVER, REFRESH_SUFFIX);
     String SOCKET_BINDING = "socket-binding";
     String SOCKET_BINDING_ADD = build(SOCKET_BINDING, ADD_SUFFIX);
     String SOCKET_BINDING_REFRESH = build(SOCKET_BINDING, REFRESH_SUFFIX);

@@ -54,8 +54,7 @@ import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTI
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * Column used in domain *and* standalone mode to manage deployments.
- * TODO Add support for domain mode
+ * Column used in standalone mode to manage deployments.
  *
  * @author Harald Pehl
  */

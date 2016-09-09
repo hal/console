@@ -50,6 +50,7 @@ public interface ModelDescriptionConstants {
     String ADDRESS = "address";
     String ALLOWED = "allowed";
     String ANY = "any";
+    String ARCHIVE = "archive";
     String ATTRIBUTES = "attributes";
     String ATTRIBUTES_ONLY = "attributes-only";
     String AUTO_START = "auto-start";
@@ -68,6 +69,7 @@ public interface ModelDescriptionConstants {
     String COMPOSITE = "composite";
     String CONNECTION_URL = "connection-url";
     String CONFIGURATION = "configuration";
+    String CONTENT = "content";
     String CONTEXT_SERVICE = "context-service";
     String CORE_SERVICE = "core-service";
 
@@ -95,6 +97,7 @@ public interface ModelDescriptionConstants {
     String ENABLED = "enabled";
     String EXCEPTIONS = "exceptions";
     String EXCLUDE = "exclude";
+    String EXPLODED = "exploded";
     String EXPRESSIONS_ALLOWED = "expressions-allowed";
 
     String FAILED = "failed";
@@ -106,6 +109,7 @@ public interface ModelDescriptionConstants {
     String GROUP = "group";
 
     String HANDLERS = "handlers";
+    String HASH = "hash";
     String HOST = "host";
     String HOSTS = "hosts";
     String HOST_SCOPED_ROLE = "host-scoped-role";
@@ -141,6 +145,7 @@ public interface ModelDescriptionConstants {
 
     String MAIL = "mail";
     String MAIL_SESSION = "mail-session";
+    String MANAGED = "managed";
     String MANAGED_EXECUTOR_SERVICE = "managed-executor-service";
     String MANAGED_SCHEDULED_EXECUTOR_SERVICE = "managed-scheduled-executor-service";
     String MANAGED_THREAD_FACTORY = "managed-thread-factory";

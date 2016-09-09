@@ -55,20 +55,20 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  *
  * @author Harald Pehl
  */
-public class DeploymentFunctions {
+class DeploymentFunctions {
 
-    public static final String UPLOAD_STATISTICS = "deploymentsFunctions.uploadStatistics";
+    private static final String UPLOAD_STATISTICS = "deploymentsFunctions.uploadStatistics";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(DeploymentFunctions.class);
 
     /**
      * Loads the contents form the content repository and pushes a {@code List&lt;Content&gt;} onto the context stack.
      */
-    public static class LoadContentAssignments implements Function<FunctionContext> {
+    static class LoadContentAssignments implements Function<FunctionContext> {
 
         private final Dispatcher dispatcher;
         private final String serverGroup;
 
-        public LoadContentAssignments(final Dispatcher dispatcher) {
+        LoadContentAssignments(final Dispatcher dispatcher) {
             this(dispatcher, "*");
         }
 
@@ -76,7 +76,7 @@ public class DeploymentFunctions {
          * @param dispatcher  the dispatcher
          * @param serverGroup use "*" to find assignments on any server group
          */
-        public LoadContentAssignments(final Dispatcher dispatcher, final String serverGroup) {
+        LoadContentAssignments(final Dispatcher dispatcher, final String serverGroup) {
             this.dispatcher = dispatcher;
             this.serverGroup = serverGroup;
         }
@@ -89,7 +89,9 @@ public class DeploymentFunctions {
             ResourceAddress address = new ResourceAddress()
                     .add(SERVER_GROUP, serverGroup)
                     .add(DEPLOYMENT, "*");
-            Operation assignmentsOp = new Operation.Builder(READ_RESOURCE_OPERATION, address).build();
+            Operation assignmentsOp = new Operation.Builder(READ_RESOURCE_OPERATION, address)
+                    .param(INCLUDE_RUNTIME, true)
+                    .build();
 
             dispatcher.executeInFunction(control, new Composite(contentOp, assignmentsOp), (CompositeResult result) -> {
                 Map<String, Content> contentByName = new HashMap<>();
@@ -121,12 +123,12 @@ public class DeploymentFunctions {
      * Checks whether a deployment with the given name exists and pushes {@code 200} to the context stack if it exists,
      * {@code 404} otherwise.
      */
-    public static class CheckDeployment implements Function<FunctionContext> {
+    static class CheckDeployment implements Function<FunctionContext> {
 
         private final Dispatcher dispatcher;
         private final String name;
 
-        public CheckDeployment(final Dispatcher dispatcher, final String name) {
+        CheckDeployment(final Dispatcher dispatcher, final String name) {
             this.dispatcher = dispatcher;
             this.name = name;
         }
@@ -157,13 +159,13 @@ public class DeploymentFunctions {
      * The function puts an {@link UploadStatistics} under the key {@link DeploymentFunctions#UPLOAD_STATISTICS}
      * into the context.
      */
-    public static class UploadOrReplace implements Function<FunctionContext> {
+    static class UploadOrReplace implements Function<FunctionContext> {
 
         private final Dispatcher dispatcher;
         private final File file;
         private final boolean enabled;
 
-        public UploadOrReplace(final Dispatcher dispatcher, final File file, final boolean enabled) {
+        UploadOrReplace(final Dispatcher dispatcher, final File file, final boolean enabled) {
             this.dispatcher = dispatcher;
             this.file = file;
             this.enabled = enabled;
