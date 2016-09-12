@@ -23,6 +23,7 @@ import javax.inject.Provider;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
 import elemental.dom.Element;
+import elemental.html.SpanElement;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
@@ -34,10 +35,10 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -46,11 +47,11 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
-import static java.util.Comparator.naturalOrder;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.resources.CSS.fontAwesome;
 
 /**
  * Column used in domain mode to manage content in the content repository.
@@ -60,18 +61,12 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 @Column(Ids.CONTENT)
 public class ContentColumn extends FinderColumn<Content> {
 
-    static String serverGroups(Content content) {
-        return content.getAssignments().stream()
-                .map(Assignment::getServerGroup)
-                .sorted(naturalOrder())
-                .collect(joining(" "));
-    }
-
     @Inject
     public ContentColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
             final Dispatcher dispatcher,
             final EventBus eventBus,
+            final Places places,
             @Footer final Provider<Progress> progress,
             final Resources resources) {
 
@@ -107,43 +102,29 @@ public class ContentColumn extends FinderColumn<Content> {
             }
 
             @Override
-            public Element asElement() {
-                if (!item.getAssignments().isEmpty()) {
-                    String serverGroups = item.getAssignments().stream()
-                            .map(Assignment::getServerGroup)
-                            .collect(joining(", "));
-                    return ItemDisplay.withSubtitle(item.getName(), serverGroups);
-                } else {
-                    return ItemDisplay.withSubtitle(item.getName(), resources.constants().unassigned());
-                }
-            }
-
-            @Override
             public String getTooltip() {
-                if (item.getAssignments().isEmpty()) {
-                    return resources.constants().unassigned();
-                } else {
-                    String serverGroups = item.getAssignments().stream()
-                            .map(Assignment::getServerGroup)
-                            .collect(joining(", "));
-                    return resources.messages().assignedTo(serverGroups);
-                }
+                return String.join(", ",
+                        item.isExploded() ? resources.constants().exploded() : resources.constants().archived(),
+                        item.isManaged() ? resources.constants().managed() : resources.constants().unmanaged());
             }
 
             @Override
             public Element getIcon() {
-                return item.getAssignments().isEmpty() ? Icons.disabled() : Icons.info();
+                String icon = item.isExploded() ? fontAwesome("folder") : fontAwesome("archive");
+                SpanElement spanElement = Browser.getDocument().createSpanElement();
+                spanElement.setClassName(icon);
+                return spanElement;
             }
 
             @Override
             public String getFilterData() {
-                if (!item.getAssignments().isEmpty()) {
-                    String serverGroups = item.getAssignments().stream()
-                            .map(Assignment::getServerGroup)
-                            .collect(joining(" "));
-                    return getTitle() + " " + serverGroups;
-                }
-                return getTitle() + " " + resources.constants().unassigned();
+                String status = String.join(" ",
+                        item.isExploded() ? resources.constants().exploded() : resources.constants().archived(),
+                        item.isManaged() ? resources.constants().managed() : resources.constants().unmanaged());
+                String assignments = item.getAssignments().isEmpty()
+                        ? resources.constants().unassigned()
+                        : item.getAssignments().stream().map(Assignment::getServerGroup).collect(joining(" "));
+                return getTitle() + " " + status + " " + assignments;
             }
 
             @Override
@@ -175,7 +156,7 @@ public class ContentColumn extends FinderColumn<Content> {
             }
         });
 
-        setPreviewCallback(item -> new ContentPreview(ContentColumn.this, item, resources));
+        setPreviewCallback(item -> new ContentPreview(this, item, places, resources));
 
         if (JsHelper.supportsAdvancedUpload()) {
             setOnDrop(event -> DeploymentFunctions.upload(this, dispatcher, eventBus, progress, resources,
@@ -184,6 +165,10 @@ public class ContentColumn extends FinderColumn<Content> {
     }
 
     void assign(Content content) {
+        Browser.getWindow().alert(Names.NYI);
+    }
+
+    void unassign(Content content, String serverGroup) {
         Browser.getWindow().alert(Names.NYI);
     }
 }

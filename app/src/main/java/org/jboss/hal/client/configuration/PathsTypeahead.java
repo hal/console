@@ -26,6 +26,7 @@ import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.server.Server;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 
 /**
@@ -84,8 +86,8 @@ public class PathsTypeahead extends Typeahead {
                             }
                         }
                     },
-                    new TopologyFunctions.RunningServersOfProfile(environment, dispatcher,
-                            statementContext.selectedProfile()));
+                    new TopologyFunctions.RunningServersQuery(environment, dispatcher,
+                            new ModelNode().set(PROFILE, statementContext.selectedProfile())));
         }
     }
 

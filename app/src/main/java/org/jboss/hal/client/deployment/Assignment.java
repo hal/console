@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.deployment;
 
+import javax.annotation.Nullable;
+
 import org.jboss.hal.dmr.ModelNode;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DISABLED;
@@ -57,24 +59,18 @@ public class Assignment extends Content {
     }
 
     public boolean isEnabled() {
-        ModelNode enabled = get(ENABLED);
-        //noinspection SimplifiableConditionalExpression
-        return enabled.isDefined() ? enabled.asBoolean() : false;
+        return hasDefined(ENABLED) && get(ENABLED).asBoolean();
     }
 
     public String getServerGroup() {
         return serverGroup;
     }
 
-    public Deployment getDeployment() {
+    public @Nullable Deployment getDeployment() {
         return deployment;
     }
 
-    public boolean hasDeployment() {
-        return deployment != null;
-    }
-
-    public void setDeployment(final Deployment deployment) {
+    public void setDeployment(@Nullable Deployment deployment) {
         this.deployment = deployment;
     }
 

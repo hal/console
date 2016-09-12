@@ -1,0 +1,97 @@
+/*
+ * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jboss.hal.client.deployment;
+
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.ballroom.Alert;
+import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.core.finder.FinderPath;
+import org.jboss.hal.core.finder.PreviewAttributes;
+import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
+import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Icons;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
+
+import static java.util.Arrays.asList;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+
+/**
+ * @author Harald Pehl
+ */
+class AssignmentPreview extends PreviewContent<Assignment> {
+
+    private static final String LAST_ENABLED_AT = "Last enabled at";
+    private static final String LAST_DISABLED_AT = "Last disabled at";
+
+    AssignmentPreview(final AssignmentColumn column, final Assignment assignment, final Places places,
+            final Resources resources) {
+        super(assignment.getName());
+
+        Deployment deployment = assignment.getDeployment();
+        if (deployment != null && deployment.isFailure()) {
+            previewBuilder().add(new Alert(Icons.ERROR, resources.messages().deploymentFailed(assignment.getName())));
+        } else {
+            if (assignment.isEnabled()) {
+                previewBuilder().add(new Alert(Icons.OK, resources.messages().deploymentEnabled(assignment.getName()),
+                        resources.constants().disable(), event -> column.diable()));
+            } else {
+                previewBuilder()
+                        .add(new Alert(Icons.DISABLED, resources.messages().deploymentDisabled(assignment.getName()),
+                                resources.constants().enable(), event -> column.enable()));
+            }
+        }
+
+        // main attributes
+        PreviewAttributes<Assignment> attributes = new PreviewAttributes<>(assignment,
+                asList(NAME, RUNTIME_NAME, MANAGED, EXPLODED, ENABLED));
+        if (deployment != null) {
+            attributes.append(model -> new PreviewAttribute(new LabelBuilder().label(STATUS),
+                    deployment.getStatus().name()));
+            attributes.append(model -> new PreviewAttribute(LAST_ENABLED_AT, deployment.getEnabledTime()));
+            attributes.append(model -> new PreviewAttribute(LAST_DISABLED_AT, deployment.getDisabledTime()));
+        }
+        attributes.end();
+        previewBuilder().addAll(attributes);
+
+        // sub-deployments
+        if (deployment != null && deployment.hasSubdeployments()) {
+            previewBuilder().h(2).textContent(Names.SUBDEPLOYMENTS).end().ul();
+            deployment.getSubdeployments().forEach(
+                    subdeployment -> previewBuilder().li().textContent(subdeployment.getName()).end());
+            previewBuilder().end();
+        }
+
+        // reference server
+        if (deployment == null) {
+            previewBuilder().h(2).textContent(resources.constants().noReferenceServer()).end();
+            String serverGroup = assignment.getServerGroup();
+            PlaceRequest serverGroupPlaceRequest = places.finderPlace(NameTokens.RUNTIME, new FinderPath()
+                    .append(Ids.DOMAIN_BROWSE_BY, Ids.asId(Names.SERVER_GROUPS))
+                    .append(Ids.SERVER_GROUP, Ids.serverGroup(serverGroup)))
+                    .build();
+            String serverGroupHistoryToken = places.historyToken(serverGroupPlaceRequest);
+            LabelBuilder labelBuilder = new LabelBuilder();
+            previewBuilder().p().innerHtml(resources.messages().noReferenceServer(assignment.getName(),
+                    labelBuilder.label(STATUS), labelBuilder.label(LAST_ENABLED_AT),
+                    serverGroup, serverGroupHistoryToken))
+                    .end();
+        }
+    }
+}

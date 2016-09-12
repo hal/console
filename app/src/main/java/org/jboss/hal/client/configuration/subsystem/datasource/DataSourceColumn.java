@@ -44,6 +44,7 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.server.Server;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -245,8 +246,8 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
                 readDataSources,
                 new JdbcDriverFunctions.ReadConfiguration(statementContext, dispatcher),
-                new TopologyFunctions.RunningServersOfProfile(environment, dispatcher,
-                        statementContext.selectedProfile()),
+                new TopologyFunctions.RunningServersQuery(environment, dispatcher,
+                        new ModelNode().set(PROFILE, statementContext.selectedProfile())),
                 new JdbcDriverFunctions.ReadRuntime(environment, dispatcher),
                 new JdbcDriverFunctions.CombineDriverResults());
     }
@@ -277,8 +278,8 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     }
 
     private void testConnection(final DataSource dataSource) {
-        TopologyFunctions.RunningServersOfProfile runningServers = new TopologyFunctions.RunningServersOfProfile(
-                environment, dispatcher, statementContext.selectedProfile());
+        TopologyFunctions.RunningServersQuery runningServers = new TopologyFunctions.RunningServersQuery(
+                environment, dispatcher, new ModelNode().set(SERVER_GROUP, statementContext.selectedProfile()));
         Function<FunctionContext> testConnection = control -> {
             List<Server> servers = control.getContext().get(TopologyFunctions.RUNNING_SERVERS);
             if (!servers.isEmpty()) {

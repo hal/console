@@ -16,6 +16,7 @@
 package org.jboss.hal.client.deployment;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,10 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.runtime.TopologyFunctions;
+import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -46,6 +50,9 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -57,8 +64,10 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 class DeploymentFunctions {
 
+    public static final String ASSIGNMENTS = "deploymentFunctions.assignments";
     private static final String UPLOAD_STATISTICS = "deploymentsFunctions.uploadStatistics";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(DeploymentFunctions.class);
+
 
     /**
      * Loads the contents form the content repository and pushes a {@code List&lt;Content&gt;} onto the context stack.
@@ -120,22 +129,123 @@ class DeploymentFunctions {
 
 
     /**
+     * Reads the assignments of the specified server group. Stores the list in the context under the key {@link
+     * DeploymentFunctions#ASSIGNMENTS}. Stores an empty list if there are no assignments or if
+     * running in standalone mode.
+     */
+    static class AssignmentsOfServerGroup implements Function<FunctionContext> {
+
+        private final Environment environment;
+        private final Dispatcher dispatcher;
+        private final String serverGroup;
+
+        AssignmentsOfServerGroup(final Environment environment, final Dispatcher dispatcher, final String serverGroup) {
+            this.environment = environment;
+            this.dispatcher = dispatcher;
+            this.serverGroup = serverGroup;
+        }
+
+        @Override
+        public void execute(final Control<FunctionContext> control) {
+            if (environment.isStandalone()) {
+                List<Assignment> assignments = Collections.emptyList();
+                control.getContext().set(ASSIGNMENTS, assignments);
+                control.proceed();
+
+            } else {
+                ResourceAddress address = new ResourceAddress().add(SERVER_GROUP, serverGroup);
+                Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
+                        .param(CHILD_TYPE, DEPLOYMENT)
+                        .param(INCLUDE_RUNTIME, true)
+                        .build();
+                dispatcher.executeInFunction(control, operation, result -> {
+                    List<Assignment> assignments = result.asPropertyList().stream()
+                            .map(property -> new Assignment(serverGroup, property.getValue()))
+                            .collect(toList());
+                    control.getContext().set(ASSIGNMENTS, assignments);
+                    control.proceed();
+                });
+            }
+        }
+    }
+
+
+    /**
+     * Loads the deployments of the first running server from the list of running servers in the context under the key
+     * {@link org.jboss.hal.core.runtime.TopologyFunctions#RUNNING_SERVERS}. Expects the list of assignments under the
+     * key {@link #ASSIGNMENTS} in the context. Updates all assignments with the read deployments.
+     */
+    static class LoadDeploymentsFromRunningServer implements Function<FunctionContext> {
+
+        private final Environment environment;
+        private final Dispatcher dispatcher;
+
+        LoadDeploymentsFromRunningServer(final Environment environment, final Dispatcher dispatcher) {
+            this.environment = environment;
+            this.dispatcher = dispatcher;
+        }
+
+        @Override
+        public void execute(final Control<FunctionContext> control) {
+            if (environment.isStandalone()) {
+                control.proceed();
+
+            } else {
+                List<Assignment> assignments = control.getContext().get(DeploymentFunctions.ASSIGNMENTS);
+                List<Server> runningServers = control.getContext().get(TopologyFunctions.RUNNING_SERVERS);
+                if (assignments != null && runningServers != null &&
+                        !assignments.isEmpty() && !runningServers.isEmpty()) {
+
+                    Server referenceServer = runningServers.get(0);
+                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
+                            referenceServer.getServerAddress())
+                            .param(CHILD_TYPE, DEPLOYMENT)
+                            .param(INCLUDE_RUNTIME, true)
+                            .param(RECURSIVE, true)
+                            .build();
+                    dispatcher.executeInFunction(control, operation, result -> {
+
+                        Map<String, Deployment> deploymentsByName = result.asPropertyList().stream()
+                                .map(property -> new Deployment(referenceServer, property.getValue()))
+                                .collect(toMap(Deployment::getName, identity()));
+                        assignments.forEach(
+                                assignment -> assignment.setDeployment(deploymentsByName.get(assignment.getName())));
+                        control.proceed();
+                    });
+
+                } else {
+                    control.proceed();
+                }
+            }
+        }
+    }
+
+
+    /**
      * Checks whether a deployment with the given name exists and pushes {@code 200} to the context stack if it exists,
      * {@code 404} otherwise.
      */
-    static class CheckDeployment implements Function<FunctionContext> {
+    private static class CheckDeployment implements Function<FunctionContext> {
 
         private final Dispatcher dispatcher;
         private final String name;
+        private final String serverGroup;
 
         CheckDeployment(final Dispatcher dispatcher, final String name) {
+            this(dispatcher, null, name);
+        }
+
+        CheckDeployment(final Dispatcher dispatcher, final String serverGroup, final String name) {
             this.dispatcher = dispatcher;
+            this.serverGroup = serverGroup;
             this.name = name;
         }
 
         @Override
         public void execute(final Control<FunctionContext> control) {
-            Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, ResourceAddress.ROOT)
+            ResourceAddress address = serverGroup == null ? ResourceAddress.ROOT : new ResourceAddress()
+                    .add(SERVER_GROUP, serverGroup);
+            Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, address)
                     .param(CHILD_TYPE, DEPLOYMENT)
                     .build();
             dispatcher.executeInFunction(control, operation, result -> {
@@ -159,7 +269,7 @@ class DeploymentFunctions {
      * The function puts an {@link UploadStatistics} under the key {@link DeploymentFunctions#UPLOAD_STATISTICS}
      * into the context.
      */
-    static class UploadOrReplace implements Function<FunctionContext> {
+    private static class UploadOrReplace implements Function<FunctionContext> {
 
         private final Dispatcher dispatcher;
         private final File file;
@@ -234,6 +344,9 @@ class DeploymentFunctions {
     }
 
 
+    /**
+     * Uploads or updates one or multiple deployment in standalone mode.
+     */
     static <T> void upload(FinderColumn<T> column, final Dispatcher dispatcher, final EventBus eventBus,
             final Provider<Progress> progress, final Resources resources, final FileList files) {
         if (files.getLength() > 0) {
@@ -253,7 +366,53 @@ class DeploymentFunctions {
                 @Override
                 public void onFailure(final FunctionContext context) {
                     // Should not happen since UploadOrReplace functions proceed also for errors and exceptions!
-                    MessageEvent.fire(eventBus, Message.error(resources.messages().deploymentFailed(files.getLength())));
+                    MessageEvent
+                            .fire(eventBus, Message.error(resources.messages().deploymentOpFailed(files.getLength())));
+                }
+
+                @Override
+                public void onSuccess(final FunctionContext context) {
+                    UploadStatistics statistics = context.get(UPLOAD_STATISTICS);
+                    if (statistics != null) {
+                        eventBus.fireEvent(new MessageEvent(statistics.getMessage()));
+                    } else {
+                        logger.error("Unable to find upload statistics in the context using key '{}'",
+                                UPLOAD_STATISTICS);
+                    }
+                    column.refresh(RESTORE_SELECTION);
+                }
+            };
+            new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
+                    functions.toArray(new Function[functions.size()]));
+        }
+    }
+
+
+    /**
+     * Assigns or updates one or multiple deployments to a server group in domain mode.
+     */
+    static <T> void assign(FinderColumn<T> column, final Dispatcher dispatcher, final EventBus eventBus,
+            final Provider<Progress> progress, final Resources resources,
+            final String serverGroup, final FileList files) {
+        if (files.getLength() > 0) {
+
+            StringBuilder builder = new StringBuilder();
+            List<Function> functions = new ArrayList<>();
+
+            for (int i = 0; i < files.getLength(); i++) {
+                String name = files.item(i).getName();
+                builder.append(name).append(" ");
+                functions.add(new CheckDeployment(dispatcher, serverGroup, name));
+                functions.add(new UploadOrReplace(dispatcher, files.item(i), false));
+            }
+
+            logger.debug("About to upload {} file(s): {}", files.getLength(), builder.toString());
+            final Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
+                @Override
+                public void onFailure(final FunctionContext context) {
+                    // Should not happen since UploadOrReplace functions proceed also for errors and exceptions!
+                    MessageEvent
+                            .fire(eventBus, Message.error(resources.messages().deploymentOpFailed(files.getLength())));
                 }
 
                 @Override

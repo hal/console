@@ -16,14 +16,18 @@
 package org.jboss.hal.client.deployment;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DISABLED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBDEPLOYMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
 
@@ -117,36 +121,27 @@ public class Deployment extends Content {
     }
 
     public boolean isEnabled() {
-        ModelNode enabled = get("enabled");
+        ModelNode enabled = get(ENABLED);
         //noinspection SimplifiableConditionalExpression
         return enabled.isDefined() ? enabled.asBoolean() : false;
     }
 
     public Status getStatus() {
-        Status status = Status.UNDEFINED;
-        ModelNode statusNode = get("status");
-        if (statusNode.isDefined()) {
-            try {
-                status = Status.valueOf(statusNode.asString());
-            } catch (IllegalArgumentException e) {
-                // returns UNDEFINED
-            }
-        }
-        return status;
+        return ModelNodeHelper.asEnumValue(this, STATUS, Status::valueOf, Status.UNDEFINED);
     }
 
     public String getEnabledTime() {
-        ModelNode node = get("enabled-timestamp");
+        ModelNode node = get("enabled-time");
         if (node.isDefined()) {
-            return node.asString();
+            return Format.shortDateTime(new Date(node.asLong()));
         }
         return null;
     }
 
     public String getDisabledTime() {
-        ModelNode node = get("disabled-timestamp");
+        ModelNode node = get("disabled-time");
         if (node.isDefined()) {
-            return node.asString();
+            return Format.shortDateTime(new Date(node.asLong()));
         }
         return null;
     }

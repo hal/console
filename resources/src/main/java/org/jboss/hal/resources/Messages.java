@@ -48,7 +48,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml allSingletonsExist();
     SafeHtml assignByDragAndDrop();
     String assignedTo(String serverGroups);
-    SafeHtml assignedToDescription(String name, String serverGroups);
+    SafeHtml assignedToDescription(String name);
     SafeHtml assignmentExcludeSuccess(String type, String name);
     SafeHtml assignmentIncludeSuccess(String type, String name);
     String available(double value);
@@ -65,9 +65,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml dataSourceStatisticsDisabled(String name);
     SafeHtml deploymentAdded(@PluralCount int count);
     SafeHtml deploymentDisabled(String name);
+    SafeHtml deploymentDisabledSuccess(String name);
     SafeHtml deploymentEnabled(String name);
     SafeHtml deploymentEnabledError(String name);
-    SafeHtml deploymentFailed(@PluralCount int count);
+    SafeHtml deploymentEnabledSuccess(String name);
+    SafeHtml deploymentFailed(String name);
+    SafeHtml deploymentOpFailed(@PluralCount int count);
     SafeHtml deploymentReplaced(@PluralCount int count);
     String deployments(@PluralCount int count);
     SafeHtml deploymentsDescription(String serverGroupName, @PluralCount int deployments);
@@ -123,6 +126,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noDeploymentsUploaded();
     SafeHtml noLogFile();
     SafeHtml noMacrosDescription(String startMacro);
+    SafeHtml noReferenceServer(String deployment, String attribute1, String attribute2, String serverGroup, String historyToken);
     SafeHtml normalLogFile(String size);
 
     SafeHtml pageNotFound(String invalidHistoryToken);

@@ -31,6 +31,8 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 
 /**
+ * Initial column in the deployment top level tab for the domain mode.
+ *
  * @author Harald Pehl
  */
 @Column(Ids.DEPLOYMENT_BROWSE_BY)

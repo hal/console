@@ -109,6 +109,15 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
             }
 
             @Override
+            public String getTooltip() {
+                if (item.getStatus() == Status.FAILED) {
+                    return resources.constants().failed();
+                } else {
+                    return item.isEnabled() ? resources.constants().enabled() : resources.constants().disabled();
+                }
+            }
+
+            @Override
             public Element getIcon() {
                 if (item.getStatus() == Status.FAILED) {
                     return Icons.error();
@@ -154,7 +163,8 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, deployment.getName());
         Operation operation = new Operation.Builder("undeploy", address).build(); //NON-NLS
         dispatcher.execute(operation, result -> {
-            MessageEvent.fire(eventBus, Message.success(resources.messages().deploymentDisabled(deployment.getName())));
+            MessageEvent.fire(eventBus,
+                    Message.success(resources.messages().deploymentDisabledSuccess(deployment.getName())));
             refresh(RESTORE_SELECTION);
         });
     }
@@ -173,7 +183,7 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
             @Override
             public void onSuccess(final FunctionContext context) {
                 MessageEvent.fire(eventBus,
-                        Message.success(resources.messages().deploymentEnabled(deployment.getName())));
+                        Message.success(resources.messages().deploymentEnabledSuccess(deployment.getName())));
                 refresh(RESTORE_SELECTION);
             }
         };

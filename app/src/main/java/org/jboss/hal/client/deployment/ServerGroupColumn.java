@@ -21,11 +21,13 @@ import javax.inject.Inject;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
+import com.google.web.bindery.event.shared.EventBus;
 import elemental.dom.Element;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.runtime.group.ServerGroup;
+import org.jboss.hal.core.runtime.group.ServerGroupSelectionEvent;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -53,9 +55,12 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
     @Inject
     public ServerGroupColumn(final Finder finder,
             final Dispatcher dispatcher,
+            final EventBus eventBus,
             final Resources resources) {
 
         super(new FinderColumn.Builder<ServerGroup>(finder, Ids.DEPLOYMENT_SERVER_GROUP, Names.SERVER_GROUP)
+                // TODO Change the security context (server group scoped roles!)
+                .onItemSelect(serverGroup -> eventBus.fireEvent(new ServerGroupSelectionEvent(serverGroup.getName())))
                 .pinnable()
                 .showCount()
                 .withFilter());

@@ -23,9 +23,9 @@ import org.jboss.hal.resources.Resources;
 /**
  * @author Harald Pehl
  */
-public class ServerGroupPreview extends PreviewContent<ServerGroup> {
+class ServerGroupPreview extends PreviewContent<ServerGroup> {
 
-    public ServerGroupPreview(final ServerGroup serverGroup, final int deployments, Resources resources) {
+    ServerGroupPreview(final ServerGroup serverGroup, final int deployments, Resources resources) {
         super(serverGroup.getName());
         previewBuilder().p()
                 .innerHtml(resources.messages().deploymentsDescription(serverGroup.getName(), deployments)).end();

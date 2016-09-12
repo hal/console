@@ -44,8 +44,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String active();
     String add();
     String adminOnly();
+    String archived();
     String assign();
     String assignment();
+    String assignments();
     String assignmentsOfGroup();
     String assignmentsOfUser();
     String attribute();
@@ -222,6 +224,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String macroEditor();
     String mainAttributes();
+    String managed();
     String managementVersion();
     String maxUsed();
     String membership();
@@ -244,6 +247,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noMacros();
     String noPrincipalsExcluded();
     String noPrincipalsIncluded();
+    String noReferenceServer();
     String noRolesExcluded();
     String noRolesIncluded();
     String noRolesIncludedOrExcluded();
@@ -351,6 +355,5 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String xaProperties();
 
     String yes();
-
     //@formatter:on
 }
