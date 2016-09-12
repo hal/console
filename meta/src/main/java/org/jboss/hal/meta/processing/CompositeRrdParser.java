@@ -94,7 +94,7 @@ class CompositeRrdParser {
     private ResourceAddress adjustAddress(ResourceAddress operationAddress, ResourceAddress resultAddress) {
         // For wildcard rrd operations against running servers like /host=master/server=server-one/interfaces=*
         // the result does *not* contain fully qualified addresses. But since we need fq addresses in the
-        // registries this method fixes this special case.
+        // registries this method fixes this corner case.
 
         ResourceAddress resolved = resultAddress;
         List<Property> operationSegments = operationAddress.asPropertyList();
