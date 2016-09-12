@@ -173,7 +173,8 @@ class DeploymentFunctions {
     /**
      * Loads the deployments of the first running server from the list of running servers in the context under the key
      * {@link org.jboss.hal.core.runtime.TopologyFunctions#RUNNING_SERVERS}. Expects the list of assignments under the
-     * key {@link #ASSIGNMENTS} in the context. Updates all assignments with the read deployments.
+     * key {@link #ASSIGNMENTS} in the context. Updates all matching assignments with the deployments from the running
+     * server.
      */
     static class LoadDeploymentsFromRunningServer implements Function<FunctionContext> {
 
@@ -304,7 +305,7 @@ class DeploymentFunctions {
                         .param(ENABLED, enabled);
             }
             Operation operation = builder.build();
-            operation.get("content").add().get("input-stream-index").set(0); //NON-NLS
+            operation.get(CONTENT).add().get("input-stream-index").set(0); //NON-NLS
 
             dispatcher.upload(file, operation,
                     result -> {
@@ -361,7 +362,7 @@ class DeploymentFunctions {
                 functions.add(new UploadOrReplace(dispatcher, files.item(i), false));
             }
 
-            logger.debug("About to upload {} file(s): {}", files.getLength(), builder.toString());
+            logger.debug("About to upload / update {} file(s): {}", files.getLength(), builder.toString());
             final Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
                 @Override
                 public void onFailure(final FunctionContext context) {
@@ -389,7 +390,7 @@ class DeploymentFunctions {
 
 
     /**
-     * Assigns or updates one or multiple deployments to a server group in domain mode.
+     * Assigns or updates one or multiple deployments of a server group in domain mode.
      */
     static <T> void assign(FinderColumn<T> column, final Dispatcher dispatcher, final EventBus eventBus,
             final Provider<Progress> progress, final Resources resources,
@@ -406,7 +407,7 @@ class DeploymentFunctions {
                 functions.add(new UploadOrReplace(dispatcher, files.item(i), false));
             }
 
-            logger.debug("About to upload {} file(s): {}", files.getLength(), builder.toString());
+            logger.debug("About to assign / update {} file(s): {}", files.getLength(), builder.toString());
             final Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
                 @Override
                 public void onFailure(final FunctionContext context) {

@@ -55,7 +55,7 @@ class ContentPreview extends PreviewContent<Content> {
 
         if (!content.getAssignments().isEmpty()) {
             previewBuilder().h(2).textContent(resources.constants().assignments()).end()
-                    .p().innerHtml(resources.messages().assignedToDescription(content.getName())).end()
+                    .p().innerHtml(resources.messages().assignedTo(content.getName())).end()
                     .ul();
             content.getAssignments().forEach(assignment -> {
                 String serverGroup = assignment.getServerGroup();

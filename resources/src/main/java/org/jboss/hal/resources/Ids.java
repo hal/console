@@ -76,12 +76,15 @@ public interface Ids {
     String ACCESS_CONTROL_BROWSE_BY = "access-control-browse-by";
     String ASSIGNED_DEPLOYMENT = "assigned-deployment";
     String ASSIGNMENT = "assignement";
+    String ASSIGNMENT_ADD = build(ASSIGNMENT, ADD_SUFFIX);
+    String ASSIGNMENT_REFRESH = build(ASSIGNMENT, REFRESH_SUFFIX);
     String ASSIGNMENT_INCLUDE = build(ASSIGNMENT, "include");
     String ASSIGNMENT_EXCLUDE = build(ASSIGNMENT, "exclude");
 
     String CONFIGURATION = "configuration";
     String CONTENT = "content";
     String CONTENT_ADD = build(Ids.CONTENT, ADD_SUFFIX);
+    String CONTENT_REFRESH = build(Ids.CONTENT, REFRESH_SUFFIX);
 
     String DATA_SOURCE_CONFIGURATION = "data-source-configuration";
     String DATA_SOURCE_ADD = build(DATA_SOURCE_CONFIGURATION, ADD_SUFFIX);

@@ -61,6 +61,10 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 @Column(Ids.CONTENT)
 public class ContentColumn extends FinderColumn<Content> {
 
+    private final Dispatcher dispatcher;
+    private final EventBus eventBus;
+    private final Resources resources;
+
     @Inject
     public ContentColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
@@ -71,9 +75,6 @@ public class ContentColumn extends FinderColumn<Content> {
             final Resources resources) {
 
         super(new FinderColumn.Builder<Content>(finder, Ids.CONTENT, resources.constants().content())
-
-                .columnAction(columnActionFactory.add(Ids.CONTENT_ADD,
-                        resources.constants().content(), column -> Browser.getWindow().alert(Names.NYI)))
 
                 .itemsProvider((context, callback) -> {
                     final Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
@@ -92,8 +93,15 @@ public class ContentColumn extends FinderColumn<Content> {
                             new DeploymentFunctions.LoadContentAssignments(dispatcher));
                 })
 
-                .withFilter()
-        );
+                .withFilter());
+
+        this.dispatcher = dispatcher;
+        this.eventBus = eventBus;
+        this.resources = resources;
+
+        addColumnAction(columnActionFactory.add(Ids.CONTENT_ADD, resources.constants().content(), column -> add()));
+        addColumnAction(columnActionFactory.refresh(Ids.CONTENT_REFRESH));
+        setPreviewCallback(item -> new ContentPreview(this, item, places, resources));
 
         setItemRenderer(item -> new ItemDisplay<Content>() {
             @Override
@@ -110,7 +118,7 @@ public class ContentColumn extends FinderColumn<Content> {
 
             @Override
             public Element getIcon() {
-                String icon = item.isExploded() ? fontAwesome("folder") : fontAwesome("archive");
+                String icon = item.isExploded() ? fontAwesome("folder-open") : fontAwesome("archive");
                 SpanElement spanElement = Browser.getDocument().createSpanElement();
                 spanElement.setClassName(icon);
                 return spanElement;
@@ -131,32 +139,16 @@ public class ContentColumn extends FinderColumn<Content> {
             public List<ItemAction<Content>> actions() {
                 List<ItemAction<Content>> actions = new ArrayList<>();
                 actions.add(new ItemAction<>(resources.constants().assign(), content -> assign(content)));
+                actions.add(new ItemAction<>(resources.constants().replace(), content -> replace(content)));
 
                 if (item.getAssignments().isEmpty()) {
-                    actions.add(new ItemAction<>(resources.constants().remove(), content ->
-                            DialogFactory.showConfirmation(
-                                    resources.messages().removeResourceConfirmationTitle(item.getName()),
-                                    resources.messages().removeResourceConfirmationQuestion(item.getName()),
-                                    () -> {
-                                        ResourceAddress address = new ResourceAddress()
-                                                .add(DEPLOYMENT, item.getName());
-                                        Operation operation = new Operation.Builder(REMOVE, address).build();
-                                        dispatcher.execute(operation, result -> {
-                                            MessageEvent.fire(eventBus, Message.success(resources.messages()
-                                                    .removeResourceSuccess(resources.constants().content(),
-                                                            item.getName())));
-                                            refresh(CLEAR_SELECTION);
-                                        });
-                                    })));
+                    actions.add(new ItemAction<>(resources.constants().remove(), itm -> remove(itm)));
                 } else {
-                    actions.add(new ItemAction<>(resources.constants().unassign(),
-                            itm -> Browser.getWindow().alert(Names.NYI)));
+                    actions.add(new ItemAction<>(resources.constants().unassign(), itm -> unassign(itm)));
                 }
                 return actions;
             }
         });
-
-        setPreviewCallback(item -> new ContentPreview(this, item, places, resources));
 
         if (JsHelper.supportsAdvancedUpload()) {
             setOnDrop(event -> DeploymentFunctions.upload(this, dispatcher, eventBus, progress, resources,
@@ -164,11 +156,39 @@ public class ContentColumn extends FinderColumn<Content> {
         }
     }
 
+    private void add() {
+        Browser.getWindow().alert(Names.NYI);
+    }
+
+    private void replace(Content content) {
+        Browser.getWindow().alert(Names.NYI);
+    }
+
     void assign(Content content) {
+        Browser.getWindow().alert(Names.NYI);
+    }
+
+    private void unassign(Content content) {
         Browser.getWindow().alert(Names.NYI);
     }
 
     void unassign(Content content, String serverGroup) {
         Browser.getWindow().alert(Names.NYI);
+    }
+
+    private void remove(Content content) {
+        DialogFactory.showConfirmation(
+                resources.messages().removeResourceConfirmationTitle(content.getName()),
+                resources.messages().removeResourceConfirmationQuestion(content.getName()),
+                () -> {
+                    ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
+                    Operation operation = new Operation.Builder(REMOVE, address).build();
+                    dispatcher.execute(operation, result -> {
+                        MessageEvent.fire(eventBus, Message.success(resources.messages()
+                                .removeResourceSuccess(resources.constants().content(),
+                                        content.getName())));
+                        refresh(CLEAR_SELECTION);
+                    });
+                });
     }
 }

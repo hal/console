@@ -46,9 +46,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml addSingleResourceSuccess(String type);
     SafeHtml allMailServersExist();
     SafeHtml allSingletonsExist();
-    SafeHtml assignByDragAndDrop();
-    String assignedTo(String serverGroups);
-    SafeHtml assignedToDescription(String name);
+    SafeHtml assignByDragAndDrop(String replace);
+    SafeHtml assignedTo(String name);
     SafeHtml assignmentExcludeSuccess(String type, String name);
     SafeHtml assignmentIncludeSuccess(String type, String name);
     String available(double value);

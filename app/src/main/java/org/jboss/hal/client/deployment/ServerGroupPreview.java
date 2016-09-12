@@ -30,7 +30,8 @@ class ServerGroupPreview extends PreviewContent<ServerGroup> {
         previewBuilder().p()
                 .innerHtml(resources.messages().deploymentsDescription(serverGroup.getName(), deployments)).end();
         if (JsHelper.supportsAdvancedUpload()) {
-            previewBuilder().p().innerHtml(resources.messages().assignByDragAndDrop()).end();
+            previewBuilder().p().innerHtml(resources.messages().assignByDragAndDrop(resources.constants().replace()))
+                    .end();
         }
     }
 }

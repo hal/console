@@ -29,12 +29,15 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.js.JsHelper;
+import org.jboss.hal.client.deployment.DeploymentFunctions.AssignmentsOfServerGroup;
+import org.jboss.hal.client.deployment.DeploymentFunctions.LoadDeploymentsFromRunningServer;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.core.runtime.TopologyFunctions;
+import org.jboss.hal.core.runtime.TopologyFunctions.RunningServersQuery;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
@@ -61,6 +64,7 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
 
     @Inject
     public AssignmentColumn(final Finder finder,
+            final ColumnActionFactory columnActionFactory,
             final Environment environment,
             final EventBus eventBus,
             final Dispatcher dispatcher,
@@ -106,17 +110,19 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
 
                 .pinnable()
                 .showCount()
-                .withFilter()
-        );
+                .withFilter());
+
+        addColumnAction(columnActionFactory.add(Ids.ASSIGNMENT_ADD, Names.DEPLOYMENT, column -> add()));
+        addColumnAction(columnActionFactory.refresh(Ids.ASSIGNMENT_REFRESH));
+        setPreviewCallback(item -> new AssignmentPreview(this, item, places, resources));
 
         setItemsProvider((context, callback) -> {
 
             List<Function<FunctionContext>> functions = Lists.newArrayList(
-                    new DeploymentFunctions.AssignmentsOfServerGroup(environment, dispatcher,
-                            statementContext.selectedServerGroup()),
-                    new TopologyFunctions.RunningServersQuery(environment, dispatcher,
+                    new AssignmentsOfServerGroup(environment, dispatcher, statementContext.selectedServerGroup()),
+                    new RunningServersQuery(environment, dispatcher,
                             new ModelNode().set(SERVER_GROUP, statementContext.selectedServerGroup())),
-                    new DeploymentFunctions.LoadDeploymentsFromRunningServer(environment, dispatcher));
+                    new LoadDeploymentsFromRunningServer(environment, dispatcher));
 
             new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
                     new Outcome<FunctionContext>() {
@@ -134,12 +140,14 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
 
         });
 
-        setPreviewCallback(item -> new AssignmentPreview(this, item, places, resources));
-
         if (JsHelper.supportsAdvancedUpload()) {
             setOnDrop(event -> DeploymentFunctions.assign(this, dispatcher, eventBus, progress, resources,
                     statementContext.selectedServerGroup(), event.dataTransfer.files));
         }
+    }
+
+    private void add() {
+        Browser.getWindow().alert(Names.NYI);
     }
 
     void diable() {
