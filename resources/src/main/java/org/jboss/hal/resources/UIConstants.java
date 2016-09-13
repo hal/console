@@ -48,6 +48,7 @@ public interface UIConstants {
     String EXPANDED = "expanded";
     String GROUP = "group";
     String HAS_POPUP = "haspopup";
+    String HIDDEN_MODAL = "hidden.bs.modal";
     String HREF = "href";
     String HIDDEN = "hidden";
     String LABELLED_BY = "labelledby";
@@ -60,6 +61,7 @@ public interface UIConstants {
     String PRESENTATION = "presentation";
     String PROGRESSBAR = "progressbar";
     String ROLE = "role";
+    String SHOWN_MODAL = "shown.bs.modal";
     String TABINDEX = "tabindex";
     String TABLIST = "tablist";
     String TARGET = "target";

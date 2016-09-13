@@ -15,13 +15,13 @@
  */
 package org.jboss.hal.ballroom.wizard;
 
-import com.google.common.base.CharMatcher;
-import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.ballroom.Attachable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import com.google.common.base.CharMatcher;
+import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.Attachable;
 
 /**
  * A step in a wizard. The UI for the step should <string>not</string> contain a header. The header is part of the
@@ -99,9 +99,5 @@ public abstract class WizardStep<C, S extends Enum<S>> implements IsElement {
         if (rest != null) {
             Collections.addAll(attachables, rest);
         }
-    }
-
-    protected void setTitle(String title) {
-        wizard.setTitle(title);
     }
 }

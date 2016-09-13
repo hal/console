@@ -129,6 +129,11 @@ public interface Ids {
 
     String GROUP = "group";
 
+    String HAL_MODAL = "hal-modal";
+    String HAL_MODAL_TITLE = build(HAL_MODAL, "title");
+    String HAL_WIZARD = "hal-wizard";
+    String HAL_WIZARD_TITLE = build(HAL_WIZARD, "title");
+
     String HEADER = "header";
     String HEADER_CONNECTED_TO = build(HEADER, "connected-to");
     String HEADER_MESSAGES = build(HEADER, "messages");

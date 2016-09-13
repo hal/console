@@ -50,6 +50,7 @@ public interface CSS {
     String blue = "blue";
     String bootstrapSwitch = "bootstrap-switch";
     String btn = "btn";
+    String btnCancel = "btn-cancel";
     String btnDefault = "btn-default";
     String btnFinder = "btn-finder";
     String btnGroup = "btn-group";
@@ -289,9 +290,14 @@ public interface CSS {
     String warning = "warning";
     String warningTriangleO = "warning-triangle-o";
     String withProgress = "with-progress";
-    String wizardHeader = "wizard-header";
-    String wizardProgress = "wizard-progress";
-    String wizardStep = "wizard-step";
+    String wizardPf = "wizard-pf";
+    String wizardPfBody = "wizard-pf-body";
+    String wizardPfFooter = "wizard-pf-footer";
+    String wizardPfMain = "wizard-pf-main";
+    String wizardPfStepNumber = "wizard-pf-step-number";
+    String wizardPfStepTitle = "wizard-pf-step-title";
+    String wizardPfSteps = "wizard-pf-steps";
+    String wizardPfStepsIndicator = "wizard-pf-steps-indicator";
 
     static String column(int columns, String... sizes) {
         if (sizes != null && sizes.length != 0) {

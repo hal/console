@@ -140,7 +140,7 @@ class NewSingletonWizard extends Wizard<NewSingletonWizard.SingletonContext, New
         @Override
         protected void onShow(final SingletonContext context) {
             Elements.removeChildrenFrom(root);
-            setTitle(wizard.getContext().parent.text + "=" + wizard.getContext().singleton);
+            // setTitle(wizard.getContext().parent.text + "=" + wizard.getContext().singleton);
             ResourceAddress singletonAddress = wizard.getContext().parent.data.getAddress().getParent()
                     .add(wizard.getContext().parent.text, wizard.getContext().singleton);
             AddressTemplate template = ModelBrowser.asGenericTemplate(wizard.getContext().parent, singletonAddress);

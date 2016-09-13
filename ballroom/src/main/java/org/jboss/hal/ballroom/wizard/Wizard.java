@@ -15,25 +15,28 @@
  */
 package org.jboss.hal.ballroom.wizard;
 
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.google.common.collect.Iterables;
 import com.google.gwt.core.client.GWT;
+import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.ButtonElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.dialog.Dialog;
-import org.jboss.hal.ballroom.dialog.Dialog.Size;
-import org.jboss.hal.resources.CSS;
+import org.jboss.hal.ballroom.dialog.Modal.ModalOptions;
 import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.UIConstants;
 
-import java.util.EnumSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import static elemental.css.CSSStyleDeclaration.Unit.PCT;
-import static java.lang.Math.min;
-import static java.lang.Math.round;
+import static org.jboss.hal.ballroom.dialog.Modal.$;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.UIConstants.HIDDEN;
+import static org.jboss.hal.resources.UIConstants.ROLE;
+import static org.jboss.hal.resources.UIConstants.TABINDEX;
 
 /**
  * General purpose wizard relying on a context for the common data and an enum representing the states of the different
@@ -67,17 +70,101 @@ public abstract class Wizard<C, S extends Enum<S>> {
     }
 
 
+    // ------------------------------------------------------ wizard singleton
+
     private static final Constants CONSTANTS = GWT.create(Constants.class);
-    private static final String INDICATOR_ELEMENT = "indicatorElement";
-    private static final String HEADER_ELEMENT = "headerElement";
-    private static final String STEPS_CONTAINER = "stepsContainer";
+    private static final String BACK_ELEMENT = "prev";
+    private static final String CANCEL_ELEMENT = "cancel";
+    private static final String CLOSE_ICON_ELEMENT = "closeIcon";
+    private static final String LABEL = "label";
+    private static final String MAIN_CONTAINER = "mainContainer";
+    private static final String NEXT_ELEMENT = "next";
+    private static final String SELECTOR_ID = "#" + Ids.HAL_WIZARD;
+    private static final String STEPS_LIST = "steps";
+    private static final String TITLE_ELEMENT = "title";
+
+    private static final Element root;
+    private static final Element closeIcon;
+    private static final Element title;
+    private static final Element stepsList;
+    private static final Element main;
+    private static final ButtonElement cancel;
+    private static final ButtonElement back;
+    private static final ButtonElement next;
+
+    private static boolean open;
+
+
+    static {
+        // @formatter:off
+        Elements.Builder rootBuilder = new Elements.Builder()
+            .div().id(Ids.HAL_WIZARD).css(modal)
+                    .attr(ROLE, "wizard") //NON-NLS
+                    .attr(TABINDEX, "-1")
+                    .aria("labeledby", Ids.HAL_WIZARD_TITLE)
+                .div().css(modalDialog, modalLarge, wizardPf)
+                    .div().css(modalContent)
+                        .div().css(modalHeader)
+                            .button().css(close).aria(LABEL, CONSTANTS.close()).rememberAs(CLOSE_ICON_ELEMENT)
+                                .span().css(pfIcon("close")).aria(HIDDEN, String.valueOf(true)).end()
+                            .end()
+                            .h(4).css(modalTitle).id(Ids.HAL_WIZARD_TITLE).rememberAs(TITLE_ELEMENT).end()
+                        .end()
+                        .div().css(modalBody, wizardPfBody, clearfix)
+                            .div().css(wizardPfSteps)
+                                .ul().css(wizardPfStepsIndicator).rememberAs(STEPS_LIST)
+                                .end()
+                            .end()
+                            .div().css(wizardPfMain).rememberAs(MAIN_CONTAINER)
+                            .end()
+                        .end()
+                        .div().css(modalFooter, wizardPfFooter)
+                            .button().css(btn, btnDefault, btnCancel).rememberAs(CANCEL_ELEMENT)
+                                .textContent(CONSTANTS.cancel())
+                                .end()
+                            .button().css(btn, btnDefault).rememberAs(BACK_ELEMENT)
+                                .span().css(fontAwesome("angle-left")).end()
+                                .span().textContent(CONSTANTS.back()).end()
+                            .end()
+                            .button().css(btn, btnPrimary).rememberAs(NEXT_ELEMENT)
+                                .span().textContent(CONSTANTS.next()).end()
+                                .span().css(fontAwesome("angle-right")).end()
+                            .end()
+                        .end()
+                    .end()
+                .end()
+            .end();
+        // @formatter:on
+
+        root = rootBuilder.build();
+        closeIcon = rootBuilder.referenceFor(CLOSE_ICON_ELEMENT);
+        title = rootBuilder.referenceFor(TITLE_ELEMENT);
+        stepsList = rootBuilder.referenceFor(STEPS_LIST);
+        main = rootBuilder.referenceFor(MAIN_CONTAINER);
+        cancel = rootBuilder.referenceFor(CANCEL_ELEMENT);
+        back = rootBuilder.referenceFor(BACK_ELEMENT);
+        next = rootBuilder.referenceFor(NEXT_ELEMENT);
+
+        Browser.getDocument().getBody().appendChild(root);
+        initEventHandler();
+    }
+
+    private static void initEventHandler() {
+        $(SELECTOR_ID).on(UIConstants.SHOWN_MODAL, () -> Wizard.open = true);
+        $(SELECTOR_ID).on(UIConstants.HIDDEN_MODAL, () -> Wizard.open = false);
+    }
+
+    private static void reset() {
+        Elements.removeChildrenFrom(stepsList);
+        Elements.removeChildrenFrom(main);
+    }
+
+
+    // ------------------------------------------------------ wizard instance
 
     private final String id;
     private final LinkedHashMap<S, WizardStep<C, S>> steps;
-    private final Element header;
-    private final Element indicator;
-    private final Element stepsContainer;
-    private final Dialog dialog;
+    private final Map<S, Element> stepIndicators;
     private final C context;
     private final FinishCallback<C> finishCallback;
     private final CancelCallback<C> cancelCallback;
@@ -99,37 +186,40 @@ public abstract class Wizard<C, S extends Enum<S>> {
         this.finishCallback = finishCallback;
         this.cancelCallback = cancelCallback;
         this.steps = new LinkedHashMap<>();
+        this.stepIndicators = new HashMap<>();
 
-        // @formatter:off
-        Elements.Builder body = new Elements.Builder()
-            .header().css(wizardHeader)
-                .h(1).css(wizardHeader).rememberAs(HEADER_ELEMENT).end()
-                .div().css(wizardProgress)
-                    .span().css(CSS.indicator).rememberAs(INDICATOR_ELEMENT).end()
-                .end()
-            .end()
-            .section().css(wizardStep).rememberAs(STEPS_CONTAINER).end();
-        // @formatter:on
-
-        this.header = body.referenceFor(HEADER_ELEMENT);
-        this.indicator = body.referenceFor(INDICATOR_ELEMENT);
-        this.stepsContainer = body.referenceFor(STEPS_CONTAINER);
-        this.dialog = new Dialog.Builder(title)
-                .closeOnEsc(true)
-                .size(Size.MEDIUM)
-                .add(body.elements())
-                .secondary(-100, CONSTANTS.cancel(), this::onCancel)
-                .secondary(CONSTANTS.back(), this::onBack)
-                .primary(CONSTANTS.next(), this::onNext)
-                .build();
+        reset();
+        Wizard.title.setTextContent(title);
+        closeIcon.setOnclick(event -> onCancel());
+        cancel.setOnclick(event -> onCancel());
+        back.setOnclick(event -> onBack());
+        next.setOnclick(event -> onNext());
     }
 
     private void initSteps() {
+        int index = 1;
         for (Map.Entry<S, WizardStep<C, S>> entry : steps.entrySet()) {
             WizardStep<C, S> step = entry.getValue();
-            Element element = step.asElement();
-            Elements.setVisible(element, false);
-            stepsContainer.appendChild(element);
+
+            // @formatter:off
+            Element li = new Elements.Builder()
+                .li()
+                    .a()
+                        .span().css(wizardPfStepNumber).textContent(String.valueOf(index)).end()
+                        .span().css(wizardPfStepTitle).textContent(step.title).end()
+                    .end()
+                .end()
+            .build();
+            // @formatter:on
+
+            stepIndicators.put(entry.getKey(), li);
+            stepsList.appendChild(li);
+
+            Element stepElement = step.asElement();
+            main.appendChild(stepElement);
+            Elements.setVisible(stepElement, false);
+
+            index++;
         }
     }
 
@@ -146,7 +236,7 @@ public abstract class Wizard<C, S extends Enum<S>> {
      */
     public void show() {
         assertSteps();
-        if (stepsContainer.getChildElementCount() == 0) {
+        if (stepsList.getChildElementCount() == 0) {
             initSteps();
         }
 
@@ -156,7 +246,12 @@ public abstract class Wizard<C, S extends Enum<S>> {
         }
         state = initialState();
 
-        dialog.show();
+        if (Wizard.open) {
+            throw new IllegalStateException(
+                    "Another wizard is still open. Only one wizard can be open at a time. Please close the other wizard!");
+        }
+        $(SELECTOR_ID).modal(ModalOptions.create(true));
+        $(SELECTOR_ID).modal("show");
         pushState(state);
     }
 
@@ -164,39 +259,37 @@ public abstract class Wizard<C, S extends Enum<S>> {
         return context;
     }
 
+    private void close() {
+        $(SELECTOR_ID).modal("hide");
+    }
+
 
     // ------------------------------------------------------ workflow
 
-    private boolean onCancel() {
+    private void onCancel() {
         if (currentStep().onCancel(context)) {
             cancel();
-            return true;
+            close();
         }
-        return false;
     }
 
-    private boolean onBack() {
+    private void onBack() {
         if (currentStep().onBack(context)) {
             final S previousState = back(state);
             if (previousState != null) {
                 pushState(previousState);
             }
         }
-        return false;
     }
 
-    private boolean onNext() {
+    private void onNext() {
         if (currentStep().onNext(context)) {
             final S nextState = next(state);
             if (nextState != null) {
                 pushState(nextState);
-                return false;
             } else {
                 finish();
-                return true;
             }
-        } else {
-            return false;
         }
     }
 
@@ -208,6 +301,7 @@ public abstract class Wizard<C, S extends Enum<S>> {
         if (finishCallback != null) {
             finishCallback.onFinish(context);
         }
+        close();
     }
 
     /**
@@ -217,6 +311,7 @@ public abstract class Wizard<C, S extends Enum<S>> {
         if (cancelCallback != null) {
             cancelCallback.onCancel(context);
         }
+        close();
     }
 
     /**
@@ -227,31 +322,21 @@ public abstract class Wizard<C, S extends Enum<S>> {
     private void pushState(final S state) {
         this.state = state;
 
-        int index = 0;
-        int current = 0;
-        for (Map.Entry<S, WizardStep<C, S>> entry : steps.entrySet()) {
-            if (entry.getKey() == state) {
-                current = index;
+        stepIndicators.forEach((s, element) -> {
+            if (s == state) {
+                element.getClassList().add(active);
+            } else {
+                element.getClassList().remove(active);
             }
-            Elements.setVisible(entry.getValue().asElement(), entry.getKey() == state);
-            index++;
-        }
-        current++;
-        double width = min(round(((double) current / (double) steps.size()) * 100.0), 100.0);
-        setTitle(currentStep().title);
-        indicator.getStyle().setWidth(width, PCT);
+        });
+        steps.forEach((s, step) -> Elements.setVisible(step.asElement(), s == state));
         currentStep().onShow(context);
         for (Attachable attachable : currentStep().attachables) {
             attachable.attach();
         }
-        ButtonElement back = dialog.getButton(Dialog.SECONDARY_POSITION);
-        back.setDisabled(state == initialState());
-        ButtonElement next = dialog.getButton(Dialog.PRIMARY_POSITION);
-        next.setInnerHTML(lastStates().contains(state) ? CONSTANTS.finish() : CONSTANTS.next());
-    }
 
-    void setTitle(String title) {
-        header.setInnerText(title);
+        back.setDisabled(state == initialState());
+        next.setInnerHTML(lastStates().contains(state) ? CONSTANTS.finish() : CONSTANTS.next());
     }
 
     /**
