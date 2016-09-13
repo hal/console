@@ -64,7 +64,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 class DeploymentFunctions {
 
-    public static final String ASSIGNMENTS = "deploymentFunctions.assignments";
+    static final String ASSIGNMENTS = "deploymentFunctions.assignments";
     private static final String UPLOAD_STATISTICS = "deploymentsFunctions.uploadStatistics";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(DeploymentFunctions.class);
 
@@ -230,23 +230,15 @@ class DeploymentFunctions {
 
         private final Dispatcher dispatcher;
         private final String name;
-        private final String serverGroup;
 
         CheckDeployment(final Dispatcher dispatcher, final String name) {
-            this(dispatcher, null, name);
-        }
-
-        CheckDeployment(final Dispatcher dispatcher, final String serverGroup, final String name) {
             this.dispatcher = dispatcher;
-            this.serverGroup = serverGroup;
             this.name = name;
         }
 
         @Override
         public void execute(final Control<FunctionContext> control) {
-            ResourceAddress address = serverGroup == null ? ResourceAddress.ROOT : new ResourceAddress()
-                    .add(SERVER_GROUP, serverGroup);
-            Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, address)
+            Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, ResourceAddress.ROOT)
                     .param(CHILD_TYPE, DEPLOYMENT)
                     .build();
             dispatcher.executeInFunction(control, operation, result -> {
@@ -272,11 +264,14 @@ class DeploymentFunctions {
      */
     private static class UploadOrReplace implements Function<FunctionContext> {
 
+        private final Environment environment;
         private final Dispatcher dispatcher;
         private final File file;
         private final boolean enabled;
 
-        UploadOrReplace(final Dispatcher dispatcher, final File file, final boolean enabled) {
+        UploadOrReplace(final Environment environment, final Dispatcher dispatcher, final File file,
+                final boolean enabled) {
+            this.environment = environment;
             this.dispatcher = dispatcher;
             this.file = file;
             this.enabled = enabled;
@@ -311,7 +306,7 @@ class DeploymentFunctions {
                     result -> {
                         UploadStatistics statistics = control.getContext().get(UPLOAD_STATISTICS);
                         if (statistics == null) {
-                            statistics = new UploadStatistics();
+                            statistics = new UploadStatistics(environment);
                             control.getContext().set(UPLOAD_STATISTICS, statistics);
                         }
                         if (ADD.equals(operation.getName())) {
@@ -325,7 +320,7 @@ class DeploymentFunctions {
                     (op, failure) -> {
                         UploadStatistics statistics = control.getContext().get(UPLOAD_STATISTICS);
                         if (statistics == null) {
-                            statistics = new UploadStatistics();
+                            statistics = new UploadStatistics(environment);
                             control.getContext().set(UPLOAD_STATISTICS, statistics);
                         }
                         statistics.recordFailed(file.getName());
@@ -335,7 +330,7 @@ class DeploymentFunctions {
                     (op, exception) -> {
                         UploadStatistics statistics = control.getContext().get(UPLOAD_STATISTICS);
                         if (statistics == null) {
-                            statistics = new UploadStatistics();
+                            statistics = new UploadStatistics(environment);
                             control.getContext().set(UPLOAD_STATISTICS, statistics);
                         }
                         statistics.recordFailed(file.getName());
@@ -346,68 +341,24 @@ class DeploymentFunctions {
 
 
     /**
-     * Uploads or updates one or multiple deployment in standalone mode.
+     * Uploads or updates one or multiple deployment in standalone mode resp. content in domain mode.
      */
-    static <T> void upload(FinderColumn<T> column, final Dispatcher dispatcher, final EventBus eventBus,
-            final Provider<Progress> progress, final Resources resources, final FileList files) {
+    static <T> void upload(FinderColumn<T> column, final Environment environment, final Dispatcher dispatcher,
+            final EventBus eventBus, final Provider<Progress> progress, final Resources resources,
+            final FileList files) {
         if (files.getLength() > 0) {
 
             StringBuilder builder = new StringBuilder();
             List<Function> functions = new ArrayList<>();
 
             for (int i = 0; i < files.getLength(); i++) {
-                String name = files.item(i).getName();
-                builder.append(name).append(" ");
-                functions.add(new CheckDeployment(dispatcher, name));
-                functions.add(new UploadOrReplace(dispatcher, files.item(i), false));
+                String filename = files.item(i).getName();
+                builder.append(filename).append(" ");
+                functions.add(new CheckDeployment(dispatcher, filename));
+                functions.add(new UploadOrReplace(environment, dispatcher, files.item(i), false));
             }
 
             logger.debug("About to upload / update {} file(s): {}", files.getLength(), builder.toString());
-            final Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
-                @Override
-                public void onFailure(final FunctionContext context) {
-                    // Should not happen since UploadOrReplace functions proceed also for errors and exceptions!
-                    MessageEvent
-                            .fire(eventBus, Message.error(resources.messages().deploymentOpFailed(files.getLength())));
-                }
-
-                @Override
-                public void onSuccess(final FunctionContext context) {
-                    UploadStatistics statistics = context.get(UPLOAD_STATISTICS);
-                    if (statistics != null) {
-                        eventBus.fireEvent(new MessageEvent(statistics.getMessage()));
-                    } else {
-                        logger.error("Unable to find upload statistics in the context using key '{}'",
-                                UPLOAD_STATISTICS);
-                    }
-                    column.refresh(RESTORE_SELECTION);
-                }
-            };
-            new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
-                    functions.toArray(new Function[functions.size()]));
-        }
-    }
-
-
-    /**
-     * Assigns or updates one or multiple deployments of a server group in domain mode.
-     */
-    static <T> void assign(FinderColumn<T> column, final Dispatcher dispatcher, final EventBus eventBus,
-            final Provider<Progress> progress, final Resources resources,
-            final String serverGroup, final FileList files) {
-        if (files.getLength() > 0) {
-
-            StringBuilder builder = new StringBuilder();
-            List<Function> functions = new ArrayList<>();
-
-            for (int i = 0; i < files.getLength(); i++) {
-                String name = files.item(i).getName();
-                builder.append(name).append(" ");
-                functions.add(new CheckDeployment(dispatcher, serverGroup, name));
-                functions.add(new UploadOrReplace(dispatcher, files.item(i), false));
-            }
-
-            logger.debug("About to assign / update {} file(s): {}", files.getLength(), builder.toString());
             final Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
                 @Override
                 public void onFailure(final FunctionContext context) {

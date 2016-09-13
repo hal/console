@@ -30,6 +30,7 @@ import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.client.deployment.Deployment.Status;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -69,6 +70,7 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
     @Inject
     public DeploymentColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
+            final Environment environment,
             final Dispatcher dispatcher,
             final EventBus eventBus,
             @Footer final Provider<Progress> progress,
@@ -154,7 +156,7 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
 
         setPreviewCallback(deployment -> new DeploymentPreview(DeploymentColumn.this, deployment, resources));
         if (JsHelper.supportsAdvancedUpload()) {
-            setOnDrop(event -> DeploymentFunctions.upload(this, dispatcher, eventBus, progress, resources,
+            setOnDrop(event -> DeploymentFunctions.upload(this, environment, dispatcher, eventBus, progress, resources,
                     event.dataTransfer.files));
         }
     }

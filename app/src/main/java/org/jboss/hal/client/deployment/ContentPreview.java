@@ -16,6 +16,8 @@
 package org.jboss.hal.client.deployment;
 
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.PreviewAttributes;
@@ -40,8 +42,21 @@ import static org.jboss.hal.resources.CSS.clickable;
  */
 class ContentPreview extends PreviewContent<Content> {
 
+    private static final String ASSIGNMENTS_DIV = "assignmentsDiv";
+    private static final String ASSIGNMENTS_UL = "assignmentsUl";
+
+    private final ContentColumn column;
+    private final Places places;
+    private final Resources resources;
+    private final PreviewAttributes<Content> attributes;
+    private final Element assignmentsDiv;
+    private final Element assignmentsUl;
+
     ContentPreview(final ContentColumn column, final Content content, final Places places, final Resources resources) {
         super(content.getName());
+        this.column = column;
+        this.places = places;
+        this.resources = resources;
 
         if (content.getAssignments().isEmpty()) {
             previewBuilder().add(
@@ -49,14 +64,27 @@ class ContentPreview extends PreviewContent<Content> {
                             resources.constants().assign(), event -> column.assign(content)));
         }
 
-        PreviewAttributes<Content> attributes = new PreviewAttributes<>(content,
+        attributes = new PreviewAttributes<>(content,
                 asList(NAME, RUNTIME_NAME, MANAGED, EXPLODED)).end();
         previewBuilder().addAll(attributes);
 
+        previewBuilder()
+                .div().rememberAs(ASSIGNMENTS_DIV)
+                .h(2).textContent(resources.constants().assignments()).end()
+                .p().innerHtml(resources.messages().assignedTo(content.getName())).end()
+                .ul().rememberAs(ASSIGNMENTS_UL).end()
+                .end();
+        assignmentsDiv = previewBuilder().referenceFor(ASSIGNMENTS_DIV);
+        assignmentsUl = previewBuilder().referenceFor(ASSIGNMENTS_UL);
+    }
+
+    @Override
+    public void update(final Content content) {
+        attributes.refresh(content);
+        Elements.setVisible(assignmentsDiv, !content.getAssignments().isEmpty());
         if (!content.getAssignments().isEmpty()) {
-            previewBuilder().h(2).textContent(resources.constants().assignments()).end()
-                    .p().innerHtml(resources.messages().assignedTo(content.getName())).end()
-                    .ul();
+            Elements.removeChildrenFrom(assignmentsUl);
+            Elements.Builder builder = new Elements.Builder();
             content.getAssignments().forEach(assignment -> {
                 String serverGroup = assignment.getServerGroup();
                 PlaceRequest serverGroupPlaceRequest = places.finderPlace(NameTokens.DEPLOYMENTS, new FinderPath()
@@ -64,18 +92,20 @@ class ContentPreview extends PreviewContent<Content> {
                         .append(Ids.DEPLOYMENT_SERVER_GROUP, Ids.serverGroup(serverGroup)))
                         .build();
                 String serverGroupToken = places.historyToken(serverGroupPlaceRequest);
-                previewBuilder().li()
+                // @formatter:off
+                builder
+                    .li()
                         .a(serverGroupToken).textContent(serverGroup).end()
                         .span().textContent(" (").end()
                         .a().css(clickable)
-                        .on(click, event -> column.unassign(content, serverGroup))
-                        .textContent(resources.constants().unassign())
-                        .end() // </a>
+                            .on(click, event -> column.unassign(content, serverGroup))
+                            .textContent(resources.constants().unassign())
+                        .end()
                         .span().textContent(")").end()
-                        .end(); // </li>
-
+                    .end();
+                // @formatter:on
+                assignmentsUl.appendChild(builder.build());
             });
-            previewBuilder().end(); // </ul>
         }
     }
 }

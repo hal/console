@@ -165,6 +165,7 @@ public interface CSS {
     String macroList = "macro-list";
     String marginBottom5 = "margin-bottom-5";
     String marginRight4 = "margin-right-4";
+    String marginLeft4 = "margin-left-4";
     String marginTop20 = "margin-top-20";
     String messageDetails = "message-details";
     String messageDetailsPre = "message-details-pre";
@@ -246,6 +247,7 @@ public interface CSS {
     String secondaryCollapseTogglePf = "secondary-collapse-toggle-pf";
     String secondaryNavItemPf = "secondary-nav-item-pf";
     String secondaryVisiblePf = "secondary-visible-pf";
+    String selectCheckbox = "select-checkbox"; // used in DataTables for the checkbox column
     String selected = "selected";
     String selectpicker = "selectpicker";
     String separator = "separator";

@@ -71,6 +71,7 @@ public class Column<T> {
     public RenderCallback<T, ?> render;
     public boolean orderable;
     public boolean searchable;
+    public String className;
     public String type;
     public String width;
 }

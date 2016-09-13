@@ -77,9 +77,11 @@ public interface Ids {
     String ASSIGNED_DEPLOYMENT = "assigned-deployment";
     String ASSIGNMENT = "assignement";
     String ASSIGNMENT_ADD = build(ASSIGNMENT, ADD_SUFFIX);
-    String ASSIGNMENT_REFRESH = build(ASSIGNMENT, REFRESH_SUFFIX);
+    String ASSIGNMENT_ADD_TABLE = build(ASSIGNMENT, ADD_SUFFIX, TABLE_SUFFIX);
+    String ASSIGNMENT_ENABLE = build(ASSIGNMENT, "enable");
     String ASSIGNMENT_INCLUDE = build(ASSIGNMENT, "include");
     String ASSIGNMENT_EXCLUDE = build(ASSIGNMENT, "exclude");
+    String ASSIGNMENT_REFRESH = build(ASSIGNMENT, REFRESH_SUFFIX);
 
     String CONFIGURATION = "configuration";
     String CONTENT = "content";

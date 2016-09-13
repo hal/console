@@ -141,8 +141,7 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
         });
 
         if (JsHelper.supportsAdvancedUpload()) {
-            setOnDrop(event -> DeploymentFunctions.assign(this, dispatcher, eventBus, progress, resources,
-                    statementContext.selectedServerGroup(), event.dataTransfer.files));
+            setOnDrop(event -> Browser.getWindow().alert(Names.NYI));
         }
     }
 

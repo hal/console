@@ -17,6 +17,7 @@ package org.jboss.hal.client.deployment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -30,13 +31,17 @@ import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.js.JsHelper;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.Ids;
@@ -48,10 +53,13 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.spi.MessageEvent.fire;
 
 /**
  * Column used in domain mode to manage content in the content repository.
@@ -68,6 +76,7 @@ public class ContentColumn extends FinderColumn<Content> {
     @Inject
     public ContentColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
+            final Environment environment,
             final Dispatcher dispatcher,
             final EventBus eventBus,
             final Places places,
@@ -138,9 +147,13 @@ public class ContentColumn extends FinderColumn<Content> {
             @Override
             public List<ItemAction<Content>> actions() {
                 List<ItemAction<Content>> actions = new ArrayList<>();
-                actions.add(new ItemAction<>(resources.constants().assign(), content -> assign(content)));
-                actions.add(new ItemAction<>(resources.constants().replace(), content -> replace(content)));
 
+                // order is: assign, (explode), replace, unassign / remove
+                actions.add(new ItemAction<>(resources.constants().assign(), itm -> assign(itm)));
+                if (item.getAssignments().isEmpty() && !item.isExploded()) {
+                    actions.add(new ItemAction<>(resources.constants().explode(), itm -> explode(itm)));
+                }
+                actions.add(new ItemAction<>(resources.constants().replace(), itm -> replace(itm)));
                 if (item.getAssignments().isEmpty()) {
                     actions.add(new ItemAction<>(resources.constants().remove(), itm -> remove(itm)));
                 } else {
@@ -151,7 +164,7 @@ public class ContentColumn extends FinderColumn<Content> {
         });
 
         if (JsHelper.supportsAdvancedUpload()) {
-            setOnDrop(event -> DeploymentFunctions.upload(this, dispatcher, eventBus, progress, resources,
+            setOnDrop(event -> DeploymentFunctions.upload(this, environment, dispatcher, eventBus, progress, resources,
                     event.dataTransfer.files));
         }
     }
@@ -164,16 +177,90 @@ public class ContentColumn extends FinderColumn<Content> {
         Browser.getWindow().alert(Names.NYI);
     }
 
+    private void explode(Content content) {
+        Operation operation = new Operation.Builder("explode", contentAddress(content)).build();
+        dispatcher.execute(operation, result -> {
+            refresh(RESTORE_SELECTION);
+            MessageEvent
+                    .fire(eventBus, Message.success(resources.messages().deploymentExploded(content.getName())));
+        });
+    }
+
     void assign(Content content) {
-        Browser.getWindow().alert(Names.NYI);
+        Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, ResourceAddress.ROOT)
+                .param(CHILD_TYPE, SERVER_GROUP)
+                .build();
+        dispatcher.execute(operation, result -> {
+            Set<String> unassignedServerGroups = result.asList().stream()
+                    .map(ModelNode::asString)
+                    .collect(toSet());
+            Set<String> assignedServerGroups = content.getAssignments().stream()
+                    .map(Assignment::getServerGroup)
+                    .collect(toSet());
+            unassignedServerGroups.removeAll(assignedServerGroups);
+
+            if (unassignedServerGroups.isEmpty()) {
+                MessageEvent.fire(eventBus, Message.warning(
+                        resources.messages().contentAlreadyAssignedToAllServerGroups(content.getName())));
+
+            } else {
+                new AssignContentDialog(content, unassignedServerGroups, resources, (cnt, serverGroups, enable) -> {
+                    List<Operation> operations = serverGroups.stream()
+                            .map(serverGroup -> {
+                                ResourceAddress resourceAddress = new ResourceAddress()
+                                        .add(SERVER_GROUP, serverGroup)
+                                        .add(DEPLOYMENT, content.getName());
+                                return new Operation.Builder(ADD, resourceAddress)
+                                        .param(RUNTIME_NAME, content.getRuntimeName())
+                                        .param(ENABLED, enable)
+                                        .build();
+                            })
+                            .collect(toList());
+                    dispatcher.execute(new Composite(operations), (CompositeResult cr) -> {
+                        refresh(RESTORE_SELECTION);
+                        MessageEvent.fire(eventBus,
+                                Message.success(resources.messages().contentAssigned(content.getName())));
+                    });
+                }).show();
+            }
+        });
     }
 
     private void unassign(Content content) {
-        Browser.getWindow().alert(Names.NYI);
+        if (!content.getAssignments().isEmpty()) {
+            Set<String> assignedServerGroups = content.getAssignments().stream()
+                    .map(Assignment::getServerGroup)
+                    .collect(toSet());
+            new AssignContentDialog(content, assignedServerGroups, resources, (cnt, serverGroups) -> {
+                List<Operation> operations = serverGroups.stream()
+                        .map(serverGroup -> {
+                            ResourceAddress resourceAddress = new ResourceAddress()
+                                    .add(SERVER_GROUP, serverGroup)
+                                    .add(DEPLOYMENT, content.getName());
+                            return new Operation.Builder(REMOVE, resourceAddress).build();
+                        })
+                        .collect(toList());
+                dispatcher.execute(new Composite(operations), (CompositeResult cr) -> {
+                    refresh(RESTORE_SELECTION);
+                    MessageEvent.fire(eventBus,
+                            Message.success(resources.messages().contentUnassigned(content.getName())));
+                });
+            }).show();
+
+        } else {
+            MessageEvent.fire(eventBus, Message.warning(resources.messages().unassignedContent(content.getName())));
+        }
     }
 
     void unassign(Content content, String serverGroup) {
-        Browser.getWindow().alert(Names.NYI);
+        ResourceAddress address = new ResourceAddress().add(SERVER_GROUP, serverGroup)
+                .add(DEPLOYMENT, content.getName());
+        Operation operation = new Operation.Builder(REMOVE, address).build();
+        dispatcher.execute(operation, result -> {
+            refresh(RESTORE_SELECTION);
+            fire(eventBus,
+                    Message.success(resources.messages().deploymentUnassigned(content.getName(), serverGroup)));
+        });
     }
 
     private void remove(Content content) {
@@ -184,11 +271,15 @@ public class ContentColumn extends FinderColumn<Content> {
                     ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
                     Operation operation = new Operation.Builder(REMOVE, address).build();
                     dispatcher.execute(operation, result -> {
-                        MessageEvent.fire(eventBus, Message.success(resources.messages()
+                        fire(eventBus, Message.success(resources.messages()
                                 .removeResourceSuccess(resources.constants().content(),
                                         content.getName())));
                         refresh(CLEAR_SELECTION);
                     });
                 });
+    }
+
+    private ResourceAddress contentAddress(Content content) {
+        return new ResourceAddress().add(DEPLOYMENT, content.getName());
     }
 }

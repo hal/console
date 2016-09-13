@@ -47,6 +47,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml allMailServersExist();
     SafeHtml allSingletonsExist();
     SafeHtml assignByDragAndDrop(String replace);
+    SafeHtml assignContentDescription(String name);
     SafeHtml assignedTo(String name);
     SafeHtml assignmentExcludeSuccess(String type, String name);
     SafeHtml assignmentIncludeSuccess(String type, String name);
@@ -56,6 +57,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml configuredMailServer(String servers);
     String connectedTo(String url);
+    SafeHtml contentAdded(@PluralCount int size);
+    SafeHtml contentAlreadyAssignedToAllServerGroups(String name);
+    SafeHtml contentAssigned(String name);
+    SafeHtml contentOpFailed(@PluralCount int size);
+    SafeHtml contentReplaced(@PluralCount int size);
+    SafeHtml contentUnassigned(String name);
     String currentOfTottal(long current, long total);
 
     SafeHtml dataSourceDisabled(String name);
@@ -68,9 +75,11 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml deploymentEnabled(String name);
     SafeHtml deploymentEnabledError(String name);
     SafeHtml deploymentEnabledSuccess(String name);
+    SafeHtml deploymentExploded(String name);
     SafeHtml deploymentFailed(String name);
     SafeHtml deploymentOpFailed(@PluralCount int count);
     SafeHtml deploymentReplaced(@PluralCount int count);
+    SafeHtml deploymentUnassigned(String name, String serverGroup);
     String deployments(@PluralCount int count);
     SafeHtml deploymentsDescription(String serverGroupName, @PluralCount int deployments);
     SafeHtml domainConfigurationChanged();
@@ -126,6 +135,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noLogFile();
     SafeHtml noMacrosDescription(String startMacro);
     SafeHtml noReferenceServer(String deployment, String attribute1, String attribute2, String serverGroup, String historyToken);
+    SafeHtml noServerGroupSelected();
     SafeHtml normalLogFile(String size);
 
     SafeHtml pageNotFound(String invalidHistoryToken);
@@ -245,6 +255,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml updateHostError(String name);
     SafeHtml updateServerError(String name);
     SafeHtml updateServerGroupError(String name);
+    SafeHtml unassignContentDescription(String name);
     SafeHtml unassignedContent(String name);
     String unit(String unit);
     SafeHtml unknownError();

@@ -46,6 +46,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String adminOnly();
     String archived();
     String assign();
+    String assignContent();
     String assignment();
     String assignments();
     String assignmentsOfGroup();
@@ -95,6 +96,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String edit();
     String enable();
     String enabled();
+    String enableContent();
     String enableRbac();
     String enableStatistics();
     String endpointSelectTitle();
@@ -106,6 +108,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String excludeRole();
     String excludeUserGroup();
     String excludes();
+    String explode();
     String exploded();
     String expressionResolver();
 
@@ -342,6 +345,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String type();
 
     String unassign();
+    String unassignContent();
     String unassigned();
     String unknownState();
     String unmanaged();
