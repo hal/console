@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://raw.githubusercontent.com/hal/hal.next/develop/spi/src/main/resources/org/jboss/hal/spi/MbuiView.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!--
+  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<view>
+    <vertical-navigation id="ejb-vertical-navigation">
+
+        <item id="container-item" title="Container" icon="fa fa-cogs">
+            
+            <sub-item id="configuration-item" title="Container">
+                <metadata address="/{selected.profile}/subsystem=ejb3">
+                    <h1>Container</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <form id="configuration-form" title="Container" auto-save="true" />
+                </metadata>
+            </sub-item>
+            
+            
+            <sub-item id="thread-pool-item" title="Thread Pool">
+                <metadata address="/{selected.profile}/subsystem=ejb3/thread-pool=*">
+                    <h1>Thread Pool</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="thread-pool-table" title="Thread Pool" form-ref="thread-pool-form">
+                        <actions>
+                            <action handler-ref="add-resource">
+                            </action>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="{{row.getName()}}"/>
+                        </columns>
+                    </table>
+                    <form id="thread-pool-form" title="Thread Pool" auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                    </form>
+                </metadata>
+            </sub-item>
+            
+            <sub-item id="remoting-profile-item" title="Remoting Profile">
+                <metadata address="/{selected.profile}/subsystem=ejb3/remoting-profile=*">
+                    <h1>Remoting Profile</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="remoting-profile-table" title="Remoting Profile" form-ref="remoting-profile-form">
+                        <actions>
+                            <action handler-ref="add-resource">
+                            </action>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="{{row.getName()}}"/>
+                        </columns>
+                    </table>
+                    <form id="remoting-profile-form" title="Remoting Profile" auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                    </form>
+                </metadata>
+            </sub-item>
+        </item>
+        
+        <item id="bean-pool-item" title="Bean Pool" icon="pficon pficon-repository">
+            <metadata address="/{selected.profile}/subsystem=ejb3/strict-max-bean-instance-pool=*">
+                <h1>Bean Pool</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="bean-pool-table" title="Bean Pool" form-ref="bean-pool-form">
+                    <actions>
+                        <action handler-ref="add-resource">
+                        </action>
+                        <action handler-ref="remove-resource" scope="selected"
+                                name-resolver="{{api.selectedRow().getName()}}"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="bean-pool-form" title="Bean Pool" auto-save="true"
+                      name-resolver="{{form.getModel().getName()}}">
+                </form>
+            </metadata>
+        </item>
+
+        <item id="state-item" title="State Management" icon="fa fa-list-ul">
+
+            <sub-item id="cache-item" title="Cache">
+                <metadata address="/{selected.profile}/subsystem=ejb3/cache=*">
+                    <h1>Cache</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="cache-table" title="Cache" form-ref="cache-form">
+                        <actions>
+                            <action handler-ref="add-resource">
+                            </action>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="{{row.getName()}}"/>
+                        </columns>
+                    </table>
+                    <form id="cache-form" title="Cache" auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                    </form>
+                </metadata>
+            </sub-item>
+
+
+            <sub-item id="passivation-item" title="Passivation">
+                <metadata address="/{selected.profile}/subsystem=ejb3/passivation-store=*">
+                    <h1>Passivation</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <table id="passivation-table" title="Passivation" form-ref="passivation-form">
+                        <actions>
+                            <action handler-ref="add-resource">
+                                <attributes>
+                                    <attribute name="bean-cache" />
+                                    <attribute name="cache-container" >
+                                        <suggest-handler>
+                                            <templates>
+                                                <template address="/{selected.profile}/subsystem=infinispan/cache-container=*"/>
+                                            </templates>
+                                        </suggest-handler>
+                                    </attribute>
+                                    <attribute name="max-size" />
+                                </attributes>
+                            </action>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="{{api.selectedRow().getName()}}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="{{row.getName()}}"/>
+                        </columns>
+                    </table>
+                    <form id="passivation-form" title="Passivation" auto-save="true"
+                          name-resolver="{{form.getModel().getName()}}">
+                    </form>
+                </metadata>
+            </sub-item>
+
+        </item>
+
+        <item id="service-item" title="Services" icon="pficon pficon-service">
+
+            <sub-item id="service-async-item" title="Async">
+                <metadata address="/{selected.profile}/subsystem=ejb3/service=async">
+                    <h1>Async</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <form id="service-async-form" title="Async" auto-save="true">
+                        <attributes>
+                            <attribute name="thread-pool-name">
+                                <suggest-handler>
+                                    <templates>
+                                    <!-- @formatter:off -->
+                                    <template address="/{selected.profile}/subsystem=ejb3/thread-pool=*"/>
+                                    <!-- @formatter:on -->
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+            <sub-item id="service-iiop-item" title="IIOP">
+                <metadata address="/{selected.profile}/subsystem=ejb3/service=iiop">
+                    <h1>IIOP</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <form id="service-iiop-form" title="IIOP" auto-save="true"/>
+                </metadata>
+            </sub-item>
+            <sub-item id="service-remote-item" title="Remote">
+                <metadata address="/{selected.profile}/subsystem=ejb3/service=remote">
+                    <h1>Remote</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <form id="service-remote-form" title="Remote" auto-save="true" >
+                        <attributes>
+                            <attribute name="cluster">
+                                <suggest-handler>
+                                    <templates>
+                                    <!-- @formatter:off -->
+                                    <template address="/{selected.profile}/subsystem=infinispan/cache-container=*"/>
+                                    <!-- @formatter:on -->
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                            <attribute name="connector-ref">
+                                <suggest-handler>
+                                    <templates>
+                                    <!-- @formatter:off -->
+                                    <template address="/{selected.profile}/subsystem=remoting/http-connector=*"/>
+                                    <!-- @formatter:on -->
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                            <attribute name="thread-pool-name">
+                                <suggest-handler>
+                                    <templates>
+                                    <!-- @formatter:off -->
+                                    <template address="/{selected.profile}/subsystem=ejb3/thread-pool=*"/>
+                                    <!-- @formatter:on -->
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                            <attribute name="execute-in-worker" />
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+            <sub-item id="service-timer-item" title="Timer">
+                <metadata address="/{selected.profile}/subsystem=ejb3/service=timer-service">
+                    <h1>Timer</h1>
+                    <p>{{metadata.getDescription().getDescription()}}</p>
+                    <form id="service-timer-form" title="Timer" auto-save="true">
+                        <attributes>
+                            <attribute name="default-data-store">
+                                <suggest-handler>
+                                    <templates>
+                                    <!-- @formatter:off -->
+                                    <template address="/{selected.profile}/subsystem=ejb3/service=timer-service/database-data-store=*"/>
+                                    <template address="/{selected.profile}/subsystem=ejb3/service=timer-service/file-data-store=*"/>
+                                    <!-- @formatter:on -->
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                            <attribute name="thread-pool-name">
+                                <suggest-handler>
+                                    <templates>
+                                    <!-- @formatter:off -->
+                                    <template address="/{selected.profile}/subsystem=ejb3/thread-pool=*"/>
+                                    <!-- @formatter:on -->
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+        </item>
+        
+        <item id="mdb-delivery-group-item" title="MDB Delivery" icon="fa fa-inbox">
+
+            <metadata address="/{selected.profile}/subsystem=ejb3/mdb-delivery-group=*">
+                <h1>MDB Delivery Group</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="mdb-delivery-group-table" title="MDB Delivery Group" form-ref="mdb-delivery-group-form">
+                    <actions>
+                        <action handler-ref="add-resource">
+                        </action>
+                        <action handler-ref="remove-resource" scope="selected"
+                                name-resolver="{{api.selectedRow().getName()}}"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="mdb-delivery-group-form" title="MDB Delivery Group" auto-save="true"
+                      name-resolver="{{form.getModel().getName()}}">
+                </form>
+            </metadata>
+        </item>        
+
+        <item id="app-security-domain-item" title="Security Domain" icon="fa fa-link">
+            <metadata address="/{selected.profile}/subsystem=ejb3/application-security-domain=*">
+                <h1>Application Security Domain</h1>
+                <p>{{metadata.getDescription().getDescription()}}</p>
+                <table id="app-security-domain-table" title="Application Security Domain" form-ref="app-security-domain-form">
+                    <actions>
+                        <action handler-ref="add-resource">
+                        </action>
+                        <action handler-ref="remove-resource" scope="selected"
+                                name-resolver="{{api.selectedRow().getName()}}"/>
+                    </actions>
+                    <columns>
+                        <column name="name" value="{{row.getName()}}"/>
+                    </columns>
+                </table>
+                <form id="app-security-domain-form" title="Application Security Domain" auto-save="true"
+                      name-resolver="{{form.getModel().getName()}}">
+                </form>
+            </metadata>
+        </item>        
+        
+    </vertical-navigation>
+</view>
