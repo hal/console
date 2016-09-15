@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
+package org.jboss.hal.core.modelbrowser;
 
 /**
  * @author Harald Pehl
  */
-public enum State {
-    CHOOSE_TEMPLATE, NAMES, DRIVER, PROPERTIES, CONNECTION, REVIEW
+enum SingletonState {
+    CHOOSE, CREATE
 }

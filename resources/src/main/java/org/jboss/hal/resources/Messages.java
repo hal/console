@@ -48,6 +48,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml allSingletonsExist();
     SafeHtml assignByDragAndDrop(String replace);
     SafeHtml assignContentDescription(String name);
+    String assignedDeployments(@PluralCount int count);
     SafeHtml assignedTo(String name);
     SafeHtml assignmentExcludeSuccess(String type, String name);
     SafeHtml assignmentIncludeSuccess(String type, String name);
@@ -65,6 +66,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml contentUnassigned(String name);
     String currentOfTottal(long current, long total);
 
+    SafeHtml dataSourceAddError();
     SafeHtml dataSourceDisabled(String name);
     SafeHtml dataSourceDisabledNoStatistics(String name);
     SafeHtml dataSourceEnabled(String name);
@@ -80,7 +82,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml deploymentOpFailed(@PluralCount int count);
     SafeHtml deploymentReplaced(@PluralCount int count);
     SafeHtml deploymentUnassigned(String name, String serverGroup);
-    String deployments(@PluralCount int count);
     SafeHtml deploymentsDescription(String serverGroupName, @PluralCount int deployments);
     SafeHtml domainConfigurationChanged();
     SafeHtml domainControllerTimeout(String name);
@@ -263,5 +264,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String unknownResourceDetails(String address, String reason);
     String uptime(String uptime);
     String used(double value);
+
+    String view(String type);
     //@formatter:on
 }

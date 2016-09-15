@@ -66,7 +66,7 @@ public interface Ids {
     String STORAGE_PREFIX = "hal-local-storage";
     String TAB_SUFFIX = "tab";
     String TABLE_SUFFIX = "table";
-    String WIZARD_SUFFIX = "wizard";
+    String WIZARD_STEP_SUFFIX = "wizard-step";
 
 
     // ------------------------------------------------------ ids (a-z)
@@ -91,14 +91,23 @@ public interface Ids {
     String DATA_SOURCE_CONFIGURATION = "data-source-configuration";
     String DATA_SOURCE_ADD = build(DATA_SOURCE_CONFIGURATION, ADD_SUFFIX);
     String DATA_SOURCE_ADD_ACTIONS = build(DATA_SOURCE_CONFIGURATION, "add-actions");
+    String DATA_SOURCE_CHOOSE_TEMPLATE_STEP = build(DATA_SOURCE_CONFIGURATION, "choose-template", WIZARD_STEP_SUFFIX);
+    String DATA_SOURCE_CONNECTION_FORM = build(DATA_SOURCE_CONFIGURATION, "connection", FORM_SUFFIX);
+    String DATA_SOURCE_CONNECTION_STEP = build(DATA_SOURCE_CONFIGURATION, "connection", WIZARD_STEP_SUFFIX);
     String DATA_SOURCE_DRIVER = "data-source-driver";
+    String DATA_SOURCE_DRIVER_FORM = build(DATA_SOURCE_CONFIGURATION, "driver", FORM_SUFFIX);
+    String DATA_SOURCE_DRIVER_STEP = build(DATA_SOURCE_CONFIGURATION, "driver", WIZARD_STEP_SUFFIX);
+    String DATA_SOURCE_NAMES_FORM = build(DATA_SOURCE_CONFIGURATION, "names", FORM_SUFFIX);
+    String DATA_SOURCE_NAMES_STEP = build(DATA_SOURCE_CONFIGURATION, "names", WIZARD_STEP_SUFFIX);
+    String DATA_SOURCE_PROPERTIES_STEP = build(DATA_SOURCE_CONFIGURATION, "properties", WIZARD_STEP_SUFFIX);
     String DATA_SOURCE_REFRESH = build(DATA_SOURCE_CONFIGURATION, REFRESH_SUFFIX);
+    String DATA_SOURCE_REVIEW_FORM = build(DATA_SOURCE_CONFIGURATION, "review", FORM_SUFFIX);
+    String DATA_SOURCE_REVIEW_STEP = build(DATA_SOURCE_CONFIGURATION, "review", WIZARD_STEP_SUFFIX);
     String DATA_SOURCE_RUNTIME = "data-source-runtime";
     String DATA_SOURCE_RUNTIME_JDBC_FORM = build(DATA_SOURCE_RUNTIME, "jdbc", FORM_SUFFIX);
     String DATA_SOURCE_RUNTIME_JDBC_TAB = build(DATA_SOURCE_RUNTIME, "jdbc", TAB_SUFFIX);
     String DATA_SOURCE_RUNTIME_POOL_FORM = build(DATA_SOURCE_RUNTIME, "pool", FORM_SUFFIX);
     String DATA_SOURCE_RUNTIME_POOL_TAB = build(DATA_SOURCE_RUNTIME, "pool", TAB_SUFFIX);
-    String DATA_SOURCE_WIZARD = build(DATA_SOURCE_CONFIGURATION, WIZARD_SUFFIX);
     String DEPLOYMENT = "deployment";
     String DEPLOYMENT_ADD = build(Ids.DEPLOYMENT, ADD_SUFFIX);
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
@@ -202,6 +211,9 @@ public interface Ids {
     String MEMBERSHIP_EXCLUDE = build(MEMBERSHIP, "exclude");
     String MODEL_BROWSER = "model-browser";
     String MODEL_BROWSER_ROOT = build(MODEL_BROWSER, "root");
+    String MODEL_BROWSER_CHOOSE_SINGLETON_STEP = build(MODEL_BROWSER, "choose-singleton", WIZARD_STEP_SUFFIX);
+    String MODEL_BROWSER_CREATE_SINGLETON_FORM = build(MODEL_BROWSER, "create-singleton", FORM_SUFFIX);
+    String MODEL_BROWSER_CREATE_SINGLETON_STEP = build(MODEL_BROWSER, "create-singleton", WIZARD_STEP_SUFFIX);
 
     String PREVIEW_ID = build(FINDER, "preview");
     String PROFILE = "profile";

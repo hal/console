@@ -13,11 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
+package org.jboss.hal.core.modelbrowser;
+
+import java.util.List;
+
+import org.jboss.hal.ballroom.tree.Node;
+import org.jboss.hal.dmr.ModelNode;
 
 /**
  * @author Harald Pehl
  */
-public enum State {
-    CHOOSE_TEMPLATE, NAMES, DRIVER, PROPERTIES, CONNECTION, REVIEW
+class SingletonContext {
+
+    final Node<Context> parent;
+    final List<String> children;
+    String singleton;
+    ModelNode modelNode;
+
+    SingletonContext(final Node<Context> parent, final List<String> children) {
+        this.parent = parent;
+        this.children = children;
+    }
 }

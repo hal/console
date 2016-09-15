@@ -97,12 +97,16 @@ public class Capabilities {
                     .build();
             dispatcher.execute(operation,
                     result -> {
-                        List<AddressTemplate> templates = result.asList().stream()
-                                .map(ModelNode::asString)
-                                .map(AddressTemplate::of)
-                                .collect(toList());
-                        register(name, templates);
-                        callback.onSuccess(lookup(name));
+                        if (result.isDefined()) {
+                            List<AddressTemplate> templates = result.asList().stream()
+                                    .map(ModelNode::asString)
+                                    .map(AddressTemplate::of)
+                                    .collect(toList());
+                            register(name, templates);
+                            callback.onSuccess(lookup(name));
+                        } else {
+                            callback.onFailure(new IllegalArgumentException("No capabilities found for " + name));
+                        }
                     },
                     (op, failure) -> callback.onFailure(new RuntimeException(
                             "Error reading capabilities for " + name + " using " + op + ": " + failure)),

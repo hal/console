@@ -38,13 +38,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PASSWORD;
 /**
  * @author Harald Pehl
  */
-class SummaryStep extends WizardStep<Context, State> {
+public class ReviewStep extends WizardStep<Context, State> {
 
     private final ModelNodeForm<DataSource> form;
 
-    SummaryStep(final NewDataSourceWizard wizard, final Metadata metadata, final Resources resources,
+    public ReviewStep(final Metadata metadata, final Resources resources,
             final boolean xa) {
-        super(wizard, resources.constants().summary());
+        super(Ids.DATA_SOURCE_REVIEW_STEP, resources.constants().review());
 
         List<String> attributes = new ArrayList<>();
         attributes.add(JNDI_NAME);
@@ -53,7 +53,7 @@ class SummaryStep extends WizardStep<Context, State> {
         }
         attributes.addAll(Arrays.asList(DRIVER_NAME, "user-name", PASSWORD)); //NON-NLS
 
-        form = new ModelNodeForm.Builder<DataSource>(Ids.build(id(), "summary", "step"), metadata)
+        form = new ModelNodeForm.Builder<DataSource>(Ids.DATA_SOURCE_REVIEW_FORM, metadata)
                 .unboundFormItem(new NameItem(), 0)
                 .include(attributes)
                 .unsorted()

@@ -25,6 +25,7 @@ import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplate;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.stream.Collectors.toList;
@@ -34,13 +35,13 @@ import static org.jboss.gwt.elemento.core.EventType.click;
 /**
  * @author Harald Pehl
  */
-class ChooseTemplateStep extends WizardStep<Context, State> {
+public class ChooseTemplateStep extends WizardStep<Context, State> {
 
     private final Element root;
 
-    ChooseTemplateStep(final NewDataSourceWizard wizard, final DataSourceTemplates templates,
+    public ChooseTemplateStep(final DataSourceTemplates templates,
             final Resources resources, final boolean xa) {
-        super(wizard, resources.constants().chooseTemplate());
+        super(Ids.DATA_SOURCE_CHOOSE_TEMPLATE_STEP, resources.constants().chooseTemplate());
 
         Elements.Builder builder = new Elements.Builder().div();
         // @formatter:off
@@ -49,7 +50,7 @@ class ChooseTemplateStep extends WizardStep<Context, State> {
                     .input(InputType.radio)
                         .attr("name", "template") //NON-NLS
                         .attr("value", "custom")
-                        .on(click, event -> wizard.getContext().template  = null)
+                        .on(click, event -> wizard().getContext().template  = null)
                     .span().textContent(resources.constants().custom()).end()
                 .end()
             .end();
@@ -66,7 +67,7 @@ class ChooseTemplateStep extends WizardStep<Context, State> {
                         .attr("value", template.getId())
                     .on(click, event -> {
                         String id = ((InputElement)event.getTarget()).getValue();
-                        wizard.getContext().template = templates.getTemplate(id);
+                        wizard().getContext().template = templates.getTemplate(id);
                     })
                     .span().textContent(template.toString()).end()
                 .end()

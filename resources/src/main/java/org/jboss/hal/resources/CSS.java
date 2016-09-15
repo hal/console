@@ -290,14 +290,17 @@ public interface CSS {
     String warning = "warning";
     String warningTriangleO = "warning-triangle-o";
     String withProgress = "with-progress";
+    String wizardHalErrorText = "wizard-hal-error-text";
     String wizardPf = "wizard-pf";
     String wizardPfBody = "wizard-pf-body";
+    String wizardPfErrorIcon = "wizard-pf-error-icon";
     String wizardPfFooter = "wizard-pf-footer";
     String wizardPfMain = "wizard-pf-main";
     String wizardPfStepNumber = "wizard-pf-step-number";
     String wizardPfStepTitle = "wizard-pf-step-title";
     String wizardPfSteps = "wizard-pf-steps";
     String wizardPfStepsIndicator = "wizard-pf-steps-indicator";
+    String wizardPfSuccessIcon = "wizard-pf-success-icon";
 
     static String column(int columns, String... sizes) {
         if (sizes != null && sizes.length != 0) {
@@ -326,7 +329,7 @@ public interface CSS {
     }
 
     /**
-     * Builds a FontAwesome CSS class.
+     * Builds a FontAwesome icons class.
      *
      * @param name the name of the FontAwesome icon <strong>w/o</strong> the "fa fa-" prefix.
      */
@@ -341,5 +344,14 @@ public interface CSS {
      */
     static String pfIcon(@NonNls String name) {
         return "pficon pficon-" + name; //NON-NLS
+    }
+
+    /**
+     * Builds a Glyphicon icon class.
+     *
+     * @param name the name of the Glyphicon icon <strong>w/o</strong> the "glyphicon glyphicon-" prefix.
+     */
+    static String glyphicon(@NonNls String name) {
+        return "glyphicon glyphicon-" + name; //NON-NLS
     }
 }

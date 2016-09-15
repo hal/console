@@ -263,7 +263,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String ok();
     String opened();
     String openInExternalWindow();
+    String operationFailed();
     String operationMode();
+    String operationSuccessful();
     String operations();
     String output();
 
@@ -296,6 +298,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String restartResourceServices();
     String restricted();
     String resume();
+    String review();
     String role();
     String roles();
     String running();
@@ -325,7 +328,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String stopMacro();
     String stopped();
     String storage();
-    String summary();
     String supportsExpressions();
     String suspend();
     String suspended();

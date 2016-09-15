@@ -31,7 +31,7 @@ public interface NameTokens {
     String DATA_SOURCE_CONFIGURATION = ModelDescriptionConstants.DATA_SOURCE + CONFIGURATION_SUFFIX;
     String DATA_SOURCE_RUNTIME = ModelDescriptionConstants.DATA_SOURCE + RUNTIME_SUFFIX;
     String DEPLOYMENT_SCANNERS = ModelDescriptionConstants.DEPLOYMENT_SCANNER;
-    String DEPLOYMENTS = "deployments";
+    String DEPLOYMENTS = "assignedDeployments";
     String EE = ModelDescriptionConstants.EE;
     String EJB3 = ModelDescriptionConstants.EJB3;
     String GENERIC_SUBSYSTEM = "generic-subsystem";
