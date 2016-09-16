@@ -78,6 +78,7 @@ public interface ModelDescriptionConstants {
     String DEPLOYMENT = "deployment";
     String DEPLOYMENT_NAME = "deployment-name";
     String DEPLOYMENT_SCANNER = "deployment-scanner";
+    String DEPRECATED = "deprecated";
     String DESCRIPTION = "description";
     String DISABLED = "disabled";
     String DRIVER_CLASS = "driver-class";
@@ -187,6 +188,7 @@ public interface ModelDescriptionConstants {
     String READ_RESOURCE_OPERATION = "read-resource";
     String READ_WRITE = "read-write";
     String REALM = "realm";
+    String REASON = "reason";
     String RELATIVE_TO = "relative-to";
     String REMOTING = "remoting";
     String REMOVE = "remove";

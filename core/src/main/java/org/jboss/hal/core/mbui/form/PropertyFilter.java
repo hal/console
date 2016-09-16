@@ -38,6 +38,11 @@ class PropertyFilter implements Predicate<Property> {
                 (p.getValue().hasDefined(REQUIRED) && p.getValue().get(REQUIRED).asBoolean()) ||
                         (p.getValue().hasDefined(NILLABLE) && !p.getValue().get(NILLABLE).asBoolean()));
 
+        // do not include "deprecated" attribute
+        if (property.getValue().hasDefined(DEPRECATED)) {
+            return false;
+        }
+
         if (builder.addOnly) {
             // if builder.includes is empty include either all or only required properties
             // otherwise include required properties plus the ones defined in builder.includes

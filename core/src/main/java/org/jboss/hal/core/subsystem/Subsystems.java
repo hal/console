@@ -45,7 +45,7 @@ public class Subsystems {
         add(new SubsystemMetadata(DATASOURCES, Names.DATASOURCES_DRIVERS, null, null, Ids.DATA_SOURCE_DRIVER, true, resources.previews().configurationDatasourcesDrivers()));
         add(new SubsystemMetadata(DEPLOYMENT_SCANNER, "Deployment Scanners", null, NameTokens.DEPLOYMENT_SCANNERS, null, true, resources.previews().configurationDeploymentScanner()));
         add(new SubsystemMetadata(EE, "EE", null, NameTokens.EE, null, true, resources.previews().configurationEe()));
-        add(new SubsystemMetadata(EJB3, "EJB3", null, NameTokens.EJB3, null, false));
+        add(new SubsystemMetadata(EJB3, "EJB3", null, NameTokens.EJB3, null, true));
         add(new SubsystemMetadata(IIOP_OPENJDK, "IIOP", "OpenJDK", NameTokens.IIOP, null, true));
         add(new SubsystemMetadata(INFINISPAN, "Infinispan", null, null, null, false));
         add(new SubsystemMetadata(IO, "IO", null, NameTokens.IO, null, true, resources.previews().configurationIo()));
