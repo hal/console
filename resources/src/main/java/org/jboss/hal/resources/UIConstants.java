@@ -28,7 +28,7 @@ public interface UIConstants {
     int DIALOG_TIMEOUT = 111;
 
     /**
-     * The timeout for long running operations / actions before a loading indicator is shown
+     * The timeout for long running operations / actions before some kind of loading indicator is shown
      */
     int PROGRESS_TIMEOUT = 333;
 

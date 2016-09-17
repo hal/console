@@ -124,6 +124,7 @@ public interface CSS {
     String hasError = "has-error";
     String hasFeedback = "has-feedback";
     String helpBlock = "help-block";
+    String hidden = "hidden";
     String hiddenColumns = "hidden-columns";
     String hint = "hint";
     String hover = "hover";
@@ -283,6 +284,10 @@ public interface CSS {
     String underline = "underline";
     String unpin = "unpin";
     String unpinned = "unpinned";
+    String upload = "upload";
+    String uploadAdvanced = "upload-advanced";
+    String uploadIcon = "upload-icon";
+    String uploadFile = "upload-file";
 
     String value = "value";
     String valueDropdown = "value-dropdown";
@@ -334,7 +339,20 @@ public interface CSS {
      * @param name the name of the FontAwesome icon <strong>w/o</strong> the "fa fa-" prefix.
      */
     static String fontAwesome(@NonNls String name) {
-        return "fa fa-" + name; //NON-NLS
+        return fontAwesome(name, null);
+    }
+
+    /**
+     * Builds a FontAwesome icons class.
+     *
+     * @param name the name of the FontAwesome icon <strong>w/o</strong> the "fa fa-" prefix.
+     */
+    static String fontAwesome(@NonNls String name, FontAwesomeSize size) {
+        @NonNls String css = "fa fa-" + name;
+        if (size != null) {
+            css += " fa-" + size.size();
+        }
+        return css;
     }
 
     /**

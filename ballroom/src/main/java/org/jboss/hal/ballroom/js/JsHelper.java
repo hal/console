@@ -18,7 +18,13 @@ package org.jboss.hal.ballroom.js;
 import java.util.ArrayList;
 import java.util.List;
 
+import elemental.dom.Element;
+import elemental.events.EventListener;
 import elemental.js.util.JsArrayOf;
+import org.jboss.hal.ballroom.dragndrop.DragEvent;
+import org.jboss.hal.ballroom.dragndrop.DropEventHandler;
+
+import static org.jboss.hal.resources.CSS.ondrag;
 
 /**
  * @author Harald Pehl
@@ -46,6 +52,38 @@ public final class JsHelper {
         return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) &&
             'FormData' in window && 'FileReader' in window;
     }-*/;
+
+    public static void addDropHandler(Element element, DropEventHandler handler) {
+        EventListener noop = event -> {
+            event.preventDefault();
+            event.stopPropagation();
+        };
+        EventListener addDragIndicator = event -> {
+            noop.handleEvent(event);
+            element.getClassList().add(ondrag);
+        };
+        EventListener removeDragIndicator = event -> {
+            noop.handleEvent(event);
+            element.getClassList().remove(ondrag);
+        };
+
+        element.setOndrag(noop);
+        element.setOndragstart(noop);
+
+        element.setOndragenter(addDragIndicator);
+        element.setOndragover(addDragIndicator);
+
+        element.setOndragleave(removeDragIndicator);
+        element.setOndragend(removeDragIndicator);
+
+        element.setOndrop(event -> {
+            noop.handleEvent(event);
+            removeDragIndicator.handleEvent(event);
+
+            DragEvent dragEvent = (DragEvent) event;
+            handler.onDrop(dragEvent);
+        });
+    }
 
     private JsHelper() {
     }

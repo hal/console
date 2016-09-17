@@ -252,12 +252,14 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml transactionUnableSetProcessId();
     SafeHtml txEnableJournalStore();
 
+    SafeHtml unassignContentDescription(String name);
+    SafeHtml unassignedContent(String name);
     String updateAvailable(String current, String update);
     SafeHtml updateHostError(String name);
     SafeHtml updateServerError(String name);
     SafeHtml updateServerGroupError(String name);
-    SafeHtml unassignContentDescription(String name);
-    SafeHtml unassignedContent(String name);
+    SafeHtml uploadInProgress(String name);
+    SafeHtml uploadSuccessful(String name);
     String unit(String unit);
     SafeHtml unknownError();
     SafeHtml unknownResource();
@@ -266,5 +268,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String used(double value);
 
     String view(String type);
+
+    SafeHtml noContent();
     //@formatter:on
 }

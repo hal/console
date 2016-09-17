@@ -31,7 +31,13 @@ import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.js.JsHelper;
+import org.jboss.hal.ballroom.wizard.Wizard;
+import org.jboss.hal.client.deployment.wizard.ContentContext;
+import org.jboss.hal.client.deployment.wizard.ContentState;
+import org.jboss.hal.client.deployment.wizard.NamesStep;
+import org.jboss.hal.client.deployment.wizard.UploadContentStep;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -44,6 +50,9 @@ import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -51,14 +60,19 @@ import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static org.jboss.hal.client.deployment.ContentColumn.DEPLOYMENT_ADDRESS;
+import static org.jboss.hal.client.deployment.wizard.ContentState.NAMES;
+import static org.jboss.hal.client.deployment.wizard.ContentState.UPLOAD;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.spi.MessageEvent.fire;
 
 /**
@@ -67,10 +81,15 @@ import static org.jboss.hal.spi.MessageEvent.fire;
  * @author Harald Pehl
  */
 @Column(Ids.CONTENT)
+@Requires(DEPLOYMENT_ADDRESS)
 public class ContentColumn extends FinderColumn<Content> {
+
+    static final String DEPLOYMENT_ADDRESS = "/deployment=*";
+    static final AddressTemplate DEPLOYMENT_TEMPLATE = AddressTemplate.of(DEPLOYMENT_ADDRESS);
 
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
+    private final MetadataRegistry metadataRegistry;
     private final Resources resources;
 
     @Inject
@@ -81,6 +100,7 @@ public class ContentColumn extends FinderColumn<Content> {
             final EventBus eventBus,
             final Places places,
             @Footer final Provider<Progress> progress,
+            final MetadataRegistry metadataRegistry,
             final Resources resources) {
 
         super(new FinderColumn.Builder<Content>(finder, Ids.CONTENT, resources.constants().content())
@@ -106,9 +126,17 @@ public class ContentColumn extends FinderColumn<Content> {
 
         this.dispatcher = dispatcher;
         this.eventBus = eventBus;
+        this.metadataRegistry = metadataRegistry;
         this.resources = resources;
 
-        addColumnAction(columnActionFactory.add(Ids.CONTENT_ADD, resources.constants().content(), column -> add()));
+        List<ColumnAction<Content>> addActions = new ArrayList<>();
+        addActions.add(new ColumnAction<>(Ids.CONTENT_ADD_MANAGED,
+                resources.constants().uploadContent(),
+                column -> addContent()));
+        addActions.add(new ColumnAction<>(Ids.CONTENT_ADD_UNMANAGED,
+                resources.messages().addResourceTitle(Names.UNMANAGED_DEPLOYMENT),
+                column -> addUnmanaged()));
+        addColumnActions(Ids.CONTENT_ADD_ACTIONS, pfIcon("add-circle-o"), resources.constants().add(), addActions);
         addColumnAction(columnActionFactory.refresh(Ids.CONTENT_REFRESH));
         setPreviewCallback(item -> new ContentPreview(this, item, places, resources));
 
@@ -169,7 +197,30 @@ public class ContentColumn extends FinderColumn<Content> {
         }
     }
 
-    private void add() {
+    private void addContent() {
+        Metadata metadata = metadataRegistry.lookup(DEPLOYMENT_TEMPLATE);
+        Wizard<ContentContext, ContentState> wizard = new Wizard.Builder<ContentContext, ContentState>(
+                resources.messages().addResourceTitle(resources.constants().content()), new ContentContext())
+
+                .addStep(ContentState.UPLOAD, new UploadContentStep(resources))
+                .addStep(ContentState.NAMES, new NamesStep(metadata, resources))
+
+                .onBack((context, currentState) -> currentState == NAMES ? UPLOAD : null)
+                .onNext((context, currentState) -> currentState == UPLOAD ? NAMES : null)
+
+                .stayOpenAfterFinish()
+                .onFinish((wzd, context) -> {
+                    wzd.showProgress(resources.constants().uploadInProgress(),
+                            resources.messages().uploadInProgress(context.names.getName()));
+                    Browser.getWindow().alert("Simulating upload...");
+                    wzd.showSuccess(resources.constants().uploadSuccessful(),
+                            resources.messages().uploadSuccessful(context.names.getName()));
+                })
+                .build();
+        wizard.show();
+    }
+
+    private void addUnmanaged() {
         Browser.getWindow().alert(Names.NYI);
     }
 

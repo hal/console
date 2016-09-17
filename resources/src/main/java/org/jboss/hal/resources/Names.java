@@ -85,6 +85,7 @@ public interface Names {
     String THREADS = "Threads";
     String TOPOLOGY = "Topology";
     String UNKNOWN = "unknown";
+    String UNMANAGED_DEPLOYMENT = "Unmanaged Deployment";
     String VALUE = "Value";
     String XA_DATASOURCE = "XA Datasource";
 }

@@ -60,6 +60,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String browseBy();
 
     String cancel();
+    String chooseFile();
     String chooseSingleton();
     String chooseTemplate();
     String clear();
@@ -267,6 +268,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String operationMode();
     String operationSuccessful();
     String operations();
+    String orDragItHere();
     String output();
 
     String pending();
@@ -315,13 +317,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String settings();
     String showAll();
     String size();
+    String specifyNames();
     String start();
     String starting();
     String startMacro();
     String statements();
-
     String statisticsDisabled();
-
     String statisticsDisabledHeader();
     String status();
     String stop();
@@ -352,6 +353,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String unknownState();
     String unmanaged();
     String unpin();
+    String uploadContent();
+    String uploadInProgress();
+    String uploadSuccessful();
     String used();
     String user();
     String users();

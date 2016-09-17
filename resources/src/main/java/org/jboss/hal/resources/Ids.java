@@ -85,7 +85,13 @@ public interface Ids {
 
     String CONFIGURATION = "configuration";
     String CONTENT = "content";
-    String CONTENT_ADD = build(Ids.CONTENT, ADD_SUFFIX);
+    String CONTENT_ADD_ACTIONS = build(Ids.CONTENT, "add-actions");
+    String CONTENT_ADD_MANAGED = build(Ids.CONTENT, "managed", ADD_SUFFIX);
+    String CONTENT_ADD_MANAGED_UPLOAD_STEP = build(Ids.CONTENT_ADD_MANAGED, "upload", WIZARD_STEP_SUFFIX);
+    String CONTENT_ADD_MANAGED_UPLOAD_FILE_INPUT = build(Ids.CONTENT_ADD_MANAGED, "upload-file-input");
+    String CONTENT_ADD_MANAGED_NAMES_FORM = build(Ids.CONTENT_ADD_MANAGED, "names", FORM_SUFFIX);
+    String CONTENT_ADD_MANAGED_NAMES_STEP = build(Ids.CONTENT_ADD_MANAGED, "names", WIZARD_STEP_SUFFIX);
+    String CONTENT_ADD_UNMANAGED = build(Ids.CONTENT, "unmanaged", ADD_SUFFIX);
     String CONTENT_REFRESH = build(Ids.CONTENT, REFRESH_SUFFIX);
 
     String DATA_SOURCE_CONFIGURATION = "data-source-configuration";

@@ -347,6 +347,7 @@ public class Wizard<C, S extends Enum<S>> {
                 .h(3).css(blankSlatePfMainAction).textContent(title).end()
                 .p().css(blankSlatePfSecondaryAction).innerHtml(text).end();
 
+        steps.values().forEach(step -> Elements.setVisible(step.asElement(), false));
         Elements.removeChildrenFrom(blankSlate);
         builder.elements().forEach(blankSlate::appendChild);
         Elements.setVisible(blankSlate, true);
