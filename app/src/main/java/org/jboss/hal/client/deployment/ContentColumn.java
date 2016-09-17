@@ -26,12 +26,15 @@ import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.SpanElement;
 import org.jboss.gwt.flow.Async;
+import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.ballroom.wizard.Wizard;
+import org.jboss.hal.client.deployment.DeploymentFunctions.CheckDeployment;
+import org.jboss.hal.client.deployment.DeploymentFunctions.UploadOrReplace;
 import org.jboss.hal.client.deployment.wizard.ContentContext;
 import org.jboss.hal.client.deployment.wizard.ContentState;
 import org.jboss.hal.client.deployment.wizard.NamesStep;
@@ -87,8 +90,10 @@ public class ContentColumn extends FinderColumn<Content> {
     static final String DEPLOYMENT_ADDRESS = "/deployment=*";
     static final AddressTemplate DEPLOYMENT_TEMPLATE = AddressTemplate.of(DEPLOYMENT_ADDRESS);
 
+    private final Environment environment;
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
+    private final Provider<Progress> progress;
     private final MetadataRegistry metadataRegistry;
     private final Resources resources;
 
@@ -123,9 +128,11 @@ public class ContentColumn extends FinderColumn<Content> {
                 })
 
                 .withFilter());
+        this.environment = environment;
 
         this.dispatcher = dispatcher;
         this.eventBus = eventBus;
+        this.progress = progress;
         this.metadataRegistry = metadataRegistry;
         this.resources = resources;
 
@@ -210,11 +217,33 @@ public class ContentColumn extends FinderColumn<Content> {
 
                 .stayOpenAfterFinish()
                 .onFinish((wzd, context) -> {
+                    String name = context.name;
+                    String runtimeName = context.runtimeName;
                     wzd.showProgress(resources.constants().uploadInProgress(),
-                            resources.messages().uploadInProgress(context.names.getName()));
-                    Browser.getWindow().alert("Simulating upload...");
-                    wzd.showSuccess(resources.constants().uploadSuccessful(),
-                            resources.messages().uploadSuccessful(context.names.getName()));
+                            resources.messages().uploadInProgress(name));
+
+                    Function[] functions = {
+                            new CheckDeployment(dispatcher, name),
+                            new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file, false)
+                    };
+                    new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
+                            new Outcome<FunctionContext>() {
+                                @Override
+                                public void onFailure(final FunctionContext functionContext) {
+                                    wzd.showError(resources.constants().uploadError(),
+                                            resources.messages().uploadError(name),
+                                            functionContext.getErrorMessage());
+                                }
+
+                                @Override
+                                public void onSuccess(final FunctionContext functionContext) {
+                                    refresh(Ids.asId(name));
+                                    wzd.showSuccess(resources.constants().uploadSuccessful(),
+                                            resources.messages().uploadSuccessful(name),
+                                            resources.messages().view(Names.DEPLOYMENT),
+                                            cxt -> { /* nothing to do, content is already selected */ });
+                                }
+                            }, functions);
                 })
                 .build();
         wizard.show();

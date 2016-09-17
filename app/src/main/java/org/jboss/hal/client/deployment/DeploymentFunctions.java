@@ -226,7 +226,7 @@ class DeploymentFunctions {
      * Checks whether a deployment with the given name exists and pushes {@code 200} to the context stack if it exists,
      * {@code 404} otherwise.
      */
-    private static class CheckDeployment implements Function<FunctionContext> {
+    static class CheckDeployment implements Function<FunctionContext> {
 
         private final Dispatcher dispatcher;
         private final String name;
@@ -262,17 +262,21 @@ class DeploymentFunctions {
      * The function puts an {@link UploadStatistics} under the key {@link DeploymentFunctions#UPLOAD_STATISTICS}
      * into the context.
      */
-    private static class UploadOrReplace implements Function<FunctionContext> {
+    static class UploadOrReplace implements Function<FunctionContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
+        private final String name;
+        private final String runtimeName;
         private final File file;
         private final boolean enabled;
 
-        UploadOrReplace(final Environment environment, final Dispatcher dispatcher, final File file,
-                final boolean enabled) {
+        UploadOrReplace(final Environment environment, final Dispatcher dispatcher,
+                final String name, final String runtimeName, final File file, final boolean enabled) {
             this.environment = environment;
             this.dispatcher = dispatcher;
+            this.name = name;
+            this.runtimeName = runtimeName;
             this.file = file;
             this.enabled = enabled;
         }
@@ -291,12 +295,12 @@ class DeploymentFunctions {
 
             if (replace) {
                 builder = new Operation.Builder(FULL_REPLACE_DEPLOYMENT, ResourceAddress.ROOT) //NON-NLS
-                        .param(NAME, file.getName())
-                        .param(RUNTIME_NAME, file.getName());
+                        .param(NAME, name)
+                        .param(RUNTIME_NAME, runtimeName);
                 // leave "enabled" as undefined to indicate that the state of the existing deployment should be retained
             } else {
-                builder = new Operation.Builder(ADD, new ResourceAddress().add(DEPLOYMENT, file.getName()))
-                        .param(RUNTIME_NAME, file.getName())
+                builder = new Operation.Builder(ADD, new ResourceAddress().add(DEPLOYMENT, name))
+                        .param(RUNTIME_NAME, runtimeName)
                         .param(ENABLED, enabled);
             }
             Operation operation = builder.build();
@@ -310,9 +314,9 @@ class DeploymentFunctions {
                             control.getContext().set(UPLOAD_STATISTICS, statistics);
                         }
                         if (ADD.equals(operation.getName())) {
-                            statistics.recordAdded(file.getName());
+                            statistics.recordAdded(name);
                         } else {
-                            statistics.recordReplaced(file.getName());
+                            statistics.recordReplaced(name);
                         }
                         control.proceed();
                     },
@@ -323,7 +327,7 @@ class DeploymentFunctions {
                             statistics = new UploadStatistics(environment);
                             control.getContext().set(UPLOAD_STATISTICS, statistics);
                         }
-                        statistics.recordFailed(file.getName());
+                        statistics.recordFailed(name);
                         control.proceed();
                     },
 
@@ -333,7 +337,7 @@ class DeploymentFunctions {
                             statistics = new UploadStatistics(environment);
                             control.getContext().set(UPLOAD_STATISTICS, statistics);
                         }
-                        statistics.recordFailed(file.getName());
+                        statistics.recordFailed(name);
                         control.proceed();
                     });
         }
@@ -355,7 +359,7 @@ class DeploymentFunctions {
                 String filename = files.item(i).getName();
                 builder.append(filename).append(" ");
                 functions.add(new CheckDeployment(dispatcher, filename));
-                functions.add(new UploadOrReplace(environment, dispatcher, files.item(i), false));
+                functions.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), false));
             }
 
             logger.debug("About to upload / update {} file(s): {}", files.getLength(), builder.toString());

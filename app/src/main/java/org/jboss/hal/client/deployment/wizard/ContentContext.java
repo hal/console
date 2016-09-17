@@ -16,7 +16,6 @@
 package org.jboss.hal.client.deployment.wizard;
 
 import elemental.html.File;
-import org.jboss.hal.dmr.model.NamedNode;
 
 /**
  * @author Harald Pehl
@@ -24,5 +23,6 @@ import org.jboss.hal.dmr.model.NamedNode;
 public class ContentContext {
 
     public File file;
-    public NamedNode names;
+    public String name;
+    public String runtimeName;
 }

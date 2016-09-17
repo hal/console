@@ -21,7 +21,6 @@ import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
@@ -34,13 +33,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
 public class NamesStep extends WizardStep<ContentContext, ContentState> {
 
     private final NameItem nameItem;
-    private final Form<NamedNode> form;
+    private final Form<ModelNode> form;
 
     public NamesStep(final Metadata metadata, final Resources resources) {
         super(Ids.CONTENT_ADD_MANAGED_NAMES_STEP, resources.constants().specifyNames());
 
         nameItem = new NameItem();
-        form = new ModelNodeForm.Builder<NamedNode>(Ids.CONTENT_ADD_MANAGED_NAMES_FORM, metadata)
+        form = new ModelNodeForm.Builder<>(Ids.CONTENT_ADD_MANAGED_NAMES_FORM, metadata)
                 .unboundFormItem(nameItem, 0)
                 .addFromRequestProperties()
                 .include(RUNTIME_NAME)
@@ -54,20 +53,27 @@ public class NamesStep extends WizardStep<ContentContext, ContentState> {
 
     @Override
     public void reset(final ContentContext context) {
-        context.names = new NamedNode(new ModelNode());
+        context.name = "";
+        context.runtimeName = "";
     }
 
     @Override
     protected void onShow(final ContentContext context) {
-        form.add(context.names);
-        nameItem.setValue(context.file.getName());
-        nameItem.setUndefined(false); // TODO Why is this necessary!? Should be set by the onchange handler in TextBoxItem.
-        form.getFormItem(RUNTIME_NAME).setValue(context.file.getName());
+        String filename = context.file.getName();
+
+        form.add(new ModelNode());
+        nameItem.setValue(filename);
+        nameItem.setUndefined(false);
+        form.getFormItem(RUNTIME_NAME).setValue(filename);
     }
 
     @Override
     protected boolean onNext(final ContentContext context) {
-        context.names.setName(nameItem.getValue());
-        return form.save();
+        boolean valid = form.save();
+        if (valid) {
+            context.name = nameItem.getValue();
+            context.runtimeName = form.<String>getFormItem(RUNTIME_NAME).getValue();
+        }
+        return valid;
     }
 }

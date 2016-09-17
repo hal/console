@@ -132,6 +132,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml modifyResourceSuccess(String type, String name);
     SafeHtml modifySingleResourceSuccess(String type);
 
+    SafeHtml noContent();
     SafeHtml noDeploymentsUploaded();
     SafeHtml noLogFile();
     SafeHtml noMacrosDescription(String startMacro);
@@ -250,14 +251,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml topologyError();
     SafeHtml transactionSetUuidOrSocket();
     SafeHtml transactionUnableSetProcessId();
-    SafeHtml txEnableJournalStore();
 
     SafeHtml unassignContentDescription(String name);
     SafeHtml unassignedContent(String name);
     String updateAvailable(String current, String update);
-    SafeHtml updateHostError(String name);
     SafeHtml updateServerError(String name);
-    SafeHtml updateServerGroupError(String name);
+    SafeHtml uploadError(String name);
     SafeHtml uploadInProgress(String name);
     SafeHtml uploadSuccessful(String name);
     String unit(String unit);
@@ -268,7 +267,5 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String used(double value);
 
     String view(String type);
-
-    SafeHtml noContent();
     //@formatter:on
 }

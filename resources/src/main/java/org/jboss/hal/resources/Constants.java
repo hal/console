@@ -354,6 +354,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String unmanaged();
     String unpin();
     String uploadContent();
+    String uploadError();
     String uploadInProgress();
     String uploadSuccessful();
     String used();

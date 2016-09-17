@@ -114,8 +114,9 @@ public class UploadContentStep extends WizardStep<ContentContext, ContentState> 
         if (files.getLength() > 0) {
             File file = files.item(0);
             labelElement.setInnerHTML(file.getName());
-            wizard().getContext().file = file;
             Elements.setVisible(alert.asElement(), false);
+
+            wizard().getContext().file = file;
         }
     }
 
