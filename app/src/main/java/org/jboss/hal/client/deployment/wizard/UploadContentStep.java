@@ -56,8 +56,8 @@ public class UploadContentStep extends WizardStep<ContentContext, ContentState> 
 
         // @formatter:off
         Elements.Builder builder = new Elements.Builder()
-            .add(alert)
             .form().attr("novalidate", "true").css(upload) //NON-NLS
+                .add(alert)
                 .div().rememberAs(ICON_ELEMENT).css(uploadIcon, fontAwesome("upload", x4)).end()
                 .input(file)
                     .rememberAs(FILE_INPUT_ELEMENT)
@@ -115,15 +115,14 @@ public class UploadContentStep extends WizardStep<ContentContext, ContentState> 
             File file = files.item(0);
             labelElement.setInnerHTML(file.getName());
             wizard().getContext().file = file;
+            Elements.setVisible(alert.asElement(), false);
         }
     }
 
     @Override
     protected boolean onNext(final ContentContext context) {
         boolean valid = fileInput.getFiles() != null && fileInput.getFiles().getLength() > 0;
-        if (!valid) {
-            Elements.setVisible(alert.asElement(), true);
-        }
+        Elements.setVisible(alert.asElement(), !valid);
         return valid;
     }
 }
