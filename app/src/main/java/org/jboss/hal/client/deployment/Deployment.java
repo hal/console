@@ -32,7 +32,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBDEPLOYMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
 
 /**
- * A deployed and assigned content on a specific server.
+ * A deployment on a specific server.
  *
  * @author Harald Pehl
  */

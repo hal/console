@@ -32,17 +32,15 @@ import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
-import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.ballroom.wizard.Wizard;
-import org.jboss.hal.client.configuration.PathsTypeahead;
 import org.jboss.hal.client.deployment.DeploymentFunctions.CheckDeployment;
 import org.jboss.hal.client.deployment.DeploymentFunctions.UploadOrReplace;
-import org.jboss.hal.client.deployment.wizard.ContentContext;
-import org.jboss.hal.client.deployment.wizard.ContentState;
 import org.jboss.hal.client.deployment.wizard.NamesStep;
 import org.jboss.hal.client.deployment.wizard.UploadContentStep;
+import org.jboss.hal.client.deployment.wizard.UploadContext;
 import org.jboss.hal.client.deployment.wizard.UploadElement;
+import org.jboss.hal.client.deployment.wizard.UploadState;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
@@ -50,12 +48,8 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
-import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mbui.dialog.NameItem;
-import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -64,8 +58,6 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
-import org.jboss.hal.meta.description.ResourceDescription;
-import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -78,14 +70,13 @@ import org.jboss.hal.spi.Requires;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static org.jboss.hal.client.deployment.ContentColumn.DEPLOYMENT_ADDRESS;
-import static org.jboss.hal.client.deployment.wizard.ContentState.NAMES;
-import static org.jboss.hal.client.deployment.wizard.ContentState.UPLOAD;
+import static org.jboss.hal.client.deployment.ContentColumn.CONTENT_ADDRESS;
+import static org.jboss.hal.client.deployment.wizard.UploadState.NAMES;
+import static org.jboss.hal.client.deployment.wizard.UploadState.UPLOAD;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
-import static org.jboss.hal.resources.CSS.name;
 import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.spi.MessageEvent.fire;
 
@@ -95,11 +86,11 @@ import static org.jboss.hal.spi.MessageEvent.fire;
  * @author Harald Pehl
  */
 @Column(Ids.CONTENT)
-@Requires(DEPLOYMENT_ADDRESS)
+@Requires(CONTENT_ADDRESS)
 public class ContentColumn extends FinderColumn<Content> {
 
-    static final String DEPLOYMENT_ADDRESS = "/deployment=*";
-    static final AddressTemplate DEPLOYMENT_TEMPLATE = AddressTemplate.of(DEPLOYMENT_ADDRESS);
+    static final String CONTENT_ADDRESS = "/deployment=*";
+    static final AddressTemplate CONTENT_TEMPLATE = AddressTemplate.of(CONTENT_ADDRESS);
 
     private final Environment environment;
     private final Dispatcher dispatcher;
@@ -135,7 +126,7 @@ public class ContentColumn extends FinderColumn<Content> {
                         }
                     };
                     new Async<FunctionContext>(progress.get()).single(new FunctionContext(), outcome,
-                            new DeploymentFunctions.LoadContentAssignments(dispatcher));
+                            new DeploymentFunctions.LoadContent(dispatcher));
                 })
 
                 .withFilter());
@@ -148,17 +139,20 @@ public class ContentColumn extends FinderColumn<Content> {
         this.resources = resources;
 
         List<ColumnAction<Content>> addActions = new ArrayList<>();
-        addActions.add(new ColumnAction<>(Ids.CONTENT_ADD_MANAGED,
-                resources.constants().uploadContent(),
-                column -> addContent()));
-        addActions.add(new ColumnAction<>(Ids.CONTENT_ADD_UNMANAGED,
-                resources.messages().addResourceTitle(Names.UNMANAGED_DEPLOYMENT),
-                column -> addUnmanaged()));
+        addActions.add(new ColumnAction<>(Ids.CONTENT_ADD, resources.constants().uploadContent(),
+                column -> uploadContent()));
+        addActions.add(new ColumnAction<>(Ids.CONTENT_UNMANAGED_ADD,
+                resources.messages().addResourceTitle(Names.UNMANAGED_DEPLOYMENT), column -> addUnmanaged()));
         addColumnActions(Ids.CONTENT_ADD_ACTIONS, pfIcon("add-circle-o"), resources.constants().add(), addActions);
         addColumnAction(columnActionFactory.refresh(Ids.CONTENT_REFRESH));
         setPreviewCallback(item -> new ContentPreview(this, item, places, resources));
 
         setItemRenderer(item -> new ItemDisplay<Content>() {
+            @Override
+            public String getId() {
+                return Ids.content(item.getName());
+            }
+
             @Override
             public String getTitle() {
                 return item.getName();
@@ -184,46 +178,47 @@ public class ContentColumn extends FinderColumn<Content> {
                 String status = String.join(" ",
                         item.isExploded() ? resources.constants().exploded() : resources.constants().archived(),
                         item.isManaged() ? resources.constants().managed() : resources.constants().unmanaged());
-                String assignments = item.getAssignments().isEmpty()
-                        ? resources.constants().unassigned()
-                        : item.getAssignments().stream().map(Assignment::getServerGroup).collect(joining(" "));
-                return getTitle() + " " + status + " " + assignments;
+                String deployments = item.getServerGroupDeployments().isEmpty()
+                        ? resources.constants().undeployed()
+                        : item.getServerGroupDeployments().stream().map(ServerGroupDeployment::getServerGroup)
+                        .collect(joining(" "));
+                return getTitle() + " " + status + " " + deployments;
             }
 
             @Override
             public List<ItemAction<Content>> actions() {
                 List<ItemAction<Content>> actions = new ArrayList<>();
 
-                // order is: assign, (explode), replace, unassign / remove
-                actions.add(new ItemAction<>(resources.constants().assign(), itm -> assign(itm)));
-                if (item.getAssignments().isEmpty() && !item.isExploded()) {
+                // order is: deploy, (explode), replace, undeploy / remove
+                actions.add(new ItemAction<>(resources.constants().deploy(), itm -> deploy(itm)));
+                if (item.getServerGroupDeployments().isEmpty() && !item.isExploded()) {
                     actions.add(new ItemAction<>(resources.constants().explode(), itm -> explode(itm)));
                 }
                 if (item.isManaged()) {
                     actions.add(new ItemAction<>(resources.constants().replace(), itm -> replace(itm)));
                 }
-                if (item.getAssignments().isEmpty()) {
+                if (item.getServerGroupDeployments().isEmpty()) {
                     actions.add(new ItemAction<>(resources.constants().remove(), itm -> remove(itm)));
                 } else {
-                    actions.add(new ItemAction<>(resources.constants().unassign(), itm -> unassign(itm)));
+                    actions.add(new ItemAction<>(resources.constants().undeploy(), itm -> undeploy(itm)));
                 }
                 return actions;
             }
         });
 
         if (JsHelper.supportsAdvancedUpload()) {
-            setOnDrop(event -> DeploymentFunctions.upload(this, environment, dispatcher, eventBus, progress, resources,
-                    event.dataTransfer.files));
+            setOnDrop(event -> DeploymentFunctions.upload(this, environment, dispatcher, eventBus, progress,
+                    event.dataTransfer.files, resources));
         }
     }
 
-    private void addContent() {
-        Metadata metadata = metadataRegistry.lookup(DEPLOYMENT_TEMPLATE);
-        Wizard<ContentContext, ContentState> wizard = new Wizard.Builder<ContentContext, ContentState>(
-                resources.messages().addResourceTitle(resources.constants().content()), new ContentContext())
+    private void uploadContent() {
+        Metadata metadata = metadataRegistry.lookup(CONTENT_TEMPLATE);
+        Wizard<UploadContext, UploadState> wizard = new Wizard.Builder<UploadContext, UploadState>(
+                resources.messages().addResourceTitle(resources.constants().content()), new UploadContext())
 
-                .addStep(ContentState.UPLOAD, new UploadContentStep(resources))
-                .addStep(ContentState.NAMES, new NamesStep(metadata, resources))
+                .addStep(UPLOAD, new UploadContentStep(resources))
+                .addStep(NAMES, new NamesStep(metadata, resources))
 
                 .onBack((context, currentState) -> currentState == NAMES ? UPLOAD : null)
                 .onNext((context, currentState) -> currentState == UPLOAD ? NAMES : null)
@@ -250,7 +245,7 @@ public class ContentColumn extends FinderColumn<Content> {
 
                                 @Override
                                 public void onSuccess(final FunctionContext functionContext) {
-                                    refresh(Ids.asId(name));
+                                    refresh(Ids.content(name));
                                     wzd.showSuccess(resources.constants().uploadSuccessful(),
                                             resources.messages().uploadSuccessful(name),
                                             resources.messages().view(Names.DEPLOYMENT),
@@ -263,48 +258,17 @@ public class ContentColumn extends FinderColumn<Content> {
     }
 
     private void addUnmanaged() {
-        // assemble a resource description for unmanaged content using various pieces from the deployment description
-        Metadata metadata = metadataRegistry.lookup(DEPLOYMENT_TEMPLATE);
-        ModelNode rp = ModelNodeHelper.failSafeGet(metadata.getDescription(),
-                String.join("/", OPERATIONS, ADD, REQUEST_PROPERTIES));
-        ModelNode vt = ModelNodeHelper.failSafeGet(rp, CONTENT + "/" + VALUE_TYPE);
-        ModelNode attributes = new ModelNode();
-        attributes.get(RUNTIME_NAME).set(rp.get(RUNTIME_NAME));
-        attributes.get(PATH).set(vt.get(PATH));
-        attributes.get(RELATIVE_TO).set(vt.get(RELATIVE_TO));
-        attributes.get(ARCHIVE).set(vt.get(ARCHIVE));
-        ModelNode description = new ModelNode();
-        description.get(ATTRIBUTES).set(attributes);
-
-        Metadata unmanagedMeta = new Metadata(SecurityContext.RWX, new ResourceDescription(description),
-                metadata.getCapabilities());
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.CONTENT_ADD_UNMANAGED_FORM, unmanagedMeta)
-                .unboundFormItem(new NameItem(), 0)
-                .include(RUNTIME_NAME, PATH, RELATIVE_TO, ARCHIVE)
-                .unsorted()
-                .addOnly()
-                .build();
-        form.getFormItem(PATH).setRequired(true);
-        form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsTypeahead());
-        AddResourceDialog dialog = new AddResourceDialog(
-                resources.messages().addResourceTitle(Names.UNMANAGED_DEPLOYMENT), form,
-                (name, model) -> {
-                    if (model != null) {
-                        // assemble the payload using the provided model node from the form
-                        ModelNode payload = new ModelNode();
-                        payload.get(RUNTIME_NAME).set(model.get(RUNTIME_NAME));
-                        model.remove(RUNTIME_NAME);
-                        payload.get(CONTENT).set(model);
-                        Operation operation = new Operation.Builder(ADD, new ResourceAddress().add(DEPLOYMENT, name))
-                                .payload(payload)
-                                .build();
-                        dispatcher.execute(operation, result -> {
-                            refresh(Ids.asId(name));
-                            MessageEvent.fire(eventBus, Message.success(
-                                    resources.messages().addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
-                        });
-                    }
-                });
+        Metadata metadata = metadataRegistry.lookup(CONTENT_TEMPLATE);
+        AddUnmanagedDialog dialog = new AddUnmanagedDialog(metadata, resources, (name, model) -> {
+            Operation operation = new Operation.Builder(ADD, new ResourceAddress().add(DEPLOYMENT, name))
+                    .payload(model)
+                    .build();
+            dispatcher.execute(operation, result -> {
+                refresh(Ids.content(name));
+                MessageEvent.fire(eventBus, Message.success(
+                        resources.messages().addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
+            });
+        });
         dialog.show();
     }
 
@@ -335,7 +299,7 @@ public class ContentColumn extends FinderColumn<Content> {
 
                                     @Override
                                     public void onSuccess(final FunctionContext context) {
-                                        refresh(Ids.asId(name));
+                                        refresh(Ids.content(content.getName()));
                                         MessageEvent.fire(eventBus, Message.success(
                                                 resources.messages().contentReplaceSuccess(content.getName())));
                                     }
@@ -356,25 +320,25 @@ public class ContentColumn extends FinderColumn<Content> {
         });
     }
 
-    void assign(Content content) {
+    void deploy(Content content) {
         Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, ResourceAddress.ROOT)
                 .param(CHILD_TYPE, SERVER_GROUP)
                 .build();
         dispatcher.execute(operation, result -> {
-            Set<String> unassignedServerGroups = result.asList().stream()
+            Set<String> serverGroupsWithoutContent = result.asList().stream()
                     .map(ModelNode::asString)
                     .collect(toSet());
-            Set<String> assignedServerGroups = content.getAssignments().stream()
-                    .map(Assignment::getServerGroup)
+            Set<String> serverGroupsWithContent = content.getServerGroupDeployments().stream()
+                    .map(ServerGroupDeployment::getServerGroup)
                     .collect(toSet());
-            unassignedServerGroups.removeAll(assignedServerGroups);
+            serverGroupsWithoutContent.removeAll(serverGroupsWithContent);
 
-            if (unassignedServerGroups.isEmpty()) {
+            if (serverGroupsWithoutContent.isEmpty()) {
                 MessageEvent.fire(eventBus, Message.warning(
-                        resources.messages().contentAlreadyAssignedToAllServerGroups(content.getName())));
+                        resources.messages().contentAlreadyDeployedToAllServerGroups(content.getName())));
 
             } else {
-                new AssignContentDialog(content, unassignedServerGroups, resources, (cnt, serverGroups, enable) -> {
+                new DeployContentDialog(content, serverGroupsWithoutContent, resources, (cnt, serverGroups, enable) -> {
                     List<Operation> operations = serverGroups.stream()
                             .map(serverGroup -> {
                                 ResourceAddress resourceAddress = new ResourceAddress()
@@ -389,19 +353,19 @@ public class ContentColumn extends FinderColumn<Content> {
                     dispatcher.execute(new Composite(operations), (CompositeResult cr) -> {
                         refresh(RESTORE_SELECTION);
                         MessageEvent.fire(eventBus,
-                                Message.success(resources.messages().contentAssigned(content.getName())));
+                                Message.success(resources.messages().contentDeployed(content.getName())));
                     });
                 }).show();
             }
         });
     }
 
-    private void unassign(Content content) {
-        if (!content.getAssignments().isEmpty()) {
-            Set<String> assignedServerGroups = content.getAssignments().stream()
-                    .map(Assignment::getServerGroup)
+    private void undeploy(Content content) {
+        if (!content.getServerGroupDeployments().isEmpty()) {
+            Set<String> serverGroupsWithContent = content.getServerGroupDeployments().stream()
+                    .map(ServerGroupDeployment::getServerGroup)
                     .collect(toSet());
-            new AssignContentDialog(content, assignedServerGroups, resources, (cnt, serverGroups) -> {
+            new DeployContentDialog(content, serverGroupsWithContent, resources, (cnt, serverGroups) -> {
                 List<Operation> operations = serverGroups.stream()
                         .map(serverGroup -> {
                             ResourceAddress resourceAddress = new ResourceAddress()
@@ -413,23 +377,23 @@ public class ContentColumn extends FinderColumn<Content> {
                 dispatcher.execute(new Composite(operations), (CompositeResult cr) -> {
                     refresh(RESTORE_SELECTION);
                     MessageEvent.fire(eventBus,
-                            Message.success(resources.messages().contentUnassigned(content.getName())));
+                            Message.success(resources.messages().contentUndeployed(content.getName())));
                 });
             }).show();
 
         } else {
-            MessageEvent.fire(eventBus, Message.warning(resources.messages().unassignedContent(content.getName())));
+            MessageEvent.fire(eventBus, Message.warning(resources.messages().undeployedContent(content.getName())));
         }
     }
 
-    void unassign(Content content, String serverGroup) {
+    void undeploy(Content content, String serverGroup) {
         ResourceAddress address = new ResourceAddress().add(SERVER_GROUP, serverGroup)
                 .add(DEPLOYMENT, content.getName());
         Operation operation = new Operation.Builder(REMOVE, address).build();
         dispatcher.execute(operation, result -> {
             refresh(RESTORE_SELECTION);
-            fire(eventBus,
-                    Message.success(resources.messages().deploymentUnassigned(content.getName(), serverGroup)));
+            fire(eventBus, Message.success(
+                    resources.messages().contentUndeployedFromServerGroup(content.getName(), serverGroup)));
         });
     }
 

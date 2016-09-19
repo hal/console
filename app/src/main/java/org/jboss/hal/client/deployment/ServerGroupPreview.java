@@ -33,5 +33,6 @@ class ServerGroupPreview extends PreviewContent<ServerGroup> {
             previewBuilder().p().innerHtml(resources.messages().assignByDragAndDrop(resources.constants().replace()))
                     .end();
         }
+        previewBuilder().p().innerHtml(resources.messages().addUnmanagedDescription()).end();
     }
 }

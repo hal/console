@@ -78,7 +78,7 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
 
         super(new Builder<Deployment>(finder, Ids.DEPLOYMENT, Names.DEPLOYMENT)
 
-                .columnAction(columnActionFactory.add(Ids.DEPLOYMENT_ADD,
+                .columnAction(columnActionFactory.add(Ids.SERVER_GROUP_DEPLOYMENT_UPLOAD,
                         resources.constants().content(), column -> Browser.getWindow().alert(Names.NYI)))
 
                 .itemsProvider((context, callback) -> {
@@ -105,6 +105,11 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
         this.resources = resources;
 
         setItemRenderer(item -> new ItemDisplay<Deployment>() {
+            @Override
+            public String getId() {
+                return Ids.deployment(item.getName());
+            }
+
             @Override
             public String getTitle() {
                 return item.getName();
@@ -156,8 +161,9 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
 
         setPreviewCallback(deployment -> new DeploymentPreview(DeploymentColumn.this, deployment, resources));
         if (JsHelper.supportsAdvancedUpload()) {
-            setOnDrop(event -> DeploymentFunctions.upload(this, environment, dispatcher, eventBus, progress, resources,
-                    event.dataTransfer.files));
+            setOnDrop(event -> DeploymentFunctions.upload(this, environment, dispatcher, eventBus, progress,
+                    event.dataTransfer.files, resources
+            ));
         }
     }
 
@@ -192,8 +198,6 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
 
         // execute using Async to make use of the progress bar
         new Async<FunctionContext>(progress.get()).single(new FunctionContext(), outcome,
-                control -> dispatcher.executeInFunction(control, operation, result -> {
-                    control.proceed();
-                }));
+                control -> dispatcher.executeInFunction(control, operation, result -> control.proceed()));
     }
 }

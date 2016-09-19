@@ -41,23 +41,23 @@ import static org.jboss.gwt.elemento.core.InputType.checkbox;
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 
 /**
- * Dialog used to assign and unassign content.
+ * Dialog used to deploy and undeploy content.
  *
  * @author Harald Pehl
  */
-class AssignContentDialog {
+class DeployContentDialog {
 
     @FunctionalInterface
-    interface AssignCallback {
+    interface DeployCallback {
 
-        void assign(Content content, List<String> serverGroups, boolean enable);
+        void deploy(Content content, List<String> serverGroups, boolean enable);
     }
 
 
     @FunctionalInterface
-    interface UnassignCallback {
+    interface UndeployCallback {
 
-        void unassign(Content content, List<String> serverGroups);
+        void undeploy(Content content, List<String> serverGroups);
     }
 
 
@@ -76,34 +76,34 @@ class AssignContentDialog {
 
     private final Content content;
     private final List<ServerGroup> serverGroups;
-    private final AssignCallback assignCallback;
-    private final UnassignCallback unassignCallback;
+    private final DeployCallback deployCallback;
+    private final UndeployCallback undeployCallback;
     private final Alert noServerGroupSelected;
     private final DataTable<ServerGroup> table;
     private final Element enableContainer;
     private final InputElement enable;
     private final Dialog dialog;
 
-    AssignContentDialog(final Content content, final Set<String> unassignedServerGroups,
-            final Resources resources, final AssignCallback callback) {
+    DeployContentDialog(final Content content, final Set<String> unassignedServerGroups,
+            final Resources resources, final DeployCallback callback) {
         this(content, unassignedServerGroups, resources, callback, null);
     }
 
-    AssignContentDialog(final Content content, final Set<String> assignedServerGroups,
-            final Resources resources, final UnassignCallback callback) {
+    DeployContentDialog(final Content content, final Set<String> assignedServerGroups,
+            final Resources resources, final UndeployCallback callback) {
         this(content, assignedServerGroups, resources, null, callback);
     }
 
-    private AssignContentDialog(final Content content, final Set<String> serverGroups, final Resources resources,
-            final AssignCallback assignCallback, final UnassignCallback unassignCallback) {
+    private DeployContentDialog(final Content content, final Set<String> serverGroups, final Resources resources,
+            final DeployCallback deployCallback, final UndeployCallback undeployCallback) {
         this.content = content;
         //noinspection Convert2MethodRef - do not replace w/ method reference. GWT compiler will blow up
         this.serverGroups = serverGroups.stream()
                 .sorted(naturalOrder())
                 .map((serverGroup) -> new ServerGroup(serverGroup))
                 .collect(toList());
-        this.assignCallback = assignCallback;
-        this.unassignCallback = unassignCallback;
+        this.deployCallback = deployCallback;
+        this.undeployCallback = undeployCallback;
 
         noServerGroupSelected = new Alert(Icons.ERROR, resources.messages().noServerGroupSelected());
 
@@ -121,20 +121,20 @@ class AssignContentDialog {
                 .searching(false)
                 .multiselect()
                 .build();
-        table = new DataTable<>(Ids.ASSIGNMENT_ADD_TABLE, options);
+        table = new DataTable<>(Ids.SERVER_GROUP_DEPLOYMENT_TABLE, options);
 
-        SafeHtml description = assignCallback != null ? resources.messages()
-                .assignContentDescription(content.getName()) : resources.messages()
-                .unassignContentDescription(content.getName());
+        SafeHtml description = deployCallback != null ? resources.messages()
+                .deployContentDescription(content.getName()) : resources.messages()
+                .undeployContentDescription(content.getName());
         // @formatter:off
         Elements.Builder builder = new Elements.Builder()
             .div().add(noServerGroupSelected).end()
             .p().innerHtml(description).end()
             .add(table)
             .div().rememberAs(ENABLE_CONTAINER)
-                .input(checkbox).rememberAs(ENABLE).id(Ids.ASSIGNMENT_ENABLE)
+                .input(checkbox).rememberAs(ENABLE).id(Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)
                 .label().css(CSS.marginLeft4)
-                    .attr("for", Ids.ASSIGNMENT_ENABLE)
+                    .attr("for", Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)
                     .textContent(resources.constants().enableContent())
                 .end()
             .end();
@@ -142,9 +142,9 @@ class AssignContentDialog {
         enable = builder.referenceFor(ENABLE);
         enableContainer = builder.referenceFor(ENABLE_CONTAINER);
 
-        String title = assignCallback != null ? resources.constants().assignContent() : resources.constants()
-                .unassignContent();
-        String primary = assignCallback != null ? resources.constants().assign() : resources.constants().unassign();
+        String title = deployCallback != null ? resources.constants().deployContent() : resources.constants()
+                .undeployContent();
+        String primary = deployCallback != null ? resources.constants().deploy() : resources.constants().undeploy();
         dialog = new Dialog.Builder(title)
                 .add(builder.elements())
                 .primary(primary, this::finish)
@@ -162,10 +162,10 @@ class AssignContentDialog {
             List<String> serverGroups = table.api().selectedRows().stream()
                     .map(usg -> usg.serverGroup)
                     .collect(toList());
-            if (assignCallback != null) {
-                assignCallback.assign(content, serverGroups, SwitchBridge.Bridge.element(enable).getValue());
-            } else if (unassignCallback != null) {
-                unassignCallback.unassign(content, serverGroups);
+            if (deployCallback != null) {
+                deployCallback.deploy(content, serverGroups, SwitchBridge.Bridge.element(enable).getValue());
+            } else if (undeployCallback != null) {
+                undeployCallback.undeploy(content, serverGroups);
             }
         }
         return hasSelection;
@@ -174,7 +174,7 @@ class AssignContentDialog {
     void show() {
         dialog.show();
         Elements.setVisible(noServerGroupSelected.asElement(), false);
-        Elements.setVisible(enableContainer, assignCallback != null);
+        Elements.setVisible(enableContainer, deployCallback != null);
         table.api().clear().add(serverGroups).refresh(RESET);
         SwitchBridge.Bridge.element(enable).setValue(false);
     }

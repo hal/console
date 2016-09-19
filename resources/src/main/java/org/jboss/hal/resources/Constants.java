@@ -45,10 +45,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String add();
     String adminOnly();
     String archived();
-    String assign();
-    String assignContent();
     String assignment();
-    String assignments();
     String assignmentsOfGroup();
     String assignmentsOfUser();
     String attribute();
@@ -86,7 +83,13 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String day();
     String days();
     String defaultValue();
+    String deploy();
+    String deployContent();
     String deploymentAttributes();
+    String deploymentError();
+    String deploymentInProgress();
+    String deploymentSuccessful();
+    String deployments();
     String description();
     String details();
     String disable();
@@ -348,13 +351,14 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String tracking();
     String type();
 
-    String unassign();
-    String unassignContent();
-    String unassigned();
+    String undeploy();
+    String undeployContent();
+    String undeployed();
     String unknownState();
     String unmanaged();
     String unpin();
     String uploadContent();
+    String uploadDeployment();
     String uploadError();
     String uploadInProgress();
     String uploadSuccessful();

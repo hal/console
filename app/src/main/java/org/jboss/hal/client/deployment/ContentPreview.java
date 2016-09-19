@@ -42,15 +42,15 @@ import static org.jboss.hal.resources.CSS.clickable;
  */
 class ContentPreview extends PreviewContent<Content> {
 
-    private static final String ASSIGNMENTS_DIV = "assignmentsDiv";
-    private static final String ASSIGNMENTS_UL = "assignmentsUl";
+    private static final String DEPLOYMENTS_DIV = "deploymentsDiv";
+    private static final String DEPLOYMENTS_UL = "deploymentsUl";
 
     private final ContentColumn column;
     private final Places places;
     private final Resources resources;
     private final PreviewAttributes<Content> attributes;
-    private final Element assignmentsDiv;
-    private final Element assignmentsUl;
+    private final Element deploymentsDiv;
+    private final Element deploymentsUl;
 
     ContentPreview(final ContentColumn column, final Content content, final Places places, final Resources resources) {
         super(content.getName());
@@ -58,10 +58,10 @@ class ContentPreview extends PreviewContent<Content> {
         this.places = places;
         this.resources = resources;
 
-        if (content.getAssignments().isEmpty()) {
+        if (content.getServerGroupDeployments().isEmpty()) {
             previewBuilder().add(
-                    new Alert(Icons.DISABLED, resources.messages().unassignedContent(content.getName()),
-                            resources.constants().assign(), event -> column.assign(content)));
+                    new Alert(Icons.DISABLED, resources.messages().undeployedContent(content.getName()),
+                            resources.constants().deploy(), event -> column.deploy(content)));
         }
 
         attributes = new PreviewAttributes<>(content,
@@ -69,27 +69,28 @@ class ContentPreview extends PreviewContent<Content> {
         previewBuilder().addAll(attributes);
 
         previewBuilder()
-                .div().rememberAs(ASSIGNMENTS_DIV)
-                .h(2).textContent(resources.constants().assignments()).end()
-                .p().innerHtml(resources.messages().assignedTo(content.getName())).end()
-                .ul().rememberAs(ASSIGNMENTS_UL).end()
+                .div().rememberAs(DEPLOYMENTS_DIV)
+                .h(2).textContent(resources.constants().deployments()).end()
+                .p().innerHtml(resources.messages().deployedTo(content.getName())).end()
+                .ul().rememberAs(DEPLOYMENTS_UL).end()
                 .end();
-        assignmentsDiv = previewBuilder().referenceFor(ASSIGNMENTS_DIV);
-        assignmentsUl = previewBuilder().referenceFor(ASSIGNMENTS_UL);
+        deploymentsDiv = previewBuilder().referenceFor(DEPLOYMENTS_DIV);
+        deploymentsUl = previewBuilder().referenceFor(DEPLOYMENTS_UL);
     }
 
     @Override
     public void update(final Content content) {
         attributes.refresh(content);
-        Elements.setVisible(assignmentsDiv, !content.getAssignments().isEmpty());
-        if (!content.getAssignments().isEmpty()) {
-            Elements.removeChildrenFrom(assignmentsUl);
+        Elements.setVisible(deploymentsDiv, !content.getServerGroupDeployments().isEmpty());
+        if (!content.getServerGroupDeployments().isEmpty()) {
+            Elements.removeChildrenFrom(deploymentsUl);
             Elements.Builder builder = new Elements.Builder();
-            content.getAssignments().forEach(assignment -> {
-                String serverGroup = assignment.getServerGroup();
+            content.getServerGroupDeployments().forEach(sgd -> {
+                String serverGroup = sgd.getServerGroup();
                 PlaceRequest serverGroupPlaceRequest = places.finderPlace(NameTokens.DEPLOYMENTS, new FinderPath()
                         .append(Ids.DEPLOYMENT_BROWSE_BY, Ids.asId(Names.SERVER_GROUPS))
-                        .append(Ids.DEPLOYMENT_SERVER_GROUP, Ids.serverGroup(serverGroup)))
+                        .append(Ids.DEPLOYMENT_SERVER_GROUP, Ids.serverGroup(serverGroup))
+                        .append(Ids.SERVER_GROUP_DEPLOYMENT, Ids.serverGroupDeployment(serverGroup, content.getName())))
                         .build();
                 String serverGroupToken = places.historyToken(serverGroupPlaceRequest);
                 // @formatter:off
@@ -98,13 +99,13 @@ class ContentPreview extends PreviewContent<Content> {
                         .a(serverGroupToken).textContent(serverGroup).end()
                         .span().textContent(" (").end()
                         .a().css(clickable)
-                            .on(click, event -> column.unassign(content, serverGroup))
-                            .textContent(resources.constants().unassign())
+                            .on(click, event -> column.undeploy(content, serverGroup))
+                            .textContent(resources.constants().undeploy())
                         .end()
                         .span().textContent(")").end()
                     .end();
                 // @formatter:on
-                assignmentsUl.appendChild(builder.build());
+                deploymentsUl.appendChild(builder.build());
             });
         }
     }

@@ -35,32 +35,43 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-class AssignmentPreview extends PreviewContent<Assignment> {
+class ServerGroupDeploymentPreview extends PreviewContent<ServerGroupDeployment> {
 
     private static final String LAST_ENABLED_AT = "Last enabled at";
     private static final String LAST_DISABLED_AT = "Last disabled at";
 
-    AssignmentPreview(final AssignmentColumn column, final Assignment assignment, final Places places,
-            final Resources resources) {
-        super(assignment.getName());
+    ServerGroupDeploymentPreview(final ServerGroupDeploymentColumn column, final ServerGroupDeployment sgd,
+            final Places places, final Resources resources) {
+        super(sgd.getName());
 
-        Deployment deployment = assignment.getDeployment();
+        Deployment deployment = sgd.getDeployment();
         if (deployment != null && deployment.isFailure()) {
-            previewBuilder().add(new Alert(Icons.ERROR, resources.messages().deploymentFailed(assignment.getName())));
+            previewBuilder().add(new Alert(Icons.ERROR, resources.messages().deploymentFailed(sgd.getName())));
         } else {
-            if (assignment.isEnabled()) {
-                previewBuilder().add(new Alert(Icons.OK, resources.messages().deploymentEnabled(assignment.getName()),
-                        resources.constants().disable(), event -> column.diable()));
+            if (sgd.isEnabled()) {
+                previewBuilder().add(new Alert(Icons.OK, resources.messages().deploymentEnabled(sgd.getName()),
+                        resources.constants().disable(), event -> column.disable(sgd)));
             } else {
                 previewBuilder()
-                        .add(new Alert(Icons.DISABLED, resources.messages().deploymentDisabled(assignment.getName()),
-                                resources.constants().enable(), event -> column.enable()));
+                        .add(new Alert(Icons.DISABLED, resources.messages().deploymentDisabled(sgd.getName()),
+                                resources.constants().enable(), event -> column.enable(sgd)));
             }
         }
 
         // main attributes
-        PreviewAttributes<Assignment> attributes = new PreviewAttributes<>(assignment,
-                asList(NAME, RUNTIME_NAME, MANAGED, EXPLODED, ENABLED));
+        PreviewAttributes<ServerGroupDeployment> attributes = new PreviewAttributes<>(sgd,
+                asList(NAME, RUNTIME_NAME));
+        attributes.append(model -> {
+            PlaceRequest placeRequest = places.finderPlace(NameTokens.DEPLOYMENTS, new FinderPath()
+                    .append(Ids.DEPLOYMENT_BROWSE_BY, Ids.asId(resources.constants().contentRepository()))
+                    .append(Ids.CONTENT, Ids.content(model.getName())))
+                    .build();
+            return new PreviewAttribute(resources.constants().content(), model.getName(),
+                    places.historyToken(placeRequest));
+        });
+        attributes.append(MANAGED);
+        attributes.append(EXPLODED);
+        attributes.append(ENABLED);
         if (deployment != null) {
             attributes.append(model -> new PreviewAttribute(new LabelBuilder().label(STATUS),
                     deployment.getStatus().name()));
@@ -81,14 +92,14 @@ class AssignmentPreview extends PreviewContent<Assignment> {
         // reference server
         if (deployment == null) {
             previewBuilder().h(2).textContent(resources.constants().noReferenceServer()).end();
-            String serverGroup = assignment.getServerGroup();
+            String serverGroup = sgd.getServerGroup();
             PlaceRequest serverGroupPlaceRequest = places.finderPlace(NameTokens.RUNTIME, new FinderPath()
                     .append(Ids.DOMAIN_BROWSE_BY, Ids.asId(Names.SERVER_GROUPS))
                     .append(Ids.SERVER_GROUP, Ids.serverGroup(serverGroup)))
                     .build();
             String serverGroupHistoryToken = places.historyToken(serverGroupPlaceRequest);
             LabelBuilder labelBuilder = new LabelBuilder();
-            previewBuilder().p().innerHtml(resources.messages().noReferenceServer(assignment.getName(),
+            previewBuilder().p().innerHtml(resources.messages().noReferenceServer(sgd.getName(),
                     labelBuilder.label(STATUS), labelBuilder.label(LAST_ENABLED_AT),
                     serverGroup, serverGroupHistoryToken))
                     .end();

@@ -23,16 +23,16 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DISABLED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
 
 /**
- * An assigned deployment used in domain mode.
+ * An assigned content used in domain mode.
  *
  * @author Harald Pehl
  */
-public class Assignment extends Content {
+class ServerGroupDeployment extends Content {
 
     private final String serverGroup;
     private Deployment deployment; // might be null if there's no reference server available
 
-    public Assignment(final String serverGroup, final ModelNode node) {
+    ServerGroupDeployment(final String serverGroup, final ModelNode node) {
         super(node);
         this.serverGroup = serverGroup;
     }
@@ -40,10 +40,10 @@ public class Assignment extends Content {
     @Override
     public boolean equals(final Object o) {
         if (this == o) { return true; }
-        if (!(o instanceof Assignment)) { return false; }
+        if (!(o instanceof ServerGroupDeployment)) { return false; }
         if (!super.equals(o)) { return false; }
 
-        Assignment that = (Assignment) o;
+        ServerGroupDeployment that = (ServerGroupDeployment) o;
         //noinspection SimplifiableIfStatement
         if (!serverGroup.equals(that.serverGroup)) { return false; }
         return getName().equals(that.getName());
@@ -58,24 +58,24 @@ public class Assignment extends Content {
         return result;
     }
 
-    public boolean isEnabled() {
+    boolean isEnabled() {
         return hasDefined(ENABLED) && get(ENABLED).asBoolean();
     }
 
-    public String getServerGroup() {
+    String getServerGroup() {
         return serverGroup;
     }
 
-    public @Nullable Deployment getDeployment() {
+    @Nullable Deployment getDeployment() {
         return deployment;
     }
 
-    public void setDeployment(@Nullable Deployment deployment) {
+    void setDeployment(@Nullable Deployment deployment) {
         this.deployment = deployment;
     }
 
     @Override
     public String toString() {
-        return "Assignment{" + getName() + "@" + serverGroup + ", " + (isEnabled() ? ENABLED : DISABLED) + "}";
+        return "ServerGroupDeployment{" + getName() + "@" + serverGroup + ", " + (isEnabled() ? ENABLED : DISABLED) + "}";
     }
 }

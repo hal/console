@@ -15,14 +15,9 @@
  */
 package org.jboss.hal.client.deployment.wizard;
 
-import elemental.html.File;
-
 /**
  * @author Harald Pehl
  */
-public class ContentContext {
-
-    public File file;
-    public String name;
-    public String runtimeName;
+public enum UploadState {
+    UPLOAD, NAMES
 }

@@ -30,16 +30,16 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
 /**
  * @author Harald Pehl
  */
-public class NamesStep extends WizardStep<ContentContext, ContentState> {
+public class NamesStep extends WizardStep<UploadContext, UploadState> {
 
     private final NameItem nameItem;
     private final Form<ModelNode> form;
 
     public NamesStep(final Metadata metadata, final Resources resources) {
-        super(Ids.CONTENT_ADD_MANAGED_NAMES_STEP, resources.constants().specifyNames());
+        super(Ids.UPLOAD_NAMES_STEP, resources.constants().specifyNames());
 
         nameItem = new NameItem();
-        form = new ModelNodeForm.Builder<>(Ids.CONTENT_ADD_MANAGED_NAMES_FORM, metadata)
+        form = new ModelNodeForm.Builder<>(Ids.UPLOAD_NAMES_FORM, metadata)
                 .unboundFormItem(nameItem, 0)
                 .addFromRequestProperties()
                 .include(RUNTIME_NAME)
@@ -52,13 +52,13 @@ public class NamesStep extends WizardStep<ContentContext, ContentState> {
     }
 
     @Override
-    public void reset(final ContentContext context) {
+    public void reset(final UploadContext context) {
         context.name = "";
         context.runtimeName = "";
     }
 
     @Override
-    protected void onShow(final ContentContext context) {
+    protected void onShow(final UploadContext context) {
         String filename = context.file.getName();
 
         form.add(new ModelNode());
@@ -68,7 +68,7 @@ public class NamesStep extends WizardStep<ContentContext, ContentState> {
     }
 
     @Override
-    protected boolean onNext(final ContentContext context) {
+    protected boolean onNext(final UploadContext context) {
         boolean valid = form.save();
         if (valid) {
             context.name = nameItem.getValue();

@@ -50,7 +50,7 @@ import static java.util.stream.StreamSupport.stream;
  * IDs used in HTML elements and across multiple classes. Please add IDs to this interface even if there's already an
  * equivalent or similar constant in {@code ModelDescriptionConstants} (SoC).
  * <p>
- * The IDs defined here are reused by QA. So please make sure that IDs are not spread over the complete code base but
+ * The IDs defined here are reused by QA. So please make sure that IDs are not spread over the code base but
  * gathered in this interface. This is not always possible - for instance if the ID contains dynamic parts like a
  * resource name or selected server. But IDs which only contain static strings should be part of this interface.
  */
@@ -74,25 +74,16 @@ public interface Ids {
     // except the ID needs to be a constant expression (e.g. when used in an annotation).
 
     String ACCESS_CONTROL_BROWSE_BY = "access-control-browse-by";
-    String ASSIGNED_DEPLOYMENT = "assigned-deployment";
     String ASSIGNMENT = "assignement";
-    String ASSIGNMENT_ADD = build(ASSIGNMENT, ADD_SUFFIX);
-    String ASSIGNMENT_ADD_TABLE = build(ASSIGNMENT, ADD_SUFFIX, TABLE_SUFFIX);
-    String ASSIGNMENT_ENABLE = build(ASSIGNMENT, "enable");
     String ASSIGNMENT_INCLUDE = build(ASSIGNMENT, "include");
     String ASSIGNMENT_EXCLUDE = build(ASSIGNMENT, "exclude");
-    String ASSIGNMENT_REFRESH = build(ASSIGNMENT, REFRESH_SUFFIX);
 
     String CONFIGURATION = "configuration";
     String CONTENT = "content";
-    String CONTENT_ADD_ACTIONS = build(Ids.CONTENT, "add-actions");
-    String CONTENT_ADD_MANAGED = build(Ids.CONTENT, "managed", ADD_SUFFIX);
-    String CONTENT_ADD_MANAGED_UPLOAD_STEP = build(Ids.CONTENT_ADD_MANAGED, "upload", WIZARD_STEP_SUFFIX);
-    String CONTENT_ADD_MANAGED_NAMES_FORM = build(Ids.CONTENT_ADD_MANAGED, "names", FORM_SUFFIX);
-    String CONTENT_ADD_MANAGED_NAMES_STEP = build(Ids.CONTENT_ADD_MANAGED, "names", WIZARD_STEP_SUFFIX);
-    String CONTENT_ADD_UNMANAGED = build(Ids.CONTENT, "unmanaged", ADD_SUFFIX);
-    String CONTENT_ADD_UNMANAGED_FORM = build(Ids.CONTENT, "unmanaged", FORM_SUFFIX);
-    String CONTENT_REFRESH = build(Ids.CONTENT, REFRESH_SUFFIX);
+    String CONTENT_ADD = build(CONTENT, ADD_SUFFIX);
+    String CONTENT_ADD_ACTIONS = build(CONTENT, "add-actions");
+    String CONTENT_REFRESH = build(CONTENT, REFRESH_SUFFIX);
+    String CONTENT_UNMANAGED_ADD = build(CONTENT, "unmanaged", ADD_SUFFIX);
 
     String DATA_SOURCE_CONFIGURATION = "data-source-configuration";
     String DATA_SOURCE_ADD = build(DATA_SOURCE_CONFIGURATION, ADD_SUFFIX);
@@ -115,7 +106,6 @@ public interface Ids {
     String DATA_SOURCE_RUNTIME_POOL_FORM = build(DATA_SOURCE_RUNTIME, "pool", FORM_SUFFIX);
     String DATA_SOURCE_RUNTIME_POOL_TAB = build(DATA_SOURCE_RUNTIME, "pool", TAB_SUFFIX);
     String DEPLOYMENT = "deployment";
-    String DEPLOYMENT_ADD = build(Ids.DEPLOYMENT, ADD_SUFFIX);
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
     String DEPLOYMENT_SERVER_GROUP = "deployment-sg";
     String DOMAIN_BROWSE_BY = "domain-browse-by";
@@ -241,6 +231,14 @@ public interface Ids {
     String SERVER_ADD = build(SERVER, ADD_SUFFIX);
     String SERVER_GROUP = "server-group";
     String SERVER_GROUP_ADD = build(SERVER_GROUP, ADD_SUFFIX);
+    String SERVER_GROUP_DEPLOYMENT = "server-group-deployment";
+    String SERVER_GROUP_DEPLOYMENT_ADD = build(SERVER_GROUP_DEPLOYMENT, ADD_SUFFIX);
+    String SERVER_GROUP_DEPLOYMENT_ADD_ACTIONS = build(SERVER_GROUP_DEPLOYMENT, "add-actions");
+    String SERVER_GROUP_DEPLOYMENT_ENABLE = build(SERVER_GROUP_DEPLOYMENT, "enable");
+    String SERVER_GROUP_DEPLOYMENT_REFRESH = build(SERVER_GROUP_DEPLOYMENT, REFRESH_SUFFIX);
+    String SERVER_GROUP_DEPLOYMENT_TABLE = build(SERVER_GROUP_DEPLOYMENT, TABLE_SUFFIX);
+    String SERVER_GROUP_DEPLOYMENT_UNMANAGED_ADD = build(SERVER_GROUP_DEPLOYMENT, "unmanaged", ADD_SUFFIX);
+    String SERVER_GROUP_DEPLOYMENT_UPLOAD = build(SERVER_GROUP_DEPLOYMENT, "upload");
     String SERVER_GROUP_REFRESH = build(SERVER_GROUP, REFRESH_SUFFIX);
     String SERVER_MONITOR = "server-monitor";
     String SERVER_REFRESH = build(SERVER, REFRESH_SUFFIX);
@@ -265,8 +263,14 @@ public interface Ids {
     String TLC_PATCHING = "tlc-patching";
     String TLC_RUNTIME = "tlc-runtime";
 
+    String UNMANAGED = "unmanaged";
+    String UNMANAGED_FORM = build(UNMANAGED, FORM_SUFFIX);
+    String UPLOAD = "upload";
+    String UPLOAD_STEP = build(UPLOAD, WIZARD_STEP_SUFFIX);
+    String UPLOAD_FILE_INPUT = build(UPLOAD, "file-input");
+    String UPLOAD_NAMES_FORM = build(UPLOAD, "names", FORM_SUFFIX);
+    String UPLOAD_NAMES_STEP = build(UPLOAD, "names", WIZARD_STEP_SUFFIX);
     String USER = "user";
-    String UPLOAD_FILE_INPUT = "upload-file-input";
 
     String VERSION_INFO = "version-info";
     String VERSION_INFO_FORM = build(VERSION_INFO, FORM_SUFFIX);
@@ -282,12 +286,19 @@ public interface Ids {
 
     // ------------------------------------------------------ resource ids (a-z)
 
+    static String content(String name) {
+        return name;
+    }
     static String dataSourceConfiguration(String name, boolean xa) {
         return build(xa ? "xa" : "non-xa", DATA_SOURCE_CONFIGURATION, name);
     }
 
     static String dataSourceRuntime(String name, boolean xa) {
         return build(xa ? "xa" : "non-xa", DATA_SOURCE_RUNTIME, name);
+    }
+
+    static String deployment(String name) {
+        return name;
     }
 
     static String host(final String name) {
@@ -323,6 +334,10 @@ public interface Ids {
 
     static String serverGroup(final String name) {
         return build(SERVER_GROUP, name);
+    }
+
+    static String serverGroupDeployment(final String serverGroup, String name) {
+        return build(serverGroup, name);
     }
 
     static String serverGroupServer(final String serverGroup, final String server) {

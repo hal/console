@@ -28,13 +28,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  *
  * @author Harald Pehl
  */
-public class Content extends NamedNode {
+class Content extends NamedNode {
 
-    private final List<Assignment> assignments;
+    private final List<ServerGroupDeployment> serverGroupDeployments;
 
-    public Content(final ModelNode node) {
+    Content(final ModelNode node) {
         super(node);
-        this.assignments = new ArrayList<>();
+        this.serverGroupDeployments = new ArrayList<>();
 
         boolean managed = true;
         boolean archived = true;
@@ -54,24 +54,24 @@ public class Content extends NamedNode {
         get(MANAGED).set(managed);
     }
 
-    public String getRuntimeName() {
+    String getRuntimeName() {
         ModelNode runtimeName = get(RUNTIME_NAME);
         return runtimeName.isDefined() ? runtimeName.asString() : null;
     }
 
-    public void addAssignment(Assignment assignment) {
-        assignments.add(assignment);
+    void addDeployment(ServerGroupDeployment serverGroupDeployment) {
+        serverGroupDeployments.add(serverGroupDeployment);
     }
 
-    public List<Assignment> getAssignments() {
-        return assignments;
+    List<ServerGroupDeployment> getServerGroupDeployments() {
+        return serverGroupDeployments;
     }
 
-    public boolean isExploded() {
+    boolean isExploded() {
         return get(EXPLODED).asBoolean(false);
     }
 
-    public boolean isManaged() {
+    boolean isManaged() {
         return get(MANAGED).asBoolean(true);
     }
 
@@ -79,7 +79,7 @@ public class Content extends NamedNode {
     public String toString() {
         return "Content(" + getName() + ", " +
                 (isExploded() ? "exploded" : "archived") + ", " +
-                (isManaged() ? "managed" : "unmanaged") + ", assigned to " +
-                assignments + ")";
+                (isManaged() ? "managed" : "unmanaged") + ", deployed to " +
+                serverGroupDeployments + ")";
     }
 }

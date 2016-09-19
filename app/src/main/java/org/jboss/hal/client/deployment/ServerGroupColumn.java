@@ -80,7 +80,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
             @Override
             public Element asElement() {
                 return ItemDisplay.withSubtitle(item.getName(),
-                        resources.messages().assignedDeployments(deploymentsPerServerGroup.count(item.getName())));
+                        resources.messages().deployments(deploymentsPerServerGroup.count(item.getName())));
             }
 
             @Override
@@ -91,7 +91,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
 
             @Override
             public String nextColumn() {
-                return Ids.ASSIGNED_DEPLOYMENT;
+                return Ids.SERVER_GROUP_DEPLOYMENT;
             }
         });
 

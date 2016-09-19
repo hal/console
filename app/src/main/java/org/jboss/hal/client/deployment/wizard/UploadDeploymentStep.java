@@ -15,9 +15,14 @@
  */
 package org.jboss.hal.client.deployment.wizard;
 
+import org.jboss.hal.resources.Resources;
+
 /**
  * @author Harald Pehl
  */
-public enum ContentState {
-    UPLOAD, NAMES
+public class UploadDeploymentStep extends UploadStep {
+
+    public UploadDeploymentStep(final Resources resources) {
+        super(resources.constants().uploadDeployment(), resources.messages().noDeployment());
+    }
 }

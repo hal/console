@@ -15,14 +15,14 @@
  */
 package org.jboss.hal.client.deployment.wizard;
 
-import org.jboss.hal.resources.Resources;
+import elemental.html.File;
 
 /**
  * @author Harald Pehl
  */
-public class UploadContentStep extends UploadStep {
+public class UploadContext {
 
-    public UploadContentStep(final Resources resources) {
-        super(resources.constants().uploadContent(), resources.messages().noContent());
-    }
+    public File file;
+    public String name;
+    public String runtimeName;
 }
