@@ -387,6 +387,31 @@ class DeploymentFunctions {
     }
 
 
+    /**
+     * Adds an unmanaged deployment.
+     */
+    static class AddUnmanagedDeployment implements Function<FunctionContext> {
+
+        private final Dispatcher dispatcher;
+        private final String name;
+        private final ModelNode payload;
+
+        AddUnmanagedDeployment(final Dispatcher dispatcher, final String name, final ModelNode payload) {
+            this.dispatcher = dispatcher;
+            this.name = name;
+            this.payload = payload;
+        }
+
+        @Override
+        public void execute(final Control<FunctionContext> control) {
+            Operation operation = new Operation.Builder(ADD, new ResourceAddress().add(DEPLOYMENT, name))
+                    .payload(payload)
+                    .build();
+            dispatcher.executeInFunction(control, operation, result -> control.proceed());
+        }
+    }
+
+
     private static class UploadOutcome<T> implements Outcome<FunctionContext> {
 
         private final FinderColumn<T> column;

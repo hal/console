@@ -28,7 +28,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  *
  * @author Harald Pehl
  */
-class Content extends NamedNode {
+public class Content extends NamedNode {
 
     private final List<ServerGroupDeployment> serverGroupDeployments;
 
@@ -65,6 +65,13 @@ class Content extends NamedNode {
 
     List<ServerGroupDeployment> getServerGroupDeployments() {
         return serverGroupDeployments;
+    }
+
+    boolean isDeployedTo(String serverGroup) {
+        return serverGroupDeployments.stream()
+                .filter(sgd -> serverGroup.equals(sgd.getServerGroup()))
+                .findAny()
+                .isPresent();
     }
 
     boolean isExploded() {

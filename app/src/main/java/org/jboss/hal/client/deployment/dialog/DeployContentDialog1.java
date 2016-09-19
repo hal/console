@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.deployment;
+package org.jboss.hal.client.deployment.dialog;
 
 import java.util.List;
 import java.util.Set;
@@ -26,9 +26,11 @@ import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.SwitchBridge;
 import org.jboss.hal.ballroom.table.Column;
+import org.jboss.hal.ballroom.table.Column.RenderCallback;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.OptionsBuilder;
+import org.jboss.hal.client.deployment.Content;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
@@ -41,21 +43,21 @@ import static org.jboss.gwt.elemento.core.InputType.checkbox;
 import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 
 /**
- * Dialog used to deploy and undeploy content.
+ * Dialog used to deploy and undeploy content to one or more server groups.
  *
  * @author Harald Pehl
  */
-class DeployContentDialog {
+public class DeployContentDialog1 {
 
     @FunctionalInterface
-    interface DeployCallback {
+    public interface DeployCallback {
 
         void deploy(Content content, List<String> serverGroups, boolean enable);
     }
 
 
     @FunctionalInterface
-    interface UndeployCallback {
+    public interface UndeployCallback {
 
         void undeploy(Content content, List<String> serverGroups);
     }
@@ -84,17 +86,17 @@ class DeployContentDialog {
     private final InputElement enable;
     private final Dialog dialog;
 
-    DeployContentDialog(final Content content, final Set<String> unassignedServerGroups,
+    public DeployContentDialog1(final Content content, final Set<String> serverGroupsWithoutContent,
             final Resources resources, final DeployCallback callback) {
-        this(content, unassignedServerGroups, resources, callback, null);
+        this(content, serverGroupsWithoutContent, resources, callback, null);
     }
 
-    DeployContentDialog(final Content content, final Set<String> assignedServerGroups,
+    public DeployContentDialog1(final Content content, final Set<String> serverGroupsWithContent,
             final Resources resources, final UndeployCallback callback) {
-        this(content, assignedServerGroups, resources, null, callback);
+        this(content, serverGroupsWithContent, resources, null, callback);
     }
 
-    private DeployContentDialog(final Content content, final Set<String> serverGroups, final Resources resources,
+    private DeployContentDialog1(final Content content, final Set<String> serverGroups, final Resources resources,
             final DeployCallback deployCallback, final UndeployCallback undeployCallback) {
         this.content = content;
         //noinspection Convert2MethodRef - do not replace w/ method reference. GWT compiler will blow up
@@ -109,7 +111,7 @@ class DeployContentDialog {
 
         Options<ServerGroup> options = new OptionsBuilder<ServerGroup>()
                 .checkboxColumn()
-                .column(Names.SERVER_GROUP, new Column.RenderCallback<ServerGroup, String>() {
+                .column(Names.SERVER_GROUP, new RenderCallback<ServerGroup, String>() {
                     @Override
                     public String render(final String cell, final String type, final ServerGroup row,
                             final Column.Meta meta) {
@@ -124,8 +126,8 @@ class DeployContentDialog {
         table = new DataTable<>(Ids.SERVER_GROUP_DEPLOYMENT_TABLE, options);
 
         SafeHtml description = deployCallback != null ? resources.messages()
-                .deployContentDescription(content.getName()) : resources.messages()
-                .undeployContentDescription(content.getName());
+                .chooseServerGroupsToDeploy(content.getName()) : resources.messages()
+                .chooseServerGroupsToUndeploy(content.getName());
         // @formatter:off
         Elements.Builder builder = new Elements.Builder()
             .div().add(noServerGroupSelected).end()
@@ -135,7 +137,7 @@ class DeployContentDialog {
                 .input(checkbox).rememberAs(ENABLE).id(Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)
                 .label().css(CSS.marginLeft4)
                     .attr("for", Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)
-                    .textContent(resources.constants().enableContent())
+                    .textContent(resources.constants().enableDeployment())
                 .end()
             .end();
         // @formatter:on
@@ -171,7 +173,7 @@ class DeployContentDialog {
         return hasSelection;
     }
 
-    void show() {
+    public void show() {
         dialog.show();
         Elements.setVisible(noServerGroupSelected.asElement(), false);
         Elements.setVisible(enableContainer, deployCallback != null);

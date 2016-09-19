@@ -23,7 +23,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DISABLED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
 
 /**
- * An assigned content used in domain mode.
+ * A deployed content used in domain mode.
  *
  * @author Harald Pehl
  */

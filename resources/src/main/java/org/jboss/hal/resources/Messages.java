@@ -45,20 +45,24 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String addResourceTitle(String type);
     SafeHtml addSingleResourceSuccess(String type);
     SafeHtml addUnmanagedDescription();
+    SafeHtml allContentAlreadyDeployedToServerGroup(String serverGroup);
     SafeHtml allMailServersExist();
     SafeHtml allSingletonsExist();
-    SafeHtml assignByDragAndDrop(String replace);
     SafeHtml assignmentExcludeSuccess(String type, String name);
     SafeHtml assignmentIncludeSuccess(String type, String name);
     String available(double value);
 
     String blacklist(String blacklist);
 
+    SafeHtml chooseContentToDeploy(String serverGroup);
+    SafeHtml chooseServerGroupsToUndeploy(String name);
+    SafeHtml chooseServerGroupsToDeploy(String name);
     SafeHtml configuredMailServer(String servers);
     String connectedTo(String url);
     SafeHtml contentAdded(@PluralCount int size);
     SafeHtml contentAlreadyDeployedToAllServerGroups(String name);
-    SafeHtml contentDeployed(String name);
+    SafeHtml contentDeployed1(String content);
+    SafeHtml contentDeployed2(String serverGroup);
     SafeHtml contentOpFailed(@PluralCount int size);
     SafeHtml contentReplaceError(String name);
     SafeHtml contentReplaceSuccess(String name);
@@ -72,9 +76,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml dataSourceDisabledNoStatistics(String name);
     SafeHtml dataSourceEnabled(String name);
     SafeHtml dataSourceStatisticsDisabled(String name);
-    SafeHtml deploymentAdded(@PluralCount int count);
-    SafeHtml deployContentDescription(String name);
+    SafeHtml deployByDragAndDrop(String replace);
     SafeHtml deployedTo(String name);
+    SafeHtml deploymentAdded(@PluralCount int count);
     SafeHtml deploymentDisabled(String name);
     SafeHtml deploymentDisabledSuccess(String name);
     SafeHtml deploymentEnabled(String name);
@@ -86,9 +90,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml deploymentInProgress(String name);
     SafeHtml deploymentOpFailed(@PluralCount int count);
     SafeHtml deploymentReplaced(@PluralCount int count);
-    String deployments(@PluralCount int count);
     SafeHtml deploymentSuccessful(String name);
-    SafeHtml deploymentsDescription(String serverGroupName, @PluralCount int deployments);
     SafeHtml domainConfigurationChanged();
     SafeHtml domainControllerTimeout(String name);
     String duplicateResource(String type);
@@ -126,6 +128,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml lastOperationException();
     SafeHtml lastOperationFailed();
     SafeHtml listHint();
+    SafeHtml loadContentError();
     SafeHtml logFileError(String name);
     String logFileFullStatus(int lines, String lastUpdate);
     String logFilePartStatus(int lines, String lastUpdate);
@@ -139,6 +142,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml modifySingleResourceSuccess(String type);
 
     SafeHtml noContent();
+    SafeHtml noContentSelected();
     SafeHtml noDeployment();
     SafeHtml noDeploymentsUploaded();
     SafeHtml noLogFile();
@@ -259,7 +263,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml transactionSetUuidOrSocket();
     SafeHtml transactionUnableSetProcessId();
 
-    SafeHtml undeployContentDescription(String name);
     SafeHtml undeployedContent(String name);
     String updateAvailable(String current, String update);
     SafeHtml updateServerError(String name);

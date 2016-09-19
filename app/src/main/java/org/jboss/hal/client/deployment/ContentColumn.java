@@ -34,8 +34,12 @@ import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.ballroom.wizard.Wizard;
+import org.jboss.hal.client.deployment.DeploymentFunctions.AddUnmanagedDeployment;
 import org.jboss.hal.client.deployment.DeploymentFunctions.CheckDeployment;
+import org.jboss.hal.client.deployment.DeploymentFunctions.LoadContent;
 import org.jboss.hal.client.deployment.DeploymentFunctions.UploadOrReplace;
+import org.jboss.hal.client.deployment.dialog.DeployContentDialog1;
+import org.jboss.hal.client.deployment.dialog.AddUnmanagedDialog;
 import org.jboss.hal.client.deployment.wizard.NamesStep;
 import org.jboss.hal.client.deployment.wizard.UploadContentStep;
 import org.jboss.hal.client.deployment.wizard.UploadContext;
@@ -113,7 +117,7 @@ public class ContentColumn extends FinderColumn<Content> {
         super(new FinderColumn.Builder<Content>(finder, Ids.CONTENT, resources.constants().content())
 
                 .itemsProvider((context, callback) -> {
-                    final Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
+                    Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
                         @Override
                         public void onFailure(final FunctionContext context) {
                             callback.onFailure(context.getError());
@@ -125,13 +129,14 @@ public class ContentColumn extends FinderColumn<Content> {
                             callback.onSuccess(content);
                         }
                     };
-                    new Async<FunctionContext>(progress.get()).single(new FunctionContext(), outcome,
-                            new DeploymentFunctions.LoadContent(dispatcher));
+                    new Async<FunctionContext>(progress.get())
+                            .single(new FunctionContext(), outcome, new LoadContent(dispatcher));
                 })
-
+                .pinnable()
+                .showCount()
                 .withFilter());
-        this.environment = environment;
 
+        this.environment = environment;
         this.dispatcher = dispatcher;
         this.eventBus = eventBus;
         this.progress = progress;
@@ -259,16 +264,24 @@ public class ContentColumn extends FinderColumn<Content> {
 
     private void addUnmanaged() {
         Metadata metadata = metadataRegistry.lookup(CONTENT_TEMPLATE);
-        AddUnmanagedDialog dialog = new AddUnmanagedDialog(metadata, resources, (name, model) -> {
-            Operation operation = new Operation.Builder(ADD, new ResourceAddress().add(DEPLOYMENT, name))
-                    .payload(model)
-                    .build();
-            dispatcher.execute(operation, result -> {
-                refresh(Ids.content(name));
-                MessageEvent.fire(eventBus, Message.success(
-                        resources.messages().addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
-            });
-        });
+        AddUnmanagedDialog dialog = new AddUnmanagedDialog(metadata, resources,
+                (name, model) -> new Async<FunctionContext>(progress.get()).single(new FunctionContext(),
+                        new Outcome<FunctionContext>() {
+                            @Override
+                            public void onFailure(final FunctionContext context) {
+                                eventBus.fireEvent(new MessageEvent(
+                                        Message.error(resources.messages().lastOperationFailed(),
+                                                context.getErrorMessage())));
+                            }
+
+                            @Override
+                            public void onSuccess(final FunctionContext context) {
+                                refresh(Ids.content(name));
+                                MessageEvent.fire(eventBus, Message.success(
+                                        resources.messages()
+                                                .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
+                            }
+                        }, new AddUnmanagedDeployment(dispatcher, name, model)));
         dialog.show();
     }
 
@@ -338,24 +351,25 @@ public class ContentColumn extends FinderColumn<Content> {
                         resources.messages().contentAlreadyDeployedToAllServerGroups(content.getName())));
 
             } else {
-                new DeployContentDialog(content, serverGroupsWithoutContent, resources, (cnt, serverGroups, enable) -> {
-                    List<Operation> operations = serverGroups.stream()
-                            .map(serverGroup -> {
-                                ResourceAddress resourceAddress = new ResourceAddress()
-                                        .add(SERVER_GROUP, serverGroup)
-                                        .add(DEPLOYMENT, content.getName());
-                                return new Operation.Builder(ADD, resourceAddress)
-                                        .param(RUNTIME_NAME, content.getRuntimeName())
-                                        .param(ENABLED, enable)
-                                        .build();
-                            })
-                            .collect(toList());
-                    dispatcher.execute(new Composite(operations), (CompositeResult cr) -> {
-                        refresh(RESTORE_SELECTION);
-                        MessageEvent.fire(eventBus,
-                                Message.success(resources.messages().contentDeployed(content.getName())));
-                    });
-                }).show();
+                new DeployContentDialog1(content, serverGroupsWithoutContent, resources,
+                        (cnt, serverGroups, enable) -> {
+                            List<Operation> operations = serverGroups.stream()
+                                    .map(serverGroup -> {
+                                        ResourceAddress resourceAddress = new ResourceAddress()
+                                                .add(SERVER_GROUP, serverGroup)
+                                                .add(DEPLOYMENT, content.getName());
+                                        return new Operation.Builder(ADD, resourceAddress)
+                                                .param(RUNTIME_NAME, content.getRuntimeName())
+                                                .param(ENABLED, enable)
+                                                .build();
+                                    })
+                                    .collect(toList());
+                            dispatcher.execute(new Composite(operations), (CompositeResult cr) -> {
+                                refresh(RESTORE_SELECTION);
+                                MessageEvent.fire(eventBus,
+                                        Message.success(resources.messages().contentDeployed1(content.getName())));
+                            });
+                        }).show();
             }
         });
     }
@@ -365,7 +379,7 @@ public class ContentColumn extends FinderColumn<Content> {
             Set<String> serverGroupsWithContent = content.getServerGroupDeployments().stream()
                     .map(ServerGroupDeployment::getServerGroup)
                     .collect(toSet());
-            new DeployContentDialog(content, serverGroupsWithContent, resources, (cnt, serverGroups) -> {
+            new DeployContentDialog1(content, serverGroupsWithContent, resources, (cnt, serverGroups) -> {
                 List<Operation> operations = serverGroups.stream()
                         .map(serverGroup -> {
                             ResourceAddress resourceAddress = new ResourceAddress()

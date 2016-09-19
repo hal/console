@@ -32,10 +32,14 @@ import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.client.deployment.DeploymentFunctions.AddServerGroupDeployment;
+import org.jboss.hal.client.deployment.DeploymentFunctions.AddUnmanagedDeployment;
 import org.jboss.hal.client.deployment.DeploymentFunctions.CheckDeployment;
+import org.jboss.hal.client.deployment.DeploymentFunctions.LoadContent;
 import org.jboss.hal.client.deployment.DeploymentFunctions.LoadDeploymentsFromRunningServer;
 import org.jboss.hal.client.deployment.DeploymentFunctions.ReadServerGroupDeployments;
 import org.jboss.hal.client.deployment.DeploymentFunctions.UploadOrReplace;
+import org.jboss.hal.client.deployment.dialog.DeployContentDialog2;
+import org.jboss.hal.client.deployment.dialog.AddUnmanagedDialog;
 import org.jboss.hal.client.deployment.wizard.NamesStep;
 import org.jboss.hal.client.deployment.wizard.UploadContext;
 import org.jboss.hal.client.deployment.wizard.UploadDeploymentStep;
@@ -52,24 +56,32 @@ import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.TopologyFunctions.RunningServersQuery;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Composite;
+import org.jboss.hal.dmr.model.CompositeResult;
+import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Footer;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.client.deployment.ContentColumn.CONTENT_ADDRESS;
+import static org.jboss.hal.client.deployment.ContentColumn.CONTENT_TEMPLATE;
 import static org.jboss.hal.client.deployment.ServerGroupDeploymentColumn.SERVER_GROUP_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.deployment.wizard.UploadState.NAMES;
 import static org.jboss.hal.client.deployment.wizard.UploadState.UPLOAD;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DISABLED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 /**
@@ -78,13 +90,15 @@ import static org.jboss.hal.resources.CSS.pfIcon;
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.SERVER_GROUP_DEPLOYMENT)
-@Requires(SERVER_GROUP_DEPLOYMENT_ADDRESS)
+@Requires({CONTENT_ADDRESS, SERVER_GROUP_DEPLOYMENT_ADDRESS})
 public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeployment> {
 
     static final String SERVER_GROUP_DEPLOYMENT_ADDRESS = "/server-group=*/deployment=*";
-    static final AddressTemplate SERVER_GROUP_DEPLOYMENT_TEMPLATE = AddressTemplate.of(SERVER_GROUP_DEPLOYMENT_ADDRESS);
+    private static final AddressTemplate SERVER_GROUP_DEPLOYMENT_TEMPLATE = AddressTemplate
+            .of(SERVER_GROUP_DEPLOYMENT_ADDRESS);
 
     private final Environment environment;
+    private final EventBus eventBus;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final MetadataRegistry metadataRegistry;
@@ -110,6 +124,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                 .withFilter());
 
         this.environment = environment;
+        this.eventBus = eventBus;
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
         this.metadataRegistry = metadataRegistry;
@@ -118,9 +133,9 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
 
         List<ColumnAction<ServerGroupDeployment>> addActions = new ArrayList<>();
         addActions.add(new ColumnAction<>(Ids.SERVER_GROUP_DEPLOYMENT_UPLOAD, resources.constants().uploadDeployment(),
-                column -> uploadDeployment()));
+                column -> uploadAndDeploy()));
         addActions.add(new ColumnAction<>(Ids.SERVER_GROUP_DEPLOYMENT_ADD, resources.constants().deployContent(),
-                column -> addDeployment()));
+                column -> addDeploymentFromContentRepository()));
         addActions.add(new ColumnAction<>(Ids.SERVER_GROUP_DEPLOYMENT_UNMANAGED_ADD,
                 resources.messages().addResourceTitle(Names.UNMANAGED_DEPLOYMENT),
                 column -> addUnmanaged()));
@@ -193,6 +208,9 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
             @Override
             public List<ItemAction<ServerGroupDeployment>> actions() {
                 List<ItemAction<ServerGroupDeployment>> actions = new ArrayList<>();
+                actions.add(itemActionFactory.view(NameTokens.DEPLOYMENT_DETAIL,
+                        Ids.SERVER_GROUP, statementContext.selectedServerGroup(),
+                        Ids.DEPLOYMENT, item.getName()));
                 if (item.isEnabled()) {
                     actions.add(new ItemAction<>(resources.constants().disable(), itm -> disable(itm)));
                 } else {
@@ -214,7 +232,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
         }
     }
 
-    private void uploadDeployment() {
+    private void uploadAndDeploy() {
         Metadata metadata = metadataRegistry.lookup(SERVER_GROUP_DEPLOYMENT_TEMPLATE);
         Wizard<UploadContext, UploadState> wizard = new Wizard.Builder<UploadContext, UploadState>(
                 resources.messages().addResourceTitle(resources.constants().content()), new UploadContext())
@@ -261,12 +279,80 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
         wizard.show();
     }
 
-    private void addDeployment() {
-        Browser.getWindow().alert(Names.NYI);
+    private void addDeploymentFromContentRepository() {
+        Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
+            @Override
+            public void onFailure(final FunctionContext context) {
+                MessageEvent.fire(eventBus, Message.error(resources.messages().loadContentError(),
+                        context.getErrorMessage()));
+            }
+
+            @Override
+            public void onSuccess(final FunctionContext context) {
+                // extract that content which is not deployed on statementContext.selectedServerGroup()
+                String serverGroup = statementContext.selectedServerGroup();
+                List<Content> content = context.pop();
+                List<Content> undeployedContentOnSelectedServerGroup = content.stream()
+                        .filter(c -> !c.isDeployedTo(serverGroup))
+                        .collect(toList());
+                if (undeployedContentOnSelectedServerGroup.isEmpty()) {
+                    MessageEvent.fire(eventBus,
+                            Message.warning(resources.messages().allContentAlreadyDeployedToServerGroup(serverGroup)));
+                } else {
+                    new DeployContentDialog2(serverGroup, undeployedContentOnSelectedServerGroup, resources,
+                            (sg, cnt, enable) -> {
+                                List<Operation> operations = cnt.stream()
+                                        .map(c -> {
+                                            ResourceAddress resourceAddress = new ResourceAddress()
+                                                    .add(SERVER_GROUP, serverGroup)
+                                                    .add(DEPLOYMENT, c.getName());
+                                            return new Operation.Builder(ADD, resourceAddress)
+                                                    .param(RUNTIME_NAME, c.getRuntimeName())
+                                                    .param(ENABLED, enable)
+                                                    .build();
+                                        })
+                                        .collect(toList());
+                                dispatcher.execute(new Composite(operations), (CompositeResult cr) -> {
+                                    refresh(Ids.serverGroupDeployment(serverGroup, cnt.get(0).getName()));
+                                    MessageEvent.fire(eventBus,
+                                            Message.success(resources.messages().contentDeployed2(serverGroup)));
+                                });
+                            }).show();
+                }
+            }
+        };
+        new Async<FunctionContext>(progress.get())
+                .single(new FunctionContext(), outcome, new LoadContent(dispatcher));
     }
 
     private void addUnmanaged() {
-        Browser.getWindow().alert(Names.NYI);
+        Metadata metadata = metadataRegistry.lookup(CONTENT_TEMPLATE);
+        AddUnmanagedDialog dialog = new AddUnmanagedDialog(metadata, resources,
+                (name, model) -> {
+                    if (model != null) {
+                        String serverGroup = statementContext.selectedServerGroup();
+                        String runtimeName = model.get(RUNTIME_NAME).asString();
+                        new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
+                                new Outcome<FunctionContext>() {
+                                    @Override
+                                    public void onFailure(final FunctionContext context) {
+                                        eventBus.fireEvent(new MessageEvent(Message.error(
+                                                resources.messages().lastOperationFailed(),
+                                                context.getErrorMessage())));
+                                    }
+
+                                    @Override
+                                    public void onSuccess(final FunctionContext context) {
+                                        refresh(Ids.serverGroupDeployment(serverGroup, name));
+                                        MessageEvent.fire(eventBus, Message.success(resources.messages()
+                                                .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
+                                    }
+                                },
+                                new AddUnmanagedDeployment(dispatcher, name, model),
+                                new AddServerGroupDeployment(environment, dispatcher, name, runtimeName, serverGroup));
+                    }
+                });
+        dialog.show();
     }
 
     void enable(ServerGroupDeployment sgd) {

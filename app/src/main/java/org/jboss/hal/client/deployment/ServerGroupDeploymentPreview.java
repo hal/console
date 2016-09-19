@@ -66,7 +66,7 @@ class ServerGroupDeploymentPreview extends PreviewContent<ServerGroupDeployment>
                     .append(Ids.DEPLOYMENT_BROWSE_BY, Ids.asId(resources.constants().contentRepository()))
                     .append(Ids.CONTENT, Ids.content(model.getName())))
                     .build();
-            return new PreviewAttribute(resources.constants().content(), model.getName(),
+            return new PreviewAttribute(resources.constants().providedBy(), model.getName(),
                     places.historyToken(placeRequest));
         });
         attributes.append(MANAGED);

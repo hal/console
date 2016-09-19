@@ -18,6 +18,7 @@ package org.jboss.hal.client.deployment;
 import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.runtime.group.ServerGroup;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 /**
@@ -25,12 +26,10 @@ import org.jboss.hal.resources.Resources;
  */
 class ServerGroupPreview extends PreviewContent<ServerGroup> {
 
-    ServerGroupPreview(final ServerGroup serverGroup, final int deployments, Resources resources) {
-        super(serverGroup.getName());
-        previewBuilder().p()
-                .innerHtml(resources.messages().deploymentsDescription(serverGroup.getName(), deployments)).end();
+    ServerGroupPreview(final ServerGroup serverGroup, Resources resources) {
+        super(serverGroup.getName(), Names.PROFILE + " " + serverGroup.getProfile());
         if (JsHelper.supportsAdvancedUpload()) {
-            previewBuilder().p().innerHtml(resources.messages().assignByDragAndDrop(resources.constants().replace()))
+            previewBuilder().p().innerHtml(resources.messages().deployByDragAndDrop(resources.constants().replace()))
                     .end();
         }
         previewBuilder().p().innerHtml(resources.messages().addUnmanagedDescription()).end();

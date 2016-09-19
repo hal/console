@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.deployment;
+package org.jboss.hal.client.deployment.dialog;
 
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.client.configuration.PathsTypeahead;
@@ -34,11 +34,11 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-class AddUnmanagedDialog {
+public class AddUnmanagedDialog {
 
     private final AddResourceDialog  dialog;
 
-    AddUnmanagedDialog(final Metadata metadata, final Resources resources,
+    public AddUnmanagedDialog(final Metadata metadata, final Resources resources,
             final AddResourceDialog.Callback callback) {
         ModelNode rp = ModelNodeHelper.failSafeGet(metadata.getDescription(),
                 String.join("/", OPERATIONS, ADD, REQUEST_PROPERTIES));
@@ -75,7 +75,7 @@ class AddUnmanagedDialog {
                 });
     }
 
-    void show() {
+    public void show() {
         dialog.show();
     }
 }

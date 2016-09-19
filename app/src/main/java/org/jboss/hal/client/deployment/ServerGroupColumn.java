@@ -19,8 +19,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multiset;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.dom.Element;
 import org.jboss.hal.core.finder.Finder;
@@ -50,8 +48,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 @Requires(value = "/server-group=*")
 public class ServerGroupColumn extends FinderColumn<ServerGroup> {
 
-    private final Multiset<String> deploymentsPerServerGroup;
-
     @Inject
     public ServerGroupColumn(final Finder finder,
             final Dispatcher dispatcher,
@@ -64,7 +60,6 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
                 .pinnable()
                 .showCount()
                 .withFilter());
-        this.deploymentsPerServerGroup = HashMultiset.create();
 
         setItemRenderer(item -> new ItemDisplay<ServerGroup>() {
             @Override
@@ -79,14 +74,12 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
 
             @Override
             public Element asElement() {
-                return ItemDisplay.withSubtitle(item.getName(),
-                        resources.messages().deployments(deploymentsPerServerGroup.count(item.getName())));
+                return ItemDisplay.withSubtitle(item.getName(), item.getProfile());
             }
 
             @Override
             public String getFilterData() {
-                return Joiner.on(' ')
-                        .join(item.getName(), String.valueOf(deploymentsPerServerGroup.count(item.getName())));
+                return Joiner.on(' ').join(item.getName(), item.getProfile());
             }
 
             @Override
@@ -110,21 +103,10 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
                         .map(ServerGroup::new)
                         .sorted(comparing(ServerGroup::getName))
                         .collect(toList());
-
-                deploymentsPerServerGroup.clear();
-                result.step(1).get(RESULT).asList().stream()
-                        .filter(modelNode -> !modelNode.isFailure() && modelNode.hasDefined(ADDRESS))
-                        .forEach(modelNode -> {
-                            ResourceAddress serverGroupAddress = new ResourceAddress(modelNode.get(ADDRESS));
-                            //noinspection ResultOfMethodCallIgnored
-                            deploymentsPerServerGroup.add(serverGroupAddress.firstValue());
-                        });
-
                 callback.onSuccess(serverGroups);
             });
         });
 
-        setPreviewCallback(
-                item -> new ServerGroupPreview(item, deploymentsPerServerGroup.count(item.getName()), resources));
+        setPreviewCallback(item -> new ServerGroupPreview(item, resources));
     }
 }

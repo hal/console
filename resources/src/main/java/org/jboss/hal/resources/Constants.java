@@ -100,7 +100,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String edit();
     String enable();
     String enabled();
-    String enableContent();
+    String enableDeployment();
     String enableRbac();
     String enableStatistics();
     String endpointSelectTitle();
@@ -284,6 +284,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String processors();
     String productName();
     String productVersion();
+    String providedBy();
 
     String refresh();
     String releaseName();
