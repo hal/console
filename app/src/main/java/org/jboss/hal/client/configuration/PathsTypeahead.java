@@ -61,7 +61,7 @@ public class PathsTypeahead extends Typeahead {
     /**
      * Updates the static operation which is used by this typeahead.
      */
-    static void updateOperation(final Environment environment, final Dispatcher dispatcher,
+    public static void updateOperation(final Environment environment, final Dispatcher dispatcher,
             final StatementContext statementContext) {
         if (environment.isStandalone() || statementContext.selectedProfile() == null) {
             operation = defaultOperation();

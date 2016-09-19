@@ -30,15 +30,19 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.ballroom.wizard.Wizard;
+import org.jboss.hal.client.configuration.PathsTypeahead;
 import org.jboss.hal.client.deployment.DeploymentFunctions.CheckDeployment;
 import org.jboss.hal.client.deployment.DeploymentFunctions.UploadOrReplace;
 import org.jboss.hal.client.deployment.wizard.ContentContext;
 import org.jboss.hal.client.deployment.wizard.ContentState;
 import org.jboss.hal.client.deployment.wizard.NamesStep;
 import org.jboss.hal.client.deployment.wizard.UploadContentStep;
+import org.jboss.hal.client.deployment.wizard.UploadElement;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
@@ -46,8 +50,12 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.dialog.NameItem;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -56,6 +64,8 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.description.ResourceDescription;
+import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -75,6 +85,7 @@ import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.name;
 import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.spi.MessageEvent.fire;
 
@@ -188,7 +199,9 @@ public class ContentColumn extends FinderColumn<Content> {
                 if (item.getAssignments().isEmpty() && !item.isExploded()) {
                     actions.add(new ItemAction<>(resources.constants().explode(), itm -> explode(itm)));
                 }
-                actions.add(new ItemAction<>(resources.constants().replace(), itm -> replace(itm)));
+                if (item.isManaged()) {
+                    actions.add(new ItemAction<>(resources.constants().replace(), itm -> replace(itm)));
+                }
                 if (item.getAssignments().isEmpty()) {
                     actions.add(new ItemAction<>(resources.constants().remove(), itm -> remove(itm)));
                 } else {
@@ -250,11 +263,88 @@ public class ContentColumn extends FinderColumn<Content> {
     }
 
     private void addUnmanaged() {
-        Browser.getWindow().alert(Names.NYI);
+        // assemble a resource description for unmanaged content using various pieces from the deployment description
+        Metadata metadata = metadataRegistry.lookup(DEPLOYMENT_TEMPLATE);
+        ModelNode rp = ModelNodeHelper.failSafeGet(metadata.getDescription(),
+                String.join("/", OPERATIONS, ADD, REQUEST_PROPERTIES));
+        ModelNode vt = ModelNodeHelper.failSafeGet(rp, CONTENT + "/" + VALUE_TYPE);
+        ModelNode attributes = new ModelNode();
+        attributes.get(RUNTIME_NAME).set(rp.get(RUNTIME_NAME));
+        attributes.get(PATH).set(vt.get(PATH));
+        attributes.get(RELATIVE_TO).set(vt.get(RELATIVE_TO));
+        attributes.get(ARCHIVE).set(vt.get(ARCHIVE));
+        ModelNode description = new ModelNode();
+        description.get(ATTRIBUTES).set(attributes);
+
+        Metadata unmanagedMeta = new Metadata(SecurityContext.RWX, new ResourceDescription(description),
+                metadata.getCapabilities());
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.CONTENT_ADD_UNMANAGED_FORM, unmanagedMeta)
+                .unboundFormItem(new NameItem(), 0)
+                .include(RUNTIME_NAME, PATH, RELATIVE_TO, ARCHIVE)
+                .unsorted()
+                .addOnly()
+                .build();
+        form.getFormItem(PATH).setRequired(true);
+        form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsTypeahead());
+        AddResourceDialog dialog = new AddResourceDialog(
+                resources.messages().addResourceTitle(Names.UNMANAGED_DEPLOYMENT), form,
+                (name, model) -> {
+                    if (model != null) {
+                        // assemble the payload using the provided model node from the form
+                        ModelNode payload = new ModelNode();
+                        payload.get(RUNTIME_NAME).set(model.get(RUNTIME_NAME));
+                        model.remove(RUNTIME_NAME);
+                        payload.get(CONTENT).set(model);
+                        Operation operation = new Operation.Builder(ADD, new ResourceAddress().add(DEPLOYMENT, name))
+                                .payload(payload)
+                                .build();
+                        dispatcher.execute(operation, result -> {
+                            refresh(Ids.asId(name));
+                            MessageEvent.fire(eventBus, Message.success(
+                                    resources.messages().addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
+                        });
+                    }
+                });
+        dialog.show();
     }
 
     private void replace(Content content) {
-        Browser.getWindow().alert(Names.NYI);
+        UploadElement uploadElement = new UploadElement(resources.messages().noContent());
+        Dialog dialog = new Dialog.Builder(resources.constants().replaceContent())
+                .add(uploadElement.asElement())
+                .closeIcon(true)
+                .closeOnEsc(true)
+                .cancel()
+                .primary(resources.constants().replace(), () -> {
+                    boolean valid = uploadElement.validate();
+                    if (valid) {
+                        Function[] functions = new Function[]{
+                                new CheckDeployment(dispatcher, content.getName()),
+                                // To replace an existing content, the original name and runtime-name must be preserved.
+                                new UploadOrReplace(environment, dispatcher, content.getName(),
+                                        content.getRuntimeName(), uploadElement.getFiles().item(0), false)
+                        };
+                        new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
+                                new Outcome<FunctionContext>() {
+                                    @Override
+                                    public void onFailure(final FunctionContext context) {
+                                        MessageEvent.fire(eventBus, Message.error(
+                                                resources.messages().contentReplaceError(content.getName()),
+                                                context.getErrorMessage()));
+                                    }
+
+                                    @Override
+                                    public void onSuccess(final FunctionContext context) {
+                                        refresh(Ids.asId(name));
+                                        MessageEvent.fire(eventBus, Message.success(
+                                                resources.messages().contentReplaceSuccess(content.getName())));
+                                    }
+                                }, functions);
+                    }
+                    return valid;
+                })
+                .build();
+        dialog.show();
     }
 
     private void explode(Content content) {

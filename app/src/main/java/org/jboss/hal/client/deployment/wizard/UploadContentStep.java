@@ -16,75 +16,25 @@
 package org.jboss.hal.client.deployment.wizard;
 
 import elemental.dom.Element;
-import elemental.html.File;
-import elemental.html.FileList;
-import elemental.html.InputElement;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.Alert;
-import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.ballroom.wizard.WizardStep;
-import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
-
-import static org.jboss.gwt.elemento.core.EventType.change;
-import static org.jboss.gwt.elemento.core.InputType.file;
-import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.FontAwesomeSize.x4;
 
 /**
  * @author Harald Pehl
  */
 public class UploadContentStep extends WizardStep<ContentContext, ContentState> {
 
-    private static final String ICON_ELEMENT = "iconElement";
-    private static final String FILE_INPUT_ELEMENT = "fileInputElement";
-    private static final String LABEL_ELEMENT = "labelElement";
-    private static final String DRAG_ELEMENT = "dragElement";
-
-    private Element root;
-    private Alert alert;
-    private Element iconElement;
-    private InputElement fileInput;
-    private Element labelElement;
-    private Element dragElement;
+    private final UploadElement uploadElement;
 
     public UploadContentStep(final Resources resources) {
         super(Ids.CONTENT_ADD_MANAGED_UPLOAD_STEP, resources.constants().uploadContent());
-
-        alert = new Alert(Icons.ERROR, resources.messages().noContent());
-
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .form().attr("novalidate", "true").css(upload) //NON-NLS
-                .add(alert)
-                .div().rememberAs(ICON_ELEMENT).css(uploadIcon, fontAwesome("upload", x4)).end()
-                .input(file)
-                    .rememberAs(FILE_INPUT_ELEMENT)
-                    .id(Ids.CONTENT_ADD_MANAGED_UPLOAD_FILE_INPUT)
-                    .css(uploadFile)
-                    .on(change, event -> showFiles(fileInput.getFiles()))
-                .label().attr("for", Ids.CONTENT_ADD_MANAGED_UPLOAD_FILE_INPUT).rememberAs(LABEL_ELEMENT)
-                    .a().css(clickable)
-                        .textContent(resources.constants().chooseFile())
-                    .end()
-                    .span().rememberAs(DRAG_ELEMENT)
-                        .textContent(" " + resources.constants().orDragItHere())
-                    .end()
-                .end()
-            .end();
-        // @formatter:on
-
-        iconElement = builder.referenceFor(ICON_ELEMENT);
-        fileInput = builder.referenceFor(FILE_INPUT_ELEMENT);
-        labelElement = builder.referenceFor(LABEL_ELEMENT);
-        dragElement = builder.referenceFor(DRAG_ELEMENT);
-        root = builder.build();
+        this.uploadElement = new UploadElement(resources.messages().noContent());
     }
 
     @Override
     public Element asElement() {
-        return root;
+        return uploadElement.asElement();
     }
 
     @Override
@@ -94,36 +44,15 @@ public class UploadContentStep extends WizardStep<ContentContext, ContentState> 
 
     @Override
     protected void onShow(final ContentContext context) {
-        Elements.setVisible(alert.asElement(), false);
-
-        boolean advancedUpload = JsHelper.supportsAdvancedUpload();
-        if (advancedUpload) {
-            root.getClassList().add(uploadAdvanced);
-            JsHelper.addDropHandler(root, event -> {
-                fileInput.setFiles(event.dataTransfer.files);
-                showFiles(event.dataTransfer.files);
-            });
-        } else {
-            root.getClassList().remove(uploadAdvanced);
-        }
-        Elements.setVisible(iconElement, advancedUpload);
-        Elements.setVisible(dragElement, advancedUpload);
-    }
-
-    private void showFiles(FileList files) {
-        if (files.getLength() > 0) {
-            File file = files.item(0);
-            labelElement.setInnerHTML(file.getName());
-            Elements.setVisible(alert.asElement(), false);
-
-            wizard().getContext().file = file;
-        }
+        uploadElement.reset();
     }
 
     @Override
     protected boolean onNext(final ContentContext context) {
-        boolean valid = fileInput.getFiles() != null && fileInput.getFiles().getLength() > 0;
-        Elements.setVisible(alert.asElement(), !valid);
-        return valid;
+        if (uploadElement.validate()) {
+            context.file = uploadElement.getFiles().item(0);
+            return true;
+        }
+        return false;
     }
 }

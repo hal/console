@@ -290,6 +290,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String removeResource();
     String rename();
     String replace();
+    String replaceContent();
     String required();
     String requiredField();
     String reset();

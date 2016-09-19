@@ -62,6 +62,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml contentAlreadyAssignedToAllServerGroups(String name);
     SafeHtml contentAssigned(String name);
     SafeHtml contentOpFailed(@PluralCount int size);
+    SafeHtml contentReplaceError(String name);
+    SafeHtml contentReplaceSuccess(String name);
     SafeHtml contentReplaced(@PluralCount int size);
     SafeHtml contentUnassigned(String name);
     String currentOfTottal(long current, long total);
