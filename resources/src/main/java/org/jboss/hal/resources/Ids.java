@@ -107,7 +107,7 @@ public interface Ids {
     String DATA_SOURCE_RUNTIME_POOL_TAB = build(DATA_SOURCE_RUNTIME, "pool", TAB_SUFFIX);
     String DEPLOYMENT = "deployment";
     String DEPLOYMENT_ADD_ACTIONS = build(DEPLOYMENT, "add-actions");
-    String DEPLOYMENT_BROWSE_BY = build(DEPLOYMENT, "browse-by");
+    String DEPLOYMENT_BROWSE_BY = "deployment-browse-by"; // must be a constant expression!
     String DEPLOYMENT_UNMANAGED_ADD = build(DEPLOYMENT, "unmanaged", ADD_SUFFIX);
     String DEPLOYMENT_REFRESH = build(DEPLOYMENT, REFRESH_SUFFIX);
     String DEPLOYMENT_SERVER_GROUP = "deployment-sg";

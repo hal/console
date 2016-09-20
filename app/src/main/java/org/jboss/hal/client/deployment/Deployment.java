@@ -25,11 +25,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DISABLED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBDEPLOYMENT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * A deployment on a specific server.
@@ -124,6 +120,10 @@ public class Deployment extends Content {
         ModelNode enabled = get(ENABLED);
         //noinspection SimplifiableConditionalExpression
         return enabled.isDefined() ? enabled.asBoolean() : false;
+    }
+
+    boolean isExploded() {
+        return get(EXPLODED).asBoolean(false);
     }
 
     public Status getStatus() {

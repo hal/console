@@ -16,38 +16,56 @@
 package org.jboss.hal.client.deployment;
 
 import org.jboss.hal.ballroom.Alert;
+import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.client.deployment.Deployment.Status;
 import org.jboss.hal.core.finder.PreviewAttributes;
+import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
-import static org.jboss.hal.resources.Names.DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
  */
 class DeploymentPreview extends PreviewContent<Deployment> {
 
+    static final String LAST_ENABLED_AT = "Last enabled at";
+    static final String LAST_DISABLED_AT = "Last disabled at";
+
     DeploymentPreview(final DeploymentColumn column, final Deployment deployment, final Resources resources) {
         super(deployment.getName());
 
-        if (deployment.isEnabled()) {
-            previewBuilder()
-                    .add(new Alert(Icons.OK, resources.messages().resourceEnabled(DEPLOYMENT, deployment.getName()),
-                            resources.constants().disable(), event -> column.disable(deployment)));
-
+        if (deployment.getStatus() == Status.FAILED) {
+            previewBuilder().add(new Alert(Icons.ERROR, resources.messages().deploymentFailed(deployment.getName())));
+        } else if (deployment.getStatus() == Status.STOPPED) {
+            previewBuilder().add(new Alert(Icons.STOPPED, resources.messages().deploymentStopped(deployment.getName()),
+                    resources.constants().enable(), event -> column.enable(deployment)));
+        } else if (deployment.getStatus() == Status.OK) {
+            previewBuilder().add(new Alert(Icons.OK, resources.messages().deploymentActive(deployment.getName()),
+                    resources.constants().disable(), event -> column.disable(deployment)));
         } else {
-            previewBuilder()
-                    .add(new Alert(Icons.DISABLED,
-                            resources.messages().resourceDisabled(DEPLOYMENT, deployment.getName()),
-                            resources.constants().enable(), event -> column.enable(deployment)));
+            if (deployment.isEnabled()) {
+                previewBuilder().add(new Alert(Icons.OK, resources.messages().deploymentEnabled(deployment.getName()),
+                        resources.constants().disable(), event -> column.disable(deployment)));
+            } else {
+                previewBuilder()
+                        .add(new Alert(Icons.DISABLED, resources.messages().deploymentDisabled(deployment.getName()),
+                                resources.constants().enable(), event -> column.enable(deployment)));
+            }
         }
 
-        PreviewAttributes<Deployment> attributes = new PreviewAttributes<>(deployment,
-                asList(RUNTIME_NAME, "disabled-timestamp", "enabled-timestamp", STATUS)).end();
+        PreviewAttributes<Deployment> attributes = new PreviewAttributes<>(deployment, asList(NAME, RUNTIME_NAME));
+        attributes.append(MANAGED);
+        attributes.append(EXPLODED);
+        attributes.append(ENABLED);
+        attributes.append(model -> new PreviewAttribute(new LabelBuilder().label(STATUS),
+                deployment.getStatus().name()));
+        attributes.append(model -> new PreviewAttribute(LAST_ENABLED_AT, deployment.getEnabledTime()));
+        attributes.append(model -> new PreviewAttribute(LAST_DISABLED_AT, deployment.getDisabledTime()));
+        attributes.end();
         previewBuilder().addAll(attributes);
     }
 }

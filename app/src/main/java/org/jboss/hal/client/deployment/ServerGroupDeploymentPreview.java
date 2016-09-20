@@ -31,15 +31,14 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
+import static org.jboss.hal.client.deployment.DeploymentPreview.LAST_DISABLED_AT;
+import static org.jboss.hal.client.deployment.DeploymentPreview.LAST_ENABLED_AT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
  */
 class ServerGroupDeploymentPreview extends PreviewContent<ServerGroupDeployment> {
-
-    private static final String LAST_ENABLED_AT = "Last enabled at";
-    private static final String LAST_DISABLED_AT = "Last disabled at";
 
     ServerGroupDeploymentPreview(final ServerGroupDeploymentColumn column, final ServerGroupDeployment sgd,
             final Places places, final Resources resources) {
@@ -50,7 +49,8 @@ class ServerGroupDeploymentPreview extends PreviewContent<ServerGroupDeployment>
             if (deployment.getStatus() == Status.FAILED) {
                 previewBuilder().add(new Alert(Icons.ERROR, resources.messages().deploymentFailed(sgd.getName())));
             } else if (deployment.getStatus() == Status.STOPPED) {
-                previewBuilder().add(new Alert(Icons.STOPPED, resources.messages().deploymentStopped(sgd.getName())));
+                previewBuilder().add(new Alert(Icons.STOPPED, resources.messages().deploymentStopped(sgd.getName()),
+                        resources.constants().enable(), event -> column.enable(sgd)));
             } else if (deployment.getStatus() == Status.OK) {
                 previewBuilder().add(new Alert(Icons.OK, resources.messages().deploymentActive(sgd.getName()),
                         resources.constants().disable(), event -> column.disable(sgd)));

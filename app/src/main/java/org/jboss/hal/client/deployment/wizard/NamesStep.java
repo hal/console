@@ -52,6 +52,7 @@ public class NamesStep extends WizardStep<UploadContext, UploadState> {
             builder.include(ENABLED);
         }
         form = builder.build();
+        registerAttachable(form);
     }
 
     @Override

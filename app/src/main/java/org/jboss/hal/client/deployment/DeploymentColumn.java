@@ -22,13 +22,14 @@ import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
+import elemental.client.Browser;
 import elemental.dom.Element;
+import elemental.html.SpanElement;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.client.deployment.Deployment.Status;
@@ -46,6 +47,7 @@ import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
+import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.runtime.server.Server;
@@ -55,7 +57,7 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
-import org.jboss.hal.resources.Icons;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -69,9 +71,9 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.deployment.DeploymentColumn.DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.deployment.wizard.UploadState.NAMES;
 import static org.jboss.hal.client.deployment.wizard.UploadState.UPLOAD;
-import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 /**
@@ -96,6 +98,7 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
     @Inject
     public DeploymentColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
+            final ItemActionFactory itemActionFactory,
             final Environment environment,
             final Dispatcher dispatcher,
             final EventBus eventBus,
@@ -120,8 +123,9 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
                 })
 
                 .useFirstActionAsBreadcrumbHandler()
-                .withFilter()
-        );
+                .pinnable()
+                .showCount()
+                .withFilter());
 
         this.environment = environment;
         this.dispatcher = dispatcher;
@@ -153,18 +157,21 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
             public String getTooltip() {
                 if (item.getStatus() == Status.FAILED) {
                     return resources.constants().failed();
-                } else {
-                    return item.isEnabled() ? resources.constants().enabled() : resources.constants().disabled();
-                }
+                } else if (item.getStatus() == Status.STOPPED) {
+                    return resources.constants().stopped();
+                } else if (item.getStatus() == Status.OK) {
+                    return resources.constants().activeLower();
+                } else
+                    return item.isEnabled() ? resources.constants().enabled() : resources.constants()
+                            .disabled();
             }
 
             @Override
             public Element getIcon() {
-                if (item.getStatus() == Status.FAILED) {
-                    return Icons.error();
-                } else {
-                    return item.isEnabled() ? Icons.ok() : Icons.disabled();
-                }
+                String icon = item.isExploded() ? fontAwesome("folder-open") : fontAwesome("archive");
+                SpanElement spanElement = Browser.getDocument().createSpanElement();
+                spanElement.setClassName(icon);
+                return spanElement;
             }
 
             @Override
@@ -175,20 +182,15 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
             @Override
             public List<ItemAction<Deployment>> actions() {
                 List<ItemAction<Deployment>> actions = new ArrayList<>();
+                actions.add(itemActionFactory.view(NameTokens.DEPLOYMENT_DETAIL,
+                        Ids.DEPLOYMENT, item.getName()));
                 if (item.isEnabled()) {
                     actions.add(new ItemAction<>(resources.constants().disable(), deployment -> disable(deployment)));
                 } else {
                     actions.add(new ItemAction<>(resources.constants().enable(), deployment -> enable(deployment)));
                 }
-                actions.add(new ItemAction<>(resources.constants().remove(),
-                        deployment -> DialogFactory.showConfirmation(
-                                resources.messages().removeResourceConfirmationTitle(item.getName()),
-                                resources.messages().removeResourceConfirmationQuestion(item.getName()),
-                                () -> {
-                                    ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, item.getName());
-                                    Operation operation = new Operation.Builder(REMOVE, address).build();
-                                    dispatcher.execute(operation, result -> refresh(CLEAR_SELECTION));
-                                })));
+                actions.add(itemActionFactory.remove(Names.DEPLOYMENT, item.getName(), DEPLOYMENT_TEMPLATE,
+                        DeploymentColumn.this));
                 return actions;
             }
         });

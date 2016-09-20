@@ -20,10 +20,13 @@ import javax.inject.Inject;
 
 import com.google.common.base.Joiner;
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.group.ServerGroupSelectionEvent;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -52,13 +55,23 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
     public ServerGroupColumn(final Finder finder,
             final Dispatcher dispatcher,
             final EventBus eventBus,
+            final PlaceManager placeManager,
+            final Places places,
             final Resources resources) {
 
         super(new FinderColumn.Builder<ServerGroup>(finder, Ids.DEPLOYMENT_SERVER_GROUP, Names.SERVER_GROUP)
+
                 // TODO Change the security context (server group scoped roles!)
                 .onItemSelect(serverGroup -> eventBus.fireEvent(new ServerGroupSelectionEvent(serverGroup.getName())))
+
+                .onBreadcrumbItem((item, context) -> {
+                    // switch server group in place request parameter of specific presenter
+                    PlaceRequest current = placeManager.getCurrentPlaceRequest();
+                    PlaceRequest update = places.replaceParameter(current, SERVER_GROUP, item.getName()).build();
+                    placeManager.revealPlace(update);
+                })
+
                 .pinnable()
-                .showCount()
                 .withFilter());
 
         setItemRenderer(item -> new ItemDisplay<ServerGroup>() {

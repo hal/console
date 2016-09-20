@@ -23,6 +23,7 @@ import javax.inject.Provider;
 import com.google.common.collect.Lists;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import elemental.dom.Element;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
@@ -115,6 +116,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
             final Environment environment,
             final EventBus eventBus,
             final Dispatcher dispatcher,
+            final PlaceManager placeManager,
             final Places places,
             final StatementContext statementContext,
             final MetadataRegistry metadataRegistry,
@@ -122,6 +124,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
             final Resources resources) {
 
         super(new FinderColumn.Builder<ServerGroupDeployment>(finder, Ids.SERVER_GROUP_DEPLOYMENT, Names.DEPLOYMENT)
+                .useFirstActionAsBreadcrumbHandler()
                 .pinnable()
                 .showCount()
                 .withFilter());
