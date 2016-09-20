@@ -17,21 +17,34 @@ package org.jboss.hal.client.deployment;
 
 import javax.inject.Inject;
 
+import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 
 /**
  * @author Harald Pehl
  */
 public class DeploymentDetailView extends PatternFlyViewImpl implements DeploymentDetailPresenter.MyView {
 
+    private final Tabs tabs;
     private final ModelBrowser modelBrowser;
 
     @Inject
-    public DeploymentDetailView(ModelBrowser modelBrowser) {
+    public DeploymentDetailView(ModelBrowser modelBrowser, Resources resources) {
         this.modelBrowser = modelBrowser;
-        initElements(modelBrowser);
+
+        Element element = new Elements.Builder().p().textContent(Names.NYI).end().build();
+
+        tabs = new Tabs();
+        tabs.add(Ids.DEPLOYMENT_DETAIL_RESOURCES_TAB, Names.MANAGEMENT_MODEL, modelBrowser.asElements());
+        tabs.add(Ids.DEPLOYMENT_DETAIL_CONTENT_TAB, resources.constants().content(), element);
+        initElement(tabs);
     }
 
     @Override

@@ -68,7 +68,7 @@ public class UnderTheBridgePresenter
         return new FinderPath()
                 .append("rhcp-color", "red", "Color", "Red")
                 .append("rhcp-temperature", "hot", "Temperature", "Hot")
-                .append("rhcp-vegetables", "chili", "Vegetables", "Chili")
+                .append("rhcp-vegetable", "chili", "Vegetable", "Chili")
                 .append("rhcp-spice", "peppers", "Spice", "Peppers")
                 .append("rhcp-decade", "1990-1999", "Decade", "1990 - 1999")
                 .append("rhcp-album", "blood-sugar-sex-magik", "Album", "Blood Sugar Sex Magik")

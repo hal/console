@@ -108,9 +108,11 @@ public interface Ids {
     String DEPLOYMENT = "deployment";
     String DEPLOYMENT_ADD_ACTIONS = build(DEPLOYMENT, "add-actions");
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by"; // must be a constant expression!
-    String DEPLOYMENT_UNMANAGED_ADD = build(DEPLOYMENT, "unmanaged", ADD_SUFFIX);
+    String DEPLOYMENT_DETAIL_CONTENT_TAB = build(DEPLOYMENT, "detail", "content", TAB_SUFFIX);
+    String DEPLOYMENT_DETAIL_RESOURCES_TAB = build(DEPLOYMENT, "detail", "resources", TAB_SUFFIX);
     String DEPLOYMENT_REFRESH = build(DEPLOYMENT, REFRESH_SUFFIX);
     String DEPLOYMENT_SERVER_GROUP = "deployment-sg";
+    String DEPLOYMENT_UNMANAGED_ADD = build(DEPLOYMENT, "unmanaged", ADD_SUFFIX);
     String DEPLOYMENT_UPLOAD = build(DEPLOYMENT, "upload");
     String DOMAIN_BROWSE_BY = "domain-browse-by";
     String DRAG_AND_DROP_DEPLOYMENT = "drag-and-drop-deployment";

@@ -83,12 +83,12 @@ public class RhcpColumns {
     }
 
 
-    @AsyncColumn("rhcp-vegetables")
+    @AsyncColumn("rhcp-vegetable")
     public static class Vegetables extends StaticItemColumn {
 
         @Inject
         public Vegetables(Finder finder) {
-            super(finder, "rhcp-vegetables", "Vegetables",
+            super(finder, "rhcp-vegetable", "Vegetable",
                     asList(new StaticItem.Builder("Beans").build(),
                             new StaticItem.Builder("Carrot").build(),
                             new StaticItem.Builder("Chili").nextColumn("rhcp-spice").build(),
