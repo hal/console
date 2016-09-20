@@ -32,7 +32,6 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import elemental.dom.Element;
-import elemental.html.HTMLCollection;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.flow.Async;
@@ -77,36 +76,26 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
     private class SelectFunction implements Function<FunctionContext> {
 
         private final FinderSegment segment;
-        private final Element columnElement;
 
-        private SelectFunction(final FinderSegment segment, final Element columnElement) {
+        private SelectFunction(final FinderSegment segment) {
             this.segment = segment;
-            this.columnElement = columnElement;
         }
 
         @Override
         public void execute(final Control<FunctionContext> control) {
-            if (columnElement != null &&
-                    columns.containsKey(columnElement.getId()) &&
-                    segment.getColumnId().equals(columnElement.getId())) {
-                // column is already in place just select the item
-                FinderColumn column = columns.get(columnElement.getId());
-                selectItem(column, control);
+            appendColumn(segment.getColumnId(), new AsyncCallback<FinderColumn>() {
+                @Override
+                public void onFailure(final Throwable throwable) {
+                    logger.error("Error in Finder.SelectFunction: Unable to append column '{}'",
+                            segment.getColumnId());
+                    control.abort();
+                }
 
-            } else {
-                // append the column
-                appendColumn(segment.getColumnId(), new AsyncCallback<FinderColumn>() {
-                    @Override
-                    public void onFailure(final Throwable throwable) {
-                        control.abort();
-                    }
-
-                    @Override
-                    public void onSuccess(final FinderColumn finderColumn) {
-                        selectItem(finderColumn, control);
-                    }
-                });
-            }
+                @Override
+                public void onSuccess(final FinderColumn finderColumn) {
+                    selectItem(finderColumn, control);
+                }
+            });
         }
 
         private void selectItem(FinderColumn column, Control<FunctionContext> control) {
@@ -561,11 +550,9 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
 
             int index = 0;
             Function[] functions = new Function[path.size()];
-            HTMLCollection columns = root.getChildren();
             for (FinderSegment segment : path) {
-                Element column = index < columns.getLength() ? (Element) columns.item(index) : null;
-                functions[index] = new SelectFunction(new FinderSegment(segment.getColumnId(), segment.getItemId()),
-                        column); // work with a copy of segment!
+                // work with a copy of segment!
+                functions[index] = new SelectFunction(new FinderSegment(segment.getColumnId(), segment.getItemId()));
                 index++;
             }
             new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), new Outcome<FunctionContext>() {
