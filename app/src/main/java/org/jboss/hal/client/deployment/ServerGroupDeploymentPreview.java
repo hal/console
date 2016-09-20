@@ -18,6 +18,7 @@ package org.jboss.hal.client.deployment;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.client.deployment.Deployment.Status;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
@@ -45,8 +46,19 @@ class ServerGroupDeploymentPreview extends PreviewContent<ServerGroupDeployment>
         super(sgd.getName());
 
         Deployment deployment = sgd.getDeployment();
-        if (deployment != null && deployment.isFailure()) {
-            previewBuilder().add(new Alert(Icons.ERROR, resources.messages().deploymentFailed(sgd.getName())));
+        if (deployment != null) {
+            if (deployment.getStatus() == Status.FAILED) {
+                previewBuilder().add(new Alert(Icons.ERROR, resources.messages().deploymentFailed(sgd.getName())));
+            } else if (deployment.getStatus() == Status.STOPPED) {
+                previewBuilder().add(new Alert(Icons.STOPPED, resources.messages().deploymentStopped(sgd.getName())));
+            } else if (deployment.getStatus() == Status.OK) {
+                previewBuilder().add(new Alert(Icons.OK, resources.messages().deploymentActive(sgd.getName()),
+                        resources.constants().disable(), event -> column.disable(sgd)));
+            } else {
+                previewBuilder()
+                        .add(new Alert(Icons.UNKNOWN, resources.messages().deploymentUnknownState(sgd.getName()),
+                                resources.constants().disable(), event -> column.disable(sgd)));
+            }
         } else {
             if (sgd.isEnabled()) {
                 previewBuilder().add(new Alert(Icons.OK, resources.messages().deploymentEnabled(sgd.getName()),

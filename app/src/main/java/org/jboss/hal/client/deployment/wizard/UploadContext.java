@@ -25,4 +25,5 @@ public class UploadContext {
     public File file;
     public String name;
     public String runtimeName;
+    public boolean enabled;
 }

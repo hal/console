@@ -106,8 +106,12 @@ public interface Ids {
     String DATA_SOURCE_RUNTIME_POOL_FORM = build(DATA_SOURCE_RUNTIME, "pool", FORM_SUFFIX);
     String DATA_SOURCE_RUNTIME_POOL_TAB = build(DATA_SOURCE_RUNTIME, "pool", TAB_SUFFIX);
     String DEPLOYMENT = "deployment";
-    String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
+    String DEPLOYMENT_ADD_ACTIONS = build(DEPLOYMENT, "add-actions");
+    String DEPLOYMENT_BROWSE_BY = build(DEPLOYMENT, "browse-by");
+    String DEPLOYMENT_UNMANAGED_ADD = build(DEPLOYMENT, "unmanaged", ADD_SUFFIX);
+    String DEPLOYMENT_REFRESH = build(DEPLOYMENT, REFRESH_SUFFIX);
     String DEPLOYMENT_SERVER_GROUP = "deployment-sg";
+    String DEPLOYMENT_UPLOAD = build(DEPLOYMENT, "upload");
     String DOMAIN_BROWSE_BY = "domain-browse-by";
     String DRAG_AND_DROP_DEPLOYMENT = "drag-and-drop-deployment";
 

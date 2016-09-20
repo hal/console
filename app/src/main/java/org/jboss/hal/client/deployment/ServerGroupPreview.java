@@ -15,9 +15,12 @@
  */
 package org.jboss.hal.client.deployment;
 
+import elemental.client.Browser;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.runtime.group.ServerGroup;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -27,11 +30,8 @@ import org.jboss.hal.resources.Resources;
 class ServerGroupPreview extends PreviewContent<ServerGroup> {
 
     ServerGroupPreview(final ServerGroup serverGroup, Resources resources) {
-        super(serverGroup.getName(), Names.PROFILE + " " + serverGroup.getProfile());
-        if (JsHelper.supportsAdvancedUpload()) {
-            previewBuilder().p().innerHtml(resources.messages().deployByDragAndDrop(resources.constants().replace()))
-                    .end();
-        }
-        previewBuilder().p().innerHtml(resources.messages().addUnmanagedDescription()).end();
+        super(serverGroup.getName(), Names.PROFILE + " " + serverGroup.getProfile(), resources.previews().deploymentsServerGroup());
+        Elements.setVisible(Browser.getDocument().getElementById(Ids.DRAG_AND_DROP_DEPLOYMENT),
+                JsHelper.supportsAdvancedUpload());
     }
 }

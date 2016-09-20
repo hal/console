@@ -21,8 +21,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import com.google.common.collect.Lists;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
@@ -31,6 +31,7 @@ import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.ballroom.wizard.Wizard;
+import org.jboss.hal.client.deployment.Deployment.Status;
 import org.jboss.hal.client.deployment.DeploymentFunctions.AddServerGroupDeployment;
 import org.jboss.hal.client.deployment.DeploymentFunctions.AddUnmanagedDeployment;
 import org.jboss.hal.client.deployment.DeploymentFunctions.CheckDeployment;
@@ -38,8 +39,8 @@ import org.jboss.hal.client.deployment.DeploymentFunctions.LoadContent;
 import org.jboss.hal.client.deployment.DeploymentFunctions.LoadDeploymentsFromRunningServer;
 import org.jboss.hal.client.deployment.DeploymentFunctions.ReadServerGroupDeployments;
 import org.jboss.hal.client.deployment.DeploymentFunctions.UploadOrReplace;
-import org.jboss.hal.client.deployment.dialog.DeployContentDialog2;
 import org.jboss.hal.client.deployment.dialog.AddUnmanagedDialog;
+import org.jboss.hal.client.deployment.dialog.DeployContentDialog2;
 import org.jboss.hal.client.deployment.wizard.NamesStep;
 import org.jboss.hal.client.deployment.wizard.UploadContext;
 import org.jboss.hal.client.deployment.wizard.UploadDeploymentStep;
@@ -52,6 +53,7 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.TopologyFunctions.RunningServersQuery;
 import org.jboss.hal.dmr.ModelNode;
@@ -81,6 +83,7 @@ import static org.jboss.hal.client.deployment.ContentColumn.CONTENT_TEMPLATE;
 import static org.jboss.hal.client.deployment.ServerGroupDeploymentColumn.SERVER_GROUP_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.deployment.wizard.UploadState.NAMES;
 import static org.jboss.hal.client.deployment.wizard.UploadState.UPLOAD;
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
@@ -181,9 +184,16 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
 
             @Override
             public String getTooltip() {
-                if (item.getDeployment() != null && item.getDeployment()
-                        .getStatus() == Deployment.Status.FAILED) {
-                    return resources.constants().failed();
+                if (item.getDeployment() != null) {
+                    if (item.getDeployment().getStatus() == Status.FAILED) {
+                        return resources.constants().failed();
+                    } else if (item.getDeployment().getStatus() == Status.STOPPED) {
+                        return resources.constants().stopped();
+                    } else if (item.getDeployment().getStatus() == Status.OK) {
+                        return resources.constants().activeLower();
+                    } else {
+                        return resources.constants().unknownState();
+                    }
                 } else {
                     return item.isEnabled() ? resources.constants().enabled() : resources.constants()
                             .disabled();
@@ -192,9 +202,16 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
 
             @Override
             public Element getIcon() {
-                if (item.getDeployment() != null && item.getDeployment()
-                        .getStatus() == Deployment.Status.FAILED) {
-                    return Icons.unknown();
+                if (item.getDeployment() != null) {
+                    if (item.getDeployment().getStatus() == Status.FAILED) {
+                        return Icons.error();
+                    } else if (item.getDeployment().getStatus() == Status.STOPPED) {
+                        return Icons.stopped();
+                    } else if (item.getDeployment().getStatus() == Status.OK) {
+                        return Icons.ok();
+                    } else {
+                        return Icons.unknown();
+                    }
                 } else {
                     return item.isEnabled() ? Icons.ok() : Icons.disabled();
                 }
@@ -238,7 +255,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                 resources.messages().addResourceTitle(resources.constants().content()), new UploadContext())
 
                 .addStep(UPLOAD, new UploadDeploymentStep(resources))
-                .addStep(NAMES, new NamesStep(metadata, resources))
+                .addStep(NAMES, new NamesStep(environment, metadata, resources))
 
                 .onBack((context, currentState) -> currentState == NAMES ? UPLOAD : null)
                 .onNext((context, currentState) -> currentState == UPLOAD ? NAMES : null)
@@ -356,10 +373,24 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
     }
 
     void enable(ServerGroupDeployment sgd) {
-        Browser.getWindow().alert(Names.NYI);
+        enableDisable(sgd, DEPLOY, resources.messages().deploymentEnabledSuccess(sgd.getName()));
     }
 
     void disable(ServerGroupDeployment sgd) {
-        Browser.getWindow().alert(Names.NYI);
+        enableDisable(sgd, UNDEPLOY, resources.messages().deploymentDisabledSuccess(sgd.getName()));
+    }
+
+    private void enableDisable(ServerGroupDeployment sgd, String operation, SafeHtml message) {
+        String id = Ids.serverGroupDeployment(sgd.getServerGroup(), sgd.getName());
+        ResourceAddress address = new ResourceAddress()
+                .add(SERVER_GROUP, sgd.getServerGroup())
+                .add(DEPLOYMENT, sgd.getName());
+        Operation op = new Operation.Builder(operation, address).build();
+        ItemMonitor.startProgress(id);
+        dispatcher.execute(op, result -> {
+            ItemMonitor.stopProgress(id);
+            refresh(RESTORE_SELECTION);
+            MessageEvent.fire(eventBus, Message.success(message));
+        });
     }
 }

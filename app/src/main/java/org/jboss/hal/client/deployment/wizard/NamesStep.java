@@ -18,6 +18,7 @@ package org.jboss.hal.client.deployment.wizard;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.wizard.WizardStep;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
@@ -25,6 +26,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
 
 /**
@@ -34,16 +36,22 @@ public class NamesStep extends WizardStep<UploadContext, UploadState> {
 
     private final NameItem nameItem;
     private final Form<ModelNode> form;
+    private final Environment environment;
 
-    public NamesStep(final Metadata metadata, final Resources resources) {
+    public NamesStep(final Environment environment, final Metadata metadata, final Resources resources) {
         super(Ids.UPLOAD_NAMES_STEP, resources.constants().specifyNames());
+        this.environment = environment;
 
         nameItem = new NameItem();
-        form = new ModelNodeForm.Builder<>(Ids.UPLOAD_NAMES_FORM, metadata)
+        ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(Ids.UPLOAD_NAMES_FORM, metadata)
                 .unboundFormItem(nameItem, 0)
                 .addFromRequestProperties()
-                .include(RUNTIME_NAME)
-                .build();
+                .unsorted()
+                .include(RUNTIME_NAME);
+        if (environment.isStandalone()) {
+            builder.include(ENABLED);
+        }
+        form = builder.build();
     }
 
     @Override
@@ -55,6 +63,7 @@ public class NamesStep extends WizardStep<UploadContext, UploadState> {
     public void reset(final UploadContext context) {
         context.name = "";
         context.runtimeName = "";
+        context.enabled = true;
     }
 
     @Override
@@ -65,6 +74,9 @@ public class NamesStep extends WizardStep<UploadContext, UploadState> {
         nameItem.setValue(filename);
         nameItem.setUndefined(false);
         form.getFormItem(RUNTIME_NAME).setValue(filename);
+        if (environment.isStandalone()) {
+            form.getFormItem(ENABLED).setValue(context.enabled);
+        }
     }
 
     @Override

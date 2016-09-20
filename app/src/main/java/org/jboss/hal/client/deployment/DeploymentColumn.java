@@ -20,26 +20,41 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
-import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.flow.Async;
+import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.js.JsHelper;
+import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.client.deployment.Deployment.Status;
+import org.jboss.hal.client.deployment.DeploymentFunctions.AddUnmanagedDeployment;
+import org.jboss.hal.client.deployment.DeploymentFunctions.CheckDeployment;
+import org.jboss.hal.client.deployment.DeploymentFunctions.UploadOrReplace;
+import org.jboss.hal.client.deployment.dialog.AddUnmanagedDialog;
+import org.jboss.hal.client.deployment.wizard.NamesStep;
+import org.jboss.hal.client.deployment.wizard.UploadContext;
+import org.jboss.hal.client.deployment.wizard.UploadDeploymentStep;
+import org.jboss.hal.client.deployment.wizard.UploadState;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -48,11 +63,16 @@ import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.toList;
+import static org.jboss.hal.client.deployment.DeploymentColumn.DEPLOYMENT_ADDRESS;
+import static org.jboss.hal.client.deployment.wizard.UploadState.NAMES;
+import static org.jboss.hal.client.deployment.wizard.UploadState.UPLOAD;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.resources.CSS.pfIcon;
 
 /**
  * Column used in standalone mode to manage deployments.
@@ -60,10 +80,16 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Harald Pehl
  */
 @Column(Ids.DEPLOYMENT)
+@Requires(DEPLOYMENT_ADDRESS)
 public class DeploymentColumn extends FinderColumn<Deployment> {
 
+    static final String DEPLOYMENT_ADDRESS = "/deployment=*";
+    private static final AddressTemplate DEPLOYMENT_TEMPLATE = AddressTemplate.of(DEPLOYMENT_ADDRESS);
+
+    private final Environment environment;
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
+    private final MetadataRegistry metadataRegistry;
     private final Provider<Progress> progress;
     private final Resources resources;
 
@@ -73,13 +99,11 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
             final Environment environment,
             final Dispatcher dispatcher,
             final EventBus eventBus,
+            final MetadataRegistry metadataRegistry,
             @Footer final Provider<Progress> progress,
             final Resources resources) {
 
         super(new Builder<Deployment>(finder, Ids.DEPLOYMENT, Names.DEPLOYMENT)
-
-                .columnAction(columnActionFactory.add(Ids.SERVER_GROUP_DEPLOYMENT_UPLOAD,
-                        resources.constants().content(), column -> Browser.getWindow().alert(Names.NYI)))
 
                 .itemsProvider((context, callback) -> {
                     Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
@@ -99,10 +123,20 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
                 .withFilter()
         );
 
+        this.environment = environment;
         this.dispatcher = dispatcher;
         this.eventBus = eventBus;
+        this.metadataRegistry = metadataRegistry;
         this.progress = progress;
         this.resources = resources;
+
+        List<ColumnAction<Deployment>> addActions = new ArrayList<>();
+        addActions.add(new ColumnAction<>(Ids.DEPLOYMENT_UPLOAD, resources.constants().uploadDeployment(),
+                column -> uploadDeployment()));
+        addActions.add(new ColumnAction<>(Ids.DEPLOYMENT_UNMANAGED_ADD,
+                resources.messages().addResourceTitle(Names.UNMANAGED_DEPLOYMENT), column -> addUnmanaged()));
+        addColumnActions(Ids.DEPLOYMENT_ADD_ACTIONS, pfIcon("add-circle-o"), resources.constants().add(), addActions);
+        addColumnAction(columnActionFactory.refresh(Ids.DEPLOYMENT_REFRESH));
 
         setItemRenderer(item -> new ItemDisplay<Deployment>() {
             @Override
@@ -147,7 +181,7 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
                     actions.add(new ItemAction<>(resources.constants().enable(), deployment -> enable(deployment)));
                 }
                 actions.add(new ItemAction<>(resources.constants().remove(),
-                        content -> DialogFactory.showConfirmation(
+                        deployment -> DialogFactory.showConfirmation(
                                 resources.messages().removeResourceConfirmationTitle(item.getName()),
                                 resources.messages().removeResourceConfirmationQuestion(item.getName()),
                                 () -> {
@@ -167,37 +201,92 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
         }
     }
 
-    void disable(Deployment deployment) {
-        ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, deployment.getName());
-        Operation operation = new Operation.Builder("undeploy", address).build(); //NON-NLS
-        dispatcher.execute(operation, result -> {
-            MessageEvent.fire(eventBus,
-                    Message.success(resources.messages().deploymentDisabledSuccess(deployment.getName())));
-            refresh(RESTORE_SELECTION);
-        });
+    private void uploadDeployment() {
+        Metadata metadata = metadataRegistry.lookup(DEPLOYMENT_TEMPLATE);
+        Wizard<UploadContext, UploadState> wizard = new Wizard.Builder<UploadContext, UploadState>(
+                resources.messages().addResourceTitle(Names.DEPLOYMENT), new UploadContext())
+
+                .addStep(UPLOAD, new UploadDeploymentStep(resources))
+                .addStep(NAMES, new NamesStep(environment, metadata, resources))
+
+                .onBack((context, currentState) -> currentState == NAMES ? UPLOAD : null)
+                .onNext((context, currentState) -> currentState == UPLOAD ? NAMES : null)
+
+                .stayOpenAfterFinish()
+                .onFinish((wzd, context) -> {
+                    String name = context.name;
+                    String runtimeName = context.runtimeName;
+                    wzd.showProgress(resources.constants().deploymentInProgress(),
+                            resources.messages().deploymentInProgress(name));
+
+                    Function[] functions = {
+                            new CheckDeployment(dispatcher, name),
+                            new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file,
+                                    context.enabled)
+                    };
+                    new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
+                            new Outcome<FunctionContext>() {
+                                @Override
+                                public void onFailure(final FunctionContext functionContext) {
+                                    wzd.showError(resources.constants().deploymentError(),
+                                            resources.messages().deploymentError(name),
+                                            functionContext.getErrorMessage());
+                                }
+
+                                @Override
+                                public void onSuccess(final FunctionContext functionContext) {
+                                    refresh(Ids.deployment(name));
+                                    wzd.showSuccess(resources.constants().uploadSuccessful(),
+                                            resources.messages().uploadSuccessful(name),
+                                            resources.messages().view(Names.DEPLOYMENT),
+                                            cxt -> { /* nothing to do, deployment is already selected */ });
+                                }
+                            }, functions);
+                })
+                .build();
+        wizard.show();
+    }
+
+    private void addUnmanaged() {
+        Metadata metadata = metadataRegistry.lookup(DEPLOYMENT_TEMPLATE);
+        AddUnmanagedDialog dialog = new AddUnmanagedDialog(metadata, resources,
+                (name, model) -> new Async<FunctionContext>(progress.get()).single(new FunctionContext(),
+                        new Outcome<FunctionContext>() {
+                            @Override
+                            public void onFailure(final FunctionContext context) {
+                                eventBus.fireEvent(new MessageEvent(
+                                        Message.error(resources.messages().lastOperationFailed(),
+                                                context.getErrorMessage())));
+                            }
+
+                            @Override
+                            public void onSuccess(final FunctionContext context) {
+                                refresh(Ids.deployment(name));
+                                MessageEvent.fire(eventBus, Message.success(
+                                        resources.messages()
+                                                .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
+                            }
+                        }, new AddUnmanagedDeployment(dispatcher, name, model)));
+        dialog.show();
     }
 
     void enable(Deployment deployment) {
+        enableDisable(deployment, DEPLOY, resources.messages().deploymentEnabledSuccess(deployment.getName()));
+    }
+
+    void disable(Deployment deployment) {
+        enableDisable(deployment, UNDEPLOY, resources.messages().deploymentDisabledSuccess(deployment.getName()));
+    }
+
+    private void enableDisable(Deployment deployment, String operation, SafeHtml message) {
+        String id = Ids.deployment(deployment.getName());
         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, deployment.getName());
-        Operation operation = new Operation.Builder("deploy", address).build(); //NON-NLS
-        Outcome<FunctionContext> outcome = new Outcome<FunctionContext>() {
-            @Override
-            public void onFailure(final FunctionContext context) {
-                MessageEvent.fire(eventBus,
-                        Message.error(resources.messages().deploymentEnabledError(deployment.getName()),
-                                context.getErrorMessage()));
-            }
-
-            @Override
-            public void onSuccess(final FunctionContext context) {
-                MessageEvent.fire(eventBus,
-                        Message.success(resources.messages().deploymentEnabledSuccess(deployment.getName())));
-                refresh(RESTORE_SELECTION);
-            }
-        };
-
-        // execute using Async to make use of the progress bar
-        new Async<FunctionContext>(progress.get()).single(new FunctionContext(), outcome,
-                control -> dispatcher.executeInFunction(control, operation, result -> control.proceed()));
+        Operation op = new Operation.Builder(operation, address).build();
+        ItemMonitor.startProgress(id);
+        dispatcher.execute(op, result -> {
+            ItemMonitor.stopProgress(id);
+            refresh(RESTORE_SELECTION);
+            MessageEvent.fire(eventBus, Message.success(message));
+        });
     }
 }

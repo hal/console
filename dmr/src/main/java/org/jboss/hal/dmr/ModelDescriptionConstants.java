@@ -77,6 +77,7 @@ public interface ModelDescriptionConstants {
     String DATASOURCES = "datasources";
     String DEFAULT = "default";
     String DEFAULT_BINDINGS = "default-bindings";
+    String DEPLOY = "deploy";
     String DEPLOYMENT = "deployment";
     String DEPLOYMENT_NAME = "deployment-name";
     String DEPLOYMENT_SCANNER = "deployment-scanner";
@@ -276,6 +277,7 @@ public interface ModelDescriptionConstants {
 
     String UNDEFINE_ATTRIBUTE_OPERATION = "undefine-attribute";
     String UNDEFINED = "undefined";
+    String UNDEPLOY = "undeploy";
     String UNDERTOW = "undertow";
 
     String XA_DATA_SOURCE = "xa-data-source";

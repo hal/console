@@ -223,7 +223,7 @@ public class ContentColumn extends FinderColumn<Content> {
                 resources.messages().addResourceTitle(resources.constants().content()), new UploadContext())
 
                 .addStep(UPLOAD, new UploadContentStep(resources))
-                .addStep(NAMES, new NamesStep(metadata, resources))
+                .addStep(NAMES, new NamesStep(environment, metadata, resources))
 
                 .onBack((context, currentState) -> currentState == NAMES ? UPLOAD : null)
                 .onNext((context, currentState) -> currentState == UPLOAD ? NAMES : null)

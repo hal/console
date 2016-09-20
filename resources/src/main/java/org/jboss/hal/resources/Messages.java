@@ -44,7 +44,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml addResourceSuccess(String type, String name);
     String addResourceTitle(String type);
     SafeHtml addSingleResourceSuccess(String type);
-    SafeHtml addUnmanagedDescription();
     SafeHtml allContentAlreadyDeployedToServerGroup(String serverGroup);
     SafeHtml allMailServersExist();
     SafeHtml allSingletonsExist();
@@ -76,13 +75,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml dataSourceDisabledNoStatistics(String name);
     SafeHtml dataSourceEnabled(String name);
     SafeHtml dataSourceStatisticsDisabled(String name);
-    SafeHtml deployByDragAndDrop(String replace);
     SafeHtml deployedTo(String name);
+    SafeHtml deploymentActive(String name);
     SafeHtml deploymentAdded(@PluralCount int count);
     SafeHtml deploymentDisabled(String name);
     SafeHtml deploymentDisabledSuccess(String name);
     SafeHtml deploymentEnabled(String name);
-    SafeHtml deploymentEnabledError(String name);
     SafeHtml deploymentEnabledSuccess(String name);
     SafeHtml deploymentError(String name);
     SafeHtml deploymentExploded(String name);
@@ -90,7 +88,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml deploymentInProgress(String name);
     SafeHtml deploymentOpFailed(@PluralCount int count);
     SafeHtml deploymentReplaced(@PluralCount int count);
+    SafeHtml deploymentStopped(String name);
     SafeHtml deploymentSuccessful(String name);
+    SafeHtml deploymentUnknownState(String name);
     SafeHtml domainConfigurationChanged();
     SafeHtml domainControllerTimeout(String name);
     String duplicateResource(String type);

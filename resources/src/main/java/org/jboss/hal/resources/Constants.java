@@ -42,6 +42,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String accessType();
     String action();
     String active();
+    String activeLower();
     String add();
     String adminOnly();
     String archived();
