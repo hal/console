@@ -25,18 +25,18 @@ import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 @JsType(isNative = true)
-abstract class Modal {
+public abstract class Modal {
 
     @JsFunction
     @FunctionalInterface
-    interface ModalHandler {
+    public interface ModalHandler {
 
         void handle();
     }
 
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    static class ModalOptions {
+    public static class ModalOptions {
 
         public String backdrop;
         public boolean keyboard;
@@ -52,11 +52,11 @@ abstract class Modal {
 
 
     @JsMethod(namespace = GLOBAL)
-    native static Modal $(@NonNls String selector);
+    public native static Modal $(@NonNls String selector);
 
-    native void modal(ModalOptions modalOptions);
+    public native void modal(ModalOptions modalOptions);
 
-    native void modal(@NonNls String action);
+    public native void modal(@NonNls String action);
 
-    native void on(@NonNls String event, ModalHandler handler);
+    public native void on(@NonNls String event, ModalHandler handler);
 }

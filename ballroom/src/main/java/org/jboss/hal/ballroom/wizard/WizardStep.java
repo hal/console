@@ -15,13 +15,12 @@
  */
 package org.jboss.hal.ballroom.wizard;
 
-import com.google.common.base.CharMatcher;
-import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.ballroom.Attachable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.Attachable;
 
 /**
  * A step in a wizard. The UI for the step should <string>not</string> contain a header. The header is part of the
@@ -35,13 +34,25 @@ import java.util.List;
 public abstract class WizardStep<C, S extends Enum<S>> implements IsElement {
 
     final List<Attachable> attachables;
-    protected final Wizard<C, S> wizard;
+    private Wizard<C, S> wizard;
     protected String title;
 
-    protected WizardStep(final Wizard<C, S> wizard, final String title) {
-        this.wizard = wizard;
+    protected WizardStep(final String id, final String title) {
         this.title = title;
         this.attachables = new ArrayList<>();
+    }
+
+    void init(final Wizard<C, S> wizard) {
+        this.wizard = wizard;
+    }
+
+    /**
+     * Valid only <strong>after</strong> the wizard has been created. Must not be used in the step constructor!
+     *
+     * @return the wizard instance this step is part of.
+     */
+    protected Wizard<C, S> wizard() {
+        return wizard;
     }
 
     /**
@@ -87,21 +98,10 @@ public abstract class WizardStep<C, S extends Enum<S>> implements IsElement {
      */
     protected boolean onNext(C context) { return true; }
 
-    /**
-     * @return an unique id for this step based on {@link Wizard#id()}. Can be used as base ID for widgets of this step.
-     */
-    protected String id() {
-        return wizard.id() + "_" + CharMatcher.WHITESPACE.removeFrom(title);
-    }
-
     protected void registerAttachable(Attachable first, Attachable... rest) {
         attachables.add(first);
         if (rest != null) {
             Collections.addAll(attachables, rest);
         }
-    }
-
-    protected void setTitle(String title) {
-        wizard.setTitle(title);
     }
 }

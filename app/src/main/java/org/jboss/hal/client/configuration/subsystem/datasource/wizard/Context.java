@@ -24,13 +24,13 @@ import org.jboss.hal.core.datasource.JdbcDriver;
  */
 public class Context {
 
-    final boolean standalone;
-    final boolean xa;
+    private final boolean standalone;
+    private final boolean xa;
     DataSourceTemplate template;
     DataSource dataSource;
     JdbcDriver driver;
 
-    Context(boolean standalone, boolean xa) {
+    public Context(boolean standalone, boolean xa) {
         this.standalone = standalone;
         this.xa = xa;
     }
@@ -43,6 +43,10 @@ public class Context {
     void useTemplate() {
         dataSource = template.getDataSource();
         driver = template.getDriver();
+    }
+
+    public boolean isXa() {
+        return xa;
     }
 
     public DataSource getDataSource() {

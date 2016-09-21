@@ -24,8 +24,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Specifies the required resources attached to an UI element. Currently this is either a presenter-proxy or a finder
- * column. You can prefix a resource with {@value OPTIONAL} to mark it as optional. Optional resources won't
- * throw an exception if they cannot be read.
+ * column. You can prefix a resource with "opt://" to mark it as optional. Optional resources won't throw an exception
+ * if they cannot be read.
  */
 @Documented
 @Retention(RUNTIME)

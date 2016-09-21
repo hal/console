@@ -29,15 +29,14 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental.dom.Element;
 import elemental.dom.NodeList;
 import elemental.events.Event;
-import elemental.events.EventListener;
 import elemental.events.KeyboardEvent;
 import elemental.events.KeyboardEvent.KeyCode;
 import elemental.html.InputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Tooltip;
-import org.jboss.hal.ballroom.dragndrop.DragEvent;
 import org.jboss.hal.ballroom.dragndrop.DropEventHandler;
+import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
@@ -852,35 +851,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     }
 
     protected void setOnDrop(DropEventHandler handler) {
-        EventListener noop = event -> {
-            event.preventDefault();
-            event.stopPropagation();
-        };
-        EventListener addDragIndicator = event -> {
-            noop.handleEvent(event);
-            ulElement.getClassList().add(ondrag);
-        };
-        EventListener removeDragIndicator = event -> {
-            noop.handleEvent(event);
-            ulElement.getClassList().remove(ondrag);
-        };
-
-        ulElement.setOndrag(noop);
-        ulElement.setOndragstart(noop);
-
-        ulElement.setOndragenter(addDragIndicator);
-        ulElement.setOndragover(addDragIndicator);
-
-        ulElement.setOndragleave(removeDragIndicator);
-        ulElement.setOndragend(removeDragIndicator);
-
-        ulElement.setOndrop(event -> {
-            noop.handleEvent(event);
-            removeDragIndicator.handleEvent(event);
-
-            DragEvent dragEvent = (DragEvent) event;
-            handler.onDrop(dragEvent);
-        });
+        JsHelper.addDropHandler(ulElement, handler);
     }
 
     private void assertNotAsElement(String method) {

@@ -35,18 +35,17 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 /**
  * @author Harald Pehl
  */
-class NamesStep extends WizardStep<Context, State> {
+public class NamesStep extends WizardStep<Context, State> {
 
     private final ModelNodeForm<DataSource> form;
 
-    NamesStep(final NewDataSourceWizard wizard, final List<DataSource> existingDataSources,
-            final Metadata metadata, final Resources resources) {
-        super(wizard, resources.constants().attributes());
+    public NamesStep(final List<DataSource> existingDataSources, final Metadata metadata, final Resources resources) {
+        super(Ids.DATA_SOURCE_NAMES_STEP, resources.constants().attributes());
 
-        form = new ModelNodeForm.Builder<DataSource>(Ids.build(id(), "names", "step"), metadata)
+        form = new ModelNodeForm.Builder<DataSource>(Ids.DATA_SOURCE_NAMES_FORM, metadata)
                 .unboundFormItem(new NameItem(), 0)
                 .include(JNDI_NAME)
-                .onSave((form, changedValues) -> wizard.getContext().dataSource = form.getModel())
+                .onSave((form, changedValues) -> wizard().getContext().dataSource = form.getModel())
                 .build();
 
         FormItem<String> nameItem = form.getFormItem(NAME);

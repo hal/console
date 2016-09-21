@@ -251,26 +251,25 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
         setItemsProvider(itemsProvider);
 
         // reuse the items provider to filter breadcrumb items
-        setBreadcrumbItemsProvider((context, callback) -> {
-            itemsProvider.get(context, new AsyncCallback<List<Server>>() {
-                @Override
-                public void onFailure(final Throwable throwable) {
-                    callback.onFailure(throwable);
-                }
-
-                @Override
-                public void onSuccess(final List<Server> servers) {
-                    if (!serverIsLastSegment()) {
-                        // When the server is not the last segment in the finder path, we assume that
-                        // the current path is related to something which requires a running server.
-                        // In that case return only started servers.
-                        callback.onSuccess(servers.stream().filter(Server::isStarted).collect(toList()));
-                    } else {
-                        callback.onSuccess(servers);
+        setBreadcrumbItemsProvider((context, callback) ->
+                itemsProvider.get(context, new AsyncCallback<List<Server>>() {
+                    @Override
+                    public void onFailure(final Throwable throwable) {
+                        callback.onFailure(throwable);
                     }
-                }
-            });
-        });
+
+                    @Override
+                    public void onSuccess(final List<Server> servers) {
+                        if (!serverIsLastSegment()) {
+                            // When the server is not the last segment in the finder path, we assume that
+                            // the current path is related to something which requires a running server.
+                            // In that case return only started servers.
+                            callback.onSuccess(servers.stream().filter(Server::isStarted).collect(toList()));
+                        } else {
+                            callback.onSuccess(servers);
+                        }
+                    }
+                }));
 
         setItemRenderer(item -> new ItemDisplay<Server>() {
             @Override

@@ -42,6 +42,7 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.tree.SelectionChangeHandler.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
+import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.ui.Skeleton;
@@ -70,6 +71,8 @@ import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.js.JsHelper.asList;
+import static org.jboss.hal.core.modelbrowser.SingletonState.CHOOSE;
+import static org.jboss.hal.core.modelbrowser.SingletonState.CREATE;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -443,21 +446,31 @@ public class ModelBrowser implements HasElements {
 
             } else {
                 // open wizard to choose the singleton
-                NewSingletonWizard wizard = new NewSingletonWizard(metadataProcessor, progress, eventBus, resources,
-                        parent, children, context -> {
-                    Operation.Builder builder = new Operation.Builder(ADD,
-                            fqAddress(parent, context.singleton));
-                    if (context.modelNode != null) {
-                        builder.payload(context.modelNode);
-                    }
-                    dispatcher.execute(builder.build(),
-                            result -> {
-                                MessageEvent.fire(eventBus, Message.success(
-                                        resources.messages()
+                Wizard<SingletonContext, SingletonState> wizard = new Wizard.Builder<SingletonContext, SingletonState>(
+                        resources.messages().addResourceTitle(parent.text),
+                        new SingletonContext(parent, children))
+
+                        .addStep(CHOOSE, new ChooseSingletonStep(parent, children, resources))
+                        .addStep(CREATE, new CreateSingletonStep(parent, metadataProcessor, progress,
+                                eventBus, resources))
+
+                        .onBack((context, currentState) -> currentState == CREATE ? CHOOSE : null)
+                        .onNext((context, currentState) -> currentState == CHOOSE ? CREATE : null)
+
+                        .onFinish((wzrd, context) -> {
+                            Operation.Builder builder = new Operation.Builder(ADD,
+                                    fqAddress(parent, context.singleton));
+                            if (context.modelNode != null) {
+                                builder.payload(context.modelNode);
+                            }
+                            dispatcher.execute(builder.build(),
+                                    result -> {
+                                        MessageEvent.fire(eventBus, Message.success(resources.messages()
                                                 .addResourceSuccess(parent.text, context.singleton)));
-                                refresh(parent);
-                            });
-                });
+                                        refresh(parent);
+                                    });
+                        })
+                        .build();
                 wizard.show();
             }
 

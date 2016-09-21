@@ -32,7 +32,7 @@
     <packaging>gwt-app</packaging>
 
     <properties>
-        <gulp-task>prod</gulp-task>
+        <grunt-task>prod</grunt-task>
         <gwt.draftCompile>false</gwt.draftCompile>
         <gwt.failOnError>true</gwt.failOnError>
         <gwt.logLevel>INFO</gwt.logLevel>
@@ -171,12 +171,12 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>gulp build</id>
+                        <id>grunt build</id>
                         <goals>
-                            <goal>gulp</goal>
+                            <goal>grunt</goal>
                         </goals>
                         <configuration>
-                            <arguments>${gulp-task}</arguments>
+                            <arguments>${grunt-task}</arguments>
                         </configuration>
                     </execution>
                 </executions>
@@ -323,7 +323,7 @@
             -->
             <id>dev</id>
             <properties>
-                <gulp-task>dev</gulp-task>
+                <grunt-task>dev</grunt-task>
                 <gwt.draftCompile>true</gwt.draftCompile>
                 <gwt.failOnError>false</gwt.failOnError>
                 <gwt.logLevel>INFO</gwt.logLevel>

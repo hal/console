@@ -36,6 +36,7 @@ import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.dialog.Modal.ModalOptions;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.UIConstants;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.dialog.Modal.$;
@@ -266,9 +267,8 @@ public class Dialog implements IsElement {
     private static final String CLOSE_ICON_ELEMENT = "closeIcon";
     private static final String DIALOG_ELEMENT = "dialog";
     private static final String FOOTER_ELEMENT = "footer";
-    private static final String ID = "hal-modal";
     private static final String LABEL = "label";
-    private static final String SELECTOR_ID = "#" + ID;
+    private static final String SELECTOR_ID = "#" + Ids.HAL_MODAL;
     private static final String TITLE_ELEMENT = "title";
 
     private static final Element root;
@@ -282,20 +282,19 @@ public class Dialog implements IsElement {
 
 
     static {
-        String labelId = Ids.build(ID, LABEL);
         // @formatter:off
         Elements.Builder rootBuilder = new Elements.Builder()
-            .div().id(ID).css(modal)
+            .div().id(Ids.HAL_MODAL).css(modal)
                     .attr(ROLE, DIALOG_ELEMENT)
                     .attr(TABINDEX, "-1")
-                    .aria("labeledby", labelId)
+                    .aria("labeledby", Ids.HAL_MODAL_TITLE)
                 .div().css(modalDialog).attr("role", "document").rememberAs(DIALOG_ELEMENT) //NON-NLS
                     .div().css(modalContent)
                         .div().css(modalHeader)
                             .button().css(close).aria(LABEL, CONSTANTS.close()).rememberAs(CLOSE_ICON_ELEMENT)
                                 .span().css(pfIcon("close")).aria(HIDDEN, String.valueOf(true)).end()
                             .end()
-                            .h(4).css(modalTitle).id(labelId).rememberAs(TITLE_ELEMENT).end()
+                            .h(4).css(modalTitle).id(Ids.HAL_MODAL_TITLE).rememberAs(TITLE_ELEMENT).end()
                         .end()
                         .div().css(modalBody).rememberAs(BODY_ELEMENT).end()
                         .div().css(modalFooter).rememberAs(FOOTER_ELEMENT).end()
@@ -315,8 +314,8 @@ public class Dialog implements IsElement {
     }
 
     private static void initEventHandler() {
-        $(SELECTOR_ID).on("shown.bs.modal", () -> Dialog.open = true);
-        $(SELECTOR_ID).on("hidden.bs.modal", () -> Dialog.open = false);
+        $(SELECTOR_ID).on(UIConstants.SHOWN_MODAL, () -> Dialog.open = true);
+        $(SELECTOR_ID).on(UIConstants.HIDDEN_MODAL, () -> Dialog.open = false);
     }
 
     private static void reset() {

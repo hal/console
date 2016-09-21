@@ -54,6 +54,8 @@ import org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter;
 import org.jboss.hal.client.configuration.subsystem.mail.MailSessionView;
 import org.jboss.hal.client.configuration.subsystem.transactions.Mbui_TransactionView_Provider;
 import org.jboss.hal.client.configuration.subsystem.transactions.TransactionPresenter;
+import org.jboss.hal.client.deployment.DeploymentDetailPresenter;
+import org.jboss.hal.client.deployment.DeploymentDetailView;
 import org.jboss.hal.client.deployment.DeploymentPresenter;
 import org.jboss.hal.client.deployment.DeploymentView;
 import org.jboss.hal.client.homepage.HomepagePresenter;
@@ -169,6 +171,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 DeploymentPresenter.MyView.class,
                 DeploymentView.class,
                 DeploymentPresenter.MyProxy.class);
+
+        bindPresenter(DeploymentDetailPresenter.class,
+                DeploymentDetailPresenter.MyView.class,
+                DeploymentDetailView.class,
+                DeploymentDetailPresenter.MyProxy.class);
 
         bindTemplatedPresenter(DeploymentScannerPresenter.class,
                 DeploymentScannerPresenter.MyView.class,

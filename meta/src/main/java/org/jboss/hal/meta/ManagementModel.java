@@ -69,6 +69,16 @@ public class ManagementModel {
     }
 
     /**
+     * Check support for {@code :read-content} operation for deployments.
+     *
+     * @return {@code true} if the provided version isn't {@linkplain Version#UNDEFINED undefined} and greater than or
+     * equal {@code 5.0.0}
+     */
+    public static boolean supportsReadContentFromDeployment(Version version) {
+        return ensureVersion(version, V_5_0_0);
+    }
+
+    /**
      * Check support for suspend operation and related attributes.
      *
      * @return {@code true} if the provided version isn't {@linkplain Version#UNDEFINED undefined} and greater than or

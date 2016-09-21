@@ -34,23 +34,22 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_DOMAIN;
 /**
  * @author Harald Pehl
  */
-class ConnectionStep extends WizardStep<Context, State> {
+public class ConnectionStep extends WizardStep<Context, State> {
 
     private final ModelNodeForm<DataSource> form;
 
-    ConnectionStep(final NewDataSourceWizard wizard, final Metadata metadata, final Resources resources,
-            final boolean xa) {
-        super(wizard, resources.constants().connection());
+    public ConnectionStep(final Metadata metadata, final Resources resources, final boolean xa) {
+        super(Ids.DATA_SOURCE_CONNECTION_STEP, resources.constants().connection());
 
         List<String> attributes = new ArrayList<>();
         if (!xa) {
             attributes.add(CONNECTION_URL);
         }
         attributes.addAll(asList("user-name", PASSWORD, SECURITY_DOMAIN)); //NON-NLS
-        form = new ModelNodeForm.Builder<DataSource>(Ids.build(id(), "connection", "step"), metadata)
+        form = new ModelNodeForm.Builder<DataSource>(Ids.DATA_SOURCE_CONNECTION_FORM, metadata)
                 .include(attributes)
                 .unsorted()
-                .onSave((form, changedValues) -> wizard.getContext().dataSource = form.getModel())
+                .onSave((form, changedValues) -> wizard().getContext().dataSource = form.getModel())
                 .build();
     }
 

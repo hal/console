@@ -50,6 +50,7 @@ public interface CSS {
     String blue = "blue";
     String bootstrapSwitch = "bootstrap-switch";
     String btn = "btn";
+    String btnCancel = "btn-cancel";
     String btnDefault = "btn-default";
     String btnFinder = "btn-finder";
     String btnGroup = "btn-group";
@@ -123,6 +124,7 @@ public interface CSS {
     String hasError = "has-error";
     String hasFeedback = "has-feedback";
     String helpBlock = "help-block";
+    String hidden = "hidden";
     String hiddenColumns = "hidden-columns";
     String hint = "hint";
     String hover = "hover";
@@ -165,6 +167,7 @@ public interface CSS {
     String macroList = "macro-list";
     String marginBottom5 = "margin-bottom-5";
     String marginRight4 = "margin-right-4";
+    String marginLeft4 = "margin-left-4";
     String marginTop20 = "margin-top-20";
     String messageDetails = "message-details";
     String messageDetailsPre = "message-details-pre";
@@ -246,6 +249,7 @@ public interface CSS {
     String secondaryCollapseTogglePf = "secondary-collapse-toggle-pf";
     String secondaryNavItemPf = "secondary-nav-item-pf";
     String secondaryVisiblePf = "secondary-visible-pf";
+    String selectCheckbox = "select-checkbox"; // used in DataTables for the checkbox column
     String selected = "selected";
     String selectpicker = "selectpicker";
     String separator = "separator";
@@ -280,6 +284,10 @@ public interface CSS {
     String underline = "underline";
     String unpin = "unpin";
     String unpinned = "unpinned";
+    String upload = "upload";
+    String uploadAdvanced = "upload-advanced";
+    String uploadIcon = "upload-icon";
+    String uploadFile = "upload-file";
 
     String value = "value";
     String valueDropdown = "value-dropdown";
@@ -287,9 +295,17 @@ public interface CSS {
     String warning = "warning";
     String warningTriangleO = "warning-triangle-o";
     String withProgress = "with-progress";
-    String wizardHeader = "wizard-header";
-    String wizardProgress = "wizard-progress";
-    String wizardStep = "wizard-step";
+    String wizardHalErrorText = "wizard-hal-error-text";
+    String wizardPf = "wizard-pf";
+    String wizardPfBody = "wizard-pf-body";
+    String wizardPfErrorIcon = "wizard-pf-error-icon";
+    String wizardPfFooter = "wizard-pf-footer";
+    String wizardPfMain = "wizard-pf-main";
+    String wizardPfStepNumber = "wizard-pf-step-number";
+    String wizardPfStepTitle = "wizard-pf-step-title";
+    String wizardPfSteps = "wizard-pf-steps";
+    String wizardPfStepsIndicator = "wizard-pf-steps-indicator";
+    String wizardPfSuccessIcon = "wizard-pf-success-icon";
 
     static String column(int columns, String... sizes) {
         if (sizes != null && sizes.length != 0) {
@@ -318,12 +334,25 @@ public interface CSS {
     }
 
     /**
-     * Builds a FontAwesome CSS class.
+     * Builds a FontAwesome icons class.
      *
      * @param name the name of the FontAwesome icon <strong>w/o</strong> the "fa fa-" prefix.
      */
     static String fontAwesome(@NonNls String name) {
-        return "fa fa-" + name; //NON-NLS
+        return fontAwesome(name, null);
+    }
+
+    /**
+     * Builds a FontAwesome icons class.
+     *
+     * @param name the name of the FontAwesome icon <strong>w/o</strong> the "fa fa-" prefix.
+     */
+    static String fontAwesome(@NonNls String name, FontAwesomeSize size) {
+        @NonNls String css = "fa fa-" + name;
+        if (size != null) {
+            css += " fa-" + size.size();
+        }
+        return css;
     }
 
     /**
@@ -333,5 +362,14 @@ public interface CSS {
      */
     static String pfIcon(@NonNls String name) {
         return "pficon pficon-" + name; //NON-NLS
+    }
+
+    /**
+     * Builds a Glyphicon icon class.
+     *
+     * @param name the name of the Glyphicon icon <strong>w/o</strong> the "glyphicon glyphicon-" prefix.
+     */
+    static String glyphicon(@NonNls String name) {
+        return "glyphicon glyphicon-" + name; //NON-NLS
     }
 }

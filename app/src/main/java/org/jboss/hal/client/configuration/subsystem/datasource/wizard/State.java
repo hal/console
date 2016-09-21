@@ -19,5 +19,5 @@ package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
  * @author Harald Pehl
  */
 public enum State {
-    CHOOSE_TEMPLATE, NAMES, DRIVER, PROPERTIES, CONNECTION, SUMMARY
+    CHOOSE_TEMPLATE, NAMES, DRIVER, PROPERTIES, CONNECTION, REVIEW
 }

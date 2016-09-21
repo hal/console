@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -35,6 +34,7 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
@@ -97,12 +97,16 @@ public class Capabilities {
                     .build();
             dispatcher.execute(operation,
                     result -> {
-                        List<AddressTemplate> templates = result.asList().stream()
-                                .map(ModelNode::asString)
-                                .map(AddressTemplate::of)
-                                .collect(Collectors.toList());
-                        register(name, templates);
-                        callback.onSuccess(lookup(name));
+                        if (result.isDefined()) {
+                            List<AddressTemplate> templates = result.asList().stream()
+                                    .map(ModelNode::asString)
+                                    .map(AddressTemplate::of)
+                                    .collect(toList());
+                            register(name, templates);
+                            callback.onSuccess(lookup(name));
+                        } else {
+                            callback.onFailure(new IllegalArgumentException("No capabilities found for " + name));
+                        }
                     },
                     (op, failure) -> callback.onFailure(new RuntimeException(
                             "Error reading capabilities for " + name + " using " + op + ": " + failure)),

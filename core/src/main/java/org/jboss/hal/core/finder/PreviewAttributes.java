@@ -29,6 +29,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 
 import static org.jboss.hal.resources.CSS.key;
 import static org.jboss.hal.resources.CSS.listGroup;
@@ -128,8 +129,9 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
             if (previewAttribute.href != null) {
                 builder.a(previewAttribute.href);
             }
-            builder.span().rememberAs(valueId).css(CSS.value).textContent(previewAttribute.value);
-            if (previewAttribute.value.length() > 15) {
+            builder.span().rememberAs(valueId).css(CSS.value).textContent(
+                    previewAttribute.value == null ? Names.NOT_AVAILABLE : previewAttribute.value);
+            if (previewAttribute.value != null && previewAttribute.value.length() > 15) {
                 builder.title(previewAttribute.value);
             }
             builder.end(); // </span>

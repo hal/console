@@ -127,7 +127,7 @@ public class Utilization implements IsElement {
             //noinspection HardCodedStringLiteral
             valueElement.setInnerHTML(new SafeHtmlBuilder()
                     .appendHtmlConstant("<strong>")
-                    .appendEscaped(MESSAGES.currentOfTottal(current, total))
+                    .appendEscaped(MESSAGES.currentOfTotal(current, total))
                     .appendHtmlConstant("</strong>")
                     .appendEscaped(" " + unit)
                     .toSafeHtml().asString());

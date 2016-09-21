@@ -23,7 +23,7 @@ import java.util.TreeSet;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import org.jboss.hal.resources.Constants;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.Message.Level;
@@ -34,19 +34,21 @@ import org.jboss.hal.spi.Message.Level;
  *
  * @author Harald Pehl
  */
-public class UploadStatistics {
+class UploadStatistics {
 
-    public enum UploadStatus {
+    private enum UploadStatus {
         ADDED, REPLACED, FAILED
     }
 
 
-    private final Constants CONSTANTS = GWT.create(Constants.class);
     private final Messages MESSAGES = GWT.create(Messages.class);
 
+    private final Environment environment;
     private final Map<String, UploadStatus> status;
 
-    public UploadStatistics() {status = new HashMap<>();}
+    UploadStatistics(Environment environment) {
+        this.environment = environment;
+        this.status = new HashMap<>();}
 
     void recordAdded(String name) {
         status.put(name, UploadStatus.ADDED);
@@ -121,19 +123,31 @@ public class UploadStatistics {
     private SafeHtml sentences(SortedSet<String> added, SortedSet<String> replaced, SortedSet<String> failed) {
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
         if (!added.isEmpty()) {
-            builder.append(MESSAGES.deploymentAdded(added.size()));
+            if (environment.isStandalone()) {
+                builder.append(MESSAGES.deploymentAdded(added.size()));
+            } else {
+                builder.append(MESSAGES.contentAdded(added.size()));
+            }
             if (!replaced.isEmpty() || !failed.isEmpty()) {
                 builder.appendHtmlConstant("<br/>"); //NON-NLS
             }
         }
         if (!replaced.isEmpty()) {
-            builder.append(MESSAGES.deploymentReplaced(replaced.size()));
+            if (environment.isStandalone()) {
+                builder.append(MESSAGES.deploymentReplaced(replaced.size()));
+            } else {
+                builder.append(MESSAGES.contentReplaced(replaced.size()));
+            }
             if (!failed.isEmpty()) {
                 builder.appendHtmlConstant("<br/>"); //NON-NLS
             }
         }
         if (!failed.isEmpty()) {
-            builder.append(MESSAGES.deploymentFailed(failed.size()));
+            if (environment.isStandalone()) {
+                builder.append(MESSAGES.deploymentOpFailed(failed.size()));
+            } else {
+                builder.append(MESSAGES.contentOpFailed(failed.size()));
+            }
         }
         return builder.toSafeHtml();
     }
