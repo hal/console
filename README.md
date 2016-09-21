@@ -1,3 +1,5 @@
+<a href="https://ci.wildfly.org/viewType.html?buildTypeId=hal_HalNextDev&guest=1"><img src="https://ci.wildfly.org/app/rest/builds/buildType:(id:hal_HalNextDev)/statusIcon"/></a>
+
 # HAL.next
 
 Fresh start of the HAL management console using the latest frameworks / libraries. 
