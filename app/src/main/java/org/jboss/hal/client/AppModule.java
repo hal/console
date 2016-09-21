@@ -42,6 +42,8 @@ import org.jboss.hal.client.configuration.subsystem.deploymentscanner.Deployment
 import org.jboss.hal.client.configuration.subsystem.deploymentscanner.Mbui_DeploymentScannerView_Provider;
 import org.jboss.hal.client.configuration.subsystem.ee.EEPresenter;
 import org.jboss.hal.client.configuration.subsystem.ee.EEView;
+import org.jboss.hal.client.configuration.subsystem.ejb.EjbPresenter;
+import org.jboss.hal.client.configuration.subsystem.ejb.Mbui_EjbView_Provider;
 import org.jboss.hal.client.configuration.subsystem.iiop.IiopPresenter;
 import org.jboss.hal.client.configuration.subsystem.iiop.Mbui_IiopView_Provider;
 import org.jboss.hal.client.configuration.subsystem.io.IOPresenter;
@@ -182,6 +184,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 Mbui_DeploymentScannerView_Provider.class,
                 DeploymentScannerPresenter.MyProxy.class);
 
+        bindTemplatedPresenter(EjbPresenter.class,
+                EjbPresenter.MyView.class,
+                Mbui_EjbView_Provider.class,
+                EjbPresenter.MyProxy.class);
+
         bindPresenter(EEPresenter.class,
                 EEPresenter.MyView.class,
                 EEView.class,
@@ -201,7 +208,7 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 IiopPresenter.MyView.class,
                 Mbui_IiopView_Provider.class,
                 IiopPresenter.MyProxy.class);
-
+        
         bindTemplatedPresenter(IOPresenter.class,
                 IOPresenter.MyView.class,
                 Mbui_IOView_Provider.class,
