@@ -53,7 +53,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String attributes();
 
     String back();
-    String bootstrapFailed();
     String bootstrapException();
     String browseBy();
 
