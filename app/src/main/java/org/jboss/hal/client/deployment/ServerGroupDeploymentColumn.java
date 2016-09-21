@@ -309,7 +309,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
 
             @Override
             public void onSuccess(final FunctionContext context) {
-                // extract that content which is not deployed on statementContext.selectedServerGroup()
+                // extract content which is not deployed on statementContext.selectedServerGroup()
                 String serverGroup = statementContext.selectedServerGroup();
                 List<Content> content = context.pop();
                 List<Content> undeployedContentOnSelectedServerGroup = content.stream()
@@ -332,7 +332,14 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                                                     .build();
                                         })
                                         .collect(toList());
+                                if (enable) {
+                                    progress.get().reset();
+                                    progress.get().tick();
+                                }
                                 dispatcher.execute(new Composite(operations), (CompositeResult cr) -> {
+                                    if (enable) {
+                                        progress.get().finish();
+                                    }
                                     refresh(Ids.serverGroupDeployment(serverGroup, cnt.get(0).getName()));
                                     MessageEvent.fire(eventBus,
                                             Message.success(resources.messages().contentDeployed2(serverGroup)));

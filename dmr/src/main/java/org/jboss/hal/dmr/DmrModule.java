@@ -21,6 +21,7 @@ import com.google.inject.Singleton;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.dispatch.DomainProcessStateProcessor;
+import org.jboss.hal.dmr.dispatch.Download;
 import org.jboss.hal.dmr.dispatch.ProcessStateProcessor;
 import org.jboss.hal.dmr.dispatch.StandaloneProcessStateProcessor;
 import org.jboss.hal.dmr.macro.Macros;
@@ -43,6 +44,7 @@ public class DmrModule extends AbstractGinModule {
     @Override
     protected void configure() {
         bind(Dispatcher.class);
+        bind(Download.class).in(Singleton.class);
         bind(Macros.class).in(Singleton.class);
     }
 

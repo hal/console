@@ -38,8 +38,8 @@ import org.jboss.hal.client.deployment.DeploymentFunctions.AddUnmanagedDeploymen
 import org.jboss.hal.client.deployment.DeploymentFunctions.CheckDeployment;
 import org.jboss.hal.client.deployment.DeploymentFunctions.LoadContent;
 import org.jboss.hal.client.deployment.DeploymentFunctions.UploadOrReplace;
-import org.jboss.hal.client.deployment.dialog.DeployContentDialog1;
 import org.jboss.hal.client.deployment.dialog.AddUnmanagedDialog;
+import org.jboss.hal.client.deployment.dialog.DeployContentDialog1;
 import org.jboss.hal.client.deployment.wizard.NamesStep;
 import org.jboss.hal.client.deployment.wizard.UploadContentStep;
 import org.jboss.hal.client.deployment.wizard.UploadContext;
@@ -52,14 +52,17 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.dispatch.Download;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
@@ -97,6 +100,7 @@ public class ContentColumn extends FinderColumn<Content> {
     static final AddressTemplate CONTENT_TEMPLATE = AddressTemplate.of(CONTENT_ADDRESS);
 
     private final Environment environment;
+    private final Download download;
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
     private final Provider<Progress> progress;
@@ -107,6 +111,7 @@ public class ContentColumn extends FinderColumn<Content> {
     public ContentColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
             final Environment environment,
+            final Download download,
             final Dispatcher dispatcher,
             final EventBus eventBus,
             final Places places,
@@ -137,6 +142,7 @@ public class ContentColumn extends FinderColumn<Content> {
                 .withFilter());
 
         this.environment = environment;
+        this.download = download;
         this.dispatcher = dispatcher;
         this.eventBus = eventBus;
         this.progress = progress;
@@ -194,13 +200,18 @@ public class ContentColumn extends FinderColumn<Content> {
             public List<ItemAction<Content>> actions() {
                 List<ItemAction<Content>> actions = new ArrayList<>();
 
-                // order is: deploy, (explode), replace, undeploy / remove
+                // order is: deploy, (explode), replace, download, undeploy / remove
                 actions.add(new ItemAction<>(resources.constants().deploy(), itm -> deploy(itm)));
                 if (item.getServerGroupDeployments().isEmpty() && !item.isExploded()) {
                     actions.add(new ItemAction<>(resources.constants().explode(), itm -> explode(itm)));
                 }
                 if (item.isManaged()) {
                     actions.add(new ItemAction<>(resources.constants().replace(), itm -> replace(itm)));
+                }
+                if (ManagementModel.supportsReadContentFromDeployment(environment.getManagementVersion())) {
+                    String address = DEPLOYMENT + "/" + item.getName();
+                    actions.add(
+                            new ItemAction<>(resources.constants().download(), download.url(address, READ_CONTENT)));
                 }
                 if (item.getServerGroupDeployments().isEmpty()) {
                     actions.add(new ItemAction<>(resources.constants().remove(), itm -> remove(itm)));
@@ -364,7 +375,13 @@ public class ContentColumn extends FinderColumn<Content> {
                                                 .build();
                                     })
                                     .collect(toList());
+                            if (enable) {
+                                ItemMonitor.startProgress(Ids.content(cnt.getName()));
+                            }
                             dispatcher.execute(new Composite(operations), (CompositeResult cr) -> {
+                                if (enable) {
+                                    ItemMonitor.stopProgress(Ids.content(cnt.getName()));
+                                }
                                 refresh(RESTORE_SELECTION);
                                 MessageEvent.fire(eventBus,
                                         Message.success(resources.messages().contentDeployed1(content.getName())));

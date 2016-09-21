@@ -19,10 +19,9 @@ import javax.inject.Inject;
 
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
-import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.dispatch.Download;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
@@ -43,24 +42,24 @@ public class LogFiles {
     /**
      * If log files are bigger than this threshold a warning is displayed.
      */
-    public static final int LOG_FILE_SIZE_THRESHOLD = 15000000; // bytes
+    static final int LOG_FILE_SIZE_THRESHOLD = 15000000; // bytes
 
     /**
      * The number of lines in the log file viewer
      */
-    public static final int LINES = 2000;
+    static final int LINES = 2000;
 
-    private final Endpoints endpoints;
+    private final Download download;
     private final Environment environment;
     private final StatementContext statementContext;
     private final Places places;
 
     @Inject
-    public LogFiles(final Endpoints endpoints,
+    public LogFiles(final Download download,
             final Environment environment,
             final StatementContext statementContext,
             final Places places) {
-        this.endpoints = endpoints;
+        this.download = download;
         this.environment = environment;
         this.statementContext = statementContext;
         this.places = places;
@@ -72,14 +71,7 @@ public class LogFiles {
 
     String downloadUrl(String name) {
         ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, name);
-        StringBuilder url = new StringBuilder();
-
-        url.append(endpoints.dmr()).append("/");
-        for (Property property : address.asPropertyList()) {
-            url.append(property.getName()).append("/").append(property.getValue().asString()).append("/");
-        }
-        url.append("?operation=attribute&name=stream&useStreamAsResponse"); //NON-NLS
-        return url.toString();
+        return download.url(address, "attribute", NAME, "stream"); //NON-NLS
     }
 
     String externalUrl(String name) {

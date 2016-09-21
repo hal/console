@@ -18,13 +18,11 @@ package org.jboss.hal.client.deployment;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -36,6 +34,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
 import static org.jboss.hal.resources.CSS.clickable;
+import static org.jboss.hal.resources.CSS.marginLeft4;
 
 /**
  * @author Harald Pehl
@@ -44,6 +43,7 @@ class ContentPreview extends PreviewContent<Content> {
 
     private static final String DEPLOYMENTS_DIV = "deploymentsDiv";
     private static final String DEPLOYMENTS_UL = "deploymentsUl";
+    private static final String UNDEPLOYED_CONTENT_DIV = "undeployedContentDiv";
 
     private final ContentColumn column;
     private final Places places;
@@ -51,6 +51,7 @@ class ContentPreview extends PreviewContent<Content> {
     private final PreviewAttributes<Content> attributes;
     private final Element deploymentsDiv;
     private final Element deploymentsUl;
+    private final Element undeployedContent;
 
     ContentPreview(final ContentColumn column, final Content content, final Places places, final Resources resources) {
         super(content.getName());
@@ -58,31 +59,42 @@ class ContentPreview extends PreviewContent<Content> {
         this.places = places;
         this.resources = resources;
 
-        if (content.getServerGroupDeployments().isEmpty()) {
-            previewBuilder().add(
-                    new Alert(Icons.DISABLED, resources.messages().undeployedContent(content.getName()),
-                            resources.constants().deploy(), event -> column.deploy(content)));
-        }
-
         attributes = new PreviewAttributes<>(content,
                 asList(NAME, RUNTIME_NAME, MANAGED, EXPLODED)).end();
         previewBuilder().addAll(attributes);
 
+        // @formatter:off
         previewBuilder()
-                .div().rememberAs(DEPLOYMENTS_DIV)
-                .h(2).textContent(resources.constants().deployments()).end()
+            .h(2).textContent(resources.constants().deployments()).end()
+            .div().rememberAs(DEPLOYMENTS_DIV)
                 .p().innerHtml(resources.messages().deployedTo(content.getName())).end()
                 .ul().rememberAs(DEPLOYMENTS_UL).end()
-                .end();
+            .end()
+            .div().rememberAs(UNDEPLOYED_CONTENT_DIV)
+                .p().rememberAs(UNDEPLOYED_CONTENT_DIV)
+                    .span()
+                        .innerHtml(resources.messages().undeployedContent(content.getName()))
+                    .end()
+                    .a().css(clickable, marginLeft4).on(click, event -> column.deploy(content))
+                        .textContent(resources.constants().deploy())
+                    .end()
+                .end()
+            .end();
+        // @formatter:on
+
         deploymentsDiv = previewBuilder().referenceFor(DEPLOYMENTS_DIV);
         deploymentsUl = previewBuilder().referenceFor(DEPLOYMENTS_UL);
+        undeployedContent = previewBuilder().referenceFor(UNDEPLOYED_CONTENT_DIV);
     }
 
     @Override
     public void update(final Content content) {
         attributes.refresh(content);
-        Elements.setVisible(deploymentsDiv, !content.getServerGroupDeployments().isEmpty());
-        if (!content.getServerGroupDeployments().isEmpty()) {
+
+        boolean undeployed = content.getServerGroupDeployments().isEmpty();
+        Elements.setVisible(deploymentsDiv, !undeployed);
+        Elements.setVisible(undeployedContent, undeployed);
+        if (!undeployed) {
             Elements.removeChildrenFrom(deploymentsUl);
             Elements.Builder builder = new Elements.Builder();
             content.getServerGroupDeployments().forEach(sgd -> {

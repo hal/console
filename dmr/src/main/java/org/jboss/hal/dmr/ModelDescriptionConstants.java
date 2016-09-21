@@ -189,6 +189,7 @@ public interface ModelDescriptionConstants {
     String READ_CHILDREN_NAMES_OPERATION = "read-children-names";
     String READ_CHILDREN_TYPES_OPERATION = "read-children-types";
     String READ_CHILDREN_RESOURCES_OPERATION = "read-children-resources";
+    String READ_CONTENT = "read-content";
     String READ_ONLY = "read-only";
     String READ_RESOURCE_DESCRIPTION_OPERATION = "read-resource-description";
     String READ_RESOURCE_OPERATION = "read-resource";

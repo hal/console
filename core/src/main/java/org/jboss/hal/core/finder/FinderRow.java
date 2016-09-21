@@ -198,8 +198,8 @@ class FinderRow<T> implements IsElement, SecurityContextAware {
         } else if (action.href != null) {
             builder.attr(UIConstants.HREF, action.href);
         }
-        if (!action.parameter.isEmpty()) {
-            action.parameter.forEach(builder::attr);
+        if (!action.attributes.isEmpty()) {
+            action.attributes.forEach(builder::attr);
         }
         if (reference != null) {
             builder.rememberAs(reference);
