@@ -16,7 +16,6 @@
 package org.jboss.hal.ballroom.editor;
 
 import elemental.dom.Element;
-import jsinterop.annotations.JsMethod;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -27,13 +26,13 @@ import org.jboss.hal.resources.CSS;
  */
 public class AceEditor implements IsElement, Attachable {
 
-    @JsMethod(namespace = "ace")
-    native static Editor edit(String id);
+    private static final String MODE_LIST_EXTENSION = "ace/ext/modelist";
 
     private final String id;
     private final Options options;
     private final Element preElement;
     private Editor editor;
+    private ModeList modeList;
 
     public AceEditor(final String id) {
         this(id, null);
@@ -53,7 +52,9 @@ public class AceEditor implements IsElement, Attachable {
     @Override
     public void attach() {
         if (editor == null) {
-            editor = edit(id);
+            Ace.init();
+            editor = Ace.edit(id);
+            modeList = Ace.require(MODE_LIST_EXTENSION);
             if (options != null) {
                 editor.setOptions(options);
                 editor.$blockScrolling = null;
@@ -70,9 +71,25 @@ public class AceEditor implements IsElement, Attachable {
      */
     public Editor getEditor() {
         if (editor == null) {
-            throw new IllegalStateException(
-                    "AceEditor('" + id + "') is not attached. Call AceEditor.attach() before using any of the editor methods!");
+            throw new IllegalStateException(unattached());
         }
         return editor;
+    }
+
+    private ModeList getModeList() {
+        if (modeList == null) {
+            throw new IllegalStateException(unattached());
+        }
+        return modeList;
+    }
+
+    @SuppressWarnings("HardCodedStringLiteral")
+    private String unattached() {
+        return "AceEditor('" + id + "') is not attached. Call AceEditor.attach() before using any of the editor methods!";
+    }
+
+    public void setModeFromPath(String path) {
+        String mode = getModeList().getModeForPath(path).mode;
+        getEditor().getSession().setMode(mode);
     }
 }
