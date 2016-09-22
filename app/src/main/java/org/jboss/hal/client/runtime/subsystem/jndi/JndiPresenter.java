@@ -25,6 +25,7 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -53,7 +54,7 @@ public class JndiPresenter extends ApplicationPresenter<JndiPresenter.MyView, Jn
     @Requires(ROOT_ADDRESS)
     public interface MyProxy extends ProxyPlace<JndiPresenter> {}
 
-    public interface MyView extends PatternFlyView {
+    public interface MyView extends PatternFlyView, HasPresenter<JndiPresenter> {
         void update(ModelNode jndi);
     }
     // @formatter:on
@@ -78,6 +79,12 @@ public class JndiPresenter extends ApplicationPresenter<JndiPresenter.MyView, Jn
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
         this.resources = resources;
+    }
+
+    @Override
+    protected void onBind() {
+        super.onBind();
+        getView().setPresenter(this);
     }
 
     @Override

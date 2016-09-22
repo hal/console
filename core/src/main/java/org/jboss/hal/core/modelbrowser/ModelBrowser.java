@@ -283,7 +283,7 @@ public class ModelBrowser implements HasElements {
             FilterInfo filterInfo = new FilterInfo(parent, node);
             filterStack.add(filterInfo);
             filter(filterInfo);
-            tree.api().openNode(MODEL_BROWSER_ROOT, () -> select(MODEL_BROWSER_ROOT, false));
+            tree.api().openNode(MODEL_BROWSER_ROOT, () -> tree.select(MODEL_BROWSER_ROOT, false));
         }
     }
 
@@ -334,7 +334,7 @@ public class ModelBrowser implements HasElements {
 
                 @Override
                 public void onSuccess(final FunctionContext context) {
-                    select(previousFilter.node.id, false);
+                    tree.select(previousFilter.node.id, false);
                 }
             };
             new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
@@ -351,7 +351,7 @@ public class ModelBrowser implements HasElements {
 
     private void collapse(Node<Context> node) {
         if (node != null) {
-            select(node.id, true);
+            tree.select(node.id, true);
         }
     }
 
@@ -578,7 +578,7 @@ public class ModelBrowser implements HasElements {
                 result -> {
                     initTree(root, resource);
                     tree.api().openNode(MODEL_BROWSER_ROOT, () -> resourcePanel.tabs.showTab(0));
-                    select(MODEL_BROWSER_ROOT, false);
+                    tree.select(MODEL_BROWSER_ROOT, false);
 
                     Browser.getWindow().setOnresize(event -> adjustHeight());
                     adjustHeight();
@@ -604,13 +604,7 @@ public class ModelBrowser implements HasElements {
     }
 
     public void select(final String id, final boolean closeSelected) {
-        tree.api().deselectAll(true);
-        tree.api().selectNode(id, false, false);
-        if (closeSelected) {
-            tree.api().closeNode(id);
-        }
-        tree.asElement().focus();
-        Browser.getDocument().getElementById(id).scrollIntoView(false);
+        tree.select(id, closeSelected);
     }
 
     @Override

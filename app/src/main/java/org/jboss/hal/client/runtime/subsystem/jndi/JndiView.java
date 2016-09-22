@@ -24,7 +24,6 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.Search;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.tree.Api;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.tree.Tree;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -39,11 +38,13 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
+import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.meta.security.SecurityContext.RWX;
+import static org.jboss.hal.resources.CSS.*;
 
 /**
  * @author Harald Pehl
@@ -53,28 +54,31 @@ public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView
     private static final String JAVA_CONTEXTS = "java: contexts";
     private static final String APPLICATIONS = "applications";
     private static final String HEADER = "header";
+    private static final String REFRESH_ELEMENT = "refreshElement";
+    private static final String COLLAPSE_ELEMENT = "collapseElement";
     private static final String TREE_CONTAINER = "treeContainer";
     private static final String HINT = "hint";
 
     private Element header;
     private Element treeContainer;
+    private Tree<JndiContext> tree;
     private Element hint;
     private Search search;
-    private Api<JndiContext> treeApi;
     private Form<ModelNode> details;
+    private JndiPresenter presenter;
 
     @Inject
     public JndiView(Capabilities capabilities, JndiResources jndiResources, Resources resources) {
 
         search = new Search.Builder(Ids.JNDI_SEARCH,
                 query -> {
-                    if (treeApi != null) {
-                        treeApi.search(query);
+                    if (tree.api() != null) {
+                        tree.api().search(query);
                     }
                 })
                 .onClear(() -> {
-                    if (treeApi != null) {
-                        treeApi.clearSearch();
+                    if (tree.api() != null) {
+                        tree.api().clearSearch();
                     }
                 })
                 .build();
@@ -92,7 +96,19 @@ public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView
             .row()
                 .column(4)
                     .h(1).rememberAs(HEADER).textContent(resources.constants().jndiTree()).end()
-                    .add(search)
+                    .div().css(flexRow)
+                        .div().css(btnGroup, marginRight10)
+                            .button().css(btn, btnDefault).rememberAs(REFRESH_ELEMENT)
+                                .on(click, event -> presenter.load())
+                                .add("i").css(fontAwesome(CSS.refresh))
+                            .end()
+                            .button().css(btn, btnDefault).rememberAs(COLLAPSE_ELEMENT)
+                                .on(click, event -> collapse(tree.api().getSelected()))
+                                .add("i").css(fontAwesome("minus"))
+                            .end()
+                        .end()
+                        .add(search)
+                    .end()
                     .div().rememberAs(TREE_CONTAINER).css(CSS.treeContainer).end()
                 .end()
                 .column(8)
@@ -110,6 +126,11 @@ public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView
     }
 
     @Override
+    public void setPresenter(final JndiPresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    @Override
     public void attach() {
         super.attach();
         Browser.getWindow().setOnresize(event -> adjustHeight());
@@ -122,6 +143,12 @@ public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView
         int searchHeight = search.asElement().getOffsetHeight();
         treeContainer.getStyle()
                 .setHeight(height - 2 * MARGIN_BIG - headerHeight - searchHeight - 2 * MARGIN_SMALL, PX);
+    }
+
+    private void collapse(final Node<JndiContext> node) {
+        if (node != null) {
+            tree.select(node.id, true);
+        }
     }
 
     @Override
@@ -150,7 +177,7 @@ public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView
             jndiParser.parse(nodes, root, jndi.get(APPLICATIONS).asPropertyList());
         }
 
-        Tree<JndiContext> tree = new Tree<>(Ids.JNDI_TREE, nodes);
+        tree = new Tree<>(Ids.JNDI_TREE, nodes);
         Elements.removeChildrenFrom(treeContainer);
         treeContainer.appendChild(tree.asElement());
 
@@ -177,7 +204,6 @@ public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView
                 }
             }
         });
-        treeApi = tree.api();
 
         Elements.setVisible(hint, true);
         Elements.setVisible(details.asElement(), false);

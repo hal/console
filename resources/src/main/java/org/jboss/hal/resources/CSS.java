@@ -101,6 +101,7 @@ public interface CSS {
     String finder = "finder";
     String finderColumn = "finder-column";
     String finderPreview = "finder-preview";
+    String flexRow = "flex-row";
     String folder = "folder";
     String form = "form";
     String formButtons = "form-buttons";
@@ -167,6 +168,7 @@ public interface CSS {
     String macroList = "macro-list";
     String marginBottom5 = "margin-bottom-5";
     String marginRight4 = "margin-right-4";
+    String marginRight10 = "margin-right-10";
     String marginLeft4 = "margin-left-4";
     String marginTop20 = "margin-top-20";
     String messageDetails = "message-details";

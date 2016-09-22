@@ -152,4 +152,14 @@ public class Tree<T> implements IsElement, Attachable {
         }
         bridge.on(CHANGED_EVENT, handler);
     }
+
+    public void select(final String id, final boolean closeSelected) {
+        api().deselectAll(true);
+        api().selectNode(id, false, false);
+        if (closeSelected) {
+            api().closeNode(id);
+        }
+        asElement().focus();
+        Browser.getDocument().getElementById(id).scrollIntoView(false);
+    }
 }
