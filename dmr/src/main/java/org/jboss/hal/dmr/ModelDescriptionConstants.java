@@ -58,6 +58,7 @@ public interface ModelDescriptionConstants {
     String BASE_ROLE = "base-role";
     String BATCH_JBERET = "batch-jberet";
     String BLOCKING = "blocking";
+    String BROWSE_CONTENT = "browse-content";
 
     String CAPABILITIES = "capabilities";
     String CAPABILITY_REFERENCE = "capability-reference";

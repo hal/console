@@ -22,6 +22,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.SpanElement;
@@ -51,6 +53,7 @@ import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
+import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.mvp.Places;
@@ -65,6 +68,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -100,7 +104,6 @@ public class ContentColumn extends FinderColumn<Content> {
     static final AddressTemplate CONTENT_TEMPLATE = AddressTemplate.of(CONTENT_ADDRESS);
 
     private final Environment environment;
-    private final Download download;
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
     private final Provider<Progress> progress;
@@ -110,10 +113,12 @@ public class ContentColumn extends FinderColumn<Content> {
     @Inject
     public ContentColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
+            final ItemActionFactory itemActionFactory,
             final Environment environment,
             final Download download,
             final Dispatcher dispatcher,
             final EventBus eventBus,
+            final PlaceManager placeManager,
             final Places places,
             @Footer final Provider<Progress> progress,
             final MetadataRegistry metadataRegistry,
@@ -137,12 +142,17 @@ public class ContentColumn extends FinderColumn<Content> {
                     new Async<FunctionContext>(progress.get())
                             .single(new FunctionContext(), outcome, new LoadContent(dispatcher));
                 })
+                .onBreadcrumbItem((item, context) -> {
+                    PlaceRequest placeRequest = new PlaceRequest.Builder()
+                            .nameToken(NameTokens.BROWSE_CONTENT)
+                            .with(CONTENT, item.getName()).build();
+                    placeManager.revealPlace(placeRequest);
+                })
                 .pinnable()
                 .showCount()
                 .withFilter());
 
         this.environment = environment;
-        this.download = download;
         this.dispatcher = dispatcher;
         this.eventBus = eventBus;
         this.progress = progress;
@@ -200,8 +210,11 @@ public class ContentColumn extends FinderColumn<Content> {
             public List<ItemAction<Content>> actions() {
                 List<ItemAction<Content>> actions = new ArrayList<>();
 
-                // order is: deploy, (explode), replace, download, undeploy / remove
+                // order is: deploy, browse, (explode), replace, download, undeploy / remove
                 actions.add(new ItemAction<>(resources.constants().deploy(), itm -> deploy(itm)));
+                actions.add(itemActionFactory.placeRequest(resources.constants().browse(),
+                        new PlaceRequest.Builder().nameToken(NameTokens.BROWSE_CONTENT)
+                                .with(CONTENT, item.getName()).build()));
                 if (item.getServerGroupDeployments().isEmpty() && !item.isExploded()) {
                     actions.add(new ItemAction<>(resources.constants().explode(), itm -> explode(itm)));
                 }

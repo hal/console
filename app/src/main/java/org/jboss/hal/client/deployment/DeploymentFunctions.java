@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.inject.Provider;
 
+import com.google.common.collect.Lists;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.html.File;
 import elemental.html.FileList;
@@ -138,12 +139,19 @@ class DeploymentFunctions {
         private final Environment environment;
         private final Dispatcher dispatcher;
         private final String serverGroup;
+        private final String deployment;
 
         ReadServerGroupDeployments(final Environment environment, final Dispatcher dispatcher,
                 final String serverGroup) {
+            this(environment, dispatcher, serverGroup, null);
+        }
+
+        ReadServerGroupDeployments(final Environment environment, final Dispatcher dispatcher,
+                final String serverGroup, final String deployment) {
             this.environment = environment;
             this.dispatcher = dispatcher;
             this.serverGroup = serverGroup;
+            this.deployment = deployment;
         }
 
         @Override
@@ -154,18 +162,35 @@ class DeploymentFunctions {
                 control.proceed();
 
             } else {
-                ResourceAddress address = new ResourceAddress().add(SERVER_GROUP, serverGroup);
-                Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
-                        .param(CHILD_TYPE, DEPLOYMENT)
-                        .param(INCLUDE_RUNTIME, true)
-                        .build();
-                dispatcher.executeInFunction(control, operation, result -> {
-                    List<ServerGroupDeployment> serverGroupDeployments = result.asPropertyList().stream()
-                            .map(property -> new ServerGroupDeployment(serverGroup, property.getValue()))
-                            .collect(toList());
-                    control.getContext().set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
-                    control.proceed();
-                });
+                if (deployment != null) {
+                    // read a single deployment
+                    ResourceAddress address = new ResourceAddress().add(SERVER_GROUP, serverGroup)
+                            .add(DEPLOYMENT, deployment);
+                    Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
+                            .param(INCLUDE_RUNTIME, true)
+                            .build();
+                    dispatcher.executeInFunction(control, operation, result -> {
+                        List<ServerGroupDeployment> serverGroupDeployments = Lists
+                                .newArrayList(new ServerGroupDeployment(serverGroup, result));
+                        control.getContext().set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
+                        control.proceed();
+                    });
+
+                } else {
+                    // read all deployments
+                    ResourceAddress address = new ResourceAddress().add(SERVER_GROUP, serverGroup);
+                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
+                            .param(CHILD_TYPE, DEPLOYMENT)
+                            .param(INCLUDE_RUNTIME, true)
+                            .build();
+                    dispatcher.executeInFunction(control, operation, result -> {
+                        List<ServerGroupDeployment> serverGroupDeployments = result.asPropertyList().stream()
+                                .map(property -> new ServerGroupDeployment(serverGroup, property.getValue()))
+                                .collect(toList());
+                        control.getContext().set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
+                        control.proceed();
+                    });
+                }
             }
         }
     }

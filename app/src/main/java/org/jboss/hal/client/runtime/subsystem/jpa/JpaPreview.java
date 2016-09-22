@@ -70,14 +70,13 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
                 .description(resources.messages()
                         .jpaStatisticsDisabled(jpaStatistic.getName(), jpaStatistic.getDeployment()))
                 .icon(fontAwesome("line-chart"))
-                .primaryAction(resources.constants().gotoDeployment(), event -> placeManager.revealPlace(placeRequest))
+                .primaryAction(resources.constants().gotoDeployment(), () -> placeManager.revealPlace(placeRequest))
                 .build();
 
         openedSessions = new Utilization(resources.constants().opened(), resources.constants().sessions(),
                 environment.isStandalone(), false);
         closedSessions = new Utilization(resources.constants().closed(), resources.constants().sessions(),
                 environment.isStandalone(), false);
-
 
         // @formatter:off
         previewBuilder()

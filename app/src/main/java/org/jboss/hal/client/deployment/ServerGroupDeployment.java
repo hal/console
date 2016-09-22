@@ -17,6 +17,7 @@ package org.jboss.hal.client.deployment;
 
 import javax.annotation.Nullable;
 
+import org.jboss.hal.client.deployment.Deployment.Status;
 import org.jboss.hal.dmr.ModelNode;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DISABLED;
@@ -47,7 +48,6 @@ class ServerGroupDeployment extends Content {
         //noinspection SimplifiableIfStatement
         if (!serverGroup.equals(that.serverGroup)) { return false; }
         return getName().equals(that.getName());
-
     }
 
     @Override
@@ -72,6 +72,10 @@ class ServerGroupDeployment extends Content {
 
     void setDeployment(@Nullable Deployment deployment) {
         this.deployment = deployment;
+    }
+
+    boolean runningWithReferenceServer() {
+        return deployment != null && deployment.getStatus() == Status.OK && deployment.getReferenceServer() != null;
     }
 
     @Override

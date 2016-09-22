@@ -86,7 +86,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml deploymentExploded(String name);
     SafeHtml deploymentFailed(String name);
     SafeHtml deploymentInProgress(String name);
+    SafeHtml deploymentNotEnabled(String name);
     SafeHtml deploymentOpFailed(@PluralCount int count);
+    SafeHtml deploymentReadError(String deployment);
     SafeHtml deploymentReplaced(@PluralCount int count);
     SafeHtml deploymentStopped(String name);
     SafeHtml deploymentSuccessful(String name);
@@ -100,6 +102,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml endpointOk(String url);
 
     SafeHtml flushConnectionSuccess();
+
+    String goTo(String name);
 
     String homepagePatchingSubHeader(String name);
     String homepagePatchingStandaloneStepIntro(String name);
@@ -147,7 +151,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noDeploymentsUploaded();
     SafeHtml noLogFile();
     SafeHtml noMacrosDescription(String startMacro);
-    SafeHtml noReferenceServer(String deployment, String attribute1, String attribute2, String serverGroup, String historyToken);
+    SafeHtml noReferenceServerPreview(String deployment, String attribute1, String attribute2, String serverGroup, String historyToken);
+    SafeHtml noReferenceServerEmptyState(String deployment, String serverGroup);
     SafeHtml noServerGroupSelected();
     SafeHtml normalLogFile(String size);
 

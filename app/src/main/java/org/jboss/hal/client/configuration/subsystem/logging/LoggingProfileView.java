@@ -123,7 +123,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         noRootLogger = new EmptyState.Builder(mbuiContext.resources().constants().noRootLogger())
                 .description(mbuiContext.resources().constants().noRootLoggerDescription())
                 .icon(fontAwesome("sitemap"))
-                .primaryAction(mbuiContext.resources().constants().add(), event -> addRootLogger())
+                .primaryAction(mbuiContext.resources().constants().add(), () -> addRootLogger())
                 .build();
         noRootLogger.asElement().getClassList().add(marginTop20);
 

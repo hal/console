@@ -171,6 +171,7 @@ public class ModelBrowser implements HasElements {
     Tree<Context> tree;
 
     private boolean updateBreadcrumb;
+    private int surroundingHeight;
 
 
     // ------------------------------------------------------ ui setup
@@ -188,6 +189,8 @@ public class ModelBrowser implements HasElements {
         this.resources = resources;
         this.operationFactory = new OperationFactory();
         this.filterStack = new Stack<>();
+        this.updateBreadcrumb = false;
+        this.surroundingHeight = 0;
 
         // @formatter:off
         Elements.Builder buttonsBuilder = new Elements.Builder()
@@ -238,8 +241,9 @@ public class ModelBrowser implements HasElements {
     private void adjustHeight() {
         int height = Skeleton.applicationHeight();
         int buttonGroup = this.buttonGroup.getOffsetHeight();
-        treeContainer.getStyle().setHeight(height - 2 * MARGIN_BIG - buttonGroup - 2 * MARGIN_SMALL, PX);
-        content.getStyle().setHeight(height - 2 * MARGIN_BIG - MARGIN_SMALL, PX);
+        treeContainer.getStyle()
+                .setHeight(height - 2 * MARGIN_BIG - surroundingHeight - buttonGroup - 2 * MARGIN_SMALL, PX);
+        content.getStyle().setHeight(height - 2 * MARGIN_BIG - surroundingHeight - MARGIN_SMALL, PX);
     }
 
     private void initTree(ResourceAddress address, String text) {
@@ -548,6 +552,17 @@ public class ModelBrowser implements HasElements {
 
 
     // ------------------------------------------------------ public API
+
+    /**
+     * Use this method if you embed the model browser into an application view and if you have additional elements
+     * before or after the model browser. This method should be called when the application view is attached or before
+     * {@link #setRoot(ResourceAddress, boolean)} is called.
+     *
+     * @param surroundingHeight the sum of the height of all surrounding elements
+     */
+    public void setSurroundingHeight(final int surroundingHeight) {
+        this.surroundingHeight = surroundingHeight;
+    }
 
     public void setRoot(ResourceAddress root, boolean updateBreadcrumb) {
         this.updateBreadcrumb = updateBreadcrumb;

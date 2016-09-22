@@ -54,6 +54,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String back();
     String bootstrapException();
+    String browse();
     String browseBy();
 
     String cancel();
@@ -262,6 +263,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noRootLoggerDescription();
     String noRunningServers();
     String notANumber();
+    String notActive();
     String nothingSelected();
 
     String ok();

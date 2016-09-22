@@ -42,6 +42,9 @@ import static com.google.common.base.Strings.nullToEmpty;
  */
 public class FinderPath implements Iterable<FinderSegment> {
 
+    /**
+     * Separator is used in URL tokens. Please choose a string which is safe to use in URLs
+     */
     static final String SEPARATOR = "!";
 
 

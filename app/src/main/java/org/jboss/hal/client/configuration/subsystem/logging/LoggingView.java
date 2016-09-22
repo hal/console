@@ -97,7 +97,7 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
         noRootLogger = new EmptyState.Builder(mbuiContext.resources().constants().noRootLogger())
                 .description(mbuiContext.resources().constants().noRootLoggerDescription())
                 .icon("fa fa-sitemap")
-                .primaryAction(mbuiContext.resources().constants().add(), event -> addRootLogger())
+                .primaryAction(mbuiContext.resources().constants().add(), () -> addRootLogger())
                 .build();
         noRootLogger.asElement().getClassList().add(marginTop20);
 

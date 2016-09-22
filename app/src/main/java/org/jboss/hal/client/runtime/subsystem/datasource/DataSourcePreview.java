@@ -88,7 +88,7 @@ class DataSourcePreview extends PreviewContent<DataSource> {
         noStatistics = new EmptyState.Builder(resources.constants().statisticsDisabledHeader())
                 .description(resources.messages().dataSourceStatisticsDisabled(dataSource.getName()))
                 .icon(fontAwesome("line-chart"))
-                .primaryAction(resources.constants().enableStatistics(), event -> column.enableStatistics(dataSource))
+                .primaryAction(resources.constants().enableStatistics(), () -> column.enableStatistics(dataSource))
                 .build();
 
         needsReloadWarning = new Alert(Icons.WARNING,

@@ -111,7 +111,7 @@ class ServerGroupDeploymentPreview extends PreviewContent<ServerGroupDeployment>
                     .build();
             String serverGroupHistoryToken = places.historyToken(serverGroupPlaceRequest);
             LabelBuilder labelBuilder = new LabelBuilder();
-            previewBuilder().p().innerHtml(resources.messages().noReferenceServer(sgd.getName(),
+            previewBuilder().p().innerHtml(resources.messages().noReferenceServerPreview(sgd.getName(),
                     labelBuilder.label(STATUS), labelBuilder.label(LAST_ENABLED_AT),
                     serverGroup, serverGroupHistoryToken))
                     .end();

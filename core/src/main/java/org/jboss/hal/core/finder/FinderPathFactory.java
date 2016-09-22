@@ -80,6 +80,19 @@ public class FinderPathFactory {
 
     // ------------------------------------------------------ deployment
 
+    public FinderPath content(final String content) {
+        if (environment.isStandalone()) {
+            // in standalone content and deployment are the same thing
+            return deployment(content);
+        } else {
+            return new FinderPath()
+                    .append(Ids.DEPLOYMENT_BROWSE_BY, Ids.asId(resources.constants().contentRepository()),
+                            resources.constants().browseBy(), resources.constants().contentRepository())
+                    .append(Ids.CONTENT, Ids.content(content),
+                            resources.constants().content(), content);
+        }
+    }
+
     public FinderPath deployment(String deployment) {
         if (environment.isStandalone()) {
             return new FinderPath().append(Ids.DEPLOYMENT, Ids.deployment(deployment),

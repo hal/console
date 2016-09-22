@@ -81,7 +81,11 @@ public class ItemActionFactory {
     }
 
     public <T> ItemAction<T> view(PlaceRequest placeRequest) {
-        return new ItemAction<>(resources.constants().view(), item -> placeManager.revealPlace(placeRequest));
+        return placeRequest(resources.constants().view(), placeRequest);
+    }
+
+    public <T> ItemAction<T> placeRequest(String title, PlaceRequest placeRequest) {
+        return new ItemAction<>(title, item -> placeManager.revealPlace(placeRequest));
     }
 
     public <T> ItemAction<T> viewAndMonitor(String itemId, PlaceRequest placeRequest) {

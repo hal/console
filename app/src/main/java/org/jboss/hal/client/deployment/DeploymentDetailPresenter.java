@@ -22,29 +22,39 @@ import javax.inject.Provider;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.gwt.flow.Async;
+import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.client.deployment.DeploymentFunctions.LoadDeploymentsFromRunningServer;
+import org.jboss.hal.client.deployment.DeploymentFunctions.ReadServerGroupDeployments;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
-import org.jboss.hal.core.runtime.TopologyFunctions;
+import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.core.runtime.TopologyFunctions.RunningServersQuery;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
@@ -57,18 +67,21 @@ public class DeploymentDetailPresenter
     @NameToken(NameTokens.DEPLOYMENT_DETAIL)
     public interface MyProxy extends ProxyPlace<DeploymentDetailPresenter> {}
 
-    public interface MyView extends PatternFlyView {
-        void setRoot(ResourceAddress root);
+    public interface MyView extends PatternFlyView, HasPresenter<DeploymentDetailPresenter> {
+        void updateStandalone(Deployment deployment);
+        void updateDomain(String serverGroup, ServerGroupDeployment serverGroupDeployment);
     }
     // @formatter:on
 
     private final Environment environment;
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
-    private final StatementContext statementContext;
+    private final PlaceManager placeManager;
+    private final Places places;
     private final Provider<Progress> progress;
+    private final Resources resources;
+    private String serverGroup;
     private String deployment;
-    private ResourceAddress address;
 
     @Inject
     public DeploymentDetailPresenter(final EventBus eventBus,
@@ -78,61 +91,107 @@ public class DeploymentDetailPresenter
             final Finder finder,
             final FinderPathFactory finderPathFactory,
             final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            @Footer final Provider<Progress> progress) {
+            final PlaceManager placeManager,
+            final Places places,
+            @Footer final Provider<Progress> progress,
+            final Resources resources) {
         super(eventBus, view, proxy, finder);
         this.environment = environment;
         this.finderPathFactory = finderPathFactory;
         this.dispatcher = dispatcher;
-        this.statementContext = statementContext;
+        this.placeManager = placeManager;
+        this.places = places;
         this.progress = progress;
-        this.address = ResourceAddress.ROOT;
+        this.resources = resources;
+    }
+
+    @Override
+    protected void onBind() {
+        super.onBind();
+        getView().setPresenter(this);
     }
 
     @Override
     public void prepareFromRequest(final PlaceRequest request) {
         super.prepareFromRequest(request);
-        if (!environment.isStandalone()) {
-            String serverGroup = request.getParameter(SERVER_GROUP, null);
-            deployment = request.getParameter(DEPLOYMENT, null);
-            address = new ResourceAddress().add(SERVER_GROUP, serverGroup).add(DEPLOYMENT, deployment);
-        } else {
-            deployment = request.getParameter(DEPLOYMENT, null);
-            address = new ResourceAddress().add(DEPLOYMENT, deployment);
-        }
+        serverGroup = request.getParameter(SERVER_GROUP, null);
+        deployment = request.getParameter(DEPLOYMENT, null);
     }
 
     @Override
     protected void onReset() {
         super.onReset();
-        if (environment.isStandalone()) {
-            getView().setRoot(address);
-
-        } else {
-            new Async<FunctionContext>(progress.get()).single(new FunctionContext(),
-                    new Outcome<FunctionContext>() {
-                        @Override
-                        public void onFailure(final FunctionContext context) {
-                            getView().setRoot(address);
-                        }
-
-                        @Override
-                        public void onSuccess(final FunctionContext context) {
-                            List<Server> servers = context.get(TopologyFunctions.RUNNING_SERVERS);
-                            if (!servers.isEmpty()) {
-                                address = servers.get(0).getServerAddress()
-                                        .add(DEPLOYMENT, deployment);
-                            }
-                            getView().setRoot(address);
-                        }
-                    },
-                    new TopologyFunctions.RunningServersQuery(environment, dispatcher,
-                            new ModelNode().set(SERVER_GROUP, statementContext.selectedServerGroup())));
-        }
+        loadDeployment();
     }
 
     @Override
     protected FinderPath finderPath() {
-        return finderPathFactory.deployment(address.lastValue());
+        return finderPathFactory.deployment(deployment);
+    }
+
+    private void loadDeployment() {
+        if (environment.isStandalone()) {
+            Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
+                    new ResourceAddress().add(DEPLOYMENT, deployment))
+                    .param(INCLUDE_RUNTIME, true)
+                    .build();
+            dispatcher.execute(operation,
+                    result -> getView().updateStandalone(new Deployment(Server.STANDALONE, result)));
+
+        } else {
+            Function[] functions = new Function[]{
+                    new ReadServerGroupDeployments(environment, dispatcher, serverGroup, deployment),
+                    new RunningServersQuery(environment, dispatcher, new ModelNode().set(SERVER_GROUP, serverGroup)),
+                    new LoadDeploymentsFromRunningServer(environment, dispatcher)
+            };
+
+            new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
+                    new Outcome<FunctionContext>() {
+                        @Override
+                        public void onFailure(final FunctionContext context) {
+                            MessageEvent.fire(getEventBus(),
+                                    Message.error(resources.messages().deploymentReadError(deployment)));
+                        }
+
+                        @Override
+                        public void onSuccess(final FunctionContext context) {
+                            List<ServerGroupDeployment> serverGroupDeployments = context
+                                    .get(DeploymentFunctions.SERVER_GROUP_DEPLOYMENTS);
+                            if (!serverGroupDeployments.isEmpty()) {
+                                ServerGroupDeployment serverGroupDeployment = serverGroupDeployments.get(0);
+                                getView().updateDomain(serverGroup, serverGroupDeployment);
+                            } else {
+                                MessageEvent.fire(getEventBus(),
+                                        Message.error(resources.messages().deploymentReadError(deployment)));
+                            }
+                        }
+                    }, functions);
+        }
+    }
+
+    void goToServerGroup() {
+        PlaceRequest serverGroupPlaceRequest = places.finderPlace(NameTokens.RUNTIME, new FinderPath()
+                .append(Ids.DOMAIN_BROWSE_BY, Ids.asId(Names.SERVER_GROUPS))
+                .append(Ids.SERVER_GROUP, Ids.serverGroup(serverGroup)))
+                .build();
+        placeManager.revealPlace(serverGroupPlaceRequest);
+    }
+
+    void enable(final String deployment) {
+        ResourceAddress address;
+        if (environment.isStandalone()) {
+            address = new ResourceAddress().add(DEPLOYMENT, deployment);
+        } else {
+            address = new ResourceAddress().add(SERVER_GROUP, serverGroup).add(DEPLOYMENT, deployment);
+        }
+        progress.get().reset();
+        progress.get().tick();
+        Operation operation = new Operation.Builder(DEPLOY, address).build();
+        dispatcher.execute(operation, result -> {
+            progress.get().finish();
+            loadDeployment();
+            MessageEvent
+                    .fire(getEventBus(), Message.success(resources.messages().deploymentEnabledSuccess(deployment)));
+        });
     }
 }

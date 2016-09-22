@@ -20,10 +20,9 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.collect.Lists;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import elemental.dom.Element;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
@@ -55,6 +54,7 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
+import org.jboss.hal.core.finder.ItemsProvider;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.TopologyFunctions.RunningServersQuery;
 import org.jboss.hal.dmr.ModelNode;
@@ -81,6 +81,7 @@ import org.jboss.hal.spi.Requires;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.deployment.ContentColumn.CONTENT_ADDRESS;
 import static org.jboss.hal.client.deployment.ContentColumn.CONTENT_TEMPLATE;
+import static org.jboss.hal.client.deployment.Deployment.Status.OK;
 import static org.jboss.hal.client.deployment.ServerGroupDeploymentColumn.SERVER_GROUP_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.deployment.wizard.UploadState.NAMES;
 import static org.jboss.hal.client.deployment.wizard.UploadState.UPLOAD;
@@ -116,7 +117,6 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
             final Environment environment,
             final EventBus eventBus,
             final Dispatcher dispatcher,
-            final PlaceManager placeManager,
             final Places places,
             final StatementContext statementContext,
             final MetadataRegistry metadataRegistry,
@@ -149,13 +149,13 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                 addActions);
         addColumnAction(columnActionFactory.refresh(Ids.SERVER_GROUP_DEPLOYMENT_REFRESH));
 
-        setItemsProvider((context, callback) -> {
-
-            List<Function<FunctionContext>> functions = Lists.newArrayList(
+        ItemsProvider<ServerGroupDeployment> itemsProvider = (context, callback) -> {
+            Function[] functions = new Function[]{
                     new ReadServerGroupDeployments(environment, dispatcher, statementContext.selectedServerGroup()),
                     new RunningServersQuery(environment, dispatcher,
                             new ModelNode().set(SERVER_GROUP, statementContext.selectedServerGroup())),
-                    new LoadDeploymentsFromRunningServer(environment, dispatcher));
+                    new LoadDeploymentsFromRunningServer(environment, dispatcher)
+            };
 
             new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
                     new Outcome<FunctionContext>() {
@@ -170,9 +170,28 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                                     .get(DeploymentFunctions.SERVER_GROUP_DEPLOYMENTS);
                             callback.onSuccess(serverGroupDeployments);
                         }
-                    }, functions.toArray(new Function[functions.size()]));
+                    }, functions);
 
-        });
+        };
+        setItemsProvider(itemsProvider);
+
+        // reuse the items provider to filter breadcrumb items
+        setBreadcrumbItemsProvider((context, callback) ->
+                itemsProvider.get(context, new AsyncCallback<List<ServerGroupDeployment>>() {
+                    @Override
+                    public void onFailure(final Throwable caught) {
+                        callback.onFailure(caught);
+                    }
+
+                    @Override
+                    public void onSuccess(final List<ServerGroupDeployment> result) {
+                        // only running deployments w/ a reference server will show up in the breadcrumb dropdown
+                        List<ServerGroupDeployment> deploymentsOnServer = result.stream()
+                                .filter(ServerGroupDeployment::runningWithReferenceServer)
+                                .collect(toList());
+                        callback.onSuccess(deploymentsOnServer);
+                    }
+                }));
 
         setItemRenderer(item -> new ItemDisplay<ServerGroupDeployment>() {
             @Override
@@ -192,7 +211,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                         return resources.constants().failed();
                     } else if (item.getDeployment().getStatus() == Status.STOPPED) {
                         return resources.constants().stopped();
-                    } else if (item.getDeployment().getStatus() == Status.OK) {
+                    } else if (item.getDeployment().getStatus() == OK) {
                         return resources.constants().activeLower();
                     } else {
                         return resources.constants().unknownState();
@@ -210,7 +229,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                         return Icons.error();
                     } else if (item.getDeployment().getStatus() == Status.STOPPED) {
                         return Icons.stopped();
-                    } else if (item.getDeployment().getStatus() == Status.OK) {
+                    } else if (item.getDeployment().getStatus() == OK) {
                         return Icons.ok();
                     } else {
                         return Icons.unknown();
@@ -228,9 +247,13 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
             @Override
             public List<ItemAction<ServerGroupDeployment>> actions() {
                 List<ItemAction<ServerGroupDeployment>> actions = new ArrayList<>();
-                actions.add(itemActionFactory.view(NameTokens.DEPLOYMENT_DETAIL,
-                        Ids.SERVER_GROUP, statementContext.selectedServerGroup(),
-                        Ids.DEPLOYMENT, item.getName()));
+
+                // view makes only sense only for running deployments w/ a reference server
+                if (item.runningWithReferenceServer()) {
+                    actions.add(itemActionFactory.view(NameTokens.DEPLOYMENT_DETAIL,
+                            Ids.SERVER_GROUP, statementContext.selectedServerGroup(),
+                            Ids.DEPLOYMENT, item.getName()));
+                }
                 if (item.isEnabled()) {
                     actions.add(new ItemAction<>(resources.constants().disable(), itm -> disable(itm)));
                 } else {
