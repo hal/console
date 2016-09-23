@@ -138,9 +138,11 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
         this.resources = resources;
 
         List<ColumnAction<ServerGroupDeployment>> addActions = new ArrayList<>();
-        addActions.add(new ColumnAction<>(Ids.SERVER_GROUP_DEPLOYMENT_UPLOAD, resources.constants().uploadDeployment(),
+        addActions.add(new ColumnAction<>(Ids.SERVER_GROUP_DEPLOYMENT_UPLOAD,
+                resources.constants().uploadNewDeployment(),
                 column -> uploadAndDeploy()));
-        addActions.add(new ColumnAction<>(Ids.SERVER_GROUP_DEPLOYMENT_ADD, resources.constants().deployContent(),
+        addActions.add(new ColumnAction<>(Ids.SERVER_GROUP_DEPLOYMENT_ADD,
+                resources.constants().deployExistingContent(),
                 column -> addDeploymentFromContentRepository()));
         addActions.add(new ColumnAction<>(Ids.SERVER_GROUP_DEPLOYMENT_UNMANAGED_ADD,
                 resources.messages().addResourceTitle(Names.UNMANAGED_DEPLOYMENT),

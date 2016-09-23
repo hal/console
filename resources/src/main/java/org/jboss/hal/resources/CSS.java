@@ -175,6 +175,7 @@ public interface CSS {
     String marginRightSmall = "margin-right-small";
     String marginLeft5 = "margin-left-5";
     String marginTopLarge = "margin-top-large";
+    String marginTopSmall = "margin-top-small";
     String messageDetails = "message-details";
     String messageDetailsPre = "message-details-pre";
     String modal = "modal";

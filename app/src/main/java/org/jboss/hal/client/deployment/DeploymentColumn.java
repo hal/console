@@ -22,6 +22,7 @@ import javax.inject.Provider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.html.SpanElement;
@@ -184,6 +185,9 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
                 List<ItemAction<Deployment>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.view(NameTokens.DEPLOYMENT_DETAIL,
                         Ids.DEPLOYMENT, item.getName()));
+                actions.add(itemActionFactory.placeRequest(resources.constants().browse(),
+                        new PlaceRequest.Builder().nameToken(NameTokens.BROWSE_CONTENT)
+                                .with(CONTENT, item.getName()).build()));
                 if (item.isEnabled()) {
                     actions.add(new ItemAction<>(resources.constants().disable(), deployment -> disable(deployment)));
                 } else {

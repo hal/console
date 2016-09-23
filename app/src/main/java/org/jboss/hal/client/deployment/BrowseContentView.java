@@ -165,7 +165,7 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
                             .end()
                         .end()
                     .end()
-                    .div().css(marginTopLarge, marginBottomLarge)
+                    .div().css(marginTopSmall, marginBottomLarge)
                         .add(editor.asElement())
                     .end()
                 .end()
@@ -216,7 +216,7 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
         int height = Skeleton.applicationHeight();
         int searchHeight = treeSearch.asElement().getOffsetHeight();
         int treeHeight = height - 2 * MARGIN_BIG - searchHeight - 2 * MARGIN_SMALL;
-        int editorHeight = height - 3 * MARGIN_BIG - editorControls.getOffsetHeight();
+        int editorHeight = height - 2 * MARGIN_BIG - MARGIN_SMALL - editorControls.getOffsetHeight();
         editorHeight = max(editorHeight, MIN_HEIGHT);
 
         treeContainer.getStyle().setHeight(treeHeight, PX);
@@ -240,9 +240,12 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
             if (!"ready".equals(selectionContext.action)) { //NON-NLS
                 boolean hasSelection = !selectionContext.selected.isEmpty();
                 if (hasSelection) {
-                    if (selectionContext.node.id == Ids.CONTENT_TREE_ROOT) {
+                    if (selectionContext.node.id.equals(Ids.CONTENT_TREE_ROOT)) {
                         // root node
-                        editorStatus.setTextContent(resources.constants().nothingSelected());
+                        ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, presenter.getContent());
+                        Operation operation = new Operation.Builder(READ_CONTENT, address).build();
+                        downloadLink.setAttribute("href", dispatcher.downloadUrl(operation)); //NON-NLS
+                        editorStatus.setTextContent(presenter.getContent());
                         editor.getEditor().getSession().setValue("");
                     } else {
                         ContentEntry contentEntry = selectionContext.node.data;
