@@ -134,6 +134,8 @@ public interface CSS {
     String hover = "hover";
     String hostContainer = "host-container";
 
+    String imgResponsive = "img-responsive";
+    String imgThumbnail = "img-thumbnail";
     String in = "in";
     String inactive = "inactive";
     String indicator = "indicator";
@@ -171,6 +173,7 @@ public interface CSS {
     String macroList = "macro-list";
     String marginBottom5 = "margin-bottom-5";
     String marginBottomLarge = "margin-bottom-large";
+    String marginBottomSmall = "margin-bottom-small";
     String marginRight5 = "margin-right-5";
     String marginRightSmall = "margin-right-small";
     String marginLeft5 = "margin-left-5";

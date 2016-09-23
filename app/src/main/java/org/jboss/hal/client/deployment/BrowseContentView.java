@@ -20,9 +20,11 @@ import javax.inject.Inject;
 import com.google.common.base.Strings;
 import elemental.client.Browser;
 import elemental.dom.Element;
+import elemental.html.ImageElement;
 import elemental.js.util.JsArrayOf;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Clipboard;
+import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.Search;
@@ -30,6 +32,7 @@ import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
 import org.jboss.hal.ballroom.tree.Node;
+import org.jboss.hal.ballroom.tree.SelectionChangeHandler.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.core.ui.Skeleton;
@@ -37,14 +40,17 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.lang.Integer.max;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.client.deployment.BrowseContentPresenter.SUPPORTED_FILE_TYPES;
+import static org.jboss.hal.client.deployment.BrowseContentPresenter.EDITOR_FILE_TYPES;
+import static org.jboss.hal.client.deployment.BrowseContentPresenter.IMAGE_FILE_TYPES;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
@@ -61,7 +67,8 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
     private static final String DOWNLOAD = "download";
     private static final String EDITOR_CONTROLS = "contentHeader";
     private static final String EDITOR_STATUS = "editorStatus";
-    private static final String UNSUPPORTED = "unsupported";
+    private static final String PREVIEW_CONTAINER = "prieviewContainer";
+    private static final String PREVIEW_IMAGE = "prieviewImage";
     private static final String TREE_CONTAINER = "treeContainer";
     private static final int MIN_HEIGHT = 70;
 
@@ -70,16 +77,23 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
 
     private Search treeSearch;
     private Tree<ContentEntry> tree;
+    private EmptyState pleaseSelect;
+    private EmptyState deploymentPreview;
+    private EmptyState unsupportedFileType;
     private AceEditor editor;
 
     private Element treeContainer;
     private Element editorControls;
     private Element editorStatus;
-    private Element unsupported;
     private Element copyToClipboardLink;
     private Element downloadLink;
+    private Element previewContainer;
+    private ImageElement previewImage;
 
     private BrowseContentPresenter presenter;
+
+
+    // ------------------------------------------------------ ui stuff
 
     @Inject
     public BrowseContentView(final Dispatcher dispatcher, final Resources resources) {
@@ -113,6 +127,29 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
         editor = new AceEditor(Ids.CONTENT_EDITOR, editorOptions);
         registerAttachable(editor);
 
+        pleaseSelect = new EmptyState.Builder(resources.constants().nothingSelected())
+                .icon(Icons.INFO)
+                .description(resources.constants().noContentSelected())
+                .build();
+
+        deploymentPreview = new EmptyState.Builder(Names.DEPLOYMENT)
+                .icon(fontAwesome("archive"))
+                .description(resources.constants().deploymentPreview())
+                .build();
+
+        unsupportedFileType = new EmptyState.Builder(resources.constants().unsupportedFileType())
+                .icon(Icons.UNKNOWN)
+                .description(resources.constants().unsupportedFileTypeDescription())
+                .primaryAction(resources.constants().download(), () -> {
+                    //noinspection ConstantConditions
+                    Browser.getWindow().getLocation().setHref(downloadUrl((tree.api().getSelected().data)));
+                })
+                .secondaryAction(resources.constants().viewInEditor(), () -> {
+                    //noinspection ConstantConditions
+                    viewInEditor(tree.api().getSelected().data);
+                })
+                .build();
+
         // @formatter:off
         LayoutBuilder builder = new LayoutBuilder()
             .row()
@@ -131,41 +168,39 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
                     .div().rememberAs(TREE_CONTAINER).css(CSS.treeContainer).end()
                 .end()
                 .column(8)
-                    .div().css(CSS.editorControls, marginTopLarge).rememberAs(EDITOR_CONTROLS)
-                        .add(contentSearch)
-                        .div().css(CSS.editorStatus)
-                            .span().rememberAs(EDITOR_STATUS)
-                                .textContent(resources.constants().nothingSelected())
+                    .div().css(marginTopLarge, marginBottomLarge)
+                        .add(pleaseSelect)
+                        .add(deploymentPreview)
+                        .add(unsupportedFileType)
+                        .div().style("overflow: scroll").rememberAs(PREVIEW_CONTAINER)
+                            .add("img").css(imgResponsive, imgThumbnail).rememberAs(PREVIEW_IMAGE)
+                        .end()
+                        .div().css(CSS.editorControls, marginBottomSmall).rememberAs(EDITOR_CONTROLS)
+                            .add(contentSearch)
+                            .div().css(CSS.editorStatus)
+                                .span().rememberAs(EDITOR_STATUS)
+                                    .textContent(resources.constants().nothingSelected())
+                                .end()
                             .end()
-                            .a().css(marginLeft5, clickable)
-                                .on(click, event -> readUnsupported()).rememberAs(UNSUPPORTED)
-                                .title(resources.constants().unsupportedFileTypeDesc())
-                                .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                                .data(UIConstants.CONTAINER, UIConstants.BODY)
-                                .data(UIConstants.PLACEMENT, UIConstants.TOP)
-                                    .textContent(resources.constants().unsupportedFileType())
+                            .div().css(editorButtons)
+                                .a().css(btn, btnDefault, clickable)
+                                    .title(resources.constants().copyToClipboard())
+                                    .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
+                                    .data(UIConstants.CONTAINER, UIConstants.BODY)
+                                    .data(UIConstants.PLACEMENT, UIConstants.TOP)
+                                    .rememberAs(COPY_TO_CLIPBOARD)
+                                        .span().css(fontAwesome("clipboard")).end()
+                                .end()
+                                .a().css(btn, btnDefault, clickable)
+                                    .title(resources.constants().download())
+                                    .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
+                                    .data(UIConstants.CONTAINER, UIConstants.BODY)
+                                    .data(UIConstants.PLACEMENT, UIConstants.TOP)
+                                    .rememberAs(DOWNLOAD)
+                                        .span().css(fontAwesome("download")).end()
+                                .end()
                             .end()
                         .end()
-                        .div().css(editorButtons)
-                            .a().css(btn, btnDefault, clickable)
-                                .title(resources.constants().copyToClipboard())
-                                .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                                .data(UIConstants.CONTAINER, UIConstants.BODY)
-                                .data(UIConstants.PLACEMENT, UIConstants.TOP)
-                                .rememberAs(COPY_TO_CLIPBOARD)
-                                    .span().css(fontAwesome("clipboard")).end()
-                            .end()
-                            .a().css(btn, btnDefault, clickable)
-                                .title(resources.constants().download())
-                                .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                                .data(UIConstants.CONTAINER, UIConstants.BODY)
-                                .data(UIConstants.PLACEMENT, UIConstants.TOP)
-                                .rememberAs(DOWNLOAD)
-                                    .span().css(fontAwesome("download")).end()
-                            .end()
-                        .end()
-                    .end()
-                    .div().css(marginTopSmall, marginBottomLarge)
                         .add(editor.asElement())
                     .end()
                 .end()
@@ -176,15 +211,149 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
         treeContainer = builder.referenceFor(TREE_CONTAINER);
         editorControls = builder.referenceFor(EDITOR_CONTROLS);
         editorStatus = builder.referenceFor(EDITOR_STATUS);
-        unsupported = builder.referenceFor(UNSUPPORTED);
         copyToClipboardLink = builder.referenceFor(COPY_TO_CLIPBOARD);
         downloadLink = builder.referenceFor(DOWNLOAD);
+        previewContainer = builder.referenceFor(PREVIEW_CONTAINER);
+        previewImage = builder.referenceFor(PREVIEW_IMAGE);
 
-        Elements.setVisible(unsupported, false);
         Clipboard clipboard = new Clipboard(copyToClipboardLink);
         clipboard.onCopy(event -> copyToClipboard(event.client));
 
+        Elements.setVisible(pleaseSelect.asElement(), true);
+        Elements.setVisible(editorControls, false);
+        Elements.setVisible(editor.asElement(), false);
+        Elements.setVisible(deploymentPreview.asElement(), false);
+        Elements.setVisible(unsupportedFileType.asElement(), false);
+        Elements.setVisible(previewContainer, false);
         initElement(root);
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
+        editor.getEditor().$blockScrolling = 1;
+        Browser.getWindow().setOnresize(event -> adjustHeight());
+        adjustHeight();
+    }
+
+    private void adjustHeight() {
+        int height = Skeleton.applicationHeight();
+        int treeSearchHeight = treeSearch.asElement().getOffsetHeight();
+        int treeHeight = height - 2 * MARGIN_BIG - treeSearchHeight - 2 * MARGIN_SMALL;
+        int previewHeight = height - 2 * MARGIN_BIG;
+        int editorHeight = height - 2 * MARGIN_BIG - MARGIN_SMALL - editorControls.getOffsetHeight();
+        editorHeight = max(editorHeight, MIN_HEIGHT);
+
+        treeContainer.getStyle().setHeight(treeHeight, PX);
+        previewContainer.getStyle().setHeight(previewHeight, PX);
+        editor.asElement().getStyle().setHeight(editorHeight, PX);
+        editor.getEditor().resize();
+    }
+
+
+    // ------------------------------------------------------ ui visibility / states
+
+    private void noSelection() {
+        Elements.setVisible(pleaseSelect.asElement(), true);
+        Elements.setVisible(editorControls, false);
+        Elements.setVisible(editor.asElement(), false);
+        Elements.setVisible(deploymentPreview.asElement(), false);
+        Elements.setVisible(unsupportedFileType.asElement(), false);
+        Elements.setVisible(previewContainer, false);
+        adjustHeight();
+    }
+
+    private void deploymentPreview() {
+        Elements.setVisible(pleaseSelect.asElement(), false);
+        Elements.setVisible(editorControls, false);
+        Elements.setVisible(editor.asElement(), false);
+        Elements.setVisible(deploymentPreview.asElement(), true);
+        Elements.setVisible(unsupportedFileType.asElement(), false);
+        Elements.setVisible(previewContainer, false);
+        adjustHeight();
+
+        deploymentPreview.setHeader(presenter.getContent());
+        deploymentPreview.setPrimaryAction(resources.constants().download(),
+                () -> Browser.getWindow().getLocation().setHref(downloadUrl(null)));
+    }
+
+    private void directory() {
+        Elements.setVisible(pleaseSelect.asElement(), false);
+        Elements.setVisible(editorControls, false);
+        Elements.setVisible(editor.asElement(), false);
+        Elements.setVisible(deploymentPreview.asElement(), false);
+        Elements.setVisible(unsupportedFileType.asElement(), false);
+        Elements.setVisible(previewContainer, false);
+        adjustHeight();
+    }
+
+    private void viewInEditor(ContentEntry contentEntry) {
+        Elements.setVisible(pleaseSelect.asElement(), false);
+        Elements.setVisible(editorControls, true);
+        Elements.setVisible(editor.asElement(), true);
+        Elements.setVisible(deploymentPreview.asElement(), false);
+        Elements.setVisible(unsupportedFileType.asElement(), false);
+        Elements.setVisible(previewContainer, false);
+        adjustHeight();
+
+        editorStatus.setTextContent(contentEntry.name + " - " + Format.humanReadableFileSize(contentEntry.fileSize));
+        downloadLink.setAttribute("href", downloadUrl(contentEntry)); //NON-NLS
+        presenter.loadContent(contentEntry, result -> {
+            editor.setModeFromPath(contentEntry.name);
+            editor.getEditor().getSession().setValue(result);
+        });
+    }
+
+    private void viewInPreview(ContentEntry contentEntry) {
+        Elements.setVisible(pleaseSelect.asElement(), false);
+        Elements.setVisible(editorControls, false);
+        Elements.setVisible(editor.asElement(), false);
+        Elements.setVisible(deploymentPreview.asElement(), false);
+        Elements.setVisible(unsupportedFileType.asElement(), false);
+        Elements.setVisible(previewContainer, true);
+        adjustHeight();
+
+        previewImage.setSrc(downloadUrl(contentEntry));
+    }
+
+    private void unsupportedFileType() {
+        Elements.setVisible(pleaseSelect.asElement(), false);
+        Elements.setVisible(editorControls, false);
+        Elements.setVisible(editor.asElement(), false);
+        Elements.setVisible(deploymentPreview.asElement(), false);
+        Elements.setVisible(unsupportedFileType.asElement(), true);
+        Elements.setVisible(previewContainer, false);
+        adjustHeight();
+    }
+
+
+    // ------------------------------------------------------ public API
+
+    @Override
+    public void setPresenter(final BrowseContentPresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    @Override
+    public void setContent(final JsArrayOf<Node<ContentEntry>> nodes) {
+        tree = new Tree<>(Ids.CONTENT_TREE, nodes);
+        Elements.removeChildrenFrom(treeContainer);
+        treeContainer.appendChild(tree.asElement());
+        tree.attach();
+        tree.onSelectionChange((event, selectionContext) -> {
+            if (!"ready".equals(selectionContext.action)) { //NON-NLS
+                onSelectNode(selectionContext);
+            }
+        });
+    }
+
+
+    // ------------------------------------------------------ event handler
+
+    private void collapse(final Node<ContentEntry> node) {
+        if (node != null) {
+            tree.select(node.id, true);
+        }
     }
 
     private void copyToClipboard(Clipboard clipboard) {
@@ -200,112 +369,47 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
         }
     }
 
-    @Override
-    public void setPresenter(final BrowseContentPresenter presenter) {
-        this.presenter = presenter;
-    }
+    private void onSelectNode(SelectionContext<ContentEntry> selection) {
+        if (!selection.selected.isEmpty()) {
+            if (selection.node.id.equals(Ids.CONTENT_TREE_ROOT)) {
+                deploymentPreview();
 
-    @Override
-    public void attach() {
-        super.attach();
-        Browser.getWindow().setOnresize(event -> adjustHeight());
-        adjustHeight();
-    }
+            } else {
+                ContentEntry contentEntry = selection.node.data;
+                if (contentEntry.directory) {
+                    directory();
 
-    private void adjustHeight() {
-        int height = Skeleton.applicationHeight();
-        int searchHeight = treeSearch.asElement().getOffsetHeight();
-        int treeHeight = height - 2 * MARGIN_BIG - searchHeight - 2 * MARGIN_SMALL;
-        int editorHeight = height - 2 * MARGIN_BIG - MARGIN_SMALL - editorControls.getOffsetHeight();
-        editorHeight = max(editorHeight, MIN_HEIGHT);
-
-        treeContainer.getStyle().setHeight(treeHeight, PX);
-        editor.asElement().getStyle().setHeight(editorHeight, PX);
-        editor.getEditor().resize();
-    }
-
-    private void collapse(final Node<ContentEntry> node) {
-        if (node != null) {
-            tree.select(node.id, true);
-        }
-    }
-
-    @Override
-    public void setContent(final JsArrayOf<Node<ContentEntry>> nodes) {
-        tree = new Tree<>(Ids.CONTENT_TREE, nodes);
-        Elements.removeChildrenFrom(treeContainer);
-        treeContainer.appendChild(tree.asElement());
-        tree.attach();
-        tree.onSelectionChange((event, selectionContext) -> {
-            if (!"ready".equals(selectionContext.action)) { //NON-NLS
-                boolean hasSelection = !selectionContext.selected.isEmpty();
-                if (hasSelection) {
-                    if (selectionContext.node.id.equals(Ids.CONTENT_TREE_ROOT)) {
-                        // root node
-                        ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, presenter.getContent());
-                        Operation operation = new Operation.Builder(READ_CONTENT, address).build();
-                        downloadLink.setAttribute("href", dispatcher.downloadUrl(operation)); //NON-NLS
-                        editorStatus.setTextContent(presenter.getContent());
-                        editor.getEditor().getSession().setValue("");
-                    } else {
-                        ContentEntry contentEntry = selectionContext.node.data;
-                        onSelect(contentEntry);
-                    }
                 } else {
-                    editorStatus.setTextContent(resources.constants().nothingSelected());
-                    editor.getEditor().getSession().setValue("");
+                    int index = contentEntry.name.lastIndexOf('.');
+                    String extension = index != -1 && index < contentEntry.name.length() - 1
+                            ? contentEntry.name.substring(index + 1) : "";
+
+                    if (EDITOR_FILE_TYPES.contains(extension)) {
+                        viewInEditor(contentEntry);
+
+                    } else if (IMAGE_FILE_TYPES.contains(extension)) {
+                        viewInPreview(contentEntry);
+
+                    } else {
+                        unsupportedFileType();
+                    }
                 }
             }
-        });
-    }
-
-    private void readUnsupported() {
-        Node<ContentEntry> selected = tree.api().getSelected();
-        if (selected != null) {
-            ContentEntry contentEntry = selected.data;
-            presenter.loadContent(contentEntry, result -> {
-                editor.setModeFromPath(contentEntry.name);
-                editor.getEditor().getSession().setValue(result);
-            });
-        }
-    }
-
-    private void onSelect(ContentEntry contentEntry) {
-        updateStatus(contentEntry);
-        Elements.setVisible(unsupported, !(isSupported(contentEntry.name) || contentEntry.directory));
-
-        if (contentEntry.directory) {
-            editor.getEditor().getSession().setValue("");
 
         } else {
-            ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, presenter.getContent());
-            Operation operation = new Operation.Builder(READ_CONTENT, address).param(PATH, contentEntry.path).build();
-            downloadLink.setAttribute("href", dispatcher.downloadUrl(operation)); //NON-NLS
-
-            if (isSupported(contentEntry.name)) {
-                presenter.loadContent(contentEntry, result -> {
-                    editor.setModeFromPath(contentEntry.name);
-                    editor.getEditor().getSession().setValue(result);
-                });
-            } else {
-                editor.getEditor().getSession().setValue("");
-            }
+            noSelection();
         }
     }
 
-    private void updateStatus(ContentEntry contentEntry) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(contentEntry.name).append(" - ");
-        if (contentEntry.directory) {
-            builder.append(resources.constants().directory());
-        } else {
-            builder.append(Format.humanReadableFileSize(contentEntry.fileSize));
-        }
-        editorStatus.setTextContent(builder.toString());
-    }
 
-    private boolean isSupported(String name) {
-        int index = name.lastIndexOf('.');
-        return index != -1 && SUPPORTED_FILE_TYPES.contains(name.substring(index + 1));
+    // ------------------------------------------------------ helper methods
+
+    private String downloadUrl(ContentEntry contentEntry) {
+        ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, presenter.getContent());
+        Operation.Builder builder = new Operation.Builder(READ_CONTENT, address);
+        if (contentEntry != null) {
+            builder.param(PATH, contentEntry.path);
+        }
+        return dispatcher.downloadUrl(builder.build());
     }
 }

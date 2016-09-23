@@ -57,7 +57,7 @@ public class BrowseContentPresenter
     // @formatter:on
 
     @SuppressWarnings("HardCodedStringLiteral")
-    static final Set<String> SUPPORTED_FILE_TYPES = Sets.newHashSet(
+    static final Set<String> EDITOR_FILE_TYPES = Sets.newHashSet(
             "bash",
             "css",
             "htm",
@@ -94,6 +94,19 @@ public class BrowseContentPresenter
             "shtml",
             "xhtml",
             "xml");
+
+    @SuppressWarnings("HardCodedStringLiteral")
+    static final Set<String> IMAGE_FILE_TYPES = Sets.newHashSet(
+            "bmp",
+            "gif",
+            "ico",
+            "img",
+            "jpg",
+            "jpeg",
+            "png",
+            "svg",
+            "tiff",
+            "webp");
 
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
