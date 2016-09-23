@@ -287,6 +287,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String play();
     String pool();
     String preparedStatementCache();
+    String preview();
     String processors();
     String productName();
     String productVersion();

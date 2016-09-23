@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.deployment;
 
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,9 +27,6 @@ import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Ids;
 
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
@@ -36,37 +35,39 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
  */
 class ContentParser {
 
+    private static final Comparator<ContentEntry> BY_NAME = (c1, c2) -> c1.name.compareTo(c2.name);
+    private static final Comparator<ContentEntry> BY_DEPTH = (c1, c2) -> Integer.compare(c1.depth, c2.depth);
+
     private static final String DIRECTORY = "directory";
     private static final String FILE_SIZE = "file-size";
 
     void parse(JsArrayOf<Node<ContentEntry>> nodes, Node<ContentEntry> root, List<ModelNode> content) {
         nodes.push(root);
-        List<ContentEntry> contentEntries = content.stream().map(this::contentEntry).collect(toList());
-        Map<String, ContentEntry> byPath = contentEntries.stream()
-                .collect(toMap(contentEntry -> contentEntry.path, identity()));
-        readChildren(nodes, root, contentEntries, byPath);
-    }
 
-    private void readChildren(JsArrayOf<Node<ContentEntry>> nodes, Node<ContentEntry> parent,
-            List<ContentEntry> contentEntries, Map<String, ContentEntry> checklist) {
+        Map<String, Node<ContentEntry>> nodesByPath = new HashMap<>();
+        content.stream()
+                .map(this::contentEntry)
+                .filter(contentEntry -> contentEntry.directory)
+                .sorted(BY_DEPTH.thenComparing(BY_NAME))
+                .forEach(directory -> {
+                    String parentPath = parentPath(directory);
+                    Node<ContentEntry> parent = parentPath == null ? root : nodesByPath.get(parentPath);
 
-        contentEntries.stream()
-                .filter(contentEntry -> checklist.containsKey(contentEntry.path))
-                .forEach(contentEntry -> {
-                    checklist.remove(contentEntry.path);
+                    if (parent != null) {
+                        Node<ContentEntry> node = pushFolder(nodes, parent, directory);
+                        nodesByPath.put(directory.path, node);
+                    }
+                });
 
-                    if (contentEntry.directory) {
-                        Node<ContentEntry> node = pushFolder(nodes, parent, contentEntry);
-                        List<ContentEntry> children = checklist.values().stream()
-                                .filter(ce -> ce.path.startsWith(contentEntry.path) &&
-                                        ce.depth == contentEntry.depth + 1)
-                                .collect(toList());
-                        if (!children.isEmpty()) {
-                            readChildren(nodes, node, children, checklist);
-                        }
-
-                    } else {
-                        pushEntry(nodes, parent, contentEntry);
+        content.stream()
+                .map(this::contentEntry)
+                .filter(contentEntry -> !contentEntry.directory)
+                .sorted(BY_NAME)
+                .forEach(file -> {
+                    String parentPath = parentPath(file);
+                    Node<ContentEntry> parent = parentPath == null ? root : nodesByPath.get(parentPath);
+                    if (parent != null) {
+                        pushEntry(nodes, parent, file);
                     }
                 });
     }
@@ -104,5 +105,16 @@ class ContentParser {
                 .build();
         nodes.push(node);
         return node;
+    }
+
+    private String parentPath(ContentEntry contentEntry) {
+        String path = contentEntry.path.endsWith("/")
+                ? contentEntry.path.substring(0, contentEntry.path.length() - 1)
+                : contentEntry.path;
+        int index = path.lastIndexOf('/');
+        if (index != -1) {
+            return path.substring(0, index + 1);
+        }
+        return null;
     }
 }

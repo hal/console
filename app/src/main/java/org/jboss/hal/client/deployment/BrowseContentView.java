@@ -68,6 +68,8 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
     private static final String EDITOR_CONTROLS = "contentHeader";
     private static final String EDITOR_STATUS = "editorStatus";
     private static final String PREVIEW_CONTAINER = "prieviewContainer";
+    private static final String PREVIEW_HEADER = "prieviewContainer";
+    private static final String PREVIEW_IMAGE_CONTAINER = "prieviewImageContainer";
     private static final String PREVIEW_IMAGE = "prieviewImage";
     private static final String TREE_CONTAINER = "treeContainer";
     private static final int MIN_HEIGHT = 70;
@@ -88,12 +90,14 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
     private Element copyToClipboardLink;
     private Element downloadLink;
     private Element previewContainer;
+    private Element previewHeader;
+    private Element previewImageContainer;
     private ImageElement previewImage;
 
     private BrowseContentPresenter presenter;
 
 
-    // ------------------------------------------------------ ui stuff
+    // ------------------------------------------------------ ui setup
 
     @Inject
     public BrowseContentView(final Dispatcher dispatcher, final Resources resources) {
@@ -172,8 +176,13 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
                         .add(pleaseSelect)
                         .add(deploymentPreview)
                         .add(unsupportedFileType)
-                        .div().style("overflow: scroll").rememberAs(PREVIEW_CONTAINER)
-                            .add("img").css(imgResponsive, imgThumbnail).rememberAs(PREVIEW_IMAGE)
+                        .div().rememberAs(PREVIEW_CONTAINER)
+                            .h(1).rememberAs(PREVIEW_HEADER)
+                                .textContent(resources.constants().preview())
+                            .end()
+                            .div().rememberAs(PREVIEW_IMAGE_CONTAINER).style("overflow: scroll")
+                                .add("img").css(imgResponsive, imgThumbnail).rememberAs(PREVIEW_IMAGE)
+                            .end()
                         .end()
                         .div().css(CSS.editorControls, marginBottomSmall).rememberAs(EDITOR_CONTROLS)
                             .add(contentSearch)
@@ -214,6 +223,8 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
         copyToClipboardLink = builder.referenceFor(COPY_TO_CLIPBOARD);
         downloadLink = builder.referenceFor(DOWNLOAD);
         previewContainer = builder.referenceFor(PREVIEW_CONTAINER);
+        previewHeader = builder.referenceFor(PREVIEW_HEADER);
+        previewImageContainer = builder.referenceFor(PREVIEW_IMAGE_CONTAINER);
         previewImage = builder.referenceFor(PREVIEW_IMAGE);
 
         Clipboard clipboard = new Clipboard(copyToClipboardLink);
@@ -225,6 +236,8 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
         Elements.setVisible(deploymentPreview.asElement(), false);
         Elements.setVisible(unsupportedFileType.asElement(), false);
         Elements.setVisible(previewContainer, false);
+        Elements.setVisible(previewImageContainer, false);
+        Elements.setVisible(previewImage, false);
         initElement(root);
     }
 
@@ -239,13 +252,15 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
     private void adjustHeight() {
         int height = Skeleton.applicationHeight();
         int treeSearchHeight = treeSearch.asElement().getOffsetHeight();
+        int previewHeaderHeight = previewHeader.getOffsetHeight();
+
         int treeHeight = height - 2 * MARGIN_BIG - treeSearchHeight - 2 * MARGIN_SMALL;
-        int previewHeight = height - 2 * MARGIN_BIG;
+        int previewHeight = height - 2 * MARGIN_BIG - previewHeaderHeight;
         int editorHeight = height - 2 * MARGIN_BIG - MARGIN_SMALL - editorControls.getOffsetHeight();
         editorHeight = max(editorHeight, MIN_HEIGHT);
 
         treeContainer.getStyle().setHeight(treeHeight, PX);
-        previewContainer.getStyle().setHeight(previewHeight, PX);
+        previewImageContainer.getStyle().setHeight(previewHeight, PX);
         editor.asElement().getStyle().setHeight(editorHeight, PX);
         editor.getEditor().resize();
     }
@@ -260,6 +275,8 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
         Elements.setVisible(deploymentPreview.asElement(), false);
         Elements.setVisible(unsupportedFileType.asElement(), false);
         Elements.setVisible(previewContainer, false);
+        Elements.setVisible(previewImageContainer, false);
+        Elements.setVisible(previewImage, false);
         adjustHeight();
     }
 
@@ -270,6 +287,8 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
         Elements.setVisible(deploymentPreview.asElement(), true);
         Elements.setVisible(unsupportedFileType.asElement(), false);
         Elements.setVisible(previewContainer, false);
+        Elements.setVisible(previewImageContainer, false);
+        Elements.setVisible(previewImage, false);
         adjustHeight();
 
         deploymentPreview.setHeader(presenter.getContent());
@@ -284,6 +303,8 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
         Elements.setVisible(deploymentPreview.asElement(), false);
         Elements.setVisible(unsupportedFileType.asElement(), false);
         Elements.setVisible(previewContainer, false);
+        Elements.setVisible(previewImageContainer, false);
+        Elements.setVisible(previewImage, false);
         adjustHeight();
     }
 
@@ -294,6 +315,8 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
         Elements.setVisible(deploymentPreview.asElement(), false);
         Elements.setVisible(unsupportedFileType.asElement(), false);
         Elements.setVisible(previewContainer, false);
+        Elements.setVisible(previewImageContainer, false);
+        Elements.setVisible(previewImage, false);
         adjustHeight();
 
         editorStatus.setTextContent(contentEntry.name + " - " + Format.humanReadableFileSize(contentEntry.fileSize));
@@ -311,6 +334,8 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
         Elements.setVisible(deploymentPreview.asElement(), false);
         Elements.setVisible(unsupportedFileType.asElement(), false);
         Elements.setVisible(previewContainer, true);
+        Elements.setVisible(previewImageContainer, true);
+        Elements.setVisible(previewImage, true);
         adjustHeight();
 
         previewImage.setSrc(downloadUrl(contentEntry));
@@ -323,6 +348,8 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
         Elements.setVisible(deploymentPreview.asElement(), false);
         Elements.setVisible(unsupportedFileType.asElement(), true);
         Elements.setVisible(previewContainer, false);
+        Elements.setVisible(previewImageContainer, false);
+        Elements.setVisible(previewImage, false);
         adjustHeight();
     }
 
@@ -342,7 +369,7 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
         tree.attach();
         tree.onSelectionChange((event, selectionContext) -> {
             if (!"ready".equals(selectionContext.action)) { //NON-NLS
-                onSelectNode(selectionContext);
+                selectNode(selectionContext);
             }
         });
     }
@@ -369,7 +396,7 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
         }
     }
 
-    private void onSelectNode(SelectionContext<ContentEntry> selection) {
+    private void selectNode(SelectionContext<ContentEntry> selection) {
         if (!selection.selected.isEmpty()) {
             if (selection.node.id.equals(Ids.CONTENT_TREE_ROOT)) {
                 deploymentPreview();
