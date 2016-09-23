@@ -15,8 +15,10 @@
  */
 package org.jboss.hal.client.deployment;
 
+import java.util.Set;
 import javax.inject.Inject;
 
+import com.google.common.collect.Sets;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
@@ -36,11 +38,7 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.BROWSE_CONTENT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CONTENT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CONTENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Harald Pehl
@@ -57,6 +55,45 @@ public class BrowseContentPresenter
         void setContent(JsArrayOf<Node<ContentEntry>> nodes);
     }
     // @formatter:on
+
+    @SuppressWarnings("HardCodedStringLiteral")
+    static final Set<String> SUPPORTED_FILE_TYPES = Sets.newHashSet(
+            "bash",
+            "css",
+            "htm",
+            "html",
+            "ini",
+            "java",
+            "js",
+            "jsm",
+            "jsx",
+            "json",
+            "jsf",
+            "jsp",
+            "jsx",
+            "less",
+            "md",
+            "markdown",
+            "MF",
+            "php",
+            "php",
+            "php3",
+            "php4",
+            "php5",
+            "phps",
+            "phpt",
+            "phtml",
+            "properties",
+            "rb",
+            "ru",
+            "sh",
+            "sql",
+            "txt",
+            "ts",
+            "typescript",
+            "shtml",
+            "xhtml",
+            "xml");
 
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
@@ -121,5 +158,9 @@ public class BrowseContentPresenter
                     .build();
             dispatcher.download(operation, successCallback);
         }
+    }
+
+    String getContent() {
+        return content;
     }
 }

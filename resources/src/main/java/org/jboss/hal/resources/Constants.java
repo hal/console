@@ -93,6 +93,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String deployments();
     String description();
     String details();
+    String directory();
     String disable();
     String disabled();
     String download();
@@ -360,6 +361,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String unknownState();
     String unmanaged();
     String unpin();
+    String unsupportedFileType();
+    String unsupportedFileTypeDesc();
     String uploadContent();
     String uploadDeployment();
     String uploadError();

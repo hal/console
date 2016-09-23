@@ -39,8 +39,10 @@ public interface UIConstants {
 
 
     String ALERT = "alert";
+    String BODY = "body";
     String BUTTON = "button";
     String COLLAPSE = "collapse";
+    String CONTAINER = "container";
     String CONTROLS = "controls";
     String DISMISS = "dismiss";
     String DROPDOWN = "dropdown";
@@ -66,5 +68,6 @@ public interface UIConstants {
     String TABLIST = "tablist";
     String TARGET = "target";
     String TOGGLE = "toggle";
+    String TOP = "top";
     String TOOLTIP = "tooltip";
 }

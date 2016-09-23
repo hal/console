@@ -87,6 +87,7 @@ public interface Ids {
     String CONTENT_SEARCH = build(CONTENT, "search");
     String CONTENT_TREE = build(CONTENT, "tree");
     String CONTENT_TREE_ROOT = build(CONTENT, "tree-root");
+    String CONTENT_TREE_SEARCH = build(CONTENT, "tree", "search");
     String CONTENT_UNMANAGED_ADD = build(CONTENT, "unmanaged", ADD_SUFFIX);
 
     String DATA_SOURCE_CONFIGURATION = "data-source-configuration";

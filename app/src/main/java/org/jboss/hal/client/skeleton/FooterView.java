@@ -19,8 +19,6 @@ import javax.annotation.PostConstruct;
 
 import com.gwtplatform.mvp.client.ViewImpl;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
-import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.DataElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -41,7 +39,6 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.Collections.singletonList;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.disabled;
 import static org.jboss.hal.resources.CSS.pulse;
@@ -110,8 +107,8 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
                     version.toString());
             updateAvailable.setTitle(message);
             updateAvailable.getDataset().setAt(UIConstants.TOGGLE, UIConstants.TOOLTIP);
-            updateAvailable.getDataset().setAt(UIConstants.PLACEMENT, "top");
-            updateAvailable.getDataset().setAt("container", "body"); //NON-NLS
+            updateAvailable.getDataset().setAt(UIConstants.PLACEMENT, UIConstants.TOP);
+            updateAvailable.getDataset().setAt(UIConstants.CONTAINER, UIConstants.BODY);
             Tooltip.element(updateAvailable).init();
             Elements.setVisible(updateAvailable, true);
         }

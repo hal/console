@@ -91,6 +91,9 @@ public interface CSS {
     String eapHomeTitle = "eap-home-title";
     String editing = "editing";
     String editor = "editor";
+    String editorButtons = "editor-buttons";
+    String editorControls = "editor-controls";
+    String editorStatus = "editor-status";
     String error = "error";
     String errorCircleO = "error-circle-o";
     String equals = "equals";
@@ -167,6 +170,7 @@ public interface CSS {
     String macroEditor = "macro-editor";
     String macroList = "macro-list";
     String marginBottom5 = "margin-bottom-5";
+    String marginBottomLarge = "margin-bottom-large";
     String marginRight5 = "margin-right-5";
     String marginRightSmall = "margin-right-small";
     String marginLeft5 = "margin-left-5";
