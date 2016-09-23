@@ -58,7 +58,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LEVEL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.resources.CSS.fontAwesome;
-import static org.jboss.hal.resources.CSS.marginTop20;
+import static org.jboss.hal.resources.CSS.marginTopLarge;
 
 /**
  * @author Harald Pehl
@@ -125,7 +125,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 .icon(fontAwesome("sitemap"))
                 .primaryAction(mbuiContext.resources().constants().add(), () -> addRootLogger())
                 .build();
-        noRootLogger.asElement().getClassList().add(marginTop20);
+        noRootLogger.asElement().getClassList().add(marginTopLarge);
 
         // hack which relies on the element hierarchy given in the template. will break if you change that hierarchy.
         rootLoggerForm.asElement().getParentElement().appendChild(noRootLogger.asElement());

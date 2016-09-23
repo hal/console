@@ -21,7 +21,8 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.dmr.dispatch.Download;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
@@ -30,6 +31,7 @@ import org.jboss.hal.resources.Ids;
 import static org.jboss.hal.client.runtime.subsystem.logging.LogFilePresenter.EXTERNAL_PARAM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 
 /**
@@ -49,17 +51,17 @@ public class LogFiles {
      */
     static final int LINES = 2000;
 
-    private final Download download;
+    private final Dispatcher dispatcher;
     private final Environment environment;
     private final StatementContext statementContext;
     private final Places places;
 
     @Inject
-    public LogFiles(final Download download,
+    public LogFiles(final Dispatcher dispatcher,
             final Environment environment,
             final StatementContext statementContext,
             final Places places) {
-        this.download = download;
+        this.dispatcher = dispatcher;
         this.environment = environment;
         this.statementContext = statementContext;
         this.places = places;
@@ -71,7 +73,8 @@ public class LogFiles {
 
     String downloadUrl(String name) {
         ResourceAddress address = AddressTemplates.LOG_FILE_TEMPLATE.resolve(statementContext, name);
-        return download.url(address, "attribute", NAME, "stream"); //NON-NLS
+        Operation operation = new Operation.Builder(READ_ATTRIBUTE_OPERATION, address).param(NAME, "stream").build();
+        return dispatcher.downloadUrl(operation);
     }
 
     String externalUrl(String name) {

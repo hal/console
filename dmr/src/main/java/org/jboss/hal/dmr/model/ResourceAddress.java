@@ -90,6 +90,10 @@ public class ResourceAddress extends ModelNode {
         return isDefined() ? asList().size() : 0;
     }
 
+    public boolean isEmpty() {
+        return size() == 0;
+    }
+
     public ResourceAddress replaceValue(String name, String newValue) {
         ResourceAddress newAddress = new ResourceAddress();
         for (Property property : asPropertyList()) {

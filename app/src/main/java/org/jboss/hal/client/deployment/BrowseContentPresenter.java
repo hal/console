@@ -28,6 +28,7 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -38,6 +39,8 @@ import org.jboss.hal.resources.Ids;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.BROWSE_CONTENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CONTENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CONTENT;
 
 /**
  * @author Harald Pehl
@@ -50,7 +53,7 @@ public class BrowseContentPresenter
     @NameToken(NameTokens.BROWSE_CONTENT)
     public interface MyProxy extends ProxyPlace<BrowseContentPresenter> {}
 
-    public interface MyView extends PatternFlyView {
+    public interface MyView extends PatternFlyView, HasPresenter<BrowseContentPresenter> {
         void setContent(JsArrayOf<Node<ContentEntry>> nodes);
     }
     // @formatter:on
@@ -74,6 +77,12 @@ public class BrowseContentPresenter
     }
 
     @Override
+    protected void onBind() {
+        super.onBind();
+        getView().setPresenter(this);
+    }
+
+    @Override
     public void prepareFromRequest(final PlaceRequest request) {
         super.prepareFromRequest(request);
         content = request.getParameter(CONTENT, null);
@@ -90,7 +99,7 @@ public class BrowseContentPresenter
         return finderPathFactory.content(content);
     }
 
-    private void loadContent() {
+    void loadContent() {
         Operation operation = new Operation.Builder(BROWSE_CONTENT, new ResourceAddress().add(DEPLOYMENT, content))
                 .build();
         dispatcher.execute(operation, result -> {
@@ -103,5 +112,14 @@ public class BrowseContentPresenter
             contentParser.parse(nodes, root, result.asList());
             getView().setContent(nodes);
         });
+    }
+
+    void loadContent(ContentEntry contentEntry, Dispatcher.SuccessCallback<String> successCallback) {
+        if (!contentEntry.directory) {
+            Operation operation = new Operation.Builder(READ_CONTENT, new ResourceAddress().add(DEPLOYMENT, content))
+                    .param(PATH, contentEntry.path)
+                    .build();
+            dispatcher.download(operation, successCallback);
+        }
     }
 }

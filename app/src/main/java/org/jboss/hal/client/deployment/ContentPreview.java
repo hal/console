@@ -34,7 +34,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
 import static org.jboss.hal.resources.CSS.clickable;
-import static org.jboss.hal.resources.CSS.marginLeft4;
+import static org.jboss.hal.resources.CSS.marginLeft5;
 
 /**
  * @author Harald Pehl
@@ -75,7 +75,7 @@ class ContentPreview extends PreviewContent<Content> {
                     .span()
                         .innerHtml(resources.messages().undeployedContent(content.getName()))
                     .end()
-                    .a().css(clickable, marginLeft4).on(click, event -> column.deploy(content))
+                    .a().css(clickable, marginLeft5).on(click, event -> column.deploy(content))
                         .textContent(resources.constants().deploy())
                     .end()
                 .end()

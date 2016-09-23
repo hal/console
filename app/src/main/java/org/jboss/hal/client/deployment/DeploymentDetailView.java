@@ -33,7 +33,7 @@ import org.jboss.hal.resources.Resources;
 import static org.jboss.hal.client.deployment.Deployment.Status.OK;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.resources.CSS.fontAwesome;
-import static org.jboss.hal.resources.CSS.marginTop20;
+import static org.jboss.hal.resources.CSS.marginTopLarge;
 import static org.jboss.hal.resources.CSS.stopCircleO;
 
 /**
@@ -57,13 +57,13 @@ public class DeploymentDetailView extends PatternFlyViewImpl implements Deployme
         noReferenceServer = new EmptyState.Builder(resources.constants().noReferenceServer())
                 .icon(CSS.pfIcon("server"))
                 .build();
-        noReferenceServer.asElement().getClassList().add(marginTop20);
+        noReferenceServer.asElement().getClassList().add(marginTopLarge);
         Elements.setVisible(noReferenceServer.asElement(), false);
 
         notActive = new EmptyState.Builder(resources.constants().notActive())
                 .icon(fontAwesome(stopCircleO))
                 .build();
-        notActive.asElement().getClassList().add(marginTop20);
+        notActive.asElement().getClassList().add(marginTopLarge);
         Elements.setVisible(notActive.asElement(), false);
 
         ArrayList<Element> elements = Lists.newArrayList(modelBrowser.asElements());

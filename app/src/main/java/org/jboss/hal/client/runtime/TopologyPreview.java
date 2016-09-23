@@ -137,7 +137,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         previewBuilder()
             .p()
                 .a().css(clickable, pullRight).on(click, event -> update(null))
-                    .span().css(fontAwesome("refresh"), marginRight4).end()
+                    .span().css(fontAwesome("refresh"), marginRight5).end()
                     .span().textContent(resources.constants().refresh()).end()
                 .end()
             .end()
@@ -389,7 +389,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                             .aria(HAS_POPUP, "true") //NON-NLS
                             .title(host.getName());
                             if (host.isDomainController()) {
-                                builder.span().css(fontAwesome("star"), marginRight4).title(Names.DOMAIN_CONTROLLER).end();
+                                builder.span().css(fontAwesome("star"), marginRight5).title(Names.DOMAIN_CONTROLLER).end();
                             }
                             builder.span().textContent(host.getName()).end()
                         .end()

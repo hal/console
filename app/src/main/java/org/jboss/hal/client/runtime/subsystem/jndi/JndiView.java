@@ -54,8 +54,6 @@ public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView
     private static final String JAVA_CONTEXTS = "java: contexts";
     private static final String APPLICATIONS = "applications";
     private static final String HEADER = "header";
-    private static final String REFRESH_ELEMENT = "refreshElement";
-    private static final String COLLAPSE_ELEMENT = "collapseElement";
     private static final String TREE_CONTAINER = "treeContainer";
     private static final String HINT = "hint";
 
@@ -97,13 +95,11 @@ public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView
                 .column(4)
                     .h(1).rememberAs(HEADER).textContent(resources.constants().jndiTree()).end()
                     .div().css(flexRow)
-                        .div().css(btnGroup, marginRight10)
-                            .button().css(btn, btnDefault).rememberAs(REFRESH_ELEMENT)
-                                .on(click, event -> presenter.load())
+                        .div().css(btnGroup, marginRightSmall)
+                            .button().css(btn, btnDefault).on(click, event -> presenter.load())
                                 .add("i").css(fontAwesome(CSS.refresh))
                             .end()
-                            .button().css(btn, btnDefault).rememberAs(COLLAPSE_ELEMENT)
-                                .on(click, event -> collapse(tree.api().getSelected()))
+                            .button().css(btn, btnDefault).on(click, event -> collapse(tree.api().getSelected()))
                                 .add("i").css(fontAwesome("minus"))
                             .end()
                         .end()

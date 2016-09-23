@@ -82,7 +82,9 @@ public interface Ids {
     String CONTENT = "content";
     String CONTENT_ADD = build(CONTENT, ADD_SUFFIX);
     String CONTENT_ADD_ACTIONS = build(CONTENT, "add-actions");
+    String CONTENT_EDITOR = build(CONTENT, "editor");
     String CONTENT_REFRESH = build(CONTENT, REFRESH_SUFFIX);
+    String CONTENT_SEARCH = build(CONTENT, "search");
     String CONTENT_TREE = build(CONTENT, "tree");
     String CONTENT_TREE_ROOT = build(CONTENT, "tree-root");
     String CONTENT_UNMANAGED_ADD = build(CONTENT, "unmanaged", ADD_SUFFIX);

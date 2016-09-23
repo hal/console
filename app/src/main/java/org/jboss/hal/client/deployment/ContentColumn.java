@@ -59,7 +59,6 @@ import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.dispatch.Download;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
@@ -115,7 +114,6 @@ public class ContentColumn extends FinderColumn<Content> {
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
             final Environment environment,
-            final Download download,
             final Dispatcher dispatcher,
             final EventBus eventBus,
             final PlaceManager placeManager,
@@ -222,9 +220,9 @@ public class ContentColumn extends FinderColumn<Content> {
                     actions.add(new ItemAction<>(resources.constants().replace(), itm -> replace(itm)));
                 }
                 if (ManagementModel.supportsReadContentFromDeployment(environment.getManagementVersion())) {
-                    String address = DEPLOYMENT + "/" + item.getName();
-                    actions.add(
-                            new ItemAction<>(resources.constants().download(), download.url(address, READ_CONTENT)));
+                    ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, item.getName());
+                    Operation operation = new Operation.Builder(READ_CONTENT, address).build();
+                    actions.add(new ItemAction<>(resources.constants().download(), dispatcher.downloadUrl(operation)));
                 }
                 if (item.getServerGroupDeployments().isEmpty()) {
                     actions.add(new ItemAction<>(resources.constants().remove(), itm -> remove(itm)));

@@ -128,7 +128,7 @@ class DataSourcePreview extends PreviewContent<DataSource> {
             .add(disabledWarning)
             .div().css(clearfix)
                 .a().rememberAs(REFRESH_ELEMENT).css(clickable, pullRight).on(click, event -> update(null))
-                    .span().css(fontAwesome("refresh"), marginRight4).end()
+                    .span().css(fontAwesome("refresh"), marginRight5).end()
                     .span().textContent(resources.constants().refresh()).end()
                 .end()
             .end()

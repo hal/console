@@ -402,7 +402,7 @@ public class Wizard<C, S extends Enum<S>> {
                 .p().css(blankSlatePfSecondaryAction).innerHtml(text);
         if (error != null) {
             String id = Ids.uniqueId();
-            builder.a("#" + id).css(marginLeft4)
+            builder.a("#" + id).css(marginLeft5)
                     .data(UIConstants.TOGGLE, UIConstants.COLLAPSE)
                     .aria(UIConstants.EXPANDED, "false")
                     .aria(UIConstants.CONTROLS, id)

@@ -95,7 +95,7 @@ public class DeployContentDialog2 {
             .add(table)
             .div()
                 .input(checkbox).rememberAs(ENABLE).id(Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)
-                .label().css(CSS.marginLeft4)
+                .label().css(CSS.marginLeft5)
                     .attr("for", Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)
                     .textContent(resources.constants().enableDeployment())
                 .end()

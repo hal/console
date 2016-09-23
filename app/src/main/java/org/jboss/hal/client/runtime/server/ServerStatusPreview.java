@@ -80,7 +80,7 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
             .end()
             .div().css(clearfix)
                 .a().css(clickable, pullRight).on(click, event -> update(null))
-                    .span().css(fontAwesome("refresh"), marginRight4).end()
+                    .span().css(fontAwesome("refresh"), marginRight5).end()
                     .span().textContent(resources.constants().refresh()).end()
                 .end()
             .end()
