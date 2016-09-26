@@ -65,7 +65,7 @@ public class ServerGroupDeploymentPresenter
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(NameTokens.SERVER_GROUP_DEPLOYMENT_DETAIL)
+    @NameToken(NameTokens.SERVER_GROUP_DEPLOYMENT)
     public interface MyProxy extends ProxyPlace<ServerGroupDeploymentPresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<ServerGroupDeploymentPresenter> {

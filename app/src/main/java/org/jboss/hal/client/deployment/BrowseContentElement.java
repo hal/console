@@ -38,6 +38,7 @@ import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.tree.SelectionChangeHandler.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
 import org.jboss.hal.core.ui.Skeleton;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -138,6 +139,7 @@ class BrowseContentElement implements IsElement, Attachable {
     private final Dispatcher dispatcher;
     private final Resources resources;
 
+    private final ContentParser contentParser;
     private final Search treeSearch;
     private Tree<ContentEntry> tree;
     private final EmptyState pleaseSelect;
@@ -166,6 +168,7 @@ class BrowseContentElement implements IsElement, Attachable {
             final RefreshCallback refreshCallback) {
         this.dispatcher = dispatcher;
         this.resources = resources;
+        this.contentParser = new ContentParser();
         this.surroundingHeight = 0;
 
         treeSearch = new Search.Builder(Ids.CONTENT_TREE_SEARCH,
@@ -305,6 +308,7 @@ class BrowseContentElement implements IsElement, Attachable {
     public void attach() {
         editor.attach();
         editor.getEditor().$blockScrolling = 1;
+        Browser.getWindow().setOnresize(event -> adjustHeight());
     }
 
     @Override
@@ -323,19 +327,31 @@ class BrowseContentElement implements IsElement, Attachable {
         int editorHeight = height - 2 * MARGIN_BIG - MARGIN_SMALL - editorControls.getOffsetHeight() -
                 surroundingHeight;
         int previewHeaderHeight = previewHeader.getOffsetHeight();
-        int previewHeight = height - 2 * MARGIN_BIG - previewHeaderHeight - surroundingHeight;
+        int previewHeight = height - 2 * MARGIN_BIG - MARGIN_SMALL - previewHeaderHeight - surroundingHeight;
 
         treeContainer.getStyle().setHeight(treeHeight, PX);
-        editor.asElement().getStyle().setHeight(max(editorHeight, MIN_HEIGHT), PX);
-        editor.getEditor().resize();
-        previewImageContainer.getStyle().setHeight(previewHeight, PX);
+        if (Elements.isVisible(editor.asElement())) {
+            editor.asElement().getStyle().setHeight(max(editorHeight, MIN_HEIGHT), PX);
+            editor.getEditor().resize();
+        }
+        if (Elements.isVisible(previewImageContainer)) {
+            previewImageContainer.getStyle().setHeight(previewHeight, PX);
+        }
     }
 
 
     // ------------------------------------------------------ ui visibility / states
 
-    void setContent(final String content, final JsArrayOf<Node<ContentEntry>> nodes) {
+    void setContent(final String content, final ModelNode browseContentResult) {
         this.content = content;
+
+        JsArrayOf<Node<ContentEntry>> nodes = JsArrayOf.create();
+        Node<ContentEntry> root = new Node.Builder<>(Ids.CONTENT_TREE_ROOT, content, new ContentEntry())
+                .root()
+                .folder()
+                .open()
+                .build();
+        contentParser.parse(nodes, root, browseContentResult.asList());
 
         tree = new Tree<>(Ids.CONTENT_TREE, nodes);
         Elements.removeChildrenFrom(treeContainer);

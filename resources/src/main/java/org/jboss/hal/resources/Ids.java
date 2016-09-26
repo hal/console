@@ -85,6 +85,7 @@ public interface Ids {
     String CONTENT_EDITOR = build(CONTENT, "editor");
     String CONTENT_REFRESH = build(CONTENT, REFRESH_SUFFIX);
     String CONTENT_SEARCH = build(CONTENT, "search");
+    String CONTENT_TAB = build(CONTENT, TAB_SUFFIX);
     String CONTENT_TREE = build(CONTENT, "tree");
     String CONTENT_TREE_ROOT = build(CONTENT, "tree-root");
     String CONTENT_TREE_SEARCH = build(CONTENT, "tree", "search");
@@ -112,11 +113,10 @@ public interface Ids {
     String DATA_SOURCE_RUNTIME_POOL_TAB = build(DATA_SOURCE_RUNTIME, "pool", TAB_SUFFIX);
     String DEPLOYMENT = "deployment";
     String DEPLOYMENT_ADD_ACTIONS = build(DEPLOYMENT, "add-actions");
-    String DEPLOYMENT_BROWSE_BY = "deployment-browse-by"; // must be a constant expression!
-    String DEPLOYMENT_DETAIL_CONTENT_TAB = build(DEPLOYMENT, "detail", "content", TAB_SUFFIX);
-    String DEPLOYMENT_DETAIL_RESOURCES_TAB = build(DEPLOYMENT, "detail", "resources", TAB_SUFFIX);
+    String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
     String DEPLOYMENT_REFRESH = build(DEPLOYMENT, REFRESH_SUFFIX);
     String DEPLOYMENT_SERVER_GROUP = "deployment-sg";
+    String DEPLOYMENT_TAB = build(DEPLOYMENT, TAB_SUFFIX);
     String DEPLOYMENT_UNMANAGED_ADD = build(DEPLOYMENT, "unmanaged", ADD_SUFFIX);
     String DEPLOYMENT_UPLOAD = build(DEPLOYMENT, "upload");
     String DOMAIN_BROWSE_BY = "domain-browse-by";

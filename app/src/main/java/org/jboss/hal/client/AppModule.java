@@ -62,6 +62,8 @@ import org.jboss.hal.client.deployment.DeploymentPresenter;
 import org.jboss.hal.client.deployment.DeploymentView;
 import org.jboss.hal.client.deployment.ServerGroupDeploymentPresenter;
 import org.jboss.hal.client.deployment.ServerGroupDeploymentView;
+import org.jboss.hal.client.deployment.StandaloneDeploymentPresenter;
+import org.jboss.hal.client.deployment.StandaloneDeploymentView;
 import org.jboss.hal.client.homepage.HomepagePresenter;
 import org.jboss.hal.client.homepage.HomepageView;
 import org.jboss.hal.client.patching.PatchingPresenter;
@@ -181,11 +183,6 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 DeploymentView.class,
                 DeploymentPresenter.MyProxy.class);
 
-        bindPresenter(ServerGroupDeploymentPresenter.class,
-                ServerGroupDeploymentPresenter.MyView.class,
-                ServerGroupDeploymentView.class,
-                ServerGroupDeploymentPresenter.MyProxy.class);
-
         bindTemplatedPresenter(DeploymentScannerPresenter.class,
                 DeploymentScannerPresenter.MyView.class,
                 Mbui_DeploymentScannerView_Provider.class,
@@ -296,10 +293,20 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 Mbui_ServerGroupView_Provider.class,
                 ServerGroupPresenter.MyProxy.class);
 
+        bindPresenter(ServerGroupDeploymentPresenter.class,
+                ServerGroupDeploymentPresenter.MyView.class,
+                ServerGroupDeploymentView.class,
+                ServerGroupDeploymentPresenter.MyProxy.class);
+
         bindPresenter(ServerStatusPresenter.class,
                 ServerStatusPresenter.MyView.class,
                 ServerStatusView.class,
                 ServerStatusPresenter.MyProxy.class);
+
+        bindPresenter(StandaloneDeploymentPresenter.class,
+                StandaloneDeploymentPresenter.MyView.class,
+                StandaloneDeploymentView.class,
+                StandaloneDeploymentPresenter.MyProxy.class);
 
         bindPresenter(SubsystemPresenter.class,
                 SubsystemPresenter.MyView.class,

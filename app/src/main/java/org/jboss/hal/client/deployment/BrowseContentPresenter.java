@@ -22,19 +22,17 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental.js.util.JsArrayOf;
-import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Ids;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.BROWSE_CONTENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CONTENT;
@@ -52,13 +50,12 @@ public class BrowseContentPresenter
     public interface MyProxy extends ProxyPlace<BrowseContentPresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<BrowseContentPresenter> {
-        void setContent(String content, JsArrayOf<Node<ContentEntry>> nodes);
+        void setContent(String content, ModelNode browseContentResult);
     }
     // @formatter:on
 
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
-    private final ContentParser contentParser;
     private String content;
 
     @Inject
@@ -71,7 +68,6 @@ public class BrowseContentPresenter
         super(eventBus, view, proxy, finder);
         this.finderPathFactory = finderPathFactory;
         this.dispatcher = dispatcher;
-        this.contentParser = new ContentParser();
     }
 
     @Override
@@ -98,17 +94,8 @@ public class BrowseContentPresenter
     }
 
     void loadContent() {
-        Operation operation = new Operation.Builder(BROWSE_CONTENT, new ResourceAddress().add(DEPLOYMENT, content))
-                .build();
-        dispatcher.execute(operation, result -> {
-            JsArrayOf<Node<ContentEntry>> nodes = JsArrayOf.create();
-            Node<ContentEntry> root = new Node.Builder<>(Ids.CONTENT_TREE_ROOT, content, new ContentEntry())
-                    .root()
-                    .folder()
-                    .open()
-                    .build();
-            contentParser.parse(nodes, root, result.asList());
-            getView().setContent(content, nodes);
-        });
+        ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content);
+        Operation operation = new Operation.Builder(BROWSE_CONTENT, address).build();
+        dispatcher.execute(operation, result -> getView().setContent(content, result));
     }
 }

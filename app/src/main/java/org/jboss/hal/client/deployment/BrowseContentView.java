@@ -17,9 +17,8 @@ package org.jboss.hal.client.deployment;
 
 import javax.inject.Inject;
 
-import elemental.js.util.JsArrayOf;
-import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Resources;
 
@@ -49,7 +48,7 @@ public class BrowseContentView extends PatternFlyViewImpl implements BrowseConte
     }
 
     @Override
-    public void setContent(final String content, final JsArrayOf<Node<ContentEntry>> nodes) {
-        browseContent.setContent(content, nodes);
+    public void setContent(final String content, final ModelNode browseContentResult) {
+        browseContent.setContent(content, browseContentResult);
     }
 }

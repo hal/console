@@ -78,4 +78,8 @@ class DeploymentModelElement implements HasElements {
             notActive.setPrimaryAction(resources.constants().enable(), enableAction);
         }
     }
+
+    void setSurroundingHeight(final int surroundingHeight) {
+        this.modelBrowser.setSurroundingHeight(surroundingHeight);
+    }
 }
