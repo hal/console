@@ -47,12 +47,12 @@ public class FinishBootstrap implements BootstrapFunction {
 
     @Override
     public void execute(final Control<FunctionContext> control) {
-        // reset the uncaught exception handler setup in HalPreBootstrapper
+        // reset the uncaught exception handler from HalPreBootstrapper
         GWT.setUncaughtExceptionHandler(e -> {
             String errorMessage = e != null ? e.getMessage() : Names.NOT_AVAILABLE;
-            logger.error("Uncaught exception: {}", errorMessage); //NON-NLS
+            logger.error("Uncaught exception: {}", errorMessage);
             placeManager.unlock();
-            eventBus.fireEvent(new MessageEvent(Message.error(resources.messages().unknownError(), errorMessage)));
+            MessageEvent.fire(eventBus, Message.error(resources.messages().unknownError(), errorMessage));
         });
         control.proceed();
     }

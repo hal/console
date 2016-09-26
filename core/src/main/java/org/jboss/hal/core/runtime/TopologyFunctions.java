@@ -540,24 +540,24 @@ public class TopologyFunctions {
 
 
     /**
-     * Returns a list of running servers which belong to the specified profile. Stores the list in the context under
-     * the key {@link TopologyFunctions#RUNNING_SERVERS}. Stores an empty list when running in standalone mode.
+     * Returns a list of running servers which satisfy the specified query. Stores the list in the context under
+     * the key {@link TopologyFunctions#RUNNING_SERVERS}. Stores an empty list if there are no running servers or if
+     * running in standalone mode.
      */
-    public static class RunningServersOfProfile implements Function<FunctionContext> {
+    public static class RunningServersQuery implements Function<FunctionContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
-        private final String profile;
+        private final ModelNode query;
 
-        public RunningServersOfProfile(final Environment environment, final Dispatcher dispatcher,
-                final String profile) {
+        public RunningServersQuery(final Environment environment, final Dispatcher dispatcher,
+                final ModelNode query) {
             this.environment = environment;
             this.dispatcher = dispatcher;
-            this.profile = profile;
+            this.query = query;
         }
 
         @Override
-        @SuppressWarnings("HardCodedStringLiteral")
         public void execute(final Control<FunctionContext> control) {
             if (environment.isStandalone()) {
                 List<Server> servers = Collections.emptyList();
@@ -565,13 +565,21 @@ public class TopologyFunctions {
                 control.proceed();
 
             } else {
-                ModelNode select = new ModelNode().add(ModelDescriptionConstants.HOST).add(LAUNCH_TYPE).add(NAME)
-                        .add(PROFILE_NAME).add(RUNNING_MODE).add(ModelDescriptionConstants.SERVER_GROUP)
-                        .add(SERVER_STATE).add(SUSPEND_STATE).add("uuid");
-
+                // Note for mixed domains with servers w/o support for SUSPEND_STATE attribute:
+                // The query operation won't fail, instead the unsupported attributes just won't be
+                // part of the response payload (kudos to the guy who implemented the query operation!)
                 Operation operation = new Operation.Builder(QUERY, ALL_SERVERS)
-                        .param(SELECT, select)
-                        .param(WHERE, new ModelNode().set(PROFILE_NAME, profile))
+                        .param(SELECT, new ModelNode()
+                                .add(ModelDescriptionConstants.HOST)
+                                .add(LAUNCH_TYPE)
+                                .add(NAME)
+                                .add(PROFILE_NAME)
+                                .add(RUNNING_MODE)
+                                .add(ModelDescriptionConstants.SERVER_GROUP)
+                                .add(SERVER_STATE)
+                                .add(SUSPEND_STATE)
+                                .add("uuid")) //NON-NLS
+                        .param(WHERE, query)
                         .build();
 
                 dispatcher.executeInFunction(control, operation, result -> {

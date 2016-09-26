@@ -21,37 +21,72 @@ import java.util.List;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * An uploaded deployment blob.
+ * A deployment in the content repository. Can be exploded or archived, managed or unmanaged.
  *
  * @author Harald Pehl
  */
 public class Content extends NamedNode {
 
-    private final List<Assignment> assignments;
+    private final List<ServerGroupDeployment> serverGroupDeployments;
 
-    public Content(final ModelNode node) {
+    Content(final ModelNode node) {
         super(node);
-        this.assignments = new ArrayList<>();
+        this.serverGroupDeployments = new ArrayList<>();
+
+        boolean managed = true;
+        boolean archived = true;
+        if (node.hasDefined(CONTENT) && !node.get(CONTENT).asList().isEmpty()) {
+            ModelNode content = node.get(CONTENT).asList().get(0);
+            if (content.hasDefined(HASH)) {
+                managed = true;
+            } else if (content.hasDefined(PATH)) {
+                managed = false;
+            }
+            if (content.hasDefined(ARCHIVE)) {
+                archived = content.get(ARCHIVE).asBoolean();
+            }
+        }
+        // simplify access and set the flags directly into the model node
+        get(EXPLODED).set(!archived);
+        get(MANAGED).set(managed);
     }
 
-    public String getRuntimeName() {
+    String getRuntimeName() {
         ModelNode runtimeName = get(RUNTIME_NAME);
         return runtimeName.isDefined() ? runtimeName.asString() : null;
     }
 
-    public void addAssignment(Assignment assignment) {
-        assignments.add(assignment);
+    void addDeployment(ServerGroupDeployment serverGroupDeployment) {
+        serverGroupDeployments.add(serverGroupDeployment);
     }
 
-    public List<Assignment> getAssignments() {
-        return assignments;
+    List<ServerGroupDeployment> getServerGroupDeployments() {
+        return serverGroupDeployments;
+    }
+
+    boolean isDeployedTo(String serverGroup) {
+        return serverGroupDeployments.stream()
+                .filter(sgd -> serverGroup.equals(sgd.getServerGroup()))
+                .findAny()
+                .isPresent();
+    }
+
+    boolean isExploded() {
+        return get(EXPLODED).asBoolean(false);
+    }
+
+    boolean isManaged() {
+        return get(MANAGED).asBoolean(true);
     }
 
     @Override
     public String toString() {
-        return "Content(" + getName() + ", assigned to " + assignments + ")";
+        return "Content(" + getName() + ", " +
+                (isExploded() ? "exploded" : "archived") + ", " +
+                (isManaged() ? "managed" : "unmanaged") + ", deployed to " +
+                serverGroupDeployments + ")";
     }
 }

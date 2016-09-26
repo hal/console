@@ -27,6 +27,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
@@ -35,11 +36,13 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -184,14 +187,18 @@ public class MailSessionPresenter
                             resources.constants().type(), new ArrayList<>(availableServers));
                     serverTypeItem.setRequired(true);
                 }
-
                 Metadata metadata = metadataRegistry.lookup(AddressTemplates.SERVER_TEMPLATE);
-                AddResourceDialog dialog = new AddResourceDialog(
-                        Ids.MAIL_SERVER_DIALOG,
-                        resources.messages().addResourceTitle(Names.SERVER), metadata,
-                        asList(OUTBOUND_SOCKET_BINDING_REF, "username", "password", "ssl", "tls"), //NON-NLS
-                        (name, modelNode) -> {
+                Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.MAIL_SERVER_DIALOG, metadata)
+                        .addFromRequestProperties()
+                        .include(OUTBOUND_SOCKET_BINDING_REF, "username", "password", "ssl", "tls")
+                        .requiredOnly()
+                        .unboundFormItem(serverTypeItem, 0)
+                        .build();
 
+                AddResourceDialog dialog = new AddResourceDialog(
+                        resources.messages().addResourceTitle(Names.SERVER),
+                        form,
+                        (name, modelNode) -> {
                             String serverType = serverTypeItem.getValue().toLowerCase();
                             ResourceAddress address = AddressTemplates.SELECTED_MAIL_SESSION_TEMPLATE
                                     .append(ModelDescriptionConstants.SERVER + "=" + serverType)

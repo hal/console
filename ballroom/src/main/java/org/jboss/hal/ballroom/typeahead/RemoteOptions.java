@@ -50,6 +50,7 @@ public class RemoteOptions {
 
     public String url;
     public boolean cache;
+    public int ttl;
     public Preparator prepare;
     public Transformator transform;
 }

@@ -15,22 +15,25 @@
  */
 package org.jboss.hal.client.deployment;
 
+import javax.annotation.Nullable;
+
+import org.jboss.hal.client.deployment.Deployment.Status;
 import org.jboss.hal.dmr.ModelNode;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DISABLED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
 
 /**
- * An assigned deployment used in domain mode.
+ * A deployed content used in domain mode.
  *
  * @author Harald Pehl
  */
-public class Assignment extends Content {
+class ServerGroupDeployment extends Content {
 
     private final String serverGroup;
     private Deployment deployment; // might be null if there's no reference server available
 
-    public Assignment(final String serverGroup, final ModelNode node) {
+    ServerGroupDeployment(final String serverGroup, final ModelNode node) {
         super(node);
         this.serverGroup = serverGroup;
     }
@@ -38,14 +41,13 @@ public class Assignment extends Content {
     @Override
     public boolean equals(final Object o) {
         if (this == o) { return true; }
-        if (!(o instanceof Assignment)) { return false; }
+        if (!(o instanceof ServerGroupDeployment)) { return false; }
         if (!super.equals(o)) { return false; }
 
-        Assignment that = (Assignment) o;
+        ServerGroupDeployment that = (ServerGroupDeployment) o;
         //noinspection SimplifiableIfStatement
         if (!serverGroup.equals(that.serverGroup)) { return false; }
         return getName().equals(that.getName());
-
     }
 
     @Override
@@ -56,30 +58,28 @@ public class Assignment extends Content {
         return result;
     }
 
-    public boolean isEnabled() {
-        ModelNode enabled = get(ENABLED);
-        //noinspection SimplifiableConditionalExpression
-        return enabled.isDefined() ? enabled.asBoolean() : false;
+    boolean isEnabled() {
+        return hasDefined(ENABLED) && get(ENABLED).asBoolean();
     }
 
-    public String getServerGroup() {
+    String getServerGroup() {
         return serverGroup;
     }
 
-    public Deployment getDeployment() {
+    @Nullable Deployment getDeployment() {
         return deployment;
     }
 
-    public boolean hasDeployment() {
-        return deployment != null;
+    void setDeployment(@Nullable Deployment deployment) {
+        this.deployment = deployment;
     }
 
-    public void setDeployment(final Deployment deployment) {
-        this.deployment = deployment;
+    boolean runningWithReferenceServer() {
+        return deployment != null && deployment.getStatus() == Status.OK && deployment.getReferenceServer() != null;
     }
 
     @Override
     public String toString() {
-        return "Assignment{" + getName() + "@" + serverGroup + ", " + (isEnabled() ? ENABLED : DISABLED) + "}";
+        return "ServerGroupDeployment{" + getName() + "@" + serverGroup + ", " + (isEnabled() ? ENABLED : DISABLED) + "}";
     }
 }

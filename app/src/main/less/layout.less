@@ -14,6 +14,11 @@ h2.underline {
   margin-left: -1px;
 }
 
+.flex-row {
+  display: flex;
+  flex-flow: row;
+}
+
 .layout-pf.layout-pf-fixed body {
   padding-top: @hal-header-height;
   @media (max-width: @screen-sm) {
@@ -26,12 +31,32 @@ h2.underline {
   margin-bottom: 5px;
 }
 
-.margin-right-4 {
-  margin-right: 4px;
+.margin-bottom-large {
+  margin-bottom: @margin-large;
 }
 
-.margin-top-20 {
-  margin-top: 20px;
+.margin-bottom-small {
+  margin-bottom: @margin-small;
+}
+
+.margin-left-5 {
+  margin-left: 5px;
+}
+
+.margin-right-5 {
+  margin-right: 5px;
+}
+
+.margin-right-small {
+  margin-right: @margin-small;
+}
+
+.margin-top-large {
+  margin-top: @margin-large;
+}
+
+.margin-top-small {
+  margin-top: @margin-small;
 }
 
 .with-progress {

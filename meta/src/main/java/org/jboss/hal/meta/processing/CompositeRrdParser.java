@@ -40,7 +40,7 @@ class CompositeRrdParser {
 
     private final Composite composite;
 
-    public CompositeRrdParser(final Composite composite) {
+    CompositeRrdParser(final Composite composite) {
         this.composite = composite;
     }
 
@@ -85,8 +85,7 @@ class CompositeRrdParser {
     private ResourceAddress operationAddress(int index) {
         List<ModelNode> steps = composite.get(STEPS).asList();
         if (index >= steps.size()) {
-            throw new ParserException(
-                    "Cannot get operation at index " + index + " from composite " + composite);
+            throw new ParserException("Cannot get operation at index " + index + " from composite " + composite);
         }
         ModelNode operation = steps.get(index);
         return new ResourceAddress(operation.get(ADDRESS));
@@ -95,7 +94,7 @@ class CompositeRrdParser {
     private ResourceAddress adjustAddress(ResourceAddress operationAddress, ResourceAddress resultAddress) {
         // For wildcard rrd operations against running servers like /host=master/server=server-one/interfaces=*
         // the result does *not* contain fully qualified addresses. But since we need fq addresses in the
-        // registries this method fixes this special case.
+        // registries this method fixes this corner case.
 
         ResourceAddress resolved = resultAddress;
         List<Property> operationSegments = operationAddress.asPropertyList();

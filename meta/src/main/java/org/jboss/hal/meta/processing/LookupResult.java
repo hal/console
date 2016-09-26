@@ -15,13 +15,13 @@
  */
 package org.jboss.hal.meta.processing;
 
-import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.MissingMetadataException;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.MissingMetadataException;
 
 /**
  * @author Harald Pehl

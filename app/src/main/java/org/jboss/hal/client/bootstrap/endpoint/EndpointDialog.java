@@ -127,8 +127,13 @@ class EndpointDialog {
                 .unsorted()
                 .onCancel((form) -> switchTo(SELECT))
                 .onSave((form, changedValues) -> {
-                    storage.add(form.getModel());
+                    Endpoint endpoint = form.getModel();
+                    if (!endpoint.hasDefined(PORT)) {
+                        endpoint.get(PORT).set(EndpointManager.DEFAULT_PORT);
+                    }
+                    storage.add(endpoint);
                     switchTo(SELECT);
+                    select(endpoint.getName());
                 })
                 .build();
 
@@ -149,6 +154,12 @@ class EndpointDialog {
         dialog.registerAttachable(form, table);
     }
 
+    private void select(String name) {
+        if (mode == SELECT) {
+            table.api().rows((index, endpoint, tr) -> name.equals(endpoint.getName())).select();
+        }
+    }
+
     private Endpoint transientEndpoint() {
         Endpoint endpoint = new Endpoint();
         endpoint.setName("__transientEndpoint__"); //NON-NLS
@@ -157,7 +168,9 @@ class EndpointDialog {
         FormItem<String> host = form.getFormItem(HOST);
         endpoint.get(HOST).set(host.getValue());
         FormItem<Number> port = form.getFormItem(PORT);
-        if (port.getValue() != null) {
+        if (port.getValue() == null) {
+            endpoint.get(PORT).set(EndpointManager.DEFAULT_PORT);
+        } else{
             endpoint.get(PORT).set(port.getValue().intValue());
         }
         return endpoint;
@@ -217,5 +230,9 @@ class EndpointDialog {
         table.api().add(storage.list()).refresh(RESET);
 
         switchTo(SELECT);
+        storage.list().stream()
+                .filter(Endpoint::isSelected)
+                .findFirst()
+                .ifPresent(endpoint -> select(endpoint.getName()));
     }
 }

@@ -23,10 +23,7 @@ import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NILLABLE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATIONS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * Represents the result of a read-resource-description operation for one specific resource.
@@ -76,5 +73,17 @@ public class ResourceDescription extends ModelNode {
             }
         }
         return null;
+    }
+    
+    public boolean isDeprecated() {
+        return hasDefined(DEPRECATED);
+    }
+    
+    public String getDeprecatedMessage() {
+        String message = "";
+        if (hasDefined(DEPRECATED)) {
+            message = get(DEPRECATED).get(REASON).asString();
+        }
+        return message;
     }
 }

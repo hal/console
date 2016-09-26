@@ -29,7 +29,7 @@ public class ItemAction<T> {
     final Element element;
     final ItemActionHandler<T> handler;
     final String href;
-    final Map<String, String> parameter;
+    final Map<String, String> attributes;
 
     public ItemAction(final String title, final ItemActionHandler<T> handler) {
         this(title, null, handler, null, (String[]) null);
@@ -39,27 +39,33 @@ public class ItemAction<T> {
         this(null, element, handler, null, (String[]) null);
     }
 
-    public ItemAction(final String title, final String href, String... parameter) {
-        this(title, null, null, href, parameter);
+    /**
+     * Creates an action using an href.
+     * @param title the title for the action
+     * @param href the href which is followed by the browser
+     * @param attributes attributes when creating the {@code <a/>} tag.
+     */
+    public ItemAction(final String title, final String href, String... attributes) {
+        this(title, null, null, href, attributes);
     }
 
-    public ItemAction(final Element element, final String href, String... parameter) {
-        this(null, element, null, href, parameter);
+    public ItemAction(final Element element, final String href, String... attributes) {
+        this(null, element, null, href, attributes);
     }
 
     private ItemAction(final String title, final Element element, final ItemActionHandler<T> handler,
-            final String href, String... parameter) {
+            final String href, String... attributes) {
         this.title = title;
         this.element = element;
         this.handler = handler;
         this.href = href;
-        this.parameter = new HashMap<>();
-        if (parameter != null && parameter.length > 1) {
-            if (parameter.length % 2 != 0) {
-                throw new IllegalArgumentException("Parameter in new ItemAction() must be key/value pairs");
+        this.attributes = new HashMap<>();
+        if (attributes != null && attributes.length > 1) {
+            if (attributes.length % 2 != 0) {
+                throw new IllegalArgumentException("Attributes in new ItemAction() must be key/value pairs");
             }
-            for (int i = 0; i < parameter.length; i += 2) {
-                this.parameter.put(parameter[i], parameter[i + 1]);
+            for (int i = 0; i < attributes.length; i += 2) {
+                this.attributes.put(attributes[i], attributes[i + 1]);
             }
         }
     }

@@ -32,8 +32,8 @@ import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.OptionsBuilder;
-import org.jboss.hal.ballroom.table.Selector;
-import org.jboss.hal.ballroom.table.SelectorBuilder;
+import org.jboss.hal.ballroom.table.SelectorModifier;
+import org.jboss.hal.ballroom.table.SelectorModifierBuilder;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -44,7 +44,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.ballroom.table.Selector.Page.all;
+import static org.jboss.hal.ballroom.table.SelectorModifier.Page.all;
 import static org.jboss.hal.core.modelbrowser.ReadChildren.uniqueId;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
@@ -82,19 +82,19 @@ class ChildrenPanel implements HasElements, Attachable {
                         .width("10em")
                         .build())
                 .button(resources.constants().add(), (event, api) -> {
-                    Selector selector = new SelectorBuilder().page(all).build();
-                    modelBrowser.add(parent, JsHelper.asList(api.rows(selector).data().toArray()));
+                    SelectorModifier selectorModifier = new SelectorModifierBuilder().page(all).build();
+                    modelBrowser.add(parent, JsHelper.asList(api.rows(selectorModifier).data().toArray()));
                 })
 
                 .button(resources.constants().remove(), Scope.SELECTED,
-                        (event, api) -> DialogFactory.confirmation(resources.constants().removeResource(),
+                        (event, api) -> DialogFactory.showConfirmation(
+                                resources.constants().removeResource(),
                                 resources.messages().removeResourceConfirmationQuestion(api.selectedRow()),
                                 () -> {
                                     ResourceAddress fq = parent.data.getAddress().getParent()
                                             .add(parent.text, api.selectedRow());
                                     modelBrowser.remove(fq);
-                                    return true;
-                                }).show())
+                                }))
                 .paging(false)
                 .build();
 

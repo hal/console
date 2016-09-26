@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
-import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -29,7 +28,6 @@ import org.jboss.gwt.flow.Control;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.macro.Action;
 import org.jboss.hal.dmr.macro.Macro;
 import org.jboss.hal.dmr.macro.MacroFinishedEvent;
@@ -41,6 +39,7 @@ import org.jboss.hal.dmr.macro.RecordingEvent.RecordingHandler;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -48,6 +47,8 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.stream.Collectors.joining;
+import static org.jboss.gwt.elemento.core.InputType.url;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
@@ -93,26 +94,23 @@ public class Dispatcher implements RecordingHandler {
     public enum HttpMethod {GET, POST}
 
 
+    @FunctionalInterface
+    private interface ReadyListener {
+
+        void onReady(XMLHttpRequest xhr);
+    }
+
+
     public static final String APPLICATION_DMR_ENCODED = "application/dmr-encoded";
-    public static final String APPLICATION_JSON = "application/json";
     public static final String HEADER_MANAGEMENT_CLIENT_NAME = "X-Management-Client-Name";
     public static final String HEADER_MANAGEMENT_CLIENT_VALUE = "HAL";
 
-    public static FailedCallback NOOP_FAILED_CALLBACK = (op, failure) -> {};
-    public static ExceptionCallback NOOP_EXCEPTIONAL_CALLBACK = (op, exception) -> {};
+    static final String APPLICATION_JSON = "application/json";
+    static FailedCallback NOOP_FAILED_CALLBACK = (op, failure) -> {/* noop */};
+    static ExceptionCallback NOOP_EXCEPTIONAL_CALLBACK = (op, exception) -> {/* noop */};
 
     private static final String HEADER_ACCEPT = "Accept";
     private static final String HEADER_CONTENT_TYPE = "Content-Type";
-
-    /**
-     * The read resource description supports the following parameters:
-     * recursive, proxies, operations, inherited plus one not documented: locale.
-     * See https://docs.jboss.org/author/display/WFLY9/Global+operations#Globaloperations-readresourcedescription
-     * for a more detailed description
-     */
-    private static final String[] READ_RESOURCE_DESCRIPTION_OPTIONAL_PARAMETERS = new String[]{
-            RECURSIVE, PROXIES, OPERATIONS, INHERITED, LOCALE
-    };
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
 
@@ -165,6 +163,11 @@ public class Dispatcher implements RecordingHandler {
         dmr(composite, callback, new FailedFunctionCallback<>(control), new ExceptionalFunctionCallback<>(control));
     }
 
+    public <T extends FunctionContext> void executeInFunction(final Control<T> control, final Composite composite,
+            final CompositeCallback callback, FailedCallback failedCallback) {
+        dmr(composite, callback, failedCallback, new ExceptionalFunctionCallback<>(control));
+    }
+
 
     // ------------------------------------------------------ execute operation
 
@@ -193,27 +196,21 @@ public class Dispatcher implements RecordingHandler {
     }
 
 
-    // ------------------------------------------------------ execute dmr
+    // ------------------------------------------------------ dmr
 
     private <T> void dmr(final Operation operation, final SuccessCallback<T> callback,
             final FailedCallback failedCallback, final ExceptionCallback exceptionCallback) {
         String url;
         HttpMethod method;
-        String op = operation.get(OP).asString();
-
-        if (READ_RESOURCE_DESCRIPTION_OPERATION.equals(op)) {
-            String endpoint = endpoints.dmr();
-            if (endpoint.endsWith("/")) {
-                endpoint = endpoint.substring(0, endpoint.length() - 1);
-            }
+        if (GetOperation.isSupported(operation.getName())) {
+            url = operationUrl(operation);
             method = GET;
-            url = Browser.encodeURI(endpoint + descriptionOperationToUrl(operation));
         } else {
-            method = POST;
             url = endpoints.dmr();
+            method = POST;
         }
 
-        XMLHttpRequest xhr = newXhr(url, method, operation, new DmrPayloadProcessor(), callback, failedCallback,
+        XMLHttpRequest xhr = newDmrXhr(url, method, operation, new DmrPayloadProcessor(), callback, failedCallback,
                 exceptionCallback);
         xhr.setRequestHeader(HEADER_ACCEPT, APPLICATION_DMR_ENCODED);
         xhr.setRequestHeader(HEADER_CONTENT_TYPE, APPLICATION_DMR_ENCODED);
@@ -223,23 +220,6 @@ public class Dispatcher implements RecordingHandler {
             xhr.send(operation.toBase64String());
         }
         recordOperation(operation);
-    }
-
-    @SuppressWarnings("HardCodedStringLiteral")
-    private String descriptionOperationToUrl(final ModelNode operation) {
-        StringBuilder url = new StringBuilder();
-        final List<Property> address = operation.get(ADDRESS).asPropertyList();
-        for (Property property : address) {
-            url.append("/").append(property.getName()).append("/").append(property.getValue().asString());
-        }
-
-        url.append("?operation=").append("resource-description");
-        for (String parameter : READ_RESOURCE_DESCRIPTION_OPTIONAL_PARAMETERS) {
-            if (operation.has(parameter)) {
-                url.append("&").append(parameter).append("=").append(operation.get(parameter).asString());
-            }
-        }
-        return url.toString();
     }
 
 
@@ -291,73 +271,122 @@ public class Dispatcher implements RecordingHandler {
 
     private void uploadFormData(FormData formData, final Operation operation, final OperationCallback callback,
             final FailedCallback failedCallback, ExceptionCallback exceptionCallback) {
-        XMLHttpRequest xhr = newXhr(endpoints.upload(), POST, operation, new UploadPayloadProcessor(), callback,
+        XMLHttpRequest xhr = newDmrXhr(endpoints.upload(), POST, operation, new UploadPayloadProcessor(), callback,
                 failedCallback, exceptionCallback);
         xhr.send(formData);
-        // TODO Support uploads in macros?
-        // recordOperation(operation);
+        // Uploads are not supported in macros!
     }
 
 
-    // ------------------------------------------------------ create and setup xhr
+    // ------------------------------------------------------ download
 
-    private <T> XMLHttpRequest newXhr(final String url, final HttpMethod method, final Operation operation,
+    public void download(final Operation operation, final SuccessCallback<String> successCallback) {
+        String url = downloadUrl(operation);
+        XMLHttpRequest request = newXhr(url, GET, operation, exceptionCallback, xhr -> {
+            int readyState = xhr.getReadyState();
+            if (readyState == 4) {
+                int status = xhr.getStatus();
+                String responseText = xhr.getResponseText();
+
+                if (status == 200) {
+                    successCallback.onSuccess(responseText);
+                } else {
+                    handleErrorCodes(status, operation, exceptionCallback);
+                }
+            }
+        });
+        request.setRequestHeader(HEADER_ACCEPT, APPLICATION_DMR_ENCODED);
+        request.setRequestHeader(HEADER_CONTENT_TYPE, APPLICATION_DMR_ENCODED);
+        request.send();
+        // Downloads are not supported in macros!
+    }
+
+    public String downloadUrl(final Operation operation) {
+        return operationUrl(operation) + "&useStreamAsResponse"; //NON-NLS
+    }
+
+
+    // ------------------------------------------------------ urls
+
+    private String operationUrl(Operation operation) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(endpoints.dmr()).append("/");
+
+        // 1. address
+        ResourceAddress address = operation.getAddress();
+        if (!address.isEmpty()) {
+            String path = address.asPropertyList().stream()
+                    .map(property -> property.getName() + "/" + property.getValue().asString())
+                    .collect(joining("/"));
+            builder.append(path);
+        }
+
+        // 2. operation
+        String name = operation.getName();
+        if (GetOperation.isSupported(name)) {
+            GetOperation getOperation = GetOperation.get(name);
+            name = getOperation.httpGetOperation();
+        }
+        builder.append("?").append(OP).append("=").append(name);
+
+        // 3. parameter
+        if (operation.hasParamter()) {
+            operation.getParameter().asPropertyList().forEach(property -> {
+                builder.append("&").append(property.getName());
+                if (property.getValue().isDefined()) {
+                    builder.append("=").append(property.getValue().asString());
+                }
+            });
+        }
+
+        return Browser.encodeURI(builder.toString());
+    }
+
+
+    // ------------------------------------------------------ xhr
+
+    private <T> XMLHttpRequest newDmrXhr(final String url, final HttpMethod method, final Operation operation,
             final PayloadProcessor payloadProcessor, SuccessCallback<T> callback, final FailedCallback failedCallback,
             final ExceptionCallback exceptionCallback) {
-        XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
-
-        // The order of the XHR methods is important! Do not rearrange the code unless you know what you're doing!
-        xhr.setOnreadystatechange(event -> {
+        return newXhr(url, method, operation, exceptionCallback, xhr -> {
             int readyState = xhr.getReadyState();
             if (readyState == 4) {
                 int status = xhr.getStatus();
                 String responseText = xhr.getResponseText();
                 String contentType = xhr.getResponseHeader(HEADER_CONTENT_TYPE);
 
-                switch (status) {
-                    case 200:
-                    case 500:
-                        ModelNode payload = payloadProcessor.processPayload(method, contentType, responseText);
-                        if (!payload.isFailure()) {
-                            if (processStateProcessor.get().accepts(payload)) {
-                                ProcessState processState = processStateProcessor.get().process(payload);
-                                eventBus.fireEvent(new ProcessStateEvent(processState));
-                            }
-                            ModelNode result = payload.get(RESULT);
-                            if (operation instanceof Composite && callback instanceof CompositeCallback) {
-                                ((CompositeCallback) callback).onSuccess(new CompositeResult(result));
-                            } else if (callback instanceof OperationCallback) {
-                                ((OperationCallback) callback).onSuccess(result);
-                            } else {
-                                exceptionCallback.onException(operation,
-                                        new DispatchException("Wrong combination of operation and callback.", 500));
-                            }
-                        } else {
-                            failedCallback.onFailed(operation, payload.getFailureDescription());
+                if (status == 200 || status == 500) {
+                    ModelNode payload = payloadProcessor.processPayload(method, contentType, responseText);
+                    if (!payload.isFailure()) {
+                        if (processStateProcessor.get().accepts(payload)) {
+                            ProcessState processState = processStateProcessor.get().process(payload);
+                            eventBus.fireEvent(new ProcessStateEvent(processState));
                         }
-                        break;
-                    case 0:
-                    case 401:
-                    case 403:
-                        exceptionCallback.onException(operation,
-                                new DispatchException("Authentication required.", status));
-                        break;
-                    case 404:
-                        exceptionCallback.onException(operation, new DispatchException(
-                                "Management interface at '" + url + "' not found.", status));
-                        break;
-                    case 503:
-                        exceptionCallback.onException(operation, new DispatchException(
-                                "Service temporarily unavailable. Is the server still booting?", status));
-                        break;
-                    default:
-                        exceptionCallback.onException(operation,
-                                new DispatchException("Unexpected status code.", status));
-                        break;
+                        ModelNode result = payload.get(RESULT);
+                        if (operation instanceof Composite && callback instanceof CompositeCallback) {
+                            ((CompositeCallback) callback).onSuccess(new CompositeResult(result));
+                        } else if (callback instanceof OperationCallback) {
+                            ((OperationCallback) callback).onSuccess(result);
+                        } else {
+                            exceptionCallback.onException(operation,
+                                    new DispatchException("Wrong combination of operation and callback.", 500));
+                        }
+                    } else {
+                        failedCallback.onFailed(operation, payload.getFailureDescription());
+                    }
+                } else {
+                    handleErrorCodes(status, operation, exceptionCallback);
                 }
             }
         });
+    }
 
+    private XMLHttpRequest newXhr(final String url, final HttpMethod method, final Operation operation,
+            final ExceptionCallback exceptionCallback, final ReadyListener readyListener) {
+        XMLHttpRequest xhr = Browser.getWindow().newXMLHttpRequest();
+
+        // The order of the XHR methods is important! Do not rearrange the code unless you know what you're doing!
+        xhr.setOnreadystatechange(event -> readyListener.onReady(xhr));
         xhr.addEventListener("error", event -> exceptionCallback //NON-NLS
                 .onException(operation, new DispatchException("Communication error.", xhr.getStatus())), false);
         xhr.open(method.name(), url, true);
@@ -365,6 +394,31 @@ public class Dispatcher implements RecordingHandler {
         xhr.setWithCredentials(true);
 
         return xhr;
+    }
+
+    private void handleErrorCodes(int status, Operation operation, ExceptionCallback exceptionCallback) {
+        switch (status) {
+            case 0:
+            case 401:
+            case 403:
+                exceptionCallback.onException(operation, new DispatchException("Authentication required.", status));
+                break;
+            case 404:
+                exceptionCallback.onException(operation,
+                        new DispatchException("Management interface at '" + url + "' not found.", status));
+                break;
+            case 500:
+                exceptionCallback.onException(operation,
+                        new DispatchException("Internal Server Error for '" + operation.asCli() + "'.", status));
+                break;
+            case 503:
+                exceptionCallback.onException(operation,
+                        new DispatchException("Service temporarily unavailable. Is the server still booting?", status));
+                break;
+            default:
+                exceptionCallback.onException(operation, new DispatchException("Unexpected status code.", status));
+                break;
+        }
     }
 
 
@@ -417,10 +471,6 @@ public class Dispatcher implements RecordingHandler {
 
 
     // ------------------------------------------------------ getter
-
-    public FailedCallback defaultFailedCallback() {
-        return failedCallback;
-    }
 
     public ExceptionCallback defaultExceptionCallback() {
         return exceptionCallback;

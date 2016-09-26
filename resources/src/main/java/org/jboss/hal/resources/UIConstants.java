@@ -23,23 +23,34 @@ package org.jboss.hal.resources;
 public interface UIConstants {
 
     /**
-     * The timeout for long running operations / actions before a loading indicator is shown
-     */
-    int PROGRESS_TIMEOUT = 333;
-
-    /**
      * The time in milliseconds after one modal dialog is closed and the next one is shown.
      */
     int DIALOG_TIMEOUT = 111;
 
+    /**
+     * The timeout for long running operations / actions before some kind of loading indicator is shown
+     */
+    int PROGRESS_TIMEOUT = 333;
+
+    /**
+     * The timeout until a non-sticky message is hidden
+     */
+    int MESSAGE_TIMEOUT = 6000; // ms
+
+
+    String ALERT = "alert";
+    String BODY = "body";
     String BUTTON = "button";
     String COLLAPSE = "collapse";
+    String CONTAINER = "container";
     String CONTROLS = "controls";
+    String DISMISS = "dismiss";
     String DROPDOWN = "dropdown";
     String DOWNLOAD = "download";
     String EXPANDED = "expanded";
     String GROUP = "group";
     String HAS_POPUP = "haspopup";
+    String HIDDEN_MODAL = "hidden.bs.modal";
     String HREF = "href";
     String HIDDEN = "hidden";
     String LABELLED_BY = "labelledby";
@@ -47,13 +58,16 @@ public interface UIConstants {
     String MENUITEM = "menuitem";
     String NBSP = "&nbsp;";
     String OBJECT = "Object";
+    String PLACEHOLDER = "placeholder";
     String PLACEMENT = "placement";
     String PRESENTATION = "presentation";
     String PROGRESSBAR = "progressbar";
     String ROLE = "role";
+    String SHOWN_MODAL = "shown.bs.modal";
     String TABINDEX = "tabindex";
     String TABLIST = "tablist";
     String TARGET = "target";
     String TOGGLE = "toggle";
+    String TOP = "top";
     String TOOLTIP = "tooltip";
 }

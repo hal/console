@@ -38,10 +38,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_ADDRESS;
-import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_TEMPLATE;
-import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_ADDRESS;
-import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
@@ -56,7 +53,8 @@ public class DataSourcePresenter extends ApplicationPresenter<DataSourcePresente
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(DATA_SOURCE_RUNTIME)
-    @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS})
+    @Requires({DATA_SOURCE_ADDRESS, DATA_SOURCE_POOL_ADDRESS, DATA_SOURCE_JDBC_ADDRESS,
+            XA_DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_POOL_ADDRESS, XA_DATA_SOURCE_JDBC_ADDRESS})
     public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<DataSourcePresenter> {

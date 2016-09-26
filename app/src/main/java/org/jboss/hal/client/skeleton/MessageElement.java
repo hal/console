@@ -20,11 +20,13 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.UIConstants.ALERT;
+import static org.jboss.hal.resources.UIConstants.DISMISS;
+import static org.jboss.hal.resources.UIConstants.HIDDEN;
 
 /**
  * @author Harald Pehl
@@ -42,19 +44,29 @@ class MessageElement implements IsElement {
         }
 
         Elements.Builder builder = new Elements.Builder()
-                .div().css(toastPf, toastPfMaxWidth, toastPfTopRight, alert, cssIcon[0]);
+                .div().css(toastPf, alert, cssIcon[0]);
         if (message.isSticky()) {
-            //noinspection HardCodedStringLiteral
-            builder.button().css(close).data("dismiss", "alert").aria(UIConstants.HIDDEN, String.valueOf(true))
+            builder.button().css(close).data(DISMISS, ALERT).aria(HIDDEN, String.valueOf(true))
                     .span().css(pfIcon(close)).end()
                     .end();
         }
-        if (message.getDetails() != null) {
+
+        if (message.hasAction() || message.getDetails() != null) {
+            // @formatter:off
             builder.div().css(pullRight, toastPfAction)
-                    .a().css(clickable).on(click, event -> showMessage(message))
-                    .textContent(CONSTANTS.details()).end()
-                    .end();
+                .a().css(clickable).data(DISMISS, ALERT);
+                    if (message.hasAction()) {
+                        builder.on(click, event -> message.getAction().execute())
+                                .textContent(message.getActionTitle());
+                    } else {
+                        builder.on(click, event -> showMessage(message))
+                                .textContent(CONSTANTS.details());
+                    }
+                builder.end()
+            .end();
+            // @formatter:on
         }
+
         builder.span().css(pfIcon(cssIcon[1])).end();
         builder.span().innerHtml(message.getMessage()).end();
         builder.end(); // </div>

@@ -15,14 +15,14 @@
  */
 package org.jboss.hal.ballroom;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import org.jboss.hal.dmr.Property;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Generates a human readable label from terms used in the management model.
@@ -45,6 +45,7 @@ public class LabelBuilder {
             .put("jsf", "JSF")
             .put("sar", "SAR")
             .put("sql", "SQL")
+            .put("uri", "URI")
             .put("url", "URL")
             .build();
 

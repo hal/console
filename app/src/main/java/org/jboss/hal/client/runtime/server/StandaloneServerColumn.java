@@ -27,6 +27,7 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActionEvent;
 import org.jboss.hal.core.runtime.server.ServerActionEvent.ServerActionHandler;
@@ -59,7 +60,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
 
     @Inject
     public StandaloneServerColumn(final Finder finder, final EventBus eventBus, final Dispatcher dispatcher,
-            final ServerActions serverActions, final Resources resources) {
+            final ServerActions serverActions, final Places places, final Resources resources) {
         super(new Builder<Server>(finder, Ids.STANDALONE_SERVER, Names.SERVER)
 
                 .itemsProvider((context, callback) -> {
@@ -153,7 +154,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                     }
                 })
 
-                .onPreview(item -> new ServerPreview(serverActions, item, resources))
+                .onPreview(item -> new ServerPreview(serverActions, item, places, resources))
         );
 
         this.finder = finder;

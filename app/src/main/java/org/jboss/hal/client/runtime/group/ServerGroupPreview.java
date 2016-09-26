@@ -15,11 +15,14 @@
  */
 package org.jboss.hal.client.runtime.group;
 
-import java.util.Arrays;
-
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.group.ServerGroup;
+import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
@@ -32,13 +35,28 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_PORT_OF
  */
 class ServerGroupPreview extends PreviewContent<ServerGroup> {
 
-    ServerGroupPreview(final ServerGroup serverGroup) {
+    ServerGroupPreview(final ServerGroup serverGroup, Places places) {
         super(serverGroup.getName(), Names.PROFILE + " " + serverGroup.getProfile());
 
-        //noinspection HardCodedStringLiteral
-        PreviewAttributes<ServerGroup> attributes = new PreviewAttributes<>(serverGroup,
-                Arrays.asList(PROFILE, SOCKET_BINDING_GROUP, SOCKET_BINDING_PORT_OFFSET,
-                        SOCKET_BINDING_DEFAULT_INTERFACE))
+        PlaceRequest profilePlaceRequest = places
+                .finderPlace(NameTokens.CONFIGURATION, new FinderPath()
+                        .append(Ids.CONFIGURATION, Ids.asId(Names.PROFILES))
+                        .append(Ids.PROFILE, serverGroup.getProfile()))
+                .build();
+        String profileHref = places.historyToken(profilePlaceRequest);
+
+        PlaceRequest sbgPlaceRequest = places
+                .finderPlace(NameTokens.CONFIGURATION, new FinderPath()
+                        .append(Ids.CONFIGURATION, Ids.asId(Names.SOCKET_BINDINGS))
+                        .append(Ids.SOCKET_BINDING, serverGroup.get(SOCKET_BINDING_GROUP).asString()))
+                .build();
+        String sbgHref = places.historyToken(sbgPlaceRequest);
+
+        PreviewAttributes<ServerGroup> attributes = new PreviewAttributes<>(serverGroup)
+                .append(PROFILE, profileHref)
+                .append(SOCKET_BINDING_GROUP, sbgHref)
+                .append(SOCKET_BINDING_PORT_OFFSET)
+                .append(SOCKET_BINDING_DEFAULT_INTERFACE)
                 .end();
         previewBuilder().addAll(attributes);
     }

@@ -39,24 +39,23 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-class DriverStep extends WizardStep<Context, State> {
+public class DriverStep extends WizardStep<Context, State> {
 
     private final Map<String, JdbcDriver> drivers;
     private final ModelNodeForm<JdbcDriver> form;
     private final FormItem<String> nameItem;
     private SuggestHandler suggestHandler;
 
-    DriverStep(final NewDataSourceWizard wizard, final List<JdbcDriver> drivers,
-            final Metadata metadata, final Resources resources) {
-        super(wizard, resources.constants().jdbcDriver());
+    public DriverStep(final List<JdbcDriver> drivers, final Metadata metadata, final Resources resources) {
+        super(Ids.DATA_SOURCE_DRIVER_STEP, resources.constants().jdbcDriver());
 
         this.drivers = Maps.uniqueIndex(drivers, JdbcDriver::getName);
-        this.form = new ModelNodeForm.Builder<JdbcDriver>(Ids.build(id(), "driver", "step"),
+        this.form = new ModelNodeForm.Builder<JdbcDriver>(Ids.DATA_SOURCE_DRIVER_FORM,
                 adjustMetadata(metadata))
                 .include(DRIVER_NAME, DRIVER_MODULE_NAME, DRIVER_CLASS_NAME, DRIVER_MAJOR_VERSION,
                         DRIVER_MINOR_VERSION)
                 .unsorted()
-                .onSave((form, changedValues) -> wizard.getContext().driver = form.getModel())
+                .onSave((form, changedValues) -> wizard().getContext().driver = form.getModel())
                 .build();
         this.nameItem = form.getFormItem(DRIVER_NAME);
 

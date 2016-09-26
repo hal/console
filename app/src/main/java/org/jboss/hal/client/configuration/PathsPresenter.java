@@ -22,7 +22,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.MbuiPresenter;
@@ -31,7 +30,6 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
@@ -58,8 +56,6 @@ public class PathsPresenter extends MbuiPresenter<PathsPresenter.MyView, PathsPr
     // @formatter:on
 
 
-    private final Environment environment;
-    private final StatementContext statementContext;
     private final Dispatcher dispatcher;
 
     @Inject
@@ -67,12 +63,8 @@ public class PathsPresenter extends MbuiPresenter<PathsPresenter.MyView, PathsPr
             final MyView view,
             final MyProxy proxy,
             final Finder finder,
-            final Environment environment,
-            final StatementContext statementContext,
             final Dispatcher dispatcher) {
         super(eventBus, view, proxy, finder);
-        this.environment = environment;
-        this.statementContext = statementContext;
         this.dispatcher = dispatcher;
     }
 
@@ -94,7 +86,5 @@ public class PathsPresenter extends MbuiPresenter<PathsPresenter.MyView, PathsPr
                 .param(CHILD_TYPE, "path")
                 .build();
         dispatcher.execute(operation, result -> getView().update(asNamedNodes(result.asPropertyList())));
-
-        PathsTypeahead.updateOperation(environment, dispatcher, statementContext);
     }
 }

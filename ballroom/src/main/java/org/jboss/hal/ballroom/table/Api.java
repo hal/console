@@ -177,7 +177,27 @@ public class Api<T> {
 
     public native Api<T> off(String event);
 
-    public native Api<T> rows(Selector selector);
+    /**
+     * Select all rows, but apply the specified modifier (e.g. to return only selected rows). Chain the {@link #data()}
+     * to get the actual data.
+     */
+    public native Api<T> rows(SelectorModifier selectorModifier);
+
+    /**
+     * Select rows by index. Chain the {@link #data()} to get the actual data.
+     */
+    public native Api<T> rows(int index);
+
+    /**
+     * Select rows by using a function. Chain the {@link #data()} to get the actual data.
+     */
+    public native Api<T> rows(RowSelection<T> selection);
+
+    /**
+     * Selects the row(s) that have been found by the {@link #rows(RowSelection)}, {@link #rows(int)} or {@link
+     * #rows(SelectorModifier)} selector methods.
+     */
+    public native Api<T> select();
 
     public native JsArrayOf<T> toArray();
 
@@ -267,8 +287,8 @@ public class Api<T> {
 
     @JsOverlay
     public final List<T> selectedRows() {
-        Selector selector = new SelectorBuilder().selected().build();
-        JsArrayOf<T> selection = rows(selector).data().toArray();
+        SelectorModifier selectorModifier = new SelectorModifierBuilder().selected().build();
+        JsArrayOf<T> selection = rows(selectorModifier).data().toArray();
         if (selection == null || selection.isEmpty()) {
             return Collections.emptyList();
         }

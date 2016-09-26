@@ -51,25 +51,21 @@ public class Tree<T> implements IsElement, Attachable {
     private static final String CHANGED_EVENT = "changed.jstree";
 
     private final String id;
-    private final Options options;
     private final Element div;
+    private final Options options;
     private Bridge<T> bridge;
     private Api<T> api;
 
 
+    /**
+     * Creates a tree with the specified root node. All other nodes are loaded on demand using the provided callback.
+     */
     public Tree(final String id, final Node<T> root, final DataFunction<T> data) {
         this.id = id;
-        this.options = initOptions(root, data);
         this.div = Browser.getDocument().createDivElement();
         this.div.setId(id);
-    }
-
-    private Options<T> initOptions(final Node<T> root, final DataFunction<T> data) {
-        Options<T> options = new Options<>();
-        options.core = new Options.Core<>();
-        options.core.animation = false;
-        options.core.multiple = false;
-        options.core.data = (node, callback) -> {
+        this.options = initOptions();
+        this.options.core.data = (DataFunction<T>) (node, callback) -> {
             if (ROOT_NODE.equals(node.id)) {
                 JsArrayOf<Node<T>> rootNodes = JsArrayOf.create();
                 rootNodes.push(root);
@@ -78,14 +74,36 @@ public class Tree<T> implements IsElement, Attachable {
                 data.load(node, callback);
             }
         };
+    }
+
+    /**
+     * Creates a tree and populates the tree with the specified nodes. This expects all nodes at construction time and
+     * does not load nodes on demand.
+     * <p>
+     * If you use this constructor you must ensure that {@code T} can be turned into JSON.
+     */
+    public Tree(final String id, final JsArrayOf<Node<T>> nodes) {
+        this.id = id;
+        this.div = Browser.getDocument().createDivElement();
+        this.div.setId(id);
+        this.options = initOptions();
+        this.options.core.data = nodes;
+    }
+
+    private Options<T> initOptions() {
+        Options<T> options = new Options<>();
+        options.core = new Options.Core<>();
+        options.core.animation = false;
+        options.core.multiple = false;
         options.core.themes = new Options.Themes();
         options.core.themes.name = "hal"; //NON-NLS
-        options.core.themes.dots= false;
+        options.core.themes.dots = false;
         options.core.themes.icons = true;
         options.core.themes.responsive = true;
         options.core.themes.striped = false;
         options.core.themes.url = false;
         options.plugins = JsArrayOf.create();
+        options.plugins.push("search"); //NON-NLS
         options.plugins.push("wholerow"); //NON-NLS
         return options;
     }
@@ -116,6 +134,7 @@ public class Tree<T> implements IsElement, Attachable {
 
     /**
      * Getter for the {@link org.jboss.hal.ballroom.tree.Api} instance.
+     *
      * @throws IllegalStateException if the API wasn't initialized using {@link #attach()}
      */
     public Api<T> api() {
@@ -132,5 +151,15 @@ public class Tree<T> implements IsElement, Attachable {
                     "Tree('" + id + "') is not attached. Call Tree.attach() before you register callbacks!");
         }
         bridge.on(CHANGED_EVENT, handler);
+    }
+
+    public void select(final String id, final boolean closeSelected) {
+        api().deselectAll(true);
+        api().selectNode(id, false, false);
+        if (closeSelected) {
+            api().closeNode(id);
+        }
+        asElement().focus();
+        Browser.getDocument().getElementById(id).scrollIntoView(false);
     }
 }

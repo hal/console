@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.subsystem.logging;
 
 import org.jboss.hal.core.finder.PreviewAttributes;
+import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Resources;
@@ -60,9 +61,10 @@ class LogFilePreview extends PreviewContent<LogFile> {
 
         PreviewAttributes<LogFile> previewAttributes = new PreviewAttributes<>(logFile)
                 .append(model ->
-                        new String[]{resources.constants().lastModified(), logFile.getFormattedLastModifiedDate()})
+                        new PreviewAttribute(resources.constants().lastModified(),
+                                logFile.getFormattedLastModifiedDate()))
                 .append(model ->
-                        new String[]{resources.constants().size(), logFile.getFormattedSize()})
+                        new PreviewAttribute(resources.constants().size(), logFile.getFormattedSize()))
                 .end();
         previewBuilder().addAll(previewAttributes);
     }

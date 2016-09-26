@@ -24,6 +24,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.capabilitiy.Capability;
 
@@ -57,23 +58,33 @@ public class ReadCapabilities implements BootstrapFunction {
     @Override
     public void execute(final Control<FunctionContext> control) {
         logStart();
-        ResourceAddress capabilityRegistry = new ResourceAddress();
-        if (!environment.isStandalone()) {
-            capabilityRegistry.add(HOST, environment.getDomainController());
-        }
-        capabilityRegistry.add(CORE_SERVICE, CAPABILITY_REGISTRY);
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, capabilityRegistry).build();
-        dispatcher.execute(operation, result -> {
-            if (result.hasDefined(POSSIBLE_CAPABILITIES)) {
-                for (ModelNode capabilityNode : result.get(POSSIBLE_CAPABILITIES).asList()) {
-                    Capability capability = new Capability(capabilityNode);
-                    capabilities.register(capability);
-                    logger.debug("Registered {}", capability); //NON-NLS
-                }
-            }
+
+        if (!ManagementModel.supportsCapabilitiesRegistry(environment.getManagementVersion())) {
+            logger.warn("Skip {}: Capabilities registry is not supported for management model version {}!", name(),
+                    environment.getManagementVersion());
+            // TODO Register some well-known capabilities as fall back
             logDone();
             control.proceed();
-        });
+
+        } else {
+            ResourceAddress capabilityRegistry = new ResourceAddress();
+            if (!environment.isStandalone()) {
+                capabilityRegistry.add(HOST, environment.getDomainController());
+            }
+            capabilityRegistry.add(CORE_SERVICE, CAPABILITY_REGISTRY);
+            Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, capabilityRegistry).build();
+            dispatcher.execute(operation, result -> {
+                if (result.hasDefined(POSSIBLE_CAPABILITIES)) {
+                    for (ModelNode capabilityNode : result.get(POSSIBLE_CAPABILITIES).asList()) {
+                        Capability capability = new Capability(capabilityNode);
+                        capabilities.register(capability);
+                        logger.debug("Registered {}", capability);
+                    }
+                }
+                logDone();
+                control.proceed();
+            });
+        }
     }
 
     @Override

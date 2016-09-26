@@ -26,6 +26,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST_SCOPED_ROLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ROLE_MAPPING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP_SCOPED_ROLE;
+import static org.jboss.hal.meta.AddressTemplate.OPTIONAL;
 
 /**
  * @author Harald Pehl
@@ -36,8 +37,8 @@ public interface AddressTemplates {
     String ROLE_MAPPING_ADDRESS = ROOT_ADDRESS + "/role-mapping=*";
     String INCLUDE_ADDRESS = ROLE_MAPPING_ADDRESS + "/include=*";
     String EXCLUDE_ADDRESS = ROLE_MAPPING_ADDRESS + "/exclude=*";
-    String HOST_SCOPED_ROLE_ADDRESS = ROOT_ADDRESS + "/host-scoped-role=*";
-    String SERVER_GROUP_SCOPED_ROLE_ADDRESS = ROOT_ADDRESS + "/server-group-scoped-role=*";
+    String HOST_SCOPED_ROLE_ADDRESS = OPTIONAL + ROOT_ADDRESS + "/host-scoped-role=*";
+    String SERVER_GROUP_SCOPED_ROLE_ADDRESS = OPTIONAL + ROOT_ADDRESS + "/server-group-scoped-role=*";
 
     AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
     AddressTemplate ROLE_MAPPING_TEMPLATE = AddressTemplate.of(ROLE_MAPPING_ADDRESS);

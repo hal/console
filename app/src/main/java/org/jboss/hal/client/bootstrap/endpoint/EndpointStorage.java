@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
  */
 public class EndpointStorage {
 
-    private static final String KEY = Ids.build(Ids.STORAGE_PREFIX, '.', "endpoints");
     @NonNls private static final Logger logger = LoggerFactory.getLogger(EndpointStorage.class);
 
     private final Storage storage;
@@ -47,7 +46,7 @@ public class EndpointStorage {
     private List<Endpoint> load() {
         List<Endpoint> endpoints = new ArrayList<>();
         if (storage != null) {
-            String payload = storage.getItem(KEY);
+            String payload = storage.getItem(Ids.ENDPOINT_STORAGE);
             if (payload != null) {
                 try {
                     List<ModelNode> nodes = ModelNode.fromBase64(payload).asList();
@@ -55,7 +54,8 @@ public class EndpointStorage {
                         endpoints.add(new Endpoint(node));
                     }
                 } catch (IllegalArgumentException e) {
-                    logger.error("Unable to read endpoints from local storage using key '{}': {}", KEY, e.getMessage());
+                    logger.error("Unable to read endpoints from local storage using key '{}': {}",
+                            Ids.ENDPOINT_STORAGE, e.getMessage());
                 }
             }
         }
@@ -64,7 +64,7 @@ public class EndpointStorage {
 
     private void save() {
         if (storage != null) {
-            storage.setItem(KEY, toBase64());
+            storage.setItem(Ids.ENDPOINT_STORAGE, toBase64());
         }
     }
 
@@ -86,7 +86,7 @@ public class EndpointStorage {
         save();
     }
 
-    public void saveSelection(Endpoint selected) {
+    void saveSelection(Endpoint selected) {
         for (Endpoint endpoint : endpoints) {
             if (selected.getName().equals(endpoint.getName())) {
                 endpoint.setSelected(true);

@@ -189,8 +189,7 @@ public class ServerGroupActions {
 
         List<Server> startedServers = serverGroup.getServers(Server::isStarted);
         if (!startedServers.isEmpty()) {
-            DialogFactory.confirmation(title, question, () -> {
-
+            DialogFactory.showConfirmation(title, question, () -> {
                 prepare(serverGroup, startedServers, action);
                 dispatcher.execute(operation,
                         result -> new TimeoutHandler(dispatcher, timeout(serverGroup, action)).execute(
@@ -199,9 +198,7 @@ public class ServerGroupActions {
                                 new ServerGroupTimeoutCallback(serverGroup, startedServers, successMessage)),
                         new ServerGroupFailedCallback(serverGroup, startedServers, errorMessage),
                         new ServerGroupExceptionCallback(serverGroup, startedServers, errorMessage));
-
-                return true;
-            }).show();
+            });
 
         } else {
             MessageEvent.fire(eventBus,
@@ -219,36 +216,34 @@ public class ServerGroupActions {
                     String id = Ids.build(SUSPEND_SERVERS, serverGroup.getName(), Ids.FORM_SUFFIX);
                     Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, SUSPEND_SERVERS).build();
 
-                    Dialog dialog = DialogFactory
-                            .confirmation(resources.messages().suspend(serverGroup.getName()),
-                                    resources.messages().suspendServerGroupQuestion(serverGroup.getName()),
-                                    form.asElement(),
-                                    () -> {
+                    Dialog dialog = DialogFactory.buildConfirmation(
+                            resources.messages().suspend(serverGroup.getName()),
+                            resources.messages().suspendServerGroupQuestion(serverGroup.getName()),
+                            form.asElement(),
+                            () -> {
 
-                                        form.save();
-                                        int timeout = getOrDefault(form.getModel(), TIMEOUT,
-                                                () -> form.getModel().get(TIMEOUT).asInt(), 0);
-                                        int uiTimeout = timeout + timeout(serverGroup, Action.SUSPEND);
+                                form.save();
+                                int timeout = getOrDefault(form.getModel(), TIMEOUT,
+                                        () -> form.getModel().get(TIMEOUT).asInt(), 0);
+                                int uiTimeout = timeout + timeout(serverGroup, Action.SUSPEND);
 
-                                        prepare(serverGroup, startedServers, Action.SUSPEND);
-                                        Operation operation = new Operation.Builder(SUSPEND_SERVERS,
-                                                serverGroup.getAddress())
-                                                .param(TIMEOUT, timeout)
-                                                .build();
-                                        dispatcher.execute(operation,
-                                                result -> new TimeoutHandler(dispatcher, uiTimeout).execute(
-                                                        readSuspendState(startedServers),
-                                                        checkSuspendState(startedServers.size(), SUSPENDED),
-                                                        new ServerGroupTimeoutCallback(serverGroup, startedServers,
-                                                                resources.messages().suspendServerGroupSuccess(
-                                                                        serverGroup.getName()))),
-                                                new ServerGroupFailedCallback(serverGroup, startedServers, resources
-                                                        .messages().suspendServerGroupError(serverGroup.getName())),
-                                                new ServerGroupExceptionCallback(serverGroup, startedServers, resources
-                                                        .messages().suspendServerGroupError(serverGroup.getName())));
-                                        return true;
-                                    });
-
+                                prepare(serverGroup, startedServers, Action.SUSPEND);
+                                Operation operation = new Operation.Builder(SUSPEND_SERVERS,
+                                        serverGroup.getAddress())
+                                        .param(TIMEOUT, timeout)
+                                        .build();
+                                dispatcher.execute(operation,
+                                        result -> new TimeoutHandler(dispatcher, uiTimeout).execute(
+                                                readSuspendState(startedServers),
+                                                checkSuspendState(startedServers.size(), SUSPENDED),
+                                                new ServerGroupTimeoutCallback(serverGroup, startedServers,
+                                                        resources.messages().suspendServerGroupSuccess(
+                                                                serverGroup.getName()))),
+                                        new ServerGroupFailedCallback(serverGroup, startedServers, resources
+                                                .messages().suspendServerGroupError(serverGroup.getName())),
+                                        new ServerGroupExceptionCallback(serverGroup, startedServers, resources
+                                                .messages().suspendServerGroupError(serverGroup.getName())));
+                            });
                     dialog.registerAttachable(form);
                     dialog.show();
 
@@ -303,38 +298,36 @@ public class ServerGroupActions {
                     Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, STOP_SERVERS)
                             .include(TIMEOUT).build();
 
-                    Dialog dialog = DialogFactory
-                            .confirmation(resources.messages().stop(serverGroup.getName()),
-                                    resources.messages().stopServerGroupQuestion(serverGroup.getName()),
-                                    form.asElement(),
-                                    () -> {
+                    Dialog dialog = DialogFactory.buildConfirmation(
+                            resources.messages().stop(serverGroup.getName()),
+                            resources.messages().stopServerGroupQuestion(serverGroup.getName()),
+                            form.asElement(),
+                            () -> {
 
-                                        form.save();
-                                        int timeout = getOrDefault(form.getModel(), TIMEOUT,
-                                                () -> form.getModel().get(TIMEOUT).asInt(), 0);
-                                        int uiTimeout = timeout + timeout(serverGroup, Action.STOP);
+                                form.save();
+                                int timeout = getOrDefault(form.getModel(), TIMEOUT,
+                                        () -> form.getModel().get(TIMEOUT).asInt(), 0);
+                                int uiTimeout = timeout + timeout(serverGroup, Action.STOP);
 
-                                        prepare(serverGroup, startedServers, Action.STOP);
-                                        Operation operation = new Operation.Builder(STOP_SERVERS,
-                                                serverGroup.getAddress())
-                                                .param(TIMEOUT, timeout)
-                                                .param(BLOCKING, false)
-                                                .build();
-                                        dispatcher.execute(operation,
-                                                result -> new TimeoutHandler(dispatcher, uiTimeout).execute(
-                                                        readServerConfigStatus(startedServers),
-                                                        checkServerConfigStatus(startedServers.size(),
-                                                                STOPPED, DISABLED),
-                                                        new ServerGroupTimeoutCallback(serverGroup, startedServers,
-                                                                resources.messages().stopServerGroupSuccess(
-                                                                        serverGroup.getName()))),
-                                                new ServerGroupFailedCallback(serverGroup, startedServers, resources
-                                                        .messages().stopServerGroupError(serverGroup.getName())),
-                                                new ServerGroupExceptionCallback(serverGroup, startedServers, resources
-                                                        .messages().stopServerGroupError(serverGroup.getName())));
-                                        return true;
-                                    });
-
+                                prepare(serverGroup, startedServers, Action.STOP);
+                                Operation operation = new Operation.Builder(STOP_SERVERS,
+                                        serverGroup.getAddress())
+                                        .param(TIMEOUT, timeout)
+                                        .param(BLOCKING, false)
+                                        .build();
+                                dispatcher.execute(operation,
+                                        result -> new TimeoutHandler(dispatcher, uiTimeout).execute(
+                                                readServerConfigStatus(startedServers),
+                                                checkServerConfigStatus(startedServers.size(),
+                                                        STOPPED, DISABLED),
+                                                new ServerGroupTimeoutCallback(serverGroup, startedServers,
+                                                        resources.messages().stopServerGroupSuccess(
+                                                                serverGroup.getName()))),
+                                        new ServerGroupFailedCallback(serverGroup, startedServers, resources
+                                                .messages().stopServerGroupError(serverGroup.getName())),
+                                        new ServerGroupExceptionCallback(serverGroup, startedServers, resources
+                                                .messages().stopServerGroupError(serverGroup.getName())));
+                            });
                     dialog.registerAttachable(form);
                     dialog.show();
 

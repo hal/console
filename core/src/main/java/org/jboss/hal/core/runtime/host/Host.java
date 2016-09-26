@@ -15,12 +15,14 @@
  */
 package org.jboss.hal.core.runtime.host;
 
+import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.runtime.HasServersNode;
 import org.jboss.hal.core.runtime.RunningMode;
 import org.jboss.hal.core.runtime.RunningState;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.ManagementModel;
 
 import static org.jboss.hal.core.runtime.RunningMode.ADMIN_ONLY;
 import static org.jboss.hal.core.runtime.RunningState.RELOAD_REQUIRED;
@@ -42,19 +44,26 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 public class Host extends HasServersNode {
 
     private final String addressName;
+    private final Version managementVersion;
 
     public Host(final ModelNode node) {
         super(node.get(NAME).asString(), node);
         this.addressName = node.get(NAME).asString();
+        this.managementVersion = ManagementModel.parseVersion(node);
     }
 
     public Host(final Property property) {
         super(property.getValue().get(NAME).asString(), property.getValue());
         this.addressName = property.getName();
+        this.managementVersion = ManagementModel.parseVersion(property.getValue());
     }
 
     public String getAddressName() {
         return addressName;
+    }
+
+    public Version getManagementVersion() {
+        return managementVersion;
     }
 
     public boolean isDomainController() {

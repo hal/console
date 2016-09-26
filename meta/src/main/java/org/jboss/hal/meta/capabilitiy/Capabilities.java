@@ -19,19 +19,22 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.StatementContext;
+import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
@@ -49,15 +52,18 @@ public class Capabilities {
     }
 
 
-    private static final Logger logger = LoggerFactory.getLogger(Capabilities.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(Capabilities.class);
 
+    private final Environment environment;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final Map<String, Capability> registry;
 
     @Inject
-    public Capabilities(final Dispatcher dispatcher,
+    public Capabilities(final Environment environment,
+            final Dispatcher dispatcher,
             final StatementContext statementContext) {
+        this.environment = environment;
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
         this.registry = new HashMap<>();
@@ -78,25 +84,36 @@ public class Capabilities {
      */
     @SuppressWarnings("DuplicateStringLiteralInspection")
     public void lookup(final String name, final CapabilitiesCallback callback) {
-        ResourceAddress address = AddressTemplate.of("{domain.controller}/core-service=capability-registry")
-                .resolve(statementContext);
-        Operation operation = new Operation.Builder("get-provider-points", address) //NON-NLS
-                .param(NAME, name)
-                .build();
-        dispatcher.execute(operation,
-                result -> {
-                    List<AddressTemplate> templates = result.asList().stream()
-                            .map(ModelNode::asString)
-                            .map(AddressTemplate::of)
-                            .collect(Collectors.toList());
-                    register(name, templates);
-                    callback.onSuccess(lookup(name));
-                },
-                (op, failure) -> callback.onFailure(new RuntimeException(
-                        "Error reading capabilities for " + name + " using " + op + ": " + failure)),
-                (op, exception) -> callback.onFailure(new RuntimeException(
-                        "Error reading capabilities for " + name + " using " + op + ": " + exception.getMessage(),
-                        exception)));
+        if (!ManagementModel.supportsCapabilitiesRegistry(environment.getManagementVersion())) {
+            callback.onFailure(new UnsupportedOperationException("Unable to lookup capabilities for " + name +
+                    ", capabilities registry is not supported for management model version " +
+                    environment.getManagementVersion()));
+
+        } else {
+            ResourceAddress address = AddressTemplate.of("{domain.controller}/core-service=capability-registry")
+                    .resolve(statementContext);
+            Operation operation = new Operation.Builder("get-provider-points", address) //NON-NLS
+                    .param(NAME, name)
+                    .build();
+            dispatcher.execute(operation,
+                    result -> {
+                        if (result.isDefined()) {
+                            List<AddressTemplate> templates = result.asList().stream()
+                                    .map(ModelNode::asString)
+                                    .map(AddressTemplate::of)
+                                    .collect(toList());
+                            register(name, templates);
+                            callback.onSuccess(lookup(name));
+                        } else {
+                            callback.onFailure(new IllegalArgumentException("No capabilities found for " + name));
+                        }
+                    },
+                    (op, failure) -> callback.onFailure(new RuntimeException(
+                            "Error reading capabilities for " + name + " using " + op + ": " + failure)),
+                    (op, exception) -> callback.onFailure(new RuntimeException(
+                            "Error reading capabilities for " + name + " using " + op + ": " + exception.getMessage(),
+                            exception)));
+        }
     }
 
     public boolean contains(final String name) {return registry.containsKey(name);}

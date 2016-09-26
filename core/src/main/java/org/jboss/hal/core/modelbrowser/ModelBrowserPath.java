@@ -15,12 +15,13 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
-import org.jboss.hal.ballroom.tree.Node;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
+import org.jboss.hal.ballroom.tree.Node;
+import org.jboss.hal.resources.Ids;
 
 /**
  * @author Harald Pehl
@@ -50,7 +51,7 @@ public class ModelBrowserPath implements Iterable<ModelBrowserPath.Segment[]> {
 
         Node<Context> current = node;
         List<Node<Context>> nodes = new ArrayList<>();
-        while (current != null && !ModelBrowser.ROOT_ID.equals(current.id)) {
+        while (current != null && !Ids.MODEL_BROWSER_ROOT.equals(current.id)) {
             nodes.add(current);
             current = modelBrowser.tree.api().getNode(current.parent);
         }

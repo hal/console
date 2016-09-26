@@ -50,6 +50,7 @@ public interface ModelDescriptionConstants {
     String ADDRESS = "address";
     String ALLOWED = "allowed";
     String ANY = "any";
+    String ARCHIVE = "archive";
     String ATTRIBUTES = "attributes";
     String ATTRIBUTES_ONLY = "attributes-only";
     String AUTO_START = "auto-start";
@@ -57,16 +58,19 @@ public interface ModelDescriptionConstants {
     String BASE_ROLE = "base-role";
     String BATCH_JBERET = "batch-jberet";
     String BLOCKING = "blocking";
+    String BROWSE_CONTENT = "browse-content";
 
     String CAPABILITIES = "capabilities";
     String CAPABILITY_REFERENCE = "capability-reference";
     String CAPABILITY_REGISTRY = "capability-registry";
     String CHILD_TYPE = "child-type";
     String CHILDREN = "children";
+    String CLASS_NAME = "class-name";
     String COMBINED_DESCRIPTIONS = "combined-descriptions";
     String COMPOSITE = "composite";
     String CONNECTION_URL = "connection-url";
     String CONFIGURATION = "configuration";
+    String CONTENT = "content";
     String CONTEXT_SERVICE = "context-service";
     String CORE_SERVICE = "core-service";
 
@@ -74,9 +78,11 @@ public interface ModelDescriptionConstants {
     String DATASOURCES = "datasources";
     String DEFAULT = "default";
     String DEFAULT_BINDINGS = "default-bindings";
+    String DEPLOY = "deploy";
     String DEPLOYMENT = "deployment";
     String DEPLOYMENT_NAME = "deployment-name";
     String DEPLOYMENT_SCANNER = "deployment-scanner";
+    String DEPRECATED = "deprecated";
     String DESCRIPTION = "description";
     String DISABLED = "disabled";
     String DRIVER_CLASS = "driver-class";
@@ -94,6 +100,7 @@ public interface ModelDescriptionConstants {
     String ENABLED = "enabled";
     String EXCEPTIONS = "exceptions";
     String EXCLUDE = "exclude";
+    String EXPLODED = "exploded";
     String EXPRESSIONS_ALLOWED = "expressions-allowed";
 
     String FAILED = "failed";
@@ -105,6 +112,7 @@ public interface ModelDescriptionConstants {
     String GROUP = "group";
 
     String HANDLERS = "handlers";
+    String HASH = "hash";
     String HOST = "host";
     String HOSTS = "hosts";
     String HOST_SCOPED_ROLE = "host-scoped-role";
@@ -140,6 +148,7 @@ public interface ModelDescriptionConstants {
 
     String MAIL = "mail";
     String MAIL_SESSION = "mail-session";
+    String MANAGED = "managed";
     String MANAGED_EXECUTOR_SERVICE = "managed-executor-service";
     String MANAGED_SCHEDULED_EXECUTOR_SERVICE = "managed-scheduled-executor-service";
     String MANAGED_THREAD_FACTORY = "managed-thread-factory";
@@ -181,11 +190,13 @@ public interface ModelDescriptionConstants {
     String READ_CHILDREN_NAMES_OPERATION = "read-children-names";
     String READ_CHILDREN_TYPES_OPERATION = "read-children-types";
     String READ_CHILDREN_RESOURCES_OPERATION = "read-children-resources";
+    String READ_CONTENT = "read-content";
     String READ_ONLY = "read-only";
     String READ_RESOURCE_DESCRIPTION_OPERATION = "read-resource-description";
     String READ_RESOURCE_OPERATION = "read-resource";
     String READ_WRITE = "read-write";
     String REALM = "realm";
+    String REASON = "reason";
     String RELATIVE_TO = "relative-to";
     String REMOTING = "remoting";
     String REMOVE = "remove";
@@ -270,6 +281,7 @@ public interface ModelDescriptionConstants {
 
     String UNDEFINE_ATTRIBUTE_OPERATION = "undefine-attribute";
     String UNDEFINED = "undefined";
+    String UNDEPLOY = "undeploy";
     String UNDERTOW = "undertow";
 
     String XA_DATA_SOURCE = "xa-data-source";

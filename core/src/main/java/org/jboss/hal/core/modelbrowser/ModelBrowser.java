@@ -42,6 +42,7 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.tree.SelectionChangeHandler.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
+import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.ui.Skeleton;
@@ -70,17 +71,18 @@ import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.js.JsHelper.asList;
+import static org.jboss.hal.core.modelbrowser.SingletonState.CHOOSE;
+import static org.jboss.hal.core.modelbrowser.SingletonState.CREATE;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.Ids.MODEL_BROWSER_ROOT;
 import static org.jboss.hal.resources.Names.NYI;
 
 /**
- * TODO Removing a filter in a scoped model browser does not work
- *
  * @author Harald Pehl
  */
 public class ModelBrowser implements HasElements {
@@ -128,9 +130,7 @@ public class ModelBrowser implements HasElements {
 
     private abstract class DefaultMetadataCallback implements MetadataProcessor.MetadataCallback {
 
-        private final ResourceAddress address;
-
-        DefaultMetadataCallback(final ResourceAddress address) {this.address = address;}
+        DefaultMetadataCallback() {}
 
         @Override
         public void onError(final Throwable error) {
@@ -143,7 +143,6 @@ public class ModelBrowser implements HasElements {
     private static final String REFRESH_ELEMENT = "refreshElement";
     private static final String COLLAPSE_ELEMENT = "collapseElement";
 
-    static final String ROOT_ID = Ids.build(Ids.MODEL_BROWSER, "root");
     static final Element PLACE_HOLDER_ELEMENT = Browser.getDocument().createDivElement();
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelBrowser.class);
@@ -168,6 +167,7 @@ public class ModelBrowser implements HasElements {
     Tree<Context> tree;
 
     private boolean updateBreadcrumb;
+    private int surroundingHeight;
 
 
     // ------------------------------------------------------ ui setup
@@ -185,6 +185,8 @@ public class ModelBrowser implements HasElements {
         this.resources = resources;
         this.operationFactory = new OperationFactory();
         this.filterStack = new Stack<>();
+        this.updateBreadcrumb = false;
+        this.surroundingHeight = 0;
 
         // @formatter:off
         Elements.Builder buttonsBuilder = new Elements.Builder()
@@ -204,7 +206,7 @@ public class ModelBrowser implements HasElements {
         refresh = buttonsBuilder.referenceFor(REFRESH_ELEMENT);
         collapse = buttonsBuilder.referenceFor(COLLAPSE_ELEMENT);
         buttonGroup = buttonsBuilder.build();
-        treeContainer = new Elements.Builder().div().css(modelBrowserTree).end().build();
+        treeContainer = new Elements.Builder().div().css(CSS.treeContainer).end().build();
         content = new Elements.Builder().div().css(modelBrowserContent).end().build();
 
         resourcePanel = new ResourcePanel(this, dispatcher, resources);
@@ -235,14 +237,15 @@ public class ModelBrowser implements HasElements {
     private void adjustHeight() {
         int height = Skeleton.applicationHeight();
         int buttonGroup = this.buttonGroup.getOffsetHeight();
-        treeContainer.getStyle().setHeight(height - 2 * MARGIN_BIG - buttonGroup - 2 * MARGIN_SMALL, PX);
-        content.getStyle().setHeight(height - 2 * MARGIN_BIG - MARGIN_SMALL, PX);
+        treeContainer.getStyle()
+                .setHeight(height - 2 * MARGIN_BIG - buttonGroup - MARGIN_SMALL - surroundingHeight, PX);
+        content.getStyle().setHeight(height - 2 * MARGIN_BIG - surroundingHeight, PX);
     }
 
     private void initTree(ResourceAddress address, String text) {
         Context context = new Context(address, Collections.emptySet());
-        Node<Context> rootNode = new Node.Builder<>(ROOT_ID, text, context)
-                .folder()
+        Node<Context> rootNode = new Node.Builder<>(MODEL_BROWSER_ROOT, text, context)
+                .asyncFolder()
                 .build();
         tree = new Tree<>(Ids.MODEL_BROWSER, rootNode, new ReadChildren(dispatcher));
         Elements.removeChildrenFrom(treeContainer);
@@ -255,8 +258,8 @@ public class ModelBrowser implements HasElements {
 
     private void emptyTree() {
         Context context = new Context(ResourceAddress.ROOT, Collections.emptySet());
-        Node<Context> rootNode = new Node.Builder<>(ROOT_ID, Names.NOT_AVAILABLE, context)
-                .folder()
+        Node<Context> rootNode = new Node.Builder<>(MODEL_BROWSER_ROOT, Names.NOT_AVAILABLE, context)
+                .asyncFolder()
                 .build();
 
         tree = new Tree<>(Ids.MODEL_BROWSER, rootNode, (node, callback) -> callback.result(JsArrayOf.create()));
@@ -276,7 +279,7 @@ public class ModelBrowser implements HasElements {
             FilterInfo filterInfo = new FilterInfo(parent, node);
             filterStack.add(filterInfo);
             filter(filterInfo);
-            tree.api().openNode(ROOT_ID, () -> select(ROOT_ID, false));
+            tree.api().openNode(MODEL_BROWSER_ROOT, () -> tree.select(MODEL_BROWSER_ROOT, false));
         }
     }
 
@@ -327,7 +330,7 @@ public class ModelBrowser implements HasElements {
 
                 @Override
                 public void onSuccess(final FunctionContext context) {
-                    select(previousFilter.node.id, false);
+                    tree.select(previousFilter.node.id, false);
                 }
             };
             new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(), outcome,
@@ -344,7 +347,7 @@ public class ModelBrowser implements HasElements {
 
     private void collapse(Node<Context> node) {
         if (node != null) {
-            select(node.id, true);
+            tree.select(node.id, true);
         }
     }
 
@@ -356,7 +359,7 @@ public class ModelBrowser implements HasElements {
 
         filter.setDisabled(context.selected.isEmpty() ||
                 !context.node.data.isFullyQualified() ||
-                context.node.id.equals(ROOT_ID));
+                context.node.id.equals(MODEL_BROWSER_ROOT));
         refresh.setDisabled(context.selected.isEmpty());
         collapse.setDisabled(context.selected.isEmpty());
 
@@ -392,7 +395,7 @@ public class ModelBrowser implements HasElements {
     private void showResourceView(Node<Context> node, ResourceAddress address) {
         Node<Context> parent = tree.api().getNode(node.parent);
         AddressTemplate template = asGenericTemplate(parent, address);
-        metadataProcessor.lookup(template, progress.get(), new DefaultMetadataCallback(address) {
+        metadataProcessor.lookup(template, progress.get(), new DefaultMetadataCallback() {
             @Override
             public void onMetadata(final Metadata metadata) {
                 resourcePanel.update(node, node.data.getAddress(), metadata);
@@ -414,7 +417,7 @@ public class ModelBrowser implements HasElements {
 
                 ResourceAddress singletonAddress = parent.data.getAddress().getParent().add(parent.text, singleton);
                 AddressTemplate template = asGenericTemplate(parent, singletonAddress);
-                metadataProcessor.lookup(template, progress.get(), new DefaultMetadataCallback(singletonAddress) {
+                metadataProcessor.lookup(template, progress.get(), new DefaultMetadataCallback() {
                     @Override
                     public void onMetadata(Metadata metadata) {
                         String id = Ids.build(parent.id, "singleton", Ids.FORM_SUFFIX);
@@ -443,27 +446,37 @@ public class ModelBrowser implements HasElements {
 
             } else {
                 // open wizard to choose the singleton
-                NewSingletonWizard wizard = new NewSingletonWizard(metadataProcessor, progress, eventBus, resources,
-                        parent, children, context -> {
-                    Operation.Builder builder = new Operation.Builder(ADD,
-                            fqAddress(parent, context.singleton));
-                    if (context.modelNode != null) {
-                        builder.payload(context.modelNode);
-                    }
-                    dispatcher.execute(builder.build(),
-                            result -> {
-                                MessageEvent.fire(eventBus, Message.success(
-                                        resources.messages()
+                Wizard<SingletonContext, SingletonState> wizard = new Wizard.Builder<SingletonContext, SingletonState>(
+                        resources.messages().addResourceTitle(parent.text),
+                        new SingletonContext(parent, children))
+
+                        .addStep(CHOOSE, new ChooseSingletonStep(parent, children, resources))
+                        .addStep(CREATE, new CreateSingletonStep(parent, metadataProcessor, progress,
+                                eventBus, resources))
+
+                        .onBack((context, currentState) -> currentState == CREATE ? CHOOSE : null)
+                        .onNext((context, currentState) -> currentState == CHOOSE ? CREATE : null)
+
+                        .onFinish((wzrd, context) -> {
+                            Operation.Builder builder = new Operation.Builder(ADD,
+                                    fqAddress(parent, context.singleton));
+                            if (context.modelNode != null) {
+                                builder.payload(context.modelNode);
+                            }
+                            dispatcher.execute(builder.build(),
+                                    result -> {
+                                        MessageEvent.fire(eventBus, Message.success(resources.messages()
                                                 .addResourceSuccess(parent.text, context.singleton)));
-                                refresh(parent);
-                            });
-                });
+                                        refresh(parent);
+                                    });
+                        })
+                        .build();
                 wizard.show();
             }
 
         } else {
             AddressTemplate template = asGenericTemplate(parent, parent.data.getAddress());
-            metadataProcessor.lookup(template, progress.get(), new DefaultMetadataCallback(parent.data.getAddress()) {
+            metadataProcessor.lookup(template, progress.get(), new DefaultMetadataCallback() {
                 @Override
                 public void onMetadata(Metadata metadata) {
                     AddResourceDialog dialog = new AddResourceDialog(
@@ -536,6 +549,18 @@ public class ModelBrowser implements HasElements {
 
     // ------------------------------------------------------ public API
 
+    /**
+     * Use this method if you embed the model browser into an application view and if you have additional elements
+     * before or after the model browser. This method should be called when the application view is attached or before
+     * {@link #setRoot(ResourceAddress, boolean)} is called.
+     *
+     * @param surroundingHeight the sum of the height of all surrounding elements
+     */
+    public void setSurroundingHeight(final int surroundingHeight) {
+        this.surroundingHeight = surroundingHeight;
+        adjustHeight();
+    }
+
     public void setRoot(ResourceAddress root, boolean updateBreadcrumb) {
         this.updateBreadcrumb = updateBreadcrumb;
 
@@ -544,13 +569,15 @@ public class ModelBrowser implements HasElements {
             throw new IllegalArgumentException("Invalid root address: " + root +
                     ". ModelBrowser.setRoot() must be called with a concrete address.");
         }
+        // TODO Removing a filter in a scoped model browser does not work
+        Elements.setVisible(filter, root == ResourceAddress.ROOT);
 
         Operation ping = new Operation.Builder(READ_RESOURCE_OPERATION, root).build();
         dispatcher.execute(ping,
                 result -> {
                     initTree(root, resource);
-                    tree.api().openNode(ROOT_ID, () -> resourcePanel.tabs.showTab(0));
-                    select(ROOT_ID, false);
+                    tree.api().openNode(MODEL_BROWSER_ROOT, () -> resourcePanel.tabs.showTab(0));
+                    tree.select(MODEL_BROWSER_ROOT, false);
 
                     Browser.getWindow().setOnresize(event -> adjustHeight());
                     adjustHeight();
@@ -576,13 +603,7 @@ public class ModelBrowser implements HasElements {
     }
 
     public void select(final String id, final boolean closeSelected) {
-        tree.api().deselectAll(true);
-        tree.api().selectNode(id, false, false);
-        if (closeSelected) {
-            tree.api().closeNode(id);
-        }
-        tree.asElement().focus();
-        Browser.getDocument().getElementById(id).scrollIntoView(false);
+        tree.select(id, closeSelected);
     }
 
     @Override

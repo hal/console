@@ -15,9 +15,9 @@
  */
 package org.jboss.hal.ballroom.form;
 
-import org.jboss.hal.ballroom.form.Form.Operation;
-
 import java.util.EnumSet;
+
+import org.jboss.hal.ballroom.form.Form.Operation;
 
 import static org.jboss.hal.ballroom.form.Form.Operation.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
@@ -43,8 +43,6 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
  *   (0)---edit()--->   EDITING   +-----+     clear()
  *                  |             |             |
  *                  +------+------+             |
- *                         |                    |
- *                       clear()                |
  *                         |                    |
  *                         +--------------------+
  * </pre>

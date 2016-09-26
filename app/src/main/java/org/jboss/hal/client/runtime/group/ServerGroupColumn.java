@@ -36,6 +36,7 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemMonitor;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.group.ServerGroupActionEvent;
@@ -75,6 +76,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
             final ServerGroupActions serverGroupActions,
+            final Places places,
             final Resources resources) {
 
         super(new Builder<ServerGroup>(finder, Ids.SERVER_GROUP, Names.SERVER_GROUP)
@@ -101,7 +103,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
                                 new TopologyFunctions.ServerGroupsWithServerConfigs(environment, dispatcher),
                                 new TopologyFunctions.ServerGroupsStartedServers(environment, dispatcher)))
 
-                .onPreview(ServerGroupPreview::new)
+                .onPreview(item -> new ServerGroupPreview(item, places))
                 // TODO Change the security context (server group scoped roles!)
                 .onItemSelect(serverGroup -> eventBus.fireEvent(new ServerGroupSelectionEvent(serverGroup.getName())))
                 .pinnable()

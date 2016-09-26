@@ -42,10 +42,32 @@ public class Node<T> {
             node.icon = fontAwesome("file-o");
         }
 
+        public Builder<T> root() {
+            node.parent = "#";
+            return this;
+        }
+
+        public Builder<T> parent(String id) {
+            node.parent = id;
+            return this;
+        }
+
         public Builder<T> folder() {
-            node.children = true;
             node.icon = fontAwesome("folder");
             return this;
+        }
+
+        public Builder<T> open() {
+            if (node.state == null) {
+                node.state = new State();
+            }
+            node.state.opened = true;
+            return this;
+        }
+
+        public Builder<T> asyncFolder() {
+            node.children = true;
+            return folder();
         }
 
         public Builder<T> icon(String icon) {

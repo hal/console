@@ -44,6 +44,7 @@ import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
+import org.jboss.hal.config.semver.Version;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
@@ -52,6 +53,7 @@ import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.meta.ManagementModel;
 
 import static org.jboss.hal.config.AccessControlProvider.SIMPLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -109,9 +111,8 @@ public class ReadEnvironment implements BootstrapFunction {
                     environment.setOperationMode(node.get(LAUNCH_TYPE).asString());
 
                     // management version
-                    environment.setManagementVersion(node.get(MANAGEMENT_MAJOR_VERSION).asString(),
-                            node.get(MANAGEMENT_MICRO_VERSION).asString(),
-                            node.get(MANAGEMENT_MINOR_VERSION).asString());
+                    Version version = ManagementModel.parseVersion(node);
+                    environment.setManagementVersion(version);
 
                     // user info
                     logger.debug("{}: Parse whoami data", name());

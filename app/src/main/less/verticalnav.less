@@ -1,18 +1,13 @@
 /*
  * Adjust the top and bottom position to the header and footer used in HAL.
- * Adjust the width to match two columns (which is used by the finder).
  */
-.nav-pf-vertical-hal, .nav-pf-persistent-secondary-hal {
-  bottom: 26px;
+.nav-pf-vertical-hal, .nav-pf-secondary-nav-hal {
+  bottom: @hal-footer-height;
   min-height: 1px;
-  top: 71px;
+  top: (@hal-header-height - 1px);
   z-index: 1000; // lower z-index to make the breadcrumb dropdown visible again
 
   @media (max-width: 767px) {
     top: 38px;
   }
-}
-
-.container-pf-nav-pf-vertical {
-  margin-left: 200px; // since we do not use .layout-pf.layout-pf-fixed for the html tag
 }

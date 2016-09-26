@@ -128,6 +128,17 @@
             </element>
         </element>
     </define>
+    
+    <define name="tab-definition">
+        <element name="tab">
+            <attribute name="id">
+                <data type="NCName"/>
+            </attribute>
+            <attribute name="title">
+                <ref name="token-or-code"/>
+            </attribute>
+        </element>
+    </define>
 
     <define name="action-definition">
         <element name="action">
@@ -219,6 +230,9 @@
                 <ref name="attribute-definition"/>
             </oneOrMore>
         </element>
+        <optional>
+            <ref name="tab-definition"/>
+        </optional>
     </define>
 
     <define name="attribute-definition">

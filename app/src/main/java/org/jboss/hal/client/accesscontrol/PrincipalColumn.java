@@ -181,8 +181,9 @@ class PrincipalColumn extends FinderColumn<Principal> {
                 SafeHtml success = item.getType() == Principal.Type.USER ? resources.messages()
                         .removeUserSuccess(item.getName()) : resources.messages().removeGroupSuccess(item.getName());
                 return singletonList(new ItemAction<Principal>(resources.constants().remove(), itm ->
-                        DialogFactory.confirmation(resources.messages().removeResourceConfirmationTitle(title),
-                                question, () -> {
+                        DialogFactory.showConfirmation(
+                                resources.messages().removeResourceConfirmationTitle(title), question,
+                                () -> {
                                     List<Operation> operations = accessControl.assignments().byPrincipal(item)
                                             .map(assignment -> new Operation.Builder(REMOVE,
                                                     AddressTemplates.assignment(assignment)).build())
@@ -191,8 +192,7 @@ class PrincipalColumn extends FinderColumn<Principal> {
                                         MessageEvent.fire(eventBus, Message.success(success));
                                         accessControl.reload(() -> refresh(CLEAR_SELECTION));
                                     });
-                                    return true;
-                                }).show()));
+                                })));
             }
 
             @Override

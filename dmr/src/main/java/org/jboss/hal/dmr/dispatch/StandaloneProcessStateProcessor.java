@@ -15,10 +15,8 @@
  */
 package org.jboss.hal.dmr.dispatch;
 
-import java.util.List;
-
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.dispatch.ServerState.State;
 import org.jboss.hal.resources.Names;
 
@@ -35,27 +33,22 @@ public class StandaloneProcessStateProcessor implements ProcessStateProcessor {
 
     @Override
     public boolean accepts(ModelNode response) {
-        return response.hasDefined(RESPONSE_HEADERS);
+        return ModelNodeHelper.failSafeGet(response, RESPONSE_HEADERS + "/" + PROCESS_STATE).isDefined();
     }
 
     @Override
     public ProcessState process(ModelNode response) {
         ProcessState processState = new ProcessState();
-        List<Property> headers = response.get(RESPONSE_HEADERS).asPropertyList();
-        //noinspection Convert2streamapi
-        for (Property header : headers) {
-            if (PROCESS_STATE.equals(header.getName())) {
 
-                String headerValue = header.getValue().asString();
-                if (RESTART_REQUIRED.equals(headerValue)) {
-                    ServerState state = new ServerState("", Names.STANDALON_SERVER, State.RESTART_REQUIRED);
-                    processState.add(state);
+        ModelNode processStateNode = ModelNodeHelper.failSafeGet(response, RESPONSE_HEADERS + "/" + PROCESS_STATE);
+        String processStateValue = processStateNode.asString();
+        if (RESTART_REQUIRED.equals(processStateValue)) {
+            ServerState state = new ServerState("", Names.STANDALONE_SERVER, State.RESTART_REQUIRED);
+            processState.add(state);
 
-                } else if (RELOAD_REQUIRED.equals(headerValue)) {
-                    ServerState state = new ServerState("", Names.STANDALON_SERVER, State.RELOAD_REQUIRED);
-                    processState.add(state);
-                }
-            }
+        } else if (RELOAD_REQUIRED.equals(processStateValue)) {
+            ServerState state = new ServerState("", Names.STANDALONE_SERVER, State.RELOAD_REQUIRED);
+            processState.add(state);
         }
         return processState;
     }

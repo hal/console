@@ -135,6 +135,14 @@ public class Operation extends ModelNode {
         return address;
     }
 
+    public ModelNode getParameter() {
+        return parameter;
+    }
+
+    public boolean hasParamter() {
+        return parameter.isDefined() && !parameter.asList().isEmpty();
+    }
+
     @Override
     public Operation clone() {
         return new Operation(name, address, parameter, role);

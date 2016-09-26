@@ -33,9 +33,16 @@ import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
 /**
+ * This class does the bulk of work when it comes to parse the r-r-d response. Therefore it processes three parts:
+ * <ol>
+ * <li>The actual description of the resource and its attributes</li>
+ * <li>The security relevant information</li>
+ * <li>The capabilities</li>
+ * </ol>
+ *
  * @author Harald Pehl
  */
-public class SingleRrdParser {
+class SingleRrdParser {
 
     public Set<RrdResult> parse(ResourceAddress address, ModelNode modelNode) throws ParserException {
         Set<RrdResult> results = new HashSet<>();

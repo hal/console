@@ -161,7 +161,7 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
                     .header(Names.DATASOURCE).rememberAs(HEADER_ELEMENT).end()
                     .p().css(clearfix)
                         .a().css(clickable, pullRight).on(click, event -> refresh())
-                            .span().css(fontAwesome("refresh"), marginRight4).end()
+                            .span().css(fontAwesome("refresh"), marginRight5).end()
                             .span().textContent(resources.constants().refresh()).end()
                         .end()
                     .end()

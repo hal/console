@@ -44,7 +44,7 @@ public class Options<T> {
         public boolean multiple;
         public boolean animation;
         public Themes themes;
-        public DataFunction<T> data;
+        public Object data; // can be a DataFunction<T> or JsArrayOf<Node<T>>
     }
 
 

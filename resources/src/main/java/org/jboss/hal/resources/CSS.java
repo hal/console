@@ -50,6 +50,7 @@ public interface CSS {
     String blue = "blue";
     String bootstrapSwitch = "bootstrap-switch";
     String btn = "btn";
+    String btnCancel = "btn-cancel";
     String btnDefault = "btn-default";
     String btnFinder = "btn-finder";
     String btnGroup = "btn-group";
@@ -60,6 +61,7 @@ public interface CSS {
 
     String caret = "caret";
     String centerBlock = "center-block";
+    String clear = "clear";
     String clearfix = "clearfix";
     String clickable = "clickable";
     String close = "close";
@@ -71,7 +73,7 @@ public interface CSS {
     String collapse = "collapse";
     String containerFluid = "container-fluid";
     String containerPfNavPfVertical = "container-pf-nav-pf-vertical";
-    String containerPfNavPfVerticalWithSecondary = "container-pf-nav-pf-vertical-with-secondary";
+    String containerPfNavPfVerticalWithSubMenus = "container-pf-nav-pf-vertical-with-sub-menus";
     String controlLabel = "control-label";
     String copy = "copy";
 
@@ -89,6 +91,9 @@ public interface CSS {
     String eapHomeTitle = "eap-home-title";
     String editing = "editing";
     String editor = "editor";
+    String editorButtons = "editor-buttons";
+    String editorControls = "editor-controls";
+    String editorStatus = "editor-status";
     String error = "error";
     String errorCircleO = "error-circle-o";
     String equals = "equals";
@@ -99,6 +104,7 @@ public interface CSS {
     String finder = "finder";
     String finderColumn = "finder-column";
     String finderPreview = "finder-preview";
+    String flexRow = "flex-row";
     String folder = "folder";
     String form = "form";
     String formButtons = "form-buttons";
@@ -116,14 +122,20 @@ public interface CSS {
     String halFormLabel = "hal-form-label";
     String halFormInput = "hal-form-input";
     String halFormOffset = "hal-form-offset";
+    String halSearch = "hal-search";
+    String hasButton = "has-button";
+    String hasClear = "has-clear";
     String hasError = "has-error";
     String hasFeedback = "has-feedback";
     String helpBlock = "help-block";
+    String hidden = "hidden";
     String hiddenColumns = "hidden-columns";
     String hint = "hint";
     String hover = "hover";
     String hostContainer = "host-container";
 
+    String imgResponsive = "img-responsive";
+    String imgThumbnail = "img-thumbnail";
     String in = "in";
     String inactive = "inactive";
     String indicator = "indicator";
@@ -160,8 +172,13 @@ public interface CSS {
     String macroEditor = "macro-editor";
     String macroList = "macro-list";
     String marginBottom5 = "margin-bottom-5";
-    String marginRight4 = "margin-right-4";
-    String marginTop20 = "margin-top-20";
+    String marginBottomLarge = "margin-bottom-large";
+    String marginBottomSmall = "margin-bottom-small";
+    String marginRight5 = "margin-right-5";
+    String marginRightSmall = "margin-right-small";
+    String marginLeft5 = "margin-left-5";
+    String marginTopLarge = "margin-top-large";
+    String marginTopSmall = "margin-top-small";
     String messageDetails = "message-details";
     String messageDetailsPre = "message-details-pre";
     String modal = "modal";
@@ -177,16 +194,17 @@ public interface CSS {
     String modalTitle = "modal-title";
     String modelBrowserButtons = "model-browser-buttons";
     String modelBrowserContent = "model-browser-content";
-    String modelBrowserTree = "model-browser-tree";
 
     String name = "name";
     String nav = "nav";
     String navbar = "navbar";
+    String navItemPfHeader = "nav-item-pf-header";
     String navPfPersistentSecondary = "nav-pf-persistent-secondary";
-    String navPfPersistentSecondaryHal = "nav-pf-persistent-secondary-hal";
+    String navPfSecondaryNav = "nav-pf-secondary-nav";
+    String navPfSecondaryNavHal = "nav-pf-secondary-nav-hal";
     String navPfVertical = "nav-pf-vertical";
     String navPfVerticalHal = "nav-pf-vertical-hal";
-    String navPfVerticalWithSecondaryNav = "nav-pf-vertical-with-secondary-nav";
+    String navPfVerticalWithSubMenus = "nav-pf-vertical-with-sub-menus";
     String navTabs = "nav-tabs";
     String navTabsHal = "nav-tabs-hal";
     String navTabsPf = "nav-tabs-pf";
@@ -199,15 +217,13 @@ public interface CSS {
     String operations = "operations";
 
     String panel = "panel";
-    String panelBody = "panel-default";
+    String panelBody = "panel-body";
     String panelCollapse = "panel-collapse";
     String panelDefault = "panel-default";
     String panelGroup = "panel-group";
     String panelHeading = "panel-heading";
     String panelTitle = "panel-title";
     String pauseCircle ="pause-circle-o";
-    String persistentSecondary = "persistent-secondary";
-    String persistentSecondaryHeader = "persistent-secondary-header";
     String pin = "pin";
     String pinned = "pinned";
     String pinnable = "pinnable";
@@ -239,7 +255,11 @@ public interface CSS {
     String row = "row";
     String rowHeader = "row-header";
 
+    String searchPfInputGroup = "search-pf-input-group";
+    String secondaryCollapseTogglePf = "secondary-collapse-toggle-pf";
+    String secondaryNavItemPf = "secondary-nav-item-pf";
     String secondaryVisiblePf = "secondary-visible-pf";
+    String selectCheckbox = "select-checkbox"; // used in DataTables for the checkbox column
     String selected = "selected";
     String selectpicker = "selectpicker";
     String separator = "separator";
@@ -264,16 +284,20 @@ public interface CSS {
     String timestamp = "timestamp";
     String tmTag = "tm-tag";
     String tmTagRemove = "tm-tag-remove";
+    String toastNotificationsListPf = "toast-notifications-list-pf";
     String toastPf = "toast-pf";
     String toastPfAction = "toast-pf-action";
-    String toastPfMaxWidth = "toast-pf-max-width";
-    String toastPfTopRight = "toast-pf-top-right";
     String topology = "topology";
+    String treeContainer = "tree-container";
     String ttNested = "tt-nested";
 
     String underline = "underline";
     String unpin = "unpin";
     String unpinned = "unpinned";
+    String upload = "upload";
+    String uploadAdvanced = "upload-advanced";
+    String uploadIcon = "upload-icon";
+    String uploadFile = "upload-file";
 
     String value = "value";
     String valueDropdown = "value-dropdown";
@@ -281,9 +305,17 @@ public interface CSS {
     String warning = "warning";
     String warningTriangleO = "warning-triangle-o";
     String withProgress = "with-progress";
-    String wizardHeader = "wizard-header";
-    String wizardProgress = "wizard-progress";
-    String wizardStep = "wizard-step";
+    String wizardHalErrorText = "wizard-hal-error-text";
+    String wizardPf = "wizard-pf";
+    String wizardPfBody = "wizard-pf-body";
+    String wizardPfErrorIcon = "wizard-pf-error-icon";
+    String wizardPfFooter = "wizard-pf-footer";
+    String wizardPfMain = "wizard-pf-main";
+    String wizardPfStepNumber = "wizard-pf-step-number";
+    String wizardPfStepTitle = "wizard-pf-step-title";
+    String wizardPfSteps = "wizard-pf-steps";
+    String wizardPfStepsIndicator = "wizard-pf-steps-indicator";
+    String wizardPfSuccessIcon = "wizard-pf-success-icon";
 
     static String column(int columns, String... sizes) {
         if (sizes != null && sizes.length != 0) {
@@ -312,12 +344,25 @@ public interface CSS {
     }
 
     /**
-     * Builds a FontAwesome CSS class.
+     * Builds a FontAwesome icons class.
      *
      * @param name the name of the FontAwesome icon <strong>w/o</strong> the "fa fa-" prefix.
      */
     static String fontAwesome(@NonNls String name) {
-        return "fa fa-" + name; //NON-NLS
+        return fontAwesome(name, null);
+    }
+
+    /**
+     * Builds a FontAwesome icons class.
+     *
+     * @param name the name of the FontAwesome icon <strong>w/o</strong> the "fa fa-" prefix.
+     */
+    static String fontAwesome(@NonNls String name, FontAwesomeSize size) {
+        @NonNls String css = "fa fa-" + name;
+        if (size != null) {
+            css += " fa-" + size.size();
+        }
+        return css;
     }
 
     /**
@@ -327,5 +372,14 @@ public interface CSS {
      */
     static String pfIcon(@NonNls String name) {
         return "pficon pficon-" + name; //NON-NLS
+    }
+
+    /**
+     * Builds a Glyphicon icon class.
+     *
+     * @param name the name of the Glyphicon icon <strong>w/o</strong> the "glyphicon glyphicon-" prefix.
+     */
+    static String glyphicon(@NonNls String name) {
+        return "glyphicon glyphicon-" + name; //NON-NLS
     }
 }

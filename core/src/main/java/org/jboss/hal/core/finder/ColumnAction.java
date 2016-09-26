@@ -25,21 +25,17 @@ public class ColumnAction<T> {
     final String id;
     final String title;
     final Element element;
-    ColumnActionHandler<T> handler;
-
-    public ColumnAction(final String id, final String title) {
-        this(id, title, null, null);
-    }
+    final ColumnActionHandler<T> handler;
 
     public ColumnAction(final String id, final String title, final ColumnActionHandler<T> handler) {
         this(id, title, null, handler);
     }
 
-    public ColumnAction(final String id, final Element element) {
+    ColumnAction(final String id, final Element element) {
         this(id, null, element, null);
     }
 
-    public ColumnAction(final String id, final Element element, final ColumnActionHandler<T> handler) {
+    ColumnAction(final String id, final Element element, final ColumnActionHandler<T> handler) {
         this(id, null, element, handler);
     }
 

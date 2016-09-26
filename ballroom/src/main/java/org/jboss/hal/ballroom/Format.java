@@ -44,7 +44,7 @@ public final class Format {
 
     public static String humanReadableFileSize(long size) {
         if (size <= 0) { return "0"; }
-        final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"}; //NON-NLS
+        final String[] units = new String[]{"Bytes", "KB", "MB", "GB", "TB"}; //NON-NLS
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
         return SIZE_FORMAT.format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }

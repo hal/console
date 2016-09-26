@@ -23,7 +23,6 @@ import elemental.client.Browser;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.VerticalNavigation;
-import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
@@ -59,7 +58,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LEVEL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.resources.CSS.fontAwesome;
-import static org.jboss.hal.resources.CSS.marginTop20;
+import static org.jboss.hal.resources.CSS.marginTopLarge;
 
 /**
  * @author Harald Pehl
@@ -124,9 +123,9 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         noRootLogger = new EmptyState.Builder(mbuiContext.resources().constants().noRootLogger())
                 .description(mbuiContext.resources().constants().noRootLoggerDescription())
                 .icon(fontAwesome("sitemap"))
-                .primaryAction(mbuiContext.resources().constants().add(), event -> addRootLogger())
+                .primaryAction(mbuiContext.resources().constants().add(), () -> addRootLogger())
                 .build();
-        noRootLogger.asElement().getClassList().add(marginTop20);
+        noRootLogger.asElement().getClassList().add(marginTopLarge);
 
         // hack which relies on the element hierarchy given in the template. will break if you change that hierarchy.
         rootLoggerForm.asElement().getParentElement().appendChild(noRootLogger.asElement());
@@ -560,19 +559,17 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         //noinspection ConstantConditions
         String name = api.selectedRow().getName();
         AddressTemplate selectionTemplate = SELECTED_LOGGING_PROFILE_TEMPLATE.append(templateSuffix);
-        Dialog dialog = DialogFactory
-                .confirmation(mbuiContext.resources().messages().removeResourceConfirmationTitle(type),
-                        mbuiContext.resources().messages().removeResourceConfirmationQuestion(name),
-                        () -> {
-                            ResourceAddress address = selectionTemplate.resolve(selectionAwareStatementContext, name);
-                            Operation operation = new Operation.Builder(REMOVE, address).build();
-                            mbuiContext.dispatcher().execute(operation, result -> {
-                                presenter.reload();
-                                MessageEvent.fire(mbuiContext.eventBus(), Message.success(
-                                        mbuiContext.resources().messages().removeResourceSuccess(type, name)));
-                            });
-                            return true;
-                        });
-        dialog.show();
+        DialogFactory.showConfirmation(
+                mbuiContext.resources().messages().removeResourceConfirmationTitle(type),
+                mbuiContext.resources().messages().removeResourceConfirmationQuestion(name),
+                () -> {
+                    ResourceAddress address = selectionTemplate.resolve(selectionAwareStatementContext, name);
+                    Operation operation = new Operation.Builder(REMOVE, address).build();
+                    mbuiContext.dispatcher().execute(operation, result -> {
+                        presenter.reload();
+                        MessageEvent.fire(mbuiContext.eventBus(), Message.success(
+                                mbuiContext.resources().messages().removeResourceSuccess(type, name)));
+                    });
+                });
     }
 }

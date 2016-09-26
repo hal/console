@@ -31,7 +31,7 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 
 /**
- * Column used in domain mode to manage content in the content repository.
+ * Initial column in the deployment top level tab for the domain mode.
  *
  * @author Harald Pehl
  */
@@ -62,6 +62,7 @@ public class BrowseByColumn extends StaticItemColumn {
                         new StaticItem.Builder(Names.SERVER_GROUPS)
                                 .onPreview(new PreviewContent(Names.SERVER_GROUPS,
                                         resources.previews().deploymentsServerGroups()))
+                                .nextColumn(Ids.DEPLOYMENT_SERVER_GROUP)
                                 .build()
                 ));
     }

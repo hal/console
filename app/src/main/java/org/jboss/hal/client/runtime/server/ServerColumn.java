@@ -64,6 +64,7 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Icons;
@@ -143,7 +144,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 .pinnable()
                 .showCount()
                 .withFilter()
-                .onPreview(item -> new ServerPreview(serverActions, item, resources))
+                .onPreview(item -> new ServerPreview(serverActions, item, places, resources))
         );
         this.finder = finder;
 
@@ -250,26 +251,25 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
         setItemsProvider(itemsProvider);
 
         // reuse the items provider to filter breadcrumb items
-        setBreadcrumbItemsProvider((context, callback) -> {
-            itemsProvider.get(context, new AsyncCallback<List<Server>>() {
-                @Override
-                public void onFailure(final Throwable throwable) {
-                    callback.onFailure(throwable);
-                }
-
-                @Override
-                public void onSuccess(final List<Server> servers) {
-                    if (!serverIsLastSegment()) {
-                        // When the server is not the last segment in the finder path, we assume that
-                        // the current path is related to something which requires a running server.
-                        // In that case return only started servers.
-                        callback.onSuccess(servers.stream().filter(Server::isStarted).collect(toList()));
-                    } else {
-                        callback.onSuccess(servers);
+        setBreadcrumbItemsProvider((context, callback) ->
+                itemsProvider.get(context, new AsyncCallback<List<Server>>() {
+                    @Override
+                    public void onFailure(final Throwable throwable) {
+                        callback.onFailure(throwable);
                     }
-                }
-            });
-        });
+
+                    @Override
+                    public void onSuccess(final List<Server> servers) {
+                        if (!serverIsLastSegment()) {
+                            // When the server is not the last segment in the finder path, we assume that
+                            // the current path is related to something which requires a running server.
+                            // In that case return only started servers.
+                            callback.onSuccess(servers.stream().filter(Server::isStarted).collect(toList()));
+                        } else {
+                            callback.onSuccess(servers);
+                        }
+                    }
+                }));
 
         setItemRenderer(item -> new ItemDisplay<Server>() {
             @Override
@@ -362,6 +362,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 actions.add(itemActionFactory.viewAndMonitor(Ids.server(item.getName()), placeRequest));
                 if (!serverActions.isPending(item)) {
                     if (!item.isStarted()) {
+                        actions.add(new ItemAction<>(resources.constants().start(), serverActions::start));
                         AddressTemplate template = AddressTemplate
                                 .of("/host=" + item.getHost() + "/item-config=" + item.getName());
                         actions.add(
@@ -369,16 +370,16 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     }
                     actions.add(new ItemAction<>(resources.constants().copy(),
                             itm -> copyServer(itm, BrowseByColumn.browseByHosts(finder.getContext()))));
-                    if (!item.isStarted()) {
-                        actions.add(new ItemAction<>(resources.constants().start(), serverActions::start));
-                    } else {
+                    if (item.isStarted()) {
                         // Order is: reload, restart, (resume | suspend), stop
                         actions.add(new ItemAction<>(resources.constants().reload(), serverActions::reload));
                         actions.add(new ItemAction<>(resources.constants().restart(), serverActions::restart));
-                        if (item.isSuspended()) {
-                            actions.add(new ItemAction<>(resources.constants().resume(), serverActions::resume));
-                        } else {
-                            actions.add(new ItemAction<>(resources.constants().suspend(), serverActions::suspend));
+                        if (ManagementModel.supportsSuspend(item.getManagementVersion())) {
+                            if (item.isSuspended()) {
+                                actions.add(new ItemAction<>(resources.constants().resume(), serverActions::resume));
+                            } else {
+                                actions.add(new ItemAction<>(resources.constants().suspend(), serverActions::suspend));
+                            }
                         }
                         actions.add(new ItemAction<>(resources.constants().stop(), serverActions::stop));
                     }

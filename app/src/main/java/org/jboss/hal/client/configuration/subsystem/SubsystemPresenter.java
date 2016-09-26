@@ -28,7 +28,6 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
@@ -85,11 +84,10 @@ public class SubsystemPresenter
         } else {
             address = ResourceAddress.ROOT;
         }
-        for (Property property : address.asPropertyList()) {
-            if (PROFILE.equals(property.getName())) {
-                getEventBus().fireEvent(new ProfileSelectionEvent(property.getValue().asString()));
-            }
-        }
+        address.asPropertyList().stream()
+                .filter(property -> PROFILE.equals(property.getName()))
+                .forEach(
+                        property -> getEventBus().fireEvent(new ProfileSelectionEvent(property.getValue().asString())));
     }
 
     @Override

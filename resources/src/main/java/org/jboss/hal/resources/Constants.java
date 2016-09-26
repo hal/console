@@ -42,10 +42,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String accessType();
     String action();
     String active();
+    String activeLower();
     String add();
     String adminOnly();
-    String assign();
-    String assignedContentDesc();
+    String archived();
     String assignment();
     String assignmentsOfGroup();
     String assignmentsOfUser();
@@ -53,11 +53,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String attributes();
 
     String back();
-    String bootstrapFailed();
     String bootstrapException();
+    String browse();
     String browseBy();
 
     String cancel();
+    String chooseFile();
     String chooseSingleton();
     String chooseTemplate();
     String clear();
@@ -83,9 +84,18 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String day();
     String days();
     String defaultValue();
+    String deploy();
+    String deployContent();
+    String deployExistingContent();
     String deploymentAttributes();
+    String deploymentError();
+    String deploymentInProgress();
+    String deploymentPreview();
+    String deploymentSuccessful();
+    String deployments();
     String description();
     String details();
+    String directory();
     String disable();
     String disabled();
     String download();
@@ -94,6 +104,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String edit();
     String enable();
     String enabled();
+    String enableDeployment();
     String enableRbac();
     String enableStatistics();
     String endpointSelectTitle();
@@ -105,6 +116,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String excludeRole();
     String excludeUserGroup();
     String excludes();
+    String explode();
+    String exploded();
     String expressionResolver();
 
     String failed();
@@ -211,6 +224,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String input();
 
     String jdbcDriver();
+    String jndiTree();
 
     String lastModified();
     String loading();
@@ -221,6 +235,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String macroEditor();
     String mainAttributes();
+    String managed();
     String managementVersion();
     String maxUsed();
     String membership();
@@ -238,11 +253,13 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String no();
     String noAttributes();
     String noConfiguredMailServers();
+    String noContentSelected();
     String noDetails();
     String noItems();
     String noMacros();
     String noPrincipalsExcluded();
     String noPrincipalsIncluded();
+    String noReferenceServer();
     String noRolesExcluded();
     String noRolesIncluded();
     String noRolesIncludedOrExcluded();
@@ -250,13 +267,18 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String noRootLoggerDescription();
     String noRunningServers();
     String notANumber();
+
+    String notEnabled();
     String nothingSelected();
 
     String ok();
     String opened();
     String openInExternalWindow();
+    String operationFailed();
     String operationMode();
+    String operationSuccessful();
     String operations();
+    String orDragItHere();
     String output();
 
     String pending();
@@ -266,9 +288,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String play();
     String pool();
     String preparedStatementCache();
+    String preview();
     String processors();
     String productName();
     String productVersion();
+    String providedBy();
 
     String refresh();
     String releaseName();
@@ -277,6 +301,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String remove();
     String removeResource();
     String rename();
+    String replace();
+    String replaceContent();
     String required();
     String requiredField();
     String reset();
@@ -287,6 +313,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String restartResourceServices();
     String restricted();
     String resume();
+    String review();
     String role();
     String roles();
     String running();
@@ -303,20 +330,18 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String settings();
     String showAll();
     String size();
+    String specifyNames();
     String start();
     String starting();
     String startMacro();
     String statements();
-
     String statisticsDisabled();
-
     String statisticsDisabledHeader();
     String status();
     String stop();
     String stopMacro();
     String stopped();
     String storage();
-    String summary();
     String supportsExpressions();
     String suspend();
     String suspended();
@@ -335,16 +360,27 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String tracking();
     String type();
 
-    String unassign();
-    String unassignedContentDesc();
+    String undeploy();
+    String undeployContent();
+    String undeployed();
     String unknownState();
+    String unmanaged();
     String unpin();
+    String unsupportedFileType();
+    String unsupportedFileTypeDescription();
+    String uploadContent();
+    String uploadDeployment();
+    String uploadError();
+    String uploadInProgress();
+    String uploadNewDeployment();
+    String uploadSuccessful();
     String used();
     String user();
     String users();
 
     String validation();
     String view();
+    String viewInEditor();
 
     String xaProperties();
 

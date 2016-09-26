@@ -1,3 +1,5 @@
+<a href="https://ci.wildfly.org/viewType.html?buildTypeId=hal_HalNextDev&guest=1"><img src="https://ci.wildfly.org/app/rest/builds/buildType:(id:hal_HalNextDev)/statusIcon"/></a>
+
 # HAL.next
 
 Fresh start of the HAL management console using the latest frameworks / libraries. 
@@ -23,7 +25,7 @@ In order to make the console future proof, it's necessary to rewrite these parts
     - Add deployments using drag & drop
     - Topology overview
     - Macro recording
-    - PatternFly compliant
+    - PatternFly compliance
     - Enhanced form items for lists, properties and booleans
     - Use capabilities & requirements to generate combo boxes with type-ahead support
     - Declarative UI using MBUI and a simple XML format. See [LoggingView.xml](app/src/main/resources/org/jboss/hal/client/configuration/subsystem/logging/LoggingView.xml) for an example.
@@ -79,8 +81,9 @@ The package is also available on npmjs.com: https://www.npmjs.com/package/hal-ne
 
 ### Docker 
 
-The `docker` module is used to build a docker image with WildFly 10.0.0.Final and HAL.next.
+The `docker` module is used to build a docker image with WildFly 11.0.0.Alpha1 and HAL.next.
 
+1. `cd docker`
 1. `mvn install`
 1. `docker run -p 9990:9990 -it hpehl/hal-next /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0` or 
 1. `docker run -p 9990:9990 -it hpehl/hal-next /opt/jboss/wildfly/bin/domain.sh -b 0.0.0.0 -bmanagement 0.0.0.0` 

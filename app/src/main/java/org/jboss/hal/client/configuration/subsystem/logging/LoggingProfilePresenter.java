@@ -23,8 +23,6 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.client.configuration.PathsTypeahead;
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -83,7 +81,6 @@ public class LoggingProfilePresenter
 
 
     private final FinderPathFactory finderPathFactory;
-    private final Environment environment;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
     private String loggingProfile;
@@ -94,12 +91,10 @@ public class LoggingProfilePresenter
             final MyProxy myProxy,
             final Finder finder,
             final FinderPathFactory finderPathFactory,
-            final Environment environment,
             final StatementContext statementContext,
             final Dispatcher dispatcher) {
         super(eventBus, view, myProxy, finder);
         this.finderPathFactory = finderPathFactory;
-        this.environment = environment;
         this.statementContext = new SelectionAwareStatementContext(statementContext, () -> loggingProfile);
         this.dispatcher = dispatcher;
     }
@@ -155,6 +150,5 @@ public class LoggingProfilePresenter
             getView().updatePatternFormatter(asNamedNodes(failSafePropertyList(result, PATTERN_FORMATTER_TEMPLATE.lastKey())));
             // @formatter:on
         });
-        PathsTypeahead.updateOperation(environment, dispatcher, statementContext);
     }
 }

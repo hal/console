@@ -80,12 +80,33 @@ public class FinderPathFactory {
 
     // ------------------------------------------------------ deployment
 
+    public FinderPath content(final String content) {
+        if (environment.isStandalone()) {
+            // in standalone content and deployment are the same thing
+            return deployment(content);
+        } else {
+            return new FinderPath()
+                    .append(Ids.DEPLOYMENT_BROWSE_BY, Ids.asId(resources.constants().contentRepository()),
+                            resources.constants().browseBy(), resources.constants().contentRepository())
+                    .append(Ids.CONTENT, Ids.content(content),
+                            resources.constants().content(), content);
+        }
+    }
+
     public FinderPath deployment(String deployment) {
-        return environment.isStandalone() ? new FinderPath()
-                .append(Ids.DEPLOYMENT, Ids.asId(deployment)) : new FinderPath()
-                .append(Ids.DEPLOYMENT_BROWSE_BY, Ids.asId(Names.SERVER_GROUPS))
-                .append(Ids.DEPLOYMENT_SERVER_GROUP, Ids.serverGroup(statementContext.selectedServerGroup()))
-                .append(Ids.DEPLOYMENT, Ids.asId(deployment));
+        if (environment.isStandalone()) {
+            return new FinderPath().append(Ids.DEPLOYMENT, Ids.deployment(deployment),
+                    Names.DEPLOYMENT, deployment);
+        } else {
+            String serverGroup = statementContext.selectedServerGroup();
+            return new FinderPath()
+                    .append(Ids.DEPLOYMENT_BROWSE_BY, Ids.asId(Names.SERVER_GROUPS),
+                            resources.constants().browseBy(), Names.SERVER_GROUPS)
+                    .append(Ids.DEPLOYMENT_SERVER_GROUP, Ids.serverGroup(serverGroup),
+                            Names.SERVER_GROUP, serverGroup)
+                    .append(Ids.SERVER_GROUP_DEPLOYMENT, Ids.serverGroupDeployment(serverGroup, deployment),
+                            Names.DEPLOYMENT, deployment);
+        }
     }
 
 
@@ -95,7 +116,13 @@ public class FinderPathFactory {
      * Creates a finder path for the selected host.
      */
     public FinderPath runtimeHostPath() {
-        String host = statementContext.selectedHost();
+        return runtimeHostPath(statementContext.selectedHost());
+    }
+
+    /**
+     * Creates a finder path for the specified host.
+     */
+    public FinderPath runtimeHostPath(String host) {
         return new FinderPath()
                 .append(Ids.DOMAIN_BROWSE_BY, Ids.asId(Names.HOSTS), resources.constants().browseBy(), Names.HOSTS)
                 .append(Ids.HOST, Ids.host(host), Names.HOST, host);
@@ -118,11 +145,23 @@ public class FinderPathFactory {
     public FinderPath runtimeServerPath() {
         if (environment.isStandalone()) {
             return new FinderPath().append(Ids.STANDALONE_SERVER, Ids.server(Server.STANDALONE.getName()),
-                    Names.SERVER, Names.STANDALON_SERVER);
+                    Names.SERVER, Names.STANDALONE_SERVER);
         } else {
             String server = statementContext.selectedServer();
             FinderPath path = browseByServerGroups() ? runtimeServerGroupPath() : runtimeHostPath();
             return path.append(Ids.SERVER, Ids.server(server), Names.SERVER, server);
+        }
+    }
+
+    /**
+     * Creates a finder path for the specified host and server.
+     */
+    public FinderPath runtimeServerPath(String host, String server) {
+        if (environment.isStandalone()) {
+            return new FinderPath().append(Ids.STANDALONE_SERVER, Ids.server(Server.STANDALONE.getName()),
+                    Names.SERVER, Names.STANDALONE_SERVER);
+        } else {
+            return runtimeHostPath(host).append(Ids.SERVER, Ids.server(server), Names.SERVER, server);
         }
     }
 

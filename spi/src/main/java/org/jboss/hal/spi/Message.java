@@ -29,8 +29,21 @@ public class Message {
     }
 
 
+    @FunctionalInterface
+    public interface Action {
+
+        void execute();
+    }
+
+
+    // ------------------------------------------------------ error
+
     public static Message error(final SafeHtml message) {
         return error(message, null, false);
+    }
+
+    public static Message error(final SafeHtml message, boolean sticky) {
+        return error(message, null, sticky);
     }
 
     public static Message error(final SafeHtml message, String details) {
@@ -38,11 +51,26 @@ public class Message {
     }
 
     public static Message error(final SafeHtml message, final String details, boolean sticky) {
-        return new Message(Level.ERROR, message, details, sticky);
+        return new Message(Level.ERROR, message, details, null, null, sticky);
     }
+
+    public static Message error(final SafeHtml message, final String actionTitle, final Action action) {
+        return error(message, actionTitle, action, false);
+    }
+
+    public static Message error(final SafeHtml message, final String actionTitle, final Action action, boolean sticky) {
+        return new Message(Level.ERROR, message, null, actionTitle, action, sticky);
+    }
+
+
+    // ------------------------------------------------------ warning
 
     public static Message warning(final SafeHtml message) {
         return warning(message, null, false);
+    }
+
+    public static Message warning(final SafeHtml message, boolean sticky) {
+        return warning(message, null, sticky);
     }
 
     public static Message warning(final SafeHtml message, String details) {
@@ -50,11 +78,27 @@ public class Message {
     }
 
     public static Message warning(final SafeHtml message, final String details, boolean sticky) {
-        return new Message(Level.WARNING, message, details, sticky);
+        return new Message(Level.WARNING, message, details, null, null, sticky);
     }
+
+    public static Message warning(final SafeHtml message, final String actionTitle, final Action action) {
+        return warning(message, actionTitle, action, false);
+    }
+
+    public static Message warning(final SafeHtml message, final String actionTitle, final Action action,
+            boolean sticky) {
+        return new Message(Level.WARNING, message, null, actionTitle, action, sticky);
+    }
+
+
+    // ------------------------------------------------------ info
 
     public static Message info(final SafeHtml message) {
         return info(message, null, false);
+    }
+
+    public static Message info(final SafeHtml message, boolean sticky) {
+        return info(message, null, sticky);
     }
 
     public static Message info(final SafeHtml message, final String details) {
@@ -62,12 +106,26 @@ public class Message {
     }
 
     public static Message info(final SafeHtml message, final String details, boolean sticky) {
-        return new Message(Level.INFO, message, details, sticky);
+        return new Message(Level.INFO, message, details, null, null, sticky);
+    }
+
+    public static Message info(final SafeHtml message, final String actionTitle, final Action action) {
+        return info(message, actionTitle, action, false);
+    }
+
+    public static Message info(final SafeHtml message, final String actionTitle, final Action action, boolean sticky) {
+        return new Message(Level.INFO, message, null, actionTitle, action, sticky);
     }
 
 
+    // ------------------------------------------------------ success
+
     public static Message success(final SafeHtml message) {
         return success(message, null, false);
+    }
+
+    public static Message success(final SafeHtml message, boolean sticky) {
+        return success(message, null, sticky);
     }
 
     public static Message success(final SafeHtml message, final String details) {
@@ -75,23 +133,39 @@ public class Message {
     }
 
     public static Message success(final SafeHtml message, final String details, boolean sticky) {
-        return new Message(Level.SUCCESS, message, details, sticky);
+        return new Message(Level.SUCCESS, message, details, null, null, sticky);
     }
 
+    public static Message success(final SafeHtml message, final String actionTitle, final Action action) {
+        return success(message, actionTitle, action, false);
+    }
+
+    public static Message success(final SafeHtml message, final String actionTitle, final Action action,
+            boolean sticky) {
+        return new Message(Level.SUCCESS, message, null, actionTitle, action, sticky);
+    }
+
+
+    // ------------------------------------------------------ message instance
 
     private final long id;
     private final String timestamp;
     private final Level level;
     private final SafeHtml message;
     private final String details;
+    private final String actionTitle;
+    private final Action action;
     private final boolean sticky;
 
-    private Message(final Level level, final SafeHtml message, final String details, final boolean sticky) {
+    private Message(final Level level, final SafeHtml message, final String details,
+            final String actionTitle, final Action action, final boolean sticky) {
         this.id = System.currentTimeMillis();
         this.timestamp = DateTimeFormat.getFormat(DATE_TIME_LONG).format(new Date());
         this.level = level;
         this.message = message;
         this.details = details;
+        this.actionTitle = actionTitle;
+        this.action = action;
         this.sticky = sticky;
     }
 
@@ -113,6 +187,18 @@ public class Message {
 
     public String getDetails() {
         return details;
+    }
+
+    public boolean hasAction() {
+        return actionTitle != null && action != null;
+    }
+
+    public String getActionTitle() {
+        return actionTitle;
+    }
+
+    public Action getAction() {
+        return action;
     }
 
     public boolean isSticky() {

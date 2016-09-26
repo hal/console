@@ -47,6 +47,7 @@ public interface Names {
     String JDBC = "JDBC";
     String JDBC_DRIVER = "JDBC Driver";
     String JDBC_DRIVERS = "JDBC Drivers";
+    String JNDI = "JNDI";
     String JPA = "JPA";
     String LOGGING = "Logging";
     String LOGGING_PROFILE = "Logging Profile";
@@ -76,13 +77,15 @@ public interface Names {
     String SERVER_GROUPS = "Server Groups";
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDINGS = "Socket Bindings";
-    String STANDALON_SERVER = "Standalone Server";
+    String STANDALONE_SERVER = "Standalone Server";
+    String SUBDEPLOYMENTS = "Subdeployments";
     String SUBSYSTEM = "Subsystem";
     String SUBSYSTEMS = "Subsystems";
     String SYSTEM_PROPERTIES = "System Properties";
     String THREADS = "Threads";
     String TOPOLOGY = "Topology";
     String UNKNOWN = "unknown";
+    String UNMANAGED_DEPLOYMENT = "Unmanaged Deployment";
     String VALUE = "Value";
     String XA_DATASOURCE = "XA Datasource";
 }

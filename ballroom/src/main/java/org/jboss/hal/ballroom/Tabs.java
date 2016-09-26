@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import elemental.dom.Element;
+import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
@@ -37,6 +38,14 @@ import static org.jboss.hal.resources.CSS.*;
  */
 public class Tabs implements IsElement {
 
+    @JsFunction
+    @FunctionalInterface
+    public interface SelectHandler {
+
+        void onSelect();
+    }
+
+
     @JsType(isNative = true)
     static class Bridge {
 
@@ -44,6 +53,8 @@ public class Tabs implements IsElement {
         public native static Bridge select(String selector);
 
         public native void tab(String command);
+
+        public native void on(String event, SelectHandler handler);
     }
 
 
@@ -164,6 +175,12 @@ public class Tabs implements IsElement {
                 Elements.removeChildrenFrom(pane);
                 fillPane(pane, elements(first, rest));
             }
+        }
+    }
+
+    public void onShow(final String id, final SelectHandler handler) {
+        if (id != null) {
+            Bridge.select("a[href='#" + id + "']").on("shown.bs.tab", handler); //NON-NLS
         }
     }
 }

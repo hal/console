@@ -297,8 +297,9 @@ public class Typeahead implements SuggestHandler, Attachable {
 
     public void showAll() {
         Bridge bridge = Bridge.select(formItemSelector());
-        bridge.setValue(SHOW_ALL_VALUE);
         bridge.focus();
+        bridge.setValue("");
+        bridge.setValue(SHOW_ALL_VALUE);
     }
 
     @Override
@@ -344,6 +345,7 @@ public class Typeahead implements SuggestHandler, Attachable {
         RemoteOptions remoteOptions = new RemoteOptions();
         remoteOptions.url = Endpoints.INSTANCE.dmr();
         remoteOptions.cache = false;
+        remoteOptions.ttl = 0;
         remoteOptions.prepare = (query, settings) -> {
             AjaxSettings.Accepts accepts = new AjaxSettings.Accepts();
             accepts.text = APPLICATION_DMR_ENCODED;

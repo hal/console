@@ -19,17 +19,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import com.google.common.collect.Sets;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import elemental.client.Browser;
-import elemental.dom.Document;
 import elemental.dom.Element;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Progress;
@@ -51,15 +49,14 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.dmr.model.SuccessfulOutcome;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.Collections.singletonList;
-import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
@@ -70,9 +67,6 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
  */
 @AsyncColumn(Ids.ASSIGNMENT)
 public class AssignmentColumn extends FinderColumn<Assignment> {
-
-    private static final String INCLUDE_LI_SELECTOR = "[aria-" + UIConstants.LABELLED_BY + "=" + Ids.ASSIGNMENT_INCLUDE + "] > li";
-    private static final String EXCLUDE_LI_SELECTOR = "[aria-" + UIConstants.LABELLED_BY + "=" + Ids.ASSIGNMENT_EXCLUDE + "] > li";
 
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
@@ -110,31 +104,27 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
                         .forEach(assignments::add);
             }
 
-            // Show / hide the assigned roles from the include / exclude drop-downs
-            // The id is on the <a> element, but we need to show / hide the parent <li> element
-            Set<String> includeIds = assignments.stream()
-                    .map(assignment -> includeId(assignment.getRole()))
-                    .collect(Collectors.toSet());
-            Set<String> excludeIds = assignments.stream()
-                    .map(assignment -> excludeId(assignment.getRole()))
-                    .collect(Collectors.toSet());
+            // Add the missing roles to the include / exclude column action drop-downs
+            resetColumnActions();
+            Set<Role> assignedRoles = assignments.stream().map(Assignment::getRole).collect(toSet());
+            Set<Role> missingRoles = Sets.newHashSet(accessControl.roles());
+            missingRoles.removeAll(assignedRoles);
 
-            Document document = Browser.getDocument();
-            Elements.stream(document.querySelectorAll(INCLUDE_LI_SELECTOR + " > a")) //NON-NLS
-                    .forEach(element -> Elements.setVisible(element.getParentElement(),
-                            !includeIds.contains(element.getId())));
-            Elements.stream(document.querySelectorAll(EXCLUDE_LI_SELECTOR + " > a")) //NON-NLS
-                    .forEach(element -> Elements.setVisible(element.getParentElement(),
-                            !excludeIds.contains(element.getId())));
+            List<ColumnAction<Assignment>> includeActions = missingRoles.stream()
+                    .map(role -> new ColumnAction<>(includeId(role), role.getName(), columnActionHandler(role, true)))
+                    .collect(toList());
+            if (!includeActions.isEmpty()) {
+                addColumnActions(Ids.ASSIGNMENT_INCLUDE, fontAwesome("plus"), resources.constants().includeRole(),
+                        includeActions);
+            }
 
-            long visibleIncludes = Elements.stream(document.querySelectorAll(INCLUDE_LI_SELECTOR))
-                    .filter(Elements::isVisible)
-                    .count();
-            Elements.setVisible(document.getElementById(Ids.ASSIGNMENT_INCLUDE), visibleIncludes != 0);
-            long visibleExcludes = Elements.stream(document.querySelectorAll(EXCLUDE_LI_SELECTOR))
-                    .filter(Elements::isVisible)
-                    .count();
-            Elements.setVisible(document.getElementById(Ids.ASSIGNMENT_EXCLUDE), visibleExcludes != 0);
+            List<ColumnAction<Assignment>> excludeActions = missingRoles.stream()
+                    .map(role -> new ColumnAction<>(excludeId(role), role.getName(), columnActionHandler(role, false)))
+                    .collect(toList());
+            if (!excludeActions.isEmpty()) {
+                addColumnActions(Ids.ASSIGNMENT_EXCLUDE, fontAwesome("minus"), resources.constants().excludeRole(),
+                        excludeActions);
+            }
 
             callback.onSuccess(assignments);
         });
@@ -198,27 +188,6 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
                         }));
             }
         });
-
-        // Setup column actions to include / exclude *all* roles.
-        // Already included / excluded roles will be filtered out later in the ItemsProvider
-        List<Role> roles = new ArrayList<>();
-        // Please do not refactor this to a method reference! It seems that the GWT compiler cannot cope with
-        // two method references. Although the MembershipColumn does use two method refs. Very strange!?
-        //noinspection Convert2MethodRef
-        accessControl.roles().standardRoles().stream().sorted(comparing(Role::getName)).forEach(r -> roles.add(r));
-        accessControl.roles().scopedRoles().stream().sorted(comparing(Role::getName)).forEach(roles::add);
-
-        List<ColumnAction<Assignment>> includeActions = roles.stream()
-                .map(role -> new ColumnAction<>(includeId(role), role.getName(), columnActionHandler(role, true)))
-                .collect(toList());
-        addColumnActions(Ids.ASSIGNMENT_INCLUDE, fontAwesome("plus"), resources.constants().includeRole(),
-                includeActions);
-
-        List<ColumnAction<Assignment>> excludeActions = roles.stream()
-                .map(role -> new ColumnAction<>(excludeId(role), role.getName(), columnActionHandler(role, false)))
-                .collect(toList());
-        addColumnActions(Ids.ASSIGNMENT_EXCLUDE, fontAwesome("minus"), resources.constants().excludeRole(),
-                excludeActions);
     }
 
     private Principal findPrincipal(FinderPath path) {

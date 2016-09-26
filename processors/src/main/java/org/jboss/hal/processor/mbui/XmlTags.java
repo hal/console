@@ -22,6 +22,7 @@ public interface XmlTags {
 
     String FORM = "form";
     String METADATA = "metadata";
+    String TAB = "tab";
     String TABLE = "table";
     String VERTICAL_NAVIGATION = "vertical-navigation";
     String VIEW = "view";

@@ -15,10 +15,6 @@
  */
 package org.jboss.hal.config.semver;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
-
-import java.util.Date;
-
 /**
  * @author Heiko Braun
  * @since 25/02/15
@@ -30,7 +26,7 @@ public class Versions {
     public static Version parseVersion(String versionString) {
         Version version = null;
         try {
-            int defaultIndex = Versions.ordinalIndexOf(versionString, ".", 3);
+            int defaultIndex = ordinalIndexOf(versionString, ".", 3, false);
             if (INDEX_NOT_FOUND == defaultIndex) { defaultIndex = versionString.length(); }
 
             version = Version.valueOf(versionString.substring(0, defaultIndex));
@@ -41,16 +37,7 @@ public class Versions {
         return version;
     }
 
-    public static Date parseDate(String dateString) throws Exception {
-        DateTimeFormat parser = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss"); //NON-NLS
-        return parser.parse(dateString);
-    }
-
-    public static int ordinalIndexOf(final CharSequence str, final CharSequence searchStr, final int ordinal) {
-        return ordinalIndexOf(str, searchStr, ordinal, false);
-    }
-
-    public static int ordinalIndexOf(final CharSequence str, final CharSequence searchStr, final int ordinal,
+    private static int ordinalIndexOf(final CharSequence str, final CharSequence searchStr, final int ordinal,
             final boolean lastIndex) {
         if (str == null || searchStr == null || ordinal <= 0) {
             return INDEX_NOT_FOUND;
@@ -74,29 +61,11 @@ public class Versions {
         return index;
     }
 
-    public static int lastIndexOf(final CharSequence cs, final CharSequence searchChar, final int start) {
+    private static int lastIndexOf(final CharSequence cs, final CharSequence searchChar, final int start) {
         return cs.toString().lastIndexOf(searchChar.toString(), start);
-        //        if (cs instanceof String && searchChar instanceof String) {
-        //            // TODO: Do we assume searchChar is usually relatively small;
-        //            //       If so then calling toString() on it is better than reverting to
-        //            //       the green implementation in the else block
-        //            return ((String) cs).lastIndexOf((String) searchChar, start);
-        //        } else {
-        //            // TODO: Implement rather than convert to String
-        //            return cs.toString().lastIndexOf(searchChar.toString(), start);
-        //        }
     }
 
-    public static int indexOf(final CharSequence cs, final CharSequence searchChar, final int start) {
+    private static int indexOf(final CharSequence cs, final CharSequence searchChar, final int start) {
         return cs.toString().indexOf(searchChar.toString(), start);
-        //        if (cs instanceof String && searchChar instanceof String) {
-        //            // TODO: Do we assume searchChar is usually relatively small;
-        //            //       If so then calling toString() on it is better than reverting to
-        //            //       the green implementation in the else block
-        //            return ((String) cs).indexOf((String) searchChar, start);
-        //        } else {
-        //            // TODO: Implement rather than convert to String
-        //            return cs.toString().indexOf(searchChar.toString(), start);
-        //        }
     }
 }

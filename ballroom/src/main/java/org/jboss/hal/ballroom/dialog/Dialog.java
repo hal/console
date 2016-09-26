@@ -36,6 +36,7 @@ import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.dialog.Modal.ModalOptions;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.UIConstants;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.dialog.Modal.$;
@@ -46,9 +47,10 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
 
 /**
  * A modal dialog with optional secondary and primary buttons. Only one dialog can be open at a time. The buttons can
- * be placed on the left or the right side. Each button has a callback which either returns {@code true} to indicate
- * that the dialog should be closed or {@code false} if it should stay open. You can add as many buttons as you like,
- * but only one of them should be a primary button.
+ * be placed on the left or the right side. Each button has a callback. The callback is either a {@link SimpleCallback}
+ * which always closes the dialog or a {@link ResultCallback} with a boolean return value. A value of {@code true}
+ * indicates that the dialog should be closed whereas {@code false} keeps the dialog open. You can add as many buttons
+ * as you like, but only one of them should be the primary button.
  * <p>
  * There are convenience methods to add primary and secondary buttons which come with pre-defined placements. If
  * you want to define the placement by yourself use negative numbers to place the buttons on the left side and positive
@@ -69,28 +71,42 @@ public class Dialog implements IsElement {
     }
 
 
+    /**
+     * A button callback which returns a boolean to indicate whether the dialog should be closed or stay open.
+     */
     @FunctionalInterface
-    public interface Callback {
+    public interface ResultCallback {
 
         /**
-         * A button callback
-         *
          * @return {@code true} if the dialog should be closed and {@code false} if the dialog should stay open.
          */
-        boolean execute();
+        boolean eval();
+    }
+
+
+    /**
+     * A simplified button callback w/o a return value. When using this callback the dialog is closed in any case.
+     */
+    @FunctionalInterface
+    public interface SimpleCallback {
+
+        void execute();
     }
 
 
     private static class Button {
 
         final String label;
-        final Callback callback;
+        final ResultCallback resultCallback;
+        final SimpleCallback simpleCallback;
         final boolean primary;
 
-        private Button(final String label, final Callback callback, final boolean primary) {
-            this.primary = primary;
+        private Button(final String label, final ResultCallback callback, final SimpleCallback simpleCallback,
+                boolean primary) {
             this.label = label;
-            this.callback = callback;
+            this.resultCallback = callback;
+            this.simpleCallback = simpleCallback;
+            this.primary = primary;
         }
     }
 
@@ -126,7 +142,7 @@ public class Dialog implements IsElement {
          */
         public Builder closeOnly() {
             buttons.clear();
-            buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.close(), () -> true, false));
+            buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.close(), null, null, false));
             closeIcon = true;
             return this;
         }
@@ -135,10 +151,10 @@ public class Dialog implements IsElement {
          * Shortcut for a dialog with a 'Save' and 'Cancel' button. Clicking on save will execute the specified
          * callback.
          */
-        public Builder saveCancel(Callback saveCallback) {
+        public Builder saveCancel(ResultCallback saveCallback) {
             buttons.clear();
-            buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.save(), saveCallback, true));
-            buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.close(), () -> true, false));
+            buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.save(), saveCallback, null, true));
+            buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.close(), null, null, false));
             return this;
         }
 
@@ -146,10 +162,10 @@ public class Dialog implements IsElement {
          * Shortcut for a dialog with a 'Yes' and 'No' button. Clicking on yes will execute the specified
          * callback.
          */
-        public Builder yesNo(Callback yesCallback) {
+        Builder yesNo(SimpleCallback yesCallback) {
             buttons.clear();
-            buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.yes(), yesCallback, true));
-            buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.no(), () -> true, false));
+            buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.yes(), null, yesCallback, true));
+            buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.no(), null, null, false));
             return this;
         }
 
@@ -157,42 +173,46 @@ public class Dialog implements IsElement {
          * Shortcut for a dialog with a 'Ok' and 'Cancel' button. Clicking on yes will execute the specified
          * callback.
          */
-        public Builder okCancel(Callback okCallback) {
+        public Builder okCancel(SimpleCallback okCallback) {
             buttons.clear();
-            buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.ok(), okCallback, true));
-            buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.cancel(), () -> true, false));
+            buttons.put(PRIMARY_POSITION, new Button(CONSTANTS.ok(), null, okCallback, true));
+            buttons.put(SECONDARY_POSITION, new Button(CONSTANTS.cancel(), null, null, false));
             return this;
         }
 
         /**
          * Adds a primary with label 'Save' and position {@value #PRIMARY_POSITION}.
          */
-        public Builder primary(Callback callback) {
+        public Builder primary(ResultCallback callback) {
             return primary(CONSTANTS.save(), callback);
         }
 
-        public Builder primary(String label, Callback callback) {
+        public Builder primary(String label, ResultCallback callback) {
             return primary(PRIMARY_POSITION, label, callback);
         }
 
-        public Builder primary(int position, String label, Callback callback) {
-            buttons.put(position, new Button(label, callback, true));
+        public Builder primary(int position, String label, ResultCallback callback) {
+            buttons.put(position, new Button(label, callback, null, true));
             return this;
+        }
+
+        public Builder cancel() {
+            return secondary(CONSTANTS.cancel(), null);
         }
 
         /**
          * Adds a secondary button with label 'Cancel' and position {@value #SECONDARY_POSITION}
          */
-        public Builder secondary(Callback callback) {
+        public Builder secondary(ResultCallback callback) {
             return secondary(CONSTANTS.cancel(), callback);
         }
 
-        public Builder secondary(String label, Callback callback) {
+        public Builder secondary(String label, ResultCallback callback) {
             return secondary(SECONDARY_POSITION, label, callback);
         }
 
-        public Builder secondary(int position, String label, Callback callback) {
-            buttons.put(position, new Button(label, callback, false));
+        public Builder secondary(int position, String label, ResultCallback callback) {
+            buttons.put(position, new Button(label, callback, null, false));
             return this;
         }
 
@@ -225,6 +245,7 @@ public class Dialog implements IsElement {
 
         public Builder add(Iterable<Element> elements) {
             if (elements != null) {
+                //noinspection ResultOfMethodCallIgnored
                 Iterables.addAll(this.elements, elements);
             }
             return this;
@@ -246,9 +267,8 @@ public class Dialog implements IsElement {
     private static final String CLOSE_ICON_ELEMENT = "closeIcon";
     private static final String DIALOG_ELEMENT = "dialog";
     private static final String FOOTER_ELEMENT = "footer";
-    private static final String ID = "hal-modal";
     private static final String LABEL = "label";
-    private static final String SELECTOR_ID = "#" + ID;
+    private static final String SELECTOR_ID = "#" + Ids.HAL_MODAL;
     private static final String TITLE_ELEMENT = "title";
 
     private static final Element root;
@@ -262,20 +282,19 @@ public class Dialog implements IsElement {
 
 
     static {
-        String labelId = Ids.build(ID, LABEL);
         // @formatter:off
         Elements.Builder rootBuilder = new Elements.Builder()
-            .div().id(ID).css(modal)
+            .div().id(Ids.HAL_MODAL).css(modal)
                     .attr(ROLE, DIALOG_ELEMENT)
                     .attr(TABINDEX, "-1")
-                    .aria("labeledby", labelId)
+                    .aria("labeledby", Ids.HAL_MODAL_TITLE)
                 .div().css(modalDialog).attr("role", "document").rememberAs(DIALOG_ELEMENT) //NON-NLS
                     .div().css(modalContent)
                         .div().css(modalHeader)
                             .button().css(close).aria(LABEL, CONSTANTS.close()).rememberAs(CLOSE_ICON_ELEMENT)
                                 .span().css(pfIcon("close")).aria(HIDDEN, String.valueOf(true)).end()
                             .end()
-                            .h(4).css(modalTitle).id(labelId).rememberAs(TITLE_ELEMENT).end()
+                            .h(4).css(modalTitle).id(Ids.HAL_MODAL_TITLE).rememberAs(TITLE_ELEMENT).end()
                         .end()
                         .div().css(modalBody).rememberAs(BODY_ELEMENT).end()
                         .div().css(modalFooter).rememberAs(FOOTER_ELEMENT).end()
@@ -295,8 +314,8 @@ public class Dialog implements IsElement {
     }
 
     private static void initEventHandler() {
-        $(SELECTOR_ID).on("shown.bs.modal", () -> Dialog.open = true);
-        $(SELECTOR_ID).on("hidden.bs.modal", () -> Dialog.open = false);
+        $(SELECTOR_ID).on(UIConstants.SHOWN_MODAL, () -> Dialog.open = true);
+        $(SELECTOR_ID).on(UIConstants.HIDDEN_MODAL, () -> Dialog.open = false);
     }
 
     private static void reset() {
@@ -345,7 +364,14 @@ public class Dialog implements IsElement {
                         .button()
                         .css(css)
                         .on(click, event -> {
-                            if (button.callback.execute()) {
+                            if (button.resultCallback != null) {
+                                if (button.resultCallback.eval()) {
+                                    close();
+                                }
+                            } else if (button.simpleCallback != null) {
+                                button.simpleCallback.execute();
+                                close();
+                            } else {
                                 close();
                             }
                         })

@@ -1,6 +1,6 @@
 {
   "name": "org.jboss.hal.bower",
-  "version": "0.3.6",
+  "version": "0.4.0",
   "description": "Bower setup for HAL",
   "license": "LGPL",
   "private": true,
@@ -16,7 +16,7 @@
     "datatables.net-select": "~1.2.0",
     "jquery": "~2.2.4",
     "jstree": "~3.3.1",
-    "patternfly": "~3.8.1",
+    "patternfly": "~3.11.0",
     "tagmanager": "~3.0.2",
     "typeahead.js": "~0.11.1",
     "zeroclipboard": "^2.2.0"

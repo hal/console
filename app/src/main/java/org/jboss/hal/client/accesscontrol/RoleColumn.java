@@ -232,13 +232,11 @@ public class RoleColumn extends FinderColumn<Role> {
                             ? resources.constants().hostScopedRole()
                             : resources.constants().serverGroupScopedRole();
                     actions.add(new ItemAction<>(resources.constants().remove(), itm ->
-                            DialogFactory
-                                    .confirmation(resources.messages().removeResourceConfirmationTitle(type),
-                                            resources.messages().removeRoleQuestion(itm.getName()), () -> {
-                                                removeScopedRole(itm, type);
-                                                return true;
-                                            })
-                                    .show()
+                            DialogFactory.showConfirmation(
+                                    resources.messages().removeResourceConfirmationTitle(type),
+                                    resources.messages().removeRoleQuestion(itm.getName()),
+                                    () -> removeScopedRole(itm, type))
+
                     ));
                 }
                 return actions;

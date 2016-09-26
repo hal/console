@@ -73,6 +73,9 @@ public interface Previews extends ClientBundleWithLookup {
 
     // ------------------------------------------------------ configuration
 
+    @Source("previews/configuration/batch.html")
+    ExternalTextResource configurationBatch();
+
     @Source("previews/configuration/datasources.html")
     ExternalTextResource configurationDatasources();
 
@@ -136,6 +139,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/deployments/domain.html")
     ExternalTextResource deploymentsDomain();
 
+    @Source("previews/deployments/server-group.html")
+    ExternalTextResource deploymentsServerGroup();
+
     @Source("previews/deployments/server-groups.html")
     ExternalTextResource deploymentsServerGroups();
 
@@ -153,6 +159,9 @@ public interface Previews extends ClientBundleWithLookup {
 
     @Source("previews/runtime/hosts.html")
     ExternalTextResource runtimeHosts();
+
+    @Source("previews/runtime/jndi.html")
+    ExternalTextResource runtimeJndi();
 
     @Source("previews/runtime/jpa.html")
     ExternalTextResource runtimeJpa();

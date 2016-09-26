@@ -255,3 +255,49 @@ abbr.key {
     display: none;
   }
 }
+
+/*
+ * Upload related classes
+ */
+.upload {
+  align-items: center;
+  display: flex;
+  flex-flow: column;
+  padding: 10px;
+}
+
+.upload.upload-advanced {
+
+  &.ondrag {
+    outline: 2px dashed #333;
+  }
+
+  .upload-dragndrop {
+    display: inline;
+  }
+
+  .upload-icon {
+    color: @color-pf-black-500;
+    display: block;
+    margin-bottom: 40px;
+  }
+}
+
+.upload-file {
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  width: 0.1px;
+  z-index: -1;
+}
+
+.upload-file + label {
+  cursor: pointer;
+  display: inline-block;
+  font-size: 125%;
+  max-width: 80%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

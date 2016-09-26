@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.core.mvp;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -56,7 +55,8 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
             VerticalNavigation navigation = ((HasVerticalNavigation) getView()).getVerticalNavigation();
             if (navigation != null) {
                 navigation.on();
-                Scheduler.get().scheduleDeferred(navigation::showInitial);
+                navigation.showInitial();
+                // Scheduler.get().scheduleDeferred(navigation::showInitial);
             }
         }
     }

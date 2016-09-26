@@ -1,25 +1,35 @@
 /**
  * jsTree
- * Override default theme at "../../..//bower_components/jstree/src/themes/default/style.less"
+ * Override default theme at "../../../bower_components/jstree/src/themes/default/style.less"
  */
-@theme-name:				hal;
-@hovered-bg-color:			@hover-color;
-@hovered-shadow-color:		#cccccc;
-@disabled-color:			#666666;
-@disabled-bg-color:			#efefef;
-@clicked-bg-color:			@active-item-color;
-@clicked-shadow-color:		@active-item-color;
-@clicked-gradient-color-1:	@active-item-color;
-@clicked-gradient-color-2:	@active-item-color;
-@search-result-color:		#8b0000;
-@mobile-wholerow-bg-color:	#ebebeb;
-@mobile-wholerow-shadow:	#666666;
-@mobile-wholerow-bordert:	rgba(255,255,255,0.7);
-@mobile-wholerow-borderb:	rgba(64,64,64,0.2);
-@responsive:				true;
-@image-path:				"../img/";
-@base-height:				40px;
+@theme-name: hal;
+@hovered-bg-color: @hover-color;
+@hovered-shadow-color: #cccccc;
+@disabled-color: #666666;
+@disabled-bg-color: #efefef;
+@clicked-bg-color: @active-item-color;
+@clicked-shadow-color: @active-item-color;
+@clicked-gradient-color-1: @active-item-color;
+@clicked-gradient-color-2: @active-item-color;
+@search-result-color: #8b0000;
+@mobile-wholerow-bg-color: #ebebeb;
+@mobile-wholerow-shadow: #666666;
+@mobile-wholerow-bordert: rgba(255, 255, 255, 0.7);
+@mobile-wholerow-borderb: rgba(64, 64, 64, 0.2);
+@responsive: false;
+@image-path: "../img/";
+@base-height: 40px;
 
-@import "../../../bower_components/jstree/src/themes/mixins.less";
+/*
+ * Import a copy of the the original jsTree *.less files.
+ * Since we need to run Less using 'strictMath: true' (due to rules in PF wizard.less),
+ * all calculations must be enclosed in ()!
+ */
+@import "jstree/mixins.less";
 @import "../../../bower_components/jstree/src/themes/base.less";
 @import "../../../bower_components/jstree/src/themes/main.less";
+
+.tree-container {
+  margin-top: @margin-small;
+  overflow: scroll;
+}

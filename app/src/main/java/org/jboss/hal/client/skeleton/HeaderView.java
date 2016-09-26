@@ -26,7 +26,6 @@ import com.gwtplatform.mvp.client.ViewImpl;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import elemental.dom.Element;
-import elemental.html.Window;
 import org.jboss.gwt.elemento.core.DataElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventHandler;
@@ -55,7 +54,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.skeleton.HeaderPresenter.MAX_BREADCRUMB_VALUE_LENGTH;
-import static org.jboss.hal.client.skeleton.HeaderPresenter.MESSAGE_TIMEOUT;
 import static org.jboss.hal.config.InstanceInfo.WILDFLY;
 import static org.jboss.hal.core.Strings.abbreviateMiddle;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
@@ -86,8 +84,8 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     private PlaceRequest backPlaceRequest;
     private Map<String, PlaceRequest> tlcPlaceRequests;
     private Map<String, Element> tlc;
-    private int messageTimeoutHandle;
     private HeaderPresenter presenter;
+    private MessagePanel messagePanel;
 
     @DataElement Element logoFirst;
     @DataElement Element logoLast;
@@ -106,6 +104,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     @PostConstruct
     void init() {
         Element root = asElement();
+        messagePanel = new MessagePanel(); // message panel adds itself to the body
 
         backPlaceRequest = HOMEPAGE;
         backLink.setOnclick(event -> presenter.goTo(backPlaceRequest));
@@ -212,7 +211,6 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     @Override
     public void showMessage(final Message message) {
-        // TODO Prevent showing two messages at once -> queue multiple messages
         switch (message.getLevel()) {
             case ERROR:
                 logger.error(message.getMessage().asString());
@@ -224,24 +222,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
                 logger.info(message.getMessage().asString());
                 break;
         }
-        Element body = Browser.getDocument().getBody();
-        Element messageElement = new MessageElement(message).asElement();
-        body.insertBefore(messageElement, body.getFirstChild());
-        if (!message.isSticky()) {
-            startMessageTimeout(messageElement);
-            messageElement.setOnmouseover(event -> stopMessageTimeout());
-            messageElement.setOnmouseout(event -> startMessageTimeout(messageElement));
-        }
-    }
-
-    private void startMessageTimeout(Element element) {
-        Window window = Browser.getWindow();
-        Element body = Browser.getDocument().getBody();
-        messageTimeoutHandle = window.setTimeout(() -> body.removeChild(element), MESSAGE_TIMEOUT);
-    }
-
-    private void stopMessageTimeout() {
-        Browser.getWindow().clearTimeout(messageTimeoutHandle);
+        messagePanel.add(message);
     }
 
 

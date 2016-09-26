@@ -26,22 +26,20 @@ import static org.junit.Assert.assertTrue;
  */
 public class CreateRrdOperationsTest {
 
-    private Environment environment;
     private CreateRrdOperations rrdOps;
     private StatementContext statementContext;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
-        environment = Mockito.mock(Environment.class);
+        Environment environment = Mockito.mock(Environment.class);
         statementContext = StatementContext.NOOP;
         rrdOps = new CreateRrdOperations(statementContext, environment);
     }
 
     @Test
     public void noTemplates() {
-        List<Operation> operations = rrdOps
-                .create(new LookupResult(Collections.<AddressTemplate>emptySet(), false));
+        List<Operation> operations = rrdOps.create(new LookupResult(Collections.emptySet(), false), false);
         assertTrue(operations.isEmpty());
     }
 
@@ -60,7 +58,7 @@ public class CreateRrdOperationsTest {
         lookupResult.markMetadataPresent(allPresent, RESOURCE_DESCRIPTION_PRESENT);
         lookupResult.markMetadataPresent(allPresent, SECURITY_CONTEXT_PRESENT);
 
-        List<Operation> inputs = rrdOps.create(lookupResult);
+        List<Operation> inputs = rrdOps.create(lookupResult, false);
         assertEquals(3, inputs.size());
 
         Operation operation = findOperation(inputs, nothingPresent);
@@ -76,6 +74,11 @@ public class CreateRrdOperationsTest {
         assertTrue(operation.get(OPERATIONS).asBoolean());
     }
 
+    @Test
+    public void optional() {
+        // TODO Test optional resources
+    }
+
     private Operation findOperation(List<Operation> operations, AddressTemplate template) {
         ResourceAddress address = template.resolve(statementContext);
         for (Operation operation : operations) {
@@ -89,7 +92,7 @@ public class CreateRrdOperationsTest {
     @Test
     public void recursive() {
         List<Operation> operations = rrdOps
-                .create(new LookupResult(Sets.newHashSet(AddressTemplate.of("foo=bar")), true));
+                .create(new LookupResult(Sets.newHashSet(AddressTemplate.of("foo=bar")), true), false);
         Operation operation = operations.get(0);
         assertEquals(RRD_DEPTH, operation.get(RECURSIVE_DEPTH).asInt());
     }

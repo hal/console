@@ -17,7 +17,6 @@ package org.jboss.hal.config;
 
 import java.util.List;
 
-import com.google.common.base.Joiner;
 import org.jboss.hal.config.rebind.EnvironmentGenerator;
 import org.jboss.hal.config.semver.Version;
 
@@ -105,8 +104,8 @@ public abstract class AbstractEnvironment implements Environment {
     }
 
     @Override
-    public void setManagementVersion(final String major, final String micro, final String minor) {
-        managementVersion = Version.valueOf(Joiner.on('.').join(major, micro, minor));
+    public void setManagementVersion(final Version version) {
+        managementVersion = version;
     }
 
     @Override

@@ -14,31 +14,15 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<html class="layout-pf layout-pf-fixed transitions">
+<html class="layout-pf layout-pf-fixed">
 <head lang="en">
     <meta charset="UTF-8">
     <title>Application</title>
     <meta http-equiv="X-UA-Compatible" content="IE=9">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link href="../../../app/src/main/resources/org/jboss/hal/public/css/hal.css" rel="stylesheet">
-
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jquery.dataTables.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/typeahead.bundle.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/tagmanager.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/dataTables.buttons.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/dataTables.keyTable.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/dataTables.select.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/jstree.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-select.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/bootstrap-switch.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/patternfly.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/c3.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/d3.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/ace.js"></script>
-    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/ZeroClipboard.min.js"></script>
+    <link href="../../../app/src/main/resources/org/jboss/hal/public/css/hal.css" rel="stylesheet" media="screen">
+    <script src="../../../app/src/main/resources/org/jboss/hal/public/js/external.js"></script>
 </head>
 <body>
 <nav data-element="header" class="navbar navbar-default navbar-pf navbar-fixed-top" role="navigation">
@@ -83,7 +67,7 @@
     </nav>
 </footer>
 
-<div class="nav-pf-vertical nav-pf-vertical-hal nav-pf-vertical-with-secondary-nav">
+<div class="nav-pf-vertical nav-pf-vertical-hal nav-pf-vertical-with-sub-menus">
     <ul class="list-group">
         <li class="list-group-item">
             <a href="#">
@@ -91,14 +75,14 @@
                 <span class="list-group-item-value">Dashboard</span>
             </a>
         </li>
-        <li class="list-group-item persistent-secondary" data-target="#clusters-secondary">
+        <li class="list-group-item secondary-nav-item-pf" data-target="#clusters-secondary">
             <a class="clickable">
                 <span class="pficon pficon-cluster"></span>
                 <span class="list-group-item-value">Clusters</span>
             </a>
-            <div id="clusters-secondary" class="nav-pf-persistent-secondary nav-pf-persistent-secondary-hal">
-                <div class="persistent-secondary-header">
-                    <a class="clickable fa fa-arrow-circle-o-left" data-toggle="collapse-secondary-nav¬"></a>
+            <div id="clusters-secondary" class="nav-pf-secondary-nav nav-pf-secondary-nav-hal">
+                <div class="nav-item-pf-header">
+                    <a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
                     <span>Clusters</span>
                 </div>
                 <ul class="list-group">
@@ -143,7 +127,7 @@
     </ul>
 </div>
 
-<div class="container-fluid container-pf-nav-pf-vertical container-pf-nav-pf-vertical-with-secondary">
+<div class="container-fluid container-pf-nav-pf-vertical container-pf-nav-pf-vertical-with-sub-menus nav-pf-persistent-secondary">
     <div class="row">
         <div class="col-md-12 col-sm-12">
             <h1>Lorem Ipsum</h1>

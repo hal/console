@@ -14,31 +14,24 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<html class="layout-pf layout-pf-fixed transitions">
+<html class="layout-pf layout-pf-fixed">
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Homepage</title>
+    <title>Bootstrap Failed</title>
     <meta http-equiv="X-UA-Compatible" content="IE=9">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link href="../../public/css/hal.css" rel="stylesheet">
-
-    <script src="../../public/js/jquery.js"></script>
-    <script src="../../public/js/bootstrap.js"></script>
-    <script src="../../public/js/bootstrap-select.js"></script>
-    <script src="../../public/js/patternfly.js"></script>
+    <link href="../../public/css/hal.css" rel="stylesheet" media="screen">
+    <script src="../../public/js/external.js"></script>
 </head>
 <body>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-offset-2 col-md-8 bootstrap-error">
-            <h1>{{CONSTANTS.bootstrapFailed()}}</h1>
-            <div class="panel panel-danger">
-                <div class="panel-heading"><h3 class="panel-title">{{error()}}</h3></div>
-                <div class="panel-body">
-                    <pre data-element="code">Details code</pre>
-                </div>
+        <div class="col-md-offset-2 col-md-8">
+            <div class="alert alert-danger">
+                <span class="pficon pficon-error-circle-o"></span> {{error}}
             </div>
+            <pre data-element="code">Details code</pre>
         </div>
     </div>
 </div>

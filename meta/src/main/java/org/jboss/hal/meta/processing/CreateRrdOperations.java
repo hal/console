@@ -21,9 +21,8 @@ import java.util.List;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.ProfileAndServerGroupWildcardStatementContext;
+import org.jboss.hal.meta.StatementContext;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.processing.LookupResult.ALL_PRESENT;
@@ -43,34 +42,36 @@ class CreateRrdOperations {
         this.statementContext = new ProfileAndServerGroupWildcardStatementContext(statementContext, environment);
     }
 
-    public List<Operation> create(LookupResult lookupResult) {
+    public List<Operation> create(LookupResult lookupResult, boolean optional) {
         List<Operation> operations = new ArrayList<>();
-        for (AddressTemplate template : lookupResult.templates()) {
-            int missingMetadata = lookupResult.missingMetadata(template);
-            if (missingMetadata != ALL_PRESENT) {
-                ResourceAddress address = template.resolve(statementContext);
-                Operation.Builder builder = new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION, address);
-                switch (missingMetadata) {
-                    case NOTHING_PRESENT:
-                        // all missing
-                        builder.param(ACCESS_CONTROL, COMBINED_DESCRIPTIONS).param(OPERATIONS, true);
-                        break;
-                    case RESOURCE_DESCRIPTION_PRESENT:
-                        // security context missing
-                        builder.param(ACCESS_CONTROL, TRIM_DESCRIPTIONS).param(OPERATIONS, true);
-                        break;
-                    case SECURITY_CONTEXT_PRESENT:
-                        // resource description missing
-                        builder.param(OPERATIONS, true);
-                        break;
-                }
-                if (lookupResult.recursive()) {
-                    // Workaround: Some browsers choke on too big payload size
-                    builder.param(RECURSIVE_DEPTH, RRD_DEPTH);
-                }
-                operations.add(builder.build());
-            }
-        }
+        lookupResult.templates().stream()
+                .filter(template -> optional == template.isOptional())
+                .forEach(template -> {
+                    int missingMetadata = lookupResult.missingMetadata(template);
+                    if (missingMetadata != ALL_PRESENT) {
+                        ResourceAddress address = template.resolve(statementContext);
+                        Operation.Builder builder = new Operation.Builder(READ_RESOURCE_DESCRIPTION_OPERATION, address);
+                        switch (missingMetadata) {
+                            case NOTHING_PRESENT:
+                                // all missing
+                                builder.param(ACCESS_CONTROL, COMBINED_DESCRIPTIONS).param(OPERATIONS, true);
+                                break;
+                            case RESOURCE_DESCRIPTION_PRESENT:
+                                // security context missing
+                                builder.param(ACCESS_CONTROL, TRIM_DESCRIPTIONS).param(OPERATIONS, true);
+                                break;
+                            case SECURITY_CONTEXT_PRESENT:
+                                // resource description missing
+                                builder.param(OPERATIONS, true);
+                                break;
+                        }
+                        if (lookupResult.recursive()) {
+                            // Workaround: Some browsers choke on too big payload size
+                            builder.param(RECURSIVE_DEPTH, RRD_DEPTH);
+                        }
+                        operations.add(builder.build());
+                    }
+                });
         return operations;
     }
 }

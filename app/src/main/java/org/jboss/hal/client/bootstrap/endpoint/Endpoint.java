@@ -24,9 +24,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PORT;
 /**
  * @author Harald Pehl
  */
-public class Endpoint extends NamedNode {
+class Endpoint extends NamedNode {
 
-    public static final String SCHEME = "scheme";
+    static final String SCHEME = "scheme";
     private static final String SELECTED = "selected";
 
     Endpoint() {

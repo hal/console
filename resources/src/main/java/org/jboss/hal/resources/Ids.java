@@ -50,7 +50,7 @@ import static java.util.stream.StreamSupport.stream;
  * IDs used in HTML elements and across multiple classes. Please add IDs to this interface even if there's already an
  * equivalent or similar constant in {@code ModelDescriptionConstants} (SoC).
  * <p>
- * The IDs defined here are reused by QA. So please make sure that IDs are not spread over the complete code base but
+ * The IDs defined here are reused by QA. So please make sure that IDs are not spread over the code base but
  * gathered in this interface. This is not always possible - for instance if the ID contains dynamic parts like a
  * resource name or selected server. But IDs which only contain static strings should be part of this interface.
  */
@@ -63,13 +63,15 @@ public interface Ids {
     String ENTRY_SUFFIX = "entry";
     String FORM_SUFFIX = "form";
     String REFRESH_SUFFIX = "refresh";
+    String STORAGE_PREFIX = "hal-local-storage";
     String TAB_SUFFIX = "tab";
     String TABLE_SUFFIX = "table";
-    String WIZARD_SUFFIX = "wizard";
+    String WIZARD_STEP_SUFFIX = "wizard-step";
 
 
     // ------------------------------------------------------ ids (a-z)
-    // Try to compose IDs by making use of the build() method, except the ID is used in an annotation.
+    // Try to compose IDs by making use of the build() method,
+    // except the ID needs to be a constant expression (e.g. when used in an annotation).
 
     String ACCESS_CONTROL_BROWSE_BY = "access-control-browse-by";
     String ASSIGNMENT = "assignement";
@@ -78,23 +80,45 @@ public interface Ids {
 
     String CONFIGURATION = "configuration";
     String CONTENT = "content";
-    String CONTENT_ADD = build(Ids.CONTENT, ADD_SUFFIX);
+    String CONTENT_ADD = build(CONTENT, ADD_SUFFIX);
+    String CONTENT_ADD_ACTIONS = build(CONTENT, "add-actions");
+    String CONTENT_EDITOR = build(CONTENT, "editor");
+    String CONTENT_REFRESH = build(CONTENT, REFRESH_SUFFIX);
+    String CONTENT_SEARCH = build(CONTENT, "search");
+    String CONTENT_TAB = build(CONTENT, TAB_SUFFIX);
+    String CONTENT_TREE = build(CONTENT, "tree");
+    String CONTENT_TREE_ROOT = build(CONTENT, "tree-root");
+    String CONTENT_TREE_SEARCH = build(CONTENT, "tree", "search");
+    String CONTENT_UNMANAGED_ADD = build(CONTENT, "unmanaged", ADD_SUFFIX);
 
     String DATA_SOURCE_CONFIGURATION = "data-source-configuration";
     String DATA_SOURCE_ADD = build(DATA_SOURCE_CONFIGURATION, ADD_SUFFIX);
     String DATA_SOURCE_ADD_ACTIONS = build(DATA_SOURCE_CONFIGURATION, "add-actions");
+    String DATA_SOURCE_CHOOSE_TEMPLATE_STEP = build(DATA_SOURCE_CONFIGURATION, "choose-template", WIZARD_STEP_SUFFIX);
+    String DATA_SOURCE_CONNECTION_FORM = build(DATA_SOURCE_CONFIGURATION, "connection", FORM_SUFFIX);
+    String DATA_SOURCE_CONNECTION_STEP = build(DATA_SOURCE_CONFIGURATION, "connection", WIZARD_STEP_SUFFIX);
     String DATA_SOURCE_DRIVER = "data-source-driver";
+    String DATA_SOURCE_DRIVER_FORM = build(DATA_SOURCE_CONFIGURATION, "driver", FORM_SUFFIX);
+    String DATA_SOURCE_DRIVER_STEP = build(DATA_SOURCE_CONFIGURATION, "driver", WIZARD_STEP_SUFFIX);
+    String DATA_SOURCE_NAMES_FORM = build(DATA_SOURCE_CONFIGURATION, "names", FORM_SUFFIX);
+    String DATA_SOURCE_NAMES_STEP = build(DATA_SOURCE_CONFIGURATION, "names", WIZARD_STEP_SUFFIX);
+    String DATA_SOURCE_PROPERTIES_STEP = build(DATA_SOURCE_CONFIGURATION, "properties", WIZARD_STEP_SUFFIX);
     String DATA_SOURCE_REFRESH = build(DATA_SOURCE_CONFIGURATION, REFRESH_SUFFIX);
+    String DATA_SOURCE_REVIEW_FORM = build(DATA_SOURCE_CONFIGURATION, "review", FORM_SUFFIX);
+    String DATA_SOURCE_REVIEW_STEP = build(DATA_SOURCE_CONFIGURATION, "review", WIZARD_STEP_SUFFIX);
     String DATA_SOURCE_RUNTIME = "data-source-runtime";
     String DATA_SOURCE_RUNTIME_JDBC_FORM = build(DATA_SOURCE_RUNTIME, "jdbc", FORM_SUFFIX);
     String DATA_SOURCE_RUNTIME_JDBC_TAB = build(DATA_SOURCE_RUNTIME, "jdbc", TAB_SUFFIX);
     String DATA_SOURCE_RUNTIME_POOL_FORM = build(DATA_SOURCE_RUNTIME, "pool", FORM_SUFFIX);
     String DATA_SOURCE_RUNTIME_POOL_TAB = build(DATA_SOURCE_RUNTIME, "pool", TAB_SUFFIX);
-    String DATA_SOURCE_WIZARD = build(DATA_SOURCE_CONFIGURATION, WIZARD_SUFFIX);
     String DEPLOYMENT = "deployment";
-    String DEPLOYMENT_ADD = build(Ids.DEPLOYMENT, ADD_SUFFIX);
+    String DEPLOYMENT_ADD_ACTIONS = build(DEPLOYMENT, "add-actions");
     String DEPLOYMENT_BROWSE_BY = "deployment-browse-by";
+    String DEPLOYMENT_REFRESH = build(DEPLOYMENT, REFRESH_SUFFIX);
     String DEPLOYMENT_SERVER_GROUP = "deployment-sg";
+    String DEPLOYMENT_TAB = build(DEPLOYMENT, TAB_SUFFIX);
+    String DEPLOYMENT_UNMANAGED_ADD = build(DEPLOYMENT, "unmanaged", ADD_SUFFIX);
+    String DEPLOYMENT_UPLOAD = build(DEPLOYMENT, "upload");
     String DOMAIN_BROWSE_BY = "domain-browse-by";
     String DRAG_AND_DROP_DEPLOYMENT = "drag-and-drop-deployment";
 
@@ -111,22 +135,26 @@ public interface Ids {
     String EE_MANAGED_EXECUTOR_SCHEDULED = build(EE, "service", "scheduled-executor");
     String EE_MANAGED_THREAD_FACTORY = build(EE, "service", "thread-factories");
     String EE_SERVICES_ENTRY = build(Ids.EE, "services", ENTRY_SUFFIX);
-
     String ENDPOINT = "endpoint";
     String ENDPOINT_ADD = build(ENDPOINT, "add");
     String ENDPOINT_PING = build(ENDPOINT, "ping");
     String ENDPOINT_SELECT = build(ENDPOINT, "select");
+    String ENDPOINT_STORAGE = build(STORAGE_PREFIX, ENDPOINT);
 
     String FINDER = "hal-finder";
 
     String GROUP = "group";
+
+    String HAL_MODAL = "hal-modal";
+    String HAL_MODAL_TITLE = build(HAL_MODAL, "title");
+    String HAL_WIZARD = "hal-wizard";
+    String HAL_WIZARD_TITLE = build(HAL_WIZARD, "title");
 
     String HEADER = "header";
     String HEADER_CONNECTED_TO = build(HEADER, "connected-to");
     String HEADER_MESSAGES = build(HEADER, "messages");
     String HEADER_ROLES = build(HEADER, "roles");
     String HEADER_USERNAME = build(HEADER, "username");
-
     String HOMEPAGE = "homepage";
     String HOMEPAGE_ACCESS_CONTROL_SECTION = build(HOMEPAGE, "access-control-section");
     String HOMEPAGE_CONFIGURATION_SECTION = build(HOMEPAGE, "configuration-section");
@@ -147,7 +175,12 @@ public interface Ids {
     String JDBC_DRIVER_ADD = build(JDBC_DRIVER, ADD_SUFFIX);
     String JDBC_DRIVER_ADD_FORM = build(JDBC_DRIVER, ADD_SUFFIX, FORM_SUFFIX);
     String JDBC_DRIVER_REFRESH = build(JDBC_DRIVER, REFRESH_SUFFIX);
-
+    String JNDI = "jndi";
+    String JNDI_DETAILS = build(JNDI, "details");
+    String JNDI_SEARCH = build(JNDI, "search");
+    String JNDI_TREE = build(JNDI, "tree");
+    String JNDI_TREE_JAVA_CONTEXTS_ROOT = build(JNDI_TREE, "java-contexts-root");
+    String JNDI_TREE_APPLICATIONS_ROOT = build(JNDI_TREE, "applications-root");
     String JPA_RUNTIME = "jpa-runtime";
     String JPA_RUNTIME_MAIN_ATTRIBUTES_ENTRY = build(JPA_RUNTIME, "main", "attributes", ENTRY_SUFFIX);
     String JPA_RUNTIME_ENTITY_ENTRY = build(JPA_RUNTIME, "entity", ENTRY_SUFFIX);
@@ -158,6 +191,7 @@ public interface Ids {
     String LOG_FILE = "log-file";
     String LOG_FILE_EDITOR = build(LOG_FILE, "editor");
     String LOG_FILE_REFRESH = build(LOG_FILE, REFRESH_SUFFIX);
+    String LOG_FILE_SEARCH = build(LOG_FILE, "search");
     String LOGGING = "logging";
     String LOGGING_CONFIGURATION = "logging-configuration";
     String LOGGING_PROFILE = "logging-profile";
@@ -167,6 +201,7 @@ public interface Ids {
     String MACRO_EDITOR = build(MACRO, "editor");
     String MACRO_LIST = build(MACRO, "list");
     String MACRO_OPTIONS = build(MACRO, "options");
+    String MACRO_STORAGE = build(STORAGE_PREFIX, MACRO);
     String MAIL_SERVER = "mail-server";
     String MAIL_SERVER_ENTRY = build(MAIL_SERVER, ENTRY_SUFFIX);
     String MAIL_SERVER_DIALOG = build(MAIL_SERVER, ADD_SUFFIX, FORM_SUFFIX);
@@ -182,6 +217,10 @@ public interface Ids {
     String MEMBERSHIP_INCLUDE = build(MEMBERSHIP, "include");
     String MEMBERSHIP_EXCLUDE = build(MEMBERSHIP, "exclude");
     String MODEL_BROWSER = "model-browser";
+    String MODEL_BROWSER_ROOT = build(MODEL_BROWSER, "root");
+    String MODEL_BROWSER_CHOOSE_SINGLETON_STEP = build(MODEL_BROWSER, "choose-singleton", WIZARD_STEP_SUFFIX);
+    String MODEL_BROWSER_CREATE_SINGLETON_FORM = build(MODEL_BROWSER, "create-singleton", FORM_SUFFIX);
+    String MODEL_BROWSER_CREATE_SINGLETON_STEP = build(MODEL_BROWSER, "create-singleton", WIZARD_STEP_SUFFIX);
 
     String PREVIEW_ID = build(FINDER, "preview");
     String PROFILE = "profile";
@@ -203,8 +242,17 @@ public interface Ids {
     String SERVER_ADD = build(SERVER, ADD_SUFFIX);
     String SERVER_GROUP = "server-group";
     String SERVER_GROUP_ADD = build(SERVER_GROUP, ADD_SUFFIX);
+    String SERVER_GROUP_DEPLOYMENT = "server-group-deployment";
+    String SERVER_GROUP_DEPLOYMENT_ADD = build(SERVER_GROUP_DEPLOYMENT, ADD_SUFFIX);
+    String SERVER_GROUP_DEPLOYMENT_ADD_ACTIONS = build(SERVER_GROUP_DEPLOYMENT, "add-actions");
+    String SERVER_GROUP_DEPLOYMENT_ENABLE = build(SERVER_GROUP_DEPLOYMENT, "enable");
+    String SERVER_GROUP_DEPLOYMENT_REFRESH = build(SERVER_GROUP_DEPLOYMENT, REFRESH_SUFFIX);
+    String SERVER_GROUP_DEPLOYMENT_TABLE = build(SERVER_GROUP_DEPLOYMENT, TABLE_SUFFIX);
+    String SERVER_GROUP_DEPLOYMENT_UNMANAGED_ADD = build(SERVER_GROUP_DEPLOYMENT, "unmanaged", ADD_SUFFIX);
+    String SERVER_GROUP_DEPLOYMENT_UPLOAD = build(SERVER_GROUP_DEPLOYMENT, "upload");
     String SERVER_GROUP_REFRESH = build(SERVER_GROUP, REFRESH_SUFFIX);
     String SERVER_MONITOR = "server-monitor";
+    String SERVER_REFRESH = build(SERVER, REFRESH_SUFFIX);
     String SERVER_STATUS = "server-status";
     String SERVER_STATUS_BOOTSTRAP_ENTRY = build(SERVER_STATUS, "bootstrap", ENTRY_SUFFIX);
     String SERVER_STATUS_BOOTSTRAP_FORM = build(SERVER_STATUS, "bootstrap", FORM_SUFFIX);
@@ -212,14 +260,11 @@ public interface Ids {
     String SERVER_STATUS_MAIN_ATTRIBUTES_FORM = build(SERVER_STATUS, "main-attributes", FORM_SUFFIX);
     String SERVER_STATUS_SYSTEM_PROPERTIES_ENTRY = build(SERVER_STATUS, "system-properties", ENTRY_SUFFIX);
     String SERVER_STATUS_SYSTEM_PROPERTIES_TABLE = build(SERVER_STATUS, "system-properties", TABLE_SUFFIX);
-
-    String SERVER_REFRESH = build(SERVER, REFRESH_SUFFIX);
     String SOCKET_BINDING = "socket-binding";
     String SOCKET_BINDING_ADD = build(SOCKET_BINDING, ADD_SUFFIX);
     String SOCKET_BINDING_REFRESH = build(SOCKET_BINDING, REFRESH_SUFFIX);
     String STANDALONE_HOST = "standalone-host";
     String STANDALONE_SERVER = "standalone-server";
-    String STORAGE_PREFIX = "org.jboss.hal";
     String SUBSYSTEM = "subsystem";
 
     String TLC_ACCESS_CONTROL = "tlc-access-control";
@@ -229,12 +274,17 @@ public interface Ids {
     String TLC_PATCHING = "tlc-patching";
     String TLC_RUNTIME = "tlc-runtime";
 
+    String UNMANAGED = "unmanaged";
+    String UNMANAGED_FORM = build(UNMANAGED, FORM_SUFFIX);
+    String UPLOAD = "upload";
+    String UPLOAD_STEP = build(UPLOAD, WIZARD_STEP_SUFFIX);
+    String UPLOAD_FILE_INPUT = build(UPLOAD, "file-input");
+    String UPLOAD_NAMES_FORM = build(UPLOAD, "names", FORM_SUFFIX);
+    String UPLOAD_NAMES_STEP = build(UPLOAD, "names", WIZARD_STEP_SUFFIX);
     String USER = "user";
 
     String VERSION_INFO = "version-info";
     String VERSION_INFO_FORM = build(VERSION_INFO, FORM_SUFFIX);
-
-    String WEB_SETTINGS = "settings";
 
     String XA_DATA_SOURCE = "xa-data-source";
     String XA_DATA_SOURCE_ADD = build(XA_DATA_SOURCE, ADD_SUFFIX);
@@ -247,12 +297,19 @@ public interface Ids {
 
     // ------------------------------------------------------ resource ids (a-z)
 
+    static String content(String name) {
+        return name;
+    }
     static String dataSourceConfiguration(String name, boolean xa) {
         return build(xa ? "xa" : "non-xa", DATA_SOURCE_CONFIGURATION, name);
     }
 
     static String dataSourceRuntime(String name, boolean xa) {
         return build(xa ? "xa" : "non-xa", DATA_SOURCE_RUNTIME, name);
+    }
+
+    static String deployment(String name) {
+        return name;
     }
 
     static String host(final String name) {
@@ -288,6 +345,10 @@ public interface Ids {
 
     static String serverGroup(final String name) {
         return build(SERVER_GROUP, name);
+    }
+
+    static String serverGroupDeployment(final String serverGroup, String name) {
+        return build(serverGroup, name);
     }
 
     static String serverGroupServer(final String serverGroup, final String server) {

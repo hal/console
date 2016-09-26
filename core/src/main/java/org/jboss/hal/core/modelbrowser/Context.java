@@ -15,36 +15,36 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
-import org.jboss.hal.dmr.model.ResourceAddress;
-
 import java.util.Set;
+
+import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
  * @author Harald Pehl
  */
-public class Context {
+class Context {
 
     private final Set<String> singletons;
     private final ResourceAddress address;
 
-    public Context(final ResourceAddress address, final Set<String> singletons) {
+    Context(final ResourceAddress address, final Set<String> singletons) {
         this.singletons = singletons;
         this.address = address;
     }
 
-    public ResourceAddress getAddress() {
+    ResourceAddress getAddress() {
         return address;
     }
 
-    public Set<String> getSingletons() {
+    Set<String> getSingletons() {
         return singletons;
     }
 
-    public boolean hasSingletons() {
+    boolean hasSingletons() {
         return !singletons.isEmpty();
     }
 
-    public boolean isFullyQualified() {
+    boolean isFullyQualified() {
         return !"*".equals(address.lastValue());
     }
 }

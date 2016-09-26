@@ -27,10 +27,12 @@ public interface NameTokens {
 
     String ACCESS_CONTROL = "access-control";
     String BATCH_CONFIGURATION = ModelDescriptionConstants.BATCH_JBERET + CONFIGURATION_SUFFIX;
+    String BROWSE_CONTENT = "browse-content";
     String CONFIGURATION = "configuration";
     String DATA_SOURCE_CONFIGURATION = ModelDescriptionConstants.DATA_SOURCE + CONFIGURATION_SUFFIX;
     String DATA_SOURCE_RUNTIME = ModelDescriptionConstants.DATA_SOURCE + RUNTIME_SUFFIX;
     String DEPLOYMENT_SCANNERS = ModelDescriptionConstants.DEPLOYMENT_SCANNER;
+    String DEPLOYMENT = "deployment";
     String DEPLOYMENTS = "deployments";
     String EE = ModelDescriptionConstants.EE;
     String EJB3 = ModelDescriptionConstants.EJB3;
@@ -42,6 +44,7 @@ public interface NameTokens {
     String IO = ModelDescriptionConstants.IO;
     String JCA = ModelDescriptionConstants.JCA;
     String JMX = ModelDescriptionConstants.JMX;
+    String JNDI = "jndi";
     String JPA_CONFIGURATION = ModelDescriptionConstants.JPA + CONFIGURATION_SUFFIX;
     String JPA_RUNTIME = ModelDescriptionConstants.JPA + RUNTIME_SUFFIX;
     String LOG_FILE = "log-file";
@@ -57,6 +60,7 @@ public interface NameTokens {
     String RUNTIME = "runtime";
     String SERVER_CONFIGURATION = "server-configuration";
     String SERVER_GROUP_CONFIGURATION = "server-group-configuration";
+    String SERVER_GROUP_DEPLOYMENT = "server-group-deployment";
     String SERVER_STATUS = "server-status";
     String SOCKET_BINDING = ModelDescriptionConstants.SOCKET_BINDING;
     String SYSTEM_PROPERTIES = "system-properties";

@@ -72,6 +72,9 @@ public class FinderSegment<T> {
     }
 
 
+    /**
+     * Separator is used in URL tokens. Please choose a string which is safe to use in URLs
+     */
     static final String SEPARATOR = "~";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(FinderSegment.class);
 

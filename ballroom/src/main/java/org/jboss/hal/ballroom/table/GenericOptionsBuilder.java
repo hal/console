@@ -22,10 +22,7 @@ import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.table.Button.ActionHandler;
 import org.jboss.hal.ballroom.table.Button.Scope;
 
-import static org.jboss.hal.resources.CSS.btn;
-import static org.jboss.hal.resources.CSS.btnDefault;
-import static org.jboss.hal.resources.CSS.btnGroup;
-import static org.jboss.hal.resources.CSS.pullRight;
+import static org.jboss.hal.resources.CSS.*;
 
 /**
  * Generic builder for data table {@linkplain Options options} used as a base class for the different option builders.
@@ -101,6 +98,20 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     public B column(Column<T> column) {
         this.columns.add(column);
         return that();
+    }
+
+    public B checkboxColumn() {
+        Column<T> checkboxColumn = new Column<>();
+        checkboxColumn.orderable = false;
+        checkboxColumn.className = selectCheckbox;
+        checkboxColumn.render = new Column.RenderCallback<T, String>() {
+            @Override
+            public String render(final String cell, final String type, final T row, final Column.Meta meta) {
+                return null;
+            }
+        };
+        checkboxColumn.width = "40px"; //NON-NLS
+        return column(checkboxColumn);
     }
 
     public B multiselect() {

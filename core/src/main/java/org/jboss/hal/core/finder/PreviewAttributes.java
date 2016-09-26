@@ -29,6 +29,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 
 import static org.jboss.hal.resources.CSS.key;
 import static org.jboss.hal.resources.CSS.listGroup;
@@ -41,10 +42,28 @@ import static org.jboss.hal.resources.CSS.listGroupItem;
  */
 public class PreviewAttributes<T extends ModelNode> implements HasElements {
 
+    public static class PreviewAttribute {
+
+        final String label;
+        final String value;
+        final String href;
+
+        public PreviewAttribute(final String label, final String value) {
+            this(label, value, null);
+        }
+
+        public PreviewAttribute(final String label, final String value, final String href) {
+            this.label = label;
+            this.value = value;
+            this.href = href;
+        }
+    }
+
+
     @FunctionalInterface
     public interface PreviewAttributeFunction<T> {
 
-        String[] labelValue(T model);
+        PreviewAttribute labelValue(T model);
     }
 
 
@@ -79,16 +98,20 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
         this.attributeElements = new HashMap<>();
 
         builder.ul().css(listGroup);
-        for (String attribute : attributes) {
-            append(attribute);
-        }
+        attributes.forEach(this::append);
     }
 
     public PreviewAttributes<T> append(final String attribute) {
-        append(model -> new String[]{
-                labelBuilder.label(attribute),
-                model.hasDefined(attribute) ? model.get(attribute).asString() : ""
-        });
+        append(model -> new PreviewAttribute(labelBuilder.label(attribute),
+                model.hasDefined(attribute) ? model.get(attribute).asString() : ""));
+        attributeElements.put(attribute, lastAttributeGroupItem);
+        return this;
+    }
+
+    public PreviewAttributes<T> append(final String attribute, String href) {
+        append(model -> new PreviewAttribute(labelBuilder.label(attribute),
+                model.hasDefined(attribute) ? model.get(attribute).asString() : "",
+                href));
         attributeElements.put(attribute, lastAttributeGroupItem);
         return this;
     }
@@ -99,14 +122,25 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
         String valueId = Ids.build(id, VALUE);
         functions.put(id, function);
 
-        String[] labelValue = function.labelValue(model);
+        PreviewAttribute previewAttribute = function.labelValue(model);
+        // @formatter:off
         builder.li().rememberAs(id).css(listGroupItem)
-                .span().rememberAs(labelId).css(key).textContent(labelValue[0]).end()
-                .span().rememberAs(valueId).css(CSS.value).textContent(labelValue[1]);
-        if (labelValue[1].length() > 15) {
-            builder.title(labelValue[1]);
-        }
-        builder.end().end();
+            .span().rememberAs(labelId).css(key).textContent(previewAttribute.label).end();
+            if (previewAttribute.href != null) {
+                builder.a(previewAttribute.href);
+            }
+            builder.span().rememberAs(valueId).css(CSS.value).textContent(
+                    previewAttribute.value == null ? Names.NOT_AVAILABLE : previewAttribute.value);
+            if (previewAttribute.value != null && previewAttribute.value.length() > 15) {
+                builder.title(previewAttribute.value);
+            }
+            builder.end(); // </span>
+            if (previewAttribute.href != null) {
+                builder.end(); // </a>
+            }
+        builder.end(); // </li>
+        // @formatter:on
+
         lastAttributeGroupItem = builder.referenceFor(id);
         return this;
     }
@@ -123,10 +157,10 @@ public class PreviewAttributes<T extends ModelNode> implements HasElements {
             String valueId = Ids.build(id, VALUE);
 
             PreviewAttributeFunction<T> function = entry.getValue();
-            String[] labelValue = function.labelValue(model);
+            PreviewAttribute previewAttribute = function.labelValue(model);
 
-            builder.referenceFor(labelId).setTextContent(labelValue[0]);
-            builder.referenceFor(valueId).setTextContent(labelValue[1]);
+            builder.referenceFor(labelId).setTextContent(previewAttribute.label);
+            builder.referenceFor(valueId).setTextContent(previewAttribute.value);
         }
     }
 

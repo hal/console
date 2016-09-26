@@ -57,8 +57,7 @@ public class ModifyResourceDialog {
         this.form = form;
         this.dialog = new Dialog.Builder(title)
                 .add(form.asElement())
-                .primary(CONSTANTS.save(), form::save)
-                .secondary(CONSTANTS.cancel(), () -> true)
+                .saveCancel(form::save)
                 .size(Size.MEDIUM)
                 .closeOnEsc(true)
                 .build();

@@ -100,13 +100,10 @@ public class MacroEditorView extends PatternFlyViewImpl implements MacroEditorPr
                         new ItemAction<Macro>(RENAME_ACTION, resources.constants().rename(),
                                 macro -> presenter.rename(macro)),
                         new ItemAction<Macro>(REMOVE_ACTION, resources.constants().remove(),
-                                macro -> DialogFactory.confirmation(
+                                macro -> DialogFactory.showConfirmation(
                                         resources.messages().removeResourceConfirmationTitle(macro.getName()),
                                         resources.messages().removeResourceConfirmationQuestion(macro.getName()),
-                                        () -> {
-                                            presenter.remove(macro);
-                                            return true;
-                                        }).show()));
+                                        () -> presenter.remove(macro))));
             }
         });
         macroList.onSelect(this::loadMacro);

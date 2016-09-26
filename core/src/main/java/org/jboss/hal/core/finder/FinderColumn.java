@@ -29,15 +29,14 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental.dom.Element;
 import elemental.dom.NodeList;
 import elemental.events.Event;
-import elemental.events.EventListener;
 import elemental.events.KeyboardEvent;
 import elemental.events.KeyboardEvent.KeyCode;
 import elemental.html.InputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Tooltip;
-import org.jboss.hal.ballroom.dragndrop.DragEvent;
 import org.jboss.hal.ballroom.dragndrop.DropEventHandler;
+import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
@@ -280,7 +279,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                     .id(Ids.build(id, filter))
                     .css(formControl)
                     .aria("describedby", iconId)
-                    .attr("placeholder", CONSTANTS.filter())
+                    .attr(UIConstants.PLACEHOLDER, CONSTANTS.filter())
                     .on(keydown, this::onNavigation)
                     .on(keyup, this::onFilter)
                     .rememberAs(FILTER_ELEMENT)
@@ -337,7 +336,11 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                                 .id(actn.id)
                                 .attr(UIConstants.ROLE, UIConstants.MENUITEM)
                                 .attr(UIConstants.TABINDEX, "-1")
-                                .on(click, event -> actn.handler.execute(this));
+                                .on(click, event -> {
+                                    if (actn.handler!= null) {
+                                        actn.handler.execute(this);
+                                    }
+                                });
                                 if (actn.title != null){
                                     builder.textContent(actn.title);
                                 } else if (actn.element != null) {
@@ -356,7 +359,11 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             builder.button()
                     .id(action.id)
                     .css(btn, btnFinder)
-                    .on(click, event -> action.handler.execute(this));
+                    .on(click, event -> {
+                        if (action.handler != null) {
+                            action.handler.execute(this);
+                        }
+                    });
 
             if (action.title != null) {
                 builder.textContent(action.title);
@@ -726,7 +733,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             ulElement.appendChild(row.asElement());
         }
         updateHeader(items.size());
-        Tooltip.select("#" + id + " [data-toggle=tooltip]").init(); //NON-NLS
+        Tooltip.select("#" + id + " [data-" + UIConstants.TOGGLE + "=" + UIConstants.TOOLTIP + "]").init(); //NON-NLS
 
         if (items.isEmpty()) {
             ulElement.appendChild(noItems);
@@ -741,12 +748,8 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
      * Sometimes you need to reference {@code this} in the column action handler. This is not possible if they're
      * part of the builder which is passed to {@code super()}. In this case you can use this method to add your column
      * actions <strong>after</strong> the call to {@code super()}.
-     * <p>
-     * However make sure to call this method <strong>before</strong> the column is used {@link #asElement()} and gets
-     * attached to the DOM!
      */
     protected void addColumnAction(ColumnAction<T> columnAction) {
-        assertNotAsElement("addColumnAction()");
         columnActions.appendChild(newColumnButton(columnAction));
         if (columnActions.getChildElementCount() > 1) {
             columnActions.getClassList().add(btnGroup);
@@ -755,7 +758,6 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     }
 
     protected void addColumnActions(String id, String iconsCss, String title, List<ColumnAction<T>> actions) {
-        assertNotAsElement("addColumnActions()");
         Element element = new Elements.Builder().span()
                 .css(iconsCss)
                 .title(title)
@@ -767,6 +769,10 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
             columnActions.getClassList().add(btnGroup);
             columnActions.setAttribute(ROLE, GROUP);
         }
+    }
+
+    protected void resetColumnActions() {
+        Elements.removeChildrenFrom(columnActions);
     }
 
     /**
@@ -845,35 +851,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
     }
 
     protected void setOnDrop(DropEventHandler handler) {
-        EventListener noop = event -> {
-            event.preventDefault();
-            event.stopPropagation();
-        };
-        EventListener addDragIndicator = event -> {
-            noop.handleEvent(event);
-            ulElement.getClassList().add(ondrag);
-        };
-        EventListener removeDragIndicator = event -> {
-            noop.handleEvent(event);
-            ulElement.getClassList().remove(ondrag);
-        };
-
-        ulElement.setOndrag(noop);
-        ulElement.setOndragstart(noop);
-
-        ulElement.setOndragenter(addDragIndicator);
-        ulElement.setOndragover(addDragIndicator);
-
-        ulElement.setOndragleave(removeDragIndicator);
-        ulElement.setOndragend(removeDragIndicator);
-
-        ulElement.setOndrop(event -> {
-            noop.handleEvent(event);
-            removeDragIndicator.handleEvent(event);
-
-            DragEvent dragEvent = (DragEvent) event;
-            handler.onDrop(dragEvent);
-        });
+        JsHelper.addDropHandler(ulElement, handler);
     }
 
     private void assertNotAsElement(String method) {

@@ -19,6 +19,8 @@ import javax.lang.model.element.VariableElement;
 
 /**
  * @author Harald Pehl
+ * 
+ * Processor for java attributes that are annotated with @MbuiElement
  */
 interface MbuiElementProcessor {
 

@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
@@ -41,9 +41,9 @@ public class ConfigurationColumn extends StaticItemColumn {
 
     @Inject
     public ConfigurationColumn(final Finder finder,
-            final Resources resources,
-            final PlaceManager placeManager,
-            final Environment environment) {
+            final ItemActionFactory itemActionFactory,
+            final Environment environment,
+            final Resources resources) {
 
         super(finder, Ids.CONFIGURATION, Names.CONFIGURATION, (context, callback) -> {
             List<StaticItem> items = new ArrayList<>();
@@ -72,12 +72,12 @@ public class ConfigurationColumn extends StaticItemColumn {
                             .build(),
 
                     new StaticItem.Builder(Names.PATHS)
-                            .tokenAction(resources.constants().view(), placeManager, NameTokens.PATH)
+                            .action(itemActionFactory.view(NameTokens.PATH))
                             .onPreview(new PreviewContent(Names.PATHS, resources.previews().configurationPaths()))
                             .build(),
 
                     new StaticItem.Builder(Names.SYSTEM_PROPERTIES)
-                            .tokenAction(resources.constants().view(), placeManager, NameTokens.SYSTEM_PROPERTIES)
+                            .action(itemActionFactory.view(NameTokens.SYSTEM_PROPERTIES))
                             .onPreview(new PreviewContent(Names.SYSTEM_PROPERTIES,
                                     resources.previews().configurationSystemProperties()))
                             .build()

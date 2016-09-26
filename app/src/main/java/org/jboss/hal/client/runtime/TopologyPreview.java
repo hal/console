@@ -38,6 +38,7 @@ import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.PreviewAttributes;
+import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.runtime.TopologyFunctions;
@@ -136,7 +137,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         previewBuilder()
             .p()
                 .a().css(clickable, pullRight).on(click, event -> update(null))
-                    .span().css(fontAwesome("refresh"), marginRight4).end()
+                    .span().css(fontAwesome("refresh"), marginRight5).end()
                     .span().textContent(resources.constants().refresh()).end()
                 .end()
             .end()
@@ -154,15 +155,13 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         hostAttributes = new PreviewAttributes<>(new Host(new ModelNode()), Names.HOST,
                 asList(NAME, RELEASE_CODENAME, RELEASE_VERSION, PRODUCT_NAME, PRODUCT_VERSION,
                         HOST_STATE, RUNNING_MODE))
-                .append(model -> {
-                    return new String[]{
-                            "Management Version", //NON-NLS
-                            Joiner.on('.').join(
-                                    model.get(MANAGEMENT_MAJOR_VERSION),
-                                    model.get(MANAGEMENT_MINOR_VERSION),
-                                    model.get(MANAGEMENT_MICRO_VERSION))
-                    };
-                })
+                .append(model -> new PreviewAttribute(
+                        "Management Version", //NON-NLS
+                        Joiner.on('.').join(
+                                model.get(MANAGEMENT_MAJOR_VERSION),
+                                model.get(MANAGEMENT_MINOR_VERSION),
+                                model.get(MANAGEMENT_MICRO_VERSION))
+                ))
                 .end();
         serverGroupAttributes = new PreviewAttributes<>(new ServerGroup("", new ModelNode()), Names.SERVER_GROUP,
                 Arrays.asList(NAME, PROFILE, SOCKET_BINDING_GROUP, SOCKET_BINDING_PORT_OFFSET,
@@ -390,7 +389,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                             .aria(HAS_POPUP, "true") //NON-NLS
                             .title(host.getName());
                             if (host.isDomainController()) {
-                                builder.span().css(fontAwesome("star"), marginRight4).title(Names.DOMAIN_CONTROLLER).end();
+                                builder.span().css(fontAwesome("star"), marginRight5).title(Names.DOMAIN_CONTROLLER).end();
                             }
                             builder.span().textContent(host.getName()).end()
                         .end()

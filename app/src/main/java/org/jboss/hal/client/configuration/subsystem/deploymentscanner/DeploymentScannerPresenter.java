@@ -22,7 +22,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.client.configuration.PathsTypeahead;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -107,8 +106,5 @@ public class DeploymentScannerPresenter
             getView().updateScanners(asNamedNodes(failSafePropertyList(result, DEPLOYMENTSCANNER_TEMPLATE.lastKey())));
             // @formatter:on
         });
-
-        PathsTypeahead.updateOperation(environment, dispatcher, statementContext);
     }
-
 }
