@@ -52,7 +52,10 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+import org.jboss.hal.spi.Requires;
 
+import static org.jboss.hal.client.deployment.ContentColumn.CONTENT_ADDRESS;
+import static org.jboss.hal.client.deployment.ServerGroupDeploymentColumn.SERVER_GROUP_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
@@ -66,6 +69,7 @@ public class ServerGroupDeploymentPresenter
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.SERVER_GROUP_DEPLOYMENT)
+    @Requires(value = {CONTENT_ADDRESS, SERVER_GROUP_DEPLOYMENT_ADDRESS}, recursive = false)
     public interface MyProxy extends ProxyPlace<ServerGroupDeploymentPresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<ServerGroupDeploymentPresenter> {

@@ -83,8 +83,6 @@ import static org.jboss.hal.resources.Ids.MODEL_BROWSER_ROOT;
 import static org.jboss.hal.resources.Names.NYI;
 
 /**
- * TODO Removing a filter in a scoped model browser does not work
- *
  * @author Harald Pehl
  */
 public class ModelBrowser implements HasElements {
@@ -132,9 +130,7 @@ public class ModelBrowser implements HasElements {
 
     private abstract class DefaultMetadataCallback implements MetadataProcessor.MetadataCallback {
 
-        private final ResourceAddress address;
-
-        DefaultMetadataCallback(final ResourceAddress address) {this.address = address;}
+        DefaultMetadataCallback() {}
 
         @Override
         public void onError(final Throwable error) {
@@ -242,8 +238,8 @@ public class ModelBrowser implements HasElements {
         int height = Skeleton.applicationHeight();
         int buttonGroup = this.buttonGroup.getOffsetHeight();
         treeContainer.getStyle()
-                .setHeight(height - 2 * MARGIN_BIG - surroundingHeight - buttonGroup - MARGIN_SMALL, PX);
-        content.getStyle().setHeight(height - 2 * MARGIN_BIG - surroundingHeight - MARGIN_SMALL, PX);
+                .setHeight(height - 2 * MARGIN_BIG - buttonGroup - MARGIN_SMALL - surroundingHeight, PX);
+        content.getStyle().setHeight(height - 2 * MARGIN_BIG - surroundingHeight, PX);
     }
 
     private void initTree(ResourceAddress address, String text) {
@@ -399,7 +395,7 @@ public class ModelBrowser implements HasElements {
     private void showResourceView(Node<Context> node, ResourceAddress address) {
         Node<Context> parent = tree.api().getNode(node.parent);
         AddressTemplate template = asGenericTemplate(parent, address);
-        metadataProcessor.lookup(template, progress.get(), new DefaultMetadataCallback(address) {
+        metadataProcessor.lookup(template, progress.get(), new DefaultMetadataCallback() {
             @Override
             public void onMetadata(final Metadata metadata) {
                 resourcePanel.update(node, node.data.getAddress(), metadata);
@@ -421,7 +417,7 @@ public class ModelBrowser implements HasElements {
 
                 ResourceAddress singletonAddress = parent.data.getAddress().getParent().add(parent.text, singleton);
                 AddressTemplate template = asGenericTemplate(parent, singletonAddress);
-                metadataProcessor.lookup(template, progress.get(), new DefaultMetadataCallback(singletonAddress) {
+                metadataProcessor.lookup(template, progress.get(), new DefaultMetadataCallback() {
                     @Override
                     public void onMetadata(Metadata metadata) {
                         String id = Ids.build(parent.id, "singleton", Ids.FORM_SUFFIX);
@@ -480,7 +476,7 @@ public class ModelBrowser implements HasElements {
 
         } else {
             AddressTemplate template = asGenericTemplate(parent, parent.data.getAddress());
-            metadataProcessor.lookup(template, progress.get(), new DefaultMetadataCallback(parent.data.getAddress()) {
+            metadataProcessor.lookup(template, progress.get(), new DefaultMetadataCallback() {
                 @Override
                 public void onMetadata(Metadata metadata) {
                     AddResourceDialog dialog = new AddResourceDialog(
@@ -562,6 +558,7 @@ public class ModelBrowser implements HasElements {
      */
     public void setSurroundingHeight(final int surroundingHeight) {
         this.surroundingHeight = surroundingHeight;
+        adjustHeight();
     }
 
     public void setRoot(ResourceAddress root, boolean updateBreadcrumb) {
@@ -572,6 +569,8 @@ public class ModelBrowser implements HasElements {
             throw new IllegalArgumentException("Invalid root address: " + root +
                     ". ModelBrowser.setRoot() must be called with a concrete address.");
         }
+        // TODO Removing a filter in a scoped model browser does not work
+        Elements.setVisible(filter, root == ResourceAddress.ROOT);
 
         Operation ping = new Operation.Builder(READ_RESOURCE_OPERATION, root).build();
         dispatcher.execute(ping,

@@ -29,7 +29,24 @@ import org.jboss.hal.dmr.Property;
  */
 public class ResourceAddress extends ModelNode {
 
-    public static final ResourceAddress ROOT = new ResourceAddress();
+    public static final ResourceAddress ROOT = new ResourceAddress() {
+        static final String NOT_SUPPORTED = "Not supported for ROOT address";
+
+        @Override
+        public ResourceAddress add(final String propertyName, final String propertyValue) {
+            throw new UnsupportedOperationException(NOT_SUPPORTED);
+        }
+
+        @Override
+        public ResourceAddress add(final ResourceAddress address) {
+            throw new UnsupportedOperationException(NOT_SUPPORTED);
+        }
+
+        @Override
+        public ResourceAddress replaceValue(final String name, final String newValue) {
+            throw new UnsupportedOperationException(NOT_SUPPORTED);
+        }
+    };
 
     public ResourceAddress() {
         setEmptyList();

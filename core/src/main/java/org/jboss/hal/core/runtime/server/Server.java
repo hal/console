@@ -165,7 +165,9 @@ public class Server extends NamedNode {
      * host or server is undefined.
      */
     public ResourceAddress getServerAddress() {
-        return isStandalone() ? ResourceAddress.ROOT : new ResourceAddress().add(HOST, getHost())
+        // Do *not* return ResourceAddress.ROOT for standalone. The reference server is used to dynamically
+        // create deployment addresses like 'server.getServerAddress().add(..., ...)'
+        return isStandalone() ? new ResourceAddress() : new ResourceAddress().add(HOST, getHost())
                 .add(SERVER, getName());
     }
 

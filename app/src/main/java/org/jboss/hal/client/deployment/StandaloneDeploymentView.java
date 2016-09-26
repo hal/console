@@ -34,6 +34,7 @@ import static org.jboss.hal.resources.CSS.navTabsHal;
 public class StandaloneDeploymentView extends PatternFlyViewImpl implements StandaloneDeploymentPresenter.MyView {
 
     private final Tabs tabs;
+    private boolean initialHeightAdjusted;
     private BrowseContentElement browseContent;
     private DeploymentModelElement deploymentModel;
     private StandaloneDeploymentPresenter presenter;
@@ -57,15 +58,28 @@ public class StandaloneDeploymentView extends PatternFlyViewImpl implements Stan
 
         Element ul = tabs.asElement().querySelector("ul." + navTabsHal);//NON-NLS
         if (ul != null) {
-            int tabsHeight = ul.getOffsetHeight() + 2;
+            int tabsHeight = ul.getOffsetHeight() + 5;
             browseContent.setSurroundingHeight(tabsHeight);
             deploymentModel.setSurroundingHeight(tabsHeight);
+
+            // The heights of the elements on the initially hidden tab need to be adjusted once they're visible
+            tabs.onShow(Ids.DEPLOYMENT_TAB, () -> {
+                if (!initialHeightAdjusted) {
+                    deploymentModel.setSurroundingHeight(tabsHeight);
+                    initialHeightAdjusted = true;
+                }
+            });
         }
     }
 
     @Override
     public void setPresenter(final StandaloneDeploymentPresenter presenter) {
         this.presenter = presenter;
+    }
+
+    @Override
+    public void reset() {
+        tabs.showTab(0);
     }
 
     @Override

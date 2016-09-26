@@ -42,21 +42,21 @@ class DeploymentModelElement implements HasElements {
 
     private final ModelBrowser modelBrowser;
     private final Resources resources;
-    private final EmptyState notActive;
+    private final EmptyState notEnabled;
     private final List<Element> elements;
 
     DeploymentModelElement(final ModelBrowser modelBrowser, final Resources resources) {
         this.modelBrowser = modelBrowser;
         this.resources = resources;
 
-        notActive = new EmptyState.Builder(resources.constants().notActive())
+        notEnabled = new EmptyState.Builder(resources.constants().notEnabled())
                 .icon(fontAwesome(stopCircleO))
                 .build();
-        notActive.asElement().getClassList().add(marginTopLarge);
-        Elements.setVisible(notActive.asElement(), false);
+        notEnabled.asElement().getClassList().add(marginTopLarge);
+        Elements.setVisible(notEnabled.asElement(), false);
 
         elements = Lists.newArrayList(modelBrowser.asElements());
-        elements.add(notActive.asElement());
+        elements.add(notEnabled.asElement());
     }
 
     @Override
@@ -64,9 +64,13 @@ class DeploymentModelElement implements HasElements {
         return elements;
     }
 
+    void setSurroundingHeight(final int surroundingHeight) {
+        modelBrowser.setSurroundingHeight(surroundingHeight);
+    }
+
     void update(Deployment deployment, EmptyState.Action enableAction) {
         boolean active = deployment.getStatus() == OK;
-        Elements.setVisible(notActive.asElement(), !active);
+        Elements.setVisible(notEnabled.asElement(), !active);
         modelBrowser.asElements().forEach(element -> Elements.setVisible(element, active));
 
         if (active) {
@@ -74,12 +78,8 @@ class DeploymentModelElement implements HasElements {
                     .add(DEPLOYMENT, deployment.getName());
             modelBrowser.setRoot(address, false);
         } else {
-            notActive.setDescription(resources.messages().deploymentNotEnabled(deployment.getName()));
-            notActive.setPrimaryAction(resources.constants().enable(), enableAction);
+            notEnabled.setDescription(resources.messages().deploymentNotEnabled(deployment.getName()));
+            notEnabled.setPrimaryAction(resources.constants().enable(), enableAction);
         }
-    }
-
-    void setSurroundingHeight(final int surroundingHeight) {
-        this.modelBrowser.setSurroundingHeight(surroundingHeight);
     }
 }

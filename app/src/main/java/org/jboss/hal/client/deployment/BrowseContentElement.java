@@ -318,6 +318,7 @@ class BrowseContentElement implements IsElement, Attachable {
 
     void setSurroundingHeight(final int surroundingHeight) {
         this.surroundingHeight = surroundingHeight;
+        adjustHeight();
     }
 
     private void adjustHeight() {

@@ -95,7 +95,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
  * @author Harald Pehl
  */
 @AsyncColumn(Ids.SERVER_GROUP_DEPLOYMENT)
-@Requires({CONTENT_ADDRESS, SERVER_GROUP_DEPLOYMENT_ADDRESS})
+@Requires(value = {CONTENT_ADDRESS, SERVER_GROUP_DEPLOYMENT_ADDRESS}, recursive = false)
 public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeployment> {
 
     static final String SERVER_GROUP_DEPLOYMENT_ADDRESS = "/server-group=*/deployment=*";

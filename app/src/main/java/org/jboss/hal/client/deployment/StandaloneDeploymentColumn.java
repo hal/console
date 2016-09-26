@@ -73,6 +73,7 @@ import static org.jboss.hal.client.deployment.wizard.UploadState.NAMES;
 import static org.jboss.hal.client.deployment.wizard.UploadState.UPLOAD;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.model.ResourceAddress.ROOT;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
@@ -82,7 +83,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
  * @author Harald Pehl
  */
 @Column(Ids.DEPLOYMENT)
-@Requires(DEPLOYMENT_ADDRESS)
+@Requires(value = DEPLOYMENT_ADDRESS, recursive = false)
 public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
 
     static final String DEPLOYMENT_ADDRESS = "/deployment=*";
@@ -109,8 +110,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
         super(new Builder<Deployment>(finder, Ids.DEPLOYMENT, Names.DEPLOYMENT)
 
                 .itemsProvider((context, callback) -> {
-                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
-                            ResourceAddress.ROOT)
+                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ROOT)
                             .param(CHILD_TYPE, DEPLOYMENT)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
@@ -187,6 +187,9 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                     actions.add(new ItemAction<>(resources.constants().disable(), deployment -> disable(deployment)));
                 } else {
                     actions.add(new ItemAction<>(resources.constants().enable(), deployment -> enable(deployment)));
+                }
+                if (!item.isExploded() && !item.isEnabled()) {
+                    actions.add(new ItemAction<>(resources.constants().explode(), itm -> explode(itm)));
                 }
                 actions.add(itemActionFactory.remove(Names.DEPLOYMENT, item.getName(), DEPLOYMENT_TEMPLATE,
                         StandaloneDeploymentColumn.this));
@@ -289,6 +292,16 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
             ItemMonitor.stopProgress(id);
             refresh(RESTORE_SELECTION);
             MessageEvent.fire(eventBus, Message.success(message));
+        });
+    }
+
+    private void explode(Deployment deployment) {
+        ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, deployment.getName());
+        Operation operation = new Operation.Builder("explode", address).build();
+        dispatcher.execute(operation, result -> {
+            refresh(RESTORE_SELECTION);
+            MessageEvent
+                    .fire(eventBus, Message.success(resources.messages().deploymentExploded(deployment.getName())));
         });
     }
 }

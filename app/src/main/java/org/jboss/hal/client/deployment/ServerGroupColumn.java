@@ -43,6 +43,7 @@ import org.jboss.hal.spi.Requires;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.model.ResourceAddress.ROOT;
 
 /**
  * @author Harald Pehl
@@ -102,8 +103,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
         });
 
         setItemsProvider((context, callback) -> {
-            Operation serverGroupsOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
-                    ResourceAddress.ROOT)
+            Operation serverGroupsOp = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ROOT)
                     .param(CHILD_TYPE, SERVER_GROUP)
                     .param(INCLUDE_RUNTIME, true)
                     .build();

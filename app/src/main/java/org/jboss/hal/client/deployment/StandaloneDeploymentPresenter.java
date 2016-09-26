@@ -42,7 +42,9 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+import org.jboss.hal.spi.Requires;
 
+import static org.jboss.hal.client.deployment.StandaloneDeploymentColumn.DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
@@ -54,9 +56,11 @@ public class StandaloneDeploymentPresenter extends
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.DEPLOYMENT)
+    @Requires(value = DEPLOYMENT_ADDRESS, recursive = false)
     public interface MyProxy extends ProxyPlace<StandaloneDeploymentPresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<StandaloneDeploymentPresenter> {
+        void reset();
         void update(ModelNode browseContentResult, Deployment deployment);
     }
     // @formatter:on
@@ -98,6 +102,7 @@ public class StandaloneDeploymentPresenter extends
     @Override
     protected void onReset() {
         super.onReset();
+        getView().reset();
         loadDeployment();
     }
 
@@ -111,7 +116,8 @@ public class StandaloneDeploymentPresenter extends
         Operation readDeployment = new Operation.Builder(READ_RESOURCE_OPERATION, address)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        dispatcher.execute(new Composite(browseContent, readDeployment), (CompositeResult result) -> {
+        Composite composite = new Composite(browseContent, readDeployment);
+        dispatcher.execute(composite, (CompositeResult result) -> {
             ModelNode readContentResult = result.step(0).get(RESULT);
             Deployment d = new Deployment(Server.STANDALONE, result.step(1).get(RESULT));
             getView().update(readContentResult, d);
