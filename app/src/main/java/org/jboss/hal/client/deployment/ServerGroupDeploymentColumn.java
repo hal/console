@@ -252,7 +252,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
 
                 // view makes only sense only for running deployments w/ a reference server
                 if (item.runningWithReferenceServer()) {
-                    actions.add(itemActionFactory.view(NameTokens.DEPLOYMENT_DETAIL,
+                    actions.add(itemActionFactory.view(NameTokens.SERVER_GROUP_DEPLOYMENT_DETAIL,
                             Ids.SERVER_GROUP, statementContext.selectedServerGroup(),
                             Ids.DEPLOYMENT, item.getName()));
                 }

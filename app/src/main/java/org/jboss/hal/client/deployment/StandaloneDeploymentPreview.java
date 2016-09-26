@@ -30,12 +30,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Harald Pehl
  */
-class DeploymentPreview extends PreviewContent<Deployment> {
+class StandaloneDeploymentPreview extends PreviewContent<Deployment> {
 
     static final String LAST_ENABLED_AT = "Last enabled at";
     static final String LAST_DISABLED_AT = "Last disabled at";
 
-    DeploymentPreview(final DeploymentColumn column, final Deployment deployment, final Resources resources) {
+    StandaloneDeploymentPreview(final StandaloneDeploymentColumn column, final Deployment deployment,
+            final Resources resources) {
         super(deployment.getName());
 
         if (deployment.getStatus() == Status.FAILED) {

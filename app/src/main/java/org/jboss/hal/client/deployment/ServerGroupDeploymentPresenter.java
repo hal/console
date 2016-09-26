@@ -41,7 +41,6 @@ import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.TopologyFunctions.RunningServersQuery;
-import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -54,22 +53,23 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 
 /**
  * @author Harald Pehl
  */
-public class DeploymentDetailPresenter
-        extends ApplicationPresenter<DeploymentDetailPresenter.MyView, DeploymentDetailPresenter.MyProxy> {
+public class ServerGroupDeploymentPresenter
+        extends ApplicationPresenter<ServerGroupDeploymentPresenter.MyView, ServerGroupDeploymentPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(NameTokens.DEPLOYMENT_DETAIL)
-    public interface MyProxy extends ProxyPlace<DeploymentDetailPresenter> {}
+    @NameToken(NameTokens.SERVER_GROUP_DEPLOYMENT_DETAIL)
+    public interface MyProxy extends ProxyPlace<ServerGroupDeploymentPresenter> {}
 
-    public interface MyView extends PatternFlyView, HasPresenter<DeploymentDetailPresenter> {
-        void updateStandalone(Deployment deployment);
-        void updateDomain(String serverGroup, ServerGroupDeployment serverGroupDeployment);
+    public interface MyView extends PatternFlyView, HasPresenter<ServerGroupDeploymentPresenter> {
+        void update(String serverGroup, ServerGroupDeployment serverGroupDeployment);
     }
     // @formatter:on
 
@@ -84,7 +84,7 @@ public class DeploymentDetailPresenter
     private String deployment;
 
     @Inject
-    public DeploymentDetailPresenter(final EventBus eventBus,
+    public ServerGroupDeploymentPresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy proxy,
             final Environment environment,
@@ -130,43 +130,33 @@ public class DeploymentDetailPresenter
     }
 
     private void loadDeployment() {
-        if (environment.isStandalone()) {
-            Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
-                    new ResourceAddress().add(DEPLOYMENT, deployment))
-                    .param(INCLUDE_RUNTIME, true)
-                    .build();
-            dispatcher.execute(operation,
-                    result -> getView().updateStandalone(new Deployment(Server.STANDALONE, result)));
+        Function[] functions = new Function[]{
+                new ReadServerGroupDeployments(environment, dispatcher, serverGroup, deployment),
+                new RunningServersQuery(environment, dispatcher, new ModelNode().set(SERVER_GROUP, serverGroup)),
+                new LoadDeploymentsFromRunningServer(environment, dispatcher)
+        };
 
-        } else {
-            Function[] functions = new Function[]{
-                    new ReadServerGroupDeployments(environment, dispatcher, serverGroup, deployment),
-                    new RunningServersQuery(environment, dispatcher, new ModelNode().set(SERVER_GROUP, serverGroup)),
-                    new LoadDeploymentsFromRunningServer(environment, dispatcher)
-            };
+        new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
+                new Outcome<FunctionContext>() {
+                    @Override
+                    public void onFailure(final FunctionContext context) {
+                        MessageEvent.fire(getEventBus(),
+                                Message.error(resources.messages().deploymentReadError(deployment)));
+                    }
 
-            new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
-                    new Outcome<FunctionContext>() {
-                        @Override
-                        public void onFailure(final FunctionContext context) {
+                    @Override
+                    public void onSuccess(final FunctionContext context) {
+                        List<ServerGroupDeployment> serverGroupDeployments = context
+                                .get(DeploymentFunctions.SERVER_GROUP_DEPLOYMENTS);
+                        if (!serverGroupDeployments.isEmpty()) {
+                            ServerGroupDeployment serverGroupDeployment = serverGroupDeployments.get(0);
+                            getView().update(serverGroup, serverGroupDeployment);
+                        } else {
                             MessageEvent.fire(getEventBus(),
                                     Message.error(resources.messages().deploymentReadError(deployment)));
                         }
-
-                        @Override
-                        public void onSuccess(final FunctionContext context) {
-                            List<ServerGroupDeployment> serverGroupDeployments = context
-                                    .get(DeploymentFunctions.SERVER_GROUP_DEPLOYMENTS);
-                            if (!serverGroupDeployments.isEmpty()) {
-                                ServerGroupDeployment serverGroupDeployment = serverGroupDeployments.get(0);
-                                getView().updateDomain(serverGroup, serverGroupDeployment);
-                            } else {
-                                MessageEvent.fire(getEventBus(),
-                                        Message.error(resources.messages().deploymentReadError(deployment)));
-                            }
-                        }
-                    }, functions);
-        }
+                    }
+                }, functions);
     }
 
     void goToServerGroup() {
@@ -178,12 +168,7 @@ public class DeploymentDetailPresenter
     }
 
     void enable(final String deployment) {
-        ResourceAddress address;
-        if (environment.isStandalone()) {
-            address = new ResourceAddress().add(DEPLOYMENT, deployment);
-        } else {
-            address = new ResourceAddress().add(SERVER_GROUP, serverGroup).add(DEPLOYMENT, deployment);
-        }
+        ResourceAddress address = new ResourceAddress().add(SERVER_GROUP, serverGroup).add(DEPLOYMENT, deployment);
         progress.get().reset();
         progress.get().tick();
         Operation operation = new Operation.Builder(DEPLOY, address).build();

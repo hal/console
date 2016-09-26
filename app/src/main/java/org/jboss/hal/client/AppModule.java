@@ -58,10 +58,10 @@ import org.jboss.hal.client.configuration.subsystem.transactions.Mbui_Transactio
 import org.jboss.hal.client.configuration.subsystem.transactions.TransactionPresenter;
 import org.jboss.hal.client.deployment.BrowseContentPresenter;
 import org.jboss.hal.client.deployment.BrowseContentView;
-import org.jboss.hal.client.deployment.DeploymentDetailPresenter;
-import org.jboss.hal.client.deployment.DeploymentDetailView;
 import org.jboss.hal.client.deployment.DeploymentPresenter;
 import org.jboss.hal.client.deployment.DeploymentView;
+import org.jboss.hal.client.deployment.ServerGroupDeploymentPresenter;
+import org.jboss.hal.client.deployment.ServerGroupDeploymentView;
 import org.jboss.hal.client.homepage.HomepagePresenter;
 import org.jboss.hal.client.homepage.HomepageView;
 import org.jboss.hal.client.patching.PatchingPresenter;
@@ -181,10 +181,10 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 DeploymentView.class,
                 DeploymentPresenter.MyProxy.class);
 
-        bindPresenter(DeploymentDetailPresenter.class,
-                DeploymentDetailPresenter.MyView.class,
-                DeploymentDetailView.class,
-                DeploymentDetailPresenter.MyProxy.class);
+        bindPresenter(ServerGroupDeploymentPresenter.class,
+                ServerGroupDeploymentPresenter.MyView.class,
+                ServerGroupDeploymentView.class,
+                ServerGroupDeploymentPresenter.MyProxy.class);
 
         bindTemplatedPresenter(DeploymentScannerPresenter.class,
                 DeploymentScannerPresenter.MyView.class,

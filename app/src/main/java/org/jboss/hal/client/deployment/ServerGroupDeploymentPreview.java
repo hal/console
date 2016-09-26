@@ -31,8 +31,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.client.deployment.DeploymentPreview.LAST_DISABLED_AT;
-import static org.jboss.hal.client.deployment.DeploymentPreview.LAST_ENABLED_AT;
+import static org.jboss.hal.client.deployment.StandaloneDeploymentPreview.LAST_DISABLED_AT;
+import static org.jboss.hal.client.deployment.StandaloneDeploymentPreview.LAST_ENABLED_AT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**

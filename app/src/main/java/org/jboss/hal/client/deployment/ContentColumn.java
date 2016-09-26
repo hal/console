@@ -140,12 +140,8 @@ public class ContentColumn extends FinderColumn<Content> {
                     new Async<FunctionContext>(progress.get())
                             .single(new FunctionContext(), outcome, new LoadContent(dispatcher));
                 })
-                .onBreadcrumbItem((item, context) -> {
-                    PlaceRequest placeRequest = new PlaceRequest.Builder()
-                            .nameToken(NameTokens.BROWSE_CONTENT)
-                            .with(CONTENT, item.getName()).build();
-                    placeManager.revealPlace(placeRequest);
-                })
+
+                .useFirstActionAsBreadcrumbHandler()
                 .pinnable()
                 .showCount()
                 .withFilter());
@@ -208,14 +204,13 @@ public class ContentColumn extends FinderColumn<Content> {
             public List<ItemAction<Content>> actions() {
                 List<ItemAction<Content>> actions = new ArrayList<>();
 
-                // order is: deploy, browse, (explode), replace, download, undeploy / remove
-                actions.add(new ItemAction<>(resources.constants().deploy(), itm -> deploy(itm)));
-                actions.add(itemActionFactory.placeRequest(resources.constants().browse(),
-                        new PlaceRequest.Builder().nameToken(NameTokens.BROWSE_CONTENT)
-                                .with(CONTENT, item.getName()).build()));
+                // order is: view, (explode), deploy, replace, download, undeploy / remove
+                actions.add(itemActionFactory.view(new PlaceRequest.Builder().nameToken(NameTokens.BROWSE_CONTENT)
+                        .with(CONTENT, item.getName()).build()));
                 if (item.getServerGroupDeployments().isEmpty() && !item.isExploded()) {
                     actions.add(new ItemAction<>(resources.constants().explode(), itm -> explode(itm)));
                 }
+                actions.add(new ItemAction<>(resources.constants().deploy(), itm -> deploy(itm)));
                 if (item.isManaged()) {
                     actions.add(new ItemAction<>(resources.constants().replace(), itm -> replace(itm)));
                 }

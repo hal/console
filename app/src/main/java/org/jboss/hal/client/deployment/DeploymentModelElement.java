@@ -15,19 +15,15 @@
  */
 package org.jboss.hal.client.deployment;
 
-import java.util.ArrayList;
-import javax.inject.Inject;
+import java.util.List;
 
 import com.google.common.collect.Lists;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
-import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.resources.CSS;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.client.deployment.Deployment.Status.OK;
@@ -37,28 +33,21 @@ import static org.jboss.hal.resources.CSS.marginTopLarge;
 import static org.jboss.hal.resources.CSS.stopCircleO;
 
 /**
+ * UI element to show the management model of a deployment in the model browser. Shows an empty state element in case
+ * the deployment is inactive.
+ *
  * @author Harald Pehl
  */
-public class DeploymentDetailView extends PatternFlyViewImpl implements DeploymentDetailPresenter.MyView {
+class DeploymentModelElement implements HasElements {
 
     private final ModelBrowser modelBrowser;
-    private final Places places;
     private final Resources resources;
-    private final EmptyState noReferenceServer;
     private final EmptyState notActive;
-    private DeploymentDetailPresenter presenter;
+    private final List<Element> elements;
 
-    @Inject
-    public DeploymentDetailView(final ModelBrowser modelBrowser, final Places places, final Resources resources) {
+    DeploymentModelElement(final ModelBrowser modelBrowser, final Resources resources) {
         this.modelBrowser = modelBrowser;
-        this.places = places;
         this.resources = resources;
-
-        noReferenceServer = new EmptyState.Builder(resources.constants().noReferenceServer())
-                .icon(CSS.pfIcon("server"))
-                .build();
-        noReferenceServer.asElement().getClassList().add(marginTopLarge);
-        Elements.setVisible(noReferenceServer.asElement(), false);
 
         notActive = new EmptyState.Builder(resources.constants().notActive())
                 .icon(fontAwesome(stopCircleO))
@@ -66,42 +55,16 @@ public class DeploymentDetailView extends PatternFlyViewImpl implements Deployme
         notActive.asElement().getClassList().add(marginTopLarge);
         Elements.setVisible(notActive.asElement(), false);
 
-        ArrayList<Element> elements = Lists.newArrayList(modelBrowser.asElements());
-        elements.add(noReferenceServer.asElement());
+        elements = Lists.newArrayList(modelBrowser.asElements());
         elements.add(notActive.asElement());
-        initElements(elements);
     }
 
     @Override
-    public void setPresenter(final DeploymentDetailPresenter presenter) {
-        this.presenter = presenter;
+    public Iterable<Element> asElements() {
+        return elements;
     }
 
-    @Override
-    public void updateStandalone(final Deployment deployment) {
-        Elements.setVisible(noReferenceServer.asElement(), false); // there's always a ref server in standalone
-        handleActive(deployment);
-    }
-
-    @Override
-    public void updateDomain(final String serverGroup, final ServerGroupDeployment sgd) {
-        if (sgd.getDeployment() == null) {
-            Elements.setVisible(noReferenceServer.asElement(), true);
-            Elements.setVisible(notActive.asElement(), false);
-            modelBrowser.asElements().forEach(element -> Elements.setVisible(element, false));
-
-            noReferenceServer.setDescription(
-                    resources.messages().noReferenceServerEmptyState(sgd.getName(), serverGroup));
-            noReferenceServer.setPrimaryAction(
-                    resources.messages().goTo(Names.SERVER_GROUP), () -> presenter.goToServerGroup());
-
-        } else {
-            Elements.setVisible(noReferenceServer.asElement(), false);
-            handleActive(sgd.getDeployment());
-        }
-    }
-
-    private void handleActive(Deployment deployment) {
+    void update(Deployment deployment, EmptyState.Action enableAction) {
         boolean active = deployment.getStatus() == OK;
         Elements.setVisible(notActive.asElement(), !active);
         modelBrowser.asElements().forEach(element -> Elements.setVisible(element, active));
@@ -112,7 +75,7 @@ public class DeploymentDetailView extends PatternFlyViewImpl implements Deployme
             modelBrowser.setRoot(address, false);
         } else {
             notActive.setDescription(resources.messages().deploymentNotEnabled(deployment.getName()));
-            notActive.setPrimaryAction(resources.constants().enable(), () -> presenter.enable(deployment.getName()));
+            notActive.setPrimaryAction(resources.constants().enable(), enableAction);
         }
     }
 }

@@ -69,7 +69,7 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.deployment.DeploymentColumn.DEPLOYMENT_ADDRESS;
+import static org.jboss.hal.client.deployment.StandaloneDeploymentColumn.DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.deployment.wizard.UploadState.NAMES;
 import static org.jboss.hal.client.deployment.wizard.UploadState.UPLOAD;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
@@ -84,7 +84,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
  */
 @Column(Ids.DEPLOYMENT)
 @Requires(DEPLOYMENT_ADDRESS)
-public class DeploymentColumn extends FinderColumn<Deployment> {
+public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
 
     static final String DEPLOYMENT_ADDRESS = "/deployment=*";
     private static final AddressTemplate DEPLOYMENT_TEMPLATE = AddressTemplate.of(DEPLOYMENT_ADDRESS);
@@ -97,7 +97,7 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
     private final Resources resources;
 
     @Inject
-    public DeploymentColumn(final Finder finder,
+    public StandaloneDeploymentColumn(final Finder finder,
             final ColumnActionFactory columnActionFactory,
             final ItemActionFactory itemActionFactory,
             final Environment environment,
@@ -183,7 +183,8 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
             @Override
             public List<ItemAction<Deployment>> actions() {
                 List<ItemAction<Deployment>> actions = new ArrayList<>();
-                actions.add(itemActionFactory.view(NameTokens.DEPLOYMENT_DETAIL,
+                // TODO Combine view and browse into one action
+                actions.add(itemActionFactory.view(NameTokens.SERVER_GROUP_DEPLOYMENT_DETAIL,
                         Ids.DEPLOYMENT, item.getName()));
                 actions.add(itemActionFactory.placeRequest(resources.constants().browse(),
                         new PlaceRequest.Builder().nameToken(NameTokens.BROWSE_CONTENT)
@@ -194,12 +195,13 @@ public class DeploymentColumn extends FinderColumn<Deployment> {
                     actions.add(new ItemAction<>(resources.constants().enable(), deployment -> enable(deployment)));
                 }
                 actions.add(itemActionFactory.remove(Names.DEPLOYMENT, item.getName(), DEPLOYMENT_TEMPLATE,
-                        DeploymentColumn.this));
+                        StandaloneDeploymentColumn.this));
                 return actions;
             }
         });
 
-        setPreviewCallback(deployment -> new DeploymentPreview(DeploymentColumn.this, deployment, resources));
+        setPreviewCallback(
+                deployment -> new StandaloneDeploymentPreview(StandaloneDeploymentColumn.this, deployment, resources));
         if (JsHelper.supportsAdvancedUpload()) {
             setOnDrop(event -> DeploymentFunctions.upload(this, environment, dispatcher, eventBus, progress,
                     event.dataTransfer.files, resources

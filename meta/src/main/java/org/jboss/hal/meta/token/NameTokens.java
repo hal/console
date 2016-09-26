@@ -31,7 +31,6 @@ public interface NameTokens {
     String CONFIGURATION = "configuration";
     String DATA_SOURCE_CONFIGURATION = ModelDescriptionConstants.DATA_SOURCE + CONFIGURATION_SUFFIX;
     String DATA_SOURCE_RUNTIME = ModelDescriptionConstants.DATA_SOURCE + RUNTIME_SUFFIX;
-    String DEPLOYMENT_DETAIL = "deployment-detail";
     String DEPLOYMENT_SCANNERS = ModelDescriptionConstants.DEPLOYMENT_SCANNER;
     String DEPLOYMENTS = "deployments";
     String EE = ModelDescriptionConstants.EE;
@@ -60,6 +59,7 @@ public interface NameTokens {
     String RUNTIME = "runtime";
     String SERVER_CONFIGURATION = "server-configuration";
     String SERVER_GROUP_CONFIGURATION = "server-group-configuration";
+    String SERVER_GROUP_DEPLOYMENT_DETAIL = "server-group-deployment";
     String SERVER_STATUS = "server-status";
     String SOCKET_BINDING = ModelDescriptionConstants.SOCKET_BINDING;
     String SYSTEM_PROPERTIES = "system-properties";

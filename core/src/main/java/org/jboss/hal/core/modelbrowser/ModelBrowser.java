@@ -242,7 +242,7 @@ public class ModelBrowser implements HasElements {
         int height = Skeleton.applicationHeight();
         int buttonGroup = this.buttonGroup.getOffsetHeight();
         treeContainer.getStyle()
-                .setHeight(height - 2 * MARGIN_BIG - surroundingHeight - buttonGroup - 2 * MARGIN_SMALL, PX);
+                .setHeight(height - 2 * MARGIN_BIG - surroundingHeight - buttonGroup - MARGIN_SMALL, PX);
         content.getStyle().setHeight(height - 2 * MARGIN_BIG - surroundingHeight - MARGIN_SMALL, PX);
     }
 
