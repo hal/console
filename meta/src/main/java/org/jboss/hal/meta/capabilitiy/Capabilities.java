@@ -38,6 +38,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
+ * TODO Move all code related to read the resources from Typeahead to this class
  * @author Harald Pehl
  */
 public class Capabilities {
