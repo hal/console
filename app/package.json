@@ -8,6 +8,7 @@
     "autoprefixer": "^6.4.0",
     "bower": "^1.7.9",
     "grunt": "~1.0.1",
+    "grunt-cli": "~1.2.0",
     "grunt-contrib-clean": "^1.0.0",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-concat": "^1.0.1",
@@ -19,8 +20,5 @@
     "grunt-stylelint": "^0.6.0",
     "matchdep": "~1.0.1",
     "pixrem": "^3.0.1"
-  },
-  "peerDependencies": {
-    "grunt-cli": "~1.2.0"
   }
 }
