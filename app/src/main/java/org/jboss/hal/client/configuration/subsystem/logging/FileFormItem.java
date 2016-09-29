@@ -31,7 +31,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
 
 /**
- * Form item used in the logging subsystem to configure the complex attribute {@code file} which is roughly defined as
+ * Form item used in the subsystems  to configure the complex attribute {@code file} which is roughly defined as
  * <pre>
  * "file" => {
  *   "type" => OBJECT,

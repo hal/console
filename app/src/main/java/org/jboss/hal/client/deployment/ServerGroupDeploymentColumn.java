@@ -29,7 +29,7 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.ballroom.js.JsHelper;
+import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.client.deployment.Deployment.Status;
 import org.jboss.hal.client.deployment.DeploymentFunctions.AddServerGroupDeployment;

@@ -35,8 +35,7 @@
                     <p>{{metadata.getDescription().getDescription()}}</p>
                     <table id="thread-pool-table" title="Thread Pool" form-ref="thread-pool-form">
                         <actions>
-                            <action handler-ref="add-resource">
-                            </action>
+                            <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
                                     name-resolver="{{api.selectedRow().getName()}}"/>
                         </actions>
@@ -56,8 +55,7 @@
                     <p>{{metadata.getDescription().getDescription()}}</p>
                     <table id="remoting-profile-table" title="Remoting Profile" form-ref="remoting-profile-form">
                         <actions>
-                            <action handler-ref="add-resource">
-                            </action>
+                            <action handler-ref="add-resource"/>
                             <action handler-ref="remove-resource" scope="selected"
                                     name-resolver="{{api.selectedRow().getName()}}"/>
                         </actions>

@@ -44,7 +44,7 @@ public class EmptyState implements IsElement {
         public final String title;
         public final Action action;
 
-        public TitleAndAction(final String title, final Action action) {
+        TitleAndAction(final String title, final Action action) {
             this.title = title;
             this.action = action;
         }

@@ -25,7 +25,7 @@ import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.form.Form;
 
-import static org.jboss.hal.ballroom.js.JsHelper.asList;
+import static org.jboss.hal.ballroom.JsHelper.asList;
 import static org.jboss.hal.ballroom.table.DataTable.DESELECT;
 import static org.jboss.hal.ballroom.table.DataTable.ROW;
 import static org.jboss.hal.ballroom.table.DataTable.SELECT;

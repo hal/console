@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import java.util.List;
+
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.js.events.JsEvent;
@@ -24,9 +26,7 @@ import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.ballroom.js.JsHelper;
-
-import java.util.List;
+import org.jboss.hal.ballroom.JsHelper;
 
 import static elemental.events.KeyboardEvent.KeyCode.ENTER;
 import static jsinterop.annotations.JsPackage.GLOBAL;
