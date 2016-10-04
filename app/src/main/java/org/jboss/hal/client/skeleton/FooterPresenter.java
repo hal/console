@@ -44,7 +44,6 @@ import org.jboss.hal.dmr.macro.MacroOperationEvent;
 import org.jboss.hal.dmr.macro.MacroOperationEvent.MacroOperationHandler;
 import org.jboss.hal.dmr.macro.Macros;
 import org.jboss.hal.dmr.macro.Recording;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -74,7 +73,6 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
     private final Environment environment;
     private final PlaceManager placeManager;
     private final Macros macros;
-    private final Capabilities capabilities;
     private final Resources resources;
     private final CheckForUpdate checkForUpdate;
     private final Form<Environment> environmentForm;
@@ -87,13 +85,11 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
             final Environment environment,
             final PlaceManager placeManager,
             final Macros macros,
-            final Capabilities capabilities,
             final Resources resources) {
         super(eventBus, view);
         this.environment = environment;
         this.placeManager = placeManager;
         this.macros = macros;
-        this.capabilities = capabilities;
         this.resources = resources;
         this.checkForUpdate = new CheckForUpdate(environment);
 
@@ -175,7 +171,7 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
             getEventBus().fireEvent(Recording.stop());
 
         } else {
-            new MacroOptionsDialog(macros, capabilities, resources, options -> {
+            new MacroOptionsDialog(macros, resources, options -> {
                 MessageEvent.fire(getEventBus(), Message.info(resources.messages().recordingStarted()));
                 getEventBus().fireEvent(Recording.start(options));
                 getView().startRecording();

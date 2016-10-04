@@ -15,26 +15,45 @@
  */
 package org.jboss.hal.meta;
 
+import com.google.gwt.resources.client.TextResource;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
+import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 
+import static org.jboss.hal.meta.AddressTemplate.ROOT;
+import static org.jboss.hal.meta.security.SecurityContext.RWX;
+
 /**
- * Simple data struct for common metadata. Only used to keep the method signatures small and tidy.
+ * Simple data struct for common metadata. Used to keep the method signatures small and tidy.
  *
  * @author Harald Pehl
  */
 public class Metadata {
 
+    public static Metadata staticDescription(TextResource description) {
+        return Metadata.staticDescription(StaticResourceDescription.from(description));
+    }
+
+    public static Metadata staticDescription(ResourceDescription description) {
+        return new Metadata(ROOT, RWX, new ResourceDescription(description), new Capabilities(null));
+    }
+
+    private final AddressTemplate template;
     private final SecurityContext securityContext;
     private final ResourceDescription description;
     private final Capabilities capabilities;
 
-    public Metadata(final SecurityContext securityContext, final ResourceDescription description,
-            final Capabilities capabilities) {
+    public Metadata(final AddressTemplate template, final SecurityContext securityContext,
+            final ResourceDescription description, final Capabilities capabilities) {
+        this.template = template;
         this.securityContext = securityContext;
         this.description = description;
         this.capabilities = capabilities;
+    }
+
+    public AddressTemplate getTemplate() {
+        return template;
     }
 
     public SecurityContext getSecurityContext() {

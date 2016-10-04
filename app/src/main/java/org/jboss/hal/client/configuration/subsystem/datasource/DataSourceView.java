@@ -196,7 +196,8 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
                     .filter(attribute -> attribute.scope == BOTH || attribute.scope == NON_XA)
                     .map(attribute -> attribute.name)
                     .collect(toList());
-            form = new ModelNodeForm.Builder<DataSource>(Ids.build(Ids.DATA_SOURCE_CONFIGURATION, "form", sectionId), nonXaMeta)
+            form = new ModelNodeForm.Builder<DataSource>(Ids.build(Ids.DATA_SOURCE_CONFIGURATION, "form", sectionId),
+                    nonXaMeta)
                     .include(nonXaNames)
                     .onSave(saveCallback)
                     .build();
@@ -266,7 +267,8 @@ public class DataSourceView extends PatternFlyViewImpl implements DataSourcePres
                 .appendEscaped(dataSource.getName())
                 .appendHtmlConstant("<small>")
                 .appendEscaped(" (")
-                .appendEscaped(dataSource.isEnabled() ? resources.constants().enabled() : resources.constants().disabled())
+                .appendEscaped(
+                        dataSource.isEnabled() ? resources.constants().enabled() : resources.constants().disabled())
                 .appendEscaped(")")
                 .appendHtmlConstant("</small>")
                 .toSafeHtml().asString());

@@ -30,7 +30,7 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
-import org.jboss.hal.ballroom.typeahead.Typeahead;
+import org.jboss.hal.ballroom.typeahead.ReadChildResourcesTypeahead;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
@@ -179,7 +179,7 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
 
         ModelNodeForm form = forms.get(Ids.MAIL_SERVER_FORM);
         form.getFormItem(OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
-                new Typeahead(SOCKET_BINDING_TEMPLATE, statementContext));
+                new ReadChildResourcesTypeahead(SOCKET_BINDING_TEMPLATE, statementContext));
     }
 
     @Override

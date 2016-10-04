@@ -28,16 +28,12 @@ public interface StatementContext {
         SELECTED_SERVER_CONFIG("selected.server-config", SERVER_CONFIG),
         SELECTED_SERVER("selected.server", SERVER);
 
-        private final String tuple;
+        private final String name;
         private final String resource;
 
-        Tuple(final String tuple, final String resource) {
-            this.tuple = tuple;
+        Tuple(final String name, final String resource) {
+            this.name = name;
             this.resource = resource;
-        }
-
-        public String tuple() {
-            return tuple;
         }
 
         public String resource() {
@@ -45,12 +41,12 @@ public interface StatementContext {
         }
 
         public String variable() {
-            return "{" + tuple + "}";
+            return "{" + name + "}";
         }
 
-        public static Tuple from(String tuple) {
+        public static Tuple from(String name) {
             for (Tuple t : Tuple.values()) {
-                if (t.tuple().equals(tuple)) {
+                if (t.name.equals(name)) {
                     return t;
                 }
             }
@@ -62,15 +58,13 @@ public interface StatementContext {
     StatementContext NOOP = new StatementContext() {
 
         @Override
-        public String resolve(String key) {
-            // keys are resolved "as-is"
-            return key;
+        public String resolve(String placeholder) {
+            return placeholder;
         }
 
         @Override
-        public String[] resolveTuple(String tuple) {
-            // tuples are resolved as "echo"
-            return new String[]{tuple, tuple};
+        public String[] resolveTuple(String placeholder) {
+            return new String[]{placeholder, placeholder};
         }
 
         @Override
@@ -106,14 +100,14 @@ public interface StatementContext {
 
 
     /**
-     * Resolves a value.
+     * Resolves a single value.
      */
-    String resolve(String key);
+    String resolve(String placeholder);
 
     /**
      * Resolves a tuple.
      */
-    String[] resolveTuple(String tuple);
+    String[] resolveTuple(String placeholder);
 
     String domainController();
 

@@ -29,19 +29,16 @@ import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
-import org.jboss.hal.ballroom.typeahead.Typeahead;
+import org.jboss.hal.ballroom.typeahead.ReadChildResourcesTypeahead;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.resources.Ids;
-
-import static org.jboss.hal.meta.security.SecurityContext.RWX;
 
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
 public class UnderTheBridgeView extends PatternFlyViewImpl implements UnderTheBridgePresenter.MyView {
@@ -106,7 +103,7 @@ public class UnderTheBridgeView extends PatternFlyViewImpl implements UnderTheBr
     private UnderTheBridgePresenter presenter;
 
     @Inject
-    public UnderTheBridgeView(final StatementContext statementContext, final Capabilities capabilities) {
+    public UnderTheBridgeView(final StatementContext statementContext) {
         this.forms = new ArrayList<>();
 
         Tabs tabs = new Tabs();
@@ -115,14 +112,14 @@ public class UnderTheBridgeView extends PatternFlyViewImpl implements UnderTheBr
 
         for (Map.Entry<String, String[]> entry : ATTRIBUTES.entrySet()) {
             forms.add(new ModelNodeForm.Builder<>(Ids.build(entry.getKey(), Ids.FORM_SUFFIX),
-                    new Metadata(RWX, description, capabilities))
+                    Metadata.staticDescription(description))
                     .include(entry.getValue()).onSave(saveCallback).build());
             tabs.add(Ids.build(entry.getKey(), Ids.TAB_SUFFIX), new LabelBuilder().label(entry.getKey()),
                     forms.get(forms.size() - 1).asElement());
         }
 
-        SuggestHandler suggestHandler = new Typeahead(AddressTemplate.of("/profile=full-ha/subsystem=*"),
-                statementContext);
+        SuggestHandler suggestHandler = new ReadChildResourcesTypeahead(
+                AddressTemplate.of("/profile=full-ha/subsystem=*"), statementContext);
         for (ModelNodeForm<ModelNode> form : forms) {
             for (FormItem item : form.getFormItems()) {
                 if (item.getName().contains("-suggestion")) {

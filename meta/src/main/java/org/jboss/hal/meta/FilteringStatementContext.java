@@ -20,37 +20,38 @@ package org.jboss.hal.meta;
  *
  * @author Heiko Braun
  */
-public class FilteringStatementContext implements StatementContext {
+class FilteringStatementContext implements StatementContext {
 
     /**
-     * Allows to modify keys and tuples. Methods should return {@code null} if no modification is necessary.
+     * Allows to modify resource names and placeholders. Methods should return {@code null} if no modification is
+     * necessary.
      */
     public interface Filter {
 
-        String filter(String key);
+        String filter(String resource);
 
-        String[] filterTuple(String tuple);
+        String[] filterTuple(String placeholder);
     }
 
 
     private Filter filter;
     private StatementContext delegate;
 
-    public FilteringStatementContext(StatementContext delegate, Filter filter) {
+    FilteringStatementContext(StatementContext delegate, Filter filter) {
         this.delegate = delegate;
         this.filter = filter;
     }
 
     @Override
-    public String resolve(String key) {
-        String filtered = filter.filter(key);
-        return filtered != null ? filtered : delegate.resolve(key);
+    public String resolve(String placeholder) {
+        String filtered = filter.filter(placeholder);
+        return filtered != null ? filtered : delegate.resolve(placeholder);
     }
 
     @Override
-    public String[] resolveTuple(String tuple) {
-        String[] filtered = filter.filterTuple(tuple);
-        return filtered != null ? filtered : delegate.resolveTuple(tuple);
+    public String[] resolveTuple(String placeholder) {
+        String[] filtered = filter.filterTuple(placeholder);
+        return filtered != null ? filtered : delegate.resolveTuple(placeholder);
     }
 
     @Override

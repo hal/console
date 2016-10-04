@@ -1,5 +1,7 @@
 package org.jboss.hal.meta.processing;
 
+import java.util.Collections;
+
 import com.google.common.collect.Sets;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.description.ResourceDescriptions;
@@ -7,9 +9,10 @@ import org.jboss.hal.meta.security.SecurityFramework;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collections;
-
-import static org.jboss.hal.meta.processing.LookupResult.*;
+import static org.jboss.hal.meta.processing.LookupResult.ALL_PRESENT;
+import static org.jboss.hal.meta.processing.LookupResult.NOTHING_PRESENT;
+import static org.jboss.hal.meta.processing.LookupResult.RESOURCE_DESCRIPTION_PRESENT;
+import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESENT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -36,7 +39,7 @@ public class LookupTest {
 
     @Test
     public void noTemplates() {
-        LookupResult lookupResult = lookup.check(Collections.<AddressTemplate>emptySet(), false);
+        LookupResult lookupResult = lookup.check(Collections.emptySet(), false);
         assertTrue(lookupResult.templates().isEmpty());
     }
 

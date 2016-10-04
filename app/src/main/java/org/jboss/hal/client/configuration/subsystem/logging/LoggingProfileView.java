@@ -30,7 +30,7 @@ import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.ballroom.table.Api;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.ballroom.typeahead.Typeahead;
+import org.jboss.hal.ballroom.typeahead.ReadChildResourcesTypeahead;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
@@ -115,7 +115,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append("periodic-size-rotating-file-handler=*"),
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append("size-rotating-file-handler=*"),
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append("syslog-handler=*"));
-        suggestHandlers = new Typeahead(templates, selectionAwareStatementContext);
+        suggestHandlers = new ReadChildResourcesTypeahead(templates, selectionAwareStatementContext);
     }
 
     @PostConstruct
@@ -123,7 +123,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         noRootLogger = new EmptyState.Builder(mbuiContext.resources().constants().noRootLogger())
                 .description(mbuiContext.resources().constants().noRootLoggerDescription())
                 .icon(fontAwesome("sitemap"))
-                .primaryAction(mbuiContext.resources().constants().add(), () -> addRootLogger())
+                .primaryAction(mbuiContext.resources().constants().add(), this::addRootLogger)
                 .build();
         noRootLogger.asElement().getClassList().add(marginTopLarge);
 
@@ -371,7 +371,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append("size-rotating-file-handler=*"),
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append("syslog-handler=*"));
         dialog.getForm().getFormItem("subhandlers")
-                .registerSuggestHandler(new Typeahead(templates, selectionAwareStatementContext));
+                .registerSuggestHandler(new ReadChildResourcesTypeahead(templates, selectionAwareStatementContext));
         dialog.show();
     }
 

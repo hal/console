@@ -68,15 +68,15 @@ public class CoreStatementContext implements StatementContext,
         eventBus.addHandler(ServerSelectionEvent.getType(), this);
     }
 
-    public String resolve(final String key) {
+    public String resolve(final String resource) {
         // not supported
         return null;
     }
 
     @Override
-    public String[] resolveTuple(final String tuple) {
+    public String[] resolveTuple(final String placeholder) {
         if (!environment.isStandalone()) {
-            Tuple validTuple = Tuple.from(tuple);
+            Tuple validTuple = Tuple.from(placeholder);
             if (validTuple != null) {
                 if (validTuple == DOMAIN_CONTROLLER) {
                     return new String[]{validTuple.resource(), environment.getDomainController()};

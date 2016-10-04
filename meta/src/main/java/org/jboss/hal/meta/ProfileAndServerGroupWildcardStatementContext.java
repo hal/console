@@ -31,19 +31,19 @@ public class ProfileAndServerGroupWildcardStatementContext extends FilteringStat
     public ProfileAndServerGroupWildcardStatementContext(final StatementContext delegate, Environment environment) {
         super(delegate, new Filter() {
             @Override
-            public String filter(final String key) {
+            public String filter(final String placeholder) {
                 return null;
             }
 
             @Override
-            public String[] filterTuple(final String tuple) {
+            public String[] filterTuple(final String placeholder) {
                 if (!environment.isStandalone()) {
-                    Tuple t = Tuple.from(tuple);
+                    Tuple t = Tuple.from(placeholder);
                     if (t == SELECTED_PROFILE || t == SELECTED_GROUP) {
                         return new String[]{t.resource(), "*"};
                     }
                 }
-                return delegate.resolveTuple(tuple);
+                return delegate.resolveTuple(placeholder);
             }
         });
     }

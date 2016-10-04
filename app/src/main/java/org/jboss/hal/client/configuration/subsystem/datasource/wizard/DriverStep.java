@@ -24,6 +24,7 @@ import elemental.dom.Element;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
+import org.jboss.hal.ballroom.typeahead.StaticTypeahead;
 import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.core.datasource.JdbcDriver;
@@ -60,7 +61,7 @@ public class DriverStep extends WizardStep<Context, State> {
         this.nameItem = form.getFormItem(DRIVER_NAME);
 
         if (!this.drivers.isEmpty()) {
-            this.suggestHandler = new Typeahead(this.drivers.keySet());
+            this.suggestHandler = new StaticTypeahead(this.drivers.keySet());
             nameItem.registerSuggestHandler(suggestHandler);
         }
         registerAttachable(form);

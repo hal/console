@@ -14,14 +14,11 @@ import org.jboss.hal.ballroom.form.ViewOnlyStateMachine;
 import org.jboss.hal.core.mbui.ResourceDescriptionBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.jboss.hal.meta.security.SecurityContext.RWX;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -225,6 +222,6 @@ public class ModelNodeFormTest {
     }
 
     private Metadata metadata(ResourceDescription description) {
-        return new Metadata(RWX, description, new Capabilities(null, null, StatementContext.NOOP));
+        return Metadata.staticDescription(description);
     }
 }

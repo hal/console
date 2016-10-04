@@ -23,7 +23,6 @@ import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
@@ -45,14 +44,13 @@ public class UserColumn extends PrincipalColumn {
             final ColumnActionFactory columnActionFactory,
             final Dispatcher dispatcher,
             final EventBus eventBus,
-            final Capabilities capabilities,
             final @Footer Provider<Progress> progress,
             final AccessControl accessControl,
             final AccessControlTokens tokens,
             final AccessControlResources accessControlResources,
             final Resources resources) {
         super(finder, Ids.USER, resources.constants().user(), Principal.Type.USER,
-                columnActionFactory, dispatcher, eventBus, capabilities, progress, accessControl, tokens,
+                columnActionFactory, dispatcher, eventBus, progress, accessControl, tokens,
                 accessControlResources, resources);
     }
 }

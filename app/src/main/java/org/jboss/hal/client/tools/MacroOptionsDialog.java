@@ -23,15 +23,14 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.macro.MacroOptions;
 import org.jboss.hal.dmr.macro.Macros;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.macro.MacroOptions.*;
-import static org.jboss.hal.meta.security.SecurityContext.RWX;
+import static org.jboss.hal.dmr.macro.MacroOptions.OMIT_READ_OPERATIONS;
+import static org.jboss.hal.dmr.macro.MacroOptions.OPEN_IN_EDITOR;
+import static org.jboss.hal.dmr.macro.MacroOptions.RESOURCES;
 
 /**
  * Dialog to record a new macro.
@@ -46,20 +45,18 @@ public class MacroOptionsDialog {
         void onOptions(MacroOptions options);
     }
 
+
     private final Dialog dialog;
     private final Form<MacroOptions> form;
 
-    public MacroOptionsDialog(final Macros macros, final Capabilities capabilities, final Resources resources,
-            final MacroOptionsCallback callback) {
-        Metadata metadata = new Metadata(RWX, StaticResourceDescription.from(RESOURCES.macroOptions()), capabilities);
+    public MacroOptionsDialog(final Macros macros, final Resources resources, final MacroOptionsCallback callback) {
+        Metadata metadata = Metadata.staticDescription(RESOURCES.macroOptions());
 
         form = new ModelNodeForm.Builder<MacroOptions>(Ids.MACRO_OPTIONS, metadata)
                 .addOnly()
                 .include(NAME, DESCRIPTION, OMIT_READ_OPERATIONS, OPEN_IN_EDITOR)
                 .unsorted()
-                .onSave((form, changedValues) -> {
-                    callback.onOptions(form.getModel());
-                })
+                .onSave((form, changedValues) -> callback.onOptions(form.getModel()))
                 .build();
         FormItem<String> nameItem = form.getFormItem(NAME);
         nameItem.addValidationHandler(value -> macros.get(value) != null
