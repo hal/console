@@ -19,37 +19,28 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.google.common.collect.Iterables;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
 
 /**
  * @author Harald Pehl
  */
-public class Capability extends NamedNode {
+public class Capability {
 
-    private static final String REGISTRATION_POINTS = "registration-points";
-
+    private final String name;
     private final Set<AddressTemplate> templates;
 
-    public Capability(ModelNode node) {
-        super(node);
-        this.templates = new LinkedHashSet<>();
-        if (hasDefined(REGISTRATION_POINTS)) {
-            for (ModelNode registrationPoint : get(REGISTRATION_POINTS).asList()) {
-                addTemplate(AddressTemplate.of(registrationPoint.asString()));
-            }
-        }
-    }
-
     public Capability(final String name) {
-        super(name, new ModelNode());
+        this.name = name;
         this.templates = new LinkedHashSet<>();
     }
 
     @Override
     public String toString() {
-        return "Capability(" + getName() + " -> " + templates + ")";
+        return "Capability(" + name + " -> " + templates + ")";
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void addTemplate(final AddressTemplate template) {

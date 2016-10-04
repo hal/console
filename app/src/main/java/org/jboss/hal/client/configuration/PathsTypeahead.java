@@ -61,7 +61,7 @@ public class PathsTypeahead extends Typeahead {
     /**
      * Updates the static operation which is used by this typeahead.
      */
-    public static void updateOperation(final Environment environment, final Dispatcher dispatcher,
+    static void updateOperation(final Environment environment, final Dispatcher dispatcher,
             final StatementContext statementContext) {
         if (environment.isStandalone() || statementContext.selectedProfile() == null) {
             operation = defaultOperation();
@@ -97,7 +97,9 @@ public class PathsTypeahead extends Typeahead {
     }
 
     public PathsTypeahead() {
-        super(data -> data.getString(NAME), data -> data.getString(NAME).split(WHITESPACE), new NamesResultProcessor(),
-                data -> data.getString(NAME), null, () -> operation);
+        options = initOptions();
+        bloodhound = initBloodhound(data -> data.getString(NAME), data -> data.getString(NAME).split(WHITESPACE),
+                () -> operation, new NamesResultProcessor());
+        dataset = initDataset(data -> data.getString(NAME), null);
     }
 }

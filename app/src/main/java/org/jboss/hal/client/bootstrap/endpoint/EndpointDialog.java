@@ -31,8 +31,6 @@ import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
@@ -49,7 +47,6 @@ import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.SELECT
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PORT;
-import static org.jboss.hal.meta.security.SecurityContext.RWX;
 
 /**
  * Modal dialog to manage bootstrap servers. The dialog offers a page to connect to an existing server and a page to
@@ -60,6 +57,7 @@ import static org.jboss.hal.meta.security.SecurityContext.RWX;
 class EndpointDialog {
 
     enum Mode {SELECT, ADD}
+
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
@@ -77,10 +75,10 @@ class EndpointDialog {
     private ModelNodeTable<Endpoint> table;
     private Dialog dialog;
 
-    EndpointDialog(final EndpointManager manager, final EndpointStorage storage, final Capabilities capabilities) {
+    EndpointDialog(final EndpointManager manager, final EndpointStorage storage) {
         this.manager = manager;
         this.storage = storage;
-        Metadata metadata = new Metadata(RWX, StaticResourceDescription.from(RESOURCES.endpoint()), capabilities);
+        Metadata metadata = Metadata.staticDescription(RESOURCES.endpoint());
 
         Options<Endpoint> endpointOptions = new ModelNodeTable.Builder<Endpoint>(metadata)
                 .button(CONSTANTS.add(), (event, api) -> switchTo(ADD))
@@ -170,7 +168,7 @@ class EndpointDialog {
         FormItem<Number> port = form.getFormItem(PORT);
         if (port.getValue() == null) {
             endpoint.get(PORT).set(EndpointManager.DEFAULT_PORT);
-        } else{
+        } else {
             endpoint.get(PORT).set(port.getValue().intValue());
         }
         return endpoint;

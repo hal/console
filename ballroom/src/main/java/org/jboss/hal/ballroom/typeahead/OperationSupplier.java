@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.runtime.server;
+package org.jboss.hal.ballroom.typeahead;
 
-import com.gwtplatform.dispatch.annotation.GenEvent;
-import com.gwtplatform.dispatch.annotation.Order;
-import org.jboss.hal.meta.StatementContext;
+import java.util.function.Supplier;
+
+import org.jboss.hal.dmr.model.Operation;
 
 /**
- * Selects both {@link StatementContext.Tuple#SELECTED_SERVER_CONFIG} and {@link
- * StatementContext.Tuple#SELECTED_SERVER}
+ * Supplier for the operation which is used by the typeahead remote options.
  *
  * @author Harald Pehl
  */
-@GenEvent
-public class ServerSelection {
-
-    @Order(1) String server;
+@FunctionalInterface
+public interface OperationSupplier extends Supplier<Operation> {
 }

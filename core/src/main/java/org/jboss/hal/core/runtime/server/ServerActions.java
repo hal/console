@@ -254,7 +254,7 @@ public class ServerActions {
             return;
         }
 
-        AddressTemplate template = server.isStandalone() ? AddressTemplate.of("/") : AddressTemplate
+        AddressTemplate template = server.isStandalone() ? AddressTemplate.ROOT : AddressTemplate
                 .of("/host=" + server.getHost() + "/server-config=" + server.getName());
         metadataProcessor.lookup(template, progress.get(), new MetadataProcessor.MetadataCallback() {
             @Override

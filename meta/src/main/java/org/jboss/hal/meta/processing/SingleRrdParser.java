@@ -23,14 +23,10 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.capabilitiy.Capability;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
-import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
 /**
  * This class does the bulk of work when it comes to parse the r-r-d response. Therefore it processes three parts:
@@ -83,42 +79,6 @@ class SingleRrdParser {
                     exceptionRr.securityContext = new SecurityContext(exception);
                     results.add(exceptionRr);
                 }
-            }
-        }
-
-        // capabilities
-        if (modelNode.hasDefined(CAPABILITIES)) {
-            for (ModelNode capabilityNode : modelNode.get(CAPABILITIES).asList()) {
-                String capabilityName = capabilityNode.get(NAME).asString();
-                AddressTemplate template;
-                if (address.size() == 1) {
-                    // do not replace "/profile=*" with "{selected.profile}"
-                    template = AddressTemplate.of(address.lastName() + "=*");
-                } else {
-                    // but replace "/profile=*/foo=bar" with "{selected.profile}/foo=*"
-                    template = AddressTemplate.of(address, (name, value, first, last, index) -> {
-                        String segment;
-
-                        if (first && last) {
-                            segment = name + "=*";
-                        }
-                        switch (name) {
-                            case PROFILE:
-                                segment = SELECTED_PROFILE.variable();
-                                break;
-                            case SERVER_GROUP:
-                                segment = SELECTED_GROUP.variable();
-                                break;
-                            default:
-                                segment = name + "=" + (last ? "*" : value);
-                                break;
-                        }
-                        return segment;
-                    });
-                }
-                Capability capability = new Capability(capabilityName);
-                capability.addTemplate(template);
-                rr.capabilities.add(capability);
             }
         }
 

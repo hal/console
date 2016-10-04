@@ -31,7 +31,7 @@ import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
-import org.jboss.hal.ballroom.typeahead.Typeahead;
+import org.jboss.hal.ballroom.typeahead.StaticTypeahead;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddAssignment;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddRoleMapping;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.CheckRoleMapping;
@@ -49,8 +49,6 @@ import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.SuccessfulOutcome;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
@@ -62,7 +60,6 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.security.SecurityContext.RWX;
 
 /**
  * @author Harald Pehl
@@ -91,7 +88,6 @@ class PrincipalColumn extends FinderColumn<Principal> {
             final ColumnActionFactory columnActionFactory,
             final Dispatcher dispatcher,
             final EventBus eventBus,
-            final Capabilities capabilities,
             final Provider<Progress> progress,
             final AccessControl accessControl,
             final AccessControlTokens tokens,
@@ -109,8 +105,7 @@ class PrincipalColumn extends FinderColumn<Principal> {
         this.resources = resources;
 
         addColumnAction(columnActionFactory.add(Ids.ROLE_ADD, title, column -> {
-            Metadata metadata = new Metadata(RWX, StaticResourceDescription.from(accessControlResources.principal()),
-                    capabilities);
+            Metadata metadata = Metadata.staticDescription(accessControlResources.principal());
             Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(id, Ids.FORM_SUFFIX), metadata)
                     .addOnly()
                     .include(NAME, REALM, INCLUDE, EXCLUDE)
@@ -122,8 +117,8 @@ class PrincipalColumn extends FinderColumn<Principal> {
                     .forEach(roleNames::add);
             accessControl.roles().scopedRoles().stream().sorted(comparing(Role::getName)).map(Role::getName)
                     .forEach(roleNames::add);
-            form.getFormItem(INCLUDE).registerSuggestHandler(new Typeahead(roleNames));
-            form.getFormItem(EXCLUDE).registerSuggestHandler(new Typeahead(roleNames));
+            form.getFormItem(INCLUDE).registerSuggestHandler(new StaticTypeahead(roleNames));
+            form.getFormItem(EXCLUDE).registerSuggestHandler(new StaticTypeahead(roleNames));
 
             form.addFormValidation(frm -> {
                 FormItem<List<String>> includeItem = frm.getFormItem(INCLUDE);

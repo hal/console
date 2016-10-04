@@ -17,57 +17,31 @@ package org.jboss.hal.meta.capabilitiy;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
-import org.jboss.hal.meta.StatementContext;
-import org.jetbrains.annotations.NonNls;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /**
- * TODO Move all code related to read the resources from Typeahead to this class
+ * Provides access to static fall-back capabilities for servers which don't support a capabilities-registry.
+ *
  * @author Harald Pehl
  */
 public class Capabilities {
 
-    @FunctionalInterface
-    public interface CapabilitiesCallback extends AsyncCallback<Iterable<AddressTemplate>> {
-
-        @Override
-        default void onFailure(Throwable caught) {
-            logger.error(caught.getMessage(), caught);
-        }
-    }
-
-
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(Capabilities.class);
-
     private final Environment environment;
-    private final Dispatcher dispatcher;
-    private final StatementContext statementContext;
     private final Map<String, Capability> registry;
 
     @Inject
-    public Capabilities(final Environment environment,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext) {
+    public Capabilities(final Environment environment) {
         this.environment = environment;
-        this.dispatcher = dispatcher;
-        this.statementContext = statementContext;
         this.registry = new HashMap<>();
+    }
+
+    public boolean supportsSuggestions() {
+        return environment != null && ManagementModel.supportsCapabilitiesRegistry(environment.getManagementVersion());
     }
 
     /**
@@ -78,43 +52,6 @@ public class Capabilities {
             return registry.get(name).getTemplates();
         }
         return Collections.emptyList();
-    }
-
-    /**
-     * Looks up a capability from the remote capability registry.
-     */
-    @SuppressWarnings("DuplicateStringLiteralInspection")
-    public void lookup(final String name, final CapabilitiesCallback callback) {
-        if (!ManagementModel.supportsCapabilitiesRegistry(environment.getManagementVersion())) {
-            callback.onFailure(new UnsupportedOperationException("Unable to lookup capabilities for " + name +
-                    ", capabilities registry is not supported for management model version " +
-                    environment.getManagementVersion()));
-
-        } else {
-            ResourceAddress address = AddressTemplate.of("{domain.controller}/core-service=capability-registry")
-                    .resolve(statementContext);
-            Operation operation = new Operation.Builder("get-provider-points", address) //NON-NLS
-                    .param(NAME, name)
-                    .build();
-            dispatcher.execute(operation,
-                    result -> {
-                        if (result.isDefined()) {
-                            List<AddressTemplate> templates = result.asList().stream()
-                                    .map(ModelNode::asString)
-                                    .map(AddressTemplate::of)
-                                    .collect(toList());
-                            register(name, templates);
-                            callback.onSuccess(lookup(name));
-                        } else {
-                            callback.onFailure(new IllegalArgumentException("No capabilities found for " + name));
-                        }
-                    },
-                    (op, failure) -> callback.onFailure(new RuntimeException(
-                            "Error reading capabilities for " + name + " using " + op + ": " + failure)),
-                    (op, exception) -> callback.onFailure(new RuntimeException(
-                            "Error reading capabilities for " + name + " using " + op + ": " + exception.getMessage(),
-                            exception)));
-        }
     }
 
     public boolean contains(final String name) {return registry.containsKey(name);}

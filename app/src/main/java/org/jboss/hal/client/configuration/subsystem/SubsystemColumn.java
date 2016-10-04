@@ -51,6 +51,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
 /**
  * @author Harald Pehl
@@ -58,7 +59,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
 @Column(Ids.SUBSYSTEM)
 public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
-    private static final AddressTemplate SUBSYSTEM_TEMPLATE = AddressTemplate.of("{selected.profile}/subsystem=*");
+    private static final AddressTemplate SUBSYSTEM_TEMPLATE = AddressTemplate.of(SELECTED_PROFILE, "subsystem=*");
 
     @Inject
     public SubsystemColumn(final Finder finder,

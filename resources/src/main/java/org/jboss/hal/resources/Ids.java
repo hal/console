@@ -266,6 +266,8 @@ public interface Ids {
     String STANDALONE_HOST = "standalone-host";
     String STANDALONE_SERVER = "standalone-server";
     String SUBSYSTEM = "subsystem";
+    String SUGGEST_HANDLER_ID = "id";
+    String SUGGEST_HANDLER_VALUE = "value";
 
     String TLC_ACCESS_CONTROL = "tlc-access-control";
     String TLC_CONFIGURATION = "tlc-configuration";

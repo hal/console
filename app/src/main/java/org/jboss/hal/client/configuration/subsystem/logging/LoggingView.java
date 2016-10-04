@@ -23,9 +23,10 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.ballroom.typeahead.Typeahead;
+import org.jboss.hal.ballroom.typeahead.ReadChildResourcesTypeahead;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
@@ -97,7 +98,7 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
         noRootLogger = new EmptyState.Builder(mbuiContext.resources().constants().noRootLogger())
                 .description(mbuiContext.resources().constants().noRootLoggerDescription())
                 .icon("fa fa-sitemap")
-                .primaryAction(mbuiContext.resources().constants().add(), () -> addRootLogger())
+                .primaryAction(mbuiContext.resources().constants().add(), this::addRootLogger)
                 .build();
         noRootLogger.asElement().getClassList().add(marginTopLarge);
 
@@ -157,12 +158,12 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
                     });
                 });
 
-        Typeahead typeahead = new Typeahead(
+        SuggestHandler suggestHandler = new ReadChildResourcesTypeahead(
                 asList(ASYNC_HANDLER_TEMPLATE, CONSOLE_HANDLER_TEMPLATE, CUSTOM_HANDLER_TEMPLATE, FILE_HANDLER_TEMPLATE,
                         PERIODIC_ROTATING_FILE_HANDLER_TEMPLATE, PERIODIC_SIZE_ROTATING_FILE_HANDLER_TEMPLATE,
                         SIZE_ROTATING_FILE_HANDLER_TEMPLATE, SYSLOG_HANDLER_TEMPLATE),
                 mbuiContext.statementContext());
-        dialog.getForm().getFormItem(HANDLERS).registerSuggestHandler(typeahead);
+        dialog.getForm().getFormItem(HANDLERS).registerSuggestHandler(suggestHandler);
         dialog.show();
     }
 

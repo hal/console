@@ -60,9 +60,7 @@ public interface ModelDescriptionConstants {
     String BLOCKING = "blocking";
     String BROWSE_CONTENT = "browse-content";
 
-    String CAPABILITIES = "capabilities";
     String CAPABILITY_REFERENCE = "capability-reference";
-    String CAPABILITY_REGISTRY = "capability-registry";
     String CHILD_TYPE = "child-type";
     String CHILDREN = "children";
     String CLASS_NAME = "class-name";

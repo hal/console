@@ -15,27 +15,53 @@
  */
 package org.jboss.hal.meta.processing;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.capabilitiy.Capability;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
 /**
  * @author Harald Pehl
  */
 class RrdResult {
 
+    final AddressTemplate template;
     final ResourceAddress address;
     ResourceDescription resourceDescription;
     SecurityContext securityContext;
-    Set<Capability> capabilities;
 
     RrdResult(final ResourceAddress address) {
         this.address = address;
-        this.capabilities = new HashSet<>();
+        if (address.size() == 1) {
+            // do not replace "/profile=*" with "{selected.profile}"
+            this.template = AddressTemplate.of(address.lastName() + "=*");
+        } else {
+            // but replace "/profile=*/foo=bar" with "{selected.profile}/foo=*"
+            this.template = AddressTemplate.of(address, (name, value, first, last, index) -> {
+                String segment;
+
+                if (first && last) {
+                    segment = name + "=*";
+                }
+                switch (name) {
+                    case PROFILE:
+                        segment = SELECTED_PROFILE.variable();
+                        break;
+                    case SERVER_GROUP:
+                        segment = SELECTED_GROUP.variable();
+                        break;
+                    default:
+                        segment = name + "=" + (last ? "*" : value);
+                        break;
+                }
+                return segment;
+            });
+        }
     }
 
     boolean isDefined() {

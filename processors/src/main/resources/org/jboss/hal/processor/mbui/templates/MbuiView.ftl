@@ -16,7 +16,7 @@ import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.LayoutBuilder;
-import org.jboss.hal.ballroom.typeahead.Typeahead;
+import org.jboss.hal.ballroom.typeahead.ReadChildResourcesTypeahead;
 <#if context.verticalNavigation??>
 import org.jboss.hal.ballroom.VerticalNavigation;
 </#if>
@@ -108,12 +108,12 @@ final class ${context.subclass} extends ${context.base} {
                 <#if attribute.suggestHandler??>
         ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(${attribute.suggestHandler});
                 <#elseif attribute.suggestHandlerTemplates?size == 1>
-        ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(new Typeahead(
+        ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildResourcesTypeahead(
             AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}"), mbuiContext.statementContext()));
                 <#else>
         List<AddressTemplate> ${form.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
             AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
-        ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(new Typeahead(
+        ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildResourcesTypeahead(
             ${form.name}Templates, mbuiContext.statementContext()));
                 </#if>
             </#list>
@@ -148,12 +148,12 @@ final class ${context.subclass} extends ${context.base} {
                                         <#if attribute.suggestHandler??>
                 form.getFormItem("${attribute.name}").registerSuggestHandler(${attribute.suggestHandler});
                                         <#elseif attribute.suggestHandlerTemplates?size == 1>
-                form.getFormItem("${attribute.name}").registerSuggestHandler(new Typeahead(
+                form.getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildResourcesTypeahead(
                     AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}", mbuiContext.statementContext()));
                                         <#else>
                 List<AddressTemplate> ${table.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
                     AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
-                form.getFormItem("${attribute.name}").registerSuggestHandler(new Typeahead(
+                form.getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildResourcesTypeahead(
                     ${table.name}Templates, mbuiContext.statementContext()));
                                         </#if>
                                     </#list>
@@ -194,12 +194,12 @@ final class ${context.subclass} extends ${context.base} {
                                         <#if attribute.suggestHandler??>
                 dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(${attribute.suggestHandler});
                                         <#elseif attribute.suggestHandlerTemplates?size == 1>
-                dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(new Typeahead(
+                dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildResourcesTypeahead(
                     AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}"), mbuiContext.statementContext()));
                                         <#else>
                 List<AddressTemplate> ${table.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
                     AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
-                dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(new Typeahead(
+                dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildResourcesTypeahead(
                     ${table.name}Templates, mbuiContext.statementContext()));
                                         </#if>
                                     </#list>

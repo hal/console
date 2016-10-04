@@ -116,7 +116,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
             this.metadata = metadata;
             this.includes = new LinkedHashSet<>();
             this.excludes = new HashSet<>();
-            this.defaultFormItemProvider = new DefaultFormItemProvider(metadata.getCapabilities());
+            this.defaultFormItemProvider = new DefaultFormItemProvider(metadata);
             this.providers = new HashMap<>();
             this.unboundFormItems = new ArrayList<>();
             this.viewOnly = false;

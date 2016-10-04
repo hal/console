@@ -55,6 +55,7 @@ public class OperationFormBuilder<T extends ModelNode> {
     }
 
     public OperationFormBuilder<T> include(final Iterable<String> attributes) {
+        //noinspection ResultOfMethodCallIgnored
         Iterables.addAll(includes, attributes);
         return this;
     }
@@ -70,7 +71,8 @@ public class OperationFormBuilder<T extends ModelNode> {
         ModelNode repackaged = new ModelNode();
         repackaged.get(ATTRIBUTES).set(modelNode);
         ResourceDescription reloadDescription = new ResourceDescription(repackaged);
-        Metadata formMetadata = new Metadata(SecurityContext.RWX, reloadDescription, metadata.getCapabilities());
+        Metadata formMetadata = new Metadata(metadata.getTemplate(), SecurityContext.RWX, reloadDescription,
+                metadata.getCapabilities());
         return new ModelNodeForm.Builder<T>(id, formMetadata)
                 .include(includes)
                 .addOnly()
