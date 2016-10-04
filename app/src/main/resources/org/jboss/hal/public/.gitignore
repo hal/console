@@ -2,5 +2,6 @@ css
 fonts
 img
 js/*
+favicon.ico
 !js/mode-logfile.js
 !js/theme-logfile.js

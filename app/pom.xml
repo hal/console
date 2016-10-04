@@ -225,6 +225,9 @@
                                 <additionalSourceDirectory>../dmr/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../meta/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../resources/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../themes/eap/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../themes/hal/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>../themes/wildfly/src/main/java</additionalSourceDirectory>
                             </additionalSourceDirectories>
                             <processors>
                                 <processor>org.jboss.hal.processor.GinModuleProcessor</processor>
@@ -284,7 +287,8 @@
                         </goals>
                         <configuration>
                             <classifier>resources</classifier>
-                            <classesDirectory>${project.build.directory}/${project.build.finalName}/hal</classesDirectory>
+                            <classesDirectory>${project.build.directory}/${project.build.finalName}/hal
+                            </classesDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -296,7 +300,7 @@
                     <compilerArgs>
                         <compilerArg>-gen</compilerArg>
                         <compilerArg>${project.build.directory}/generated-sources/gwt</compilerArg>
-                   </compilerArgs>
+                    </compilerArgs>
                     <devmodeArgs>
                         <devmodeArg>-startupUrl</devmodeArg>
                         <devmodeArg>hal/dev.html</devmodeArg>
@@ -351,6 +355,9 @@
                                         <source>../meta/src/main/java</source>
                                         <source>../resources/src/main/java</source>
                                         <source>../spi/src/main/java</source>
+                                        <source>../themes/eap/src/main/java</source>
+                                        <source>../themes/hal/src/main/java</source>
+                                        <source>../themes/wildfly/src/main/java</source>
                                     </sources>
                                 </configuration>
                             </execution>
@@ -358,6 +365,36 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>theme-eap</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jboss.hal</groupId>
+                    <artifactId>hal-theme-eap</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>theme-hal</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jboss.hal</groupId>
+                    <artifactId>hal-theme-hal</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>theme-wildfly</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jboss.hal</groupId>
+                    <artifactId>hal-theme-wildfly</artifactId>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 </project>
