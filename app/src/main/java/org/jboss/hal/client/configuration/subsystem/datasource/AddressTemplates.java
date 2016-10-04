@@ -17,6 +17,8 @@ package org.jboss.hal.client.configuration.subsystem.datasource;
 
 import org.jboss.hal.meta.AddressTemplate;
 
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
+
 /**
  * @author Harald Pehl
  */
@@ -30,5 +32,5 @@ public interface AddressTemplates {
     AddressTemplate XA_DATA_SOURCE_TEMPLATE = AddressTemplate.of(XA_DATA_SOURCE_ADDRESS);
     AddressTemplate JDBC_DRIVER_TEMPLATE = AddressTemplate.of(JDBC_DRIVER_ADDRESS);
 
-    AddressTemplate DATA_SOURCE_SUBSYSTEM_TEMPLATE = AddressTemplate.of("/{selected.profile}/subsystem=datasources");
+    AddressTemplate DATA_SOURCE_SUBSYSTEM_TEMPLATE = AddressTemplate.of(SELECTED_PROFILE, "subsystem=datasources");
 }

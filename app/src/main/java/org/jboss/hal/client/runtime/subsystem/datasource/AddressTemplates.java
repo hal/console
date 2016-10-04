@@ -17,6 +17,9 @@ package org.jboss.hal.client.runtime.subsystem.datasource;
 
 import org.jboss.hal.meta.AddressTemplate;
 
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
+
 /**
  * @author Harald Pehl
  */
@@ -37,5 +40,5 @@ public interface AddressTemplates {
     AddressTemplate XA_DATA_SOURCE_JDBC_TEMPLATE = AddressTemplate.of(XA_DATA_SOURCE_JDBC_ADDRESS);
 
     AddressTemplate DATA_SOURCE_SUBSYSTEM_TEMPLATE = AddressTemplate
-            .of("/{selected.host}/{selected.server}/subsystem=datasources");
+            .of(SELECTED_HOST, SELECTED_SERVER, "subsystem=datasources");
 }

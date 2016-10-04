@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.mail;
 import org.jboss.hal.meta.AddressTemplate;
 
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_EXPRESSION;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 
 /**
  * @author Harald Pehl
@@ -36,7 +37,7 @@ public interface AddressTemplates {
     AddressTemplate SERVER_TEMPLATE = AddressTemplate.of(SERVER_ADDRESS);
 
     AddressTemplate SELECTED_MAIL_SESSION_TEMPLATE = AddressTemplate
-            .of("/{selected.profile}/subsystem=mail/mail-session=" + SELECTION_EXPRESSION);
+            .of(SELECTED_PROFILE, "subsystem=mail/mail-session=" + SELECTION_EXPRESSION);
 
     AddressTemplate SOCKET_BINDING_TEMPLATE = AddressTemplate
             .of("/socket-binding-group=*/remote-destination-outbound-socket-binding=*");

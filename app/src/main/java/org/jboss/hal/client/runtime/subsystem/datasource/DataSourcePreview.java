@@ -44,6 +44,8 @@ import org.jboss.hal.resources.Resources;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -161,7 +163,7 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                     .param(ATTRIBUTES_ONLY, true)
                     .build());
         } else {
-            ResourceAddress address = AddressTemplate.of("/{selected.host}/{selected.server}")
+            ResourceAddress address = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
                     .resolve(statementContext);
             operations.add(new Operation.Builder(READ_RESOURCE_OPERATION, address)
                     .param(INCLUDE_RUNTIME, true)

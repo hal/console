@@ -73,8 +73,17 @@ public final class AddressTemplate {
 
     public static AddressTemplate ROOT = AddressTemplate.of("/");
 
+    public static AddressTemplate of(StatementContext.Tuple placeholder) {
+        return AddressTemplate.of(String.join("/", placeholder.variable()));
+    }
+
     public static AddressTemplate of(StatementContext.Tuple placeholder, @NonNls String template) {
         return AddressTemplate.of(String.join("/", placeholder.variable(), withoutSlash(template)));
+    }
+
+    public static AddressTemplate of(StatementContext.Tuple placeholder1, StatementContext.Tuple placeholder2) {
+        return AddressTemplate.of(
+                String.join("/", placeholder1.variable(), placeholder2.variable()));
     }
 
     public static AddressTemplate of(StatementContext.Tuple placeholder1, StatementContext.Tuple placeholder2,

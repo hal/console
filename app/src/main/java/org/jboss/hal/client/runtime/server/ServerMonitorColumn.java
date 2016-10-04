@@ -41,6 +41,8 @@ import org.jboss.hal.spi.AsyncColumn;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 
 /**
  * @author Harald Pehl
@@ -81,7 +83,7 @@ public class ServerMonitorColumn extends StaticItemColumn {
                             .onPreview(new PreviewContent(Names.JNDI, resources.previews().runtimeJndi()))
                             .build());
 
-            ResourceAddress address = AddressTemplate.of("/{selected.host}/{selected.server}")
+            ResourceAddress address = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
                     .resolve(statementContext);
             Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
                     .param(ATTRIBUTES_ONLY, true)
