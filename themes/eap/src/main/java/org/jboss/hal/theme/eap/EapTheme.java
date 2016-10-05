@@ -44,7 +44,7 @@ public class EapTheme implements Theme {
 
     @Override
     public String getLastName() {
-        return "Enterprise Application Platform";
+        return "EAP";
     }
 
     @Override

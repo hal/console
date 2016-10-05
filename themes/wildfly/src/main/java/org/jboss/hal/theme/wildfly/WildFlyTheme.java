@@ -39,6 +39,16 @@ public class WildFlyTheme implements Theme {
     }
 
     @Override
+    public String getFirstName() {
+        return "Wild";
+    }
+
+    @Override
+    public String getLastName() {
+        return "Fly";
+    }
+
+    @Override
     public Favicons favicons() {
         return FAVICONS;
     }

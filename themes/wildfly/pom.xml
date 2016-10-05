@@ -52,7 +52,7 @@
                                 </resource>
                             </resources>
                             <overwrite>true</overwrite>
-                            <outputDirectory>/../../app/src/main/resources/org/jboss/hal/public</outputDirectory>
+                            <outputDirectory>../../app/src/main/resources/org/jboss/hal/public</outputDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -71,7 +71,7 @@
                                 </resource>
                             </resources>
                             <overwrite>true</overwrite>
-                            <outputDirectory>/../../app/src/main/resources/org/jboss/hal/public/img</outputDirectory>
+                            <outputDirectory>../../app/src/main/resources/org/jboss/hal/public/img</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
