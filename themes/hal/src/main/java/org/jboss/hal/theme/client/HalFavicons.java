@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.theme;
+package org.jboss.hal.theme.client;
 
 import com.google.gwt.resources.client.ImageResource;
 import org.jboss.hal.resources.Favicons;
@@ -21,7 +21,7 @@ import org.jboss.hal.resources.Favicons;
 /**
  * @author Harald Pehl
  */
-public interface EapFavicons extends Favicons {
+public interface HalFavicons extends Favicons {
 
     @Override
     @Source(FILE_NAME_16)

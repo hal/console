@@ -33,7 +33,6 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.config.InstanceInfo;
 import org.jboss.hal.config.User;
 import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderPath;
@@ -54,12 +53,9 @@ import org.slf4j.LoggerFactory;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.skeleton.HeaderPresenter.MAX_BREADCRUMB_VALUE_LENGTH;
-import static org.jboss.hal.config.InstanceInfo.WILDFLY;
 import static org.jboss.hal.core.Strings.abbreviateMiddle;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.Names.HAL;
-import static org.jboss.hal.resources.Names.MANAGEMENT_CONSOLE;
 import static org.jboss.hal.resources.Names.NYI;
 
 /**
@@ -149,19 +145,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     @Override
     public void update(Environment environment, Endpoints endpoints, User user) {
-        if (environment.getInstanceInfo() == WILDFLY) {
-            setLogo(new String[]{
-                    environment.getInstanceInfo().platform().substring(0, 4),
-                    environment.getInstanceInfo().platform().substring(4),
-            });
-        } else if (environment.getInstanceInfo() == InstanceInfo.EAP) {
-            setLogo(new String[]{
-                    environment.getInstanceInfo().platform().substring(0, 13),
-                    environment.getInstanceInfo().platform().substring(13).trim(),
-            });
-        } else {
-            setLogo(new String[]{HAL, MANAGEMENT_CONSOLE});
-        }
+        setLogo(resources().theme().getMainTitle(), resources().theme().getSecondaryTitle());
 
         if (endpoints.isSameOrigin()) {
             connectedTo.setInnerText(resources().constants().sameOrigin());
@@ -176,9 +160,11 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         roles.setInnerText(resources().messages().activeRoles(Joiner.on(", ").join(user.getRoles())));
     }
 
-    private void setLogo(String[] parts) {
-        logoFirst.setInnerText(parts[0]);
-        logoLast.setInnerText(parts[1]);
+    private void setLogo(String first, String last) {
+        logoFirst.setInnerText(first);
+        if (last != null) {
+            logoLast.setInnerText(last);
+        }
     }
 
 

@@ -25,7 +25,7 @@ import com.google.gwt.resources.client.ImageResource;
  */
 public interface Favicons extends ClientBundle {
 
-    String FILE_NAME_16 = "favicon.ico";
+    String FILE_NAME_16 = "favicon.png";
     String FILE_NAME_32 = "icon-32.png";
     String FILE_NAME_128 = "icon-128.png";
     String FILE_NAME_152 = "icon-152.png";

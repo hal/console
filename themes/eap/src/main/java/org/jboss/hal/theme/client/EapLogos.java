@@ -13,21 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.theme;
+package org.jboss.hal.theme.client;
 
-import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.inject.Singleton;
-import org.jboss.hal.resources.Theme;
-import org.jboss.hal.spi.GinModule;
+import com.google.gwt.resources.client.ImageResource;
+import org.jboss.hal.resources.Logos;
 
 /**
  * @author Harald Pehl
  */
-@GinModule
-public class WildFlyThemeModule extends AbstractGinModule {
+public interface EapLogos extends Logos {
 
     @Override
-    protected void configure() {
-        bind(Theme.class).to(WildFlyTheme.class).in(Singleton.class);
-    }
+    @Source(ABOUT_FILE_NAME)
+    ImageResource about();
 }

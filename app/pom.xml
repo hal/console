@@ -43,6 +43,7 @@
         -->
         <gwt.optimize>0</gwt.optimize>
         <gwt.style>OBFUSCATED</gwt.style>
+        <theme.src.dir>../themes/wildfly/src/main/java</theme.src.dir>
     </properties>
 
     <dependencies>
@@ -225,9 +226,7 @@
                                 <additionalSourceDirectory>../dmr/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../meta/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../resources/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../themes/eap/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../themes/hal/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>../themes/wildfly/src/main/java</additionalSourceDirectory>
+                                <additionalSourceDirectory>${theme.src.dir}</additionalSourceDirectory>
                             </additionalSourceDirectories>
                             <processors>
                                 <processor>org.jboss.hal.processor.GinModuleProcessor</processor>
@@ -368,6 +367,9 @@
         </profile>
         <profile>
             <id>theme-eap</id>
+            <properties>
+                <theme.src.dir>../themes/eap/src/main/java</theme.src.dir>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.jboss.hal</groupId>
@@ -380,6 +382,9 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+            <properties>
+                <theme.src.dir>../themes/hal/src/main/java</theme.src.dir>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.jboss.hal</groupId>
@@ -389,6 +394,9 @@
         </profile>
         <profile>
             <id>theme-wildfly</id>
+            <properties>
+                <theme.src.dir>../themes/wildfly/src/main/java</theme.src.dir>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.jboss.hal</groupId>

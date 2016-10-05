@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-mvn gwt:devmode -Pdev
+mvn gwt:devmode -Pdev,theme-hal

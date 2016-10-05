@@ -13,42 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.theme;
+package org.jboss.hal.theme.client;
 
 import com.google.gwt.core.client.GWT;
 import org.jboss.hal.resources.Favicons;
 import org.jboss.hal.resources.Logos;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Theme;
-
-import static org.jboss.hal.resources.Names.HAL;
 
 /**
  * @author Harald Pehl
  */
-public class HalTheme implements Theme {
+public class WildFlyTheme implements Theme {
 
-    private static final Favicons FAVICONS = GWT.create(HalFavicons.class);
-    private static final Logos LOGOS = GWT.create(HalLogos.class);
+    private static final Favicons FAVICONS = GWT.create(WildFlyFavicons.class);
+    private static final Logos LOGOS = GWT.create(WildFlyLogos.class);
 
     @Override
     public String getId() {
-        return "org.jboss.hal.theme.hal";
+        return "org.jboss.hal.theme.wildfly";
     }
 
     @Override
     public String getTitle() {
-        return HAL;
+        return "WildFly";
+    }
+
+    @Override
+    public String getMainTitle() {
+        return "Wild";
     }
 
     @Override
     public String getSecondaryTitle() {
-        return Names.MANAGEMENT_CONSOLE;
+        return "Fly";
     }
 
     @Override
     public String getDescription() {
-        return "HAL Management Console";
+        return "WildFly Management Console";
     }
 
     @Override

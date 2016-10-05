@@ -13,44 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.theme;
+package org.jboss.hal.theme.client;
 
 import com.google.gwt.core.client.GWT;
 import org.jboss.hal.resources.Favicons;
 import org.jboss.hal.resources.Logos;
 import org.jboss.hal.resources.Theme;
 
+import static org.jboss.hal.resources.Names.HAL;
+import static org.jboss.hal.resources.Names.MANAGEMENT_CONSOLE;
+
 /**
  * @author Harald Pehl
  */
-public class EapTheme implements Theme {
+public class HalTheme implements Theme {
 
-    private static final Favicons FAVICONS = GWT.create(EapFavicons.class);
-    private static final Logos LOGOS = GWT.create(EapLogos.class);
+    private static final Favicons FAVICONS = GWT.create(HalFavicons.class);
+    private static final Logos LOGOS = GWT.create(HalLogos.class);
+
+    public HalTheme() {
+    }
 
     @Override
     public String getId() {
-        return "org.jboss.hal.theme.eap";
+        return "org.jboss.hal.theme.hal";
     }
 
     @Override
     public String getTitle() {
-        return "EAP";
-    }
-
-    @Override
-    public String getMainTitle() {
-        return "JBoss";
+        return HAL;
     }
 
     @Override
     public String getSecondaryTitle() {
-        return "Enterprise Application Platform";
+        return MANAGEMENT_CONSOLE;
     }
 
     @Override
     public String getDescription() {
-        return "JBoss Enterprise Application Platform";
+        return "HAL Management Console";
     }
 
     @Override

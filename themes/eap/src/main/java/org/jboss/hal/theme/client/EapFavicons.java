@@ -13,17 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.theme;
+package org.jboss.hal.theme.client;
 
 import com.google.gwt.resources.client.ImageResource;
-import org.jboss.hal.resources.Logos;
+import org.jboss.hal.resources.Favicons;
 
 /**
  * @author Harald Pehl
  */
-public interface HalLogos extends Logos {
+public interface EapFavicons extends Favicons {
 
     @Override
-    @Source(ABOUT_FILE_NAME)
-    ImageResource about();
+    @Source(FILE_NAME_16)
+    ImageResource x16();
+
+    @Override
+    @Source(FILE_NAME_32)
+    ImageResource x32();
+
+    @Override
+    @Source(FILE_NAME_128)
+    ImageResource x128();
+
+    @Override
+    @Source(FILE_NAME_152)
+    ImageResource x152();
 }

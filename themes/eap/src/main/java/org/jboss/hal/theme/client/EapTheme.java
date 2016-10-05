@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.theme;
+package org.jboss.hal.theme.client;
 
 import com.google.gwt.core.client.GWT;
 import org.jboss.hal.resources.Favicons;
@@ -23,34 +23,34 @@ import org.jboss.hal.resources.Theme;
 /**
  * @author Harald Pehl
  */
-public class WildFlyTheme implements Theme {
+public class EapTheme implements Theme {
 
-    private static final Favicons FAVICONS = GWT.create(WildFlyFavicons.class);
-    private static final Logos LOGOS = GWT.create(WildFlyLogos.class);
+    private static final Favicons FAVICONS = GWT.create(EapFavicons.class);
+    private static final Logos LOGOS = GWT.create(EapLogos.class);
 
     @Override
     public String getId() {
-        return "org.jboss.hal.theme.wildfly";
+        return "org.jboss.hal.theme.eap";
     }
 
     @Override
     public String getTitle() {
-        return "WildFly";
+        return "Jboss EAP";
     }
 
     @Override
     public String getMainTitle() {
-        return "Wild";
+        return "Red Hat JBoss";
     }
 
     @Override
     public String getSecondaryTitle() {
-        return "Fly";
+        return "Enterprise Application Platform";
     }
 
     @Override
     public String getDescription() {
-        return "WildFly Management Console";
+        return "Red Hat JBoss Enterprise Application Platform";
     }
 
     @Override

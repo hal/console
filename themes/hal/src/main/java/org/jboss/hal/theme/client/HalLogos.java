@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.theme;
+package org.jboss.hal.theme.client;
 
 import com.google.gwt.resources.client.ImageResource;
 import org.jboss.hal.resources.Logos;
@@ -21,7 +21,7 @@ import org.jboss.hal.resources.Logos;
 /**
  * @author Harald Pehl
  */
-public interface EapLogos extends Logos {
+public interface HalLogos extends Logos {
 
     @Override
     @Source(ABOUT_FILE_NAME)
