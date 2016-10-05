@@ -67,7 +67,7 @@
                                 <resource>
                                     <directory>src/main/resources/org/jboss/hal/theme</directory>
                                     <includes>
-                                        <include>favicon.ico</include>
+                                        <include>favicon.png</include>
                                     </includes>
                                 </resource>
                             </resources>
