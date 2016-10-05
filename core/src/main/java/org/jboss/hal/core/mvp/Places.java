@@ -30,6 +30,7 @@ import org.jboss.hal.resources.Names;
 
 import static java.util.Collections.singletonList;
 import static org.jboss.hal.core.finder.FinderContext.PATH_PARAM;
+import static org.jboss.hal.core.mvp.ApplicationPresenter.EXTERNAL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
@@ -121,5 +122,15 @@ public class Places {
         String href = Browser.getWindow().getLocation().getHref();
         href = href.substring(0, href.indexOf('#'));
         return href + "#" + tokenFormatter.toHistoryToken(singletonList(placeRequest));
+    }
+
+    public boolean isExternal(PlaceRequest placeRequest) {
+        return Boolean.parseBoolean(placeRequest.getParameter(EXTERNAL, String.valueOf(false)));
+    }
+
+    public PlaceRequest external(PlaceRequest placeRequest) {
+        return new PlaceRequest.Builder(placeRequest)
+                .with(ApplicationPresenter.EXTERNAL, String.valueOf(true))
+                .build();
     }
 }

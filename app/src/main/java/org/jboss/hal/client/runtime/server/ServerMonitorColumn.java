@@ -79,7 +79,7 @@ public class ServerMonitorColumn extends StaticItemColumn {
                             .build(),
 
                     new StaticItem.Builder(Names.JNDI)
-                            .action(itemActionFactory.view(NameTokens.JNDI))
+                            .action(itemActionFactory.view(places.selectedServer(NameTokens.JNDI).build()))
                             .onPreview(new PreviewContent(Names.JNDI, resources.previews().runtimeJndi()))
                             .build());
 

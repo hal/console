@@ -13,30 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.tools;
-
-import javax.inject.Inject;
-
-import org.jboss.hal.core.modelbrowser.ModelBrowser;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
-import org.jboss.hal.dmr.model.ResourceAddress;
+package org.jboss.hal.core.mvp;
 
 /**
+ * Interface meant to be implemented by presenters which can be opened in an external browser window / tab.
+ *
  * @author Harald Pehl
  */
-public class ModelBrowserView extends PatternFlyViewImpl implements ModelBrowserPresenter.MyView {
+public interface ExternalMode {
 
-    private final ModelBrowser modelBrowser;
-
-    @Inject
-    public ModelBrowserView(ModelBrowser modelBrowser) {
-        this.modelBrowser = modelBrowser;
-        initElements(modelBrowser);
-    }
-
-    @Override
-    public void attach() {
-        super.attach();
-        modelBrowser.setRoot(ResourceAddress.ROOT, true);
-    }
+    /**
+     * @return {@code true} if an external link should be displayed in the header when this presenter is revealed,
+     * {@code false} otherwise.
+     */
+    boolean supportsExternalMode();
 }

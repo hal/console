@@ -66,12 +66,12 @@ import static org.jboss.hal.resources.Names.NYI;
 public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyView, IsElement {
 
     // @formatter:off
-    public static HeaderView create(final Resources resources, final User user) {
-        return new Templated_HeaderView(resources, user);
+    public static HeaderView create(final User user, final Resources resources) {
+        return new Templated_HeaderView(user, resources);
     }
 
-    public abstract Resources resources();
     public abstract User user();
+    public abstract Resources resources();
     // @formatter:on
 
 
@@ -95,7 +95,10 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     @DataElement Element patching;
     @DataElement Element topLevelTabs;
     @DataElement Element breadcrumbs;
+    @DataElement Element backItem;
     @DataElement Element backLink;
+    @DataElement Element externalItem;
+    @DataElement Element externalLink;
 
 
     @PostConstruct
@@ -225,7 +228,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         clearBreadcrumb();
         Element li = Browser.getDocument().createLIElement();
         li.setTextContent(title);
-        breadcrumbs.appendChild(li);
+        breadcrumbs.insertBefore(li, externalItem);
     }
 
     @Override
@@ -234,12 +237,23 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         Elements.setVisible(breadcrumbs, true);
     }
 
+    @Override
+    public void externalMode(final boolean externalMode) {
+        externalLink.setAttribute(UIConstants.HREF, presenter.externalUrl());
+        externalLink.setAttribute(UIConstants.TARGET, presenter.currentToken());
+        Elements.setVisible(externalItem, externalMode);
+    }
+
 
     // ------------------------------------------------------ breadcrumb
 
     private void clearBreadcrumb() {
-        while (breadcrumbs.getLastChild() != null && breadcrumbs.getChildren().getLength() > 1) {
-            breadcrumbs.removeChild(breadcrumbs.getLastChild());
+        for (Iterator<Element> iterator = Elements.iterator(breadcrumbs); iterator.hasNext(); ) {
+            Element element = iterator.next();
+            if (element == backItem || element == externalItem) {
+                continue;
+            }
+            iterator.remove();
         }
     }
 
@@ -335,7 +349,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
             }
             builder.end(); // </span>
             builder.end(); // </li>
-            breadcrumbs.appendChild(builder.build());
+            breadcrumbs.insertBefore(builder.build(), externalItem);
         }
     }
 
@@ -344,12 +358,13 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         clearBreadcrumb();
         if (path == null) {
             // deselection
-            breadcrumbs.appendChild(
-                    new Elements.Builder().li().textContent(resources().constants().nothingSelected()).build());
+            breadcrumbs.insertBefore(
+                    new Elements.Builder().li().textContent(resources().constants().nothingSelected()).build(),
+                    externalItem);
 
         } else {
             if (path.isEmpty()) {
-                breadcrumbs.appendChild(new Elements.Builder().li().textContent("").build());
+                breadcrumbs.insertBefore(new Elements.Builder().li().textContent("").build(), externalItem);
 
             } else {
                 ModelBrowser modelBrowser = path.getModelBrowser();
@@ -378,7 +393,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
                         builder.end(); // </a>
                     }
                     builder.end().end(); // </span> </li>
-                    breadcrumbs.appendChild(builder.build());
+                    breadcrumbs.insertBefore(builder.build(), externalItem);
                 }
             }
         }

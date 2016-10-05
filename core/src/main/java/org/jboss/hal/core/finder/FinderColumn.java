@@ -467,6 +467,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                             FinderRow selectedRow = previousColumn.selectedRow();
                             if (selectedRow != null) {
                                 selectedRow.updatePreview();
+                                selectedRow.asElement().scrollIntoView(false);
                             }
                             finder.updateContext();
                             finder.updateHistory();

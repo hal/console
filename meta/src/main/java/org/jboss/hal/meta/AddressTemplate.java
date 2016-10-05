@@ -127,21 +127,23 @@ public final class AddressTemplate {
         int index = 0;
         boolean first = true;
         StringBuilder builder = new StringBuilder();
-        for (Iterator<Property> iterator = address.asPropertyList().iterator(); iterator.hasNext(); ) {
-            Property property = iterator.next();
-            String name = property.getName();
-            String value = property.getValue().asString();
+        if (address.isDefined()) {
+            for (Iterator<Property> iterator = address.asPropertyList().iterator(); iterator.hasNext(); ) {
+                Property property = iterator.next();
+                String name = property.getName();
+                String value = property.getValue().asString();
 
-            String segment = unresolver == null
-                    ? name + "=" + value
-                    : unresolver.unresolve(name, value, first, !iterator.hasNext(), index);
-            builder.append(segment);
+                String segment = unresolver == null
+                        ? name + "=" + value
+                        : unresolver.unresolve(name, value, first, !iterator.hasNext(), index);
+                builder.append(segment);
 
-            if (iterator.hasNext()) {
-                builder.append("/");
+                if (iterator.hasNext()) {
+                    builder.append("/");
+                }
+                first = false;
+                index++;
             }
-            first = false;
-            index++;
         }
         return of(builder.toString());
     }

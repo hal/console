@@ -69,6 +69,7 @@ public class JpaView extends PatternFlyViewImpl implements JpaPresenter.MyView {
     private final Element headerElement;
     private final Element leadElement;
     private JpaPresenter presenter;
+
     @Inject
     public JpaView(MetadataRegistry metadataRegistry, Resources resources) {
         this.metadataRegistry = metadataRegistry;

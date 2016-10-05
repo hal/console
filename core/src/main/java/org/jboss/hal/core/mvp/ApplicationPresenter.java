@@ -17,12 +17,14 @@ package org.jboss.hal.core.mvp;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderContextEvent;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderSegment;
+import org.jboss.hal.core.ui.Skeleton;
 import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,11 +39,13 @@ import org.slf4j.LoggerFactory;
  * @author Harald Pehl
  */
 public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ extends ProxyPlace<?>>
-        extends PatternFlyPresenter<V, Proxy_> {
+        extends PatternFlyPresenter<V, Proxy_> implements ExternalMode {
 
+    static final String EXTERNAL = "external";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ApplicationPresenter.class);
 
-    protected final Finder finder;
+    private final Finder finder;
+    private boolean external;
 
     protected ApplicationPresenter(final EventBus eventBus, final V view, final Proxy_ proxy, final Finder finder) {
         super(eventBus, view, proxy, Slots.MAIN);
@@ -49,8 +53,17 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
     }
 
     @Override
+    public void prepareFromRequest(final PlaceRequest request) {
+        super.prepareFromRequest(request);
+        external = Boolean.parseBoolean(request.getParameter(EXTERNAL, String.valueOf(false)));
+    }
+
+    @Override
     protected void onReveal() {
         super.onReveal();
+        if (external) {
+            Skeleton.externalMode();
+        }
         if (getView() instanceof HasVerticalNavigation) {
             VerticalNavigation navigation = ((HasVerticalNavigation) getView()).getVerticalNavigation();
             if (navigation != null) {
@@ -62,12 +75,6 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
     }
 
     @Override
-    protected void onReset() {
-        super.onReset();
-        updateBreadcrumb();
-    }
-
-    @Override
     protected void onHide() {
         super.onHide();
         if (getView() instanceof HasVerticalNavigation) {
@@ -76,6 +83,12 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
                 navigation.off();
             }
         }
+    }
+
+    @Override
+    protected void onReset() {
+        super.onReset();
+        updateBreadcrumb();
     }
 
     /**
@@ -111,5 +124,17 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
         }
         // The breadcrumb is part of the header. Notify the header presenter to take care of updating the breadcrumb
         getEventBus().fireEvent(new FinderContextEvent(finder.getContext()));
+    }
+
+    /**
+     * @return {@code true} if this presenter is currently running in external mode, {@code false} otherwise.
+     */
+    public boolean isExternal() {
+        return external;
+    }
+
+    @Override
+    public boolean supportsExternalMode() {
+        return true;
     }
 }

@@ -96,10 +96,11 @@ public interface CSS {
     String editorButtons = "editor-buttons";
     String editorControls = "editor-controls";
     String editorStatus = "editor-status";
+    String empty = "empty";
     String error = "error";
     String errorCircleO = "error-circle-o";
     String equals = "equals";
-    String empty = "empty";
+    String external = "external";
 
     String fade = "fade";
     String filter = "filter";

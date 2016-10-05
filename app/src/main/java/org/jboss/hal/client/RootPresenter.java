@@ -22,10 +22,12 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.presenter.slots.IsSingleSlot;
 import com.gwtplatform.mvp.client.presenter.slots.PermanentSlot;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import org.jboss.hal.client.skeleton.FooterPresenter;
 import org.jboss.hal.client.skeleton.HeaderPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.mvp.Slots;
 
 /**
@@ -44,13 +46,18 @@ public class RootPresenter extends Presenter<RootPresenter.MyView, RootPresenter
     static final IsSingleSlot<HeaderPresenter> SLOT_HEADER_CONTENT = new PermanentSlot<>();
     static final IsSingleSlot<FooterPresenter> SLOT_FOOTER_CONTENT = new PermanentSlot<>();
 
+    private final Places places;
+    private final PlaceManager placeManager;
     private final HeaderPresenter headerPresenter;
     private final FooterPresenter footerPresenter;
 
     @Inject
     public RootPresenter(EventBus eventBus, MyView view, MyProxy proxy,
+            Places places, PlaceManager placeManager,
             HeaderPresenter headerPresenter, FooterPresenter footerPresenter) {
         super(eventBus, view, proxy, RevealType.Root);
+        this.places = places;
+        this.placeManager = placeManager;
         this.headerPresenter = headerPresenter;
         this.footerPresenter = footerPresenter;
     }
@@ -58,8 +65,10 @@ public class RootPresenter extends Presenter<RootPresenter.MyView, RootPresenter
     @Override
     protected void onBind() {
         getView().setPresenter(this);
-        setInSlot(SLOT_HEADER_CONTENT, headerPresenter);
-        setInSlot(SLOT_FOOTER_CONTENT, footerPresenter);
+        if (!places.isExternal(placeManager.getCurrentPlaceRequest())) {
+            setInSlot(SLOT_HEADER_CONTENT, headerPresenter);
+            setInSlot(SLOT_FOOTER_CONTENT, footerPresenter);
+        }
     }
 
     void tlcMode() {
@@ -72,5 +81,9 @@ public class RootPresenter extends Presenter<RootPresenter.MyView, RootPresenter
 
     void applicationMode() {
         headerPresenter.applicationMode();
+    }
+
+    void externalMode(final boolean externalMode) {
+        headerPresenter.externalMode(externalMode);
     }
 }

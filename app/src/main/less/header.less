@@ -15,7 +15,7 @@
 .logo-text {
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
   font-weight: 300;
-  font-size: 16px;
+  font-size: 14px;
   &.logo-text-first {
     font-weight: 700;
   }
@@ -83,7 +83,6 @@
 }
 
 .hal-breadcrumb {
-  //display: table;
   display: flex;
   flex-wrap: nowrap;
   margin-bottom: 0;
@@ -130,7 +129,7 @@
       overflow-x: scroll;
       top: 26px;
 
-      li.empty{
+      li.empty {
         color: #999;
         font-style: italic;
         padding: 5px;
@@ -150,6 +149,9 @@
     }
     padding: 0 10px;
   }
+  > li + li.external:before {
+    content: '';
+  }
 
   li.active {
     color: #7dc3e8;
@@ -161,4 +163,10 @@
     }
   }
 
+  li.external {
+    align-items: center;
+    flex-grow: 1;
+    justify-content: flex-end;
+    padding-right: 10px;
+  }
 }
