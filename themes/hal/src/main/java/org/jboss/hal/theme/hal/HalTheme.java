@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.theme.client;
+package org.jboss.hal.theme.hal;
 
 import com.google.gwt.core.client.GWT;
 import org.jboss.hal.resources.Favicons;
@@ -35,23 +35,23 @@ public class HalTheme implements Theme {
     }
 
     @Override
-    public String getId() {
-        return "org.jboss.hal.theme.hal";
-    }
-
-    @Override
-    public String getTitle() {
+    public String getName() {
         return HAL;
     }
 
     @Override
-    public String getSecondaryTitle() {
-        return MANAGEMENT_CONSOLE;
+    public String getFullName() {
+        return HAL + " " + MANAGEMENT_CONSOLE;
     }
 
     @Override
-    public String getDescription() {
-        return "HAL Management Console";
+    public String getFirstName() {
+        return HAL + " ";
+    }
+
+    @Override
+    public String getLastName() {
+        return MANAGEMENT_CONSOLE;
     }
 
     @Override

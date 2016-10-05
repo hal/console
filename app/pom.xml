@@ -32,18 +32,13 @@
     <packaging>gwt-app</packaging>
 
     <properties>
-        <grunt-task>prod</grunt-task>
-        <gwt.draftCompile>false</gwt.draftCompile>
-        <gwt.failOnError>true</gwt.failOnError>
+        <grunt-task>dev</grunt-task>
+        <gwt.draftCompile>true</gwt.draftCompile>
+        <gwt.failOnError>false</gwt.failOnError>
         <gwt.logLevel>INFO</gwt.logLevel>
-        <!--
-            Do not optimize: It will wipe out code which actually must not be erased (like the
-            org.jboss.hal.ballroom.dragndrop.DragEvent.dataTransfer parameter of the onDrop event handler)
-            TODO Check if this is a bug in GWT or how much we can optimize until the code is removed.
-        -->
         <gwt.optimize>0</gwt.optimize>
-        <gwt.style>OBFUSCATED</gwt.style>
-        <theme.src.dir>../themes/wildfly/src/main/java</theme.src.dir>
+        <gwt.style>PRETTY</gwt.style>
+        <theme.src.dir>../themes/hal/src/main/java</theme.src.dir>
     </properties>
 
     <dependencies>
@@ -249,6 +244,16 @@
                             <sources>
                                 <source>${project.build.directory}/generated-sources/apt-app</source>
                                 <source>${project.build.directory}/generated-sources/apt-gin</source>
+                                <source>../ballroom/src/main/java</source>
+                                <source>../config/src/main/java</source>
+                                <source>../core/src/main/java</source>
+                                <source>../dmr/src/main/java</source>
+                                <source>../meta/src/main/java</source>
+                                <source>../resources/src/main/java</source>
+                                <source>../spi/src/main/java</source>
+                                <source>../themes/eap/src/main/java</source>
+                                <source>../themes/hal/src/main/java</source>
+                                <source>../themes/wildfly/src/main/java</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -324,46 +329,20 @@
                 Activate this profile when running gwt:devmode from the command line
                 to enable browser refresh after changing sources
             -->
-            <id>dev</id>
+            <id>prod</id>
             <properties>
-                <grunt-task>dev</grunt-task>
-                <gwt.draftCompile>true</gwt.draftCompile>
-                <gwt.failOnError>false</gwt.failOnError>
+                <grunt-task>prod</grunt-task>
+                <gwt.draftCompile>false</gwt.draftCompile>
+                <gwt.failOnError>true</gwt.failOnError>
                 <gwt.logLevel>INFO</gwt.logLevel>
+                <!--
+                    Do not optimize: It will wipe out code which actually must not be erased (like the
+                    org.jboss.hal.ballroom.dragndrop.DragEvent.dataTransfer parameter of the onDrop event handler)
+                    TODO Check if this is a bug in GWT or how much we can optimize until the code is removed.
+                -->
                 <gwt.optimize>0</gwt.optimize>
-                <gwt.style>PRETTY</gwt.style>
+                <gwt.style>OBFUSCATED</gwt.style>
             </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>build-helper-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>add-dev-source</id>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>add-source</goal>
-                                </goals>
-                                <configuration>
-                                    <sources>
-                                        <source>../ballroom/src/main/java</source>
-                                        <source>../config/src/main/java</source>
-                                        <source>../core/src/main/java</source>
-                                        <source>../dmr/src/main/java</source>
-                                        <source>../meta/src/main/java</source>
-                                        <source>../resources/src/main/java</source>
-                                        <source>../spi/src/main/java</source>
-                                        <source>../themes/eap/src/main/java</source>
-                                        <source>../themes/hal/src/main/java</source>
-                                        <source>../themes/wildfly/src/main/java</source>
-                                    </sources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
         <profile>
             <id>theme-eap</id>

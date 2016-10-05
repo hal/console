@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.theme.client;
+package org.jboss.hal.theme.hal;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Singleton;

@@ -15,5 +15,5 @@
   ~ limitations under the License.
   -->
 <module>
-    <source path="client"/>
+    <source path="eap"/>
 </module>

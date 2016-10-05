@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.gwtplatform.mvp.client.ViewImpl;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
@@ -145,7 +146,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     @Override
     public void update(Environment environment, Endpoints endpoints, User user) {
-        setLogo(resources().theme().getMainTitle(), resources().theme().getSecondaryTitle());
+        setLogo(resources().theme().getFirstName(), resources().theme().getLastName());
 
         if (endpoints.isSameOrigin()) {
             connectedTo.setInnerText(resources().constants().sameOrigin());
@@ -162,9 +163,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     private void setLogo(String first, String last) {
         logoFirst.setInnerText(first);
-        if (last != null) {
-            logoLast.setInnerText(last);
-        }
+        logoLast.setInnerText(Strings.nullToEmpty(last));
     }
 
 

@@ -24,24 +24,33 @@ import org.jetbrains.annotations.NonNls;
  */
 public interface Theme {
 
+    /**
+     * A name to be used the UI.
+     */
     @NonNls
-    String getId();
+    String getName();
 
+    /**
+     * A longer name to be used in the UI.
+     */
     @NonNls
-    String getTitle();
+    String getFullName();
 
+    /**
+     * String used together with {@link #getLastName()} in the header. Defaults to {@link #getName()}.
+     */
     @NonNls
-    default String getMainTitle() {
-        return getTitle();
+    default String getFirstName() {
+        return getName();
     }
 
+    /**
+     * If not {@code null} this string is used together with {@link #getFirstName()} in the header.
+     */
     @NonNls
-    default String getSecondaryTitle() {
+    default String getLastName() {
         return null;
     }
-
-    @NonNls
-    String getDescription();
 
     Favicons favicons();
 

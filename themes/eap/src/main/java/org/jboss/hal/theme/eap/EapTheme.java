@@ -13,48 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.theme.client;
+package org.jboss.hal.theme.eap;
 
 import com.google.gwt.core.client.GWT;
-import org.jboss.hal.resources.Favicons;
 import org.jboss.hal.resources.Logos;
 import org.jboss.hal.resources.Theme;
 
 /**
  * @author Harald Pehl
  */
-public class WildFlyTheme implements Theme {
+public class EapTheme implements Theme {
 
-    private static final Favicons FAVICONS = GWT.create(WildFlyFavicons.class);
-    private static final Logos LOGOS = GWT.create(WildFlyLogos.class);
+    private static final org.jboss.hal.resources.Favicons FAVICONS = GWT.create(EapFavicons.class);
+    private static final Logos LOGOS = GWT.create(EapLogos.class);
 
     @Override
-    public String getId() {
-        return "org.jboss.hal.theme.wildfly";
+    public String getName() {
+        return "Jboss EAP";
     }
 
     @Override
-    public String getTitle() {
-        return "WildFly";
+    public String getFullName() {
+        return "Red Hat JBoss Enterprise Application Platform";
     }
 
     @Override
-    public String getMainTitle() {
-        return "Wild";
+    public String getFirstName() {
+        return "JBoss ";
     }
 
     @Override
-    public String getSecondaryTitle() {
-        return "Fly";
+    public String getLastName() {
+        return "Enterprise Application Platform";
     }
 
     @Override
-    public String getDescription() {
-        return "WildFly Management Console";
-    }
-
-    @Override
-    public Favicons favicons() {
+    public org.jboss.hal.resources.Favicons favicons() {
         return FAVICONS;
     }
 

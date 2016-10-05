@@ -13,21 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.theme.client;
+package org.jboss.hal.theme.eap;
 
-import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.inject.Singleton;
-import org.jboss.hal.resources.Theme;
-import org.jboss.hal.spi.GinModule;
+import com.google.gwt.resources.client.ImageResource;
+import org.jboss.hal.resources.Favicons;
 
 /**
  * @author Harald Pehl
  */
-@GinModule
-public class WildFlyThemeModule extends AbstractGinModule {
+public interface EapFavicons extends Favicons {
 
     @Override
-    protected void configure() {
-        bind(Theme.class).to(WildFlyTheme.class).in(Singleton.class);
-    }
+    @Source(FILE_NAME_16)
+    ImageResource x16();
+
+    @Override
+    @Source(FILE_NAME_32)
+    ImageResource x32();
+
+    @Override
+    @Source(FILE_NAME_128)
+    ImageResource x128();
+
+    @Override
+    @Source(FILE_NAME_152)
+    ImageResource x152();
 }

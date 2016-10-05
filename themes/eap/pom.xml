@@ -33,6 +33,50 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-favicon</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources/org/jboss/hal/theme/eap</directory>
+                                    <includes>
+                                        <include>favicon.png</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                            <overwrite>true</overwrite>
+                            <outputDirectory>/../../app/src/main/resources/org/jboss/hal/public</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-icons</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources/org/jboss/hal/theme/eap</directory>
+                                    <includes>
+                                        <include>icon-*.png</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                            <overwrite>true</overwrite>
+                            <outputDirectory>/../../app/src/main/resources/org/jboss/hal/public/img</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>net.ltgt.gwt.maven</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
                 <extensions>true</extensions>
