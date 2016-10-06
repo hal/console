@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-dependencies</artifactId>
-        <version>0.4.0</version>
+        <version>0.4.2</version>
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
@@ -30,6 +30,12 @@
     <name>HAL :: Themes</name>
     <description>Themes parent POM.</description>
     <packaging>pom</packaging>
+
+    <modules>
+        <module>eap</module>
+        <module>hal</module>
+        <module>wildfly</module>
+    </modules>
 
     <dependencies>
         <dependency>

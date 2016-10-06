@@ -27,7 +27,7 @@
 
     <groupId>org.jboss.hal</groupId>
     <artifactId>hal-parent</artifactId>
-    <version>0.4.1</version>
+    <version>0.4.2</version>
     <name>HAL :: Parent :: Aggregator</name>
     <description>The WildFly / EAP management console</description>
     <packaging>pom</packaging>
@@ -95,6 +95,7 @@
         <module>resources</module>
         <module>spi</module>
         <module>standalone</module>
+        <module>themes</module>
     </modules>
 
     <build>
@@ -146,27 +147,6 @@
             <id>docker</id>
             <modules>
                 <module>docker</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>theme-eap</id>
-            <modules>
-                <module>themes/eap</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>theme-hal</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>themes/hal</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>theme-wildfly</id>
-            <modules>
-                <module>themes/wildfly</module>
             </modules>
         </profile>
     </profiles>
