@@ -8,10 +8,6 @@ if [ "$#" -ne 1 ]; then
     echo "Illegal number of arguments. Use '$PROGNAME <version>'"
 else
     mvn versions:set -Pdocker -DnewVersion=$1
-    cd themes && mvn versions:set -DnewVersion=$1 && cd -
-    cd themes/eap && mvn versions:set -DnewVersion=$1 && cd -
-    cd themes/hal && mvn versions:set -DnewVersion=$1 && cd -
-    cd themes/wildfly && mvn versions:set -DnewVersion=$1 && cd -
     sed -i.versionsBackup "s/\"version\": \".*\",$/\"version\": \"$1\",/" app/bower.json
     sed -i.versionsBackup "s/\"version\": \".*\",$/\"version\": \"$1\",/" app/package.json
     sed -i.versionsBackup "s/\"version\": \".*\",$/\"version\": \"$1\",/" npm/package.json

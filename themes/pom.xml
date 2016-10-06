@@ -31,6 +31,12 @@
     <description>Themes parent POM.</description>
     <packaging>pom</packaging>
 
+    <modules>
+        <module>eap</module>
+        <module>hal</module>
+        <module>wildfly</module>
+    </modules>
+
     <dependencies>
         <dependency>
             <groupId>org.jboss.hal</groupId>
