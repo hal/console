@@ -105,7 +105,7 @@ GitHub pages are served from **https** so you need to secure the management inte
 The SuperDevMode is intended for development as it provides browser refresh after code changes. 
 
 1. Add http://localhost:8888 as allowed origin
-1. `mvn install -Dgwt.skipCompilation -Pdev` 
+1. `mvn install -Dgwt.skipCompilation` 
 1. `cd app`
 1. `mvn gwt:devmode`
 1. Open http://localhost:8888/hal/dev.html
