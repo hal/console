@@ -31,8 +31,6 @@ import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.capabilitiy.Capabilities;
-import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
@@ -43,7 +41,6 @@ import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
-import static org.jboss.hal.meta.security.SecurityContext.RWX;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -66,7 +63,7 @@ public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView
     private JndiPresenter presenter;
 
     @Inject
-    public JndiView(Capabilities capabilities, JndiResources jndiResources, Resources resources) {
+    public JndiView(JndiResources jndiResources, Resources resources) {
 
         search = new Search.Builder(Ids.JNDI_SEARCH,
                 query -> {
@@ -81,7 +78,7 @@ public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView
                 })
                 .build();
 
-        Metadata metadata = new Metadata(RWX, StaticResourceDescription.from(jndiResources.jndi()), capabilities);
+        Metadata metadata = Metadata.staticDescription(jndiResources.jndi());
         details = new ModelNodeForm.Builder<>(Ids.JNDI_DETAILS, metadata)
                 .include("uri", CLASS_NAME, VALUE)
                 .viewOnly()

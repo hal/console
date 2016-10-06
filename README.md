@@ -107,5 +107,5 @@ The SuperDevMode is intended for development as it provides browser refresh afte
 1. Add http://localhost:8888 as allowed origin
 1. `mvn install -Dgwt.skipCompilation -Pdev` 
 1. `cd app`
-1. `./devmode.sh`
+1. `mvn gwt:devmode`
 1. Open http://localhost:8888/hal/dev.html

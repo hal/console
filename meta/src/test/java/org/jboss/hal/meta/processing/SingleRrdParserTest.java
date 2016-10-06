@@ -155,6 +155,5 @@ public class SingleRrdParserTest {
                 "/server-group=other-server-group",
                 "/server-group=other-server-group/jvm=default");
         assertSecurityContextOnly(results);
-        assertCapability(results, "org.wildfly.domain.server-group");
     }
 }

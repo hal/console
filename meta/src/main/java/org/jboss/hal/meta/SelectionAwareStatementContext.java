@@ -15,30 +15,30 @@
  */
 package org.jboss.hal.meta;
 
-import javax.inject.Provider;
+import java.util.function.Supplier;
 
 /**
- * A filtering statement context which resolves the key {@code selection} to the specified selection provider.
+ * A filtering statement context which resolves the key {@code selection} to the specified selection supplier.
  *
  * @author Harald Pehl
  */
 public class SelectionAwareStatementContext extends FilteringStatementContext implements StatementContext {
 
-    public static final String SELECTION_KEY = "selection";
+    private static final String SELECTION_KEY = "selection";
     public static final String SELECTION_EXPRESSION = "{" + SELECTION_KEY + "}";
 
-    public SelectionAwareStatementContext(final StatementContext delegate, final Provider<String> selectionProvider) {
+    public SelectionAwareStatementContext(final StatementContext delegate, final Supplier<String> selection) {
         super(delegate, new Filter() {
             @Override
-            public String filter(final String key) {
-                if (SELECTION_KEY.equals(key)) {
-                    return selectionProvider.get();
+            public String filter(final String placeholder) {
+                if (SELECTION_KEY.equals(placeholder)) {
+                    return selection.get();
                 }
                 return null;
             }
 
             @Override
-            public String[] filterTuple(final String tuple) {
+            public String[] filterTuple(final String placeholder) {
                 return null;
             }
         });

@@ -70,7 +70,7 @@ import org.slf4j.LoggerFactory;
 import static elemental.css.CSSStyleDeclaration.Unit.PX;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.ballroom.js.JsHelper.asList;
+import static org.jboss.hal.ballroom.JsHelper.asList;
 import static org.jboss.hal.core.modelbrowser.SingletonState.CHOOSE;
 import static org.jboss.hal.core.modelbrowser.SingletonState.CREATE;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;

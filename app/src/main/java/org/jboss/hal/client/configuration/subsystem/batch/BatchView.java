@@ -42,15 +42,15 @@ public abstract class BatchView extends MbuiViewImpl<BatchPresenter> implements 
     }
 
     @MbuiElement("batch-vertical-navigation") VerticalNavigation navigation;
-    @MbuiElement("configuration-form") Form<ModelNode> configurationForm;
-    @MbuiElement("in-memory-job-repo-table") DataTable<NamedNode> inMemoryJobRepoTable;
-    @MbuiElement("in-memory-job-repo-form") Form<NamedNode> inMemoryJobRepoForm;
-    @MbuiElement("jdbc-job-repo-table") DataTable<NamedNode> jdbcJobRepoTable;
-    @MbuiElement("jdbc-job-repo-form") Form<NamedNode> jdbcJobRepoForm;
-    @MbuiElement("thread-factory-table") DataTable<NamedNode> threadFactoryTable;
-    @MbuiElement("thread-factory-form") Form<NamedNode> threadFactoryForm;
-    @MbuiElement("thread-pool-table") DataTable<NamedNode> threadPoolTable;
-    @MbuiElement("thread-pool-form") Form<NamedNode> threadPoolForm;
+    @MbuiElement("batch-configuration-form") Form<ModelNode> configurationForm;
+    @MbuiElement("batch-in-memory-job-repo-table") DataTable<NamedNode> inMemoryJobRepoTable;
+    @MbuiElement("batch-in-memory-job-repo-form") Form<NamedNode> inMemoryJobRepoForm;
+    @MbuiElement("batch-jdbc-job-repo-table") DataTable<NamedNode> jdbcJobRepoTable;
+    @MbuiElement("batch-jdbc-job-repo-form") Form<NamedNode> jdbcJobRepoForm;
+    @MbuiElement("batch-thread-factory-table") DataTable<NamedNode> threadFactoryTable;
+    @MbuiElement("batch-thread-factory-form") Form<NamedNode> threadFactoryForm;
+    @MbuiElement("batch-thread-pool-table") DataTable<NamedNode> threadPoolTable;
+    @MbuiElement("batch-thread-pool-form") Form<NamedNode> threadPoolForm;
 
     BatchView(final MbuiContext mbuiContext) {
         super(mbuiContext);

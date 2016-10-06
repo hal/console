@@ -41,10 +41,10 @@ public abstract class IOView extends MbuiViewImpl<IOPresenter> implements IOPres
     }
 
     @MbuiElement("io-vertical-navigation") VerticalNavigation navigation;
-    @MbuiElement("buffer-pool-table") DataTable<NamedNode> bufferPoolTable;
-    @MbuiElement("buffer-pool-form") Form<NamedNode> bufferPoolForm;
-    @MbuiElement("worker-table") DataTable<NamedNode> workerTable;
-    @MbuiElement("worker-form") Form<NamedNode> workerForm;
+    @MbuiElement("io-buffer-pool-table") DataTable<NamedNode> bufferPoolTable;
+    @MbuiElement("io-buffer-pool-form") Form<NamedNode> bufferPoolForm;
+    @MbuiElement("io-worker-table") DataTable<NamedNode> workerTable;
+    @MbuiElement("io-worker-form") Form<NamedNode> workerForm;
 
     IOView(final MbuiContext mbuiContext) {
         super(mbuiContext);

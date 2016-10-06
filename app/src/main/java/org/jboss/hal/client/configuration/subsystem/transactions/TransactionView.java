@@ -36,12 +36,12 @@ public abstract class TransactionView extends MbuiViewImpl<TransactionPresenter>
         return new Mbui_TransactionView(mbuiContext);
     }
 
-    @MbuiElement("transaction-vertical-navigation") VerticalNavigation navigation;
-    @MbuiElement("attributes-form") Form<ModelNode> attributesForm;
-    @MbuiElement("process-form") Form<ModelNode> processForm;
-    @MbuiElement("recovery-form") Form<ModelNode> recoveryForm;
-    @MbuiElement("path-form") Form<ModelNode> pathForm;
-    @MbuiElement("jdbc-form") Form<ModelNode> jdbcForm;
+    @MbuiElement("tx-vertical-navigation") VerticalNavigation navigation;
+    @MbuiElement("tx-attributes-form") Form<ModelNode> attributesForm;
+    @MbuiElement("tx-process-form") Form<ModelNode> processForm;
+    @MbuiElement("tx-recovery-form") Form<ModelNode> recoveryForm;
+    @MbuiElement("tx-path-form") Form<ModelNode> pathForm;
+    @MbuiElement("tx-jdbc-form") Form<ModelNode> jdbcForm;
 
     TransactionView(final MbuiContext mbuiContext) {
         super(mbuiContext);

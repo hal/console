@@ -65,7 +65,6 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
     public interface MyProxy extends ProxyPlace<LogFilePresenter> {}
 
     public interface MyView extends PatternFlyView, HasPresenter<LogFilePresenter> {
-        void externalMode();
         void loading();
         void show(LogFile logFile, int lines, String content);
         void refresh(int lines, String content);
@@ -84,8 +83,6 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
     private String logFileName;
     private LogFile logFile;
     private int intervalHandle;
-    private boolean external;
-
 
     @Inject
     public LogFilePresenter(final EventBus eventBus,
@@ -105,7 +102,6 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
         this.logFileName = null;
         this.logFile = null;
         this.intervalHandle = -1;
-        this.external = false;
     }
 
     @Override
@@ -118,15 +114,6 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
     public void prepareFromRequest(final PlaceRequest request) {
         super.prepareFromRequest(request);
         logFileName = request.getParameter(NAME, null);
-        external = Boolean.parseBoolean(request.getParameter(EXTERNAL_PARAM, "false")); //NON-NLS
-    }
-
-    @Override
-    protected void onReveal() {
-        super.onReveal();
-        if (external) {
-            getView().externalMode();
-        }
     }
 
     @Override
@@ -224,10 +211,6 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
         } else {
             MessageEvent.fire(getEventBus(), Message.error(resources.messages().noLogFile()));
         }
-    }
-
-    boolean isExternal() {
-        return external;
     }
 
     private boolean inTailMode() {

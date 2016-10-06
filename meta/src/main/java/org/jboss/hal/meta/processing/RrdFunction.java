@@ -76,12 +76,8 @@ class RrdFunction implements Function<FunctionContext> {
                             }
                             if (rr.resourceDescription != null && rr.securityContext != null) {
                                 logger.debug("Add metadata for {}", rr.address);
-                                metadataRegistry.add(rr.address,
-                                        new Metadata(rr.securityContext, rr.resourceDescription, capabilities));
-                            }
-                            if (!rr.capabilities.isEmpty()) {
-                                logger.debug("Add capabilities {} for {}", rr.capabilities, rr.address);
-                                rr.capabilities.forEach(capabilities::register);
+                                metadataRegistry.add(rr.address, new Metadata(rr.template, rr.securityContext,
+                                        rr.resourceDescription, capabilities));
                             }
                         }
                         control.proceed();

@@ -17,6 +17,8 @@ package org.jboss.hal.client.configuration.subsystem.ee;
 
 import org.jboss.hal.meta.AddressTemplate;
 
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
+
 /**
  * @author Claudio Miranda
  */
@@ -35,5 +37,5 @@ public interface AddressTemplates {
     AddressTemplate MANAGED_EXECUTOR_SCHEDULED_TEMPLATE = AddressTemplate.of(MANAGED_EXECUTOR_SCHEDULED_ADDRESS);
     AddressTemplate MANAGED_THREAD_FACTORY_TEMPLATE     = AddressTemplate.of(MANAGED_THREAD_FACTORY_ADDRESS);
 
-    AddressTemplate EE_SUBSYSTEM_TEMPLATE = AddressTemplate.of("/{selected.profile}/subsystem=ee");
+    AddressTemplate EE_SUBSYSTEM_TEMPLATE = AddressTemplate.of(SELECTED_PROFILE, "subsystem=ee");
 }

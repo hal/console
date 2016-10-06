@@ -16,7 +16,8 @@
 package org.jboss.hal.ballroom;
 
 import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Map;
 
 import elemental.client.Browser;
 import elemental.dom.Element;
@@ -70,20 +71,34 @@ public class VerticalNavigation {
     private static class Entry implements IsElement {
 
         private final String id;
+        private final String parentId;
         private final String text;
-        private final boolean primary;
         private final Element element;
+        private final LinkedHashSet<String> children;
 
-        private Entry(final String id, final String text, final boolean primary, final Element element) {
+        private Entry(final String id, String parentId, final String text, final Element element) {
             this.id = id;
+            this.parentId = parentId;
             this.text = text;
-            this.primary = primary;
             this.element = element;
+            this.children = new LinkedHashSet<>();
         }
 
         @Override
         public Element asElement() {
             return element;
+        }
+
+        private void addChild(String id) {
+            children.add(id);
+        }
+
+        private boolean hasChildren() {
+            return !children.isEmpty();
+        }
+
+        private String firstChild() {
+            return children.iterator().next();
         }
     }
 
@@ -245,7 +260,7 @@ public class VerticalNavigation {
             .end();
         // @formatter:on
 
-        Entry entry = new Entry(id, text, true, builder.build());
+        Entry entry = new Entry(id, null, text, builder.build());
         primaryUl.appendChild(entry.asElement());
         entries.put(id, entry);
         if (pane != null) {
@@ -309,7 +324,8 @@ public class VerticalNavigation {
                 .end();
             // @formatter:on
 
-            Entry secondaryEntry = new Entry(id, text, false, builder.build());
+            primaryEntry.addChild(id);
+            Entry secondaryEntry = new Entry(id, primaryId, text, builder.build());
             secondaryUl.appendChild(secondaryEntry.asElement());
             entries.put(id, secondaryEntry);
             panes.put(id, pane);
@@ -325,50 +341,49 @@ public class VerticalNavigation {
 
     public void showInitial() {
         if (!entries.isEmpty()) {
-            show(entries.keySet().iterator().next());
+            String id;
+            Map.Entry<String, Entry> entry = entries.entrySet().iterator().next();
+            if (entry.getValue().hasChildren()) {
+                id = entry.getValue().firstChild();
+            } else {
+                id = entry.getValue().id;
+            }
+            show(id);
         }
     }
 
     public void show(String id) {
         Entry show = entries.get(id);
         if (show != null) {
-            List<Entry> otherEntriesOnSameLevel = entries.values().stream()
-                    .filter(entry -> entry.primary == show.primary && !entry.id.equals(id))
-                    .collect(toList());
-            show.asElement().getClassList().add(active);
-            for (Entry entry : otherEntriesOnSameLevel) {
-                entry.asElement().getClassList().remove(active);
+            if (show.parentId != null) {
+                show(show.parentId);
             }
             for (Pane pane : panes.values()) {
                 Elements.setVisible(pane.asElement(), pane.id.equals(id));
             }
+            show.asElement().click();
 
         } else {
             logger.error("Unable to show entry for id '{}': No such entry!", id);
         }
     }
 
-    public void updateBadge(String secondaryId, int count) {
-        Entry entry = entries.get(secondaryId);
+    public void updateBadge(String id, int count) {
+        Entry entry = entries.get(id);
         if (entry != null) {
-            if (!entry.primary) {
-                Element a = entry.asElement().getFirstElementChild();
-                Element badgeContainer = a.querySelector("." + badgeContainerPf);
-                if (badgeContainer != null) {
-                    a.removeChild(badgeContainer);
-                }
-                badgeContainer = new Elements.Builder()
-                        .div().css(badgeContainerPf)
-                        .span().css(badge).textContent(String.valueOf(count)).end()
-                        .end()
-                        .build();
-                a.appendChild(badgeContainer);
-
-            } else {
-                logger.error("Entry behind '{}' is primary, but must be secondary!", secondaryId);
+            Element a = entry.asElement().getFirstElementChild();
+            Element badgeContainer = a.querySelector("." + badgeContainerPf);
+            if (badgeContainer != null) {
+                a.removeChild(badgeContainer);
             }
+            badgeContainer = new Elements.Builder()
+                    .div().css(badgeContainerPf)
+                    .span().css(badge).textContent(String.valueOf(count)).end()
+                    .end()
+                    .build();
+            a.appendChild(badgeContainer);
         } else {
-            logger.error("Unable to find secondary navigation entry for id '{}'", secondaryId);
+            logger.error("Unable to find navigation entry for id '{}'", id);
         }
     }
 
@@ -381,6 +396,6 @@ public class VerticalNavigation {
     }
 
     private boolean hasSecondary() {
-        return entries.values().stream().filter(entry -> !entry.primary).findFirst().isPresent();
+        return entries.values().stream().filter(entry -> !entry.children.isEmpty()).findAny().isPresent();
     }
 }

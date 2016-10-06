@@ -23,7 +23,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import elemental.client.Browser;
 import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.hal.ballroom.js.JsHelper;
+import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;

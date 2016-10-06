@@ -206,7 +206,7 @@ public class RhcpColumns {
                         List<JsonObject> tracks = new ArrayList<>();
                         StreamSupport.stream(context.getPath().spliterator(), false)
                                 .filter(segment -> "rhcp-album".equals(segment.getColumnId()))
-                                .findFirst()
+                                .findAny()
                                 .map(segment -> RhcpResources.DISCOGRAPHY.getObject(segment.getItemTitle()))
                                 .ifPresent(album -> {
                                     for (int i = 0; i < album.getArray("tracks").length(); i++) {

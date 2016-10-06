@@ -17,7 +17,6 @@ import org.junit.Test;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
-import static org.jboss.hal.meta.processing.RrdParserTestHelper.assertCapability;
 import static org.jboss.hal.meta.processing.RrdParserTestHelper.assertDescriptionOnly;
 import static org.jboss.hal.meta.processing.RrdParserTestHelper.assertResults;
 
@@ -84,7 +83,6 @@ public class CompositeRrdParserTest {
 
         assertResults(results, 6, FLAT_TEMPLATES);
         assertDescriptionOnly(results);
-        assertCapability(results, "org.wildfly.undertow.listener");
     }
 
     @Test
@@ -102,7 +100,5 @@ public class CompositeRrdParserTest {
         // There must be no duplicates!
         assertResults(results, 36, RECURSIVE_TEMPLATES);
         assertDescriptionOnly(results);
-        assertCapability(results, "org.wildfly.extension.undertow.handler.file");
-        assertCapability(results, "org.wildfly.undertow.listener");
     }
 }

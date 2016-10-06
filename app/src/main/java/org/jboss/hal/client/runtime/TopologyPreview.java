@@ -238,19 +238,19 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                         if (hostName != null) {
                             hosts.stream()
                                     .filter(host -> hostName.equals(host.getName()))
-                                    .findFirst()
+                                    .findAny()
                                     .ifPresent(host -> hostDetails(host));
                         }
                         if (serverGroupName != null) {
                             serverGroups.stream()
                                     .filter(serverGroup -> serverGroupName.equals(serverGroup.getName()))
-                                    .findFirst()
+                                    .findAny()
                                     .ifPresent(serverGroup -> serverGroupDetails(serverGroup));
                         }
                         if (serverName != null) {
                             servers.stream()
                                     .filter(server -> serverName.equals(server.getName()))
-                                    .findFirst()
+                                    .findAny()
                                     .ifPresent(server -> serverDetails(server));
                         }
                     }
@@ -280,7 +280,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                             host.getServers().stream()
                                     .filter(srv -> srv.getHost().equals(server.getHost()) &&
                                             srv.getName().equals(server.getName()))
-                                    .findFirst()
+                                    .findAny()
                                     .ifPresent(updatedServer -> {
                                         String serverId = Ids
                                                 .hostServer(updatedServer.getHost(), updatedServer.getName());

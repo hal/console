@@ -35,6 +35,8 @@ module.exports = function (grunt) {
                 '<%= config.public %>/img/**',
                 '<%= config.public %>/js/*.js',
                 '<%= config.public %>/js/*.swf',
+                '!<%= config.public %>/favicon.png',
+                '!<%= config.public %>/img/icon-*.png',
                 '!<%= config.public %>/js/mode-logfile.js',
                 '!<%= config.public %>/js/theme-logfile.js'
             ]

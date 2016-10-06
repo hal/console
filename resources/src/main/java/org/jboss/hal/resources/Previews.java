@@ -91,6 +91,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/configuration/ee.html")
     ExternalTextResource configurationEe();
 
+    @Source("previews/configuration/ejb3.html")
+    ExternalTextResource configurationEjb3();
+
     @Source("previews/configuration/interfaces.html")
     ExternalTextResource configurationInterfaces();
 
@@ -117,6 +120,9 @@ public interface Previews extends ClientBundleWithLookup {
 
     @Source("previews/configuration/profiles.html")
     ExternalTextResource configurationProfiles();
+
+    @Source("previews/configuration/remoting.html")
+    ExternalTextResource configurationRemoting();
 
     @Source("previews/configuration/socket-bindings.html")
     ExternalTextResource configurationSocketBindings();

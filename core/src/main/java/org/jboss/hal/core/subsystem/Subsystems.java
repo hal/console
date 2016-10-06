@@ -45,7 +45,7 @@ public class Subsystems {
         add(new SubsystemMetadata(DATASOURCES, Names.DATASOURCES_DRIVERS, null, null, Ids.DATA_SOURCE_DRIVER, true, resources.previews().configurationDatasourcesDrivers()));
         add(new SubsystemMetadata(DEPLOYMENT_SCANNER, "Deployment Scanners", null, NameTokens.DEPLOYMENT_SCANNERS, null, true, resources.previews().configurationDeploymentScanner()));
         add(new SubsystemMetadata(EE, "EE", null, NameTokens.EE, null, true, resources.previews().configurationEe()));
-        add(new SubsystemMetadata(EJB3, "EJB3", null, NameTokens.EJB3, null, true));
+        add(new SubsystemMetadata(EJB3, "EJB3", null, NameTokens.EJB3, null, true, resources.previews().configurationEjb3()));
         add(new SubsystemMetadata(IIOP_OPENJDK, "IIOP", "OpenJDK", NameTokens.IIOP, null, true));
         add(new SubsystemMetadata(INFINISPAN, "Infinispan", null, null, null, false));
         add(new SubsystemMetadata(IO, "IO", null, NameTokens.IO, null, true, resources.previews().configurationIo()));
@@ -55,7 +55,7 @@ public class Subsystems {
         add(new SubsystemMetadata(LOGGING, Names.LOGGING, null, null, Ids.LOGGING, true, resources.previews().configurationLogging()));
         add(new SubsystemMetadata(MAIL, "Mail", null, null, Ids.MAIL_SESSION, true, resources.previews().configurationMail()));
         add(new SubsystemMetadata(MESSAGING_ACTIVEMQ, "Messaging", "ActiveMQ", null, null, true));
-        add(new SubsystemMetadata(REMOTING, "Remoting", null, NameTokens.REMOTING, null, false));
+        add(new SubsystemMetadata(REMOTING, "Remoting", null, NameTokens.REMOTING, null, false, resources.previews().configurationRemoting()));
         add(new SubsystemMetadata(REQUEST_CONTROLLER, "Request Controller", null, NameTokens.REQUEST_CONTROLLER, null, false));
         add(new SubsystemMetadata(RESOURCE_ADAPTERS, "Resource Adapters", null, null, null, false));
         add(new SubsystemMetadata(SECURITY, "Security", null, null, null, false));

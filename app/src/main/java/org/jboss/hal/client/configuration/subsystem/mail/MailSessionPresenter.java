@@ -31,7 +31,7 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
-import org.jboss.hal.ballroom.typeahead.Typeahead;
+import org.jboss.hal.ballroom.typeahead.ReadChildResourcesTypeahead;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -141,9 +141,7 @@ public class MailSessionPresenter
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
                 .param(RECURSIVE, true)
                 .build();
-        dispatcher.execute(operation, result -> {
-            getView().update(new MailSession(mailSessionName, result));
-        });
+        dispatcher.execute(operation, result -> getView().update(new MailSession(mailSessionName, result)));
     }
 
     void save(final Map<String, Object> changedValues) {
@@ -215,7 +213,7 @@ public class MailSessionPresenter
                             });
                         });
                 dialog.getForm().getFormItem(OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
-                        new Typeahead(AddressTemplates.SOCKET_BINDING_TEMPLATE, statementContext));
+                        new ReadChildResourcesTypeahead(AddressTemplates.SOCKET_BINDING_TEMPLATE, statementContext));
                 dialog.show();
             }
         });

@@ -27,8 +27,8 @@ import jsinterop.annotations.JsType;
 import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.hal.ballroom.js.JsHelper.asJsArray;
-import static org.jboss.hal.ballroom.js.JsHelper.asList;
+import static org.jboss.hal.ballroom.JsHelper.asJsArray;
+import static org.jboss.hal.ballroom.JsHelper.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 

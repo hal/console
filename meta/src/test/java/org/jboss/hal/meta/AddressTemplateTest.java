@@ -20,7 +20,7 @@ public class AddressTemplateTest {
 
     @Test
     public void root() {
-        AddressTemplate at = AddressTemplate.of("/");
+        AddressTemplate at = AddressTemplate.ROOT;
         assertTrue(at.getTemplate().length() == 0);
     }
 
@@ -70,7 +70,7 @@ public class AddressTemplateTest {
 
     @Test
     public void lastKey() {
-        AddressTemplate at = AddressTemplate.of("/");
+        AddressTemplate at = AddressTemplate.ROOT;
         assertNull(at.lastKey());
 
         at = AddressTemplate.of("a=b");
@@ -85,7 +85,7 @@ public class AddressTemplateTest {
 
     @Test
     public void lastValue() {
-        AddressTemplate at = AddressTemplate.of("/");
+        AddressTemplate at = AddressTemplate.ROOT;
         assertNull(at.lastValue());
 
         at = AddressTemplate.of("a=b");

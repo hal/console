@@ -29,6 +29,7 @@ import static java.util.stream.Collectors.joining;
  */
 public interface CSS {
 
+    String aboutModalPf = "about-modal-pf";
     String active = "active";
     String alert = "alert";
     String alertDanger = "alert-danger";
@@ -81,6 +82,7 @@ public interface CSS {
     String defaultValue = "default-value";
     String disabled = "disabled";
     String disabledCircleO = "disabled-circle-o";
+    String dlHorizontal = "dl-horizontal";
     String dropdown = "dropdown";
     String dropdownKebabPf = "dropdown-kebab-pf";
     String dropdownMenu = "dropdown-menu";
@@ -94,10 +96,11 @@ public interface CSS {
     String editorButtons = "editor-buttons";
     String editorControls = "editor-controls";
     String editorStatus = "editor-status";
+    String empty = "empty";
     String error = "error";
     String errorCircleO = "error-circle-o";
     String equals = "equals";
-    String empty = "empty";
+    String external = "external";
 
     String fade = "fade";
     String filter = "filter";
@@ -165,6 +168,7 @@ public interface CSS {
     String listViewPfLeft = "list-view-pf-left";
     String listViewPfMainInfo = "list-view-pf-main-info";
     String listViewPfStacked = "list-view-pf-stacked";
+    String listUnstyled = "list-unstyled";
     String loading = "loading";
     String loadingContainer = "loading-container";
     String logFileLoading = "log-file-loading";
@@ -228,6 +232,7 @@ public interface CSS {
     String pinned = "pinned";
     String pinnable = "pinnable";
     String preview = "preview";
+    String productVersionsPf = "product-versions-pf";
     String progress = "progress";
     String progressBar = "progress-bar";
     String progressBarDanger = "progress-bar-danger";

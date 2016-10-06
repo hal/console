@@ -27,6 +27,7 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.ExternalMode;
 import org.jboss.hal.core.mvp.FullscreenPresenter;
 import org.jboss.hal.core.mvp.Slots;
 import org.jboss.hal.core.mvp.TopLevelCategory;
@@ -108,6 +109,9 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
                 presenter.fullscreenMode(((FullscreenPresenter) content).getTitle());
             } else if (content instanceof ApplicationPresenter) {
                 presenter.applicationMode();
+            }
+            if (content instanceof ExternalMode) {
+                presenter.externalMode(((ExternalMode) content).supportsExternalMode());
             }
 
         } else {

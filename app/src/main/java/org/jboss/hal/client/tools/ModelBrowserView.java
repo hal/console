@@ -19,7 +19,6 @@ import javax.inject.Inject;
 
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
-import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
@@ -28,7 +27,6 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 public class ModelBrowserView extends PatternFlyViewImpl implements ModelBrowserPresenter.MyView {
 
     private final ModelBrowser modelBrowser;
-    private ModelBrowserPresenter presenter;
 
     @Inject
     public ModelBrowserView(ModelBrowser modelBrowser) {
@@ -37,16 +35,8 @@ public class ModelBrowserView extends PatternFlyViewImpl implements ModelBrowser
     }
 
     @Override
-    public void setPresenter(final ModelBrowserPresenter presenter) {
-        this.presenter = presenter;
-    }
-
-    @Override
     public void attach() {
         super.attach();
-        if (presenter.isExternal()) {
-            Skeleton.externalWindowMode();
-        }
         modelBrowser.setRoot(ResourceAddress.ROOT, true);
     }
 }

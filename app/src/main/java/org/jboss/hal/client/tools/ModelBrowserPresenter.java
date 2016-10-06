@@ -21,9 +21,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.mvp.FullscreenPresenter;
-import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
@@ -41,11 +39,8 @@ public class ModelBrowserPresenter
     @NameToken(NameTokens.MODEL_BROWSER)
     public interface MyProxy extends ProxyPlace<ModelBrowserPresenter> {}
 
-    public interface MyView extends PatternFlyView, HasPresenter<ModelBrowserPresenter> {}
+    public interface MyView extends PatternFlyView {}
     // @formatter:on
-
-    public static final String EXTERNAL_PARAM = "external";
-    private boolean external;
 
     @Inject
     public ModelBrowserPresenter(final EventBus eventBus,
@@ -56,18 +51,7 @@ public class ModelBrowserPresenter
     }
 
     @Override
-    protected void onBind() {
-        super.onBind();
-        getView().setPresenter(this);
-    }
-
-    @Override
-    public void prepareFromRequest(final PlaceRequest request) {
-        super.prepareFromRequest(request);
-        external = Boolean.parseBoolean(request.getParameter(EXTERNAL_PARAM, "false")); //NON-NLS
-    }
-
-    boolean isExternal() {
-        return external;
+    public boolean supportsExternalMode() {
+        return true;
     }
 }

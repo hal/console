@@ -33,7 +33,7 @@ import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.SwitchItem;
-import org.jboss.hal.ballroom.typeahead.Typeahead;
+import org.jboss.hal.ballroom.typeahead.ReadChildResourcesTypeahead;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddRoleMapping;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddScopedRole;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.CheckRoleMapping;
@@ -270,7 +270,8 @@ public class RoleColumn extends FinderColumn<Role> {
                 })
                 .build();
         form.getFormItem(scopeAttribute).setRequired(true);
-        form.getFormItem(scopeAttribute).registerSuggestHandler(new Typeahead(typeaheadTemplate, statementContext));
+        form.getFormItem(scopeAttribute)
+                .registerSuggestHandler(new ReadChildResourcesTypeahead(typeaheadTemplate, statementContext));
 
         new AddResourceDialog(resources.messages().addResourceTitle(typeName), form, (name, model) -> {
             List<Function<FunctionContext>> functions = new ArrayList<>();
@@ -343,7 +344,8 @@ public class RoleColumn extends FinderColumn<Role> {
                         resources.messages().includeAllHelpText())
                 .build();
         form.getFormItem(scopeAttribute).setRequired(true);
-        form.getFormItem(scopeAttribute).registerSuggestHandler(new Typeahead(typeaheadTemplate, statementContext));
+        form.getFormItem(scopeAttribute)
+                .registerSuggestHandler(new ReadChildResourcesTypeahead(typeaheadTemplate, statementContext));
         form.getFormItem(INCLUDE_ALL).setValue(role.isIncludeAll());
 
         ModelNode modelNode = new ModelNode();

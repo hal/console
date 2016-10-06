@@ -193,7 +193,7 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
     private Principal findPrincipal(FinderPath path) {
         Optional<String> optional = StreamSupport.stream(path.spliterator(), false)
                 .filter(segment -> Ids.USER.equals(segment.getColumnId()) || Ids.GROUP.equals(segment.getColumnId()))
-                .findFirst()
+                .findAny()
                 .map(FinderSegment::getItemId);
         return optional.isPresent() ? accessControl.principals().get(optional.get()) : null;
     }

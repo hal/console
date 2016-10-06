@@ -22,7 +22,6 @@ import com.google.common.base.Strings;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.DataElement;
-import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventHandler;
 import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.ballroom.Clipboard;
@@ -78,7 +77,6 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
     @DataElement Element tailMode;
     @DataElement Element copyToClipboard;
     @DataElement Element download;
-    @DataElement Element external;
     @DataElement Element editorContainer;
     @DataElement Element editorPlaceholder;
     @DataElement Element loading;
@@ -138,7 +136,7 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
     }
 
     private void adjustHeight() {
-        int height = presenter.isExternal() ? Browser.getWindow().getInnerHeight() : Skeleton.applicationHeight();
+        int height = Skeleton.applicationHeight();
         height -= 2 * MARGIN_BIG;
         height -= (header.getOffsetHeight() + logFileControls.getOffsetHeight() + 20);
         height = max(height, MIN_HEIGHT);
@@ -153,12 +151,6 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
 
 
     // ------------------------------------------------------ API
-
-    @Override
-    public void externalMode() {
-        Skeleton.externalWindowMode();
-        Elements.setVisible(external, false);
-    }
 
     @Override
     public void loading() {
@@ -188,8 +180,6 @@ public abstract class LogFileView extends PatternFlyViewImpl implements LogFileP
         header.setTextContent(builder.toString());
         download.setAttribute(UIConstants.DOWNLOAD, logFile.getFilename());
         download.setAttribute(UIConstants.HREF, logFiles().downloadUrl(logFile.getFilename()));
-        external.setAttribute(UIConstants.HREF, logFiles().externalUrl(logFile.getFilename()));
-        external.setAttribute(UIConstants.TARGET, logFiles().target(logFile.getFilename()));
 
         editor.getEditor().getSession().setValue(content);
         editor.getEditor().gotoLine(lines, 0, false);

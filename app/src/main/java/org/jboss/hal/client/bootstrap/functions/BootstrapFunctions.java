@@ -29,12 +29,12 @@ public class BootstrapFunctions {
     @Inject
     public BootstrapFunctions(final ReadEnvironment readEnvironment,
             final FindDomainController findDomainController,
-            final ReadCapabilities readCapabilities,
+            final RegisterStaticCapabilities registerStaticCapabilities,
             final FinishBootstrap finishBootstrap) {
         this.functions = new BootstrapFunction[]{
                 readEnvironment,
                 findDomainController,
-                readCapabilities,
+                registerStaticCapabilities,
                 finishBootstrap
         };
     }

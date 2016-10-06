@@ -60,9 +60,15 @@ final class AccessControlFunctions {
                     .build();
             dispatcher.executeInFunction(control, operation,
                     result -> {
-                        // role mapping exists
-                        control.getContext().push(200);
-                        control.proceed();
+                        if (result.isFailure()) {
+                            // no role mapping found
+                            control.getContext().push(404);
+                            control.proceed();
+                        } else {
+                            // role mapping exists
+                            control.getContext().push(200);
+                            control.proceed();
+                        }
                     },
                     (operation1, failure) -> {
                         // no role mapping found

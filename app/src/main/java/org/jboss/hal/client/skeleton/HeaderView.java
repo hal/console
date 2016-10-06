@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.gwtplatform.mvp.client.ViewImpl;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
@@ -33,7 +34,6 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.config.InstanceInfo;
 import org.jboss.hal.config.User;
 import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderPath;
@@ -54,12 +54,9 @@ import org.slf4j.LoggerFactory;
 
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.skeleton.HeaderPresenter.MAX_BREADCRUMB_VALUE_LENGTH;
-import static org.jboss.hal.config.InstanceInfo.WILDFLY;
 import static org.jboss.hal.core.Strings.abbreviateMiddle;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.Names.HAL;
-import static org.jboss.hal.resources.Names.MANAGEMENT_CONSOLE;
 import static org.jboss.hal.resources.Names.NYI;
 
 /**
@@ -69,12 +66,12 @@ import static org.jboss.hal.resources.Names.NYI;
 public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyView, IsElement {
 
     // @formatter:off
-    public static HeaderView create(final Resources resources, final User user) {
-        return new Templated_HeaderView(resources, user);
+    public static HeaderView create(final User user, final Resources resources) {
+        return new Templated_HeaderView(user, resources);
     }
 
-    public abstract Resources resources();
     public abstract User user();
+    public abstract Resources resources();
     // @formatter:on
 
 
@@ -98,7 +95,10 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     @DataElement Element patching;
     @DataElement Element topLevelTabs;
     @DataElement Element breadcrumbs;
+    @DataElement Element backItem;
     @DataElement Element backLink;
+    @DataElement Element externalItem;
+    @DataElement Element externalLink;
 
 
     @PostConstruct
@@ -149,19 +149,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
     @Override
     public void update(Environment environment, Endpoints endpoints, User user) {
-        if (environment.getInstanceInfo() == WILDFLY) {
-            setLogo(new String[]{
-                    environment.getInstanceInfo().platform().substring(0, 4),
-                    environment.getInstanceInfo().platform().substring(4),
-            });
-        } else if (environment.getInstanceInfo() == InstanceInfo.EAP) {
-            setLogo(new String[]{
-                    environment.getInstanceInfo().platform().substring(0, 13),
-                    environment.getInstanceInfo().platform().substring(13).trim(),
-            });
-        } else {
-            setLogo(new String[]{HAL, MANAGEMENT_CONSOLE});
-        }
+        setLogo(resources().theme().getFirstName(), resources().theme().getLastName());
 
         if (endpoints.isSameOrigin()) {
             connectedTo.setInnerText(resources().constants().sameOrigin());
@@ -176,9 +164,9 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         roles.setInnerText(resources().messages().activeRoles(Joiner.on(", ").join(user.getRoles())));
     }
 
-    private void setLogo(String[] parts) {
-        logoFirst.setInnerText(parts[0]);
-        logoLast.setInnerText(parts[1]);
+    private void setLogo(String first, String last) {
+        logoFirst.setInnerText(first);
+        logoLast.setInnerText(Strings.nullToEmpty(last));
     }
 
 
@@ -240,7 +228,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         clearBreadcrumb();
         Element li = Browser.getDocument().createLIElement();
         li.setTextContent(title);
-        breadcrumbs.appendChild(li);
+        breadcrumbs.insertBefore(li, externalItem);
     }
 
     @Override
@@ -249,12 +237,23 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         Elements.setVisible(breadcrumbs, true);
     }
 
+    @Override
+    public void externalMode(final boolean externalMode) {
+        externalLink.setAttribute(UIConstants.HREF, presenter.externalUrl());
+        externalLink.setAttribute(UIConstants.TARGET, presenter.currentToken());
+        Elements.setVisible(externalItem, externalMode);
+    }
+
 
     // ------------------------------------------------------ breadcrumb
 
     private void clearBreadcrumb() {
-        while (breadcrumbs.getLastChild() != null && breadcrumbs.getChildren().getLength() > 1) {
-            breadcrumbs.removeChild(breadcrumbs.getLastChild());
+        for (Iterator<Element> iterator = Elements.iterator(breadcrumbs); iterator.hasNext(); ) {
+            Element element = iterator.next();
+            if (element == backItem || element == externalItem) {
+                continue;
+            }
+            iterator.remove();
         }
     }
 
@@ -350,7 +349,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
             }
             builder.end(); // </span>
             builder.end(); // </li>
-            breadcrumbs.appendChild(builder.build());
+            breadcrumbs.insertBefore(builder.build(), externalItem);
         }
     }
 
@@ -359,12 +358,13 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         clearBreadcrumb();
         if (path == null) {
             // deselection
-            breadcrumbs.appendChild(
-                    new Elements.Builder().li().textContent(resources().constants().nothingSelected()).build());
+            breadcrumbs.insertBefore(
+                    new Elements.Builder().li().textContent(resources().constants().nothingSelected()).build(),
+                    externalItem);
 
         } else {
             if (path.isEmpty()) {
-                breadcrumbs.appendChild(new Elements.Builder().li().textContent("").build());
+                breadcrumbs.insertBefore(new Elements.Builder().li().textContent("").build(), externalItem);
 
             } else {
                 ModelBrowser modelBrowser = path.getModelBrowser();
@@ -393,7 +393,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
                         builder.end(); // </a>
                     }
                     builder.end().end(); // </span> </li>
-                    breadcrumbs.appendChild(builder.build());
+                    breadcrumbs.insertBefore(builder.build(), externalItem);
                 }
             }
         }

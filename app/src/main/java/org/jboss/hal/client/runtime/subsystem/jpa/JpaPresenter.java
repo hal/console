@@ -40,11 +40,7 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.jpa.AddressTemplates.JPA_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.token.NameTokens.JPA_RUNTIME;
 
 /**

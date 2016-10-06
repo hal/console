@@ -203,12 +203,10 @@
  */
 package org.jboss.hal.meta.processing;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.capabilitiy.Capability;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -248,21 +246,5 @@ class RrdParserTestHelper {
             assertNotNull(result.resourceDescription);
             assertNotNull(result.securityContext);
         }
-    }
-
-    static void assertCapability(Set<RrdResult> results, final String name) {
-        boolean found = false;
-
-        for (Iterator<RrdResult> i1 = results.iterator(); i1.hasNext() && !found; ) {
-            RrdResult result = i1.next();
-            for (Iterator<Capability> i2 = result.capabilities.iterator(); i2.hasNext() && !found; ) {
-                Capability capability = i2.next();
-                if (name.equals(capability.getName())) {
-                    found = true;
-                }
-            }
-        }
-
-        assertTrue("Capability '" + name + "' not found!", found); //NON-NLS
     }
 }

@@ -86,7 +86,8 @@ public class EEPresenter extends ApplicationPresenter<EEPresenter.MyView, EEPres
         } else {
             globalModulesDescription = new ResourceDescription(new ModelNode());
         }
-        return new Metadata(metadata.getSecurityContext(), globalModulesDescription, metadata.getCapabilities());
+        return new Metadata(metadata.getTemplate(), metadata.getSecurityContext(), globalModulesDescription,
+                metadata.getCapabilities());
     }
 
     private final FinderPathFactory finderPathFactory;

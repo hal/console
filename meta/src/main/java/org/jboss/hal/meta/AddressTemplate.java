@@ -49,7 +49,6 @@ import org.jetbrains.annotations.NonNls;
  * <p>
  * Here are some examples for address templates:
  * <pre>
- *     AddressTemplate a1 = AddressTemplate.of("/");
  *     AddressTemplate a2 = AddressTemplate.of("{selected.profile}");
  *     AddressTemplate a3 = AddressTemplate.of("{selected.profile}/subsystem=mail");
  *     AddressTemplate a4 = AddressTemplate.of("{selected.profile}/subsystem=mail/mail-session=*");
@@ -57,7 +56,7 @@ import org.jetbrains.annotations.NonNls;
  * <p>
  * To get a fully qualified address from an address template use the {@link #resolve(StatementContext, String...)}
  * method.
- *
+ * <p>
  * TODO Handle special characters like '/' inside the value part of a segment
  * /foo=bar/special=java:jboss/x/y/z/another=segment
  *
@@ -71,8 +70,44 @@ public final class AddressTemplate {
         String unresolve(String name, String value, boolean first, boolean last, int index);
     }
 
+
+    public static AddressTemplate ROOT = AddressTemplate.of("/");
+
+    public static AddressTemplate of(StatementContext.Tuple placeholder) {
+        return AddressTemplate.of(String.join("/", placeholder.variable()));
+    }
+
+    public static AddressTemplate of(StatementContext.Tuple placeholder, @NonNls String template) {
+        return AddressTemplate.of(String.join("/", placeholder.variable(), withoutSlash(template)));
+    }
+
+    public static AddressTemplate of(StatementContext.Tuple placeholder1, StatementContext.Tuple placeholder2) {
+        return AddressTemplate.of(
+                String.join("/", placeholder1.variable(), placeholder2.variable()));
+    }
+
+    public static AddressTemplate of(StatementContext.Tuple placeholder1, StatementContext.Tuple placeholder2,
+            @NonNls String template) {
+        return AddressTemplate.of(
+                String.join("/", placeholder1.variable(), placeholder2.variable(), withoutSlash(template)));
+    }
+
     public static AddressTemplate of(@NonNls String template) {
-        return new AddressTemplate(template);
+        return new AddressTemplate(withSlash(template));
+    }
+
+    private static String withoutSlash(String template) {
+        if (template != null) {
+            return template.startsWith("/") ? template.substring(1) : template;
+        }
+        return null;
+    }
+
+    private static String withSlash(String template) {
+        if (template != null && !template.startsWith(OPTIONAL) && !template.startsWith("/")) {
+            return "/" + template;
+        }
+        return template;
     }
 
     /**
@@ -92,21 +127,23 @@ public final class AddressTemplate {
         int index = 0;
         boolean first = true;
         StringBuilder builder = new StringBuilder();
-        for (Iterator<Property> iterator = address.asPropertyList().iterator(); iterator.hasNext(); ) {
-            Property property = iterator.next();
-            String name = property.getName();
-            String value = property.getValue().asString();
+        if (address.isDefined()) {
+            for (Iterator<Property> iterator = address.asPropertyList().iterator(); iterator.hasNext(); ) {
+                Property property = iterator.next();
+                String name = property.getName();
+                String value = property.getValue().asString();
 
-            String segment = unresolver == null
-                    ? name + "=" + value
-                    : unresolver.unresolve(name, value, first, !iterator.hasNext(), index);
-            builder.append(segment);
+                String segment = unresolver == null
+                        ? name + "=" + value
+                        : unresolver.unresolve(name, value, first, !iterator.hasNext(), index);
+                builder.append(segment);
 
-            if (iterator.hasNext()) {
-                builder.append("/");
+                if (iterator.hasNext()) {
+                    builder.append("/");
+                }
+                first = false;
+                index++;
             }
-            first = false;
-            index++;
         }
         return of(builder.toString());
     }

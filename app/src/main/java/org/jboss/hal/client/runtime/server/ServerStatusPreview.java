@@ -34,6 +34,8 @@ import org.jboss.hal.resources.Resources;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.runtime.server.ServerStatusPresenter.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_SERVER;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
@@ -102,7 +104,7 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
     public void update(final StaticItem item) {
-        AddressTemplate mbean = AddressTemplate.of("/{selected.host}/{selected.server}/core-service=platform-mbean");
+        AddressTemplate mbean = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER, "core-service=platform-mbean");
         AddressTemplate osTmpl = mbean.append("type=operating-system");
         AddressTemplate runtimeTmpl = mbean.append("type=runtime");
         AddressTemplate memoryTmpl = mbean.append("type=memory");

@@ -24,7 +24,7 @@ import elemental.html.InputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Alert;
-import org.jboss.hal.ballroom.js.JsHelper;
+import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;

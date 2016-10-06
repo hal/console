@@ -114,22 +114,22 @@ public class EjbPresenter extends MbuiPresenter<EjbPresenter.MyView, EjbPresente
         dispatcher.execute(operation, result -> {
             // @formatter:off
             getView().updateConfiguration(result);
-            
+
             getView().updateThreadPool(asNamedNodes(failSafePropertyList(result, THREAD_POOL_TEMPLATE.lastKey())));
             getView().updateRemotingProfile(asNamedNodes(failSafePropertyList(result, REMOTING_PROFILE_TEMPLATE.lastKey())));
-            
+
             getView().updateBeanPool(asNamedNodes(failSafePropertyList(result, BEAN_POOL_TEMPLATE.lastKey())));
-            
+
             getView().updateCache(asNamedNodes(failSafePropertyList(result, CACHE_TEMPLATE.lastKey())));
             getView().updatePassivation(asNamedNodes(failSafePropertyList(result, PASSIVATION_TEMPLATE.lastKey())));
-            
+
             getView().updateServiceAsync(result.get(SERVICE).get(SERVICE_ASYNC_TEMPLATE.lastValue()));
             getView().updateServiceIiop(result.get(SERVICE).get(SERVICE_IIOP_TEMPLATE.lastValue()));
             getView().updateServiceRemote(result.get(SERVICE).get(SERVICE_REMOTE_TEMPLATE.lastValue()));
             getView().updateServiceTimer(result.get(SERVICE).get(SERVICE_TIMER_TEMPLATE.lastValue()));
-            
+
             getView().updateMdbDeliveryGroup(asNamedNodes(failSafePropertyList(result, MDB_DELIVERY_GROUP_TEMPLATE.lastKey())));
-            
+
             getView().updateApplicationSecurityDomain(asNamedNodes(failSafePropertyList(result, APP_SEC_DOMAIN_TEMPLATE.lastKey())));
             // @formatter:on
         });

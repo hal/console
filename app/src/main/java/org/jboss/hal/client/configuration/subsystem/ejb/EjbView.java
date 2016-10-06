@@ -42,35 +42,34 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
     }
 
     @MbuiElement("ejb-vertical-navigation") VerticalNavigation navigation;
-    
-    @MbuiElement("configuration-form") Form<ModelNode> configurationForm;
-    
-    @MbuiElement("thread-pool-table") DataTable<NamedNode> threadPoolTable;
-    @MbuiElement("thread-pool-form") Form<NamedNode> threadPoolForm;
-    
-    @MbuiElement("remoting-profile-table") DataTable<NamedNode> remotingProfileTable;
-    @MbuiElement("remoting-profile-form") Form<NamedNode> remotingProfileForm;
-    
-    @MbuiElement("bean-pool-table") DataTable<NamedNode> beanPoolTable;
-    @MbuiElement("bean-pool-form") Form<NamedNode> beanPoolForm;
-    
-    @MbuiElement("cache-table") DataTable<NamedNode> cacheTable;
-    @MbuiElement("cache-form") Form<NamedNode> cacheForm;
 
-    @MbuiElement("passivation-table") DataTable<NamedNode> passivationTable;
-    @MbuiElement("passivation-form") Form<NamedNode> passivationForm;
+    @MbuiElement("ejb-configuration-form") Form<ModelNode> configurationForm;
 
-    @MbuiElement("service-async-form") Form<ModelNode> serviceAsyncForm;
-    @MbuiElement("service-iiop-form") Form<ModelNode> serviceIiopForm;
-    @MbuiElement("service-remote-form") Form<ModelNode> serviceRemoteForm;
-    @MbuiElement("service-timer-form") Form<ModelNode> serviceTimerForm;
+    @MbuiElement("ejb-thread-pool-table") DataTable<NamedNode> threadPoolTable;
+    @MbuiElement("ejb-thread-pool-form") Form<NamedNode> threadPoolForm;
 
-    @MbuiElement("mdb-delivery-group-table") DataTable<NamedNode> mdbDeliveryGroupTable;
-    @MbuiElement("mdb-delivery-group-form") Form<NamedNode> mdbDeliveryGroupForm;
+    @MbuiElement("ejb-remoting-profile-table") DataTable<NamedNode> remotingProfileTable;
+    @MbuiElement("ejb-remoting-profile-form") Form<NamedNode> remotingProfileForm;
 
-    @MbuiElement("app-security-domain-table") DataTable<NamedNode> appSecurityDomainTable;
-    @MbuiElement("app-security-domain-form") Form<NamedNode> appSecurityDomainForm;
+    @MbuiElement("ejb-bean-pool-table") DataTable<NamedNode> beanPoolTable;
+    @MbuiElement("ejb-bean-pool-form") Form<NamedNode> beanPoolForm;
 
+    @MbuiElement("ejb-cache-table") DataTable<NamedNode> cacheTable;
+    @MbuiElement("ejb-cache-form") Form<NamedNode> cacheForm;
+
+    @MbuiElement("ejb-passivation-table") DataTable<NamedNode> passivationTable;
+    @MbuiElement("ejb-passivation-form") Form<NamedNode> passivationForm;
+
+    @MbuiElement("ejb-service-async-form") Form<ModelNode> serviceAsyncForm;
+    @MbuiElement("ejb-service-iiop-form") Form<ModelNode> serviceIiopForm;
+    @MbuiElement("ejb-service-remote-form") Form<ModelNode> serviceRemoteForm;
+    @MbuiElement("ejb-service-timer-form") Form<ModelNode> serviceTimerForm;
+
+    @MbuiElement("ejb-mdb-delivery-group-table") DataTable<NamedNode> mdbDeliveryGroupTable;
+    @MbuiElement("ejb-mdb-delivery-group-form") Form<NamedNode> mdbDeliveryGroupForm;
+
+    @MbuiElement("ejb-app-security-domain-table") DataTable<NamedNode> appSecurityDomainTable;
+    @MbuiElement("ejb-app-security-domain-form") Form<NamedNode> appSecurityDomainForm;
 
     EjbView(final MbuiContext mbuiContext) {
         super(mbuiContext);
@@ -123,7 +122,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
     public void updateServiceIiop(ModelNode node) {
         serviceIiopForm.view(node);
     }
-    
+
     @Override
     public void updateServiceRemote(ModelNode node) {
         serviceRemoteForm.view(node);
@@ -145,6 +144,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
         appSecurityDomainTable.api().clear().add(items).refresh(RefreshMode.RESET);
         appSecurityDomainForm.clear();
     }
+
 
     // ------------------------------------------------------ view / mbui contract
 

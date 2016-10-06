@@ -36,6 +36,7 @@ import org.jboss.hal.core.modelbrowser.ModelBrowserPath;
 import org.jboss.hal.core.modelbrowser.ModelBrowserPathEvent;
 import org.jboss.hal.core.modelbrowser.ModelBrowserPathEvent.ModelBrowserPathHandler;
 import org.jboss.hal.core.mvp.HasPresenter;
+import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.MessageEvent.MessageHandler;
@@ -56,6 +57,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         void tlcMode();
         void fullscreenMode(String title);
         void applicationMode();
+        void externalMode(boolean externalMode);
         void updateLinks(FinderContext finderContext);
         void updateBreadcrumb(FinderContext finderContext);
         void updateBreadcrumb(ModelBrowserPath path);
@@ -66,6 +68,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
     static final int MAX_BREADCRUMB_VALUE_LENGTH = 20;
 
     private final PlaceManager placeManager;
+    private final Places places;
     private final Environment environment;
     private final Endpoints endpoints;
     private final User user;
@@ -75,12 +78,14 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
     public HeaderPresenter(final EventBus eventBus,
             final MyView view,
             final PlaceManager placeManager,
+            final Places places,
             final Environment environment,
             final Endpoints endpoints,
             final User user,
             final Finder finder) {
         super(eventBus, view);
         this.placeManager = placeManager;
+        this.places = places;
         this.environment = environment;
         this.endpoints = endpoints;
         this.user = user;
@@ -100,16 +105,6 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         registerHandler(getEventBus().addHandler(ModelBrowserPathEvent.getType(), this));
         getView().setPresenter(this);
         getView().update(environment, endpoints, user);
-    }
-
-    @Override
-    protected void onUnbind() {
-        super.onUnbind();
-    }
-
-    @Override
-    protected void onReveal() {
-        super.onReveal();
     }
 
     @Override
@@ -167,5 +162,18 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
             getView().updateLinks(finder.getContext());
         }
         getView().fullscreenMode(title);
+    }
+
+    public void externalMode(boolean externalMode) {
+        getView().externalMode(externalMode);
+    }
+
+    String externalUrl() {
+        PlaceRequest external = places.external(placeManager.getCurrentPlaceRequest());
+        return places.historyToken(external);
+    }
+
+    String currentToken() {
+        return placeManager.getCurrentPlaceRequest().getNameToken();
     }
 }

@@ -34,9 +34,9 @@ import elemental.events.KeyboardEvent.KeyCode;
 import elemental.html.InputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.ballroom.dragndrop.DropEventHandler;
-import org.jboss.hal.ballroom.js.JsHelper;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.CSS;
@@ -467,6 +467,7 @@ public class FinderColumn<T> implements IsElement, SecurityContextAware {
                             FinderRow selectedRow = previousColumn.selectedRow();
                             if (selectedRow != null) {
                                 selectedRow.updatePreview();
+                                selectedRow.asElement().scrollIntoView(false);
                             }
                             finder.updateContext();
                             finder.updateHistory();

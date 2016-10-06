@@ -82,6 +82,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_HOST;
 
 /**
  * @author Harald Pehl
@@ -155,7 +156,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
             if (browseByHosts) {
                 serverConfigsFn = control -> {
-                    ResourceAddress address = AddressTemplate.of("/{selected.host}").resolve(statementContext);
+                    ResourceAddress address = AddressTemplate.of(SELECTED_HOST).resolve(statementContext);
                     Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, address)
                             .param(CHILD_TYPE, SERVER_CONFIG)
                             .param(INCLUDE_RUNTIME, true)

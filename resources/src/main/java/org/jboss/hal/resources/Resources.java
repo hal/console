@@ -31,13 +31,16 @@ public class Resources implements Ids, Names, UIConstants, CSS, Icons {
     private final Messages messages;
     private final Previews previews;
     private final Images images;
+    private final Theme theme;
 
     @Inject
-    public Resources(final Constants constants, final Messages messages, final Previews previews, final Images images) {
+    public Resources(final Constants constants, final Messages messages, final Previews previews, final Images images,
+            final Theme theme) {
         this.constants = constants;
         this.messages = messages;
         this.previews = previews;
         this.images = images;
+        this.theme = theme;
     }
 
     public Constants constants() {
@@ -58,5 +61,9 @@ public class Resources implements Ids, Names, UIConstants, CSS, Icons {
 
     public Images images() {
         return images;
+    }
+
+    public Theme theme() {
+        return theme;
     }
 }

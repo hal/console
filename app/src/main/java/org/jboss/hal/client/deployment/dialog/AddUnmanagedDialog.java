@@ -24,7 +24,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.description.ResourceDescription;
-import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -51,8 +50,7 @@ public class AddUnmanagedDialog {
         ModelNode description = new ModelNode();
         description.get(ATTRIBUTES).set(attributes);
 
-        Metadata unmanagedMeta = new Metadata(SecurityContext.RWX, new ResourceDescription(description),
-                metadata.getCapabilities());
+        Metadata unmanagedMeta = Metadata.staticDescription(new ResourceDescription(description));
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.UNMANAGED_FORM, unmanagedMeta)
                 .unboundFormItem(new NameItem(), 0)
                 .include(RUNTIME_NAME, PATH, RELATIVE_TO, ARCHIVE)

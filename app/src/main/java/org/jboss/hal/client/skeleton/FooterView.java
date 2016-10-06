@@ -73,19 +73,12 @@ public abstract class FooterView extends ViewImpl implements FooterPresenter.MyV
     @DataElement Element recordingContainer;
     @DataElement Element steps;
     @DataElement Element recording;
-    @DataElement Element externalModelBrowser;
 
     @PostConstruct
     void init() {
         uiRegistry().register(progress);
         Elements.setVisible(recordingContainer, false);
         Elements.setVisible(updateAvailable, false);
-
-        PlaceRequest request = new PlaceRequest.Builder().nameToken(NameTokens.MODEL_BROWSER)
-                .with(ModelBrowserPresenter.EXTERNAL_PARAM, "true") //NON-NLS
-                .build();
-        externalModelBrowser.setAttribute(UIConstants.HREF, places().historyToken(request));
-        externalModelBrowser.setAttribute(UIConstants.TARGET, Ids.MODEL_BROWSER);
     }
 
     @Override
