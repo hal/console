@@ -39,8 +39,8 @@ public abstract class DeploymentScannerView extends MbuiViewImpl<DeploymentScann
         return new Mbui_DeploymentScannerView(mbuiContext);
     }
 
-    @MbuiElement("deploymentscanner-table") DataTable<NamedNode> deploymentscannerTable;
-    @MbuiElement("deploymentscanner-form") Form<NamedNode> deploymentscannerForm;
+    @MbuiElement("deployment-scanner-table") DataTable<NamedNode> deploymentscannerTable;
+    @MbuiElement("deployment-scanner-form") Form<NamedNode> deploymentscannerForm;
 
     DeploymentScannerView(final MbuiContext mbuiContext) {
         super(mbuiContext);

@@ -21,11 +21,11 @@
         <!--
             Worker
         -->
-        <item id="worker-item" title="Worker" icon="fa fa-cogs">
+        <item id="io-worker-item" title="Worker" icon="fa fa-cogs">
             <metadata address="/{selected.profile}/subsystem=io/worker=*">
                 <h1>Worker</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="worker-table" form-ref="worker-form">
+                <table id="io-worker-table" form-ref="io-worker-form">
                     <actions>
                         <action handler-ref="add-resource" >
                             <attributes>
@@ -44,7 +44,7 @@
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
-                <form id="worker-form" auto-save="true"
+                <form id="io-worker-form" auto-save="true"
                       name-resolver="{{form.getModel().getName()}}">
                     <attributes>
                         <column name="io-threads"/>
@@ -59,11 +59,11 @@
         <!--
             Buffer Pool
         -->
-        <item id="buffer-pool-item" title="Buffer Pool" icon="pficon pficon-repository">
+        <item id="io-buffer-pool-item" title="Buffer Pool" icon="pficon pficon-repository">
             <metadata address="/{selected.profile}/subsystem=io/buffer-pool=*">
                 <h1>Buffer Pool</h1>
                 <p>{{metadata.getDescription().getDescription()}}</p>
-                <table id="buffer-pool-table" title="Buffer Pool" form-ref="buffer-pool-form">
+                <table id="io-buffer-pool-table" title="Buffer Pool" form-ref="io-buffer-pool-form">
                     <actions>
                         <action handler-ref="add-resource">
                             <attributes>
@@ -81,7 +81,7 @@
                         <column name="name" value="{{row.getName()}}"/>
                     </columns>
                 </table>
-                <form id="buffer-pool-form" title="Buffer Pool" auto-save="true"
+                <form id="io-buffer-pool-form" title="Buffer Pool" auto-save="true"
                       name-resolver="{{form.getModel().getName()}}">
                     <attributes>
                         <attribute name="buffer-size"/>
