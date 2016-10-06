@@ -1,6 +1,6 @@
 /*
- * Generated CSS file for hal-next 0.4.0
- * Build date: 2016-09-26 18:17:05
+ * Generated CSS file for hal-next 0.4.2
+ * Build date: 2016-10-06 14:14:06
  */
 /*
  * Fonts
@@ -16495,7 +16495,7 @@ h2.underline {
           flex-flow: row;
 }
 .layout-pf.layout-pf-fixed body {
-  padding-top: 72px;
+  padding-top: 71px;
   padding-bottom: 26px;
 }
 @media (max-width: 768px) {
@@ -16581,7 +16581,7 @@ h2.underline {
 .nav-pf-secondary-nav-hal {
   bottom: 26px;
   min-height: 1px;
-  top: 71px;
+  top: 70px;
   z-index: 1000;
 }
 @media (max-width: 767px) {
@@ -16589,6 +16589,11 @@ h2.underline {
   .nav-pf-secondary-nav-hal {
     top: 38px;
   }
+}
+.external .nav-pf-vertical-hal,
+.external .nav-pf-secondary-nav-hal {
+  bottom: 0;
+  top: 0;
 }
 .finder,
 .finder > .finder-column,
@@ -18508,6 +18513,9 @@ pre.editor {
 .message-details-pre {
   white-space: pre-wrap;
 }
+.product-versions-pf dt {
+  font-weight: 600;
+}
 .wizard-pf-main .blank-slate-pf {
   padding: 40px 80px;
 }
@@ -18918,13 +18926,13 @@ table.topology a {
 .logo-text {
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
   font-weight: 300;
-  font-size: 17px;
+  font-size: 14px;
 }
 .logo-text.logo-text-first {
-  font-weight: 300;
+  font-weight: 700;
 }
 .logo-text.logo-text-last {
-  font-weight: 700;
+  font-weight: 300;
 }
 .dropdown-menu > li.static {
   display: block;
@@ -19060,6 +19068,9 @@ table.topology a {
     font-size: 12px;
   }
 }
+.hal-breadcrumb > li + li.external:before {
+  content: '';
+}
 .hal-breadcrumb li.active {
   color: #7dc3e8;
 }
@@ -19071,6 +19082,19 @@ table.topology a {
 .hal-breadcrumb li.active .value > a,
 .hal-breadcrumb li.active .value.dropdown > a {
   color: #7dc3e8;
+}
+.hal-breadcrumb li.external {
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+              -ms-grid-row-align: center;
+          align-items: center;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  -webkit-justify-content: flex-end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  padding-right: 20px;
 }
 .navbar-footer {
   height: 26px;
@@ -19084,11 +19108,6 @@ table.topology a {
 }
 .navbar-footer .dropdown {
   float: left;
-}
-.navbar-footer .dropdown .external-tool {
-  position: absolute;
-  right: 0;
-  top: 6px;
 }
 .navbar-footer .caret::before {
   content: "\f106";
