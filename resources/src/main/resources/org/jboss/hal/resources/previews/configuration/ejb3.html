@@ -1,0 +1,13 @@
+<p>Enterprise beans are server-side application components as defined in the Enterprise JavaBeans (EJB) 3.1 specification, JSR-318. Enterprise beans are designed for the implementation of application business logic in a decoupled manner to encourage reuse.
+    Enterprise beans are written as Java classes and annotated with the appropriate EJB annotations. They can be deployed to the application server in their own archive (a JAR file) or be deployed as part of a Java EE application. The application server manages the lifecycle of each enterprise bean and provides services to them such as security, transactions, and concurrency management.
+    An enterprise bean can also define any number of business interfaces. Business interfaces provide greater control over which of the bean's methods are available to clients and can also allow access to clients running in remote JVMs.
+    There are three types of Enterprise Bean: Session beans, Message-driven beans and Entity beans.</p>
+
+<h2>Session Beans</h2>
+<p>Session Beans are Enterprise Beans that encapsulate a set of related business processes or tasks and are injected into the classes that request them. There are three types of session bean: stateless, stateful, and singleton.</p>
+
+<h2>Message-Driven Beans</h2>
+<p>Message-driven Beans (MDBs) provide an event driven model for application development. The methods of MDBs are not injected into or invoked from client code but are triggered by the receipt of messages from a messaging service such as a Java Messaging Service (JMS) server. The Java EE 6 specification requires that JMS is supported but other messaging systems can be supported as well.</p>
+
+<h2>Entity Beans</h2>
+<p>Entity beans are now deprecated in EJB 3.1 and it's recommended the use of JPA entities instead. Entity beans should only be used for backwards compatibility with legacy systems.</p>

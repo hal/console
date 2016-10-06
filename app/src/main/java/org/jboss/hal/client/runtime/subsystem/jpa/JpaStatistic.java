@@ -38,7 +38,7 @@ class JpaStatistic extends NamedNode {
         this.address = address;
         this.deployment = address.asPropertyList().stream()
                 .filter(property -> DEPLOYMENT.equals(property.getName()))
-                .findFirst()
+                .findAny()
                 .map((property) -> property.getValue().asString())
                 .orElse(Names.NOT_AVAILABLE);
     }

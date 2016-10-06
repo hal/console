@@ -230,7 +230,7 @@ class EndpointDialog {
         switchTo(SELECT);
         storage.list().stream()
                 .filter(Endpoint::isSelected)
-                .findFirst()
+                .findAny()
                 .ifPresent(endpoint -> select(endpoint.getName()));
     }
 }

@@ -197,7 +197,7 @@ public class MembershipColumn extends FinderColumn<Assignment> {
     private Role findRole(FinderPath path) {
         Optional<String> optional = StreamSupport.stream(path.spliterator(), false)
                 .filter(segment -> Ids.ROLE.equals(segment.getColumnId()))
-                .findFirst()
+                .findAny()
                 .map(FinderSegment::getItemId);
 
         return optional.isPresent() ? accessControl.roles().get(optional.get()) : null;

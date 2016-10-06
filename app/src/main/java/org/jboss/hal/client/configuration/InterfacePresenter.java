@@ -99,13 +99,14 @@ public class InterfacePresenter extends MbuiPresenter<InterfacePresenter.MyView,
 
     @Override
     public void prepareFromRequest(final PlaceRequest request) {
+        super.prepareFromRequest(request);
         interfce = request.getParameter(NAME, null);
     }
 
     @Override
     protected FinderPath finderPath() {
         return new FinderPath()
-                .append(Ids.CONFIGURATION, Ids.asId(Names.INTERFACE), Names.CONFIGURATION, Names.INTERFACES)
+                .append(Ids.CONFIGURATION, Ids.asId(Names.INTERFACES), Names.CONFIGURATION, Names.INTERFACES)
                 .append(Ids.INTERFACE, interfce, Names.INTERFACE, interfce);
     }
 

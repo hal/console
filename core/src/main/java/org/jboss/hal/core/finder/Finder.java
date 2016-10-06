@@ -305,7 +305,7 @@ public class Finder implements IsElement, SecurityContextAware, Attachable {
         if (hiddenColumn.isPresent()) {
             columns.values().stream()
                     .filter(column -> Elements.isVisible(column.asElement()))
-                    .findFirst()
+                    .findAny()
                     .ifPresent(firstVisibleColumn -> firstVisibleColumn.markHiddenColumns(true));
         }
     }
