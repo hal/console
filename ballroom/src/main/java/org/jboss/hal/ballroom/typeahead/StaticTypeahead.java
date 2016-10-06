@@ -21,8 +21,6 @@ import elemental.js.json.JsJsonObject;
 import elemental.js.util.JsArrayOf;
 import org.jboss.hal.resources.Ids;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-
 /**
  * @author Harald Pehl
  */
@@ -42,7 +40,7 @@ public class StaticTypeahead extends Typeahead {
         }
 
         Bloodhound.Options bloodhoundOptions = new Bloodhound.Options();
-        bloodhoundOptions.datumTokenizer = data -> data.getString(NAME).split(WHITESPACE);
+        bloodhoundOptions.datumTokenizer = data -> data.getString(Ids.SUGGEST_HANDLER_VALUE).split(WHITESPACE);
         bloodhoundOptions.queryTokenizer = query -> query.split(WHITESPACE);
         bloodhoundOptions.identify = data -> String.valueOf(data.getNumber(Ids.SUGGEST_HANDLER_ID));
         bloodhoundOptions.local = jsValues;
