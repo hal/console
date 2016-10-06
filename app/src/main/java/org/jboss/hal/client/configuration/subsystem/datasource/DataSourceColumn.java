@@ -242,7 +242,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 readDataSources,
                 new JdbcDriverFunctions.ReadConfiguration(statementContext, dispatcher),
                 new TopologyFunctions.RunningServersQuery(environment, dispatcher,
-                        new ModelNode().set(PROFILE, statementContext.selectedProfile())),
+                        new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())),
                 new JdbcDriverFunctions.ReadRuntime(environment, dispatcher),
                 new JdbcDriverFunctions.CombineDriverResults());
     }

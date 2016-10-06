@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 
 /**
@@ -87,7 +87,7 @@ public class PathsTypeahead extends Typeahead {
                         }
                     },
                     new TopologyFunctions.RunningServersQuery(environment, dispatcher,
-                            new ModelNode().set(PROFILE, statementContext.selectedProfile())));
+                            new ModelNode().set(PROFILE_NAME, statementContext.selectedProfile())));
         }
     }
 
