@@ -1,4 +1,4 @@
-<a href="https://ci.wildfly.org/viewType.html?buildTypeId=hal_HalNextDev&guest=1"><img src="https://ci.wildfly.org/app/rest/builds/buildType:(id:hal_HalNextDev)/statusIcon"/></a>
+<a href="https://ci.wildfly.org/viewType.html?buildTypeId=hal_HalNextDev&guest=1"><img src="https://ci.wildfly.org/app/rest/builds/buildType:(id:hal_HalNextDev)/statusIcon"/></a> <a href="https://gitter.im/hal"><img src="https://badges.gitter.im/hal/hal.next.svg"/></a>
 
 # HAL.next
 
