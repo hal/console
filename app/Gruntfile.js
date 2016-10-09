@@ -27,6 +27,7 @@ module.exports = function (grunt) {
             less: 'src/main/less',
             public: 'src/main/resources/org/jboss/hal/public'
         },
+        theme: grunt.option('theme') || 'hal',
 
         clean: {
             public: [
@@ -177,7 +178,7 @@ module.exports = function (grunt) {
                     ' * Generated CSS file for <%= pkg.name %> <%= pkg.version %>\n' +
                     ' * Build date: <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>\n' +
                     ' */\n\n',
-                    paths: '<%= config.less %>',
+                    paths: ['<%= config.less %>', '../themes/<%= theme %>/src/main/less'],
                     strictMath: true
                 },
                 src: '<%= config.less %>/hal.less',
