@@ -267,6 +267,7 @@ public class Dialog implements IsElement {
 
     public static final int SECONDARY_POSITION = 100;
     public static final int PRIMARY_POSITION = 200;
+    public static final String SELECTOR_ID = "#" + Ids.HAL_MODAL;
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String BODY_ELEMENT = "body";
@@ -274,7 +275,6 @@ public class Dialog implements IsElement {
     private static final String DIALOG_ELEMENT = "dialog";
     private static final String FOOTER_ELEMENT = "footer";
     private static final String LABEL = "label";
-    private static final String SELECTOR_ID = "#" + Ids.HAL_MODAL;
     private static final String TITLE_ELEMENT = "title";
 
     private static final Element root;

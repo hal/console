@@ -58,9 +58,12 @@ class AboutDialog {
     }
 
 
-    private final Dialog about;
+    private final Theme theme;
+    private final Element aboutContent;
 
     AboutDialog(final Environment environment, final Endpoints endpoints, final Theme theme) {
+        this.theme = theme;
+
         // @formatter:off
         AboutBuilder builder = new AboutBuilder()
             .h(1).textContent(theme.getFullName()).end()
@@ -80,16 +83,30 @@ class AboutDialog {
                 builder.end()
             .end();
         // @formatter:on
+        aboutContent = builder.build();
+    }
 
-        about = new Dialog.Builder("")
+    void show() {
+        Dialog dialog = new Dialog.Builder("")
                 .closeOnEsc(true)
                 .closeIcon(true)
-                .onClose(this::removeStyles)
+                .onClose(() -> {
+                    Element content = contentElement();
+                    if (content != null) {
+                        content.getClassList().remove(aboutModalPf);
+                    }
+                    Element footer = footerElement();
+                    Elements.removeChildrenFrom(footer);
+                })
                 .fadeIn(true)
-                .add(builder.elements())
+                .add(aboutContent)
                 .build();
 
-        Element footer = about.asElement().querySelector("." + modalFooter);
+        Element content = contentElement();
+        if (content != null) {
+            content.getClassList().add(aboutModalPf);
+        }
+        Element footer = footerElement();
         if (footer != null) {
             Element img = Browser.getDocument().createElement("img"); //NON-NLS
             img.setAttribute("src", theme.logos().about().getSafeUri().asString());
@@ -97,26 +114,14 @@ class AboutDialog {
             footer.appendChild(img);
             Elements.setVisible(footer, true);
         }
+        dialog.show();
     }
 
-    void show() {
-        addStyles();
-        about.show();
+    private Element contentElement() {
+        return Browser.getDocument().querySelector(Dialog.SELECTOR_ID + " ." + modalContent);
     }
 
-    private void addStyles() {
-        Element content = contentElement();
-        if (content != null) {
-            content.getClassList().add(aboutModalPf);
-        }
+    private Element footerElement() {
+        return Browser.getDocument().querySelector(Dialog.SELECTOR_ID + " ." + modalFooter);
     }
-
-    private void removeStyles() {
-        Element content = contentElement();
-        if (content != null) {
-            content.getClassList().remove(aboutModalPf);
-        }
-    }
-
-    private Element contentElement() {return about.asElement().querySelector("." + modalContent);}
 }
