@@ -15,11 +15,13 @@
  */
 package org.jboss.hal.config;
 
-import com.google.gwt.core.client.GWT;
-
 import javax.inject.Inject;
 
-import static org.jboss.hal.resources.Urls.*;
+import com.google.gwt.core.client.GWT;
+
+import static org.jboss.hal.resources.Urls.LOGOUT;
+import static org.jboss.hal.resources.Urls.MANAGEMENT;
+import static org.jboss.hal.resources.Urls.UPLOAD;
 
 /**
  * Class for getting absolute URLs to the different endpoints used in HAL.
@@ -64,6 +66,7 @@ public class Endpoints {
         dmr = safeUrl + MANAGEMENT;
         logout = safeUrl + LOGOUT;
         upload = safeUrl + UPLOAD;
+        sameOrigin = baseUrl.equals(getBaseUrl());
     }
 
     public String dmr() {
@@ -80,9 +83,5 @@ public class Endpoints {
 
     public boolean isSameOrigin() {
         return sameOrigin;
-    }
-
-    public void setSameOrigin(final boolean sameOrigin) {
-        this.sameOrigin = sameOrigin;
     }
 }
