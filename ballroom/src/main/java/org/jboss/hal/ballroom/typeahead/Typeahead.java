@@ -56,11 +56,10 @@ public abstract class Typeahead implements SuggestHandler, Attachable {
 
     @JsFunction
     @FunctionalInterface
-    public interface ChangeListener {
+    public interface TypeaheadListener {
 
-        void onChange(JsEvent event);
+        void onEvent(JsEvent event);
     }
-
 
     @JsType(isNative = true)
     public static class Bridge {
@@ -70,7 +69,7 @@ public abstract class Typeahead implements SuggestHandler, Attachable {
 
         public native void focus();
 
-        public native void bind(String event, ChangeListener listener);
+        public native void bind(String event, TypeaheadListener listener);
 
         public native void typeahead(Options options, Dataset dataset);
 
@@ -82,7 +81,7 @@ public abstract class Typeahead implements SuggestHandler, Attachable {
         public native void typeaheadClose(String method);
 
         @JsOverlay
-        public final void onChange(ChangeListener listener) {
+        public final void onChange(TypeaheadListener listener) {
             bind(CHANGE_EVENT, listener);
         }
 

@@ -400,6 +400,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             throw new IllegalStateException(NOT_INITIALIZED);
         }
         stateExec(CANCEL);
+        dataMapping.populateFormItems(model, this);
         if (cancelCallback != null) {
             cancelCallback.onCancel(this);
         }
@@ -445,6 +446,8 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     protected void prepareEditState() {}
 
     private void flip(State state) {
+        getFormItems().forEach(formItem -> formItem.setState(state));
+
         switch (state) {
             case READONLY:
                 if (exitEditWithEsc != null && panels.get(EDITING) != null) {

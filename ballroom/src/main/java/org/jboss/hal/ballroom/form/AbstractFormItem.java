@@ -73,6 +73,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     private final List<FormItemValidation<T>> validationHandlers;
     private final String label;
     private final String hint;
+    private Form.State state;
     private boolean required;
     private boolean modified;
     private boolean undefined;
@@ -326,8 +327,11 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         }
         if (suggestHandler instanceof Typeahead) {
             Typeahead.Bridge.select("#" + getId(EDITING)).onChange(event -> {
-                String value = ((elemental.html.InputElement) event.getTarget()).getValue();
-                onSuggest(value);
+                // the event might occur after we already switched to read-only mode
+                if (getState() == EDITING) {
+                    String value = ((elemental.html.InputElement) event.getTarget()).getValue();
+                    onSuggest(value);
+                }
             });
         }
     }
@@ -431,6 +435,16 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
         asElement(EDITING).getDataset().setAt(FORM_ITEM_GROUP, editId); //NON-NLS
         asElement(READONLY).getDataset().setAt(FORM_ITEM_GROUP, readonlyId); //NON-NLS
+    }
+
+    @Override
+    public void setState(Form.State state) {
+        this.state = state;
+    }
+
+    @Override
+    public Form.State getState() {
+        return state;
     }
 
     @Override
