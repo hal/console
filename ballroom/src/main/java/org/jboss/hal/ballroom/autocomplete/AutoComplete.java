@@ -17,6 +17,9 @@ package org.jboss.hal.ballroom.autocomplete;
 
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import elemental.client.Browser;
+import elemental.dom.Element;
+import elemental.events.Event;
 import jsinterop.annotations.JsConstructor;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
@@ -94,7 +97,11 @@ public class AutoComplete<T> implements SuggestHandler, Attachable {
 
     @Override
     public void showAll() {
-
+        formItem().setValue("*");
+        Event event = Browser.getDocument().createEvent("KeyboardEvent"); //NON-NLS
+        event.initEvent(Event.KEYUP, true, true);
+        Element element = Browser.getDocument().getElementById(formItem().getId(EDITING));
+        element.dispatchEvent(event);
     }
 
     @Override

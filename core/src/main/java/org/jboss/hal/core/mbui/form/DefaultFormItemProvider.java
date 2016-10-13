@@ -50,6 +50,7 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.form.NumberItem.MAX_SAFE_LONG;
 import static org.jboss.hal.ballroom.form.NumberItem.MIN_SAFE_LONG;
+import static org.jboss.hal.ballroom.form.SuggestHandler.SHOW_ALL_VALUE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Tuple.DOMAIN_CONTROLLER;
 
@@ -227,7 +228,7 @@ class DefaultFormItemProvider implements FormItemProvider {
                         (query, response) -> Dispatcher.INSTANCE.execute(operation, result -> {
                             List<String> list = result.asList().stream()
                                     .map(ModelNode::asString)
-                                    .filter(value -> value.contains(query))
+                                    .filter(value -> SHOW_ALL_VALUE.equals(query) || value.contains(query))
                                     .collect(toList());
                             response.response(JsHelper.asJsArray(list));
                         }));
