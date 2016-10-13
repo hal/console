@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.mbui;
+package org.jboss.hal.core.ui;
 
 import javax.inject.Inject;
 
@@ -26,11 +26,11 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
 
 /**
- * Holds common classes needed by generated MBUI views.
+ * Holds common classes needed by UI views.
  *
  * @author Harald Pehl
  */
-public class MbuiContext {
+public class UIContext {
 
     private final EventBus eventBus;
     private final MetadataRegistry metadataRegistry;
@@ -41,7 +41,7 @@ public class MbuiContext {
     private final StatementContext statementContext;
 
     @Inject
-    public MbuiContext(final EventBus eventBus, final MetadataRegistry metadataRegistry,
+    public UIContext(final EventBus eventBus, final MetadataRegistry metadataRegistry,
             final Dispatcher dispatcher, final OperationFactory operationFactory,
             final TableButtonFactory tableButtonFactory, final Resources resources,
             final StatementContext statementContext) {

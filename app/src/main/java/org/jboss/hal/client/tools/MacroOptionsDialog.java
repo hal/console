@@ -59,12 +59,13 @@ public class MacroOptionsDialog {
                 .onSave((form, changedValues) -> callback.onOptions(form.getModel()))
                 .build();
         FormItem<String> nameItem = form.getFormItem(NAME);
-        nameItem.addValidationHandler(value -> macros.get(value) != null
+        nameItem.addValidationHandler(name -> macros.get(name) != null
                 ? ValidationResult.invalid(resources.constants().duplicateMacro()) : ValidationResult.OK);
 
         dialog = new Dialog.Builder(resources.constants().startMacro())
                 .add(form.asElement())
-                .okCancel(form::save)
+                .primary(resources.constants().ok(), () -> form.save())
+                .cancel()
                 .closeOnEsc(true)
                 .build();
         dialog.registerAttachable(form);

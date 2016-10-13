@@ -17,7 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.transactions;
 
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.core.mbui.MbuiContext;
+import org.jboss.hal.core.ui.UIContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.spi.MbuiElement;
@@ -32,7 +32,7 @@ public abstract class TransactionView extends MbuiViewImpl<TransactionPresenter>
 
     // ------------------------------------------------------ initialization
 
-    public static TransactionView create(final MbuiContext mbuiContext) {
+    public static TransactionView create(final UIContext mbuiContext) {
         return new Mbui_TransactionView(mbuiContext);
     }
 
@@ -43,7 +43,7 @@ public abstract class TransactionView extends MbuiViewImpl<TransactionPresenter>
     @MbuiElement("tx-path-form") Form<ModelNode> pathForm;
     @MbuiElement("tx-jdbc-form") Form<ModelNode> jdbcForm;
 
-    TransactionView(final MbuiContext mbuiContext) {
+    TransactionView(final UIContext mbuiContext) {
         super(mbuiContext);
     }
 

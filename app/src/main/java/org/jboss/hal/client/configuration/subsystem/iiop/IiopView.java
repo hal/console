@@ -16,7 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.iiop;
 
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.core.mbui.MbuiContext;
+import org.jboss.hal.core.ui.UIContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.spi.MbuiElement;
@@ -28,13 +28,13 @@ import org.jboss.hal.spi.MbuiView;
 @MbuiView
 public abstract class IiopView extends MbuiViewImpl<IiopPresenter> implements IiopPresenter.MyView {
 
-    public static IiopView create(final MbuiContext mbuiContext) {
+    public static IiopView create(final UIContext mbuiContext) {
         return new Mbui_IiopView(mbuiContext);
     }
 
     @MbuiElement("iiop-openjdk-form") Form<ModelNode> form;
 
-    IiopView(final MbuiContext mbuiContext) {
+    IiopView(final UIContext mbuiContext) {
         super(mbuiContext);
     }
 

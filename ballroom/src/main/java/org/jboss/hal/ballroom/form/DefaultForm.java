@@ -400,7 +400,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             throw new IllegalStateException(NOT_INITIALIZED);
         }
         stateExec(CANCEL);
-        dataMapping.populateFormItems(model, this);
+        dataMapping.populateFormItems(model, this); // restore persisted model
         if (cancelCallback != null) {
             cancelCallback.onCancel(this);
         }

@@ -21,7 +21,7 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.core.mbui.MbuiContext;
+import org.jboss.hal.core.ui.UIContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
@@ -37,7 +37,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
 
     // ------------------------------------------------------ initialization
 
-    public static EjbView create(final MbuiContext mbuiContext) {
+    public static EjbView create(final UIContext mbuiContext) {
         return new Mbui_EjbView(mbuiContext);
     }
 
@@ -71,7 +71,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
     @MbuiElement("ejb-app-security-domain-table") DataTable<NamedNode> appSecurityDomainTable;
     @MbuiElement("ejb-app-security-domain-form") Form<NamedNode> appSecurityDomainForm;
 
-    EjbView(final MbuiContext mbuiContext) {
+    EjbView(final UIContext mbuiContext) {
         super(mbuiContext);
     }
 

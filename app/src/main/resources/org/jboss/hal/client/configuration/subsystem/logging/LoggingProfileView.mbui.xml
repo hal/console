@@ -45,8 +45,8 @@
                 <table id="logging-profile-categories-table" title="Category"
                        form-ref="logging-profile-categories-form">
                     <actions>
-                        <action title="{{mbuiContext.resources().constants().add()}}" handler="{{addLogger()}}"/>
-                        <action title="{{mbuiContext.resources().constants().remove()}}" handler="{{removeLogger(api)}}"
+                        <action title="{{uic.resources().constants().add()}}" handler="{{addLogger()}}"/>
+                        <action title="{{uic.resources().constants().remove()}}" handler="{{removeLogger(api)}}"
                                 scope="selected"/>
                     </actions>
                     <columns>
@@ -77,9 +77,9 @@
                     <p>{{metadata.getDescription().getDescription()}}</p>
                     <table id="logging-profile-handler-console-table" form-ref="logging-profile-handler-console-form">
                         <actions>
-                            <action title="{{mbuiContext.resources().constants().add()}}"
+                            <action title="{{uic.resources().constants().add()}}"
                                     handler="{{addConsoleHandler()}}"/>
-                            <action title="{{mbuiContext.resources().constants().remove()}}"
+                            <action title="{{uic.resources().constants().remove()}}"
                                     handler="{{removeConsoleHandler(api)}}" scope="selected"/>
                         </actions>
                         <columns>
@@ -123,9 +123,9 @@
                     <p>{{metadata.getDescription().getDescription()}}</p>
                     <table id="logging-profile-handler-file-table" form-ref="logging-profile-handler-file-form">
                         <actions>
-                            <action title="{{mbuiContext.resources().constants().add()}}"
+                            <action title="{{uic.resources().constants().add()}}"
                                     handler="{{addFileHandler()}}"/>
-                            <action title="{{mbuiContext.resources().constants().remove()}}"
+                            <action title="{{uic.resources().constants().remove()}}"
                                     handler="{{removeFileHandler(api)}}" scope="selected"/>
                         </actions>
                         <columns>
@@ -171,9 +171,9 @@
                     <table id="logging-profile-handler-periodic-rotating-file-table"
                            form-ref="logging-profile-handler-periodic-rotating-file-form">
                         <actions>
-                            <action title="{{mbuiContext.resources().constants().add()}}"
+                            <action title="{{uic.resources().constants().add()}}"
                                     handler="{{addPeriodicHandler()}}"/>
-                            <action title="{{mbuiContext.resources().constants().remove()}}"
+                            <action title="{{uic.resources().constants().remove()}}"
                                     handler="{{removePeriodicHandler(api)}}" scope="selected"/>
                         </actions>
                         <columns>
@@ -221,9 +221,9 @@
                     <table id="logging-profile-handler-periodic-size-rotating-file-table"
                            form-ref="logging-profile-handler-periodic-size-rotating-file-form">
                         <actions>
-                            <action title="{{mbuiContext.resources().constants().add()}}"
+                            <action title="{{uic.resources().constants().add()}}"
                                     handler="{{addPeriodicSizeHandler()}}"/>
-                            <action title="{{mbuiContext.resources().constants().remove()}}"
+                            <action title="{{uic.resources().constants().remove()}}"
                                     handler="{{removePeriodicSizeHandler(api)}}" scope="selected"/>
                         </actions>
                         <columns>
@@ -274,9 +274,9 @@
                     <table id="logging-profile-handler-size-rotating-file-table"
                            form-ref="logging-profile-handler-size-rotating-file-form">
                         <actions>
-                            <action title="{{mbuiContext.resources().constants().add()}}"
+                            <action title="{{uic.resources().constants().add()}}"
                                     handler="{{addSizeHandler()}}"/>
-                            <action title="{{mbuiContext.resources().constants().remove()}}"
+                            <action title="{{uic.resources().constants().remove()}}"
                                     handler="{{removeSizeHandler(api)}}" scope="selected"/>
                         </actions>
                         <columns>
@@ -325,9 +325,9 @@
                     <p>{{metadata.getDescription().getDescription()}}</p>
                     <table id="logging-profile-handler-async-table" form-ref="logging-profile-handler-async-form">
                         <actions>
-                            <action title="{{mbuiContext.resources().constants().add()}}"
+                            <action title="{{uic.resources().constants().add()}}"
                                     handler="{{addAsyncHandler()}}"/>
-                            <action title="{{mbuiContext.resources().constants().remove()}}"
+                            <action title="{{uic.resources().constants().remove()}}"
                                     handler="{{removeAsyncHandler(api)}}" scope="selected"/>
                         </actions>
                         <columns>
@@ -371,9 +371,9 @@
                     <p>{{metadata.getDescription().getDescription()}}</p>
                     <table id="logging-profile-handler-custom-table" form-ref="logging-profile-handler-custom-form">
                         <actions>
-                            <action title="{{mbuiContext.resources().constants().add()}}"
+                            <action title="{{uic.resources().constants().add()}}"
                                     handler="{{addCustomHandler()}}"/>
-                            <action title="{{mbuiContext.resources().constants().remove()}}"
+                            <action title="{{uic.resources().constants().remove()}}"
                                     handler="{{removeCustomHandler(api)}}" scope="selected"/>
                         </actions>
                         <columns>
@@ -416,9 +416,9 @@
                     <p>{{metadata.getDescription().getDescription()}}</p>
                     <table id="logging-profile-handler-syslog-table" form-ref="logging-profile-handler-syslog-form">
                         <actions>
-                            <action title="{{mbuiContext.resources().constants().add()}}"
+                            <action title="{{uic.resources().constants().add()}}"
                                     handler="{{addSyslogHandler()}}"/>
-                            <action title="{{mbuiContext.resources().constants().remove()}}"
+                            <action title="{{uic.resources().constants().remove()}}"
                                     handler="{{removeSyslogHandler(api)}}" scope="selected"/>
                         </actions>
                         <columns>
@@ -457,9 +457,9 @@
                     <table id="logging-profile-formatter-pattern-table"
                            form-ref="logging-profile-formatter-pattern-form">
                         <actions>
-                            <action title="{{mbuiContext.resources().constants().add()}}"
+                            <action title="{{uic.resources().constants().add()}}"
                                     handler="{{addPatternFormatter()}}"/>
-                            <action title="{{mbuiContext.resources().constants().remove()}}"
+                            <action title="{{uic.resources().constants().remove()}}"
                                     handler="{{removePatternFormatter(api)}}" scope="selected"/>
                         </actions>
                         <columns>
@@ -489,9 +489,9 @@
                     <p>{{metadata.getDescription().getDescription()}}</p>
                     <table id="logging-profile-formatter-custom-table" form-ref="logging-profile-formatter-custom-form">
                         <actions>
-                            <action title="{{mbuiContext.resources().constants().add()}}"
+                            <action title="{{uic.resources().constants().add()}}"
                                     handler="{{addCustomFormatter()}}"/>
-                            <action title="{{mbuiContext.resources().constants().remove()}}"
+                            <action title="{{uic.resources().constants().remove()}}"
                                     handler="{{removeCustomFormatter(api)}}" scope="selected"/>
                         </actions>
                         <columns>

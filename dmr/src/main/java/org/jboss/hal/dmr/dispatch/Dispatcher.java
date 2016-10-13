@@ -104,6 +104,12 @@ public class Dispatcher implements RecordingHandler {
     }
 
 
+    /**
+     * Please use this constant only in cases where no DI is available.
+     */
+    @Inject
+    public static Dispatcher INSTANCE;
+
     public static final String APPLICATION_DMR_ENCODED = "application/dmr-encoded";
     public static final String HEADER_MANAGEMENT_CLIENT_NAME = "X-Management-Client-Name";
     public static final String HEADER_MANAGEMENT_CLIENT_VALUE = "HAL";

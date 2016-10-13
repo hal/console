@@ -25,7 +25,7 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemMonitor;
-import org.jboss.hal.core.mbui.MbuiContext;
+import org.jboss.hal.core.ui.UIContext;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.core.mvp.Places;
@@ -50,7 +50,6 @@ public class CoreModule extends AbstractGinModule {
         bind(HostActions.class).in(Singleton.class);
         bind(ItemMonitor.class).in(Singleton.class);
         bind(ItemActionFactory.class).in(Singleton.class);
-        bind(MbuiContext.class).in(Singleton.class);
         bind(ModelBrowser.class);
         bind(Places.class).in(Singleton.class);
         bind(ServerActions.class).in(Singleton.class);
@@ -58,6 +57,7 @@ public class CoreModule extends AbstractGinModule {
         bind(StatementContext.class).to(CoreStatementContext.class).asEagerSingleton(); // to register the event handler
         bind(Subsystems.class).in(Singleton.class);
         bind(TableButtonFactory.class).in(Singleton.class);
+        bind(UIContext.class).in(Singleton.class);
         bind(UIRegistry.class).in(Singleton.class);
 
         requestStaticInjection(CoreStatementContext.class);

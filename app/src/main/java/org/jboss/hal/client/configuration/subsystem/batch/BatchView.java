@@ -21,7 +21,7 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.core.mbui.MbuiContext;
+import org.jboss.hal.core.ui.UIContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
@@ -37,7 +37,7 @@ public abstract class BatchView extends MbuiViewImpl<BatchPresenter> implements 
 
     // ------------------------------------------------------ initialization
 
-    public static BatchView create(final MbuiContext mbuiContext) {
+    public static BatchView create(final UIContext mbuiContext) {
         return new Mbui_BatchView(mbuiContext);
     }
 
@@ -52,7 +52,7 @@ public abstract class BatchView extends MbuiViewImpl<BatchPresenter> implements 
     @MbuiElement("batch-thread-pool-table") DataTable<NamedNode> threadPoolTable;
     @MbuiElement("batch-thread-pool-form") Form<NamedNode> threadPoolForm;
 
-    BatchView(final MbuiContext mbuiContext) {
+    BatchView(final UIContext mbuiContext) {
         super(mbuiContext);
     }
 

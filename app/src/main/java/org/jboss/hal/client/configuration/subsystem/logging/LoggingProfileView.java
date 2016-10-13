@@ -31,7 +31,7 @@ import org.jboss.hal.ballroom.table.Api;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.typeahead.ReadChildResourcesTypeahead;
-import org.jboss.hal.core.mbui.MbuiContext;
+import org.jboss.hal.core.ui.UIContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -70,7 +70,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     // ------------------------------------------------------ initialization
 
-    public static LoggingProfileView create(final MbuiContext mbuiContext) {
+    public static LoggingProfileView create(final UIContext mbuiContext) {
         return new Mbui_LoggingProfileView(mbuiContext);
     }
 
@@ -102,7 +102,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     @MbuiElement("logging-profile-formatter-pattern-form") Form<NamedNode> patternFormatterForm;
     EmptyState noRootLogger;
 
-    LoggingProfileView(final MbuiContext mbuiContext) {
+    LoggingProfileView(final UIContext mbuiContext) {
         super(mbuiContext);
         selectionAwareStatementContext = new SelectionAwareStatementContext(mbuiContext.statementContext(),
                 () -> presenter.getLoggingProfile());
@@ -120,10 +120,10 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     @PostConstruct
     void init() {
-        noRootLogger = new EmptyState.Builder(mbuiContext.resources().constants().noRootLogger())
-                .description(mbuiContext.resources().constants().noRootLoggerDescription())
+        noRootLogger = new EmptyState.Builder(uic.resources().constants().noRootLogger())
+                .description(uic.resources().constants().noRootLoggerDescription())
                 .icon(fontAwesome("sitemap"))
-                .primaryAction(mbuiContext.resources().constants().add(), this::addRootLogger)
+                .primaryAction(uic.resources().constants().add(), this::addRootLogger)
                 .build();
         noRootLogger.asElement().getClassList().add(marginTopLarge);
 
@@ -164,23 +164,23 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     }
 
     private void addRootLogger() {
-        Metadata metadata = mbuiContext.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("root-logger=ROOT"));
+        Metadata metadata = uic.metadataRegistry().lookup(LOGGING_PROFILE_TEMPLATE.append("root-logger=ROOT"));
 
         Form<ModelNode> form = new ModelNodeForm.Builder<>("logging-profile-root-logger-add", metadata)
                 .addFromRequestProperties()
                 .include(LEVEL, HANDLERS)
                 .build();
         AddResourceDialog dialog = new AddResourceDialog(
-                mbuiContext.resources().messages().addResourceTitle(Names.ROOT_LOGGER), form,
+                uic.resources().messages().addResourceTitle(Names.ROOT_LOGGER), form,
                 (name, model) -> {
                     ResourceAddress address = SELECTED_LOGGING_PROFILE_TEMPLATE.append("root-logger=ROOT")
                             .resolve(selectionAwareStatementContext);
                     Operation operation = new Operation.Builder(ADD, address)
                             .payload(model)
                             .build();
-                    mbuiContext.dispatcher().execute(operation, result -> {
-                        MessageEvent.fire(mbuiContext.eventBus(),
-                                Message.success(mbuiContext.resources().messages()
+                    uic.dispatcher().execute(operation, result -> {
+                        MessageEvent.fire(uic.eventBus(),
+                                Message.success(uic.resources().messages()
                                         .addSingleResourceSuccess(Names.ROOT_LOGGER)));
                         presenter.reload();
                     });
@@ -347,19 +347,19 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     void addAsyncHandler() {
         AddressTemplate metadataTemplate = LOGGING_PROFILE_TEMPLATE.append("async-handler=*");
-        Metadata metadata = mbuiContext.metadataRegistry().lookup(metadataTemplate);
+        Metadata metadata = uic.metadataRegistry().lookup(metadataTemplate);
         AddressTemplate selectionTemplate = SELECTED_LOGGING_PROFILE_TEMPLATE.append("async-handler=*");
 
         AddResourceDialog dialog = new AddResourceDialog(Ids.build("logging-profile-handler-async-table", "add"),
-                mbuiContext.resources().messages().addResourceTitle("Async Handler"),
+                uic.resources().messages().addResourceTitle("Async Handler"),
                 metadata, asList("level", "subhandlers", "queue-length", "overflow-action"),
                 (name, modelNode) -> {
                     ResourceAddress address = selectionTemplate.resolve(selectionAwareStatementContext, name);
                     Operation operation = new Operation.Builder(ADD, address).payload(modelNode).build();
-                    mbuiContext.dispatcher().execute(operation, result -> {
+                    uic.dispatcher().execute(operation, result -> {
                         presenter.reload();
-                        MessageEvent.fire(mbuiContext.eventBus(), Message.success(
-                                mbuiContext.resources().messages().addResourceSuccess("Async Handler", name)));
+                        MessageEvent.fire(uic.eventBus(), Message.success(
+                                uic.resources().messages().addResourceSuccess("Async Handler", name)));
                     });
                 });
         List<AddressTemplate> templates = asList(
@@ -506,19 +506,19 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     private void addResource(String templateSuffix, String id, String type, String... attributes) {
         AddressTemplate metadataTemplate = LOGGING_PROFILE_TEMPLATE.append(templateSuffix);
-        Metadata metadata = mbuiContext.metadataRegistry().lookup(metadataTemplate);
+        Metadata metadata = uic.metadataRegistry().lookup(metadataTemplate);
         AddressTemplate selectionTemplate = SELECTED_LOGGING_PROFILE_TEMPLATE.append(templateSuffix);
 
         AddResourceDialog dialog = new AddResourceDialog(id,
-                mbuiContext.resources().messages().addResourceTitle(type),
+                uic.resources().messages().addResourceTitle(type),
                 metadata, attributes == null ? emptyList() : asList(attributes),
                 (name, modelNode) -> {
                     ResourceAddress address = selectionTemplate.resolve(selectionAwareStatementContext, name);
                     Operation operation = new Operation.Builder(ADD, address).payload(modelNode).build();
-                    mbuiContext.dispatcher().execute(operation, result -> {
+                    uic.dispatcher().execute(operation, result -> {
                         presenter.reload();
-                        MessageEvent.fire(mbuiContext.eventBus(), Message.success(
-                                mbuiContext.resources().messages().addResourceSuccess(type, name)));
+                        MessageEvent.fire(uic.eventBus(), Message.success(
+                                uic.resources().messages().addResourceSuccess(type, name)));
                     });
                 });
         FormItem<Object> handlers = dialog.getForm().getFormItem("handlers");
@@ -530,7 +530,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     private void addFileHandlerResource(String templateSuffix, String id, String type, String... attributes) {
         AddressTemplate metadataTemplate = LOGGING_PROFILE_TEMPLATE.append(templateSuffix);
-        Metadata metadata = mbuiContext.metadataRegistry().lookup(metadataTemplate);
+        Metadata metadata = uic.metadataRegistry().lookup(metadataTemplate);
         AddressTemplate selectionTemplate = SELECTED_LOGGING_PROFILE_TEMPLATE.append(templateSuffix);
 
         ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, metadata)
@@ -542,14 +542,14 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
             builder.include(asList(attributes));
         }
         AddResourceDialog dialog = new AddResourceDialog(
-                mbuiContext.resources().messages().addResourceTitle(type), builder.build(),
+                uic.resources().messages().addResourceTitle(type), builder.build(),
                 (name, modelNode) -> {
                     ResourceAddress address = selectionTemplate.resolve(selectionAwareStatementContext, name);
                     Operation operation = new Operation.Builder(ADD, address).payload(modelNode).build();
-                    mbuiContext.dispatcher().execute(operation, result -> {
+                    uic.dispatcher().execute(operation, result -> {
                         presenter.reload();
-                        MessageEvent.fire(mbuiContext.eventBus(), Message.success(
-                                mbuiContext.resources().messages().addResourceSuccess(type, name)));
+                        MessageEvent.fire(uic.eventBus(), Message.success(
+                                uic.resources().messages().addResourceSuccess(type, name)));
                     });
                 });
         dialog.show();
@@ -560,15 +560,15 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
         String name = api.selectedRow().getName();
         AddressTemplate selectionTemplate = SELECTED_LOGGING_PROFILE_TEMPLATE.append(templateSuffix);
         DialogFactory.showConfirmation(
-                mbuiContext.resources().messages().removeResourceConfirmationTitle(type),
-                mbuiContext.resources().messages().removeResourceConfirmationQuestion(name),
+                uic.resources().messages().removeResourceConfirmationTitle(type),
+                uic.resources().messages().removeResourceConfirmationQuestion(name),
                 () -> {
                     ResourceAddress address = selectionTemplate.resolve(selectionAwareStatementContext, name);
                     Operation operation = new Operation.Builder(REMOVE, address).build();
-                    mbuiContext.dispatcher().execute(operation, result -> {
+                    uic.dispatcher().execute(operation, result -> {
                         presenter.reload();
-                        MessageEvent.fire(mbuiContext.eventBus(), Message.success(
-                                mbuiContext.resources().messages().removeResourceSuccess(type, name)));
+                        MessageEvent.fire(uic.eventBus(), Message.success(
+                                uic.resources().messages().removeResourceSuccess(type, name)));
                     });
                 });
     }

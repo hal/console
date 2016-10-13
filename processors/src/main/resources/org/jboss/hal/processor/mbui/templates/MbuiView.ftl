@@ -20,10 +20,10 @@ import org.jboss.hal.ballroom.typeahead.ReadChildResourcesTypeahead;
 <#if context.verticalNavigation??>
 import org.jboss.hal.ballroom.VerticalNavigation;
 </#if>
-import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
+import org.jboss.hal.core.ui.UIContext;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
@@ -53,15 +53,15 @@ final class ${context.subclass} extends ${context.base} {
     private final Map<String, Element> handlebarElements;
 
     @SuppressWarnings("unchecked")
-    ${context.subclass}(MbuiContext mbuiContext<#list context.abstractProperties as abstractProperty>, ${abstractProperty.type} ${abstractProperty.field}</#list>) {
-        super(mbuiContext);
+    ${context.subclass}(UIContext uic<#list context.abstractProperties as abstractProperty>, ${abstractProperty.type} ${abstractProperty.field}</#list>) {
+        super(uic);
 
         <#list context.abstractProperties as abstractProperty>
         this.${abstractProperty.field} = ${abstractProperty.field};
         </#list>
         <#list context.metadataInfos as metadataInfo>
         AddressTemplate ${metadataInfo.name}Template = AddressTemplate.of("${metadataInfo.template}");
-        this.${metadataInfo.name} = mbuiContext.metadataRegistry().lookup(${metadataInfo.name}Template);
+        this.${metadataInfo.name} = uic.metadataRegistry().lookup(${metadataInfo.name}Template);
         </#list>
         <#list context.tabs as tabInfo>
         ${tabInfo.name} = new Tabs();
@@ -91,11 +91,11 @@ final class ${context.subclass} extends ${context.base} {
                 <#if form.nameResolver??>
             .onSave((form, changedValues) -> {
                 String name = ${form.nameResolver};
-                saveForm(changedValues, ${form.metadata.name}Template.resolve(mbuiContext.statementContext(), name),
+                saveForm(changedValues, ${form.metadata.name}Template.resolve(uic.statementContext(), name),
                     ${form.title}, name);
             })
                 <#else>
-            .onSave((form, changedValues) -> saveSingletonForm(changedValues, ${form.metadata.name}Template.resolve(mbuiContext.statementContext()), ${form.title}))
+            .onSave((form, changedValues) -> saveSingletonForm(changedValues, ${form.metadata.name}Template.resolve(uic.statementContext()), ${form.title}))
                 </#if>
             <#elseif form.onSave??>
             .onSave((form, changedValues) -> ${form.onSave})
@@ -109,12 +109,12 @@ final class ${context.subclass} extends ${context.base} {
         ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(${attribute.suggestHandler});
                 <#elseif attribute.suggestHandlerTemplates?size == 1>
         ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildResourcesTypeahead(
-            AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}"), mbuiContext.statementContext()));
+            AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}"), uic.statementContext()));
                 <#else>
         List<AddressTemplate> ${form.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
             AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
         ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildResourcesTypeahead(
-            ${form.name}Templates, mbuiContext.statementContext()));
+            ${form.name}Templates, uic.statementContext()));
                 </#if>
             </#list>
         </#list>
@@ -127,7 +127,7 @@ final class ${context.subclass} extends ${context.base} {
                         <#case "ADD_RESOURCE">
                             <#if action.attributes?has_content>
                                 <#if action.hasAttributesWithProvider>
-            .button(mbuiContext.resources().constants().add(), (event, api) -> {
+            .button(uic.resources().constants().add(), (event, api) -> {
                 ModelNodeForm form = new ModelNodeForm.Builder(Ids.build("${table.selector}", Ids.ADD_SUFFIX),
                     ${table.metadata.name})
                     .addFromRequestProperties()
@@ -149,42 +149,42 @@ final class ${context.subclass} extends ${context.base} {
                 form.getFormItem("${attribute.name}").registerSuggestHandler(${attribute.suggestHandler});
                                         <#elseif attribute.suggestHandlerTemplates?size == 1>
                 form.getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildResourcesTypeahead(
-                    AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}", mbuiContext.statementContext()));
+                    AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}", uic.statementContext()));
                                         <#else>
                 List<AddressTemplate> ${table.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
                     AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
                 form.getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildResourcesTypeahead(
-                    ${table.name}Templates, mbuiContext.statementContext()));
+                    ${table.name}Templates, uic.statementContext()));
                                         </#if>
                                     </#list>
                 AddResourceDialog dialog = new AddResourceDialog(
-                    mbuiContext.resources().messages().addResourceTitle(${table.title}),
+                    uic.resources().messages().addResourceTitle(${table.title}),
                     form,
                     (name, modelNode) -> {
-                        ResourceAddress address = ${table.metadata.name}Template.resolve(mbuiContext.statementContext(), name);
+                        ResourceAddress address = ${table.metadata.name}Template.resolve(uic.statementContext(), name);
                         Operation operation = new Operation.Builder(ADD, address).payload(modelNode).build();
-                        mbuiContext.dispatcher().execute(operation, result -> {
+                        uic.dispatcher().execute(operation, result -> {
                             presenter.reload();
-                            MessageEvent.fire(mbuiContext.eventBus(), Message.success(
-                            mbuiContext.resources().messages().addResourceSuccess(${table.title}, name)));
+                            MessageEvent.fire(uic.eventBus(), Message.success(
+                            uic.resources().messages().addResourceSuccess(${table.title}, name)));
                         });
                     });
                 dialog.show();
             })
                                 <#elseif action.hasAttributesWithValidationsHandler || action.hasAttributesWithSuggestionHandler>
-            .button(mbuiContext.resources().constants().add(), (event, api) -> {
+            .button(uic.resources().constants().add(), (event, api) -> {
                 AddResourceDialog dialog = new AddResourceDialog(
                     Ids.build("${table.selector}", Ids.ADD_SUFFIX),
-                    mbuiContext.resources().messages().addResourceTitle(${table.title}),
+                    uic.resources().messages().addResourceTitle(${table.title}),
                     ${table.metadata.name},
                     asList(<#list action.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>),
                     (name, modelNode) -> {
-                        ResourceAddress address = ${table.metadata.name}Template.resolve(mbuiContext.statementContext(), name);
+                        ResourceAddress address = ${table.metadata.name}Template.resolve(uic.statementContext(), name);
                         Operation operation = new Operation.Builder(ADD, address).payload(modelNode).build();
-                        mbuiContext.dispatcher().execute(operation, result -> {
+                        uic.dispatcher().execute(operation, result -> {
                             presenter.reload();
-                            MessageEvent.fire(mbuiContext.eventBus(), Message.success(
-                                mbuiContext.resources().messages().addResourceSuccess(${table.title}, name)));
+                            MessageEvent.fire(uic.eventBus(), Message.success(
+                                uic.resources().messages().addResourceSuccess(${table.title}, name)));
                         });
                     });
                                     <#list action.validationHandlerAttributes as attribute>
@@ -195,18 +195,18 @@ final class ${context.subclass} extends ${context.base} {
                 dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(${attribute.suggestHandler});
                                         <#elseif attribute.suggestHandlerTemplates?size == 1>
                 dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildResourcesTypeahead(
-                    AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}"), mbuiContext.statementContext()));
+                    AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}"), uic.statementContext()));
                                         <#else>
                 List<AddressTemplate> ${table.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
                     AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
                 dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildResourcesTypeahead(
-                    ${table.name}Templates, mbuiContext.statementContext()));
+                    ${table.name}Templates, uic.statementContext()));
                                         </#if>
                                     </#list>
                 dialog.show();
             })
                                 <#else>
-            .button(mbuiContext.tableButtonFactory().add(Ids.build("${table.selector}", Ids.ADD_SUFFIX), ${table.title},
+            .button(uic.tableButtonFactory().add(Ids.build("${table.selector}", Ids.ADD_SUFFIX), ${table.title},
                 ${table.metadata.name}Template,
                 () -> presenter.reload(),
                                     <#list action.attributes as attribute>
@@ -214,13 +214,13 @@ final class ${context.subclass} extends ${context.base} {
                                     </#list>
                                 </#if>
                             <#else>
-            .button(mbuiContext.tableButtonFactory().add(Ids.build("${table.selector}", Ids.ADD_SUFFIX), ${table.title},
+            .button(uic.tableButtonFactory().add(Ids.build("${table.selector}", Ids.ADD_SUFFIX), ${table.title},
                 ${table.metadata.name}Template,
                 () -> presenter.reload()))
                             </#if>
                             <#break>
                         <#case "REMOVE_RESOURCE">
-            .button(mbuiContext.tableButtonFactory().remove(${table.title}, ${table.metadata.name}Template,
+            .button(uic.tableButtonFactory().remove(${table.title}, ${table.metadata.name}Template,
                 (api) -> ${action.nameResolver},
                 () -> presenter.reload()))
                             <#break>

@@ -21,7 +21,7 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.core.mbui.MbuiContext;
+import org.jboss.hal.core.ui.UIContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
@@ -36,7 +36,7 @@ public abstract class IOView extends MbuiViewImpl<IOPresenter> implements IOPres
 
     // ------------------------------------------------------ initialization
 
-    public static IOView create(final MbuiContext mbuiContext) {
+    public static IOView create(final UIContext mbuiContext) {
         return new Mbui_IOView(mbuiContext);
     }
 
@@ -46,7 +46,7 @@ public abstract class IOView extends MbuiViewImpl<IOPresenter> implements IOPres
     @MbuiElement("io-worker-table") DataTable<NamedNode> workerTable;
     @MbuiElement("io-worker-form") Form<NamedNode> workerForm;
 
-    IOView(final MbuiContext mbuiContext) {
+    IOView(final UIContext mbuiContext) {
         super(mbuiContext);
     }
 

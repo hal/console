@@ -27,7 +27,7 @@ import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.typeahead.ReadChildResourcesTypeahead;
-import org.jboss.hal.core.mbui.MbuiContext;
+import org.jboss.hal.core.ui.UIContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -57,7 +57,7 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
 
     // ------------------------------------------------------ initialization
 
-    public static LoggingView create(final MbuiContext mbuiContext) {
+    public static LoggingView create(final UIContext mbuiContext) {
         return new Mbui_LoggingView(mbuiContext);
     }
 
@@ -89,16 +89,16 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
 
     EmptyState noRootLogger;
 
-    LoggingView(final MbuiContext mbuiContext) {
+    LoggingView(final UIContext mbuiContext) {
         super(mbuiContext);
     }
 
     @PostConstruct
     void init() {
-        noRootLogger = new EmptyState.Builder(mbuiContext.resources().constants().noRootLogger())
-                .description(mbuiContext.resources().constants().noRootLoggerDescription())
+        noRootLogger = new EmptyState.Builder(uic.resources().constants().noRootLogger())
+                .description(uic.resources().constants().noRootLoggerDescription())
                 .icon("fa fa-sitemap")
-                .primaryAction(mbuiContext.resources().constants().add(), this::addRootLogger)
+                .primaryAction(uic.resources().constants().add(), this::addRootLogger)
                 .build();
         noRootLogger.asElement().getClassList().add(marginTopLarge);
 
@@ -137,22 +137,22 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     }
 
     private void addRootLogger() {
-        Metadata metadata = mbuiContext.metadataRegistry().lookup(ROOT_LOGGER_TEMPLATE);
+        Metadata metadata = uic.metadataRegistry().lookup(ROOT_LOGGER_TEMPLATE);
 
         Form<ModelNode> form = new ModelNodeForm.Builder<>("logging-root-logger-add", metadata)
                 .addFromRequestProperties()
                 .include(LEVEL, HANDLERS)
                 .build();
         AddResourceDialog dialog = new AddResourceDialog(
-                mbuiContext.resources().messages().addResourceTitle(Names.ROOT_LOGGER), form,
+                uic.resources().messages().addResourceTitle(Names.ROOT_LOGGER), form,
                 (name, model) -> {
                     Operation operation = new Operation.Builder(ADD,
-                            ROOT_LOGGER_TEMPLATE.resolve(mbuiContext.statementContext()))
+                            ROOT_LOGGER_TEMPLATE.resolve(uic.statementContext()))
                             .payload(model)
                             .build();
-                    mbuiContext.dispatcher().execute(operation, result -> {
-                        MessageEvent.fire(mbuiContext.eventBus(),
-                                Message.success(mbuiContext.resources().messages()
+                    uic.dispatcher().execute(operation, result -> {
+                        MessageEvent.fire(uic.eventBus(),
+                                Message.success(uic.resources().messages()
                                         .addSingleResourceSuccess(Names.ROOT_LOGGER)));
                         presenter.reload();
                     });
@@ -162,7 +162,7 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
                 asList(ASYNC_HANDLER_TEMPLATE, CONSOLE_HANDLER_TEMPLATE, CUSTOM_HANDLER_TEMPLATE, FILE_HANDLER_TEMPLATE,
                         PERIODIC_ROTATING_FILE_HANDLER_TEMPLATE, PERIODIC_SIZE_ROTATING_FILE_HANDLER_TEMPLATE,
                         SIZE_ROTATING_FILE_HANDLER_TEMPLATE, SYSLOG_HANDLER_TEMPLATE),
-                mbuiContext.statementContext());
+                uic.statementContext());
         dialog.getForm().getFormItem(HANDLERS).registerSuggestHandler(suggestHandler);
         dialog.show();
     }
