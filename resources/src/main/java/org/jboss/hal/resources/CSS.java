@@ -42,6 +42,7 @@ public interface CSS {
     String arrow = "arrow";
     String attributes = "attributes";
     String autocompleteSuggestion = "autocomplete-suggestion";
+    String autocompleteSuggestions = "autocomplete-suggestions";
 
     String badge = "badge";
     String badgeContainerPf = "badge-container-pf";

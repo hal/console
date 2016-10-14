@@ -23,6 +23,7 @@ import elemental.events.Event;
 import jsinterop.annotations.JsConstructor;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
@@ -31,6 +32,7 @@ import org.jetbrains.annotations.NonNls;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.autocompleteSuggestion;
+import static org.jboss.hal.resources.CSS.autocompleteSuggestions;
 
 /**
  * Java wrapper for <a href="https://github.com/Pixabay/JavaScript-autoComplete">javascript-auto-complete</a>
@@ -96,7 +98,16 @@ public class AutoComplete<T> implements SuggestHandler, Attachable {
     }
 
     @Override
+    public void detach() {
+        if (bridge != null) {
+            bridge.destroy();
+            bridge = null;
+        }
+    }
+
+    @Override
     public void showAll() {
+        //noinspection unchecked
         formItem().setValue("*");
         Event event = Browser.getDocument().createEvent("KeyboardEvent"); //NON-NLS
         event.initEvent(Event.KEYUP, true, true);
@@ -106,15 +117,9 @@ public class AutoComplete<T> implements SuggestHandler, Attachable {
 
     @Override
     public void close() {
-
-    }
-
-    // TODO Move this to the SuggestHandler interface
-    public void destroy() {
-        if (bridge != null) {
-            bridge.destroy();
-            bridge = null;
-        }
+        Elements.stream(Browser.getDocument().querySelectorAll(autocompleteSuggestions))
+                .filter(Elements::isVisible)
+                .forEach(element -> Elements.setVisible(element, false));
     }
 
     @Override

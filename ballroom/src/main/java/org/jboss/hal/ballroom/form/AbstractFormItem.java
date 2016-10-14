@@ -336,6 +336,12 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         }
     }
 
+    @Override
+    public void detach() {
+        if (suggestHandler instanceof Attachable) {
+            ((Attachable) suggestHandler).detach();
+        }
+    }
 
     // ------------------------------------------------------ state, name & text
 
