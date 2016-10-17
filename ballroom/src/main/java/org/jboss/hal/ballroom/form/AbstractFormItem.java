@@ -53,7 +53,6 @@ import static org.jboss.hal.resources.UIConstants.HIDDEN;
 import static org.jboss.hal.resources.UIConstants.TABINDEX;
 
 /**
- * TODO Implement org.jboss.hal.ballroom.form.Form.State#READONLY
  * TODO Show resolved expressions using a dismissable inline notification
  * https://www.patternfly.org/patterns/inline-notifications/
  *
@@ -611,7 +610,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         toggleShowAll(true);
     }
 
-    void onSuggest(final String suggestion) {
+    public void onSuggest(final String suggestion) {
         // nop
     }
 

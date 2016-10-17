@@ -1,0 +1,96 @@
+[
+    {
+        "operation" => "/interface=*:read-resource",
+        "comment" => "The operation is not used. It's just here as part of the documentation",
+        "address" => [("interface" => "management")],
+        "outcome" => "success",
+        "result" => {
+            "any" => undefined,
+            "any-address" => undefined,
+            "inet-address" => undefined,
+            "link-local-address" => undefined,
+            "loopback" => undefined,
+            "loopback-address" => undefined,
+            "multicast" => undefined,
+            "name" => "management",
+            "nic" => undefined,
+            "nic-match" => undefined,
+            "not" => undefined,
+            "point-to-point" => undefined,
+            "public-address" => undefined,
+            "site-local-address" => undefined,
+            "subnet-match" => undefined,
+            "up" => undefined,
+            "virtual" => undefined
+        }
+    },
+    {
+        "address" => [("interface" => "private")],
+        "outcome" => "success",
+        "result" => {
+            "any" => undefined,
+            "any-address" => undefined,
+            "inet-address" => expression "${jboss.bind.address.private:127.0.0.1}",
+            "link-local-address" => undefined,
+            "loopback" => undefined,
+            "loopback-address" => undefined,
+            "multicast" => undefined,
+            "name" => "private",
+            "nic" => undefined,
+            "nic-match" => undefined,
+            "not" => undefined,
+            "point-to-point" => undefined,
+            "public-address" => undefined,
+            "site-local-address" => undefined,
+            "subnet-match" => undefined,
+            "up" => undefined,
+            "virtual" => undefined
+        }
+    },
+    {
+        "address" => [("interface" => "public")],
+        "outcome" => "success",
+        "result" => {
+            "any" => undefined,
+            "any-address" => undefined,
+            "inet-address" => undefined,
+            "link-local-address" => undefined,
+            "loopback" => undefined,
+            "loopback-address" => undefined,
+            "multicast" => undefined,
+            "name" => "public",
+            "nic" => undefined,
+            "nic-match" => undefined,
+            "not" => undefined,
+            "point-to-point" => undefined,
+            "public-address" => undefined,
+            "site-local-address" => undefined,
+            "subnet-match" => undefined,
+            "up" => undefined,
+            "virtual" => undefined
+        }
+    },
+    {
+        "address" => [("interface" => "unsecure")],
+        "outcome" => "success",
+        "result" => {
+            "any" => undefined,
+            "any-address" => undefined,
+            "inet-address" => expression "${jboss.bind.address.unsecure:127.0.0.1}",
+            "link-local-address" => undefined,
+            "loopback" => undefined,
+            "loopback-address" => undefined,
+            "multicast" => undefined,
+            "name" => "unsecure",
+            "nic" => undefined,
+            "nic-match" => undefined,
+            "not" => undefined,
+            "point-to-point" => undefined,
+            "public-address" => undefined,
+            "site-local-address" => undefined,
+            "subnet-match" => undefined,
+            "up" => undefined,
+            "virtual" => undefined
+        }
+    }
+]

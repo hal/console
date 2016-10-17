@@ -35,4 +35,5 @@ public class Options {
     public boolean cache;
     public String menuClass;
     public ItemRenderer renderItem;
+    public SelectHandler onSelect;
 }

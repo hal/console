@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.ballroom.autocomplete;
 
-import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import elemental.events.Event;
@@ -25,13 +23,15 @@ import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.form.AbstractFormItem;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jetbrains.annotations.NonNls;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
-import static org.jboss.hal.resources.CSS.autocompleteSuggestion;
 import static org.jboss.hal.resources.CSS.autocompleteSuggestions;
 
 /**
@@ -40,12 +40,13 @@ import static org.jboss.hal.resources.CSS.autocompleteSuggestions;
  * @author Harald Pehl
  * @see <a href="https://github.com/Pixabay/JavaScript-autoComplete">https://github.com/Pixabay/JavaScript-autoComplete</a>
  */
-public class AutoComplete<T> implements SuggestHandler, Attachable {
+public class AutoComplete implements SuggestHandler, Attachable {
 
     @JsType(isNative = true, namespace = GLOBAL, name = "autoComplete")
     static class Bridge {
 
         @JsConstructor
+        @SuppressWarnings("UnusedParameters")
         Bridge(Options options) {
         }
 
@@ -53,46 +54,25 @@ public class AutoComplete<T> implements SuggestHandler, Attachable {
         private native void destroy();
     }
 
+    @NonNls static final Logger logger = LoggerFactory.getLogger(AutoComplete.class);
 
-    private static final RegExp ESCAPE_SPECIAL_CHARS = RegExp.compile("[-\\/\\\\^$*+?.()|[\\]{}]");
-
-    private final SourceFunction source;
-    private final ItemRenderer renderer;
     private FormItem formItem;
     private Bridge bridge;
+    private Options options;
 
-    public AutoComplete(final SourceFunction<T> source) {
-        this(source, (item, query) -> {
-            String itm = String.valueOf(item);
-            String q = ESCAPE_SPECIAL_CHARS.replace(query, "\\$&");
-            q = String.join("|", (CharSequence[]) q.split(" "));
-            RegExp regExp = RegExp.compile("(" + q + ")", "gi"); //NON-NLS
-            @NonNls SafeHtmlBuilder builder = new SafeHtmlBuilder();
-            builder.appendHtmlConstant("<div class=\"" + autocompleteSuggestion + "\" data-val=\"" + itm + "\">")
-                    .appendHtmlConstant(regExp.replace(itm, "<b>$1</b>")) //NON-NLS
-                    .appendHtmlConstant("</div>");
-            return builder.toSafeHtml().asString();
-        });
-    }
-
-    public AutoComplete(final SourceFunction<T> source, ItemRenderer<T> renderer) {
-        this.source = source;
-        this.renderer = renderer;
+    protected void init(Options options) {
+        this.options = options;
     }
 
     @Override
     public void attach() {
         if (bridge == null) {
-            Options options = new Options();
             options.selector = formItemSelector();
-            options.source = source;
-            options.minChars = 1;
-            options.delay = 150;
-            options.offsetLeft = 0;
-            options.offsetTop = 1;
-            options.cache = false;
-            options.menuClass = "";
-            options.renderItem = renderer;
+            options.onSelect = (event, item, renderedItem) -> {
+                if (formItem() instanceof AbstractFormItem) {
+                    ((AbstractFormItem) formItem()).onSuggest(renderedItem);
+                }
+            };
             bridge = new Bridge(options);
         }
     }

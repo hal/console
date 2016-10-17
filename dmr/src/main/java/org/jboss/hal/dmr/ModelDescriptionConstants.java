@@ -70,12 +70,12 @@ public interface ModelDescriptionConstants {
     String CONFIGURATION = "configuration";
     String CONTENT = "content";
     String CONTEXT_SERVICE = "context-service";
-    String CORE_SERVICE = "core-service";
 
     String DATA_SOURCE = "data-source";
     String DATASOURCES = "datasources";
     String DEFAULT = "default";
     String DEFAULT_BINDINGS = "default-bindings";
+    String DEPENDENT_ADDRESS = "dependent-address";
     String DEPLOY = "deploy";
     String DEPLOYMENT = "deployment";
     String DEPLOYMENT_NAME = "deployment-name";
@@ -255,6 +255,7 @@ public interface ModelDescriptionConstants {
     String SUBDEPLOYMENT = "subdeployment";
     String SUBSYSTEM = "subsystem";
     String SUCCESS = "success";
+    String SUGGEST_CAPABILITIES = "suggest-capabilities";
     String SUSPEND = "suspend";
     String SUSPEND_SERVERS = "suspend-servers";
     String SUSPEND_STATE = "suspend-state";

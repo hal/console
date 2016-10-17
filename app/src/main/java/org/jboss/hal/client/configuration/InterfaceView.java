@@ -16,7 +16,7 @@
 package org.jboss.hal.client.configuration;
 
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.core.ui.UIContext;
+import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.spi.MbuiElement;
@@ -28,13 +28,13 @@ import org.jboss.hal.spi.MbuiView;
 @MbuiView
 public abstract class InterfaceView extends MbuiViewImpl<InterfacePresenter> implements InterfacePresenter.MyView {
 
-    public static InterfaceView create(final UIContext mbuiContext) {
+    public static InterfaceView create(final MbuiContext mbuiContext) {
         return new Mbui_InterfaceView(mbuiContext);
     }
 
     @MbuiElement("interface-form") Form<ModelNode> form;
 
-    InterfaceView(final UIContext mbuiContext) {
+    InterfaceView(final MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 

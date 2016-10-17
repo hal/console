@@ -21,7 +21,7 @@ import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Api;
 import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.core.ui.UIContext;
+import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.dmr.model.NamedNode;
@@ -35,7 +35,7 @@ import org.jboss.hal.spi.MbuiView;
 @SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral"})
 public class ServerGroupView extends MbuiViewImpl<ServerGroupPresenter> implements ServerGroupPresenter.MyView {
 
-    public static ServerGroupView create(final UIContext mbuiContext) {
+    public static ServerGroupView create(final MbuiContext mbuiContext) {
         return new Mbui_ServerGroupView(mbuiContext);
     }
 
@@ -46,7 +46,7 @@ public class ServerGroupView extends MbuiViewImpl<ServerGroupPresenter> implemen
     @MbuiElement("server-group-system-property-table") DataTable<NamedNode> serverGroupSystemPropertyTable;
     @MbuiElement("server-group-system-property-form") Form<NamedNode> serverGroupSystemPropertyForm;
 
-    ServerGroupView(final UIContext mbuiContext) {
+    ServerGroupView(final MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 

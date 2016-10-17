@@ -18,7 +18,6 @@ package org.jboss.hal.core.mbui;
 import java.util.Map;
 
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
-import org.jboss.hal.core.ui.UIContext;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -32,11 +31,11 @@ import org.jboss.hal.spi.MessageEvent;
  */
 public abstract class MbuiViewImpl<P extends MbuiPresenter> extends PatternFlyViewImpl implements MbuiView<P> {
 
-    protected final UIContext uic;
+    protected final MbuiContext mbuiContext;
     protected P presenter;
 
-    protected MbuiViewImpl(final UIContext uic) {
-        this.uic = uic;
+    protected MbuiViewImpl(final MbuiContext mbuiContext) {
+        this.mbuiContext = mbuiContext;
     }
 
     @Override
@@ -46,21 +45,21 @@ public abstract class MbuiViewImpl<P extends MbuiPresenter> extends PatternFlyVi
 
     protected void saveSingletonForm(final Map<String, Object> changedValues, final ResourceAddress address,
             final String type) {
-        Composite composite = uic.operationFactory().fromChangeSet(address, changedValues);
-        uic.dispatcher().execute(composite, (CompositeResult result) -> {
+        Composite composite = mbuiContext.operationFactory().fromChangeSet(address, changedValues);
+        mbuiContext.dispatcher().execute(composite, (CompositeResult result) -> {
             presenter.reload();
-            MessageEvent.fire(uic.eventBus(),
-                    Message.success(uic.resources().messages().modifySingleResourceSuccess(type)));
+            MessageEvent.fire(mbuiContext.eventBus(),
+                    Message.success(mbuiContext.resources().messages().modifySingleResourceSuccess(type)));
         });
     }
 
     protected void saveForm(final Map<String, Object> changedValues, final ResourceAddress address,
             final String type, final String name) {
-        Composite composite = uic.operationFactory().fromChangeSet(address, changedValues);
-        uic.dispatcher().execute(composite, (CompositeResult result) -> {
+        Composite composite = mbuiContext.operationFactory().fromChangeSet(address, changedValues);
+        mbuiContext.dispatcher().execute(composite, (CompositeResult result) -> {
             presenter.reload();
-            MessageEvent.fire(uic.eventBus(),
-                    Message.success(uic.resources().messages().modifyResourceSuccess(type, name)));
+            MessageEvent.fire(mbuiContext.eventBus(),
+                    Message.success(mbuiContext.resources().messages().modifyResourceSuccess(type, name)));
         });
     }
 }

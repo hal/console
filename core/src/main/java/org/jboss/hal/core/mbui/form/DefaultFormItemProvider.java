@@ -19,9 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.ballroom.LabelBuilder;
-import org.jboss.hal.ballroom.autocomplete.AutoComplete;
+import org.jboss.hal.ballroom.autocomplete.SuggestCapabilitiesAutoComplete;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.ListItem;
@@ -40,8 +39,6 @@ import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
@@ -50,19 +47,22 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.form.NumberItem.MAX_SAFE_LONG;
 import static org.jboss.hal.ballroom.form.NumberItem.MIN_SAFE_LONG;
-import static org.jboss.hal.ballroom.form.SuggestHandler.SHOW_ALL_VALUE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.StatementContext.Tuple.DOMAIN_CONTROLLER;
 
 /**
  * @author Harald Pehl
  */
 class DefaultFormItemProvider implements FormItemProvider {
 
-    private final LabelBuilder labelBuilder;
+    private final Dispatcher dispatcher;
+    private final StatementContext statementContext;
     private final Metadata metadata;
+    private final LabelBuilder labelBuilder;
 
-    DefaultFormItemProvider(Metadata metadata) {
+    DefaultFormItemProvider(final Dispatcher dispatcher, final StatementContext statementContext,
+            final Metadata metadata) {
+        this.dispatcher = dispatcher;
+        this.statementContext = statementContext;
         this.metadata = metadata;
         this.labelBuilder = new LabelBuilder();
     }
@@ -218,20 +218,8 @@ class DefaultFormItemProvider implements FormItemProvider {
             Capabilities capabilities = metadata.getCapabilities();
 
             if (capabilities.supportsSuggestions()) {
-                AddressTemplate template = AddressTemplate.of(DOMAIN_CONTROLLER, "core-service=capability-registry");
-                Operation operation = new Operation.Builder("suggest-capabilities",
-                        template.resolve(statementContext))
-                        .param(NAME, reference)
-                        .param("dependent-address", metadata.getTemplate().resolve(statementContext))
-                        .build();
-                suggestHandler = new AutoComplete<String>(
-                        (query, response) -> Dispatcher.INSTANCE.execute(operation, result -> {
-                            List<String> list = result.asList().stream()
-                                    .map(ModelNode::asString)
-                                    .filter(value -> SHOW_ALL_VALUE.equals(query) || value.contains(query))
-                                    .collect(toList());
-                            response.response(JsHelper.asJsArray(list));
-                        }));
+                suggestHandler = new SuggestCapabilitiesAutoComplete(dispatcher, statementContext, reference,
+                        metadata.getTemplate());
                 // suggestHandler = new SuggestCapabilitiesTypeahead(statementContext, reference, metadata.getTemplate());
             } else if (capabilities.contains(reference)) {
                 suggestHandler = new ReadChildResourcesTypeahead(capabilities.lookup(reference), statementContext);

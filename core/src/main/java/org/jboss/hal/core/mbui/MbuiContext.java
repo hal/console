@@ -13,45 +13,66 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.ui;
+package org.jboss.hal.core.mbui;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
+import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Footer;
 
 /**
  * Holds common classes needed by UI views.
  *
  * @author Harald Pehl
  */
-public class UIContext {
+public class MbuiContext {
 
+    private final Dispatcher dispatcher;
+    private final Environment environment;
     private final EventBus eventBus;
     private final MetadataRegistry metadataRegistry;
-    private final Dispatcher dispatcher;
     private final OperationFactory operationFactory;
-    private final TableButtonFactory tableButtonFactory;
+    private final Provider<Progress> progress;
     private final Resources resources;
     private final StatementContext statementContext;
+    private final TableButtonFactory tableButtonFactory;
 
     @Inject
-    public UIContext(final EventBus eventBus, final MetadataRegistry metadataRegistry,
-            final Dispatcher dispatcher, final OperationFactory operationFactory,
-            final TableButtonFactory tableButtonFactory, final Resources resources,
-            final StatementContext statementContext) {
+    public MbuiContext(final Dispatcher dispatcher,
+            final Environment environment,
+            final EventBus eventBus,
+            final MetadataRegistry metadataRegistry,
+            final OperationFactory operationFactory,
+            final @Footer Provider<Progress> progress,
+            final Resources resources,
+            final StatementContext statementContext,
+            final TableButtonFactory tableButtonFactory) {
+        this.environment = environment;
         this.eventBus = eventBus;
-        this.metadataRegistry = metadataRegistry;
-        this.statementContext = statementContext;
         this.dispatcher = dispatcher;
+        this.metadataRegistry = metadataRegistry;
         this.operationFactory = operationFactory;
-        this.tableButtonFactory = tableButtonFactory;
+        this.progress = progress;
         this.resources = resources;
+        this.statementContext = statementContext;
+        this.tableButtonFactory = tableButtonFactory;
+    }
+
+    public Dispatcher dispatcher() {
+        return dispatcher;
+    }
+
+    public Environment environment() {
+        return environment;
     }
 
     public EventBus eventBus() {
@@ -62,23 +83,23 @@ public class UIContext {
         return metadataRegistry;
     }
 
-    public StatementContext statementContext() {
-        return statementContext;
-    }
-
-    public Dispatcher dispatcher() {
-        return dispatcher;
-    }
-
     public OperationFactory operationFactory() {
         return operationFactory;
     }
 
-    public TableButtonFactory tableButtonFactory() {
-        return tableButtonFactory;
+    public Provider<Progress> progress() {
+        return progress;
     }
 
     public Resources resources() {
         return resources;
+    }
+
+    public StatementContext statementContext() {
+        return statementContext;
+    }
+
+    public TableButtonFactory tableButtonFactory() {
+        return tableButtonFactory;
     }
 }

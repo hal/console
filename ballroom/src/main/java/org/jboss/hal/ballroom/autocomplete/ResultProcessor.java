@@ -15,14 +15,17 @@
  */
 package org.jboss.hal.ballroom.autocomplete;
 
-import jsinterop.annotations.JsFunction;
+import java.util.List;
+
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.model.CompositeResult;
 
 /**
  * @author Harald Pehl
  */
-@JsFunction
-@FunctionalInterface
-interface SourceFunction<T> {
+interface ResultProcessor<T> {
 
-    void source(String query, ResponseCallback<T> response);
+    List<T> process(String query, ModelNode result);
+
+    List<T> process(String query, CompositeResult result);
 }

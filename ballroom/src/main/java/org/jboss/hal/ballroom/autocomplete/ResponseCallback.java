@@ -15,7 +15,8 @@
  */
 package org.jboss.hal.ballroom.autocomplete;
 
-import elemental.js.util.JsArrayOf;
+import java.util.List;
+
 import jsinterop.annotations.JsFunction;
 
 /**
@@ -23,7 +24,7 @@ import jsinterop.annotations.JsFunction;
  */
 @JsFunction
 @FunctionalInterface
-public interface ResponseCallback<T> {
+interface ResponseCallback<T> {
 
-    void response(JsArrayOf<T> result);
+    void response(List<T> result);
 }

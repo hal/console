@@ -112,11 +112,14 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         // ------------------------------------------------------ configure required and optional settings
 
         public Builder(@NonNls final String id, final Metadata metadata) {
+            ModelNodeFormContext mfc = ModelNodeFormContext.INSTANCE;
+
             this.id = id;
             this.metadata = metadata;
             this.includes = new LinkedHashSet<>();
             this.excludes = new HashSet<>();
-            this.defaultFormItemProvider = new DefaultFormItemProvider(metadata);
+            this.defaultFormItemProvider = new DefaultFormItemProvider(mfc.dispatcher(), mfc.statementContext(),
+                    metadata);
             this.providers = new HashMap<>();
             this.unboundFormItems = new ArrayList<>();
             this.viewOnly = false;

@@ -20,7 +20,7 @@ import java.util.List;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.core.ui.UIContext;
+import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
@@ -35,14 +35,14 @@ public abstract class DeploymentScannerView extends MbuiViewImpl<DeploymentScann
 
     // ------------------------------------------------------ initialization
 
-    public static DeploymentScannerView create(final UIContext mbuiContext) {
+    public static DeploymentScannerView create(final MbuiContext mbuiContext) {
         return new Mbui_DeploymentScannerView(mbuiContext);
     }
 
     @MbuiElement("deployment-scanner-table") DataTable<NamedNode> deploymentscannerTable;
     @MbuiElement("deployment-scanner-form") Form<NamedNode> deploymentscannerForm;
 
-    DeploymentScannerView(final UIContext mbuiContext) {
+    DeploymentScannerView(final MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 

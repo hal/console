@@ -22,7 +22,7 @@ import jsinterop.annotations.JsFunction;
  */
 @JsFunction
 @FunctionalInterface
-public interface ItemRenderer<T> {
+interface ItemRenderer<T> {
 
     String render(T item, String query);
 }

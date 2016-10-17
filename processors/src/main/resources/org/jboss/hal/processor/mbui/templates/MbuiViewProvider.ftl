@@ -6,7 +6,7 @@ import com.google.inject.Provider;
 import javax.inject.Inject;
 import javax.annotation.Generated;
 
-import org.jboss.hal.core.ui.UIContext;
+import org.jboss.hal.core.mbui.MbuiContext;
 
 /*
  * WARNING! This class is generated. Do not modify.
@@ -14,15 +14,15 @@ import org.jboss.hal.core.ui.UIContext;
 @Generated("org.jboss.hal.processor.mbui.MbuiViewGinProcessor")
 public class ${context.subclass} implements Provider<${context.base}> {
 
-    private final UIContext uic;
+    private final MbuiContext mbuiContext;
     <#if (context.abstractProperties?size > 0)>
     <#list context.abstractProperties as abstractProperty>
     private final ${abstractProperty.type} ${abstractProperty.field};
     </#list>
 
     @Inject
-    public ${context.subclass}(UIContext uic<#list context.abstractProperties as abstractProperty>, ${abstractProperty.type} ${abstractProperty.field}</#list>) {
-        this.uic = uic;
+    public ${context.subclass}(MbuiContext mbuiContext<#list context.abstractProperties as abstractProperty>, ${abstractProperty.type} ${abstractProperty.field}</#list>) {
+        this.mbuiContext = mbuiContext;
         <#list context.abstractProperties as abstractProperty>
         this.${abstractProperty.field} = ${abstractProperty.field};
         </#list>
@@ -30,13 +30,13 @@ public class ${context.subclass} implements Provider<${context.base}> {
     <#else>
 
     @Inject
-    public ${context.subclass}(UIContext uic) {
-        this.uic = uic;
+    public ${context.subclass}(MbuiContext mbuiContext) {
+        this.mbuiContext = mbuiContext;
     }
     </#if>
 
     @Override
     public ${context.base} get() {
-        return ${context.base}.${context.createMethod}(uic<#list context.abstractProperties as abstractProperty>, ${abstractProperty.field}</#list>);
+        return ${context.base}.${context.createMethod}(mbuiContext<#list context.abstractProperties as abstractProperty>, ${abstractProperty.field}</#list>);
     }
 }

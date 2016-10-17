@@ -57,7 +57,7 @@ public class TextBoxItem extends AbstractFormItem<String> {
     }
 
     @Override
-    void onSuggest(final String suggestion) {
+    public void onSuggest(final String suggestion) {
         setValue(suggestion);
         setModified(true);
         setUndefined(false);

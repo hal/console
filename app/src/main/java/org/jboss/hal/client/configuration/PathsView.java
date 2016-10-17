@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.core.ui.UIContext;
+import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
@@ -36,14 +36,14 @@ import static org.jboss.hal.ballroom.table.Api.RefreshMode.RESET;
 @MbuiView
 public abstract class PathsView extends MbuiViewImpl<PathsPresenter> implements PathsPresenter.MyView {
 
-    public static PathsView create(final UIContext mbuiContext) {
+    public static PathsView create(final MbuiContext mbuiContext) {
         return new Mbui_PathsView(mbuiContext);
     }
 
     @MbuiElement("path-table") DataTable<NamedNode> table;
     @MbuiElement("path-form") Form<NamedNode> form;
 
-    PathsView(final UIContext mbuiContext) {
+    PathsView(final MbuiContext mbuiContext) {
         super(mbuiContext);
     }
 

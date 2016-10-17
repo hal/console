@@ -44,8 +44,6 @@ public class DmrModule extends AbstractGinModule {
     protected void configure() {
         bind(Dispatcher.class);
         bind(Macros.class).in(Singleton.class);
-
-        requestStaticInjection(Dispatcher.class);
     }
 
     @Provides

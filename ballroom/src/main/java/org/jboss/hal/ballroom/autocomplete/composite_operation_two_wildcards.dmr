@@ -1,0 +1,112 @@
+{
+    "step-1" => {
+        "operations" => [
+            "/socket-binding-group=*/local-destination-outbound-socket-binding=*:read-resource",
+            "/socket-binding-group=*/remote-destination-outbound-socket-binding=*:read-resource"
+        ],
+        "comment" => "The operations are not used. They're just here as part of the documentation",
+        "outcome" => "success",
+        "result" => [
+            {
+                "address" => [
+                    ("socket-binding-group" => "full-sockets"),
+                    ("local-destination-outbound-socket-binding" => "http-out")
+                ],
+                "outcome" => "success",
+                "result" => {
+                    "fixed-source-port" => false,
+                    "socket-binding-ref" => "http",
+                    "source-interface" => undefined,
+                    "source-port" => 0
+                }
+            },
+            {
+                "address" => [
+                    ("socket-binding-group" => "full-sockets"),
+                    ("local-destination-outbound-socket-binding" => "https-out")
+                ],
+                "outcome" => "success",
+                "result" => {
+                    "fixed-source-port" => false,
+                    "socket-binding-ref" => "https",
+                    "source-interface" => undefined,
+                    "source-port" => 0
+                }
+            },
+            {
+                "address" => [
+                    ("socket-binding-group" => "full-sockets"),
+                    ("local-destination-outbound-socket-binding" => "iiop-out")
+                ],
+                "outcome" => "success",
+                "result" => {
+                    "fixed-source-port" => false,
+                    "socket-binding-ref" => "iiop",
+                    "source-interface" => undefined,
+                    "source-port" => 0
+                }
+            }
+        ]
+    },
+    "step-2" => {
+        "outcome" => "success",
+        "result" => [
+            {
+                "address" => [
+                    ("socket-binding-group" => "standard-sockets"),
+                    ("remote-destination-outbound-socket-binding" => "mail-smtp")
+                ],
+                "outcome" => "success",
+                "result" => {
+                    "fixed-source-port" => false,
+                    "host" => "localhost",
+                    "port" => 25,
+                    "source-interface" => undefined,
+                    "source-port" => undefined
+                }
+            },
+            {
+                "address" => [
+                    ("socket-binding-group" => "ha-sockets"),
+                    ("remote-destination-outbound-socket-binding" => "mail-smtp")
+                ],
+                "outcome" => "success",
+                "result" => {
+                    "fixed-source-port" => false,
+                    "host" => "localhost",
+                    "port" => 25,
+                    "source-interface" => undefined,
+                    "source-port" => undefined
+                }
+            },
+            {
+                "address" => [
+                    ("socket-binding-group" => "full-sockets"),
+                    ("remote-destination-outbound-socket-binding" => "mail-smtp")
+                ],
+                "outcome" => "success",
+                "result" => {
+                    "fixed-source-port" => false,
+                    "host" => "localhost",
+                    "port" => 25,
+                    "source-interface" => undefined,
+                    "source-port" => undefined
+                }
+            },
+            {
+                "address" => [
+                    ("socket-binding-group" => "full-ha-sockets"),
+                    ("remote-destination-outbound-socket-binding" => "mail-smtp")
+                ],
+                "outcome" => "success",
+                "result" => {
+                    "fixed-source-port" => false,
+                    "host" => "localhost",
+                    "port" => 25,
+                    "source-interface" => undefined,
+                    "source-port" => undefined
+                }
+            }
+        ]
+    }
+}
