@@ -412,15 +412,14 @@ public class Dialog implements IsElement {
         $(SELECTOR_ID).modal(ModalOptions.create(closeOnEsc));
         $(SELECTOR_ID).modal("show");
         PatternFly.initComponents(SELECTOR_ID);
-        for (Attachable attachable : attachables) {
-            attachable.attach();
-        }
+        attachables.forEach(Attachable::attach);
     }
 
     /**
      * Please call this method only if the dialog neither have a close icon, esc handler nor a close button.
      */
     void close() {
+        attachables.forEach(Attachable::detach);
         if (onClose != null) {
             onClose.execute();
         }

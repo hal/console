@@ -54,13 +54,27 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
         Boolean allowEmpty = (Boolean) context.data();
         selectBox = new SingleSelectBoxElement(allowEmpty);
         selectBox.setClassName(formControl + " " + selectpicker);
+        return selectBox;
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
         Single.element(selectBox.asElement()).onChange((event, index) -> {
             String value = getValue();
             setModified(true);
             setUndefined(isNullOrEmpty(value));
             signalChange(value);
         });
-        return selectBox;
+    }
+
+    @Override
+    public void detach() {
+        super.detach();
+        if (selectBox != null) {
+            selectBox.asElement().getClassList().remove(selectpicker);
+            Single.element(selectBox.asElement()).destroy();
+        }
     }
 
     @Override

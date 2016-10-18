@@ -506,9 +506,7 @@ public class Wizard<C, S extends Enum<S>> {
         Elements.setVisible(blankSlate, false);
         steps.forEach((s, step) -> Elements.setVisible(step.asElement(), s == state));
         currentStep().onShow(context);
-        for (Attachable attachable : currentStep().attachables) {
-            attachable.attach();
-        }
+        currentStep().attachables.forEach(Attachable::attach);
 
         backButton.setDisabled(state == initialState);
         nextButton.setDisabled(false);
@@ -551,6 +549,7 @@ public class Wizard<C, S extends Enum<S>> {
     }
 
     private void close() {
+        steps.values().forEach(step -> step.attachables.forEach(Attachable::detach));
         $(SELECTOR_ID).modal("hide");
     }
 }

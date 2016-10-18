@@ -15,15 +15,15 @@
  */
 package org.jboss.hal.ballroom;
 
-import com.google.gwt.core.client.Scheduler;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.form.SelectBoxBridge;
-import org.jboss.hal.resources.CSS;
 import org.jetbrains.annotations.NonNls;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.jboss.hal.resources.CSS.bootstrapSwitch;
+import static org.jboss.hal.resources.CSS.selectpicker;
 
 @JsType(isNative = true)
 public class PatternFly {
@@ -33,7 +33,7 @@ public class PatternFly {
      */
     @JsOverlay
     public static void initComponents() {
-        initComponents(false, null);
+        init(null);
     }
 
     /**
@@ -41,43 +41,18 @@ public class PatternFly {
      */
     @JsOverlay
     public static void initComponents(final String parent) {
-        initComponents(false, parent);
-    }
-
-    /**
-     * Initializes JavaScript based PatternFly components.
-     *
-     * @param scheduled whether to run the initialization using {@code Scheduler.get().scheduleDeferred()}
-     */
-    @JsOverlay
-    public static void initComponents(boolean scheduled) {
-        initComponents(scheduled, null);
-    }
-
-    /**
-     * Initializes JavaScript based PatternFly components below a given parent selector.
-     *
-     * @param parent a parent selector
-     * @param scheduled whether to run the initialization using {@code Scheduler.get().scheduleDeferred()}
-     */
-    @JsOverlay
-    public static void initComponents(boolean scheduled, final String parent) {
-        if (scheduled) {
-            Scheduler.get().scheduleDeferred(() -> init(parent));
-        } else {
-            init(parent);
-        }
+        init(parent);
     }
 
     @JsOverlay
     private static void init(String parent) {
         if (parent == null) {
-            $("." + CSS.bootstrapSwitch).bootstrapSwitch();
-            $("." + CSS.selectpicker).selectpicker(SelectBoxBridge.Defaults.get());
+            $("." + bootstrapSwitch).bootstrapSwitch();
+            $("." + selectpicker).selectpicker(SelectBoxBridge.Defaults.get());
             Tooltip.select("[data-toggle=tooltip]").init(); //NON-NLS
         } else {
-            $(parent + " ." + CSS.bootstrapSwitch).bootstrapSwitch();
-            $(parent + " ." + CSS.selectpicker).selectpicker(SelectBoxBridge.Defaults.get());
+            $(parent + " ." + bootstrapSwitch).bootstrapSwitch();
+            $(parent + " ." + selectpicker).selectpicker(SelectBoxBridge.Defaults.get());
             Tooltip.select(parent + " [data-toggle=tooltip]").init(); //NON-NLS
         }
     }

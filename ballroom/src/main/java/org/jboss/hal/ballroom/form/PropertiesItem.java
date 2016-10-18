@@ -57,16 +57,6 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
     protected InputElement<Map<String, String>> newInputElement(Context<?> context) {
         propertiesElement = new PropertiesElement();
         propertiesElement.setClassName(formControl + " " + properties);
-        Bridge.element(propertiesElement.asElement()).onRefresh((event, cst) -> {
-            Map<String, String> value = Splitter.on(',')
-                    .trimResults()
-                    .omitEmptyStrings()
-                    .withKeyValueSeparator('=')
-                    .split(cst);
-            setModified(true);
-            setUndefined(value.isEmpty());
-            signalChange(value);
-        });
         return propertiesElement;
     }
 
@@ -109,7 +99,20 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
         TagsManager.Options options = TagsManager.Defaults.get();
         options.tagsContainer = "#" + tagsContainer.getId();
         options.validator = PROPERTY_REGEX::test;
-        Bridge.element(propertiesElement.asElement()).tagsManager(options);
+
+        Bridge bridge = Bridge.element(propertiesElement.asElement());
+        bridge.tagsManager(options);
+        bridge.onRefresh((event, cst) -> {
+            Map<String, String> value = Splitter.on(',')
+                    .trimResults()
+                    .omitEmptyStrings()
+                    .withKeyValueSeparator('=')
+                    .split(cst);
+            setModified(true);
+            setUndefined(value.isEmpty());
+            signalChange(value);
+        });
+
     }
 
     @Override

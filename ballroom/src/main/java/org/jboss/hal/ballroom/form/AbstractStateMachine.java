@@ -15,11 +15,11 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import java.util.EnumSet;
+
 import com.google.common.base.Joiner;
 import org.jboss.hal.ballroom.form.Form.Operation;
 import org.jboss.hal.ballroom.form.Form.State;
-
-import java.util.EnumSet;
 
 /**
  * @author Harald Pehl
@@ -31,6 +31,11 @@ public abstract class AbstractStateMachine implements StateMachine {
 
     AbstractStateMachine(EnumSet<Operation> supportedOperations) {
         this.supportedOperations = supportedOperations;
+    }
+
+    @Override
+    public void reset() {
+        current = null;
     }
 
     public State current() {

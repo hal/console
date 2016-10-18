@@ -258,6 +258,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
 
     @Override
     public void detach() {
+        stateMachine.reset();
         getFormItems().forEach(Attachable::detach);
     }
 
@@ -471,10 +472,9 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         }
 
         formLinks.switchTo(state, model, securityContext);
-        // TODO Prevent hiding and showing the very same panel
-        for (Element panel : panels.values()) {
-            Elements.setVisible(panel, false);
-        }
+        panels.values().stream()
+                .filter(panel -> panel != panels.get(state))
+                .forEach(panel -> Elements.setVisible(panel, false));
         Elements.setVisible(panels.get(state), true);
     }
 
