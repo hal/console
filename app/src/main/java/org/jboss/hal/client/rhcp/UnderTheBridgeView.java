@@ -26,13 +26,14 @@ import elemental.dom.Element;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.Tabs;
+import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
-import org.jboss.hal.ballroom.typeahead.ReadChildResourcesTypeahead;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
@@ -103,7 +104,8 @@ public class UnderTheBridgeView extends PatternFlyViewImpl implements UnderTheBr
     private UnderTheBridgePresenter presenter;
 
     @Inject
-    public UnderTheBridgeView(final StatementContext statementContext) {
+    public UnderTheBridgeView(final Dispatcher dispatcher,
+            final StatementContext statementContext) {
         this.forms = new ArrayList<>();
 
         Tabs tabs = new Tabs();
@@ -118,8 +120,8 @@ public class UnderTheBridgeView extends PatternFlyViewImpl implements UnderTheBr
                     forms.get(forms.size() - 1).asElement());
         }
 
-        SuggestHandler suggestHandler = new ReadChildResourcesTypeahead(
-                AddressTemplate.of("/profile=full-ha/subsystem=*"), statementContext);
+        SuggestHandler suggestHandler = new ReadChildrenAutoComplete(dispatcher, statementContext,
+                AddressTemplate.of("/profile=full-ha/subsystem=*"));
         for (ModelNodeForm<ModelNode> form : forms) {
             for (FormItem item : form.getFormItems()) {
                 if (item.getName().contains("-suggestion")) {

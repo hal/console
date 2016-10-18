@@ -16,7 +16,7 @@
 package org.jboss.hal.client.deployment.dialog;
 
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.client.configuration.PathsTypeahead;
+import org.jboss.hal.client.configuration.PathsAutoComplete;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -58,7 +58,7 @@ public class AddUnmanagedDialog {
                 .addOnly()
                 .build();
         form.getFormItem(PATH).setRequired(true);
-        form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsTypeahead());
+        form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
         dialog = new AddResourceDialog(
                 resources.messages().addResourceTitle(Names.UNMANAGED_DEPLOYMENT), form,
                 (name, model) -> {

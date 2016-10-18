@@ -24,9 +24,9 @@ import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 
 /**
- * A presenter which calls {@link PatternFlyView#attach()} when it's {@linkplain #onReveal() revealed}. Extend from
- * this presenter if the view uses opt-in features from PatternFly / Bootstrap like data tables, tooltips or select
- * boxes.
+ * A presenter which calls {@link PatternFlyView#attach()} when it's {@linkplain #onReveal() revealed} and {@link
+ * PatternFlyView#detach()} when it's {@linkplain #onHide() hidden}. Extend from this presenter if the view uses opt-in
+ * features from PatternFly / Bootstrap like data tables, tooltips or select boxes.
  *
  * @author Harald Pehl
  */
@@ -43,6 +43,12 @@ abstract class PatternFlyPresenter<V extends PatternFlyView, Proxy_ extends Prox
     protected void onReveal() {
         super.onReveal();
         getView().attach();
+    }
+
+    @Override
+    protected void onHide() {
+        super.onHide();
+        getView().detach();
     }
 
     @Override

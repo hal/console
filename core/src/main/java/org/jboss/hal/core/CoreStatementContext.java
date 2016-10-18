@@ -42,11 +42,6 @@ import static org.jboss.hal.meta.StatementContext.Tuple.*;
 public class CoreStatementContext implements StatementContext,
         ProfileSelectionHandler, ServerGroupSelectionHandler, HostSelectionHandler, ServerSelectionHandler {
 
-    /**
-     * Please use this constant only in cases where no DI is available.
-     */
-    @Inject public static CoreStatementContext INSTANCE;
-
     @NonNls private static final Logger logger = LoggerFactory.getLogger(CoreStatementContext.class);
 
     private final Environment environment;

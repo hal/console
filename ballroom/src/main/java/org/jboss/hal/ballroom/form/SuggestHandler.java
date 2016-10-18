@@ -27,9 +27,9 @@ public interface SuggestHandler {
      */
     String SHOW_ALL_VALUE = "*";
 
+    void setFormItem(FormItem formItem);
+
     void showAll();
 
     void close();
-
-    void setFormItem(FormItem formItem);
 }

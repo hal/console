@@ -29,11 +29,11 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.SwitchItem;
-import org.jboss.hal.ballroom.typeahead.ReadChildResourcesTypeahead;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddRoleMapping;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddScopedRole;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.CheckRoleMapping;
@@ -271,7 +271,7 @@ public class RoleColumn extends FinderColumn<Role> {
                 .build();
         form.getFormItem(scopeAttribute).setRequired(true);
         form.getFormItem(scopeAttribute)
-                .registerSuggestHandler(new ReadChildResourcesTypeahead(typeaheadTemplate, statementContext));
+                .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, typeaheadTemplate));
 
         new AddResourceDialog(resources.messages().addResourceTitle(typeName), form, (name, model) -> {
             List<Function<FunctionContext>> functions = new ArrayList<>();
@@ -345,7 +345,7 @@ public class RoleColumn extends FinderColumn<Role> {
                 .build();
         form.getFormItem(scopeAttribute).setRequired(true);
         form.getFormItem(scopeAttribute)
-                .registerSuggestHandler(new ReadChildResourcesTypeahead(typeaheadTemplate, statementContext));
+                .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, typeaheadTemplate));
         form.getFormItem(INCLUDE_ALL).setValue(role.isIncludeAll());
 
         ModelNode modelNode = new ModelNode();

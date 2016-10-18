@@ -24,4 +24,8 @@ package org.jboss.hal.ballroom;
 public interface Attachable {
 
     void attach();
+
+    default void detach() {
+
+    }
 }

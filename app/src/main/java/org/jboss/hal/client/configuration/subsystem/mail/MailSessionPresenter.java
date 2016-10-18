@@ -27,11 +27,11 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
-import org.jboss.hal.ballroom.typeahead.ReadChildResourcesTypeahead;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -213,7 +213,8 @@ public class MailSessionPresenter
                             });
                         });
                 dialog.getForm().getFormItem(OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
-                        new ReadChildResourcesTypeahead(AddressTemplates.SOCKET_BINDING_TEMPLATE, statementContext));
+                        new ReadChildrenAutoComplete(dispatcher, statementContext,
+                                AddressTemplates.SOCKET_BINDING_TEMPLATE));
                 dialog.show();
             }
         });

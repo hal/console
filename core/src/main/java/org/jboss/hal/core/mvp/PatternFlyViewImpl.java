@@ -81,13 +81,18 @@ public abstract class PatternFlyViewImpl extends ViewImpl implements PatternFlyV
 
     @Override
     public void attach() {
-        //noinspection Duplicates
         if (!attached) {
             PatternFly.initComponents();
-            for (Attachable attachable : attachables) {
-                attachable.attach();
-            }
+            attachables.forEach(Attachable::attach);
             attached = true;
+        }
+    }
+
+    @Override
+    public void detach() {
+        if (attached) {
+            attachables.forEach(Attachable::detach);
+            attached = false;
         }
     }
 }

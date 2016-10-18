@@ -102,7 +102,7 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
      * <p>
      * If this method returns {@code null} the path in the finder context is not touched.
      * <p>
-     * Lifecycle: The method is called in {@link #onReset()}.
+     * Lifecycle: The method is called during {@link #onReset()}.
      */
     protected abstract FinderPath finderPath();
 

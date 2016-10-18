@@ -15,17 +15,15 @@
  */
 package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import com.google.gwt.core.client.Scheduler;
 import elemental.dom.Element;
-import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.autocomplete.StaticAutoComplete;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
-import org.jboss.hal.ballroom.typeahead.StaticTypeahead;
-import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.core.datasource.JdbcDriver;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -61,7 +59,7 @@ public class DriverStep extends WizardStep<Context, State> {
         this.nameItem = form.getFormItem(DRIVER_NAME);
 
         if (!this.drivers.isEmpty()) {
-            this.suggestHandler = new StaticTypeahead(this.drivers.keySet());
+            this.suggestHandler = new StaticAutoComplete(new ArrayList<>(this.drivers.keySet()));
             nameItem.registerSuggestHandler(suggestHandler);
         }
         registerAttachable(form);
@@ -89,16 +87,6 @@ public class DriverStep extends WizardStep<Context, State> {
     @Override
     protected void onShow(final Context context) {
         form.edit(context.driver);
-
-        if (suggestHandler != null) {
-            Typeahead.Bridge.select("#" + nameItem.getId(Form.State.EDITING)).onChange(event -> {
-                JdbcDriver driver = drivers.get(nameItem.getValue());
-                if (driver != null) {
-                    form.edit(driver);
-                }
-            });
-            Scheduler.get().scheduleDeferred(() -> suggestHandler.close());
-        }
     }
 
     @Override

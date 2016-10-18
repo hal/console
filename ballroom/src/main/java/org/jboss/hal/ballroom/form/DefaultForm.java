@@ -39,6 +39,7 @@ import elemental.html.SpanElement;
 import elemental.html.UListElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.LazyElement;
+import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.Constants;
@@ -252,9 +253,12 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
 
     @Override
     public void attach() {
-        for (FormItem formItem : getFormItems()) {
-            formItem.attach();
-        }
+        getFormItems().forEach(Attachable::attach);
+    }
+
+    @Override
+    public void detach() {
+        getFormItems().forEach(Attachable::detach);
     }
 
     // ------------------------------------------------------ form operations
@@ -400,7 +404,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             throw new IllegalStateException(NOT_INITIALIZED);
         }
         stateExec(CANCEL);
-        dataMapping.populateFormItems(model, this);
+        dataMapping.populateFormItems(model, this); // restore persisted model
         if (cancelCallback != null) {
             cancelCallback.onCancel(this);
         }

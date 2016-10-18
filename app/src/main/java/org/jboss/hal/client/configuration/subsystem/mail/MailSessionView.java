@@ -27,10 +27,10 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
-import org.jboss.hal.ballroom.typeahead.ReadChildResourcesTypeahead;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
@@ -68,6 +68,7 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
     private final VerticalNavigation navigation;
     private final Map<String, ModelNodeForm> forms;
     private final DataTable<NamedNode> serversTable;
+    private final Dispatcher dispatcher;
     private final StatementContext statementContext;
 
     private MailSessionPresenter presenter;
@@ -80,7 +81,7 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
             final EventBus eventBus,
             final StatementContext statementContext,
             final Resources resources) {
-
+        this.dispatcher = dispatcher;
         this.statementContext = statementContext;
         this.navigation = new VerticalNavigation();
         this.forms = new HashMap<>();
@@ -179,7 +180,7 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
 
         ModelNodeForm form = forms.get(Ids.MAIL_SERVER_FORM);
         form.getFormItem(OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
-                new ReadChildResourcesTypeahead(SOCKET_BINDING_TEMPLATE, statementContext));
+                new ReadChildrenAutoComplete(dispatcher, statementContext, SOCKET_BINDING_TEMPLATE));
     }
 
     @Override

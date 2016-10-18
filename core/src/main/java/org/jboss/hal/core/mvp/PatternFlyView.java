@@ -32,4 +32,12 @@ public interface PatternFlyView extends HalView {
      * only, but not for elements!
      */
     void attach();
+
+    /**
+     * Counterpart to {@link #attach()}. Implement this method if you need to remove thing which were setup in {@link
+     * #attach()}. The default implementation does nothing.
+     */
+    default void detach() {
+
+    }
 }

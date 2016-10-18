@@ -30,6 +30,7 @@ import static java.util.stream.Collectors.joining;
 public interface CSS {
 
     String aboutModalPf = "about-modal-pf";
+    String address = "address";
     String active = "active";
     String alert = "alert";
     String alertDanger = "alert-danger";
@@ -41,6 +42,8 @@ public interface CSS {
     String alertWarning = "alert-warning";
     String arrow = "arrow";
     String attributes = "attributes";
+    String autocompleteSuggestion = "autocomplete-suggestion";
+    String autocompleteSuggestions = "autocomplete-suggestions";
 
     String badge = "badge";
     String badgeContainerPf = "badge-container-pf";
