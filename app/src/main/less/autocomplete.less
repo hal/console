@@ -1,48 +1,48 @@
 .autocomplete-suggestions {
-  text-align: left;
-  cursor: default;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  z-index: @zindex-dropdown;
-  min-width: 160px;
-  width: 100%;
-  padding: 5px 0;
-  margin: 2px 0 0;
-  font-size: @font-size-base;
+  background-clip: padding-box;
   background-color: @dropdown-bg;
-  border: 1px solid @dropdown-fallback-border;
   border: 1px solid @dropdown-border;
   border-radius: @border-radius-base;
+  box-sizing: border-box;
   .box-shadow(0 6px 12px rgba(0, 0, 0, .175));
-  background-clip: padding-box;
-  *border-right-width: 2px;
-  *border-bottom-width: 2px;
+  cursor: default;
   display: none;
+  font-size: @font-size-base;
+  left: 0;
+  margin: 2px 0 0;
   max-height: 254px;
+  min-width: 160px;
   overflow: hidden;
   overflow-y: auto;
-  box-sizing: border-box;
+  padding: 5px 0;
+  position: absolute;
+  text-align: left;
+  top: 100%;
+  width: 100%;
+  z-index: 9999;
 }
 
 .autocomplete-suggestion {
-  display: block;
-  padding: 3px 10px;
   clear: both;
+  color: @dropdown-link-color;
+  display: block;
   font-weight: normal;
   line-height: @line-height-base;
-  color: @dropdown-link-color;
-
-  position: relative;
-  white-space: nowrap;
   overflow: hidden;
+  padding: 3px 10px;
+  position: relative;
   text-overflow: ellipsis;
+  white-space: nowrap;
+
+  .address {
+    color: #999;
+  }
 }
 
 .autocomplete-suggestion.selected {
-  cursor: pointer;
-  text-decoration: none;
-  outline: 0;
   background-color: @dropdown-link-hover-bg;
   color: @dropdown-link-hover-color;
+  cursor: pointer;
+  outline: 0;
+  text-decoration: none;
 }

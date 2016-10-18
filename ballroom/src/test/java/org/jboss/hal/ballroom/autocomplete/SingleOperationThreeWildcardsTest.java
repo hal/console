@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom.typeahead;
+package org.jboss.hal.ballroom.autocomplete;
 
 import java.util.List;
 
-import org.jboss.hal.ballroom.typeahead.NestedResultProcessor.Result;
 import org.jboss.hal.dmr.ExternalModelNode;
 import org.jboss.hal.dmr.ModelNode;
 import org.junit.Before;
@@ -29,28 +28,28 @@ import static org.junit.Assert.assertTrue;
  * @author Harald Pehl
  */
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
-public class CompositeOperationTwoWildcardsTest {
+public class SingleOperationThreeWildcardsTest {
 
-    private NestedResultProcessor resultProcessor;
-    private ModelNode result;
+    private ReadChildrenProcessor resultProcessor;
+    private ModelNode nodes;
 
     @Before
     public void setUp() throws Exception {
-        resultProcessor = new NestedResultProcessor(true);
-        result = ExternalModelNode
-                .read(NamesResultProcessorTest.class.getResourceAsStream("composite_operation_two_wildcards.dmr"));
+        resultProcessor = new SingleReadChildrenProcessor();
+        nodes = ExternalModelNode
+                .read(NamesResultProcessorTest.class.getResourceAsStream("single_operation_three_wildcards.dmr"));
     }
 
     @Test
     public void nullQuery() throws Exception {
-        List<Result> models = resultProcessor.processToModel(null, result);
-        assertTrue(models.isEmpty());
+        List<ReadChildrenResult> results = resultProcessor.processToModel(null, nodes);
+        assertTrue(results.isEmpty());
     }
 
     @Test
     public void emptyQuery() throws Exception {
-        List<Result> models = resultProcessor.processToModel("", result);
-        assertTrue(models.isEmpty());
+        List<ReadChildrenResult> results = resultProcessor.processToModel("", nodes);
+        assertTrue(results.isEmpty());
     }
 
     @Test

@@ -19,6 +19,8 @@ import java.util.List;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import elemental.js.json.JsJsonObject;
+import elemental.js.util.JsArrayOf;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
@@ -28,7 +30,6 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
@@ -50,8 +51,8 @@ public class ReadChildrenAutoComplete extends AutoComplete {
             final Iterable<AddressTemplate> templates) {
         verifyTemplates(templates);
 
-        ResultProcessor<ReadChildrenResult> resultProcessor;
-        ItemRenderer<ReadChildrenResult> itemRenderer;
+        ResultProcessor resultProcessor;
+        ItemRenderer<JsJsonObject> itemRenderer;
         int numberOfTemplates = Iterables.size(templates);
 
         if (numberOfTemplates == 1) {
@@ -59,19 +60,19 @@ public class ReadChildrenAutoComplete extends AutoComplete {
             int wildcards = Iterables.size(Splitter.on('*').split(template.toString())) - 1;
             if (wildcards == 0 || (wildcards == 1 && "*".equals(template.lastValue()))) {
                 resultProcessor = new NamesResultProcessor();
-                itemRenderer = new StringItemRenderer<>(result -> result.name);
+                itemRenderer = new StringRenderer<>(result -> result.get(NAME).asString());
 
             } else {
-                resultProcessor = new SimpleReadChildrenProcessor();
-                itemRenderer = new ResultItemRenderer();
+                resultProcessor = new SingleReadChildrenProcessor();
+                itemRenderer = new ReadChildrenRenderer();
             }
 
         } else {
             resultProcessor = new CompositeReadChildrenProcessor();
-            itemRenderer = new ResultItemRenderer();
+            itemRenderer = new ReadChildrenRenderer();
         }
 
-        Options options = new OptionsBuilder<ReadChildrenResult>(
+        Options options = new OptionsBuilder<JsJsonObject>(
                 (query, response) -> {
                     List<Operation> operations = stream(templates.spliterator(), false)
                             .map(template -> template.resolve(statementContext))
@@ -82,12 +83,12 @@ public class ReadChildrenAutoComplete extends AutoComplete {
                                 result -> response.response(resultProcessor.process(query, result)),
                                 (operation, failure) -> {
                                     logger.error(ERROR_MESSAGE, templates, failure);
-                                    response.response(emptyList());
+                                    response.response(JsArrayOf.create());
 
                                 },
                                 (operation, exception) -> {
                                     logger.error(ERROR_MESSAGE, templates, exception.getMessage());
-                                    response.response(emptyList());
+                                    response.response(JsArrayOf.create());
                                 });
 
                     } else {
@@ -95,12 +96,12 @@ public class ReadChildrenAutoComplete extends AutoComplete {
                                 (CompositeResult result) -> response.response(resultProcessor.process(query, result)),
                                 (operation, failure) -> {
                                     logger.error(ERROR_MESSAGE, templates, failure);
-                                    response.response(emptyList());
+                                    response.response(JsArrayOf.create());
 
                                 },
                                 (operation, exception) -> {
                                     logger.error(ERROR_MESSAGE, templates, exception.getMessage());
-                                    response.response(emptyList());
+                                    response.response(JsArrayOf.create());
                                 });
                     }
                 })

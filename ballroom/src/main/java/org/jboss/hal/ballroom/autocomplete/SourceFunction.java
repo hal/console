@@ -22,7 +22,7 @@ import jsinterop.annotations.JsFunction;
  */
 @JsFunction
 @FunctionalInterface
-interface SourceFunction<T> {
+public interface SourceFunction<T> {
 
     void source(String query, ResponseCallback<T> response);
 }

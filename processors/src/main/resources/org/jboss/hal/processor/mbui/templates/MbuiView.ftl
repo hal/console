@@ -16,7 +16,7 @@ import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.table.Button;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.LayoutBuilder;
-import org.jboss.hal.ballroom.typeahead.ReadChildResourcesTypeahead;
+import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 <#if context.verticalNavigation??>
 import org.jboss.hal.ballroom.VerticalNavigation;
 </#if>
@@ -108,13 +108,13 @@ final class ${context.subclass} extends ${context.base} {
                 <#if attribute.suggestHandler??>
         ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(${attribute.suggestHandler});
                 <#elseif attribute.suggestHandlerTemplates?size == 1>
-        ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildResourcesTypeahead(
-            AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}"), mbuiContext.statementContext()));
+        ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildrenAutoComplete(
+            mbuiContext.dispatcher(), mbuiContext.statementContext(), AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}")));
                 <#else>
         List<AddressTemplate> ${form.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
             AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
-        ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildResourcesTypeahead(
-            ${form.name}Templates, mbuiContext.statementContext()));
+        ${form.name}.getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildrenAutoComplete(
+                    mbuiContext.dispatcher(), mbuiContext.statementContext(), ${form.name}Templates));
                 </#if>
             </#list>
         </#list>
@@ -148,13 +148,13 @@ final class ${context.subclass} extends ${context.base} {
                                         <#if attribute.suggestHandler??>
                 form.getFormItem("${attribute.name}").registerSuggestHandler(${attribute.suggestHandler});
                                         <#elseif attribute.suggestHandlerTemplates?size == 1>
-                form.getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildResourcesTypeahead(
-                    AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}", mbuiContext.statementContext()));
+                form.getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildrenAutoComplete(
+                                            mbuiContext.dispatcher(), mbuiContext.statementContext(), AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}")));
                                         <#else>
                 List<AddressTemplate> ${table.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
                     AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
-                form.getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildResourcesTypeahead(
-                    ${table.name}Templates, mbuiContext.statementContext()));
+                form.getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildrenAutoComplete(
+                                            mbuiContext.dispatcher(), mbuiContext.statementContext(), ${table.name}Templates));
                                         </#if>
                                     </#list>
                 AddResourceDialog dialog = new AddResourceDialog(
@@ -194,13 +194,13 @@ final class ${context.subclass} extends ${context.base} {
                                         <#if attribute.suggestHandler??>
                 dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(${attribute.suggestHandler});
                                         <#elseif attribute.suggestHandlerTemplates?size == 1>
-                dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildResourcesTypeahead(
-                    AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}"), mbuiContext.statementContext()));
+                dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildrenAutoComplete(
+                                            mbuiContext.dispatcher(), mbuiContext.statementContext(), AddressTemplate.of("${attribute.suggestHandlerTemplates[0]}")));
                                         <#else>
                 List<AddressTemplate> ${table.name}Templates = asList(<#list attribute.suggestHandlerTemplates as template>
                     AddressTemplate.of("${template}")<#if template_has_next>, </#if></#list>);
-                dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildResourcesTypeahead(
-                    ${table.name}Templates, mbuiContext.statementContext()));
+                dialog.getForm().getFormItem("${attribute.name}").registerSuggestHandler(new ReadChildrenAutoComplete(
+                                            mbuiContext.dispatcher(), mbuiContext.statementContext(), ${table.name}Templates));
                                         </#if>
                                     </#list>
                 dialog.show();

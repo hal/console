@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.base.Strings;
+import elemental.js.json.JsJsonObject;
+import elemental.js.util.JsArrayOf;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -28,9 +30,9 @@ import org.jetbrains.annotations.NonNls;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class AbstractReadChildrenProcessor implements ResultProcessor<ReadChildrenResult> {
+abstract class ReadChildrenProcessor extends AbstractResultProcessor<ReadChildrenResult> implements ResultProcessor {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(AbstractReadChildrenProcessor.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(ReadChildrenProcessor.class);
 
     protected List<ReadChildrenResult> results(List<ResourceAddress> addresses) {
         List<ReadChildrenResult> results = new ArrayList<>();
@@ -48,19 +50,26 @@ abstract class AbstractReadChildrenProcessor implements ResultProcessor<ReadChil
 
             // turn the addresses into a list of models
             for (ResourceAddress address : addresses) {
-                ReadChildrenResult model = new ReadChildrenResult(address.lastValue());
+                ReadChildrenResult result = new ReadChildrenResult(address.lastValue());
                 for (Property property : address.getParent().asPropertyList()) {
-                    model.addresses.put(property.getName(), property.getValue().asString());
+                    result.addresses.put(property.getName(), property.getValue().asString());
                 }
-                results.add(model);
+                results.add(result);
             }
         }
-
         return results;
     }
 
     protected boolean match(String query, ResourceAddress address) {
         return !Strings.isNullOrEmpty(query) &&
-                (SuggestHandler.SHOW_ALL_VALUE.equals(query) || address.lastValue().contains(query));
+                (SuggestHandler.SHOW_ALL_VALUE.equals(query) || address.lastValue().toLowerCase()
+                        .contains(query.toLowerCase()));
+    }
+
+    @Override
+    JsArrayOf<JsJsonObject> asJson(final List<ReadChildrenResult> results) {
+        JsArrayOf<JsJsonObject> array = JsArrayOf.create();
+        results.forEach(result -> array.push(result.asJson()));
+        return array;
     }
 }

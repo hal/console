@@ -23,6 +23,7 @@ import elemental.client.Browser;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
@@ -30,7 +31,6 @@ import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.ballroom.table.Api;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.ballroom.typeahead.ReadChildResourcesTypeahead;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
@@ -115,7 +115,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append("periodic-size-rotating-file-handler=*"),
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append("size-rotating-file-handler=*"),
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append("syslog-handler=*"));
-        suggestHandlers = new ReadChildResourcesTypeahead(templates, selectionAwareStatementContext);
+        suggestHandlers = new ReadChildrenAutoComplete(mbuiContext.dispatcher(), selectionAwareStatementContext,
+                templates);
     }
 
     @PostConstruct
@@ -370,8 +371,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append("periodic-size-rotating-file-handler=*"),
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append("size-rotating-file-handler=*"),
                 SELECTED_LOGGING_PROFILE_TEMPLATE.append("syslog-handler=*"));
-        dialog.getForm().getFormItem("subhandlers")
-                .registerSuggestHandler(new ReadChildResourcesTypeahead(templates, selectionAwareStatementContext));
+        dialog.getForm().getFormItem("subhandlers").registerSuggestHandler(
+                new ReadChildrenAutoComplete(mbuiContext.dispatcher(), selectionAwareStatementContext, templates));
         dialog.show();
     }
 

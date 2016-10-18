@@ -17,35 +17,30 @@ package org.jboss.hal.ballroom.autocomplete;
 
 import java.util.function.Function;
 
-import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import org.jetbrains.annotations.NonNls;
 
+import static org.jboss.hal.ballroom.autocomplete.ItemRenderer.highlight;
 import static org.jboss.hal.resources.CSS.autocompleteSuggestion;
 
 /**
  * @author Harald Pehl
  */
-public class StringItemRenderer<T> implements ItemRenderer<T> {
-
-    private static final RegExp ESCAPE_SPECIAL_CHARS = RegExp.compile("[-\\/\\\\^$*+?.()|[\\]{}]");
+public final class StringRenderer<T> implements ItemRenderer<T> {
 
     private final Function<T, String> toString;
 
-    public StringItemRenderer(final Function<T, String> toString) {
+    public StringRenderer(final Function<T, String> toString) {
         this.toString = toString;
     }
 
     @Override
-    public String render(final T item, final String query) {
+    public final String render(final T item, final String query) {
         String itm = toString.apply(item);
-        String q = ESCAPE_SPECIAL_CHARS.replace(query, "\\$&");
-        q = String.join("|", (CharSequence[]) q.split(" "));
-        RegExp regExp = RegExp.compile("(" + q + ")", "gi"); //NON-NLS
         @NonNls SafeHtmlBuilder builder = new SafeHtmlBuilder();
         builder.appendHtmlConstant(
                 "<div class=\"" + autocompleteSuggestion + "\" data-val=\"" + itm + "\">")
-                .appendHtmlConstant(regExp.replace(itm, "<b>$1</b>")) //NON-NLS
+                .appendHtmlConstant(highlight(query).replace(itm, "<b>$1</b>")) //NON-NLS
                 .appendHtmlConstant("</div>");
         return builder.toSafeHtml().asString();
     }

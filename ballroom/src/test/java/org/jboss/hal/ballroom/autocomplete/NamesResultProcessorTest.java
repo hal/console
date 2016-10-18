@@ -17,13 +17,13 @@ package org.jboss.hal.ballroom.autocomplete;
 
 import java.util.List;
 
-import org.jboss.hal.ballroom.typeahead.NamesResultProcessor;
 import org.jboss.hal.dmr.ExternalModelNode;
 import org.jboss.hal.dmr.ModelNode;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -39,48 +39,51 @@ public class NamesResultProcessorTest {
             "unsecure"
     };
 
-    private org.jboss.hal.ballroom.typeahead.NamesResultProcessor resultProcessor;
-    private ModelNode result;
+    private ReadChildrenProcessor resultProcessor;
+    private ModelNode nodes;
 
     @Before
     public void setUp() throws Exception {
         resultProcessor = new NamesResultProcessor();
-        result = ExternalModelNode.read(NamesResultProcessorTest.class.getResourceAsStream("names.dmr"));
+        nodes = ExternalModelNode.read(NamesResultProcessorTest.class.getResourceAsStream("names.dmr"));
     }
 
     @Test
     public void nullQuery() throws Exception {
-        List<String> models = resultProcessor.processToModel(null, result);
-        assertTrue(models.isEmpty());
+        List<ReadChildrenResult> results = resultProcessor.processToModel(null, nodes);
+        assertTrue(results.isEmpty());
     }
 
     @Test
     public void emptyQuery() throws Exception {
-        List<String> models = resultProcessor.processToModel("", result);
-        assertTrue(models.isEmpty());
+        List<ReadChildrenResult> results = resultProcessor.processToModel("", nodes);
+        assertTrue(results.isEmpty());
     }
 
     @Test
     public void wildcardQuery() throws Exception {
-        List<String> models = resultProcessor.processToModel("*", result);
-        assertArrayEquals(NAMES, models.toArray());
+        List<ReadChildrenResult> results = resultProcessor.processToModel("*", nodes);
+        assertArrayEquals(NAMES, results.stream().map(result -> result.name).toArray(String[]::new));
     }
 
     @Test
     public void oneMatch() throws Exception {
-        List<String> models = resultProcessor.processToModel("g", result);
-        assertArrayEquals(new String[]{"management"}, models.toArray());
+        List<ReadChildrenResult> results = resultProcessor.processToModel("g", nodes);
+        assertEquals(1, results.size());
+        assertEquals("management", results.get(0).name);
     }
 
     @Test
     public void twoMatches() throws Exception {
-        List<String> models = resultProcessor.processToModel("p", result);
-        assertArrayEquals(new String[]{"private", "public"}, models.toArray());
+        List<ReadChildrenResult> results = resultProcessor.processToModel("p", nodes);
+        assertEquals(2, results.size());
+        assertEquals("private", results.get(0).name);
+        assertEquals("public", results.get(1).name);
     }
 
     @Test
     public void noMatches() throws Exception {
-        List<String> models = resultProcessor.processToModel("foo", result);
-        assertTrue(models.isEmpty());
+        List<ReadChildrenResult> results = resultProcessor.processToModel("foo", nodes);
+        assertTrue(results.isEmpty());
     }
 }

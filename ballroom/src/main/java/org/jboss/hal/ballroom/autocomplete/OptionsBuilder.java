@@ -18,9 +18,9 @@ package org.jboss.hal.ballroom.autocomplete;
 /**
  * @author Harald Pehl
  */
-class OptionsBuilder<T> {
+public class OptionsBuilder<T> {
 
-    private final SourceFunction source;
+    private final SourceFunction<T> source;
 
     private int minChars;
     private int delay;
@@ -28,9 +28,9 @@ class OptionsBuilder<T> {
     private int offsetTop;
     private boolean cache;
     private String menuClass;
-    private ItemRenderer renderItem;
+    private ItemRenderer<T> renderItem;
 
-    OptionsBuilder(final SourceFunction<T> source) {
+    public OptionsBuilder(final SourceFunction<T> source) {
         this.source = source;
         this.minChars = 1;
         this.delay = 150;
@@ -38,10 +38,10 @@ class OptionsBuilder<T> {
         this.offsetTop = 1;
         this.cache = false;
         this.menuClass = "";
-        this.renderItem = null;
+        this.renderItem = new StringRenderer<>(String::valueOf);
     }
 
-    OptionsBuilder renderItem(ItemRenderer<T> renderItem) {
+    public OptionsBuilder renderItem(ItemRenderer<T> renderItem) {
         this.renderItem = renderItem;
         return this;
     }

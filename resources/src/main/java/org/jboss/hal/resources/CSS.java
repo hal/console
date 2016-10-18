@@ -30,6 +30,7 @@ import static java.util.stream.Collectors.joining;
 public interface CSS {
 
     String aboutModalPf = "about-modal-pf";
+    String address = "address";
     String active = "active";
     String alert = "alert";
     String alertDanger = "alert-danger";

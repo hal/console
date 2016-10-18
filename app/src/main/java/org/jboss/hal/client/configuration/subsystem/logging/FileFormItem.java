@@ -21,7 +21,7 @@ import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.CompositeFormItem;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
-import org.jboss.hal.client.configuration.PathsTypeahead;
+import org.jboss.hal.client.configuration.PathsAutoComplete;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Ids;
 
@@ -64,7 +64,7 @@ public class FileFormItem extends CompositeFormItem {
         path.setId(Ids.uniqueId());
         relativeTo = new TextBoxItem(RELATIVE_TO, new LabelBuilder().label(RELATIVE_TO));
         relativeTo.setId(Ids.uniqueId());
-        relativeTo.registerSuggestHandler(new PathsTypeahead());
+        relativeTo.registerSuggestHandler(new PathsAutoComplete());
         return asList(path, relativeTo);
     }
 

@@ -54,6 +54,7 @@ public class AutoComplete implements SuggestHandler, Attachable {
         private native void destroy();
     }
 
+
     @NonNls static final Logger logger = LoggerFactory.getLogger(AutoComplete.class);
 
     private FormItem formItem;
@@ -70,7 +71,7 @@ public class AutoComplete implements SuggestHandler, Attachable {
             options.selector = formItemSelector();
             options.onSelect = (event, item, renderedItem) -> {
                 if (formItem() instanceof AbstractFormItem) {
-                    ((AbstractFormItem) formItem()).onSuggest(renderedItem);
+                    ((AbstractFormItem) formItem()).onSuggest(item);
                 }
             };
             bridge = new Bridge(options);
@@ -87,13 +88,29 @@ public class AutoComplete implements SuggestHandler, Attachable {
 
     @Override
     public void showAll() {
-        //noinspection unchecked
-        formItem().setValue("*");
-        Event event = Browser.getDocument().createEvent("KeyboardEvent"); //NON-NLS
-        event.initEvent(Event.KEYUP, true, true);
         Element element = Browser.getDocument().getElementById(formItem().getId(EDITING));
-        element.dispatchEvent(event);
+        Browser.getWindow().setTimeout(() -> {
+            element.blur();
+            triggerEvent(element, Event.KEYUP, "", 0); // to reset 'last_val' in autoComplete.js
+            triggerEvent(element, Event.KEYUP, SHOW_ALL_VALUE, SHOW_ALL_VALUE.charAt(0));
+            element.focus();
+        }, 351); // timeout must be > 350, which is used in autoComplete.js
     }
+
+    private native void triggerEvent(Element element, String type, String key, int keyCode) /*-{
+        element.value = key;
+        if ($doc.createEvent) {
+            event = new Event(type);
+            event.keyCode = keyCode;
+            event.which = keyCode;
+            element.dispatchEvent(event);
+        } else {
+            event = $doc.createEventObject();
+            event.keyCode = keyCode;
+            event.which = keyCode;
+            element.fireEvent("on" + type, event);
+        }
+    }-*/;
 
     @Override
     public void close() {

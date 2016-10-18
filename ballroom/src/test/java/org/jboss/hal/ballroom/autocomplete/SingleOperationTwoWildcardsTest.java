@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom.typeahead;
+package org.jboss.hal.ballroom.autocomplete;
 
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.hal.ballroom.typeahead.NestedResultProcessor.Result;
 import org.jboss.hal.dmr.ExternalModelNode;
 import org.jboss.hal.dmr.ModelNode;
 import org.junit.Before;
 import org.junit.Test;
 
-import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -79,34 +77,33 @@ public class SingleOperationTwoWildcardsTest {
     };
 
 
-    private NestedResultProcessor resultProcessor;
-    private ModelNode result;
+    private ReadChildrenProcessor resultProcessor;
+    private ModelNode nodes;
 
     @Before
     public void setUp() throws Exception {
-        resultProcessor = new NestedResultProcessor(false);
-        result = ExternalModelNode
+        resultProcessor = new SingleReadChildrenProcessor();
+        nodes = ExternalModelNode
                 .read(NamesResultProcessorTest.class.getResourceAsStream("single_operation_two_wildcards.dmr"));
     }
 
     @Test
     public void nullQuery() throws Exception {
-        List<Result> models = resultProcessor.processToModel(null, result);
-        assertTrue(models.isEmpty());
+        List<ReadChildrenResult> results = resultProcessor.processToModel(null, nodes);
+        assertTrue(results.isEmpty());
     }
 
     @Test
     public void emptyQuery() throws Exception {
-        List<Result> models = resultProcessor.processToModel("", result);
-        assertTrue(models.isEmpty());
+        List<ReadChildrenResult> results = resultProcessor.processToModel("", nodes);
+        assertTrue(results.isEmpty());
     }
 
     @Test
     public void wildcardQuery() throws Exception {
-        List<Result> models = resultProcessor.processToModel("*", result);
-        List<String> names = models.stream().map(model -> model.name).collect(toList());
-        assertArrayEquals(NAMES, names.toArray());
-        models.forEach(model -> {
+        List<ReadChildrenResult> results = resultProcessor.processToModel("*", nodes);
+        assertArrayEquals(NAMES, results.stream().map(result -> result.name).toArray(String[]::new));
+        results.forEach(model -> {
             assertEquals(1, model.addresses.size());
             assertEquals("socket-binding-group", model.addresses.keySet().iterator().next());
         });
@@ -114,15 +111,15 @@ public class SingleOperationTwoWildcardsTest {
 
     @Test
     public void oneMatch() throws Exception {
-        List<Result> models = resultProcessor.processToModel("iiop-ssl", result);
-        assertEquals(2, models.size());
-        models.forEach(model -> assertEquals("iiop-ssl", model.name));
+        List<ReadChildrenResult> results = resultProcessor.processToModel("iiop-ssl", nodes);
+        assertEquals(2, results.size());
+        results.forEach(model -> assertEquals("iiop-ssl", model.name));
 
-        Map.Entry<String, String> entry = models.get(0).addresses.entrySet().iterator().next();
+        Map.Entry<String, String> entry = results.get(0).addresses.entrySet().iterator().next();
         assertEquals("socket-binding-group", entry.getKey());
         assertEquals("full-sockets", entry.getValue());
 
-        entry = models.get(1).addresses.entrySet().iterator().next();
+        entry = results.get(1).addresses.entrySet().iterator().next();
         assertEquals("socket-binding-group", entry.getKey());
         assertEquals("full-ha-sockets", entry.getValue());
     }

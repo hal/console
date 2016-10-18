@@ -36,7 +36,6 @@ import elemental.html.SpanElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandler;
-import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
@@ -323,15 +322,6 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         inputElement().attach();
         if (suggestHandler instanceof Attachable) {
             ((Attachable) suggestHandler).attach();
-        }
-        if (suggestHandler instanceof Typeahead) {
-            Typeahead.Bridge.select("#" + getId(EDITING)).onChange(event -> {
-                // the event might occur after we already switched to read-only mode
-                if (getState() == EDITING) {
-                    String value = ((elemental.html.InputElement) event.getTarget()).getValue();
-                    onSuggest(value);
-                }
-            });
         }
     }
 

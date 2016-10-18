@@ -25,15 +25,15 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 
-class CompositeReadChildrenProcessor extends AbstractReadChildrenProcessor implements ResultProcessor<ReadChildrenResult> {
+class CompositeReadChildrenProcessor extends ReadChildrenProcessor implements ResultProcessor {
 
     @Override
-    public List<ReadChildrenResult> process(final String query, final ModelNode result) {
+    public List<ReadChildrenResult> processToModel(final String query, final ModelNode nodes) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<ReadChildrenResult> process(final String query, final CompositeResult compositeResult) {
+    public List<ReadChildrenResult> processToModel(final String query, final CompositeResult compositeResult) {
         List<ResourceAddress> addresses = new ArrayList<>();
         for (ModelNode step : compositeResult) {
             if (!step.isFailure()) {

@@ -27,11 +27,11 @@ import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Progress;
+import org.jboss.hal.ballroom.autocomplete.StaticAutoComplete;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
-import org.jboss.hal.ballroom.typeahead.StaticTypeahead;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddAssignment;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.AddRoleMapping;
 import org.jboss.hal.client.accesscontrol.AccessControlFunctions.CheckRoleMapping;
@@ -117,8 +117,8 @@ class PrincipalColumn extends FinderColumn<Principal> {
                     .forEach(roleNames::add);
             accessControl.roles().scopedRoles().stream().sorted(comparing(Role::getName)).map(Role::getName)
                     .forEach(roleNames::add);
-            form.getFormItem(INCLUDE).registerSuggestHandler(new StaticTypeahead(roleNames));
-            form.getFormItem(EXCLUDE).registerSuggestHandler(new StaticTypeahead(roleNames));
+            form.getFormItem(INCLUDE).registerSuggestHandler(new StaticAutoComplete(roleNames));
+            form.getFormItem(EXCLUDE).registerSuggestHandler(new StaticAutoComplete(roleNames));
 
             form.addFormValidation(frm -> {
                 FormItem<List<String>> includeItem = frm.getFormItem(INCLUDE);

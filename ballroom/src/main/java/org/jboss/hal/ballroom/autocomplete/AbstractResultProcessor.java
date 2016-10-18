@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom.typeahead;
+package org.jboss.hal.ballroom.autocomplete;
 
 import java.util.List;
 
 import elemental.js.json.JsJsonObject;
 import elemental.js.util.JsArrayOf;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.model.CompositeResult;
 
 /**
  * Abstract result processor which makes it easy to unit test the processor. If your result processor is really trivial
@@ -33,11 +34,18 @@ import org.jboss.hal.dmr.ModelNode;
 abstract class AbstractResultProcessor<T> implements ResultProcessor {
 
     @Override
-    public JsArrayOf<JsJsonObject> process(final String query, final ModelNode result) {
-        return asJson(processToModel(query, result));
+    public final JsArrayOf<JsJsonObject> process(final String query, final ModelNode nodes) {
+        return asJson(processToModel(query, nodes));
     }
 
-    protected abstract List<T> processToModel(final String query, final ModelNode result);
+    @Override
+    public final JsArrayOf<JsJsonObject> process(final String query, final CompositeResult compositeResult) {
+        return asJson(processToModel(query, compositeResult));
+    }
 
-    protected abstract JsArrayOf<JsJsonObject> asJson(final List<T> models);
+    protected abstract List<T> processToModel(final String query, final ModelNode nodes);
+
+    protected abstract List<T> processToModel(final String query, final CompositeResult compositeResult);
+
+    abstract JsArrayOf<JsJsonObject> asJson(final List<T> models);
 }

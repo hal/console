@@ -27,18 +27,18 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 
 /**
- * Updates the {@link PathsTypeahead} upon profile selections and server stop / start.
+ * Updates the {@link PathsAutoComplete} upon profile selections and server stop / start.
  *
  * @author Harald Pehl
  */
-public class UpdatePathTypeahead implements ProfileSelectionHandler, ServerResultHandler {
+public class UpdatePathAutoComplete implements ProfileSelectionHandler, ServerResultHandler {
 
     private final Environment environment;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
 
     @Inject
-    public UpdatePathTypeahead(final EventBus eventBus, final Environment environment, final Dispatcher dispatcher,
+    public UpdatePathAutoComplete(final EventBus eventBus, final Environment environment, final Dispatcher dispatcher,
             final StatementContext statementContext) {
         this.environment = environment;
         this.dispatcher = dispatcher;
@@ -50,11 +50,11 @@ public class UpdatePathTypeahead implements ProfileSelectionHandler, ServerResul
 
     @Override
     public void onProfileSelection(final ProfileSelectionEvent event) {
-        PathsTypeahead.updateOperation(environment, dispatcher, statementContext);
+        PathsAutoComplete.updateOperation(environment, dispatcher, statementContext);
     }
 
     @Override
     public void onServerResult(final ServerResultEvent event) {
-        PathsTypeahead.updateOperation(environment, dispatcher, statementContext);
+        PathsAutoComplete.updateOperation(environment, dispatcher, statementContext);
     }
 }

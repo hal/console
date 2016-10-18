@@ -13,41 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.ballroom.typeahead;
+package org.jboss.hal.ballroom.autocomplete;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental.js.json.JsJsonArray;
 import elemental.js.json.JsJsonObject;
 import elemental.json.JsonObject;
+import org.jetbrains.annotations.NonNls;
 
-import static org.jboss.hal.ballroom.typeahead.NestedResultProcessor.ADDRESSES;
-import static org.jboss.hal.ballroom.typeahead.NestedResultProcessor.KEY;
-import static org.jboss.hal.ballroom.typeahead.NestedResultProcessor.VALUE;
+import static org.jboss.hal.ballroom.autocomplete.ItemRenderer.highlight;
+import static org.jboss.hal.ballroom.autocomplete.ReadChildrenResult.ADDRESSES;
+import static org.jboss.hal.ballroom.autocomplete.ReadChildrenResult.KEY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.resources.CSS.ttNested;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
+import static org.jboss.hal.resources.CSS.address;
+import static org.jboss.hal.resources.CSS.autocompleteSuggestion;
 
 /**
  * @author Harald Pehl
  */
-final class NestedSuggestionTemplate implements Templates.SuggestionTemplate {
+final class ReadChildrenRenderer implements ItemRenderer<JsJsonObject> {
 
     @Override
-    @SuppressWarnings("HardCodedStringLiteral")
-    public String render(final JsJsonObject data) {
-        SafeHtmlBuilder builder = new SafeHtmlBuilder();
-        builder.appendHtmlConstant("<div class=\"" + ttNested + "\">");
-        JsJsonArray addresses = (JsJsonArray) data.get(ADDRESSES);
+    public final String render(final JsJsonObject item, final String query) {
+        String name = item.get(NAME).asString();
+        @NonNls SafeHtmlBuilder builder = new SafeHtmlBuilder();
+        builder.appendHtmlConstant("<div class=\"" + autocompleteSuggestion + "\" data-val=\"" + name + "\">");
+        JsJsonArray addresses = (JsJsonArray) item.get(ADDRESSES);
         if (addresses.length() != 0) {
             for (int i = 0; i < addresses.length(); i++) {
                 JsonObject keyValue = addresses.getObject(i);
-                builder.appendHtmlConstant("<span title=\"" + keyValue.getString(KEY) + "\">");
+                builder.appendHtmlConstant(
+                        "<span title=\"" + keyValue.getString(KEY) + "\" class=\"" + address + "\">");
                 builder.appendEscaped(keyValue.getString(VALUE));
                 builder.appendEscaped(" / ");
                 builder.appendHtmlConstant("</span>");
             }
         }
-        builder.appendHtmlConstant("<span>").appendEscaped(data.getString(NAME)).appendHtmlConstant("</span>");
-        builder.appendHtmlConstant("</div>");
+        builder.appendHtmlConstant(highlight(query).replace(name, "<b>$1</b>")) //NON-NLS
+                .appendHtmlConstant("</div>");
         return builder.toSafeHtml().asString();
     }
 }

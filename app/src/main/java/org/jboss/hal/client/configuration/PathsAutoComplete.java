@@ -17,13 +17,18 @@ package org.jboss.hal.client.configuration;
 
 import java.util.List;
 
+import elemental.js.json.JsJsonObject;
 import org.jboss.gwt.flow.Async;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.ballroom.typeahead.NamesResultProcessor;
-import org.jboss.hal.ballroom.typeahead.Typeahead;
+import org.jboss.hal.ballroom.autocomplete.AutoComplete;
+import org.jboss.hal.ballroom.autocomplete.NamesResultProcessor;
+import org.jboss.hal.ballroom.autocomplete.Options;
+import org.jboss.hal.ballroom.autocomplete.OptionsBuilder;
+import org.jboss.hal.ballroom.autocomplete.StringRenderer;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.Core;
 import org.jboss.hal.core.runtime.TopologyFunctions;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
@@ -41,7 +46,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 
 /**
- * Special typeahead class for paths. In standalone mode or in case there's no selected profile the paths are read
+ * Special auto complete class for paths. In standalone mode or in case there's no selected profile the paths are read
  * using {@code :read-children-names(child-type=path)}.
  * <p>
  * In domain mode we try to get the first running server of the selected profile and use {@code
@@ -53,9 +58,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OP
  *
  * @author Harald Pehl
  */
-public class PathsTypeahead extends Typeahead {
+public class PathsAutoComplete extends AutoComplete {
 
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(PathsTypeahead.class);
+    @NonNls private static final Logger logger = LoggerFactory.getLogger(PathsAutoComplete.class);
     private static Operation operation = defaultOperation();
 
     /**
@@ -96,10 +101,12 @@ public class PathsTypeahead extends Typeahead {
                 .param(CHILD_TYPE, "path").build();
     }
 
-    public PathsTypeahead() {
-        options = initOptions();
-        bloodhound = initBloodhound(data -> data.getString(NAME), data -> data.getString(NAME).split(WHITESPACE),
-                () -> operation, new NamesResultProcessor());
-        dataset = initDataset(data -> data.getString(NAME), null);
+    public PathsAutoComplete() {
+        Options options = new OptionsBuilder<JsJsonObject>(
+                (query, response) -> Core.INSTANCE.dispatcher().execute(operation,
+                        result -> response.response(new NamesResultProcessor().process(query, result))))
+                .renderItem(new StringRenderer<>(item -> item.get(NAME).asString()))
+                .build();
+        init(options);
     }
 }

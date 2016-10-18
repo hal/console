@@ -24,11 +24,9 @@ import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.form.InputElement.Context;
-import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
-import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.formControl;
 import static org.jboss.hal.resources.CSS.tagManagerContainer;
@@ -95,17 +93,6 @@ public class ListItem extends AbstractFormItem<List<String>> {
     public void showError(final String message) {
         super.showError(message);
         errorText.getClassList().remove(CSS.hint);
-    }
-
-    @Override
-    public void registerSuggestHandler(final SuggestHandler suggestHandler) {
-        super.registerSuggestHandler(suggestHandler);
-        if (suggestHandler instanceof Typeahead) {
-            TagsManager.Bridge.element(listElement.asElement()).onRefresh((event, cst) -> {
-                Typeahead.Bridge.select(getId(EDITING)).setValue("");
-                suggestHandler.close();
-            });
-        }
     }
 
     @Override

@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.ballroom.autocomplete;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.jboss.hal.ballroom.form.SuggestHandler;
@@ -27,19 +28,20 @@ import static java.util.stream.Collectors.toList;
 /**
  * Processes the result of a single READ_CHILDREN_NAMES operation.
  */
-class NamesResultProcessor implements ResultProcessor<ReadChildrenResult> {
+public class NamesResultProcessor extends ReadChildrenProcessor implements ResultProcessor {
 
     @Override
-    public List<ReadChildrenResult> process(final String query, final ModelNode nodes) {
+    protected List<ReadChildrenResult> processToModel(final String query, final ModelNode nodes) {
         return nodes.asList().stream()
                 .map(node -> new ReadChildrenResult(node.asString()))
                 .filter(result -> !isNullOrEmpty(query) &&
                         (SuggestHandler.SHOW_ALL_VALUE.equals(query) || result.name.contains(query)))
+                .sorted(Comparator.comparing(result -> result.name))
                 .collect(toList());
     }
 
     @Override
-    public List<ReadChildrenResult> process(final String query, final CompositeResult result) {
+    protected List<ReadChildrenResult> processToModel(final String query, final CompositeResult compositeResult) {
         throw new UnsupportedOperationException();
     }
 }

@@ -15,21 +15,24 @@
  */
 package org.jboss.hal.ballroom.autocomplete;
 
-import com.google.gwt.regexp.shared.RegExp;
-import jsinterop.annotations.JsFunction;
-import jsinterop.annotations.JsOverlay;
+import java.util.List;
+
+import org.jboss.hal.ballroom.JsHelper;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Harald Pehl
  */
-@JsFunction
-@FunctionalInterface
-interface ItemRenderer<T> {
+public class StaticAutoComplete extends AutoComplete {
 
-    @JsOverlay
-    static RegExp highlight(String query) {
-        return RegExp.compile("(" + RegExp.quote(query) + ")", "gi"); //NON-NLS
+    public StaticAutoComplete(final List<String> values) {
+        Options options = new OptionsBuilder<String>((query, response) -> {
+            List<String> matches = values.stream()
+                    .filter(value -> SHOW_ALL_VALUE.equals(query) || value.toLowerCase().contains(query.toLowerCase()))
+                    .collect(toList());
+            response.response(JsHelper.asJsArray(matches));
+        }).build();
+        init(options);
     }
-
-    String render(T item, String query);
 }

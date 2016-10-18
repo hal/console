@@ -22,6 +22,7 @@ import elemental.js.json.JsJsonArray;
 import elemental.js.json.JsJsonObject;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 
 /**
  * @author Harald Pehl
@@ -29,8 +30,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 class ReadChildrenResult {
 
     static final String ADDRESSES = "addresses";
-    private static final String KEY = "key";
-    private static final String VALUE = "value";
+    static final String KEY = "key";
 
     final String name;
     final LinkedHashMap<String, String> addresses;

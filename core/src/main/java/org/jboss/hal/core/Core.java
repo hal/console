@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.mbui.form;
+package org.jboss.hal.core;
 
 import javax.inject.Inject;
 
@@ -21,20 +21,20 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 
 /**
- * Helper class to get access to some required dependencies for {@link ModelNodeForm}s.
+ * Helper class to get access to selected dependencies. Please use <em>only</em> if no DI is available!
  *
  * @author Harald Pehl
  */
-public class ModelNodeFormContext {
+public class Core {
 
     @Inject
-    public static ModelNodeFormContext INSTANCE;
+    public static Core INSTANCE;
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
 
     @Inject
-    public ModelNodeFormContext(final Dispatcher dispatcher, final StatementContext statementContext) {
+    public Core(final Dispatcher dispatcher, final StatementContext statementContext) {
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
     }

@@ -17,13 +17,14 @@ package org.jboss.hal.ballroom.autocomplete;
 
 import java.util.List;
 
+import elemental.js.util.JsArrayOf;
+import org.jboss.hal.ballroom.JsHelper;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPENDENT_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
@@ -52,19 +53,19 @@ public class SuggestCapabilitiesAutoComplete extends AutoComplete {
                         result -> {
                             List<String> items = result.asList().stream()
                                     .map(ModelNode::asString)
-                                    .filter(value -> SHOW_ALL_VALUE.equals(query) || value.contains(query))
+                                    .filter(value -> SHOW_ALL_VALUE.equals(query) ||
+                                            value.toLowerCase().contains(query.toLowerCase()))
                                     .collect(toList());
-                            response.response(items);
+                            response.response(JsHelper.asJsArray(items));
                         },
                         (op, failure) -> {
                             logger.error(ERROR_MESSAGE, capability, template, failure);
-                            response.response(emptyList());
+                            response.response(JsArrayOf.create());
                         },
                         (op, exception) -> {
                             logger.error(ERROR_MESSAGE, capability, template, exception.getMessage());
-                            response.response(emptyList());
+                            response.response(JsArrayOf.create());
                         }))
-                .renderItem(new StringItemRenderer<>(s -> s))
                 .build();
 
         init(options);

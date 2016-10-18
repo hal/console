@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.ballroom.autocomplete;
 
+import elemental.dom.Element;
 import elemental.js.events.JsEvent;
 import jsinterop.annotations.JsFunction;
 
@@ -23,7 +24,7 @@ import jsinterop.annotations.JsFunction;
  */
 @JsFunction
 @FunctionalInterface
-public interface SelectHandler<T> {
+interface SelectHandler {
 
-    void onSelect(JsEvent event, T item, String renderedItem);
+    void onSelect(JsEvent event, String item, Element renderedItem);
 }

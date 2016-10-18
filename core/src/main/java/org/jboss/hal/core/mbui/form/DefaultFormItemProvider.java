@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.autocomplete.SuggestCapabilitiesAutoComplete;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemProvider;
@@ -32,8 +33,7 @@ import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.ballroom.form.SwitchItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
-import org.jboss.hal.ballroom.typeahead.ReadChildResourcesTypeahead;
-import org.jboss.hal.core.CoreStatementContext;
+import org.jboss.hal.core.Core;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.ModelType;
@@ -54,15 +54,10 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  */
 class DefaultFormItemProvider implements FormItemProvider {
 
-    private final Dispatcher dispatcher;
-    private final StatementContext statementContext;
     private final Metadata metadata;
     private final LabelBuilder labelBuilder;
 
-    DefaultFormItemProvider(final Dispatcher dispatcher, final StatementContext statementContext,
-            final Metadata metadata) {
-        this.dispatcher = dispatcher;
-        this.statementContext = statementContext;
+    DefaultFormItemProvider(final Metadata metadata) {
         this.metadata = metadata;
         this.labelBuilder = new LabelBuilder();
     }
@@ -211,18 +206,19 @@ class DefaultFormItemProvider implements FormItemProvider {
 
     private void checkCapabilityReference(final ModelNode attributeDescription, final FormItem<?> formItem) {
         SuggestHandler suggestHandler = null;
-        StatementContext statementContext = CoreStatementContext.INSTANCE;
 
         if (attributeDescription.hasDefined(CAPABILITY_REFERENCE)) {
+            Dispatcher dispatcher = Core.INSTANCE.dispatcher();
+            StatementContext statementContext = Core.INSTANCE.statementContext();
             String reference = attributeDescription.get(CAPABILITY_REFERENCE).asString();
             Capabilities capabilities = metadata.getCapabilities();
 
             if (capabilities.supportsSuggestions()) {
                 suggestHandler = new SuggestCapabilitiesAutoComplete(dispatcher, statementContext, reference,
                         metadata.getTemplate());
-                // suggestHandler = new SuggestCapabilitiesTypeahead(statementContext, reference, metadata.getTemplate());
             } else if (capabilities.contains(reference)) {
-                suggestHandler = new ReadChildResourcesTypeahead(capabilities.lookup(reference), statementContext);
+                suggestHandler = new ReadChildrenAutoComplete(dispatcher, statementContext,
+                        capabilities.lookup(reference));
             }
         }
         if (suggestHandler != null) {

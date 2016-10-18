@@ -24,10 +24,10 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
 
-class SimpleReadChildrenProcessor extends AbstractReadChildrenProcessor implements ResultProcessor<ReadChildrenResult> {
+class SingleReadChildrenProcessor extends ReadChildrenProcessor implements ResultProcessor {
 
     @Override
-    public List<ReadChildrenResult> process(final String query, final ModelNode nodes) {
+    public List<ReadChildrenResult> processToModel(final String query, final ModelNode nodes) {
         List<ResourceAddress> addresses = new ArrayList<>();
         for (ModelNode node : nodes.asList()) {
             ResourceAddress address = new ResourceAddress(node.get(ADDRESS));
@@ -39,7 +39,7 @@ class SimpleReadChildrenProcessor extends AbstractReadChildrenProcessor implemen
     }
 
     @Override
-    public List<ReadChildrenResult> process(final String query, final CompositeResult result) {
+    public List<ReadChildrenResult> processToModel(final String query, final CompositeResult compositeResult) {
         throw new UnsupportedOperationException();
     }
 }
