@@ -84,7 +84,7 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
         this.placeManager = placeManager;
         this.macros = macros;
         this.resources = resources;
-        this.aboutDialog = new AboutDialog(environment, endpoints, resources.theme());
+        this.aboutDialog = new AboutDialog(environment, endpoints, resources);
         this.checkForUpdate = new CheckForUpdate(environment);
     }
 

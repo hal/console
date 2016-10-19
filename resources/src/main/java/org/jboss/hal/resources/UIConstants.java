@@ -44,6 +44,7 @@ public interface UIConstants {
     String COLLAPSE = "collapse";
     String CONTAINER = "container";
     String CONTROLS = "controls";
+    String DIALOG = "dialog";
     String DISMISS = "dismiss";
     String DROPDOWN = "dropdown";
     String DOWNLOAD = "download";
@@ -53,6 +54,7 @@ public interface UIConstants {
     String HIDDEN_MODAL = "hidden.bs.modal";
     String HREF = "href";
     String HIDDEN = "hidden";
+    String LABEL = "label";
     String LABELLED_BY = "labelledby";
     String MENU = "menu";
     String MENUITEM = "menuitem";
