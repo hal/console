@@ -356,6 +356,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         stateExec(EDIT); // switch state before data mapping!
         clearErrors();
         dataMapping.populateFormItems(model, this);
+        getFormItems().forEach(formItem -> formItem.setModified(false));
     }
 
     /**
