@@ -376,12 +376,15 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
         }
     }
 
+    /**
+     * @return only the changed values w/ {@code "access-type" => "read-write"}.
+     */
     @Override
     protected Map<String, Object> getChangedValues() {
         Map<String, Object> writableChanges = new HashMap<>(super.getChangedValues());
         writableChanges.entrySet().removeIf(entry -> {
             ModelNode metadata = attributeMetadata.get(entry.getKey());
-            return metadata != null && metadata.hasDefined(ACCESS_TYPE) && READ_ONLY
+            return metadata != null && metadata.hasDefined(ACCESS_TYPE) && !READ_WRITE
                     .equals(metadata.get(ACCESS_TYPE).asString());
         });
         return writableChanges;
