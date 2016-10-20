@@ -34,7 +34,6 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.client.configuration.subsystem.SubsystemPresenter;
 import org.jboss.hal.client.runtime.BrowseByColumn;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -126,12 +125,12 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                     if (NameTokens.GENERIC_SUBSYSTEM.equals(current.getNameToken())) {
                         // switch server in address parameter of generic presenter
                         builder = new PlaceRequest.Builder().nameToken(current.getNameToken());
-                        String addressParam = current.getParameter(SubsystemPresenter.ADDRESS_PARAM, null);
+                        String addressParam = current.getParameter(Places.ADDRESS_PARAM, null);
                         if (addressParam != null) {
                             ResourceAddress currentAddress = AddressTemplate.of(addressParam).resolve(statementContext);
                             ResourceAddress newAddress = currentAddress.replaceValue(SERVER, item.getName())
                                     .replaceValue(SERVER_CONFIG, item.getName());
-                            builder.with(SubsystemPresenter.ADDRESS_PARAM, newAddress.toString());
+                            builder.with(Places.ADDRESS_PARAM, newAddress.toString());
                         }
 
                     } else {

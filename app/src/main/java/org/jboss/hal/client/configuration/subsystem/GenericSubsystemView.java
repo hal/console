@@ -24,12 +24,12 @@ import org.jboss.hal.dmr.model.ResourceAddress;
 /**
  * @author Harald Pehl
  */
-public class SubsystemView extends PatternFlyViewImpl implements SubsystemPresenter.MyView {
+public class GenericSubsystemView extends PatternFlyViewImpl implements GenericSubsystemPresenter.MyView {
 
     private final ModelBrowser modelBrowser;
 
     @Inject
-    public SubsystemView(ModelBrowser modelBrowser) {
+    public GenericSubsystemView(ModelBrowser modelBrowser) {
         this.modelBrowser = modelBrowser;
         initElements(modelBrowser);
     }

@@ -42,6 +42,7 @@ import org.jboss.hal.core.finder.FinderSegment.DropdownItem;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.core.modelbrowser.ModelBrowserPath;
 import org.jboss.hal.core.modelbrowser.ModelBrowserPath.Segment;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
@@ -97,7 +98,9 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     @DataElement Element breadcrumbs;
     @DataElement Element backItem;
     @DataElement Element backLink;
-    @DataElement Element externalItem;
+    @DataElement Element breadcrumbToolsItem;
+    @DataElement Element modelBrowserLink;
+    @DataElement Element modelBrowserIcon;
     @DataElement Element externalLink;
 
 
@@ -228,7 +231,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         clearBreadcrumb();
         Element li = Browser.getDocument().createLIElement();
         li.setTextContent(title);
-        breadcrumbs.insertBefore(li, externalItem);
+        breadcrumbs.insertBefore(li, breadcrumbToolsItem);
     }
 
     @Override
@@ -238,10 +241,20 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     }
 
     @Override
-    public void externalMode(final boolean externalMode) {
-        externalLink.setAttribute(UIConstants.HREF, presenter.externalUrl());
-        externalLink.setAttribute(UIConstants.TARGET, presenter.currentToken());
-        Elements.setVisible(externalItem, externalMode);
+    public void switchModelBrowserLink(final boolean supported, final ResourceAddress address) {
+        Elements.setVisible(modelBrowserLink, supported);
+        if (supported) {
+            modelBrowserLink.setAttribute(UIConstants.HREF, presenter.modelBrowserUrl(address));
+        }
+    }
+
+    @Override
+    public void externalMode(boolean supported) {
+        Elements.setVisible(externalLink, supported);
+        if (supported) {
+            externalLink.setAttribute(UIConstants.HREF, presenter.externalUrl());
+            externalLink.setAttribute(UIConstants.TARGET, presenter.currentToken());
+        }
     }
 
 
@@ -250,7 +263,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     private void clearBreadcrumb() {
         for (Iterator<Element> iterator = Elements.iterator(breadcrumbs); iterator.hasNext(); ) {
             Element element = iterator.next();
-            if (element == backItem || element == externalItem) {
+            if (element == backItem || element == breadcrumbToolsItem) {
                 continue;
             }
             iterator.remove();
@@ -349,7 +362,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
             }
             builder.end(); // </span>
             builder.end(); // </li>
-            breadcrumbs.insertBefore(builder.build(), externalItem);
+            breadcrumbs.insertBefore(builder.build(), breadcrumbToolsItem);
         }
     }
 
@@ -360,11 +373,11 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
             // deselection
             breadcrumbs.insertBefore(
                     new Elements.Builder().li().textContent(resources().constants().nothingSelected()).build(),
-                    externalItem);
+                    breadcrumbToolsItem);
 
         } else {
             if (path.isEmpty()) {
-                breadcrumbs.insertBefore(new Elements.Builder().li().textContent("").build(), externalItem);
+                // breadcrumbs.insertBefore(new Elements.Builder().li().textContent("").build(), externalItem);
 
             } else {
                 ModelBrowser modelBrowser = path.getModelBrowser();
@@ -393,7 +406,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
                         builder.end(); // </a>
                     }
                     builder.end().end(); // </span> </li>
-                    breadcrumbs.insertBefore(builder.build(), externalItem);
+                    breadcrumbs.insertBefore(builder.build(), breadcrumbToolsItem);
                 }
             }
         }

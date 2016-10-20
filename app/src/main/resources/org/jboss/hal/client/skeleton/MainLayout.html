@@ -100,7 +100,14 @@
         </ul>
         <ol class="breadcrumb hal-breadcrumb" data-element="breadcrumbs">
             <li data-element="backItem"><a data-element="backLink" class="back clickable"><i class="fa fa-angle-double-left"></i>&nbsp;{{resources().constants().back()}}</a></li>
-            <li data-element="externalItem" class="external"><a data-element="externalLink" title="{{resources().constants().openInExternalWindow()}}"><span class="fa fa-external-link fa-lg"></span></a></li>
+            <li data-element="breadcrumbToolsItem" class="breadcrumb-tools">
+                <a data-element="modelBrowserLink" title="{{resources().constants().openInModelBrowser()}}" class="clickable">
+                    <span data-element="modelBrowserIcon" class="fa fa-sitemap fa-lg"></span>
+                </a>
+                <a data-element="externalLink" title="{{resources().constants().openInExternalWindow()}}">
+                    <span class="fa fa-external-link fa-lg"></span>
+                </a>
+            </li>
         </ol>
     </div>
 </nav>

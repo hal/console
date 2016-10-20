@@ -37,6 +37,7 @@ import org.jboss.hal.core.modelbrowser.ModelBrowserPathEvent;
 import org.jboss.hal.core.modelbrowser.ModelBrowserPathEvent.ModelBrowserPathHandler;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.MessageEvent.MessageHandler;
@@ -57,7 +58,8 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         void tlcMode();
         void fullscreenMode(String title);
         void applicationMode();
-        void externalMode(boolean externalMode);
+        void switchModelBrowserLink(boolean supported, ResourceAddress address);
+        void externalMode(boolean supported);
         void updateLinks(FinderContext finderContext);
         void updateBreadcrumb(FinderContext finderContext);
         void updateBreadcrumb(ModelBrowserPath path);
@@ -164,8 +166,17 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         getView().fullscreenMode(title);
     }
 
-    public void externalMode(boolean externalMode) {
-        getView().externalMode(externalMode);
+    public void switchModelBrowserLink(boolean supported, ResourceAddress address) {
+        getView().switchModelBrowserLink(supported, address);
+    }
+
+    String modelBrowserUrl(ResourceAddress address) {
+        PlaceRequest external = places.modelBrowser(address);
+        return places.historyToken(external);
+    }
+
+    public void externalMode(boolean supported) {
+        getView().externalMode(supported);
     }
 
     String externalUrl() {

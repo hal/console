@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
 public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ extends ProxyPlace<?>>
         extends PatternFlyPresenter<V, Proxy_> implements ExternalMode {
 
-    static final String EXTERNAL = "external";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ApplicationPresenter.class);
 
     private final Finder finder;
@@ -55,7 +54,7 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
     @Override
     public void prepareFromRequest(final PlaceRequest request) {
         super.prepareFromRequest(request);
-        external = Boolean.parseBoolean(request.getParameter(EXTERNAL, String.valueOf(false)));
+        external = Boolean.parseBoolean(request.getParameter(Places.EXTERNAL_PARAM, String.valueOf(false)));
     }
 
     @Override
@@ -131,10 +130,5 @@ public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ exte
      */
     public boolean isExternal() {
         return external;
-    }
-
-    @Override
-    public boolean supportsExternalMode() {
-        return true;
     }
 }

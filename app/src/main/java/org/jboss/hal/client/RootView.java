@@ -29,6 +29,7 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.ExternalMode;
 import org.jboss.hal.core.mvp.FullscreenPresenter;
+import org.jboss.hal.core.mvp.ModelBrowserSupport;
 import org.jboss.hal.core.mvp.Slots;
 import org.jboss.hal.core.mvp.TopLevelCategory;
 import org.jboss.hal.resources.Ids;
@@ -110,9 +111,12 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
             } else if (content instanceof ApplicationPresenter) {
                 presenter.applicationMode();
             }
-            if (content instanceof ExternalMode) {
-                presenter.externalMode(((ExternalMode) content).supportsExternalMode());
+            if (content instanceof ModelBrowserSupport) {
+                presenter.switchModelBrowserLink(true, ((ModelBrowserSupport) content).modelBrowserAddress());
+            } else {
+                presenter.switchModelBrowserLink(false, null);
             }
+            presenter.externalMode(content instanceof ExternalMode);
 
         } else {
             logger.warn("Unknown slot {}. Delegate to super.setInSlot()", slot);

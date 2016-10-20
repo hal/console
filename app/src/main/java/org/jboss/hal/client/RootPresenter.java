@@ -29,6 +29,7 @@ import org.jboss.hal.client.skeleton.HeaderPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.mvp.Slots;
+import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
  * @author Harald Pehl
@@ -83,7 +84,11 @@ public class RootPresenter extends Presenter<RootPresenter.MyView, RootPresenter
         headerPresenter.applicationMode();
     }
 
-    void externalMode(final boolean externalMode) {
-        headerPresenter.externalMode(externalMode);
+    void switchModelBrowserLink(boolean supported, ResourceAddress address) {
+        headerPresenter.switchModelBrowserLink(supported, address);
+    }
+
+    void externalMode(boolean supported) {
+        headerPresenter.externalMode(supported);
     }
 }

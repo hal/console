@@ -58,16 +58,6 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
     }
 
     @Override
-    public void detach() {
-        super.detach();
-        if (selectBox != null) {
-            selectBox.asElement().getClassList().remove(selectpicker);
-            Multi.element(selectBox.asElement()).destroy();
-        }
-    }
-
-
-    @Override
     void markDefaultValue(final boolean on, final List<String> defaultValue) {
         super.markDefaultValue(on, defaultValue);
         Multi.element(selectBox.asElement()).refresh();

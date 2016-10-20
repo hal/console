@@ -13,29 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.tools;
+package org.jboss.hal.core.mvp;
 
-import javax.inject.Inject;
-
-import org.jboss.hal.core.modelbrowser.ModelBrowser;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
 import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
+ * Interface meant to be implemented by presenters which support switching to an 'expert mode' using the model browser
+ * w/ {@link #modelBrowserAddress()} as root address.
+ *
  * @author Harald Pehl
  */
-public class ModelBrowserView extends PatternFlyViewImpl implements ModelBrowserPresenter.MyView {
+public interface ModelBrowserSupport {
 
-    private final ModelBrowser modelBrowser;
-
-    @Inject
-    public ModelBrowserView(ModelBrowser modelBrowser) {
-        this.modelBrowser = modelBrowser;
-        initElements(modelBrowser);
-    }
-
-    @Override
-    public void setRoot(final ResourceAddress root) {
-        modelBrowser.setRoot(root, true);
-    }
+    ResourceAddress modelBrowserAddress();
 }

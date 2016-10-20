@@ -73,7 +73,6 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
     // @formatter:on
 
 
-    static final String EXTERNAL_PARAM = "external";
     private static final int REFRESH_INTERVAL = 1000;
 
     private final FinderPathFactory finderPathFactory;

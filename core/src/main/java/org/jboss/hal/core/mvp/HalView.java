@@ -20,7 +20,7 @@ import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 
 /**
- * Bridge between GWTPs views which are based on widgets and HAL views which are based on elements.
+ * Adapter between GWTPs views which are based on widgets and HAL views which are based on elements.
  *
  * @author Harald Pehl
  */

@@ -69,15 +69,6 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
     }
 
     @Override
-    public void detach() {
-        super.detach();
-        if (selectBox != null) {
-            selectBox.asElement().getClassList().remove(selectpicker);
-            Single.element(selectBox.asElement()).destroy();
-        }
-    }
-
-    @Override
     public boolean supportsExpressions() {
         return false;
     }

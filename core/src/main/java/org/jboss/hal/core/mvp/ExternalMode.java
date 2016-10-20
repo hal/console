@@ -16,15 +16,10 @@
 package org.jboss.hal.core.mvp;
 
 /**
- * Interface meant to be implemented by presenters which can be opened in an external browser window / tab.
+ * Tagging interface meant to be implemented by presenters which can be opened in an external browser window / tab.
  *
  * @author Harald Pehl
  */
 public interface ExternalMode {
 
-    /**
-     * @return {@code true} if an external link should be displayed in the header when this presenter is revealed,
-     * {@code false} otherwise.
-     */
-    boolean supportsExternalMode();
 }
