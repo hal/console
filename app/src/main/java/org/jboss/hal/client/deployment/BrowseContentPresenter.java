@@ -25,9 +25,9 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -42,14 +42,14 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
  * @author Harald Pehl
  */
 public class BrowseContentPresenter
-        extends ApplicationPresenter<BrowseContentPresenter.MyView, BrowseContentPresenter.MyProxy> {
+        extends ApplicationFinderPresenter<BrowseContentPresenter.MyView, BrowseContentPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.BROWSE_CONTENT)
     public interface MyProxy extends ProxyPlace<BrowseContentPresenter> {}
 
-    public interface MyView extends PatternFlyView, HasPresenter<BrowseContentPresenter> {
+    public interface MyView extends HalView, HasPresenter<BrowseContentPresenter> {
         void setContent(String content, ModelNode browseContentResult);
     }
     // @formatter:on
@@ -89,7 +89,7 @@ public class BrowseContentPresenter
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.content(content);
     }
 

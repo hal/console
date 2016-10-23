@@ -15,12 +15,10 @@
  */
 package org.jboss.hal.core.mvp;
 
-import org.jboss.hal.core.finder.Finder;
-
 /**
+ * Tagging interface meant to be implemented by presenters which can be opened in an external browser window / tab.
+ *
  * @author Harald Pehl
  */
-public interface FinderView extends HalView {
-
-    void setFinder(Finder Finder);
+public interface SupportsExternalMode {
 }

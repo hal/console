@@ -31,7 +31,7 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
@@ -42,7 +42,7 @@ import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.resources.Ids;
 
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
-public class UnderTheBridgeView extends PatternFlyViewImpl implements UnderTheBridgePresenter.MyView {
+public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePresenter.MyView {
 
     private static final String VIDEO = "https://youtu.be/GLvohMXgcBo";
     private static final Map<String, String[]> ATTRIBUTES = Maps.newLinkedHashMap();

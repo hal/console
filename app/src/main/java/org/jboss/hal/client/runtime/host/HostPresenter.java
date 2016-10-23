@@ -113,7 +113,7 @@ public class HostPresenter extends MbuiPresenter<HostPresenter.MyView, HostPrese
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.runtimeHostPath();
     }
 

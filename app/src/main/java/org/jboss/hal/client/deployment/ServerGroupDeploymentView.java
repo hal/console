@@ -23,7 +23,7 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -33,7 +33,7 @@ import static org.jboss.hal.resources.CSS.marginTopLarge;
 /**
  * @author Harald Pehl
  */
-public class ServerGroupDeploymentView extends PatternFlyViewImpl implements ServerGroupDeploymentPresenter.MyView {
+public class ServerGroupDeploymentView extends HalViewImpl implements ServerGroupDeploymentPresenter.MyView {
 
     private final DeploymentModelElement deploymentModel;
     private final Resources resources;

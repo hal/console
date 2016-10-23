@@ -107,7 +107,7 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(ModelDescriptionConstants.LOGGING)
                 .append(Ids.LOGGING, Ids.LOGGING_CONFIGURATION, Names.LOGGING, Names.CONFIGURATION);
     }

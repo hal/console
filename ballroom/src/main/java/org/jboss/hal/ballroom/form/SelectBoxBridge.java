@@ -97,11 +97,6 @@ public class SelectBoxBridge {
         public final void refresh() {
             selectpicker(REFRESH);
         }
-
-        @JsOverlay
-        public final void destroy() {
-            selectpicker(DESTROY);
-        }
     }
 
 
@@ -143,17 +138,11 @@ public class SelectBoxBridge {
         public final void onChange(ChangeListener listener) {
             on(CHANGE_EVENT, listener);
         }
-
-        @JsOverlay
-        public final void destroy() {
-            selectpicker(DESTROY);
-        }
     }
 
 
     private final static String VAL = "val";
     private final static String DESELECT_ALL = "deselectAll";
-    private final static String DESTROY = "destroy";
     private final static String REFRESH = "refresh";
     private final static String CHANGE_EVENT = "changed.bs.select";
 }

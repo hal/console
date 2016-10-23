@@ -75,7 +75,7 @@ public class PathsPresenter extends MbuiPresenter<PathsPresenter.MyView, PathsPr
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return new FinderPath()
                 .append(Ids.CONFIGURATION, Ids.asId(Names.PATHS), Names.CONFIGURATION, Names.PATHS);
     }

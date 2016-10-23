@@ -13,14 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.mvp;
+package org.jboss.hal.client.configuration.subsystem;
 
-import org.jboss.hal.core.finder.Finder;
+import javax.inject.Inject;
+
+import org.jboss.hal.core.modelbrowser.ModelBrowser;
+import org.jboss.hal.core.mvp.HalViewImpl;
+import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
  * @author Harald Pehl
  */
-public interface FinderView extends HalView {
+public class GenericSubsystemView extends HalViewImpl implements GenericSubsystemPresenter.MyView {
 
-    void setFinder(Finder Finder);
+    private final ModelBrowser modelBrowser;
+
+    @Inject
+    public GenericSubsystemView(ModelBrowser modelBrowser) {
+        this.modelBrowser = modelBrowser;
+        initElements(modelBrowser);
+    }
+
+    @Override
+    public void setRoot(final ResourceAddress root) {
+        modelBrowser.setRoot(root, false);
+    }
 }

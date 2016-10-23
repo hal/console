@@ -26,45 +26,44 @@ import org.jboss.hal.core.configuration.ProfileSelectionEvent;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
-import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
+import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 
+import static org.jboss.hal.core.mvp.Places.ADDRESS_PARAM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 
 /**
  * Presenter for subsystems w/o a specific implementation in HAL. Relies on the model browser to manage a (sub)tree of
  * the management model starting at the resource specified as place request parameter.
  * <p>
- * Used in configuration and subsystem perspective.
+ * Used in configuration and runtime perspective.
  *
  * @author Harald Pehl
  */
-public class SubsystemPresenter
-        extends ApplicationPresenter<SubsystemPresenter.MyView, SubsystemPresenter.MyProxy> {
+public class GenericSubsystemPresenter
+        extends ApplicationFinderPresenter<GenericSubsystemPresenter.MyView, GenericSubsystemPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyStandard
     @NameToken(NameTokens.GENERIC_SUBSYSTEM)
-    public interface MyProxy extends ProxyPlace<SubsystemPresenter> {}
+    public interface MyProxy extends ProxyPlace<GenericSubsystemPresenter> {}
 
-    public interface MyView extends PatternFlyView {
+    public interface MyView extends HalView {
         void setRoot(ResourceAddress root);
     }
     // @formatter:on
 
-
-    public final static String ADDRESS_PARAM = "address";
 
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private ResourceAddress address;
 
     @Inject
-    public SubsystemPresenter(final EventBus eventBus,
+    public GenericSubsystemPresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy proxy,
             final Finder finder,
@@ -97,7 +96,7 @@ public class SubsystemPresenter
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(address.lastValue());
     }
 }

@@ -17,8 +17,6 @@ package org.jboss.hal.client.skeleton;
 
 import javax.annotation.PostConstruct;
 
-import com.gwtplatform.mvp.client.ViewImpl;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.DataElement;
 import org.jboss.gwt.elemento.core.Elements;
@@ -26,13 +24,11 @@ import org.jboss.gwt.elemento.core.EventHandler;
 import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.ballroom.ProgressElement;
 import org.jboss.hal.ballroom.Tooltip;
-import org.jboss.hal.client.tools.ModelBrowserPresenter;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.ui.UIRegistry;
-import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 import org.jetbrains.annotations.NonNls;
@@ -47,7 +43,7 @@ import static org.jboss.hal.resources.CSS.pulse;
  * @author Harald Pehl
  */
 @Templated("MainLayout.html#footer")
-public abstract class FooterView extends ViewImpl implements FooterPresenter.MyView {
+public abstract class FooterView extends HalViewImpl implements FooterPresenter.MyView {
 
     // @formatter:off
     public static FooterView create(final Places places, final UIRegistry uiRegistry, final Resources resources) {

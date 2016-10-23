@@ -93,7 +93,7 @@ public class ServerGroupPresenter extends MbuiPresenter<ServerGroupPresenter.MyV
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.runtimeServerGroupPath();
     }
 

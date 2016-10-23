@@ -19,7 +19,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.TopLevelPresenter;
 import org.jboss.hal.meta.token.NameTokens;
 
@@ -35,7 +35,7 @@ public class PatchingPresenter extends TopLevelPresenter<PatchingPresenter.MyVie
     @NameToken(NameTokens.PATCHING)
     public interface MyProxy extends ProxyPlace<PatchingPresenter> {}
 
-    public interface MyView extends PatternFlyView {}
+    public interface MyView extends HalView {}
     // @formatter:on
 
 

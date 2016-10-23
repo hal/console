@@ -41,11 +41,7 @@ import org.jboss.hal.resources.UIConstants;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.dialog.Modal.$;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.UIConstants.DIALOG;
-import static org.jboss.hal.resources.UIConstants.HIDDEN;
-import static org.jboss.hal.resources.UIConstants.LABEL;
-import static org.jboss.hal.resources.UIConstants.ROLE;
-import static org.jboss.hal.resources.UIConstants.TABINDEX;
+import static org.jboss.hal.resources.UIConstants.*;
 
 /**
  * A modal dialog with optional secondary and primary buttons. Only one dialog can be open at a time. The buttons can
@@ -294,7 +290,7 @@ public class Dialog implements IsElement {
             .div().id(Ids.HAL_MODAL).css(modal)
                     .attr(ROLE, DIALOG)
                     .attr(TABINDEX, "-1")
-                    .aria("labeledby", Ids.HAL_MODAL_TITLE)
+                    .aria(LABELLED_BY, Ids.HAL_MODAL_TITLE)
                 .div().css(modalDialog).attr(ROLE, "document").rememberAs(DIALOG_ELEMENT) //NON-NLS
                     .div().css(modalContent)
                         .div().css(modalHeader)

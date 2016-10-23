@@ -17,7 +17,7 @@ package org.jboss.hal.core.mbui;
 
 import java.util.Map;
 
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -29,7 +29,7 @@ import org.jboss.hal.spi.MessageEvent;
  *
  * @author Harald Pehl
  */
-public abstract class MbuiViewImpl<P extends MbuiPresenter> extends PatternFlyViewImpl implements MbuiView<P> {
+public abstract class MbuiViewImpl<P extends MbuiPresenter> extends HalViewImpl implements MbuiView<P> {
 
     protected final MbuiContext mbuiContext;
     protected P presenter;

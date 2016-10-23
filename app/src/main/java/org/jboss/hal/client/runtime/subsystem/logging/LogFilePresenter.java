@@ -27,9 +27,9 @@ import elemental.client.Browser;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
@@ -56,7 +56,7 @@ import static org.jboss.hal.meta.token.NameTokens.LOG_FILE;
 /**
  * @author Harald Pehl
  */
-public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyView, LogFilePresenter.MyProxy> {
+public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresenter.MyView, LogFilePresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -64,7 +64,7 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
     @Requires(LOG_FILE_ADDRESS)
     public interface MyProxy extends ProxyPlace<LogFilePresenter> {}
 
-    public interface MyView extends PatternFlyView, HasPresenter<LogFilePresenter> {
+    public interface MyView extends HalView, HasPresenter<LogFilePresenter> {
         void loading();
         void show(LogFile logFile, int lines, String content);
         void refresh(int lines, String content);
@@ -73,7 +73,6 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
     // @formatter:on
 
 
-    static final String EXTERNAL_PARAM = "external";
     private static final int REFRESH_INTERVAL = 1000;
 
     private final FinderPathFactory finderPathFactory;
@@ -117,7 +116,7 @@ public class LogFilePresenter extends ApplicationPresenter<LogFilePresenter.MyVi
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
                 .append(Ids.SERVER_MONITOR, Ids.asId(resources.constants().logFiles()),
                         resources.constants().monitor(), resources.constants().logFiles())

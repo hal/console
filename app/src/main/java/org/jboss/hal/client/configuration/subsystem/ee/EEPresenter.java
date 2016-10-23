@@ -29,10 +29,10 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
-import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -59,7 +59,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Claudio Miranda
  */
-public class EEPresenter extends ApplicationPresenter<EEPresenter.MyView, EEPresenter.MyProxy> {
+public class EEPresenter extends ApplicationFinderPresenter<EEPresenter.MyView, EEPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -67,7 +67,7 @@ public class EEPresenter extends ApplicationPresenter<EEPresenter.MyView, EEPres
     @Requires(AddressTemplates.EE_ADDRESS)
     public interface MyProxy extends ProxyPlace<EEPresenter> {}
 
-    public interface MyView extends PatternFlyView, HasVerticalNavigation, HasPresenter<EEPresenter> {
+    public interface MyView extends HalView, HasVerticalNavigation, HasPresenter<EEPresenter> {
         void update(ModelNode eeData);
     }
     // @formatter:on
@@ -132,7 +132,7 @@ public class EEPresenter extends ApplicationPresenter<EEPresenter.MyView, EEPres
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(AddressTemplates.EE_SUBSYSTEM_TEMPLATE.lastValue());
     }
 

@@ -25,7 +25,7 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.User;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -40,7 +40,7 @@ import static org.jboss.hal.resources.CSS.eapHomeTitle;
 /**
  * @author Harald Pehl
  */
-public class HomepageView extends PatternFlyViewImpl implements HomepagePresenter.MyView {
+public class HomepageView extends HalViewImpl implements HomepagePresenter.MyView {
 
     private HomepagePresenter presenter;
 

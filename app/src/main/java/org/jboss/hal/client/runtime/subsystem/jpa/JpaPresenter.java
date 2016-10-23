@@ -25,10 +25,10 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
-import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -47,7 +47,7 @@ import static org.jboss.hal.meta.token.NameTokens.JPA_RUNTIME;
  * @author Harald Pehl
  */
 
-public class JpaPresenter extends ApplicationPresenter<JpaPresenter.MyView, JpaPresenter.MyProxy> {
+public class JpaPresenter extends ApplicationFinderPresenter<JpaPresenter.MyView, JpaPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -55,7 +55,7 @@ public class JpaPresenter extends ApplicationPresenter<JpaPresenter.MyView, JpaP
     @Requires(JPA_ADDRESS)
     public interface MyProxy extends ProxyPlace<JpaPresenter> {}
 
-    public interface MyView extends PatternFlyView, HasPresenter<JpaPresenter>, HasVerticalNavigation {
+    public interface MyView extends HalView, HasPresenter<JpaPresenter>, HasVerticalNavigation {
         void update(JpaStatistic statistic);
     }
     // @formatter:on
@@ -100,7 +100,7 @@ public class JpaPresenter extends ApplicationPresenter<JpaPresenter.MyView, JpaP
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
                 .append(Ids.SERVER_MONITOR, Ids.asId(Names.JPA), resources.constants().monitor(), Names.JPA)
                 .append(Ids.JPA_RUNTIME, Ids.jpaStatistic(deployment, persistenceUnit), Names.JPA, persistenceUnit);

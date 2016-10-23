@@ -13,29 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.client.configuration.subsystem;
-
-import javax.inject.Inject;
-
-import org.jboss.hal.core.modelbrowser.ModelBrowser;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
-import org.jboss.hal.dmr.model.ResourceAddress;
+package org.jboss.hal.core.header;
 
 /**
  * @author Harald Pehl
  */
-public class SubsystemView extends PatternFlyViewImpl implements SubsystemPresenter.MyView {
-
-    private final ModelBrowser modelBrowser;
-
-    @Inject
-    public SubsystemView(ModelBrowser modelBrowser) {
-        this.modelBrowser = modelBrowser;
-        initElements(modelBrowser);
-    }
-
-    @Override
-    public void setRoot(final ResourceAddress root) {
-        modelBrowser.setRoot(root, false);
-    }
+public enum PresenterType {
+    TOP_LEVEL_CATEGORY,
+    APPLICATION
 }

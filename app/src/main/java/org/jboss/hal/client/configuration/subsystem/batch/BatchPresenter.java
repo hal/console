@@ -22,7 +22,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -65,7 +64,6 @@ public class BatchPresenter extends MbuiPresenter<BatchPresenter.MyView, BatchPr
     // @formatter:on
 
     private final FinderPathFactory finderPathFactory;
-    private final Environment environment;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
 
@@ -75,12 +73,10 @@ public class BatchPresenter extends MbuiPresenter<BatchPresenter.MyView, BatchPr
             final MyProxy proxy,
             final Finder finder,
             final FinderPathFactory finderPathFactory,
-            final Environment environment,
             final StatementContext statementContext,
             final Dispatcher dispatcher) {
         super(eventBus, view, proxy, finder);
         this.finderPathFactory = finderPathFactory;
-        this.environment = environment;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
     }
@@ -92,7 +88,7 @@ public class BatchPresenter extends MbuiPresenter<BatchPresenter.MyView, BatchPr
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(ModelDescriptionConstants.BATCH_JBERET);
     }
 

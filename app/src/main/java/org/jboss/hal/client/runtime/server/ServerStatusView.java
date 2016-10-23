@@ -37,7 +37,7 @@ import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.ballroom.table.OptionsBuilder;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
@@ -57,7 +57,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 /**
  * @author Harald Pehl
  */
-public class ServerStatusView extends PatternFlyViewImpl implements ServerStatusPresenter.MyView {
+public class ServerStatusView extends HalViewImpl implements ServerStatusPresenter.MyView {
 
     private static class PreTextItem extends TextBoxItem {
 

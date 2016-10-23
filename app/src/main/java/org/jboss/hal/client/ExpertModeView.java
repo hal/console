@@ -13,18 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.mvp;
+package org.jboss.hal.client;
+
+import javax.inject.Inject;
+
+import org.jboss.hal.core.modelbrowser.ModelBrowser;
+import org.jboss.hal.core.mvp.HalViewImpl;
+import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
- * Interface meant to be implemented by presenters which can be opened in an external browser window / tab.
- *
  * @author Harald Pehl
  */
-public interface ExternalMode {
+public class ExpertModeView extends HalViewImpl implements ExpertModePresenter.MyView {
 
-    /**
-     * @return {@code true} if an external link should be displayed in the header when this presenter is revealed,
-     * {@code false} otherwise.
-     */
-    boolean supportsExternalMode();
+    private final ModelBrowser modelBrowser;
+
+    @Inject
+    public ExpertModeView(ModelBrowser modelBrowser) {
+        this.modelBrowser = modelBrowser;
+        initElements(modelBrowser);
+    }
+
+    @Override
+    public void setRoot(final ResourceAddress root) {
+        modelBrowser.setRoot(root, false);
+    }
 }

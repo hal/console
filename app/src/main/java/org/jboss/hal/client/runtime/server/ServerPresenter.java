@@ -97,7 +97,7 @@ public class ServerPresenter extends MbuiPresenter<ServerPresenter.MyView, Serve
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath();
     }
 

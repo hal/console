@@ -24,9 +24,9 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -43,7 +43,7 @@ import static org.jboss.hal.meta.token.NameTokens.JNDI;
 /**
  * @author Harald Pehl
  */
-public class JndiPresenter extends ApplicationPresenter<JndiPresenter.MyView, JndiPresenter.MyProxy> {
+public class JndiPresenter extends ApplicationFinderPresenter<JndiPresenter.MyView, JndiPresenter.MyProxy> {
 
     private static final String ROOT_ADDRESS = "/{selected.host}/{selected.server}/subsystem=naming";
     private static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
@@ -54,7 +54,7 @@ public class JndiPresenter extends ApplicationPresenter<JndiPresenter.MyView, Jn
     @Requires(ROOT_ADDRESS)
     public interface MyProxy extends ProxyPlace<JndiPresenter> {}
 
-    public interface MyView extends PatternFlyView, HasPresenter<JndiPresenter> {
+    public interface MyView extends HalView, HasPresenter<JndiPresenter> {
         void update(ModelNode jndi);
     }
     // @formatter:on
@@ -88,7 +88,7 @@ public class JndiPresenter extends ApplicationPresenter<JndiPresenter.MyView, Jn
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
                 .append(Ids.SERVER_MONITOR, Ids.asId(Names.JNDI), resources.constants().monitor(), Names.JNDI);
     }

@@ -40,7 +40,6 @@ import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Column;
@@ -110,10 +109,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
                         } else if (!item.hasCustomImplementation()) {
                             ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext, item.getName());
-                            placeRequest = new PlaceRequest.Builder()
-                                    .nameToken(NameTokens.GENERIC_SUBSYSTEM)
-                                    .with(SubsystemPresenter.ADDRESS_PARAM, address.toString())
-                                    .build();
+                            placeRequest = places.genericSubsystem(address);
                         }
                         return singletonList(itemActionFactory.view(placeRequest));
                     }

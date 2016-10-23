@@ -18,13 +18,13 @@ package org.jboss.hal.client.tools;
 import javax.inject.Inject;
 
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
  * @author Harald Pehl
  */
-public class ModelBrowserView extends PatternFlyViewImpl implements ModelBrowserPresenter.MyView {
+public class ModelBrowserView extends HalViewImpl implements ModelBrowserPresenter.MyView {
 
     private final ModelBrowser modelBrowser;
 
@@ -35,8 +35,7 @@ public class ModelBrowserView extends PatternFlyViewImpl implements ModelBrowser
     }
 
     @Override
-    public void attach() {
-        super.attach();
-        modelBrowser.setRoot(ResourceAddress.ROOT, true);
+    public void setRoot(final ResourceAddress root) {
+        modelBrowser.setRoot(root, true);
     }
 }
