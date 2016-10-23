@@ -26,8 +26,8 @@ import org.jboss.hal.core.configuration.ProfileSelectionEvent;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
-import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
+import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
@@ -45,14 +45,14 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
  * @author Harald Pehl
  */
 public class GenericSubsystemPresenter
-        extends ApplicationPresenter<GenericSubsystemPresenter.MyView, GenericSubsystemPresenter.MyProxy> {
+        extends ApplicationFinderPresenter<GenericSubsystemPresenter.MyView, GenericSubsystemPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyStandard
     @NameToken(NameTokens.GENERIC_SUBSYSTEM)
     public interface MyProxy extends ProxyPlace<GenericSubsystemPresenter> {}
 
-    public interface MyView extends PatternFlyView {
+    public interface MyView extends HalView {
         void setRoot(ResourceAddress root);
     }
     // @formatter:on
@@ -96,7 +96,7 @@ public class GenericSubsystemPresenter
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(address.lastValue());
     }
 }

@@ -32,7 +32,7 @@ import org.jboss.hal.ballroom.editor.AceEditor;
 import org.jboss.hal.ballroom.editor.Options;
 import org.jboss.hal.ballroom.form.SwitchBridge;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.meta.StatementContext;
@@ -50,7 +50,7 @@ import static org.jboss.hal.resources.CSS.logFileLoading;
  * @author Harald Pehl
  */
 @Templated("LogFileView.html#root")
-public abstract class LogFileView extends PatternFlyViewImpl implements LogFilePresenter.MyView {
+public abstract class LogFileView extends HalViewImpl implements LogFilePresenter.MyView {
 
     // @formatter:off
     public static LogFileView create(final Environment environment, final StatementContext statementContext,

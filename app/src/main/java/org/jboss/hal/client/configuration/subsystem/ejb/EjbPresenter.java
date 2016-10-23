@@ -101,7 +101,7 @@ public class EjbPresenter extends MbuiPresenter<EjbPresenter.MyView, EjbPresente
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(ModelDescriptionConstants.EJB3);
     }
 

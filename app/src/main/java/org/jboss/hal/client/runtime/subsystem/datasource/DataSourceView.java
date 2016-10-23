@@ -24,7 +24,7 @@ import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -45,7 +45,7 @@ import static org.jboss.hal.resources.CSS.*;
 /**
  * @author Harald Pehl
  */
-public class DataSourceView extends PatternFlyViewImpl implements DataSourcePresenter.MyView {
+public class DataSourceView extends HalViewImpl implements DataSourcePresenter.MyView {
 
     private static final String HEADER_ELEMENT = "headerElement";
     private static final String POOL_PATH = "statistics/pool";

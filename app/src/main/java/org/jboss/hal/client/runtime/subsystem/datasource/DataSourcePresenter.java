@@ -26,9 +26,9 @@ import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -48,7 +48,8 @@ import static org.jboss.hal.meta.token.NameTokens.DATA_SOURCE_RUNTIME;
 /**
  * @author Harald Pehl
  */
-public class DataSourcePresenter extends ApplicationPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy> {
+public class DataSourcePresenter extends
+        ApplicationFinderPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -57,7 +58,7 @@ public class DataSourcePresenter extends ApplicationPresenter<DataSourcePresente
             XA_DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_POOL_ADDRESS, XA_DATA_SOURCE_JDBC_ADDRESS})
     public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
 
-    public interface MyView extends PatternFlyView, HasPresenter<DataSourcePresenter> {
+    public interface MyView extends HalView, HasPresenter<DataSourcePresenter> {
         void setup();
         void update(DataSource dataSource);
     }
@@ -104,7 +105,7 @@ public class DataSourcePresenter extends ApplicationPresenter<DataSourcePresente
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
                 .append(Ids.SERVER_MONITOR, Ids.asId(Names.DATASOURCES),
                         resources.constants().monitor(), Names.DATASOURCES)

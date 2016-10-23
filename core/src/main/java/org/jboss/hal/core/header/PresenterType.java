@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.mvp;
-
-import org.jboss.hal.dmr.model.ResourceAddress;
+package org.jboss.hal.core.header;
 
 /**
- * Interface meant to be implemented by presenters which support switching to an 'expert mode' using the model browser
- * w/ {@link #modelBrowserAddress()} as root address.
- *
  * @author Harald Pehl
  */
-public interface ModelBrowserSupport {
-
-    ResourceAddress modelBrowserAddress();
+public enum PresenterType {
+    TOP_LEVEL_CATEGORY,
+    APPLICATION
 }

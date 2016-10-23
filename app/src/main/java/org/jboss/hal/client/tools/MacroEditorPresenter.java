@@ -30,9 +30,10 @@ import org.jboss.gwt.flow.Function;
 import org.jboss.gwt.flow.FunctionContext;
 import org.jboss.gwt.flow.Outcome;
 import org.jboss.gwt.flow.Progress;
-import org.jboss.hal.core.mvp.FullscreenPresenter;
+import org.jboss.hal.ballroom.HasTitle;
+import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.macro.Macro;
 import org.jboss.hal.dmr.macro.Macros;
@@ -48,14 +49,15 @@ import static java.util.stream.Collectors.toList;
  * @author Harald Pehl
  */
 public class MacroEditorPresenter
-        extends FullscreenPresenter<MacroEditorPresenter.MyView, MacroEditorPresenter.MyProxy> {
+        extends ApplicationPresenter<MacroEditorPresenter.MyView, MacroEditorPresenter.MyProxy>
+        implements HasTitle {
 
     // @formatter:off
     @ProxyStandard
     @NameToken(NameTokens.MACRO_EDITOR)
     public interface MyProxy extends ProxyPlace<MacroEditorPresenter> {}
 
-    public interface MyView extends PatternFlyView, HasPresenter<MacroEditorPresenter> {
+    public interface MyView extends HalView, HasPresenter<MacroEditorPresenter> {
         void empty();
         void setMacros(Iterable<Macro> macros);
         void selectMacro(final Macro macro);
@@ -81,11 +83,16 @@ public class MacroEditorPresenter
             final Macros macros,
             @Footer Provider<Progress> progress,
             final Resources resources) {
-        super(eventBus, view, proxy, resources.constants().macroEditor());
+        super(eventBus, view, proxy);
         this.dispatcher = dispatcher;
         this.macros = macros;
         this.progress = progress;
         this.resources = resources;
+    }
+
+    @Override
+    public String getTitle() {
+        return resources.constants().macroEditor();
     }
 
     @Override

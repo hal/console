@@ -13,14 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.hal.core.mvp;
+package org.jboss.hal.core.header;
 
-import org.jboss.hal.core.finder.Finder;
+import com.gwtplatform.dispatch.annotation.GenEvent;
+import com.gwtplatform.dispatch.annotation.Optional;
+import com.gwtplatform.dispatch.annotation.Order;
+import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
  * @author Harald Pehl
  */
-public interface FinderView extends HalView {
+@GenEvent
+public class HeaderMode {
 
-    void setFinder(Finder Finder);
+    @Order(1) PresenterType presenterType;
+    @Order(2) @Optional String token;
+    @Order(3) @Optional String title;
+    @Order(4) @Optional boolean external;
+    @Order(5) @Optional ResourceAddress expertMode;
+    @Order(6) @Optional boolean normalMode;
 }

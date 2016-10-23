@@ -15,26 +15,10 @@
  */
 package org.jboss.hal.core.mvp;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.Proxy;
-
 /**
- * Base class for all presenters which are displayed full screen in {@link Slots#MAIN}, but which are
- * <strong>not</strong> applications.
+ * Tagging interface meant to be implemented by presenters which can be opened in an external browser window / tab.
  *
  * @author Harald Pehl
  */
-public abstract class FullscreenPresenter<V extends PatternFlyView, Proxy_ extends Proxy<?>>
-        extends PatternFlyPresenter<V, Proxy_> {
-
-    private final String title;
-
-    public FullscreenPresenter(final EventBus eventBus, final V view, final Proxy_ proxy, final String title) {
-        super(eventBus, view, proxy, Slots.MAIN);
-        this.title = title;
-    }
-
-    public String getTitle() {
-        return title;
-    }
+public interface SupportsExternalMode {
 }

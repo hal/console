@@ -25,17 +25,31 @@ import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 
 /**
- * The base presenter for HAL. Each presenter must extend from this presenter or one of its subclasses.
+ * The base presenter for HAL. Each presenter must extend from this presenter or one of its subclasses. The presenter
+ * calls {@link HalView#attach()} when it's {@linkplain #onReveal() revealed} and {@link
+ * HalView#detach()} when it's {@linkplain #onHide() hidden}.
  *
  * @author Harald Pehl
  */
-public abstract class HalPresenter<V extends HalView, Proxy_ extends Proxy<?>>
+abstract class HalPresenter<V extends HalView, Proxy_ extends Proxy<?>>
         extends Presenter<V, Proxy_>
         implements IsElement, HasElements {
 
-    public HalPresenter(final EventBus eventBus, final V view, final Proxy_ proxy,
+    HalPresenter(final EventBus eventBus, final V view, final Proxy_ proxy,
             final GwtEvent.Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, slot);
+    }
+
+    @Override
+    protected void onReveal() {
+        super.onReveal();
+        getView().attach();
+    }
+
+    @Override
+    protected void onHide() {
+        super.onHide();
+        getView().detach();
     }
 
     @Override

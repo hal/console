@@ -15,12 +15,15 @@
  */
 package org.jboss.hal.core.mvp;
 
-import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
+ * Interface meant to be implemented by presenters which support switching to an 'expert mode' using the model browser
+ * w/ {@link #resourceAddress()} as root address.
+ *
  * @author Harald Pehl
  */
-public interface FinderView extends HalView {
+public interface SupportsExpertMode {
 
-    void setFinder(Finder Finder);
+    ResourceAddress resourceAddress();
 }

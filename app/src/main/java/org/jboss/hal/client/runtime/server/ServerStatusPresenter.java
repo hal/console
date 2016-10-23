@@ -24,9 +24,9 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
-import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -45,7 +45,7 @@ import static org.jboss.hal.meta.token.NameTokens.SERVER_STATUS;
  * @author Harald Pehl
  */
 public class ServerStatusPresenter extends
-        ApplicationPresenter<ServerStatusPresenter.MyView, ServerStatusPresenter.MyProxy> {
+        ApplicationFinderPresenter<ServerStatusPresenter.MyView, ServerStatusPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -53,7 +53,7 @@ public class ServerStatusPresenter extends
     @Requires(SERVER_STATUS_ADDRESS)
     public interface MyProxy extends ProxyPlace<ServerStatusPresenter> {}
 
-    public interface MyView extends PatternFlyView, HasVerticalNavigation {
+    public interface MyView extends HalView, HasVerticalNavigation {
         void update(ModelNode modelNode);
     }
     // @formatter:on
@@ -96,7 +96,7 @@ public class ServerStatusPresenter extends
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
                 .append(Ids.SERVER_MONITOR, Ids.asId(resources.constants().status()),
                         resources.constants().monitor(), resources.constants().status());

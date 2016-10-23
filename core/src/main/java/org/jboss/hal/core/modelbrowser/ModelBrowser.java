@@ -83,6 +83,8 @@ import static org.jboss.hal.resources.Ids.MODEL_BROWSER_ROOT;
 import static org.jboss.hal.resources.Names.NYI;
 
 /**
+ * Model browser element which can be embedded in other elements.
+ *
  * @author Harald Pehl
  */
 public class ModelBrowser implements HasElements {
@@ -561,6 +563,12 @@ public class ModelBrowser implements HasElements {
         adjustHeight();
     }
 
+    /**
+     * Entry point to show the specified address.
+     *
+     * @param root             the root address for this model browser
+     * @param updateBreadcrumb {@code true} if this model browser should fire {@link ModelBrowserPathEvent}s
+     */
     public void setRoot(ResourceAddress root, boolean updateBreadcrumb) {
         this.updateBreadcrumb = updateBreadcrumb;
 

@@ -33,7 +33,7 @@ import org.jboss.hal.ballroom.editor.Options;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
 import org.jboss.hal.ballroom.listview.ListView;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.dmr.macro.Macro;
 import org.jboss.hal.resources.CSS;
@@ -50,7 +50,7 @@ import static org.jboss.hal.resources.CSS.*;
 /**
  * @author Harald Pehl
  */
-public class MacroEditorView extends PatternFlyViewImpl implements MacroEditorPresenter.MyView {
+public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter.MyView {
 
     private static final String COPY_TO_CLIPBOARD_ELEMENT = "copyToClipboardElement";
     private static final String PLAY_ACTION = "play";

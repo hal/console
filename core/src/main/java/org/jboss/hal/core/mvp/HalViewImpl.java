@@ -28,16 +28,19 @@ import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.PatternFly;
 
 /**
+ * View which initializes JavaScript based PatternFly components like select picker, tooltips or data tables in its
+ * {@link #attach()} method.
+ *
  * @author Harald Pehl
  */
-public abstract class PatternFlyViewImpl extends ViewImpl implements PatternFlyView {
+public abstract class HalViewImpl extends ViewImpl implements HalView {
 
     private final List<Attachable> attachables;
     private Element element;
     private Iterable<Element> elements;
     private boolean attached;
 
-    protected PatternFlyViewImpl() {
+    protected HalViewImpl() {
         attachables = new ArrayList<>();
         attached = false;
     }

@@ -198,6 +198,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 EEView.class,
                 EEPresenter.MyProxy.class);
 
+        bindPresenter(ExpertModePresenter.class,
+                ExpertModePresenter.MyView.class,
+                ExpertModeView.class,
+                ExpertModePresenter.MyProxy.class);
+
         bindPresenter(GenericSubsystemPresenter.class,
                 GenericSubsystemPresenter.MyView.class,
                 GenericSubsystemView.class,

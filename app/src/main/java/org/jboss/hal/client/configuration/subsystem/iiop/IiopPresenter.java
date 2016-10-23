@@ -26,7 +26,7 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
-import org.jboss.hal.core.mvp.ModelBrowserSupport;
+import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -45,7 +45,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
  * @author Harald Pehl
  */
 public class IiopPresenter extends MbuiPresenter<IiopPresenter.MyView, IiopPresenter.MyProxy> implements
-        ModelBrowserSupport {
+        SupportsExpertMode {
 
     // @formatter:off
     @ProxyStandard
@@ -91,12 +91,12 @@ public class IiopPresenter extends MbuiPresenter<IiopPresenter.MyView, IiopPrese
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(ROOT_TEMPLATE.lastValue());
     }
 
     @Override
-    public ResourceAddress modelBrowserAddress() {
+    public ResourceAddress resourceAddress() {
         return ROOT_TEMPLATE.resolve(statementContext);
     }
 

@@ -20,7 +20,7 @@ import org.jboss.hal.core.finder.Finder;
 /**
  * @author Harald Pehl
  */
-public class FinderViewImpl extends PatternFlyViewImpl implements FinderView {
+public class FinderViewImpl extends HalViewImpl implements FinderView {
 
     @Override
     public void setFinder(final Finder finder) {

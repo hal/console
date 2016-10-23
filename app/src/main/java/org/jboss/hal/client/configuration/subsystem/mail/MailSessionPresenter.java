@@ -37,10 +37,10 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
-import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -72,7 +72,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Claudio Miranda
  */
 public class MailSessionPresenter
-        extends ApplicationPresenter<MailSessionPresenter.MyView, MailSessionPresenter.MyProxy> {
+        extends ApplicationFinderPresenter<MailSessionPresenter.MyView, MailSessionPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -80,7 +80,7 @@ public class MailSessionPresenter
     @Requires({MAIL_ADDRESS, MAIL_SESSION_ADDRESS, SERVER_ADDRESS})
     public interface MyProxy extends ProxyPlace<MailSessionPresenter> {}
 
-    public interface MyView extends PatternFlyView, HasVerticalNavigation, HasPresenter<MailSessionPresenter> {
+    public interface MyView extends HalView, HasVerticalNavigation, HasPresenter<MailSessionPresenter> {
         void update(MailSession mailSession);
     }
     // @formatter:on
@@ -131,7 +131,7 @@ public class MailSessionPresenter
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(ModelDescriptionConstants.MAIL)
                 .append(Ids.MAIL_SESSION, mailSessionName, Names.MAIL_SESSION, mailSessionName);
     }

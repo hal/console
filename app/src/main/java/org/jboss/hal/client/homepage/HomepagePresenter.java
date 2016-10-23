@@ -15,18 +15,18 @@
  */
 package org.jboss.hal.client.homepage;
 
+import javax.inject.Inject;
+
 import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.PatternFlyView;
 import org.jboss.hal.core.mvp.TopLevelPresenter;
 import org.jboss.hal.meta.token.NameTokens;
-
-import javax.inject.Inject;
 
 import static org.jboss.hal.resources.Names.NYI;
 
@@ -41,7 +41,7 @@ public class HomepagePresenter extends TopLevelPresenter<HomepagePresenter.MyVie
     @NameToken(NameTokens.HOMEPAGE)
     public interface MyProxy extends ProxyPlace<HomepagePresenter> {}
 
-    public interface MyView extends PatternFlyView, HasPresenter<HomepagePresenter> {}
+    public interface MyView extends HalView, HasPresenter<HomepagePresenter> {}
     // @formatter:on
 
 

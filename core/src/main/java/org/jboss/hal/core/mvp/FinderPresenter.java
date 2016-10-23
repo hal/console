@@ -30,10 +30,12 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 /**
+ * A presenter which contains a finder.
+ *
  * @author Harald Pehl
  */
 public abstract class FinderPresenter<V extends FinderView, Proxy_ extends ProxyPlace<?>>
-        extends PatternFlyPresenter<V, Proxy_>
+        extends TopLevelPresenter<V, Proxy_>
         implements TopLevelCategory {
 
     protected final Finder finder;
@@ -42,7 +44,7 @@ public abstract class FinderPresenter<V extends FinderView, Proxy_ extends Proxy
 
     public FinderPresenter(final EventBus eventBus, final V view, final Proxy_ proxy,
             final Finder finder, final Resources resources) {
-        super(eventBus, view, proxy, Slots.MAIN);
+        super(eventBus, view, proxy);
         this.finder = finder;
         this.resources = resources;
     }

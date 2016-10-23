@@ -21,76 +21,53 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.core.mvp.ExternalMode;
-import org.jboss.hal.core.mvp.FullscreenPresenter;
-import org.jboss.hal.core.mvp.PatternFlyView;
-import org.jboss.hal.core.mvp.Places;
-import org.jboss.hal.core.ui.Skeleton;
+import org.jboss.hal.ballroom.HasTitle;
+import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.SupportsExternalMode;
+import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.hal.core.mvp.Places.ADDRESS_PARAM;
-
 /**
- * Presenter for the model browser to view and modify the management model.
+ * Presenter which uses the {@link org.jboss.hal.core.modelbrowser.ModelBrowser} to view and modify the management
+ * model.
  *
  * @author Harald Pehl
  */
 public class ModelBrowserPresenter
-        extends FullscreenPresenter<ModelBrowserPresenter.MyView, ModelBrowserPresenter.MyProxy>
-        implements ExternalMode {
+        extends ApplicationPresenter<ModelBrowserPresenter.MyView, ModelBrowserPresenter.MyProxy>
+        implements HasTitle, SupportsExternalMode {
 
     // @formatter:off
     @ProxyStandard
     @NameToken(NameTokens.MODEL_BROWSER)
     public interface MyProxy extends ProxyPlace<ModelBrowserPresenter> {}
 
-    public interface MyView extends PatternFlyView {
+    public interface MyView extends HalView {
         void setRoot(ResourceAddress root);
     }
     // @formatter:on
 
-    private final StatementContext statementContext;
-    private ResourceAddress address;
-    private boolean external;
+    private final Resources resources;
 
     @Inject
     public ModelBrowserPresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy proxy,
-            final StatementContext statementContext,
             final Resources resources) {
-        super(eventBus, view, proxy, resources.constants().modelBrowser());
-        this.statementContext = statementContext;
+        super(eventBus, view, proxy);
+        this.resources = resources;
     }
 
     @Override
-    public void prepareFromRequest(final PlaceRequest request) {
-        super.prepareFromRequest(request);
-        String addressParameter = request.getParameter(ADDRESS_PARAM, null);
-        if (addressParameter != null) {
-            address = AddressTemplate.of(addressParameter).resolve(statementContext);
-        } else {
-            address = ResourceAddress.ROOT;
-        }
-        external = Boolean.parseBoolean(request.getParameter(Places.EXTERNAL_PARAM, String.valueOf(false)));
-    }
-
-    @Override
-    protected void onReveal() {
-        super.onReveal();
-        if (external) {
-            Skeleton.externalMode();
-        }
+    public String getTitle() {
+        return resources.constants().modelBrowser();
     }
 
     @Override
     protected void onReset() {
         super.onReset();
-        getView().setRoot(address);
+        getView().setRoot(ResourceAddress.ROOT);
     }
 }

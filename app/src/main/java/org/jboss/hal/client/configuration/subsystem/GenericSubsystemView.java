@@ -18,13 +18,13 @@ package org.jboss.hal.client.configuration.subsystem;
 import javax.inject.Inject;
 
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
  * @author Harald Pehl
  */
-public class GenericSubsystemView extends PatternFlyViewImpl implements GenericSubsystemPresenter.MyView {
+public class GenericSubsystemView extends HalViewImpl implements GenericSubsystemPresenter.MyView {
 
     private final ModelBrowser modelBrowser;
 

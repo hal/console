@@ -17,7 +17,7 @@ package org.jboss.hal.client.deployment;
 
 import javax.inject.Inject;
 
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Resources;
@@ -25,7 +25,7 @@ import org.jboss.hal.resources.Resources;
 /**
  * @author Harald Pehl
  */
-public class BrowseContentView extends PatternFlyViewImpl implements BrowseContentPresenter.MyView {
+public class BrowseContentView extends HalViewImpl implements BrowseContentPresenter.MyView {
 
     private final BrowseContentElement browseContent;
     private BrowseContentPresenter presenter;
