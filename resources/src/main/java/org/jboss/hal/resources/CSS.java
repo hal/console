@@ -171,7 +171,6 @@ public interface CSS {
     String listViewPfLeft = "list-view-pf-left";
     String listViewPfMainInfo = "list-view-pf-main-info";
     String listViewPfStacked = "list-view-pf-stacked";
-    String listUnstyled = "list-unstyled";
     String loading = "loading";
     String loadingContainer = "loading-container";
     String logFileLoading = "log-file-loading";

@@ -132,6 +132,26 @@ public class VerticalNavigation implements Attachable {
     private static final String UL_ELEMENT = "ulElement";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(VerticalNavigation.class);
 
+    private static final Element rootContainer;
+    private static final Element root;
+    private static final Element ul;
+
+    static {
+        // @formatter:off
+        Elements.Builder builder = new Elements.Builder()
+            .div().css(navPfVertical, navPfVerticalHal)
+                .ul().css(listGroup).rememberAs(UL_ELEMENT).end()
+            .end();
+        // @formatter:on
+
+        rootContainer = Browser.getDocument().getElementById(Ids.ROOT_CONTAINER);
+        root = builder.build();
+        ul = builder.referenceFor(UL_ELEMENT);
+
+        Browser.getDocument().getBody().insertBefore(root, rootContainer);
+        Elements.setVisible(root, false);
+    }
+
     private final LinkedHashMap<String, Entry> entries;
     private final LinkedHashMap<String, Pane> panes;
 
@@ -142,46 +162,34 @@ public class VerticalNavigation implements Attachable {
 
     @Override
     public void attach() {
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .div().css(navPfVertical, navPfVerticalHal)
-                .ul().css(listGroup);
-                    entries.values().stream()
-                            .filter(entry -> entry.parentId == null)
-                            .forEach(entry -> builder.add(entry.asElement()));
-                builder.end()
-            .end();
-        // @formatter:on
-
-        Element root = builder.build();
-        Element rootContainer = Browser.getDocument().getElementById(Ids.ROOT_CONTAINER);
-        if (rootContainer != null) {
-            Browser.getDocument().getBody().insertBefore(root, rootContainer);
-            rootContainer.getClassList().add(containerPfNavPfVertical);
-            if (hasSecondary()) {
-                rootContainer.getClassList().add(containerPfNavPfVerticalWithSubMenus);
-                rootContainer.getClassList().add(navPfPersistentSecondary);
-                root.getClassList().add(navPfVerticalWithSubMenus);
-                root.getClassList().add(navPfPersistentSecondary);
-            }
-            Bridge.select().setupVerticalNavigation(true);
-            showInitial();
+        rootContainer.getClassList().add(containerPfNavPfVertical);
+        if (hasSecondary()) {
+            rootContainer.getClassList().add(containerPfNavPfVerticalWithSubMenus);
+            rootContainer.getClassList().add(navPfPersistentSecondary);
+            root.getClassList().add(navPfVerticalWithSubMenus);
+            root.getClassList().add(navPfPersistentSecondary);
         }
+        entries.values().stream()
+                .filter(entry -> entry.parentId == null)
+                .forEach(entry -> ul.appendChild(entry.asElement()));
+        Elements.setVisible(root, true);
+
+        Bridge.select().setupVerticalNavigation(true);
+        showInitial();
     }
 
     @Override
     public void detach() {
-        Element rootContainer = Browser.getDocument().getElementById(Ids.ROOT_CONTAINER);
-        if (rootContainer != null) {
-            rootContainer.getClassList().remove(containerPfNavPfVertical);
-            rootContainer.getClassList().remove(containerPfNavPfVerticalWithSubMenus);
-            rootContainer.getClassList().remove(navPfPersistentSecondary);
-            rootContainer.getClassList().remove(secondaryVisiblePf);
-        }
-        Element root = Browser.getDocument().querySelector("." + navPfVertical + "." + navPfVerticalHal);
-        if (root != null) {
-            Browser.getDocument().getBody().removeChild(root);
-        }
+        Elements.removeChildrenFrom(ul);
+        root.getClassList().remove(navPfPersistentSecondary);
+        root.getClassList().remove(navPfVerticalWithSubMenus);
+        root.getClassList().remove(secondaryVisiblePf);
+        rootContainer.getClassList().remove(secondaryVisiblePf);
+        rootContainer.getClassList().remove(navPfPersistentSecondary);
+        rootContainer.getClassList().remove(containerPfNavPfVerticalWithSubMenus);
+        rootContainer.getClassList().remove(containerPfNavPfVertical);
+
+        Elements.setVisible(root, false);
     }
 
 
