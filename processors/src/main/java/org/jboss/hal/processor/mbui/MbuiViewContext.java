@@ -87,6 +87,7 @@ public class MbuiViewContext {
     void setVerticalNavigation(final VerticalNavigationInfo verticalNavigation) {
         this.verticalNavigation = verticalNavigation;
         this.elements.put(verticalNavigation.getSelector(), verticalNavigation);
+        attachables.add(verticalNavigation);
     }
 
     public List<Content> getContent() {

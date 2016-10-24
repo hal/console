@@ -48,15 +48,13 @@ import static org.jboss.hal.resources.CSS.*;
  * of the vertical navigation. The panes are typically children of the root container.</li>
  * </ol>
  * <p>
- * The vertical navigation itself is not a child but a sibling of the root container. That's why you have to use the
- * methods {@link VerticalNavigation#on()} and {@link VerticalNavigation#off()} to insert and remove the vertical
- * navigation from the DOM.
- * <p>
+ * The vertical navigation itself is not a child but a sibling of the root container. It gets attached / detached to
+ * the DOM by calling {@link #attach()} and {@link #detach()}.
  *
  * @author Harald Pehl
  * @see <a href="https://www.patternfly.org/patterns/vertical-with-persistent-secondary/">https://www.patternfly.org/patterns/vertical-with-persistent-secondary/</a>
  */
-public class VerticalNavigation {
+public class VerticalNavigation implements Attachable {
 
     @JsType(isNative = true)
     static class Bridge {
@@ -132,39 +130,30 @@ public class VerticalNavigation {
     private static final int PRIMARY_VISIBLE_TEXT_LENGTH = 13;
     private static final int SECONDARY_VISIBLE_TEXT_LENGTH = 23;
     private static final String UL_ELEMENT = "ulElement";
-    private static VerticalNavigation singleton = null;
     @NonNls private static final Logger logger = LoggerFactory.getLogger(VerticalNavigation.class);
 
-    private final Element root;
-    private final Element primaryUl;
     private final LinkedHashMap<String, Entry> entries;
     private final LinkedHashMap<String, Pane> panes;
 
     public VerticalNavigation() {
-        // @formatter:off
-        Elements.Builder builder = new Elements.Builder()
-            .div().css(navPfVertical, navPfVerticalHal)
-                .ul().rememberAs(UL_ELEMENT).css(listGroup)
-                .end()
-            .end();
-        // @formatter:on
-
-        this.primaryUl = builder.referenceFor(UL_ELEMENT);
-        this.root = builder.build();
         this.entries = new LinkedHashMap<>();
         this.panes = new LinkedHashMap<>();
     }
 
-    /**
-     * Inserts the vertical instance before the root container and adds the related CSS classes to the root container.
-     */
-    public void on() {
-        if (singleton != null) {
-            logger.error("There's another vertical navigation which is still attached to the DOM. " +
-                    "Did you forget to call VerticalNavigation.off()?");
-            off();
-        }
+    @Override
+    public void attach() {
+        // @formatter:off
+        Elements.Builder builder = new Elements.Builder()
+            .div().css(navPfVertical, navPfVerticalHal)
+                .ul().css(listGroup);
+                    entries.values().stream()
+                            .filter(entry -> entry.parentId == null)
+                            .forEach(entry -> builder.add(entry.asElement()));
+                builder.end()
+            .end();
+        // @formatter:on
 
+        Element root = builder.build();
         Element rootContainer = Browser.getDocument().getElementById(Ids.ROOT_CONTAINER);
         if (rootContainer != null) {
             Browser.getDocument().getBody().insertBefore(root, rootContainer);
@@ -175,28 +164,23 @@ public class VerticalNavigation {
                 root.getClassList().add(navPfVerticalWithSubMenus);
                 root.getClassList().add(navPfPersistentSecondary);
             }
-            VerticalNavigation.singleton = this;
             Bridge.select().setupVerticalNavigation(true);
+            showInitial();
         }
     }
 
-    /**
-     * Removes the vertical navigation from the body and removes the related CSS class from the root container.
-     */
-    public void off() {
-        if (singleton != null && singleton.root != null && Browser.getDocument().getBody().contains(singleton.root)) {
-            Browser.getDocument().getBody().removeChild(singleton.root);
-            singleton = null;
-        }
+    @Override
+    public void detach() {
         Element rootContainer = Browser.getDocument().getElementById(Ids.ROOT_CONTAINER);
         if (rootContainer != null) {
             rootContainer.getClassList().remove(containerPfNavPfVertical);
             rootContainer.getClassList().remove(containerPfNavPfVerticalWithSubMenus);
             rootContainer.getClassList().remove(navPfPersistentSecondary);
             rootContainer.getClassList().remove(secondaryVisiblePf);
-            root.getClassList().remove(navPfPersistentSecondary);
-            root.getClassList().remove(navPfVerticalWithSubMenus);
-            root.getClassList().remove(secondaryVisiblePf);
+        }
+        Element root = Browser.getDocument().querySelector("." + navPfVertical + "." + navPfVerticalHal);
+        if (root != null) {
+            Browser.getDocument().getBody().removeChild(root);
         }
     }
 
@@ -261,7 +245,6 @@ public class VerticalNavigation {
         // @formatter:on
 
         Entry entry = new Entry(id, null, text, builder.build());
-        primaryUl.appendChild(entry.asElement());
         entries.put(id, entry);
         if (pane != null) {
             panes.put(id, pane);
@@ -272,10 +255,6 @@ public class VerticalNavigation {
 
 
     // ------------------------------------------------------ add secondary items
-
-    public VerticalNavigation addSecondary(String primaryId, String id, String text, IsElement element) {
-        return addSecondary(primaryId, id, text, new Pane(id, element));
-    }
 
     public VerticalNavigation addSecondary(String primaryId, String id, String text, Element element) {
         return addSecondary(primaryId, id, text, new Pane(id, element));
@@ -339,7 +318,7 @@ public class VerticalNavigation {
 
     // ------------------------------------------------------ misc
 
-    public void showInitial() {
+    private void showInitial() {
         if (!entries.isEmpty()) {
             String id;
             Map.Entry<String, Entry> entry = entries.entrySet().iterator().next();

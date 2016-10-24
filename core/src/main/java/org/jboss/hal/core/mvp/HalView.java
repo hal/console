@@ -40,7 +40,5 @@ public interface HalView extends View, IsElement, HasElements {
      * Counterpart to {@link #attach()}. Implement this method if you need to remove stuff which was setup in {@link
      * #attach()}. The default implementation does nothing.
      */
-    default void detach() {
-
-    }
+    default void detach() {}
 }

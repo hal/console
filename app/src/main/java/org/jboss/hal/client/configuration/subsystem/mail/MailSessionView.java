@@ -83,8 +83,9 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
             final Resources resources) {
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
-        this.navigation = new VerticalNavigation();
         this.forms = new HashMap<>();
+        this.navigation = new VerticalNavigation();
+        registerAttachable(navigation);
 
         TableButtonFactory tableButtonFactory = new TableButtonFactory(metadataProcessor, progress, dispatcher,
                 eventBus, new SelectionAwareStatementContext(statementContext, () -> presenter.getMailSessionName()),

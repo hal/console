@@ -118,6 +118,8 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         leadElement = builder.referenceFor(LEAD_ELEMENT);
 
         navigation = new VerticalNavigation();
+        registerAttachable(navigation);
+
         navigation.addPrimary(Ids.JPA_RUNTIME_MAIN_ATTRIBUTES_ENTRY, resources.constants().mainAttributes(),
                 fontAwesome("list-ul"), builder.<Element>build());
 

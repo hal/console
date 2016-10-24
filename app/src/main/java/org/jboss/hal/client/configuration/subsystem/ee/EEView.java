@@ -81,9 +81,10 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         this.metadataRegistry = metadataRegistry;
         this.tableButtonFactory = tableButtonFactory;
 
-        this.navigation = new VerticalNavigation();
         this.forms = new HashMap<>();
         this.tables = new HashMap<>(4);
+        this.navigation = new VerticalNavigation();
+        registerAttachable(navigation);
 
         // ============================================
         // attributes - deployments

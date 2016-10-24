@@ -244,10 +244,6 @@ final class ${context.subclass} extends ${context.base} {
         ${table.name} = new ModelNodeTable<>("${table.selector}", ${table.name}Options);
         </#list>
 
-        <#list context.attachables as attachable>
-        registerAttachable(${attachable.name});
-        </#list>
-
         <#list context.tabs as tabInfo>
             <#list tabInfo.items as tabItem>
                 <#list tabItem.formChildren as tabChild>
@@ -352,6 +348,10 @@ final class ${context.subclass} extends ${context.base} {
             .end();
             </#if>
         </#if>
+
+        <#list context.attachables as attachable>
+        registerAttachable(${attachable.name});
+        </#list>
 
         Element root = layoutBuilder.build();
         initElement(root);

@@ -215,6 +215,8 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
         // @formatter:on
 
         navigation = new VerticalNavigation();
+        registerAttachable(navigation);
+
         navigation.addPrimary(Ids.SERVER_STATUS_MAIN_ATTRIBUTES_ENTRY, resources.constants().mainAttributes(),
                 fontAwesome("list-ul"), mainAttributesBuilder.<Element>build());
         navigation

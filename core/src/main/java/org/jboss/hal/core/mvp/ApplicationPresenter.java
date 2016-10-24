@@ -19,7 +19,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.HasTitle;
-import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.core.header.HeaderModeEvent;
 import org.jboss.hal.core.header.PresenterType;
 import org.jboss.hal.core.ui.Skeleton;
@@ -32,10 +31,6 @@ import org.jboss.hal.core.ui.Skeleton;
  * <li>{@link SupportsExternalMode}: a flag indicating support to open the presenter in an external tab / window</li>
  * <li>{@link SupportsExpertMode}: the resource address as returned by {@link SupportsExpertMode#resourceAddress()}</li>
  * </ul>
- * <p>
- * If the presenter's view implements {@link HasVerticalNavigation} this presenter takes care of calling {@link
- * VerticalNavigation#on()} when the presenter is revealed and {@link VerticalNavigation#off()} when the presenter is
- * hidden.
  *
  * @author Harald Pehl
  */
@@ -57,17 +52,7 @@ public abstract class ApplicationPresenter<V extends HalView, Proxy_ extends Pro
     @Override
     protected void onReveal() {
         super.onReveal();
-
-        // show vertical navigation?
-        if (getView() instanceof HasVerticalNavigation) {
-            VerticalNavigation navigation = ((HasVerticalNavigation) getView()).getVerticalNavigation();
-            if (navigation != null) {
-                navigation.on();
-                navigation.showInitial();
-            }
-        }
-
-        // switch to external mode?
+        // if we run in external mode we need to adjust some global CSS styles
         if (external) {
             Skeleton.externalMode();
         }
@@ -95,17 +80,6 @@ public abstract class ApplicationPresenter<V extends HalView, Proxy_ extends Pro
             builder.expertModeAddress(((SupportsExpertMode) this).resourceAddress());
         }
         return builder.build();
-    }
-
-    @Override
-    protected void onHide() {
-        super.onHide();
-        if (getView() instanceof HasVerticalNavigation) {
-            VerticalNavigation navigation = ((HasVerticalNavigation) getView()).getVerticalNavigation();
-            if (navigation != null) {
-                navigation.off();
-            }
-        }
     }
 
     public boolean isExternal() {
