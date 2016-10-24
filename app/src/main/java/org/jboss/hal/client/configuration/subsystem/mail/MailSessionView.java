@@ -27,14 +27,14 @@ import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
-import org.jboss.hal.ballroom.typeahead.ReadChildResourcesTypeahead;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -63,11 +63,12 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 /**
  * @author Claudio Miranda
  */
-public class MailSessionView extends PatternFlyViewImpl implements MailSessionPresenter.MyView {
+public class MailSessionView extends HalViewImpl implements MailSessionPresenter.MyView {
 
     private final VerticalNavigation navigation;
     private final Map<String, ModelNodeForm> forms;
     private final DataTable<NamedNode> serversTable;
+    private final Dispatcher dispatcher;
     private final StatementContext statementContext;
 
     private MailSessionPresenter presenter;
@@ -80,10 +81,11 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
             final EventBus eventBus,
             final StatementContext statementContext,
             final Resources resources) {
-
+        this.dispatcher = dispatcher;
         this.statementContext = statementContext;
-        this.navigation = new VerticalNavigation();
         this.forms = new HashMap<>();
+        this.navigation = new VerticalNavigation();
+        registerAttachable(navigation);
 
         TableButtonFactory tableButtonFactory = new TableButtonFactory(metadataProcessor, progress, dispatcher,
                 eventBus, new SelectionAwareStatementContext(statementContext, () -> presenter.getMailSessionName()),
@@ -179,7 +181,7 @@ public class MailSessionView extends PatternFlyViewImpl implements MailSessionPr
 
         ModelNodeForm form = forms.get(Ids.MAIL_SERVER_FORM);
         form.getFormItem(OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
-                new ReadChildResourcesTypeahead(SOCKET_BINDING_TEMPLATE, statementContext));
+                new ReadChildrenAutoComplete(dispatcher, statementContext, SOCKET_BINDING_TEMPLATE));
     }
 
     @Override

@@ -21,11 +21,15 @@ import javax.inject.Inject;
 import com.google.gwt.resources.client.ExternalTextResource;
 import elemental.client.Browser;
 import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.hal.ballroom.Alert;
+import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
+import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Previews;
 import org.jboss.hal.resources.Resources;
@@ -39,13 +43,26 @@ public class BrowseByColumn extends StaticItemColumn {
 
     private static class TopLevelPreview extends PreviewContent<StaticItem> {
 
+        private final Environment environment;
+        private final Alert warning;
+
         TopLevelPreview(final String header, final ExternalTextResource resource,
                 final AccessControl accessControl, final Environment environment, final Resources resources) {
             super(header);
-            previewBuilder().add(AccessControlPreview.simpleProviderWarning(accessControl, environment, resources));
+            this.environment = environment;
+            this.warning = new Alert(Icons.WARNING, resources.messages().simpleProviderWarning(),
+                    resources.constants().enableRbac(),
+                    event -> accessControl.switchProvider());
+
+            previewBuilder().add(warning);
             Element content = Browser.getDocument().createDivElement();
             Previews.innerHtml(content, resource);
             previewBuilder().add(content);
+        }
+
+        @Override
+        public void update(final StaticItem item) {
+            Elements.setVisible(warning.asElement(), environment.getAccessControlProvider() == AccessControlProvider.SIMPLE);
         }
     }
 

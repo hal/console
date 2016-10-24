@@ -36,6 +36,7 @@ public interface NameTokens {
     String DEPLOYMENTS = "deployments";
     String EE = ModelDescriptionConstants.EE;
     String EJB3 = ModelDescriptionConstants.EJB3;
+    String EXPERT_MODE = "expert-mode";
     String GENERIC_SUBSYSTEM = "generic-subsystem";
     String HOMEPAGE = "home";
     String HOST_CONFIGURATION = "host-configuration";

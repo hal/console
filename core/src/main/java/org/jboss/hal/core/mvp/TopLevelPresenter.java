@@ -16,16 +16,28 @@
 package org.jboss.hal.core.mvp;
 
 import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.Proxy;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.hal.core.header.HeaderModeEvent;
+import org.jboss.hal.core.header.PresenterType;
 
 /**
+ * Presenter for a top level category such as 'Homepage', 'Configuration' or 'Runtime'. The presenter fires a {@link
+ * HeaderModeEvent} with its token in the {@link #onReveal()} method.
+ *
  * @author Harald Pehl
  */
-public abstract class TopLevelPresenter<V extends PatternFlyView, Proxy_ extends Proxy<?>>
-        extends PatternFlyPresenter<V, Proxy_>
+public abstract class TopLevelPresenter<V extends HalView, Proxy_ extends ProxyPlace<?>>
+        extends HalPresenter<V, Proxy_>
         implements TopLevelCategory {
 
     protected TopLevelPresenter(final EventBus eventBus, final V view, final Proxy_ proxy) {
         super(eventBus, view, proxy, Slots.MAIN);
+    }
+
+    @Override
+    protected HeaderModeEvent headerMode() {
+        return new HeaderModeEvent.Builder(PresenterType.TOP_LEVEL_CATEGORY)
+                .token(getProxy().getNameToken())
+                .build();
     }
 }

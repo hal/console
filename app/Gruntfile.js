@@ -27,6 +27,7 @@ module.exports = function (grunt) {
             less: 'src/main/less',
             public: 'src/main/resources/org/jboss/hal/public'
         },
+        theme: grunt.option('theme') || 'hal',
 
         clean: {
             public: [
@@ -114,6 +115,7 @@ module.exports = function (grunt) {
                     '<%= config.bower %>/ace-builds/src-noconflict/mode-text.js',
                     '<%= config.bower %>/ace-builds/src-noconflict/mode-typescript.js',
                     '<%= config.bower %>/ace-builds/src-noconflict/mode-xml.js',
+                    '<%= config.bower %>/javascript-auto-complete/auto-complete.js',
                     '<%= config.bower %>/jstree/dist/jstree.js',
                     '<%= config.bower %>/tagmanager/tagmanager.js',
                     '<%= config.bower %>/typeahead.js/dist/typeahead.bundle.js',
@@ -160,6 +162,7 @@ module.exports = function (grunt) {
                     '<%= config.bower %>/ace-builds/src-min-noconflict/mode-text.js',
                     '<%= config.bower %>/ace-builds/src-min-noconflict/mode-typescript.js',
                     '<%= config.bower %>/ace-builds/src-min-noconflict/mode-xml.js',
+                    '<%= config.bower %>/javascript-auto-complete/auto-complete.min.js',
                     '<%= config.bower %>/jstree/dist/jstree.min.js',
                     '<%= config.bower %>/tagmanager/tagmanager.js',
                     '<%= config.bower %>/typeahead.js/dist/typeahead.bundle.min.js',
@@ -177,7 +180,7 @@ module.exports = function (grunt) {
                     ' * Generated CSS file for <%= pkg.name %> <%= pkg.version %>\n' +
                     ' * Build date: <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>\n' +
                     ' */\n\n',
-                    paths: '<%= config.less %>',
+                    paths: ['<%= config.less %>', '../themes/<%= theme %>/src/main/less'],
                     strictMath: true
                 },
                 src: '<%= config.less %>/hal.less',

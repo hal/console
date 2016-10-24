@@ -27,20 +27,21 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
-import org.jboss.hal.ballroom.typeahead.ReadChildResourcesTypeahead;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
-import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.HalView;
+import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -65,6 +66,7 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_SESSION_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.SELECTED_MAIL_SESSION_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.SERVER_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -72,7 +74,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Claudio Miranda
  */
 public class MailSessionPresenter
-        extends ApplicationPresenter<MailSessionPresenter.MyView, MailSessionPresenter.MyProxy> {
+        extends ApplicationFinderPresenter<MailSessionPresenter.MyView, MailSessionPresenter.MyProxy>
+        implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -80,7 +83,7 @@ public class MailSessionPresenter
     @Requires({MAIL_ADDRESS, MAIL_SESSION_ADDRESS, SERVER_ADDRESS})
     public interface MyProxy extends ProxyPlace<MailSessionPresenter> {}
 
-    public interface MyView extends PatternFlyView, HasVerticalNavigation, HasPresenter<MailSessionPresenter> {
+    public interface MyView extends HalView, HasVerticalNavigation, HasPresenter<MailSessionPresenter> {
         void update(MailSession mailSession);
     }
     // @formatter:on
@@ -125,19 +128,24 @@ public class MailSessionPresenter
     }
 
     @Override
+    public ResourceAddress resourceAddress() {
+        return SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
+    }
+
+    @Override
     protected void onReset() {
         super.onReset();
         loadMailSession();
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(ModelDescriptionConstants.MAIL)
                 .append(Ids.MAIL_SESSION, mailSessionName, Names.MAIL_SESSION, mailSessionName);
     }
 
     void loadMailSession() {
-        ResourceAddress address = AddressTemplates.SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
+        ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
                 .param(RECURSIVE, true)
                 .build();
@@ -145,7 +153,7 @@ public class MailSessionPresenter
     }
 
     void save(final Map<String, Object> changedValues) {
-        ResourceAddress resourceAddress = AddressTemplates.SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
+        ResourceAddress resourceAddress = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
         Composite composite = operationFactory.fromChangeSet(resourceAddress, changedValues);
 
         dispatcher.execute(composite, (CompositeResult result) -> {
@@ -158,7 +166,7 @@ public class MailSessionPresenter
     void launchAddNewServer() {
         SortedSet<String> availableServers = new TreeSet<>(asList(SMTP.toUpperCase(),
                 IMAP.toUpperCase(), POP3.toUpperCase()));
-        ResourceAddress selectedSessionAddress = AddressTemplates.SELECTED_MAIL_SESSION_TEMPLATE
+        ResourceAddress selectedSessionAddress = SELECTED_MAIL_SESSION_TEMPLATE
                 .resolve(statementContext);
         Operation serverNamesOp = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, selectedSessionAddress)
                 .param(CHILD_TYPE, SERVER)
@@ -198,7 +206,7 @@ public class MailSessionPresenter
                         form,
                         (name, modelNode) -> {
                             String serverType = serverTypeItem.getValue().toLowerCase();
-                            ResourceAddress address = AddressTemplates.SELECTED_MAIL_SESSION_TEMPLATE
+                            ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE
                                     .append(ModelDescriptionConstants.SERVER + "=" + serverType)
                                     .resolve(statementContext);
                             Operation operation = new Operation.Builder(ModelDescriptionConstants.ADD, address)
@@ -213,7 +221,8 @@ public class MailSessionPresenter
                             });
                         });
                 dialog.getForm().getFormItem(OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
-                        new ReadChildResourcesTypeahead(AddressTemplates.SOCKET_BINDING_TEMPLATE, statementContext));
+                        new ReadChildrenAutoComplete(dispatcher, statementContext,
+                                AddressTemplates.SOCKET_BINDING_TEMPLATE));
                 dialog.show();
             }
         });

@@ -29,7 +29,7 @@ public class EapTheme implements Theme {
 
     @Override
     public String getName() {
-        return "Jboss EAP";
+        return "JBoss EAP";
     }
 
     @Override
@@ -39,7 +39,7 @@ public class EapTheme implements Theme {
 
     @Override
     public String getFirstName() {
-        return "JBoss ";
+        return "Red Hat JBoss ";
     }
 
     @Override

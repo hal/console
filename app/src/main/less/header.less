@@ -149,7 +149,7 @@
     }
     padding: 0 10px;
   }
-  > li + li.external:before {
+  > li + li.breadcrumb-tools:before {
     content: '';
   }
 
@@ -163,10 +163,14 @@
     }
   }
 
-  li.external {
+  li.breadcrumb-tools {
     align-items: center;
     flex-grow: 1;
     justify-content: flex-end;
     padding-right: 20px;
+
+    a {
+      margin-left: @margin-small;
+    }
   }
 }

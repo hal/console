@@ -23,21 +23,21 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.dmr.ModelNode;
 
 @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection", "SpellCheckingInspection"})
 public class UnderTheBridgePresenter
-        extends ApplicationPresenter<UnderTheBridgePresenter.MyView, UnderTheBridgePresenter.MyProxy> {
+        extends ApplicationFinderPresenter<UnderTheBridgePresenter.MyView, UnderTheBridgePresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
     @NameToken("utb")
     public interface MyProxy extends ProxyPlace<UnderTheBridgePresenter> {}
 
-    public interface MyView extends PatternFlyView, HasPresenter<UnderTheBridgePresenter> {
+    public interface MyView extends HalView, HasPresenter<UnderTheBridgePresenter> {
         void show(ModelNode model);
     }
     // @formatter:on
@@ -64,7 +64,7 @@ public class UnderTheBridgePresenter
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return new FinderPath()
                 .append("rhcp-color", "red", "Color", "Red")
                 .append("rhcp-temperature", "hot", "Temperature", "Hot")
@@ -72,8 +72,7 @@ public class UnderTheBridgePresenter
                 .append("rhcp-spice", "peppers", "Spice", "Peppers")
                 .append("rhcp-decade", "1990-1999", "Decade", "1990 - 1999")
                 .append("rhcp-album", "blood-sugar-sex-magik", "Album", "Blood Sugar Sex Magik")
-                .append("rhcp-track", "under-the-bridge", "Track", "Under the Bridge")
-                ;
+                .append("rhcp-track", "under-the-bridge", "Track", "Under the Bridge");
     }
 
     void saveModel(final ModelNode model) {

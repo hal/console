@@ -20,7 +20,7 @@ import org.jboss.hal.core.finder.Finder;
 /**
  * @author Harald Pehl
  */
-public interface FinderView extends PatternFlyView {
+public interface FinderView extends HalView {
 
     void setFinder(Finder Finder);
 }

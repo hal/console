@@ -24,11 +24,10 @@ import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.form.InputElement.Context;
-import org.jboss.hal.ballroom.typeahead.Typeahead;
+import org.jboss.hal.ballroom.form.TagsManager.Bridge;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
-import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.formControl;
 import static org.jboss.hal.resources.CSS.tagManagerContainer;
@@ -51,15 +50,6 @@ public class ListItem extends AbstractFormItem<List<String>> {
     protected InputElement<List<String>> newInputElement(Context<?> context) {
         listElement = new ListElement();
         listElement.setClassName(formControl + " " + tags);
-        TagsManager.Bridge.element(listElement.asElement()).onRefresh((event, cst) -> {
-            List<String> value = Splitter.on(',')
-                    .trimResults()
-                    .omitEmptyStrings()
-                    .splitToList(cst);
-            setModified(true);
-            setUndefined(value.isEmpty());
-            signalChange(value);
-        });
         return listElement;
     }
 
@@ -82,7 +72,6 @@ public class ListItem extends AbstractFormItem<List<String>> {
         inputContainer.insertBefore(tagsContainer, errorText);
     }
 
-
     @Override
     public void clearError() {
         super.clearError();
@@ -98,19 +87,8 @@ public class ListItem extends AbstractFormItem<List<String>> {
     }
 
     @Override
-    public void registerSuggestHandler(final SuggestHandler suggestHandler) {
-        super.registerSuggestHandler(suggestHandler);
-        if (suggestHandler instanceof Typeahead) {
-            TagsManager.Bridge.element(listElement.asElement()).onRefresh((event, cst) -> {
-                Typeahead.Bridge.select(getId(EDITING)).setValue("");
-                suggestHandler.close();
-            });
-        }
-    }
-
-    @Override
-    void onSuggest(final String suggestion) {
-        TagsManager.Bridge.element(listElement.asElement()).addTag(suggestion);
+    public void onSuggest(final String suggestion) {
+        Bridge.element(listElement.asElement()).addTag(suggestion);
         setModified(true);
         setUndefined(false);
     }
@@ -120,7 +98,18 @@ public class ListItem extends AbstractFormItem<List<String>> {
         super.attach();
         TagsManager.Options options = TagsManager.Defaults.get();
         options.tagsContainer = "#" + tagsContainer.getId();
-        TagsManager.Bridge.element(listElement.asElement()).tagsManager(options);
+
+        Bridge bridge = Bridge.element(listElement.asElement());
+        bridge.tagsManager(options);
+        bridge.onRefresh((event, cst) -> {
+            List<String> value = Splitter.on(',')
+                    .trimResults()
+                    .omitEmptyStrings()
+                    .splitToList(cst);
+            setModified(true);
+            setUndefined(value.isEmpty());
+            signalChange(value);
+        });
     }
 
     @Override
@@ -150,20 +139,20 @@ public class ListItem extends AbstractFormItem<List<String>> {
 
         @Override
         public List<String> getValue() {
-            return isAttached() ? TagsManager.Bridge.element(asElement()).getTags() : Collections.emptyList();
+            return isAttached() ? Bridge.element(asElement()).getTags() : Collections.emptyList();
         }
 
         @Override
         public void setValue(final List<String> value) {
             if (isAttached()) {
-                TagsManager.Bridge.element(asElement()).setTags(value);
+                Bridge.element(asElement()).setTags(value);
             }
         }
 
         @Override
         public void clearValue() {
             if (isAttached()) {
-                TagsManager.Bridge.element(asElement()).removeAll();
+                Bridge.element(asElement()).removeAll();
             }
         }
 

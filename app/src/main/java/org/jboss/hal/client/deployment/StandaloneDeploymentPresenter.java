@@ -27,9 +27,9 @@ import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -51,7 +51,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Harald Pehl
  */
 public class StandaloneDeploymentPresenter extends
-        ApplicationPresenter<StandaloneDeploymentPresenter.MyView, StandaloneDeploymentPresenter.MyProxy> {
+        ApplicationFinderPresenter<StandaloneDeploymentPresenter.MyView, StandaloneDeploymentPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -59,7 +59,7 @@ public class StandaloneDeploymentPresenter extends
     @Requires(value = DEPLOYMENT_ADDRESS, recursive = false)
     public interface MyProxy extends ProxyPlace<StandaloneDeploymentPresenter> {}
 
-    public interface MyView extends PatternFlyView, HasPresenter<StandaloneDeploymentPresenter> {
+    public interface MyView extends HalView, HasPresenter<StandaloneDeploymentPresenter> {
         void reset();
         void update(ModelNode browseContentResult, Deployment deployment);
     }
@@ -106,7 +106,7 @@ public class StandaloneDeploymentPresenter extends
         loadDeployment();
     }
 
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.deployment(deployment);
     }
 

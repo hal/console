@@ -1,6 +1,6 @@
 {
   "name": "hal-next",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "The next version of the WildFly management console",
   "keywords": ["hal", "wildfly", "management", "console"],
   "bin": {

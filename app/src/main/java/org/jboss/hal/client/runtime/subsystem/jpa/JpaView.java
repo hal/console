@@ -33,7 +33,7 @@ import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
@@ -54,7 +54,7 @@ import static org.jboss.hal.resources.CSS.*;
  * @author Harald Pehl
  */
 @SuppressWarnings({"HardCodedStringLiteral", "ResultOfMethodCallIgnored"})
-public class JpaView extends PatternFlyViewImpl implements JpaPresenter.MyView {
+public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
 
     private static final String HEADER_ELEMENT = "headerElement";
     private static final String LEAD_ELEMENT = "leadElement";
@@ -118,6 +118,8 @@ public class JpaView extends PatternFlyViewImpl implements JpaPresenter.MyView {
         leadElement = builder.referenceFor(LEAD_ELEMENT);
 
         navigation = new VerticalNavigation();
+        registerAttachable(navigation);
+
         navigation.addPrimary(Ids.JPA_RUNTIME_MAIN_ATTRIBUTES_ENTRY, resources.constants().mainAttributes(),
                 fontAwesome("list-ul"), builder.<Element>build());
 

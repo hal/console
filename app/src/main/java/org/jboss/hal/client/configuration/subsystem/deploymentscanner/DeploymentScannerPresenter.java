@@ -28,10 +28,12 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
+import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.Requires;
@@ -49,12 +51,13 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
  * @author Claudio Miranda
  */
 public class DeploymentScannerPresenter
-        extends MbuiPresenter<DeploymentScannerPresenter.MyView, DeploymentScannerPresenter.MyProxy> {
+        extends MbuiPresenter<DeploymentScannerPresenter.MyView, DeploymentScannerPresenter.MyProxy>
+        implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.DEPLOYMENT_SCANNERS)
-    @Requires( {DEPLOYMENTSCANNER_SUBSYSTEM_ADDRESS, DEPLOYMENTSCANNER_ADDRESS})
+    @Requires({DEPLOYMENTSCANNER_SUBSYSTEM_ADDRESS, DEPLOYMENTSCANNER_ADDRESS})
     public interface MyProxy extends ProxyPlace<DeploymentScannerPresenter> {}
 
     public interface MyView extends MbuiView<DeploymentScannerPresenter> {
@@ -91,16 +94,21 @@ public class DeploymentScannerPresenter
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public ResourceAddress resourceAddress() {
+        return DEPLOYMENTSCANNER_SUBSYSTEM_TEMPLATE.resolve(statementContext);
+    }
+
+    @Override
+    public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(ModelDescriptionConstants.DEPLOYMENT_SCANNER);
     }
 
     @Override
     protected void reload() {
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
-            DEPLOYMENTSCANNER_SUBSYSTEM_TEMPLATE.resolve(statementContext))
-            .param(RECURSIVE_DEPTH, 2)
-            .build();
+                DEPLOYMENTSCANNER_SUBSYSTEM_TEMPLATE.resolve(statementContext))
+                .param(RECURSIVE_DEPTH, 2)
+                .build();
         dispatcher.execute(operation, result -> {
             // @formatter:off
             getView().updateScanners(asNamedNodes(failSafePropertyList(result, DEPLOYMENTSCANNER_TEMPLATE.lastKey())));

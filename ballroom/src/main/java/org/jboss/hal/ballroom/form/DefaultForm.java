@@ -39,6 +39,7 @@ import elemental.html.SpanElement;
 import elemental.html.UListElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.LazyElement;
+import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextAware;
 import org.jboss.hal.resources.Constants;
@@ -252,9 +253,13 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
 
     @Override
     public void attach() {
-        for (FormItem formItem : getFormItems()) {
-            formItem.attach();
-        }
+        getFormItems().forEach(Attachable::attach);
+    }
+
+    @Override
+    public void detach() {
+        stateMachine.reset();
+        getFormItems().forEach(Attachable::detach);
     }
 
     // ------------------------------------------------------ form operations
@@ -351,6 +356,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         stateExec(EDIT); // switch state before data mapping!
         clearErrors();
         dataMapping.populateFormItems(model, this);
+        getFormItems().forEach(formItem -> formItem.setModified(false));
     }
 
     /**
@@ -400,6 +406,7 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
             throw new IllegalStateException(NOT_INITIALIZED);
         }
         stateExec(CANCEL);
+        dataMapping.populateFormItems(model, this); // restore persisted model
         if (cancelCallback != null) {
             cancelCallback.onCancel(this);
         }
@@ -445,6 +452,8 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
     protected void prepareEditState() {}
 
     private void flip(State state) {
+        getFormItems().forEach(formItem -> formItem.setState(state));
+
         switch (state) {
             case READONLY:
                 if (exitEditWithEsc != null && panels.get(EDITING) != null) {
@@ -464,10 +473,9 @@ public class DefaultForm<T> extends LazyElement implements Form<T>, SecurityCont
         }
 
         formLinks.switchTo(state, model, securityContext);
-        // TODO Prevent hiding and showing the very same panel
-        for (Element panel : panels.values()) {
-            Elements.setVisible(panel, false);
-        }
+        panels.values().stream()
+                .filter(panel -> panel != panels.get(state))
+                .forEach(panel -> Elements.setVisible(panel, false));
         Elements.setVisible(panels.get(state), true);
     }
 

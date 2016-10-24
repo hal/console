@@ -22,17 +22,18 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
+import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.Requires;
@@ -46,7 +47,9 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 /**
  * @author Claudio Miranda
  */
-public class IOPresenter extends MbuiPresenter<IOPresenter.MyView, IOPresenter.MyProxy> {
+public class IOPresenter
+        extends MbuiPresenter<IOPresenter.MyView, IOPresenter.MyProxy>
+        implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -62,7 +65,6 @@ public class IOPresenter extends MbuiPresenter<IOPresenter.MyView, IOPresenter.M
 
 
     private final FinderPathFactory finderPathFactory;
-    private final Environment environment;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
 
@@ -72,12 +74,10 @@ public class IOPresenter extends MbuiPresenter<IOPresenter.MyView, IOPresenter.M
             final MyProxy proxy,
             final Finder finder,
             final FinderPathFactory finderPathFactory,
-            final Environment environment,
             final StatementContext statementContext,
             final Dispatcher dispatcher) {
         super(eventBus, view, proxy, finder);
         this.finderPathFactory = finderPathFactory;
-        this.environment = environment;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
     }
@@ -89,7 +89,12 @@ public class IOPresenter extends MbuiPresenter<IOPresenter.MyView, IOPresenter.M
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public ResourceAddress resourceAddress() {
+        return IO_SUBSYSTEM_TEMPLATE.resolve(statementContext);
+    }
+
+    @Override
+    public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(ModelDescriptionConstants.IO);
     }
 

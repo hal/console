@@ -90,7 +90,7 @@
                 </ul>
             </li>
         </ul>
-        <ul class="nav navbar-nav navbar-primary" data-element="topLevelTabs">
+        <ul class="nav navbar-nav navbar-primary" data-element="topLevelCategories">
             <li class="active"><a id="{{resources().TLC_HOMEPAGE}}" class="clickable active">Homepage</a></li>
             <li><a id="{{resources().TLC_DEPLOYMENTS}}" class="clickable">Deployments</a></li>
             <li><a id="{{resources().TLC_CONFIGURATION}}" class="clickable">Configuration</a></li>
@@ -98,9 +98,16 @@
             <li data-element="patching"><a id="{{resources().TLC_PATCHING}}" class="clickable">Patching</a></li>
             <li data-element="accessControl"><a id="{{resources().TLC_ACCESS_CONTROL}}" class="clickable">Access Control</a></li>
         </ul>
-        <ol class="breadcrumb hal-breadcrumb" data-element="breadcrumbs">
+        <ol class="breadcrumb hal-breadcrumb" data-element="breadcrumb">
             <li data-element="backItem"><a data-element="backLink" class="back clickable"><i class="fa fa-angle-double-left"></i>&nbsp;{{resources().constants().back()}}</a></li>
-            <li data-element="externalItem" class="external"><a data-element="externalLink" title="{{resources().constants().openInExternalWindow()}}"><span class="fa fa-external-link fa-lg"></span></a></li>
+            <li data-element="breadcrumbToolsItem" class="breadcrumb-tools">
+                <a data-element="switchModeLink" title="{{resources().constants().openInModelBrowser()}}" class="clickable">
+                    <span data-element="switchModeIcon" class="fa fa-sitemap fa-lg"></span>
+                </a>
+                <a data-element="externalLink" title="{{resources().constants().openInExternalWindow()}}">
+                    <span class="fa fa-external-link fa-lg"></span>
+                </a>
+            </li>
         </ol>
     </div>
 </nav>

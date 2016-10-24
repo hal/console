@@ -30,6 +30,7 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
+import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
@@ -54,7 +55,9 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 /**
  * @author Harald Pehl
  */
-public class HostPresenter extends MbuiPresenter<HostPresenter.MyView, HostPresenter.MyProxy> {
+public class HostPresenter
+        extends MbuiPresenter<HostPresenter.MyView, HostPresenter.MyProxy>
+        implements SupportsExpertMode {
 
     static final String HOST_ADDRESS = "/{selected.host}";
     static final String INTERFACE_ADDRESS = HOST_ADDRESS + "/interface=*";
@@ -113,7 +116,12 @@ public class HostPresenter extends MbuiPresenter<HostPresenter.MyView, HostPrese
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public ResourceAddress resourceAddress() {
+        return new ResourceAddress().add(HOST, statementContext.selectedHost());
+    }
+
+    @Override
+    public FinderPath finderPath() {
         return finderPathFactory.runtimeHostPath();
     }
 

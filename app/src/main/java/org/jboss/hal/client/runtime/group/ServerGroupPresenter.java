@@ -28,6 +28,7 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
+import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
@@ -46,7 +47,9 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 /**
  * @author Harald Pehl
  */
-public class ServerGroupPresenter extends MbuiPresenter<ServerGroupPresenter.MyView, ServerGroupPresenter.MyProxy> {
+public class ServerGroupPresenter
+        extends MbuiPresenter<ServerGroupPresenter.MyView, ServerGroupPresenter.MyProxy>
+        implements SupportsExpertMode {
 
     static final String SERVER_GROUP_ADDRESS = "/{selected.group}";
     static final String JVM_ADDRESS = SERVER_GROUP_ADDRESS + "/jvm=*";
@@ -93,7 +96,12 @@ public class ServerGroupPresenter extends MbuiPresenter<ServerGroupPresenter.MyV
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public ResourceAddress resourceAddress() {
+        return AddressTemplate.of(SERVER_GROUP_ADDRESS).resolve(statementContext);
+    }
+
+    @Override
+    public FinderPath finderPath() {
         return finderPathFactory.runtimeServerGroupPath();
     }
 

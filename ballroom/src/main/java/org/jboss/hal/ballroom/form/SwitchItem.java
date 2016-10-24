@@ -36,12 +36,26 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
     protected InputElement<Boolean> newInputElement(Context<?> context) {
         switchElement = new SwitchElement();
         switchElement.setClassName(bootstrapSwitch);
+        return switchElement;
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
         Bridge.element(switchElement.asElement()).onChange((event, state) -> {
             setModified(true);
             setUndefined(false);
             signalChange(state);
         });
-        return switchElement;
+    }
+
+    @Override
+    public void detach() {
+        super.detach();
+        if (switchElement != null) {
+            switchElement.asElement().getClassList().remove(bootstrapSwitch);
+            Bridge.element(switchElement.asElement()).destroy();
+        }
     }
 
     @Override

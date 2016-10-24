@@ -18,123 +18,71 @@ package org.jboss.hal.core.mvp;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import org.jboss.hal.ballroom.VerticalNavigation;
-import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.core.finder.FinderContextEvent;
-import org.jboss.hal.core.finder.FinderPath;
-import org.jboss.hal.core.finder.FinderSegment;
+import org.jboss.hal.ballroom.HasTitle;
+import org.jboss.hal.core.header.HeaderModeEvent;
+import org.jboss.hal.core.header.PresenterType;
 import org.jboss.hal.core.ui.Skeleton;
-import org.jetbrains.annotations.NonNls;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Base class for all application presenters displayed in {@link Slots#MAIN}.
- * <p>
- * If the view implements {@link HasVerticalNavigation} this presenter takes care of calling {@link
- * VerticalNavigation#on()} when the presenter is revealed and {@link VerticalNavigation#off()} when the presenter is
- * hidden.
+ * Base presenter for all kind of application presenters. The presenter fires a {@link HeaderModeEvent} with various
+ * information depending on the implemented interfaces:
+ * <ul>
+ * <li>{@link HasTitle}: the title as returned by {@link HasTitle#getTitle()}</li>
+ * <li>{@link SupportsExternalMode}: a flag indicating support to open the presenter in an external tab / window</li>
+ * <li>{@link SupportsExpertMode}: the resource address as returned by {@link SupportsExpertMode#resourceAddress()}</li>
+ * </ul>
  *
  * @author Harald Pehl
  */
-public abstract class ApplicationPresenter<V extends PatternFlyView, Proxy_ extends ProxyPlace<?>>
-        extends PatternFlyPresenter<V, Proxy_> implements ExternalMode {
+public abstract class ApplicationPresenter<V extends HalView, Proxy_ extends ProxyPlace<?>>
+        extends HalPresenter<V, Proxy_> {
 
-    static final String EXTERNAL = "external";
-    @NonNls private static final Logger logger = LoggerFactory.getLogger(ApplicationPresenter.class);
-
-    private final Finder finder;
     private boolean external;
 
-    protected ApplicationPresenter(final EventBus eventBus, final V view, final Proxy_ proxy, final Finder finder) {
+    protected ApplicationPresenter(final EventBus eventBus, final V view, final Proxy_ proxy) {
         super(eventBus, view, proxy, Slots.MAIN);
-        this.finder = finder;
     }
 
     @Override
     public void prepareFromRequest(final PlaceRequest request) {
         super.prepareFromRequest(request);
-        external = Boolean.parseBoolean(request.getParameter(EXTERNAL, String.valueOf(false)));
+        external = Boolean.parseBoolean(request.getParameter(Places.EXTERNAL_PARAM, String.valueOf(false)));
     }
 
     @Override
     protected void onReveal() {
         super.onReveal();
+        // if we run in external mode we need to adjust some global CSS styles
         if (external) {
             Skeleton.externalMode();
         }
-        if (getView() instanceof HasVerticalNavigation) {
-            VerticalNavigation navigation = ((HasVerticalNavigation) getView()).getVerticalNavigation();
-            if (navigation != null) {
-                navigation.on();
-                navigation.showInitial();
-                // Scheduler.get().scheduleDeferred(navigation::showInitial);
-            }
-        }
-    }
-
-    @Override
-    protected void onHide() {
-        super.onHide();
-        if (getView() instanceof HasVerticalNavigation) {
-            VerticalNavigation navigation = ((HasVerticalNavigation) getView()).getVerticalNavigation();
-            if (navigation != null) {
-                navigation.off();
-            }
-        }
-    }
-
-    @Override
-    protected void onReset() {
-        super.onReset();
-        updateBreadcrumb();
     }
 
     /**
-     * Application presenters need to provide information about their path in the finder. Normally this path is
-     * updated automatically when navigating in the finder. However since application presenters can also be revealed
-     * using the breadcrumb dropdown or by entering the URL directly this information is crucial to restore the path
-     * in the finder context.
+     * Returns a {@link HeaderModeEvent}. The payload of the event depends on the implemented interfaces:
+     * <ul>
+     * <li>{@link HasTitle}: the title as returned by {@link HasTitle#getTitle()}</li>
+     * <li>{@link SupportsExternalMode}: a flag indicating support to open the presenter in an external tab /
+     * window</li>
+     * <li>{@link SupportsExpertMode}: the resource address as returned by {@link SupportsExpertMode#resourceAddress()}</li>
+     * </ul>
      * <p>
-     * Please make sure that the IDs for selected items in the finder path match to the IDs returned by {@link
-     * org.jboss.hal.core.finder.ItemDisplay#getId()}
-     * <p>
-     * If this method returns {@code null} the path in the finder context is not touched.
-     * <p>
-     * Lifecycle: The method is called in {@link #onReset()}.
      */
-    protected abstract FinderPath finderPath();
-
-    @SuppressWarnings("unchecked")
-    private void updateBreadcrumb() {
-        FinderPath applicationPath = finderPath();
-        if (applicationPath != null) {
-            // try to connect segments with existing columns from the finder
-            for (FinderSegment segment : applicationPath) {
-                FinderColumn column = finder.getColumn(segment.getColumnId());
-                if (column != null) {
-                    segment.connect(column);
-                } else {
-                    logger.warn("Unable to find column '{}' to connect breadcrumb segment '{}' for token '{}'",
-                            segment.getColumnId(), segment, getProxy().getNameToken());
-                }
-            }
-            finder.getContext().reset(applicationPath);
+    protected HeaderModeEvent headerMode() {
+        HeaderModeEvent.Builder builder = new HeaderModeEvent.Builder(PresenterType.APPLICATION);
+        if (this instanceof HasTitle) {
+            builder.title(((HasTitle) this).getTitle());
         }
-        // The breadcrumb is part of the header. Notify the header presenter to take care of updating the breadcrumb
-        getEventBus().fireEvent(new FinderContextEvent(finder.getContext()));
+        if (this instanceof SupportsExternalMode) {
+            builder.supportsExternal(true);
+        }
+        if (this instanceof SupportsExpertMode) {
+            builder.expertModeAddress(((SupportsExpertMode) this).resourceAddress());
+        }
+        return builder.build();
     }
 
-    /**
-     * @return {@code true} if this presenter is currently running in external mode, {@code false} otherwise.
-     */
     public boolean isExternal() {
         return external;
-    }
-
-    @Override
-    public boolean supportsExternalMode() {
-        return true;
     }
 }

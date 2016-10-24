@@ -258,6 +258,16 @@ public class TestableFormItem implements FormItem<String> {
     }
 
     @Override
+    public void setState(final Form.State state) {
+
+    }
+
+    @Override
+    public Form.State getState() {
+        return null;
+    }
+
+    @Override
     public void addValidationHandler(final FormItemValidation<String> validationHandler) {
 
     }

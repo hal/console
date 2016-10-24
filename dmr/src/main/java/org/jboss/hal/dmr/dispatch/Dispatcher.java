@@ -49,7 +49,10 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.joining;
 import static org.jboss.gwt.elemento.core.InputType.url;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.QUERY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
 
@@ -465,7 +468,7 @@ public class Dispatcher implements RecordingHandler {
             }
             return true;
         } else {
-            return operation.getName().startsWith("read");
+            return operation.getName().startsWith("read") || operation.getName().equals(QUERY);
         }
     }
 

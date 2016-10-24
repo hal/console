@@ -36,9 +36,9 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.TopologyFunctions.RunningServersQuery;
 import org.jboss.hal.dmr.ModelNode;
@@ -63,8 +63,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 /**
  * @author Harald Pehl
  */
-public class ServerGroupDeploymentPresenter
-        extends ApplicationPresenter<ServerGroupDeploymentPresenter.MyView, ServerGroupDeploymentPresenter.MyProxy> {
+public class ServerGroupDeploymentPresenter extends
+        ApplicationFinderPresenter<ServerGroupDeploymentPresenter.MyView, ServerGroupDeploymentPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -72,10 +72,11 @@ public class ServerGroupDeploymentPresenter
     @Requires(value = {CONTENT_ADDRESS, SERVER_GROUP_DEPLOYMENT_ADDRESS}, recursive = false)
     public interface MyProxy extends ProxyPlace<ServerGroupDeploymentPresenter> {}
 
-    public interface MyView extends PatternFlyView, HasPresenter<ServerGroupDeploymentPresenter> {
+    public interface MyView extends HalView, HasPresenter<ServerGroupDeploymentPresenter> {
         void update(String serverGroup, ServerGroupDeployment serverGroupDeployment);
     }
     // @formatter:on
+
 
     private final Environment environment;
     private final FinderPathFactory finderPathFactory;
@@ -129,7 +130,7 @@ public class ServerGroupDeploymentPresenter
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.deployment(deployment);
     }
 

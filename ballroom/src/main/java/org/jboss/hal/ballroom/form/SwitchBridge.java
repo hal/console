@@ -51,6 +51,11 @@ public class SwitchBridge {
         public native void on(@NonNls String event, ChangeListener listener);
 
         @JsOverlay
+        public final void destroy() {
+            bootstrapSwitch(DESTROY);
+        }
+
+        @JsOverlay
         public final boolean getValue() {
             return bootstrapSwitch(STATE);
         }
@@ -78,6 +83,7 @@ public class SwitchBridge {
 
 
     private static final String STATE = "state";
+    private static final String DESTROY = "destroy";
     private static final String DISABLED = "disabled";
     private static final String CHANGE_EVENT = "switchChange.bootstrapSwitch";
 }

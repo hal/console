@@ -17,7 +17,7 @@ package org.jboss.hal.client.patching;
 
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.LayoutBuilder;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.resources.Names;
 
 import static org.jboss.hal.resources.Names.NYI;
@@ -25,7 +25,7 @@ import static org.jboss.hal.resources.Names.NYI;
 /**
  * @author Harald Pehl
  */
-public class PatchingView extends PatternFlyViewImpl implements PatchingPresenter.MyView {
+public class PatchingView extends HalViewImpl implements PatchingPresenter.MyView {
 
     public PatchingView() {
         // @formatter:off

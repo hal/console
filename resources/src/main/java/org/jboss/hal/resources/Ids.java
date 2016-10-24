@@ -73,6 +73,8 @@ public interface Ids {
     // Try to compose IDs by making use of the build() method,
     // except the ID needs to be a constant expression (e.g. when used in an annotation).
 
+    String ABOUT_MODAL = "about-modal";
+    String ABOUT_MODAL_TITLE = build(ABOUT_MODAL, "title");
     String ACCESS_CONTROL_BROWSE_BY = "access-control-browse-by";
     String ASSIGNMENT = "assignement";
     String ASSIGNMENT_INCLUDE = build(ASSIGNMENT, "include");

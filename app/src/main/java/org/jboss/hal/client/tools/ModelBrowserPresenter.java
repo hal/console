@@ -21,37 +21,53 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import org.jboss.hal.core.mvp.FullscreenPresenter;
-import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.ballroom.HasTitle;
+import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.SupportsExternalMode;
+import org.jboss.hal.core.mvp.HalView;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
 
 /**
- * Presenter for the model browser to view and modify the management model.
+ * Presenter which uses the {@link org.jboss.hal.core.modelbrowser.ModelBrowser} to view and modify the management
+ * model.
  *
  * @author Harald Pehl
  */
 public class ModelBrowserPresenter
-        extends FullscreenPresenter<ModelBrowserPresenter.MyView, ModelBrowserPresenter.MyProxy> {
+        extends ApplicationPresenter<ModelBrowserPresenter.MyView, ModelBrowserPresenter.MyProxy>
+        implements HasTitle, SupportsExternalMode {
 
     // @formatter:off
     @ProxyStandard
     @NameToken(NameTokens.MODEL_BROWSER)
     public interface MyProxy extends ProxyPlace<ModelBrowserPresenter> {}
 
-    public interface MyView extends PatternFlyView {}
+    public interface MyView extends HalView {
+        void setRoot(ResourceAddress root);
+    }
     // @formatter:on
+
+    private final Resources resources;
 
     @Inject
     public ModelBrowserPresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy proxy,
             final Resources resources) {
-        super(eventBus, view, proxy, resources.constants().modelBrowser());
+        super(eventBus, view, proxy);
+        this.resources = resources;
     }
 
     @Override
-    public boolean supportsExternalMode() {
-        return true;
+    public String getTitle() {
+        return resources.constants().modelBrowser();
+    }
+
+    @Override
+    protected void onReset() {
+        super.onReset();
+        getView().setRoot(ResourceAddress.ROOT);
     }
 }

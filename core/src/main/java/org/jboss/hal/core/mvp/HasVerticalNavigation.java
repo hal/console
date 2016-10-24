@@ -18,7 +18,7 @@ package org.jboss.hal.core.mvp;
 import org.jboss.hal.ballroom.VerticalNavigation;
 
 /**
- * Meant to be implemented by views which have a vertical navigation. Works together with {@link ApplicationPresenter}
+ * Meant to be implemented by views which have a vertical navigation. Works together with {@link ApplicationFinderPresenter}
  * to automatically show and hide the vertical navigation when the presenter is revealed and hidden.
  *
  * @author Harald Pehl

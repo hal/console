@@ -16,13 +16,29 @@
 package org.jboss.hal.core.mvp;
 
 import com.gwtplatform.mvp.client.View;
+import com.gwtplatform.mvp.client.ViewImpl;
 import org.jboss.gwt.elemento.core.HasElements;
 import org.jboss.gwt.elemento.core.IsElement;
 
 /**
- * Bridge between GWTPs views which are based on widgets and HAL views which are based on elements.
+ * Adapter between GWTPs views which are based on widgets and HAL views which are based on elements.
  *
  * @author Harald Pehl
  */
 public interface HalView extends View, IsElement, HasElements {
+
+    /**
+     * This method should be called <em>after</em> the view's elements are attached to the DOM. Typically this method
+     * is called from {@link HalPresenter#onReveal()}.
+     * <p>
+     * Do <em>not</em> use {@link ViewImpl#onAttach()} to initialize PatternFly components. This works for widgets
+     * only, but not for elements!
+     */
+    void attach();
+
+    /**
+     * Counterpart to {@link #attach()}. Implement this method if you need to remove stuff which was setup in {@link
+     * #attach()}. The default implementation does nothing.
+     */
+    default void detach() {}
 }

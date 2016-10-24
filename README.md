@@ -1,4 +1,5 @@
-<a href="https://ci.wildfly.org/viewType.html?buildTypeId=hal_HalNextDev&guest=1"><img src="https://ci.wildfly.org/app/rest/builds/buildType:(id:hal_HalNextDev)/statusIcon"/></a>
+[![TC Build](https://ci.wildfly.org/app/rest/builds/buildType:(id:hal_HalNextDev)/statusIcon.svg)](https://ci.wildfly.org/viewType.html?buildTypeId=hal_HalNextDev&guest=1) [![License](https://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Chat on Gitter](https://badges.gitter.im/hal/hal.next.svg)](https://gitter.im/hal)  
+[![Issues in Ready](https://badge.waffle.io/hal/hal.next.svg?label=ready&title=Ready)](http://waffle.io/hal/hal.next) [![Issues in Progress](https://badge.waffle.io/hal/hal.next.svg?label=In%20Progress&title=In%20Progress)](http://waffle.io/hal/hal.next) 
 
 # HAL.next
 
@@ -105,7 +106,7 @@ GitHub pages are served from **https** so you need to secure the management inte
 The SuperDevMode is intended for development as it provides browser refresh after code changes. 
 
 1. Add http://localhost:8888 as allowed origin
-1. `mvn install -Dgwt.skipCompilation -Pdev` 
+1. `mvn install -Dgwt.skipCompilation` 
 1. `cd app`
 1. `mvn gwt:devmode`
 1. Open http://localhost:8888/hal/dev.html

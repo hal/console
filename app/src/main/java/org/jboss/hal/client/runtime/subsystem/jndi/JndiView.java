@@ -27,7 +27,7 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.tree.Tree;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
@@ -46,7 +46,7 @@ import static org.jboss.hal.resources.CSS.*;
 /**
  * @author Harald Pehl
  */
-public class JndiView extends PatternFlyViewImpl implements JndiPresenter.MyView {
+public class JndiView extends HalViewImpl implements JndiPresenter.MyView {
 
     private static final String JAVA_CONTEXTS = "java: contexts";
     private static final String APPLICATIONS = "applications";

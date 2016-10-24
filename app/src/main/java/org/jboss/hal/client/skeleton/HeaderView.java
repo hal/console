@@ -23,14 +23,12 @@ import javax.annotation.PostConstruct;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.gwtplatform.mvp.client.ViewImpl;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.DataElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventHandler;
-import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Templated;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
@@ -42,6 +40,9 @@ import org.jboss.hal.core.finder.FinderSegment.DropdownItem;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.core.modelbrowser.ModelBrowserPath;
 import org.jboss.hal.core.modelbrowser.ModelBrowserPath.Segment;
+import org.jboss.hal.core.mvp.HalViewImpl;
+import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
@@ -57,19 +58,20 @@ import static org.jboss.hal.client.skeleton.HeaderPresenter.MAX_BREADCRUMB_VALUE
 import static org.jboss.hal.core.Strings.abbreviateMiddle;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.Names.NYI;
+import static org.jboss.hal.resources.FontAwesomeSize.large;
 
 /**
  * @author Harald Pehl
  */
 @Templated("MainLayout.html#header")
-public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyView, IsElement {
+public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
 
     // @formatter:off
-    public static HeaderView create(final User user, final Resources resources) {
-        return new Templated_HeaderView(user, resources);
+    public static HeaderView create(final Places places, final User user, final Resources resources) {
+        return new Templated_HeaderView(places, user, resources);
     }
 
+    public abstract Places places();
     public abstract User user();
     public abstract Resources resources();
     // @formatter:on
@@ -93,13 +95,17 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     @DataElement Element connectedTo;
     @DataElement Element accessControl;
     @DataElement Element patching;
-    @DataElement Element topLevelTabs;
-    @DataElement Element breadcrumbs;
+    @DataElement Element topLevelCategories;
+    @DataElement Element breadcrumb;
     @DataElement Element backItem;
     @DataElement Element backLink;
-    @DataElement Element externalItem;
+    @DataElement Element breadcrumbToolsItem;
+    @DataElement Element switchModeLink;
+    @DataElement Element switchModeIcon;
     @DataElement Element externalLink;
 
+
+    // ------------------------------------------------------ initialization
 
     @PostConstruct
     void init() {
@@ -136,10 +142,10 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
 
         boolean su = user().isSuperuser() || user().isAdministrator();
         if (!su) {
-            topLevelTabs.removeChild(patching);
-            topLevelTabs.removeChild(accessControl);
+            topLevelCategories.removeChild(patching);
+            topLevelCategories.removeChild(accessControl);
         }
-        Elements.setVisible(breadcrumbs, false);
+        Elements.setVisible(breadcrumb, false);
     }
 
     @Override
@@ -148,7 +154,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     }
 
     @Override
-    public void update(Environment environment, Endpoints endpoints, User user) {
+    public void init(Environment environment, Endpoints endpoints, User user) {
         setLogo(resources().theme().getFirstName(), resources().theme().getLastName());
 
         if (endpoints.isSameOrigin()) {
@@ -170,32 +176,17 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
     }
 
 
-    // ------------------------------------------------------ links and tokens
+    // ------------------------------------------------------ logo, messages & global state
 
-    @Override
-    public void updateLinks(final FinderContext finderContext) {
-        PlaceRequest placeRequest = finderContext.getToken() != null ? finderContext.toPlaceRequest() : HOMEPAGE;
-        backPlaceRequest = placeRequest;
-        if (tlcPlaceRequests.containsKey(finderContext.getToken())) {
-            tlcPlaceRequests.put(finderContext.getToken(), placeRequest);
-        }
+    @EventHandler(element = "logoLink", on = click)
+    void onLogo() {
+        presenter.goTo(NameTokens.HOMEPAGE);
     }
 
-    @Override
-    public void selectTlc(final String nameToken) {
-        for (String token : tlc.keySet()) {
-            if (token.equals(nameToken)) {
-                tlc.get(token).getClassList().add(active);
-                tlc.get(token).getParentElement().getClassList().add(active);
-            } else {
-                tlc.get(token).getClassList().remove(active);
-                tlc.get(token).getParentElement().getClassList().remove(active);
-            }
-        }
+    @EventHandler(element = "messages", on = click)
+    void onMessages() {
+        presenter.toggleMessages();
     }
-
-
-    // ------------------------------------------------------ messages
 
     @Override
     public void showMessage(final Message message) {
@@ -213,57 +204,74 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
         messagePanel.add(message);
     }
 
+    @EventHandler(element = "logout", on = click)
+    void onLogout() {
+        presenter.logout();
+    }
+
+    @EventHandler(element = "reconnect", on = click)
+    void onReconnect() {
+        presenter.reconnect();
+    }
+
 
     // ------------------------------------------------------ modes
 
     @Override
-    public void tlcMode() {
-        Elements.setVisible(topLevelTabs, true);
-        Elements.setVisible(breadcrumbs, false);
-    }
-
-    @Override
-    public void fullscreenMode(final String title) {
-        applicationMode();
-        clearBreadcrumb();
-        Element li = Browser.getDocument().createLIElement();
-        li.setTextContent(title);
-        breadcrumbs.insertBefore(li, externalItem);
+    public void topLevelCategoryMode() {
+        Elements.setVisible(topLevelCategories, true);
+        Elements.setVisible(breadcrumb, false);
     }
 
     @Override
     public void applicationMode() {
-        Elements.setVisible(topLevelTabs, false);
-        Elements.setVisible(breadcrumbs, true);
+        Elements.setVisible(topLevelCategories, false);
+        Elements.setVisible(breadcrumb, true);
+    }
+
+
+    // ------------------------------------------------------ links & tlc
+
+    @Override
+    public void updateLinks(final FinderContext finderContext) {
+        PlaceRequest placeRequest = finderContext.getToken() != null ? finderContext.toPlaceRequest() : HOMEPAGE;
+        backPlaceRequest = placeRequest;
+        if (tlcPlaceRequests.containsKey(finderContext.getToken())) {
+            tlcPlaceRequests.put(finderContext.getToken(), placeRequest);
+        }
     }
 
     @Override
-    public void externalMode(final boolean externalMode) {
-        externalLink.setAttribute(UIConstants.HREF, presenter.externalUrl());
-        externalLink.setAttribute(UIConstants.TARGET, presenter.currentToken());
-        Elements.setVisible(externalItem, externalMode);
+    public void selectTopLevelCategory(final String nameToken) {
+        for (String token : tlc.keySet()) {
+            if (token.equals(nameToken)) {
+                tlc.get(token).getClassList().add(active);
+                tlc.get(token).getParentElement().getClassList().add(active);
+            } else {
+                tlc.get(token).getClassList().remove(active);
+                tlc.get(token).getParentElement().getClassList().remove(active);
+            }
+        }
     }
 
 
     // ------------------------------------------------------ breadcrumb
 
-    private void clearBreadcrumb() {
-        for (Iterator<Element> iterator = Elements.iterator(breadcrumbs); iterator.hasNext(); ) {
-            Element element = iterator.next();
-            if (element == backItem || element == externalItem) {
-                continue;
-            }
-            iterator.remove();
-        }
+    @Override
+    public void updateBreadcrumb(final String title) {
+        clearBreadcrumb();
+        Element li = Browser.getDocument().createLIElement();
+        li.setTextContent(title);
+        breadcrumb.insertBefore(li, breadcrumbToolsItem);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void updateBreadcrumb(final FinderContext context) {
+    public void updateBreadcrumb(final FinderContext finderContext) {
         clearBreadcrumb();
         FinderPath currentPath = new FinderPath();
 
-        for (Iterator<FinderSegment> iterator = context.getPath().iterator(); iterator.hasNext(); ) {
+        for (Iterator<FinderSegment> iterator = finderContext.getPath().iterator(); iterator.hasNext(); ) {
             FinderSegment<Object> segment = iterator.next();
             if (segment.getColumnId() == null || segment.getItemId() == null) {
                 // we need to ignore half filled segments which occur when removing items from a column
@@ -278,9 +286,9 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
                 builder.css(active);
             }
             builder.span().css(key);
-            if (context.getToken() != null) {
+            if (finderContext.getToken() != null) {
                 PlaceRequest keyRequest = new PlaceRequest.Builder()
-                        .nameToken(context.getToken())
+                        .nameToken(finderContext.getToken())
                         .with("path", currentPath.toString())
                         .build();
                 builder.a().css(clickable).on(click, event -> presenter.goTo(keyRequest))
@@ -304,7 +312,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
                         .attr(UIConstants.ROLE, UIConstants.BUTTON)
                         .on(click, event -> {
                             Element ul = ((Element) event.getCurrentTarget()).getNextElementSibling();
-                            segment.dropdown(context, items -> {
+                            segment.dropdown(finderContext, items -> {
                                 Elements.removeChildrenFrom(ul);
                                 if (items.isEmpty()) {
                                     Element empty = new Elements.Builder().li().css(CSS.empty)
@@ -315,7 +323,7 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
                                     for (DropdownItem<Object> dropdownItem : items) {
                                         Element element = new Elements.Builder().li().a()
                                                 .css(clickable)
-                                                .on(click, e -> dropdownItem.onSelect(context))
+                                                .on(click, e -> dropdownItem.onSelect(finderContext))
                                                 .textContent(dropdownItem.getTitle()).end().end().build();
                                         ul.appendChild(element);
                                     }
@@ -349,75 +357,94 @@ public abstract class HeaderView extends ViewImpl implements HeaderPresenter.MyV
             }
             builder.end(); // </span>
             builder.end(); // </li>
-            breadcrumbs.insertBefore(builder.build(), externalItem);
+            breadcrumb.insertBefore(builder.build(), breadcrumbToolsItem);
         }
     }
 
     @Override
     public void updateBreadcrumb(final ModelBrowserPath path) {
         clearBreadcrumb();
-        if (path == null) {
+        if (path == null || path.isEmpty()) {
             // deselection
-            breadcrumbs.insertBefore(
+            breadcrumb.insertBefore(
                     new Elements.Builder().li().textContent(resources().constants().nothingSelected()).build(),
-                    externalItem);
+                    breadcrumbToolsItem);
 
         } else {
-            if (path.isEmpty()) {
-                breadcrumbs.insertBefore(new Elements.Builder().li().textContent("").build(), externalItem);
+            ModelBrowser modelBrowser = path.getModelBrowser();
+            for (Iterator<Segment[]> iterator = path.iterator(); iterator.hasNext(); ) {
+                Segment[] segments = iterator.next();
+                Segment key = segments[0];
+                Segment value = segments[1];
+                boolean link = value != ModelBrowserPath.WILDCARD && iterator.hasNext();
 
-            } else {
-                ModelBrowser modelBrowser = path.getModelBrowser();
-                for (Iterator<Segment[]> iterator = path.iterator(); iterator.hasNext(); ) {
-                    Segment[] segments = iterator.next();
-                    Segment key = segments[0];
-                    Segment value = segments[1];
-                    boolean link = value != ModelBrowserPath.WILDCARD && iterator.hasNext();
-
-                    // @formatter:off
-                    Elements.Builder builder = new Elements.Builder()
-                        .li()
-                            .span().css(CSS.key)
-                                .a().css(clickable).on(click, event -> modelBrowser.select(key.id, true))
-                                    .textContent(key.text)
-                                .end()
+                // @formatter:off
+                Elements.Builder builder = new Elements.Builder()
+                    .li()
+                        .span().css(CSS.key)
+                            .a().css(clickable).on(click, event -> modelBrowser.select(key.id, true))
+                                .textContent(key.text)
                             .end()
-                            .span().css(arrow).innerHtml(SafeHtmlUtils.fromSafeConstant("&#8658;")).end()
-                            .span().css(CSS.value);
-                    // @formatter:on
-                    if (link) {
-                        builder.a().css(clickable).on(click, event -> modelBrowser.select(value.id, true));
-                    }
-                    builder.textContent(value.text);
-                    if (link) {
-                        builder.end(); // </a>
-                    }
-                    builder.end().end(); // </span> </li>
-                    breadcrumbs.insertBefore(builder.build(), externalItem);
+                        .end()
+                        .span().css(arrow).innerHtml(SafeHtmlUtils.fromSafeConstant("&#8658;")).end()
+                        .span().css(CSS.value);
+                // @formatter:on
+                if (link) {
+                    builder.a().css(clickable).on(click, event -> modelBrowser.select(value.id, true));
                 }
+                builder.textContent(value.text);
+                if (link) {
+                    builder.end(); // </a>
+                }
+                builder.end().end(); // </span> </li>
+                breadcrumb.insertBefore(builder.build(), breadcrumbToolsItem);
             }
         }
     }
 
-
-    // ------------------------------------------------------ event handler
-
-    @EventHandler(element = "logoLink", on = click)
-    void onLogo() {
-        presenter.goTo(NameTokens.HOMEPAGE);
+    private void clearBreadcrumb() {
+        for (Iterator<Element> iterator = Elements.iterator(breadcrumb); iterator.hasNext(); ) {
+            Element element = iterator.next();
+            if (element == backItem || element == breadcrumbToolsItem) {
+                continue;
+            }
+            iterator.remove();
+        }
     }
 
-    @EventHandler(element = "messages", on = click)
-    void onMessages() {
+
+    // ------------------------------------------------------ breadcrumb tools
+
+    @Override
+    public void showExpertMode(final ResourceAddress address) {
+        switchModeLink.setOnclick(event -> presenter.switchToExpertMode(address));
+        switchModeLink.setTitle(resources().constants().expertMode());
+        switchModeIcon.setClassName(fontAwesome("sitemap", large));
+        Elements.setVisible(switchModeLink, true);
     }
 
-    @EventHandler(element = "logout", on = click)
-    void onLogout() {
-        Browser.getWindow().alert(NYI);
+    @Override
+    public void showBackToNormalMode() {
+        switchModeLink.setOnclick(event -> presenter.backToNormalMode());
+        switchModeLink.setTitle(resources().constants().backToNormalMode());
+        switchModeIcon.setClassName(fontAwesome("th-list", large));
+        Elements.setVisible(switchModeLink, true);
     }
 
-    @EventHandler(element = "reconnect", on = click)
-    void onReconnect() {
-        Browser.getWindow().alert(NYI);
+    @Override
+    public void hideSwitchMode() {
+        Elements.setVisible(switchModeLink, false);
+    }
+
+    @Override
+    public void showExternal(final PlaceRequest placeRequest) {
+        Elements.setVisible(externalLink, true);
+        externalLink.setAttribute(UIConstants.TARGET, placeRequest.getNameToken());
+        externalLink.setAttribute(UIConstants.HREF, places().historyToken(placeRequest));
+    }
+
+    @Override
+    public void hideExternal() {
+        Elements.setVisible(externalLink, false);
     }
 }

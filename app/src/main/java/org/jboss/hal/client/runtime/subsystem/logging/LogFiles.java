@@ -28,7 +28,7 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 
-import static org.jboss.hal.client.runtime.subsystem.logging.LogFilePresenter.EXTERNAL_PARAM;
+import static org.jboss.hal.core.mvp.Places.EXTERNAL_PARAM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;

@@ -19,7 +19,7 @@ import com.google.inject.Inject;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Ids;
@@ -31,7 +31,7 @@ import static org.jboss.hal.resources.CSS.navTabsHal;
 /**
  * @author Harald Pehl
  */
-public class StandaloneDeploymentView extends PatternFlyViewImpl implements StandaloneDeploymentPresenter.MyView {
+public class StandaloneDeploymentView extends HalViewImpl implements StandaloneDeploymentPresenter.MyView {
 
     private final Tabs tabs;
     private boolean initialHeightAdjusted;

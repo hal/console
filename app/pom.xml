@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-parent-with-dependencies</artifactId>
-        <version>0.4.2</version>
+        <version>0.4.3</version>
         <relativePath>../parent-with-dependencies/pom.xml</relativePath>
     </parent>
 
@@ -38,7 +38,7 @@
         <gwt.logLevel>INFO</gwt.logLevel>
         <gwt.optimize>0</gwt.optimize>
         <gwt.style>PRETTY</gwt.style>
-        <theme.src.dir>../themes/hal/src/main/java</theme.src.dir>
+        <theme.name>hal</theme.name>
     </properties>
 
     <dependencies>
@@ -172,7 +172,7 @@
                             <goal>grunt</goal>
                         </goals>
                         <configuration>
-                            <arguments>${grunt-task}</arguments>
+                            <arguments>${grunt-task} --theme=${theme.name}</arguments>
                         </configuration>
                     </execution>
                 </executions>
@@ -221,7 +221,7 @@
                                 <additionalSourceDirectory>../dmr/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../meta/src/main/java</additionalSourceDirectory>
                                 <additionalSourceDirectory>../resources/src/main/java</additionalSourceDirectory>
-                                <additionalSourceDirectory>${theme.src.dir}</additionalSourceDirectory>
+                                <additionalSourceDirectory>../themes/${theme.name}/src/main/java</additionalSourceDirectory>
                             </additionalSourceDirectories>
                             <processors>
                                 <processor>org.jboss.hal.processor.GinModuleProcessor</processor>
@@ -325,10 +325,6 @@
 
     <profiles>
         <profile>
-            <!--
-                Activate this profile when running gwt:devmode from the command line
-                to enable browser refresh after changing sources
-            -->
             <id>prod</id>
             <properties>
                 <grunt-task>prod</grunt-task>
@@ -347,7 +343,7 @@
         <profile>
             <id>theme-eap</id>
             <properties>
-                <theme.src.dir>../themes/eap/src/main/java</theme.src.dir>
+                <theme.name>eap</theme.name>
             </properties>
             <dependencies>
                 <dependency>
@@ -362,7 +358,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <theme.src.dir>../themes/hal/src/main/java</theme.src.dir>
+                <theme.name>hal</theme.name>
             </properties>
             <dependencies>
                 <dependency>
@@ -374,7 +370,7 @@
         <profile>
             <id>theme-wildfly</id>
             <properties>
-                <theme.src.dir>../themes/wildfly/src/main/java</theme.src.dir>
+                <theme.name>wildfly</theme.name>
             </properties>
             <dependencies>
                 <dependency>

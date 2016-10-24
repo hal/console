@@ -70,7 +70,7 @@
 
 
 /*
- * Tag Manager
+ * External Components
  */
 @import "../../../bower_components/tagmanager/tagmanager";
 
@@ -186,13 +186,14 @@
  * HAL
  */
 @import "variables";
+@import (optional) "colors"; // will be defined in themes
 @import "mixins";
 @import "layout";
 @import "icons";
 @import "verticalnav";
 @import "finder";
 
-@import "typeahead";
+@import "autocomplete";
 @import "form";
 @import "search";
 @import "editor";

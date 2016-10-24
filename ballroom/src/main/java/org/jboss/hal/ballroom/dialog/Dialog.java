@@ -41,9 +41,7 @@ import org.jboss.hal.resources.UIConstants;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.dialog.Modal.$;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.UIConstants.HIDDEN;
-import static org.jboss.hal.resources.UIConstants.ROLE;
-import static org.jboss.hal.resources.UIConstants.TABINDEX;
+import static org.jboss.hal.resources.UIConstants.*;
 
 /**
  * A modal dialog with optional secondary and primary buttons. Only one dialog can be open at a time. The buttons can
@@ -267,14 +265,13 @@ public class Dialog implements IsElement {
 
     public static final int SECONDARY_POSITION = 100;
     public static final int PRIMARY_POSITION = 200;
+    public static final String SELECTOR_ID = "#" + Ids.HAL_MODAL;
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String BODY_ELEMENT = "body";
     private static final String CLOSE_ICON_ELEMENT = "closeIcon";
     private static final String DIALOG_ELEMENT = "dialog";
     private static final String FOOTER_ELEMENT = "footer";
-    private static final String LABEL = "label";
-    private static final String SELECTOR_ID = "#" + Ids.HAL_MODAL;
     private static final String TITLE_ELEMENT = "title";
 
     private static final Element root;
@@ -291,10 +288,10 @@ public class Dialog implements IsElement {
         // @formatter:off
         Elements.Builder rootBuilder = new Elements.Builder()
             .div().id(Ids.HAL_MODAL).css(modal)
-                    .attr(ROLE, DIALOG_ELEMENT)
+                    .attr(ROLE, DIALOG)
                     .attr(TABINDEX, "-1")
-                    .aria("labeledby", Ids.HAL_MODAL_TITLE)
-                .div().css(modalDialog).attr("role", "document").rememberAs(DIALOG_ELEMENT) //NON-NLS
+                    .aria(LABELLED_BY, Ids.HAL_MODAL_TITLE)
+                .div().css(modalDialog).attr(ROLE, "document").rememberAs(DIALOG_ELEMENT) //NON-NLS
                     .div().css(modalContent)
                         .div().css(modalHeader)
                             .button().css(close).aria(LABEL, CONSTANTS.close()).rememberAs(CLOSE_ICON_ELEMENT)
@@ -412,15 +409,14 @@ public class Dialog implements IsElement {
         $(SELECTOR_ID).modal(ModalOptions.create(closeOnEsc));
         $(SELECTOR_ID).modal("show");
         PatternFly.initComponents(SELECTOR_ID);
-        for (Attachable attachable : attachables) {
-            attachable.attach();
-        }
+        attachables.forEach(Attachable::attach);
     }
 
     /**
      * Please call this method only if the dialog neither have a close icon, esc handler nor a close button.
      */
     void close() {
+        attachables.forEach(Attachable::detach);
         if (onClose != null) {
             onClose.execute();
         }

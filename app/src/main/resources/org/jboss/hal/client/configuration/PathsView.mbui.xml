@@ -26,7 +26,7 @@
                         <attribute name="name"
                                    validation-handler='{{new org.jboss.hal.ballroom.form.BlacklistValidation("jboss.home", "user.home", "user.dir", "java.home", "jboss.server.base.dir")}}'/>
                         <attribute name="path"/>
-                        <attribute name="relative-to" suggest-handler="{{new PathsTypeahead()}}"/>
+                        <attribute name="relative-to" suggest-handler="{{new PathsAutoComplete()}}"/>
                     </attributes>
                 </action>
                 <action handler-ref="remove-resource" scope="selected" name-resolver="{{api.selectedRow().getName()}}"/>
@@ -40,7 +40,7 @@
             <attributes>
                 <attribute name="name"/>
                 <attribute name="path"/>
-                <attribute name="relative-to" suggest-handler="{{new PathsTypeahead()}}"/>
+                <attribute name="relative-to" suggest-handler="{{new PathsAutoComplete()}}"/>
             </attributes>
         </form>
     </metadata>

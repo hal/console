@@ -22,6 +22,7 @@ import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.HasTitle;
+import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
@@ -40,7 +41,7 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
      * An unique id for this item.
      * <p>
      * Please make sure the id returned by this method matches the id which is part of the {@link FinderPath} returned
-     * by {@link org.jboss.hal.core.mvp.ApplicationPresenter#finderPath()}
+     * by {@link ApplicationFinderPresenter#finderPath()}
      *
      * @return an id based on {@link #getTitle()}: {@code Ids.asId(getTitle())}
      */

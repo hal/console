@@ -20,7 +20,6 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
-import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental.dom.Element;
@@ -31,6 +30,7 @@ import org.jboss.hal.client.tools.MacroOptionsDialog;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.semver.Version;
+import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.macro.MacroFinishedEvent;
 import org.jboss.hal.dmr.macro.MacroFinishedEvent.MacroFinishedHandler;
@@ -52,7 +52,7 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
         implements IsElement, MacroOperationHandler, MacroFinishedHandler {
 
     // @formatter:off
-    public interface MyView extends View, IsElement, HasPresenter<FooterPresenter> {
+    public interface MyView extends HalView, HasPresenter<FooterPresenter> {
         void updateEnvironment(Environment environment);
         void updateVersion(Version version);
         void startRecording();
@@ -84,7 +84,7 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
         this.placeManager = placeManager;
         this.macros = macros;
         this.resources = resources;
-        this.aboutDialog = new AboutDialog(environment, endpoints, resources.theme());
+        this.aboutDialog = new AboutDialog(environment, endpoints, resources);
         this.checkForUpdate = new CheckForUpdate(environment);
     }
 

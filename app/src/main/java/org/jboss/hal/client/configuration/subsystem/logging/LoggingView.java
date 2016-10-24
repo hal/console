@@ -22,11 +22,11 @@ import elemental.client.Browser;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.VerticalNavigation;
+import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.DataTable;
-import org.jboss.hal.ballroom.typeahead.ReadChildResourcesTypeahead;
 import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
@@ -158,11 +158,12 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
                     });
                 });
 
-        SuggestHandler suggestHandler = new ReadChildResourcesTypeahead(
+        SuggestHandler suggestHandler = new ReadChildrenAutoComplete(
+                mbuiContext.dispatcher(),
+                mbuiContext.statementContext(),
                 asList(ASYNC_HANDLER_TEMPLATE, CONSOLE_HANDLER_TEMPLATE, CUSTOM_HANDLER_TEMPLATE, FILE_HANDLER_TEMPLATE,
                         PERIODIC_ROTATING_FILE_HANDLER_TEMPLATE, PERIODIC_SIZE_ROTATING_FILE_HANDLER_TEMPLATE,
-                        SIZE_ROTATING_FILE_HANDLER_TEMPLATE, SYSLOG_HANDLER_TEMPLATE),
-                mbuiContext.statementContext());
+                        SIZE_ROTATING_FILE_HANDLER_TEMPLATE, SYSLOG_HANDLER_TEMPLATE));
         dialog.getForm().getFormItem(HANDLERS).registerSuggestHandler(suggestHandler);
         dialog.show();
     }

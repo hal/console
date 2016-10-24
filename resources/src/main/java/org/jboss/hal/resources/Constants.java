@@ -37,8 +37,6 @@ package org.jboss.hal.resources;
 public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     //@formatter:off
-    String aboutEnvironment();
-    String accessControlProvider();
     String accessType();
     String action();
     String active();
@@ -53,6 +51,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String attributes();
 
     String back();
+    String backToNormalMode();
     String bootstrapException();
     String browse();
     String browseBy();
@@ -65,7 +64,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String clearMessages();
     String close();
     String closed();
-    String commited();
+    String committed();
+    String connectedTo();
     String connection();
     String connections();
     String connectionPool();
@@ -116,6 +116,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String excludeRole();
     String excludeUserGroup();
     String excludes();
+    String expertMode();
     String explode();
     String exploded();
     String expressionResolver();
@@ -274,6 +275,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String ok();
     String opened();
     String openInExternalWindow();
+    String openInModelBrowser();
     String operationFailed();
     String operationMode();
     String operationSuccessful();

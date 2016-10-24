@@ -24,13 +24,14 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderSegment;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
 import static java.util.Collections.singletonList;
 import static org.jboss.hal.core.finder.FinderContext.PATH_PARAM;
-import static org.jboss.hal.core.mvp.ApplicationPresenter.EXTERNAL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
@@ -42,6 +43,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
  * @author Harald Pehl
  */
 public class Places {
+
+    public static final String ADDRESS_PARAM = "address";
+    public static final String EXTERNAL_PARAM = "external";
 
     private final Environment environment;
     private final StatementContext statementContext;
@@ -58,6 +62,14 @@ public class Places {
         this.finder = finder;
         this.tokenFormatter = tokenFormatter;
     }
+
+    /**
+     * Returns a place request builder for the specified finder path.
+     */
+    public PlaceRequest.Builder finderPlace(final String token, final FinderPath path) {
+        return new PlaceRequest.Builder().nameToken(token).with(PATH_PARAM, path.toString());
+    }
+
 
     /**
      * Returns a place request builder for the specified token with parameters for the selected profile
@@ -88,6 +100,39 @@ public class Places {
         return builder;
     }
 
+
+    private boolean browseByServerGroups() {
+        if (!finder.getContext().getPath().isEmpty()) {
+            FinderSegment firstSegment = finder.getContext().getPath().iterator().next();
+            return firstSegment.getItemId().equals(Ids.asId(Names.SERVER_GROUPS));
+        }
+        return false;
+    }
+
+    public PlaceRequest genericSubsystem(ResourceAddress address) {
+        return new PlaceRequest.Builder()
+                .nameToken(NameTokens.GENERIC_SUBSYSTEM)
+                .with(ADDRESS_PARAM, address.toString())
+                .build();
+    }
+
+    public PlaceRequest modelBrowser(ResourceAddress address) {
+        return new PlaceRequest.Builder()
+                .nameToken(NameTokens.MODEL_BROWSER)
+                .with(ADDRESS_PARAM, address.toString())
+                .build();
+    }
+
+    public PlaceRequest external(PlaceRequest placeRequest) {
+        return new PlaceRequest.Builder(placeRequest)
+                .with(EXTERNAL_PARAM, String.valueOf(true))
+                .build();
+    }
+
+    public boolean isExternal(PlaceRequest placeRequest) {
+        return Boolean.parseBoolean(placeRequest.getParameter(EXTERNAL_PARAM, String.valueOf(false)));
+    }
+
     /**
      * Returns a new place request with the a new value for the specified parameter.
      */
@@ -103,34 +148,9 @@ public class Places {
         return builder;
     }
 
-    private boolean browseByServerGroups() {
-        if (!finder.getContext().getPath().isEmpty()) {
-            FinderSegment firstSegment = finder.getContext().getPath().iterator().next();
-            return firstSegment.getItemId().equals(Ids.asId(Names.SERVER_GROUPS));
-        }
-        return false;
-    }
-
-    /**
-     * Returns a place request builder for the specified finder path.
-     */
-    public PlaceRequest.Builder finderPlace(final String token, final FinderPath path) {
-        return new PlaceRequest.Builder().nameToken(token).with(PATH_PARAM, path.toString());
-    }
-
     public String historyToken(PlaceRequest placeRequest) {
         String href = Browser.getWindow().getLocation().getHref();
         href = href.substring(0, href.indexOf('#'));
         return href + "#" + tokenFormatter.toHistoryToken(singletonList(placeRequest));
-    }
-
-    public boolean isExternal(PlaceRequest placeRequest) {
-        return Boolean.parseBoolean(placeRequest.getParameter(EXTERNAL, String.valueOf(false)));
-    }
-
-    public PlaceRequest external(PlaceRequest placeRequest) {
-        return new PlaceRequest.Builder(placeRequest)
-                .with(ApplicationPresenter.EXTERNAL, String.valueOf(true))
-                .build();
     }
 }

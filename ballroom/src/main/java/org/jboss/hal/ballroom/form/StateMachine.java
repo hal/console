@@ -25,6 +25,8 @@ import org.jboss.hal.ballroom.form.Form.State;
  */
 public interface StateMachine {
 
+    void reset();
+
     State current();
 
     void execute(Operation operation);

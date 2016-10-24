@@ -15,13 +15,13 @@
  */
 package org.jboss.hal.ballroom.form;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.google.common.base.Joiner;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.form.InputElement.Context;
 import org.jboss.hal.ballroom.form.SelectBoxBridge.Multi;
-
-import java.util.Collections;
-import java.util.List;
 
 import static org.jboss.hal.ballroom.form.InputElement.EMPTY_CONTEXT;
 import static org.jboss.hal.resources.CSS.formControl;
@@ -43,13 +43,18 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
     protected InputElement<List<String>> newInputElement(Context<?> context) {
         selectBox = new MultiSelectBoxElement();
         selectBox.setClassName(formControl + " " + selectpicker);
+        return selectBox;
+    }
+
+    @Override
+    public void attach() {
+        super.attach();
         Multi.element(selectBox.asElement()).onChange((event, index) -> {
             List<String> value = getValue();
             setModified(true);
             setUndefined(value.isEmpty());
             signalChange(value);
         });
-        return selectBox;
     }
 
     @Override

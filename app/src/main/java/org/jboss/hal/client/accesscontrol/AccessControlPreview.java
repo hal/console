@@ -33,21 +33,24 @@ class AccessControlPreview extends PreviewContent<Void> {
 
     private static final String CONTENT_ELEMENT = "contentElement";
 
-    static Alert simpleProviderWarning(final AccessControl accessControl, final Environment environment,
-            final Resources resources) {
-        Alert warning = new Alert(Icons.WARNING, resources.messages().simpleProviderWarning(),
-                resources.constants().enableRbac(),
-                event -> accessControl.switchProvider());
-        Elements.setVisible(warning.asElement(), environment.getAccessControlProvider() == AccessControlProvider.SIMPLE);
-        return warning;
-    }
+    private final Environment environment;
+    private final Alert warning;
 
     AccessControlPreview(AccessControl accessControl, Environment environment, Resources resources) {
         super(Names.ACCESS_CONTROL);
+        this.environment = environment;
+        this.warning = new Alert(Icons.WARNING, resources.messages().simpleProviderWarning(),
+                resources.constants().enableRbac(),
+                event -> accessControl.switchProvider());
 
-        previewBuilder().add(simpleProviderWarning(accessControl, environment, resources));
+        previewBuilder().add(warning);
         previewBuilder().section().rememberAs(CONTENT_ELEMENT).end();
         Element content = previewBuilder().referenceFor(CONTENT_ELEMENT);
         Previews.innerHtml(content, resources.previews().rbacOverview());
+    }
+
+    @Override
+    public void update(final Void item) {
+        Elements.setVisible(warning.asElement(), environment.getAccessControlProvider() == AccessControlProvider.SIMPLE);
     }
 }

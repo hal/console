@@ -27,9 +27,10 @@ import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
-import org.jboss.hal.core.mvp.ApplicationPresenter;
+import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.PatternFlyView;
+import org.jboss.hal.core.mvp.SupportsExpertMode;
+import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
@@ -47,7 +48,9 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DATASOURCES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
@@ -57,8 +60,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
  *
  * @author Harald Pehl
  */
-public class DataSourcePresenter extends
-        ApplicationPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy> {
+public class DataSourcePresenter
+        extends ApplicationFinderPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy>
+        implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -66,7 +70,7 @@ public class DataSourcePresenter extends
     @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS})
     public interface MyProxy extends ProxyPlace<DataSourcePresenter> {}
 
-    public interface MyView extends PatternFlyView, HasPresenter<DataSourcePresenter> {
+    public interface MyView extends HalView, HasPresenter<DataSourcePresenter> {
         void clear(boolean xa);
         void update(DataSource dataSource);
     }
@@ -114,13 +118,20 @@ public class DataSourcePresenter extends
     }
 
     @Override
+    public ResourceAddress resourceAddress() {
+        return xa
+                ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, name)
+                : DATA_SOURCE_TEMPLATE.resolve(statementContext, name);
+    }
+
+    @Override
     protected void onReset() {
         super.onReset();
         loadDataSource();
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(DATASOURCES)
                 .append(Ids.DATA_SOURCE_DRIVER, DATASOURCES, Names.DATASOURCES_DRIVERS, Names.DATASOURCES)
                 .append(Ids.DATA_SOURCE_CONFIGURATION, Ids.dataSourceConfiguration(name, xa), Names.DATASOURCE, name);

@@ -32,9 +32,7 @@ import org.jboss.hal.client.configuration.InterfacePresenter;
 import org.jboss.hal.client.configuration.Mbui_InterfaceView_Provider;
 import org.jboss.hal.client.configuration.Mbui_PathsView_Provider;
 import org.jboss.hal.client.configuration.PathsPresenter;
-import org.jboss.hal.client.configuration.UpdatePathTypeahead;
-import org.jboss.hal.client.configuration.subsystem.SubsystemPresenter;
-import org.jboss.hal.client.configuration.subsystem.SubsystemView;
+import org.jboss.hal.client.configuration.UpdatePathAutoComplete;
 import org.jboss.hal.client.configuration.subsystem.batch.BatchPresenter;
 import org.jboss.hal.client.configuration.subsystem.batch.Mbui_BatchView_Provider;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
@@ -127,7 +125,7 @@ public class AppModule extends AbstractTemplatedPresenterModule {
         bind(DataSourceTemplates.class).in(Singleton.class);
         bind(Dispatcher.class).to(DAGDispatcher.class).in(Singleton.class);
         bind(ProcessStateHandler.class).asEagerSingleton(); // to register the event handler
-        bind(UpdatePathTypeahead.class).asEagerSingleton(); // to register the event handler
+        bind(UpdatePathAutoComplete.class).asEagerSingleton(); // to register the event handler
 
 
         // ------------------------------------------------------ skeleton & root presenter
@@ -197,6 +195,16 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 EEPresenter.MyView.class,
                 EEView.class,
                 EEPresenter.MyProxy.class);
+
+        bindPresenter(ExpertModePresenter.class,
+                ExpertModePresenter.MyView.class,
+                ExpertModeView.class,
+                ExpertModePresenter.MyProxy.class);
+
+        bindPresenter(GenericSubsystemPresenter.class,
+                GenericSubsystemPresenter.MyView.class,
+                GenericSubsystemView.class,
+                GenericSubsystemPresenter.MyProxy.class);
 
         bindPresenter(HomepagePresenter.class,
                 HomepagePresenter.MyView.class,
@@ -307,11 +315,6 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 StandaloneDeploymentPresenter.MyView.class,
                 StandaloneDeploymentView.class,
                 StandaloneDeploymentPresenter.MyProxy.class);
-
-        bindPresenter(SubsystemPresenter.class,
-                SubsystemPresenter.MyView.class,
-                SubsystemView.class,
-                SubsystemPresenter.MyProxy.class);
 
         bindTemplatedPresenter(TransactionPresenter.class,
                 TransactionPresenter.MyView.class,

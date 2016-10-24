@@ -29,6 +29,7 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
+import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
@@ -52,7 +53,8 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
  * @author Harald Pehl
  */
 public class LoggingProfilePresenter
-        extends MbuiPresenter<LoggingProfilePresenter.MyView, LoggingProfilePresenter.MyProxy> {
+        extends MbuiPresenter<LoggingProfilePresenter.MyView, LoggingProfilePresenter.MyProxy>
+        implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -111,12 +113,17 @@ public class LoggingProfilePresenter
         loggingProfile = request.getParameter(NAME, null);
     }
 
+    @Override
+    public ResourceAddress resourceAddress() {
+        return SELECTED_LOGGING_PROFILE_TEMPLATE.resolve(statementContext);
+    }
+
     String getLoggingProfile() {
         return loggingProfile;
     }
 
     @Override
-    protected FinderPath finderPath() {
+    public FinderPath finderPath() {
         return finderPathFactory.subsystemPath(LOGGING_SUBSYSTEM_TEMPLATE.lastValue())
                 .append(Ids.LOGGING_PROFILE, Ids.loggingProfile(loggingProfile),
                         Names.LOGGING_PROFILE, loggingProfile);

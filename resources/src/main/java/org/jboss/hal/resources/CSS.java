@@ -30,6 +30,7 @@ import static java.util.stream.Collectors.joining;
 public interface CSS {
 
     String aboutModalPf = "about-modal-pf";
+    String address = "address";
     String active = "active";
     String alert = "alert";
     String alertDanger = "alert-danger";
@@ -41,6 +42,8 @@ public interface CSS {
     String alertWarning = "alert-warning";
     String arrow = "arrow";
     String attributes = "attributes";
+    String autocompleteSuggestion = "autocomplete-suggestion";
+    String autocompleteSuggestions = "autocomplete-suggestions";
 
     String badge = "badge";
     String badgeContainerPf = "badge-container-pf";
@@ -168,7 +171,6 @@ public interface CSS {
     String listViewPfLeft = "list-view-pf-left";
     String listViewPfMainInfo = "list-view-pf-main-info";
     String listViewPfStacked = "list-view-pf-stacked";
-    String listUnstyled = "list-unstyled";
     String loading = "loading";
     String loadingContainer = "loading-container";
     String logFileLoading = "log-file-loading";

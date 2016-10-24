@@ -36,7 +36,6 @@ import elemental.html.SpanElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandler;
-import org.jboss.hal.ballroom.typeahead.Typeahead;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
@@ -53,7 +52,6 @@ import static org.jboss.hal.resources.UIConstants.HIDDEN;
 import static org.jboss.hal.resources.UIConstants.TABINDEX;
 
 /**
- * TODO Implement org.jboss.hal.ballroom.form.Form.State#READONLY
  * TODO Show resolved expressions using a dismissable inline notification
  * https://www.patternfly.org/patterns/inline-notifications/
  *
@@ -73,6 +71,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     private final List<FormItemValidation<T>> validationHandlers;
     private final String label;
     private final String hint;
+    private Form.State state;
     private boolean required;
     private boolean modified;
     private boolean undefined;
@@ -324,14 +323,14 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         if (suggestHandler instanceof Attachable) {
             ((Attachable) suggestHandler).attach();
         }
-        if (suggestHandler instanceof Typeahead) {
-            Typeahead.Bridge.select("#" + getId(EDITING)).onChange(event -> {
-                String value = ((elemental.html.InputElement) event.getTarget()).getValue();
-                onSuggest(value);
-            });
-        }
     }
 
+    @Override
+    public void detach() {
+        if (suggestHandler instanceof Attachable) {
+            ((Attachable) suggestHandler).detach();
+        }
+    }
 
     // ------------------------------------------------------ state, name & text
 
@@ -431,6 +430,16 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
 
         asElement(EDITING).getDataset().setAt(FORM_ITEM_GROUP, editId); //NON-NLS
         asElement(READONLY).getDataset().setAt(FORM_ITEM_GROUP, readonlyId); //NON-NLS
+    }
+
+    @Override
+    public void setState(Form.State state) {
+        this.state = state;
+    }
+
+    @Override
+    public Form.State getState() {
+        return state;
     }
 
     @Override
@@ -591,7 +600,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         toggleShowAll(true);
     }
 
-    void onSuggest(final String suggestion) {
+    public void onSuggest(final String suggestion) {
         // nop
     }
 

@@ -29,7 +29,7 @@ import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Constants;
@@ -52,7 +52,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * @author Harald Pehl
  */
 @SuppressWarnings("ResultOfMethodCallIgnored")
-public class DataSourceView extends PatternFlyViewImpl implements DataSourcePresenter.MyView {
+public class DataSourceView extends HalViewImpl implements DataSourcePresenter.MyView {
 
     private static final String HEADER_ELEMENT = "headerElement";
     private static final Constants CONSTANTS = GWT.create(Constants.class);

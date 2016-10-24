@@ -31,7 +31,7 @@ import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
-import org.jboss.hal.core.mvp.PatternFlyViewImpl;
+import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.model.NamedNode;
@@ -55,7 +55,7 @@ import static org.jboss.hal.resources.Ids.*;
 /**
  * @author Claudio Miranda
  */
-public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
+public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
     // local names
     private static final String DEFAULT_BINDINGS_NAME = "Default Bindings";
@@ -81,9 +81,10 @@ public class EEView extends PatternFlyViewImpl implements EEPresenter.MyView {
         this.metadataRegistry = metadataRegistry;
         this.tableButtonFactory = tableButtonFactory;
 
-        this.navigation = new VerticalNavigation();
         this.forms = new HashMap<>();
         this.tables = new HashMap<>(4);
+        this.navigation = new VerticalNavigation();
+        registerAttachable(navigation);
 
         // ============================================
         // attributes - deployments
