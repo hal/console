@@ -28,6 +28,7 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
+import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
@@ -46,7 +47,9 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 /**
  * @author Harald Pehl
  */
-public class ServerPresenter extends MbuiPresenter<ServerPresenter.MyView, ServerPresenter.MyProxy> {
+public class ServerPresenter
+        extends MbuiPresenter<ServerPresenter.MyView, ServerPresenter.MyProxy>
+        implements SupportsExpertMode {
 
     static final String SERVER_CONFIG_ADDRESS = "/{selected.host}/{selected.server-config}";
     static final String INTERFACE_ADDRESS = SERVER_CONFIG_ADDRESS + "/interface=*";
@@ -94,6 +97,11 @@ public class ServerPresenter extends MbuiPresenter<ServerPresenter.MyView, Serve
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
+    }
+
+    @Override
+    public ResourceAddress resourceAddress() {
+        return AddressTemplate.of(SERVER_CONFIG_ADDRESS).resolve(statementContext);
     }
 
     @Override

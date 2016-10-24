@@ -33,6 +33,7 @@ import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.HalView;
+import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -54,12 +55,14 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.EE_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
  * @author Claudio Miranda
  */
-public class EEPresenter extends ApplicationFinderPresenter<EEPresenter.MyView, EEPresenter.MyProxy> {
+public class EEPresenter extends ApplicationFinderPresenter<EEPresenter.MyView, EEPresenter.MyProxy> implements
+        SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -74,7 +77,7 @@ public class EEPresenter extends ApplicationFinderPresenter<EEPresenter.MyView, 
 
 
     static Metadata globalModulesMetadata(MetadataRegistry metadataRegistry) {
-        Metadata metadata = metadataRegistry.lookup(AddressTemplates.EE_SUBSYSTEM_TEMPLATE);
+        Metadata metadata = metadataRegistry.lookup(EE_SUBSYSTEM_TEMPLATE);
 
         ResourceDescription globalModulesDescription;
         Property globalModules = metadata.getDescription().findAttribute(ATTRIBUTES, GLOBAL_MODULES);
@@ -126,6 +129,11 @@ public class EEPresenter extends ApplicationFinderPresenter<EEPresenter.MyView, 
     }
 
     @Override
+    public ResourceAddress resourceAddress() {
+        return EE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
+    }
+
+    @Override
     protected void onReset() {
         super.onReset();
         loadEESubsystem();
@@ -133,12 +141,12 @@ public class EEPresenter extends ApplicationFinderPresenter<EEPresenter.MyView, 
 
     @Override
     public FinderPath finderPath() {
-        return finderPathFactory.subsystemPath(AddressTemplates.EE_SUBSYSTEM_TEMPLATE.lastValue());
+        return finderPathFactory.subsystemPath(EE_SUBSYSTEM_TEMPLATE.lastValue());
     }
 
     void loadEESubsystem() {
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
-                AddressTemplates.EE_SUBSYSTEM_TEMPLATE.resolve(statementContext))
+                EE_SUBSYSTEM_TEMPLATE.resolve(statementContext))
                 .param(RECURSIVE, true)
                 .build();
         dispatcher.execute(operation, result -> getView().update(result));
@@ -164,7 +172,7 @@ public class EEPresenter extends ApplicationFinderPresenter<EEPresenter.MyView, 
 
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.GLOBAL_MODULES),
                 form, (name, globalModule) -> {
-            ResourceAddress address = AddressTemplates.EE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
+            ResourceAddress address = EE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
             Operation operation = new Operation.Builder(LIST_ADD, address)
                     .param(NAME, GLOBAL_MODULES)
                     .param(VALUE, globalModule)
@@ -185,7 +193,7 @@ public class EEPresenter extends ApplicationFinderPresenter<EEPresenter.MyView, 
                 resources.messages().removeResourceConfirmationTitle(Names.GLOBAL_MODULES),
                 resources.messages().removeResourceConfirmationQuestion(name),
                 () -> {
-                    ResourceAddress address = AddressTemplates.EE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
+                    ResourceAddress address = EE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
                     Operation operation = new Operation.Builder(LIST_REMOVE, address)
                             .param(NAME, GLOBAL_MODULES)
                             .param(VALUE, globalModule)

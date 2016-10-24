@@ -28,6 +28,7 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
+import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
@@ -52,7 +53,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
  * @author Harald Pehl
  */
 @SuppressWarnings("SpellCheckingInspection")
-public class InterfacePresenter extends MbuiPresenter<InterfacePresenter.MyView, InterfacePresenter.MyProxy> {
+public class InterfacePresenter
+        extends MbuiPresenter<InterfacePresenter.MyView, InterfacePresenter.MyProxy>
+        implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -101,6 +104,11 @@ public class InterfacePresenter extends MbuiPresenter<InterfacePresenter.MyView,
     public void prepareFromRequest(final PlaceRequest request) {
         super.prepareFromRequest(request);
         interfce = request.getParameter(NAME, null);
+    }
+
+    @Override
+    public ResourceAddress resourceAddress() {
+        return ROOT_TEMPLATE.resolve(statementContext, interfce);
     }
 
     @Override

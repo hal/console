@@ -17,11 +17,11 @@ package org.jboss.hal.client.skeleton;
 
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.config.Endpoints;
@@ -41,15 +41,14 @@ import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.token.NameTokens;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.MessageEvent.MessageHandler;
 
-import static org.jboss.hal.resources.Names.NYI;
-
 /**
  * Presenter which controls the header. The header is a central UI element in HAL showing global state such as messages
- * or the current user. Additionally it contains the navigation which is either the top level tabs (tlc) or the
+ * or the current user. Additionally it contains the navigation which is either the top level categories (tlc) or the
  * breadcrumb.
  * <p>
  * The breadcrumb shows path like information such as the selected finder path or the selected address in the model
@@ -65,10 +64,9 @@ import static org.jboss.hal.resources.Names.NYI;
  * </ul>
  * <li>A collection of tools / icons. Currently the following tools are available:
  * <ul>
- * <li>Switch between normal and expert presenterType. If supported by the current presenter, the user can switch between the
- * normal and an expert presenterType which uses the model browser to show a generic view of the current resource.</li>
- * <li>Open in external tab / window. Opens the current presenter in an external tab / window w/o the header and
- * footer.</li>
+ * <li>Switch between normal and expert mode. If supported by the current presenter, the user can switch between the
+ * normal and an expert mode which uses the model browser to show a generic view of the current resource.</li>
+ * <li>Open the current presenter in external tab / window w/o the header and footer.</li>
  * </ul></li>
  * </li>
  * </ol>
@@ -81,26 +79,25 @@ import static org.jboss.hal.resources.Names.NYI;
 public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         implements MessageHandler, HeaderModeHandler, FinderContextHandler, ModelBrowserPathHandler, IsElement {
 
-
     // @formatter:off
     public interface MyView extends HalView, HasPresenter<HeaderPresenter> {
         void init(Environment environment, Endpoints endpoints, User user);
+
         void topLevelCategoryMode();
         void applicationMode();
 
-        void selectTopLevelCategory(String nameToken);
-
         void showMessage(Message message);
 
+        void selectTopLevelCategory(String nameToken);
         void updateLinks(FinderContext finderContext);
 
         void updateBreadcrumb(String title);
         void updateBreadcrumb(FinderContext finderContext);
         void updateBreadcrumb(ModelBrowserPath modelBrowserPath);
 
+        void showBackToNormalMode();
         void showExpertMode(ResourceAddress address);
-        void showNormalMode();
-        void hideExpertNormalMode();
+        void hideSwitchMode();
 
         void showExternal(PlaceRequest placeRequest);
         void hideExternal();
@@ -157,16 +154,16 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         getView().showMessage(event.getMessage());
     }
 
-    public void toggleMessages() {
-        Window.alert(NYI);
+    void toggleMessages() {
+        Browser.getWindow().alert(Names.NYI);
     }
 
-    public void reconnect() {
-        Window.alert(NYI);
+    void reconnect() {
+        Browser.getWindow().alert(Names.NYI);
     }
 
-    public void logout() {
-        Window.alert(NYI);
+    void logout() {
+        Browser.getWindow().alert(Names.NYI);
     }
 
 
@@ -186,7 +183,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
             if (event.getTitle() != null) {
                 getView().updateBreadcrumb(event.getTitle());
             }
-            if (event.isExternal()) {
+            if (event.isSupportsExternal()) {
                 PlaceRequest placeRequest = new PlaceRequest.Builder(placeManager.getCurrentPlaceRequest())
                         .with(Places.EXTERNAL_PARAM, "true") //NON-NLS
                         .build();
@@ -194,12 +191,12 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
             } else {
                 getView().hideExternal();
             }
-            if (event.getExpertMode() != null) {
-                getView().showExpertMode(event.getExpertMode());
-            } else if (event.isNormalMode()) {
-                getView().showNormalMode();
+            if (event.getExpertModeAddress() != null) {
+                getView().showExpertMode(event.getExpertModeAddress());
+            } else if (event.isBackToNormalMode()) {
+                getView().showBackToNormalMode();
             } else {
-                getView().hideExpertNormalMode();
+                getView().hideSwitchMode();
             }
         }
     }
@@ -222,7 +219,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
 
     // ------------------------------------------------------ place management
 
-    void expertMode(ResourceAddress address) {
+    void switchToExpertMode(ResourceAddress address) {
         normalMode = placeManager.getCurrentPlaceRequest();
         PlaceRequest placeRequest = new PlaceRequest.Builder()
                 .nameToken(NameTokens.EXPERT_MODE)
@@ -231,7 +228,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView>
         placeManager.revealPlace(placeRequest);
     }
 
-    void normalMode() {
+    void backToNormalMode() {
         if (normalMode != null) {
             placeManager.revealPlace(normalMode);
         }

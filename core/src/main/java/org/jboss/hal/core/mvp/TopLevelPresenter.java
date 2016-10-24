@@ -21,7 +21,7 @@ import org.jboss.hal.core.header.HeaderModeEvent;
 import org.jboss.hal.core.header.PresenterType;
 
 /**
- * Presenter for a top level category such as 'Homepage', 'Configuration' or 'Runtime'. This presenter fires a {@link
+ * Presenter for a top level category such as 'Homepage', 'Configuration' or 'Runtime'. The presenter fires a {@link
  * HeaderModeEvent} with its token in the {@link #onReveal()} method.
  *
  * @author Harald Pehl
@@ -35,11 +35,9 @@ public abstract class TopLevelPresenter<V extends HalView, Proxy_ extends ProxyP
     }
 
     @Override
-    protected void onReveal() {
-        super.onReveal();
-        HeaderModeEvent event = new HeaderModeEvent.Builder(PresenterType.TOP_LEVEL_CATEGORY)
+    protected HeaderModeEvent headerMode() {
+        return new HeaderModeEvent.Builder(PresenterType.TOP_LEVEL_CATEGORY)
                 .token(getProxy().getNameToken())
                 .build();
-        getEventBus().fireEvent(event);
     }
 }

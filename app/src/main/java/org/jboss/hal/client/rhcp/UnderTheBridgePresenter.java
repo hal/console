@@ -72,8 +72,7 @@ public class UnderTheBridgePresenter
                 .append("rhcp-spice", "peppers", "Spice", "Peppers")
                 .append("rhcp-decade", "1990-1999", "Decade", "1990 - 1999")
                 .append("rhcp-album", "blood-sugar-sex-magik", "Album", "Blood Sugar Sex Magik")
-                .append("rhcp-track", "under-the-bridge", "Track", "Under the Bridge")
-                ;
+                .append("rhcp-track", "under-the-bridge", "Track", "Under the Bridge");
     }
 
     void saveModel(final ModelNode model) {

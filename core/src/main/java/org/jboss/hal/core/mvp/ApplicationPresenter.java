@@ -25,12 +25,11 @@ import org.jboss.hal.core.header.PresenterType;
 import org.jboss.hal.core.ui.Skeleton;
 
 /**
- * Base presenter for all application presenters. The presenter fires a {@link HeaderModeEvent} in the {@link
- * #onReveal()} method. Depending on what additional interfaces this presenter implements, various information will be
- * part of the event's payload:
+ * Base presenter for all kind of application presenters. The presenter fires a {@link HeaderModeEvent} with various
+ * information depending on the implemented interfaces:
  * <ul>
  * <li>{@link HasTitle}: the title as returned by {@link HasTitle#getTitle()}</li>
- * <li>{@link SupportsExternalMode}: a flag indicating support for external mode</li>
+ * <li>{@link SupportsExternalMode}: a flag indicating support to open the presenter in an external tab / window</li>
  * <li>{@link SupportsExpertMode}: the resource address as returned by {@link SupportsExpertMode#resourceAddress()}</li>
  * </ul>
  * <p>
@@ -58,7 +57,6 @@ public abstract class ApplicationPresenter<V extends HalView, Proxy_ extends Pro
     @Override
     protected void onReveal() {
         super.onReveal();
-        headerMode();
 
         // show vertical navigation?
         if (getView() instanceof HasVerticalNavigation) {
@@ -75,18 +73,28 @@ public abstract class ApplicationPresenter<V extends HalView, Proxy_ extends Pro
         }
     }
 
-    protected void headerMode() {
+    /**
+     * Returns a {@link HeaderModeEvent}. The payload of the event depends on the implemented interfaces:
+     * <ul>
+     * <li>{@link HasTitle}: the title as returned by {@link HasTitle#getTitle()}</li>
+     * <li>{@link SupportsExternalMode}: a flag indicating support to open the presenter in an external tab /
+     * window</li>
+     * <li>{@link SupportsExpertMode}: the resource address as returned by {@link SupportsExpertMode#resourceAddress()}</li>
+     * </ul>
+     * <p>
+     */
+    protected HeaderModeEvent headerMode() {
         HeaderModeEvent.Builder builder = new HeaderModeEvent.Builder(PresenterType.APPLICATION);
         if (this instanceof HasTitle) {
             builder.title(((HasTitle) this).getTitle());
         }
         if (this instanceof SupportsExternalMode) {
-            builder.external(true);
+            builder.supportsExternal(true);
         }
         if (this instanceof SupportsExpertMode) {
-            builder.expertMode(((SupportsExpertMode) this).resourceAddress());
+            builder.expertModeAddress(((SupportsExpertMode) this).resourceAddress());
         }
-        getEventBus().fireEvent(builder.build());
+        return builder.build();
     }
 
     @Override

@@ -33,8 +33,6 @@ import org.jboss.hal.client.configuration.Mbui_InterfaceView_Provider;
 import org.jboss.hal.client.configuration.Mbui_PathsView_Provider;
 import org.jboss.hal.client.configuration.PathsPresenter;
 import org.jboss.hal.client.configuration.UpdatePathAutoComplete;
-import org.jboss.hal.client.configuration.subsystem.GenericSubsystemPresenter;
-import org.jboss.hal.client.configuration.subsystem.GenericSubsystemView;
 import org.jboss.hal.client.configuration.subsystem.batch.BatchPresenter;
 import org.jboss.hal.client.configuration.subsystem.batch.Mbui_BatchView_Provider;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;

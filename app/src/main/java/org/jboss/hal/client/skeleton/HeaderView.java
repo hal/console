@@ -58,8 +58,7 @@ import static org.jboss.hal.client.skeleton.HeaderPresenter.MAX_BREADCRUMB_VALUE
 import static org.jboss.hal.core.Strings.abbreviateMiddle;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.CSS.fontAwesome;
-import static org.jboss.hal.resources.Names.NYI;
+import static org.jboss.hal.resources.FontAwesomeSize.large;
 
 /**
  * @author Harald Pehl
@@ -101,8 +100,8 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     @DataElement Element backItem;
     @DataElement Element backLink;
     @DataElement Element breadcrumbToolsItem;
-    @DataElement Element expertNormalLink;
-    @DataElement Element expertNormalIcon;
+    @DataElement Element switchModeLink;
+    @DataElement Element switchModeIcon;
     @DataElement Element externalLink;
 
 
@@ -186,6 +185,7 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
 
     @EventHandler(element = "messages", on = click)
     void onMessages() {
+        presenter.toggleMessages();
     }
 
     @Override
@@ -206,13 +206,16 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
 
     @EventHandler(element = "logout", on = click)
     void onLogout() {
-        Browser.getWindow().alert(NYI);
+        presenter.logout();
     }
 
     @EventHandler(element = "reconnect", on = click)
     void onReconnect() {
-        Browser.getWindow().alert(NYI);
+        presenter.reconnect();
     }
+
+
+    // ------------------------------------------------------ modes
 
     @Override
     public void topLevelCategoryMode() {
@@ -361,45 +364,40 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
     @Override
     public void updateBreadcrumb(final ModelBrowserPath path) {
         clearBreadcrumb();
-        if (path == null) {
+        if (path == null || path.isEmpty()) {
             // deselection
             breadcrumb.insertBefore(
                     new Elements.Builder().li().textContent(resources().constants().nothingSelected()).build(),
                     breadcrumbToolsItem);
 
         } else {
-            if (path.isEmpty()) {
-                // breadcrumb.insertBefore(new Elements.Builder().li().textContent("").build(), externalItem);
+            ModelBrowser modelBrowser = path.getModelBrowser();
+            for (Iterator<Segment[]> iterator = path.iterator(); iterator.hasNext(); ) {
+                Segment[] segments = iterator.next();
+                Segment key = segments[0];
+                Segment value = segments[1];
+                boolean link = value != ModelBrowserPath.WILDCARD && iterator.hasNext();
 
-            } else {
-                ModelBrowser modelBrowser = path.getModelBrowser();
-                for (Iterator<Segment[]> iterator = path.iterator(); iterator.hasNext(); ) {
-                    Segment[] segments = iterator.next();
-                    Segment key = segments[0];
-                    Segment value = segments[1];
-                    boolean link = value != ModelBrowserPath.WILDCARD && iterator.hasNext();
-
-                    // @formatter:off
-                    Elements.Builder builder = new Elements.Builder()
-                        .li()
-                            .span().css(CSS.key)
-                                .a().css(clickable).on(click, event -> modelBrowser.select(key.id, true))
-                                    .textContent(key.text)
-                                .end()
+                // @formatter:off
+                Elements.Builder builder = new Elements.Builder()
+                    .li()
+                        .span().css(CSS.key)
+                            .a().css(clickable).on(click, event -> modelBrowser.select(key.id, true))
+                                .textContent(key.text)
                             .end()
-                            .span().css(arrow).innerHtml(SafeHtmlUtils.fromSafeConstant("&#8658;")).end()
-                            .span().css(CSS.value);
-                    // @formatter:on
-                    if (link) {
-                        builder.a().css(clickable).on(click, event -> modelBrowser.select(value.id, true));
-                    }
-                    builder.textContent(value.text);
-                    if (link) {
-                        builder.end(); // </a>
-                    }
-                    builder.end().end(); // </span> </li>
-                    breadcrumb.insertBefore(builder.build(), breadcrumbToolsItem);
+                        .end()
+                        .span().css(arrow).innerHtml(SafeHtmlUtils.fromSafeConstant("&#8658;")).end()
+                        .span().css(CSS.value);
+                // @formatter:on
+                if (link) {
+                    builder.a().css(clickable).on(click, event -> modelBrowser.select(value.id, true));
                 }
+                builder.textContent(value.text);
+                if (link) {
+                    builder.end(); // </a>
+                }
+                builder.end().end(); // </span> </li>
+                breadcrumb.insertBefore(builder.build(), breadcrumbToolsItem);
             }
         }
     }
@@ -419,21 +417,23 @@ public abstract class HeaderView extends HalViewImpl implements HeaderPresenter.
 
     @Override
     public void showExpertMode(final ResourceAddress address) {
-        expertNormalLink.setOnclick(event -> presenter.expertMode(address));
-        expertNormalIcon.setClassName(fontAwesome("sitemap"));
-        Elements.setVisible(expertNormalLink, true);
+        switchModeLink.setOnclick(event -> presenter.switchToExpertMode(address));
+        switchModeLink.setTitle(resources().constants().expertMode());
+        switchModeIcon.setClassName(fontAwesome("sitemap", large));
+        Elements.setVisible(switchModeLink, true);
     }
 
     @Override
-    public void showNormalMode() {
-        expertNormalLink.setOnclick(event -> presenter.normalMode());
-        expertNormalIcon.setClassName(fontAwesome("th-list"));
-        Elements.setVisible(expertNormalLink, true);
+    public void showBackToNormalMode() {
+        switchModeLink.setOnclick(event -> presenter.backToNormalMode());
+        switchModeLink.setTitle(resources().constants().backToNormalMode());
+        switchModeIcon.setClassName(fontAwesome("th-list", large));
+        Elements.setVisible(switchModeLink, true);
     }
 
     @Override
-    public void hideExpertNormalMode() {
-        Elements.setVisible(expertNormalLink, false);
+    public void hideSwitchMode() {
+        Elements.setVisible(switchModeLink, false);
     }
 
     @Override

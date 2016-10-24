@@ -78,12 +78,11 @@ public class ExpertModePresenter
     }
 
     @Override
-    protected void headerMode() {
-        HeaderModeEvent event = new HeaderModeEvent.Builder(PresenterType.APPLICATION)
-                .external(true)
-                .normalMode(true)
+    protected HeaderModeEvent headerMode() {
+        return new HeaderModeEvent.Builder(PresenterType.APPLICATION)
+                .supportsExternal(true)
+                .backToNormalMode(true)
                 .build();
-        getEventBus().fireEvent(event);
     }
 
     @Override

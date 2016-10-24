@@ -44,8 +44,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
 /**
  * @author Harald Pehl
  */
-public class IiopPresenter extends MbuiPresenter<IiopPresenter.MyView, IiopPresenter.MyProxy> implements
-        SupportsExpertMode {
+public class IiopPresenter
+        extends MbuiPresenter<IiopPresenter.MyView, IiopPresenter.MyProxy>
+        implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyStandard

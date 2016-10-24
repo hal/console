@@ -21,6 +21,8 @@ import com.gwtplatform.dispatch.annotation.Order;
 import org.jboss.hal.dmr.model.ResourceAddress;
 
 /**
+ * Payload for the {@link HeaderModeEvent}. The event is fired by presenters to change the state of the header.
+ *
  * @author Harald Pehl
  */
 @GenEvent
@@ -29,7 +31,7 @@ public class HeaderMode {
     @Order(1) PresenterType presenterType;
     @Order(2) @Optional String token;
     @Order(3) @Optional String title;
-    @Order(4) @Optional boolean external;
-    @Order(5) @Optional ResourceAddress expertMode;
-    @Order(6) @Optional boolean normalMode;
+    @Order(4) @Optional ResourceAddress expertModeAddress;
+    @Order(5) @Optional boolean backToNormalMode;
+    @Order(6) @Optional boolean supportsExternal;
 }

@@ -64,7 +64,7 @@ class ServerStatusPreview extends PreviewContent<StaticItem> {
         this.resources = resources;
 
         this.usedHeap = new Utilization(resources.constants().used(), Names.MB, environment.isStandalone(), true);
-        this.committedHeap = new Utilization(resources.constants().commited(), Names.MB, environment.isStandalone(),
+        this.committedHeap = new Utilization(resources.constants().committed(), Names.MB, environment.isStandalone(),
                 true);
         this.threads = new Utilization("Daemon", Names.THREADS, environment.isStandalone(), false); //NON-NLS
 

@@ -63,8 +63,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 /**
  * @author Harald Pehl
  */
-public class ServerGroupDeploymentPresenter
-        extends
+public class ServerGroupDeploymentPresenter extends
         ApplicationFinderPresenter<ServerGroupDeploymentPresenter.MyView, ServerGroupDeploymentPresenter.MyProxy> {
 
     // @formatter:off
@@ -77,6 +76,7 @@ public class ServerGroupDeploymentPresenter
         void update(String serverGroup, ServerGroupDeployment serverGroupDeployment);
     }
     // @formatter:on
+
 
     private final Environment environment;
     private final FinderPathFactory finderPathFactory;

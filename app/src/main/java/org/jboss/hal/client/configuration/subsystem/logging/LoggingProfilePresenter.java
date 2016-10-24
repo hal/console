@@ -29,6 +29,7 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
+import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
@@ -52,7 +53,8 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
  * @author Harald Pehl
  */
 public class LoggingProfilePresenter
-        extends MbuiPresenter<LoggingProfilePresenter.MyView, LoggingProfilePresenter.MyProxy> {
+        extends MbuiPresenter<LoggingProfilePresenter.MyView, LoggingProfilePresenter.MyProxy>
+        implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -109,6 +111,11 @@ public class LoggingProfilePresenter
     public void prepareFromRequest(final PlaceRequest request) {
         super.prepareFromRequest(request);
         loggingProfile = request.getParameter(NAME, null);
+    }
+
+    @Override
+    public ResourceAddress resourceAddress() {
+        return SELECTED_LOGGING_PROFILE_TEMPLATE.resolve(statementContext);
     }
 
     String getLoggingProfile() {

@@ -118,6 +118,13 @@ public class DataSourcePresenter
     }
 
     @Override
+    public ResourceAddress resourceAddress() {
+        return xa
+                ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, name)
+                : DATA_SOURCE_TEMPLATE.resolve(statementContext, name);
+    }
+
+    @Override
     protected void onReset() {
         super.onReset();
         loadDataSource();
@@ -128,13 +135,6 @@ public class DataSourcePresenter
         return finderPathFactory.subsystemPath(DATASOURCES)
                 .append(Ids.DATA_SOURCE_DRIVER, DATASOURCES, Names.DATASOURCES_DRIVERS, Names.DATASOURCES)
                 .append(Ids.DATA_SOURCE_CONFIGURATION, Ids.dataSourceConfiguration(name, xa), Names.DATASOURCE, name);
-    }
-
-    @Override
-    public ResourceAddress resourceAddress() {
-        return xa
-                ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, name)
-                : DATA_SOURCE_TEMPLATE.resolve(statementContext, name);
     }
 
     private void loadDataSource() {

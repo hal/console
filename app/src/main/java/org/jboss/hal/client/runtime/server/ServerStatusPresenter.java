@@ -25,8 +25,8 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
-import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.HalView;
+import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
@@ -44,8 +44,8 @@ import static org.jboss.hal.meta.token.NameTokens.SERVER_STATUS;
 /**
  * @author Harald Pehl
  */
-public class ServerStatusPresenter extends
-        ApplicationFinderPresenter<ServerStatusPresenter.MyView, ServerStatusPresenter.MyProxy> {
+public class ServerStatusPresenter
+        extends ApplicationFinderPresenter<ServerStatusPresenter.MyView, ServerStatusPresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -108,7 +108,7 @@ public class ServerStatusPresenter extends
         load();
     }
 
-    void load() {
+    private void load() {
         ResourceAddress address = SERVER_STATUS_TEMPLATE.resolve(statementContext);
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
                 .param(INCLUDE_RUNTIME, true)

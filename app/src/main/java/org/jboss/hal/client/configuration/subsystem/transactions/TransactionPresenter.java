@@ -33,6 +33,7 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
+import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -57,7 +58,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
  * TODO I18n for error / validation messages
  * @author Claudio Miranda
  */
-public class TransactionPresenter extends MbuiPresenter<TransactionPresenter.MyView, TransactionPresenter.MyProxy> {
+public class TransactionPresenter
+        extends MbuiPresenter<TransactionPresenter.MyView, TransactionPresenter.MyProxy>
+        implements SupportsExpertMode {
 
     // datasource address is required as there is a typeahead declared in TransactionView.mbui.xml
     // to lookup datasource subsystem
@@ -102,6 +105,11 @@ public class TransactionPresenter extends MbuiPresenter<TransactionPresenter.MyV
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
+    }
+
+    @Override
+    public ResourceAddress resourceAddress() {
+        return TRANSACTIONS_SUBSYSTEM_TEMPLATE.resolve(statementContext);
     }
 
     @Override

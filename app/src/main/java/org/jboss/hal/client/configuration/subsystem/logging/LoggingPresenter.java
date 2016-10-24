@@ -28,11 +28,13 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
+import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -48,7 +50,9 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 /**
  * @author Harald Pehl
  */
-public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, LoggingPresenter.MyProxy> {
+public class LoggingPresenter
+        extends MbuiPresenter<LoggingPresenter.MyView, LoggingPresenter.MyProxy>
+        implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -104,6 +108,11 @@ public class LoggingPresenter extends MbuiPresenter<LoggingPresenter.MyView, Log
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
+    }
+
+    @Override
+    public ResourceAddress resourceAddress() {
+        return LOGGING_SUBSYSTEM_TEMPLATE.resolve(statementContext);
     }
 
     @Override

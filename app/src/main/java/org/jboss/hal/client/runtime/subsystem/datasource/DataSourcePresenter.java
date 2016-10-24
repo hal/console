@@ -27,8 +27,8 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
-import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HalView;
+import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -48,8 +48,8 @@ import static org.jboss.hal.meta.token.NameTokens.DATA_SOURCE_RUNTIME;
 /**
  * @author Harald Pehl
  */
-public class DataSourcePresenter extends
-        ApplicationFinderPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy> {
+public class DataSourcePresenter
+        extends ApplicationFinderPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy> {
 
     // @formatter:off
     @ProxyCodeSplit

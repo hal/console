@@ -28,11 +28,13 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mvp.HasVerticalNavigation;
+import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.dmr.model.Operation;
+import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.Requires;
@@ -46,7 +48,9 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 /**
  * @author Claudio Miranda
  */
-public class BatchPresenter extends MbuiPresenter<BatchPresenter.MyView, BatchPresenter.MyProxy> {
+public class BatchPresenter
+        extends MbuiPresenter<BatchPresenter.MyView, BatchPresenter.MyProxy>
+        implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -85,6 +89,11 @@ public class BatchPresenter extends MbuiPresenter<BatchPresenter.MyView, BatchPr
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
+    }
+
+    @Override
+    public ResourceAddress resourceAddress() {
+        return BATCH_SUBSYSTEM_TEMPLATE.resolve(statementContext);
     }
 
     @Override
