@@ -186,11 +186,6 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
     }
 
     @Override
-    public VerticalNavigation getVerticalNavigation() {
-        return navigation;
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public void update(final ModelNode eeData) {
         // update the attributes - deployments tab

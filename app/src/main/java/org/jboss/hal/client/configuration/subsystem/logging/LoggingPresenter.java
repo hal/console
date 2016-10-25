@@ -27,7 +27,6 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
-import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
@@ -64,7 +63,7 @@ public class LoggingPresenter
             CUSTOM_FORMATTER_ADDRESS, PATTERN_FORMATTER_ADDRESS})
     public interface MyProxy extends ProxyPlace<LoggingPresenter> {}
 
-    public interface MyView extends MbuiView<LoggingPresenter>, HasVerticalNavigation {
+    public interface MyView extends MbuiView<LoggingPresenter> {
         void updateLoggingConfig(ModelNode modelNode);
 
         void updateRootLogger(ModelNode modelNode);

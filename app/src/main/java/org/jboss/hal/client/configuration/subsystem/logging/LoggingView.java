@@ -252,12 +252,4 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
         patternFormatterTable.api().clear().add(items).refresh(RefreshMode.RESET);
         patternFormatterForm.clear();
     }
-
-
-    // ------------------------------------------------------ view / mbui contract
-
-    @Override
-    public VerticalNavigation getVerticalNavigation() {
-        return navigation;
-    }
 }

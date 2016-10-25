@@ -49,7 +49,7 @@ public class Subsystems {
         add(new SubsystemMetadata(IIOP_OPENJDK, "IIOP", "OpenJDK", NameTokens.IIOP, null, true));
         add(new SubsystemMetadata(INFINISPAN, "Infinispan", null, null, null, false));
         add(new SubsystemMetadata(IO, "IO", null, NameTokens.IO, null, true, resources.previews().configurationIo()));
-        add(new SubsystemMetadata(JCA, "JCA", null, NameTokens.JCA, null, false));
+        add(new SubsystemMetadata(JCA, "JCA", null, NameTokens.JCA, null, true));
         add(new SubsystemMetadata(JMX, "JMX", null, NameTokens.JMX, null, false));
         add(new SubsystemMetadata(JPA, "JPA", null, NameTokens.JPA_CONFIGURATION, null, false));
         add(new SubsystemMetadata(LOGGING, Names.LOGGING, null, null, Ids.LOGGING, true, resources.previews().configurationLogging()));

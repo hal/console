@@ -32,7 +32,6 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
-import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
@@ -70,7 +69,7 @@ public class TransactionPresenter
     @Requires({TRANSACTIONS_SUBSYSTEM_ADDRESS, DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS})
     public interface MyProxy extends ProxyPlace<TransactionPresenter> {}
 
-    public interface MyView extends MbuiView<TransactionPresenter>, HasVerticalNavigation {
+    public interface MyView extends MbuiView<TransactionPresenter> {
         void updateConfiguration(ModelNode conf);
     }
     // @formatter:on

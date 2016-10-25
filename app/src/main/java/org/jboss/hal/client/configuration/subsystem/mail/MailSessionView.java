@@ -65,7 +65,6 @@ import static org.jboss.hal.resources.CSS.pfIcon;
  */
 public class MailSessionView extends HalViewImpl implements MailSessionPresenter.MyView {
 
-    private final VerticalNavigation navigation;
     private final Map<String, ModelNodeForm> forms;
     private final DataTable<NamedNode> serversTable;
     private final Dispatcher dispatcher;
@@ -84,7 +83,8 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
         this.forms = new HashMap<>();
-        this.navigation = new VerticalNavigation();
+
+        VerticalNavigation navigation = new VerticalNavigation();
         registerAttachable(navigation);
 
         TableButtonFactory tableButtonFactory = new TableButtonFactory(metadataProcessor, progress, dispatcher,
@@ -182,11 +182,6 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
         ModelNodeForm form = forms.get(Ids.MAIL_SERVER_FORM);
         form.getFormItem(OUTBOUND_SOCKET_BINDING_REF).registerSuggestHandler(
                 new ReadChildrenAutoComplete(dispatcher, statementContext, SOCKET_BINDING_TEMPLATE));
-    }
-
-    @Override
-    public VerticalNavigation getVerticalNavigation() {
-        return navigation;
     }
 
     @Override

@@ -144,12 +144,4 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
         appSecurityDomainTable.api().clear().add(items).refresh(RefreshMode.RESET);
         appSecurityDomainForm.clear();
     }
-
-
-    // ------------------------------------------------------ view / mbui contract
-
-    @Override
-    public VerticalNavigation getVerticalNavigation() {
-        return navigation;
-    }
 }

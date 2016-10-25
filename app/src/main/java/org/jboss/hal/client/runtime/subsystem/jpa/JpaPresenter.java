@@ -28,7 +28,6 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
@@ -54,7 +53,7 @@ public class JpaPresenter extends ApplicationFinderPresenter<JpaPresenter.MyView
     @Requires(JPA_ADDRESS)
     public interface MyProxy extends ProxyPlace<JpaPresenter> {}
 
-    public interface MyView extends HalView, HasPresenter<JpaPresenter>, HasVerticalNavigation {
+    public interface MyView extends HalView, HasPresenter<JpaPresenter> {
         void update(JpaStatistic statistic);
     }
     // @formatter:on

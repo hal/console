@@ -55,11 +55,6 @@ public abstract class ServerView extends MbuiViewImpl<ServerPresenter> implement
     }
 
     @Override
-    public VerticalNavigation getVerticalNavigation() {
-        return navigation;
-    }
-
-    @Override
     public void updateServer(final Server server) {
         serverConfigurationForm.view(server);
     }

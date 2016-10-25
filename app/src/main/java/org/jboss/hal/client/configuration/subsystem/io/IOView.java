@@ -67,12 +67,4 @@ public abstract class IOView extends MbuiViewImpl<IOPresenter> implements IOPres
         workerTable.api().clear().add(items).refresh(RefreshMode.RESET);
         workerForm.clear();
     }
-
-
-    // ------------------------------------------------------ view / mbui contract
-
-    @Override
-    public VerticalNavigation getVerticalNavigation() {
-        return navigation;
-    }
 }

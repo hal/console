@@ -62,7 +62,6 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
     private static LinkedListMultimap<String, String> mainAttributes = LinkedListMultimap.create();
     private final MetadataRegistry metadataRegistry;
     private final Resources resources;
-    private final VerticalNavigation navigation;
     private final List<Form<JpaStatistic>> mainForms;
     private final Map<String, DataTable<NamedNode>> childTables;
     private final Map<String, Form<NamedNode>> childForms;
@@ -117,7 +116,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         headerElement = builder.referenceFor(HEADER_ELEMENT);
         leadElement = builder.referenceFor(LEAD_ELEMENT);
 
-        navigation = new VerticalNavigation();
+        VerticalNavigation navigation = new VerticalNavigation();
         registerAttachable(navigation);
 
         navigation.addPrimary(Ids.JPA_RUNTIME_MAIN_ATTRIBUTES_ENTRY, resources.constants().mainAttributes(),
@@ -199,11 +198,6 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
     @Override
     public void setPresenter(final JpaPresenter presenter) {
         this.presenter = presenter;
-    }
-
-    @Override
-    public VerticalNavigation getVerticalNavigation() {
-        return navigation;
     }
 
     @Override

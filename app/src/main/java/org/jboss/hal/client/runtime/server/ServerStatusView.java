@@ -150,7 +150,6 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
             INPUT_ARGUMENTS,
     };
 
-    private final VerticalNavigation navigation;
     private final Form<ModelNode> mainAttributes;
     private final Form<ModelNode> bootstrapAttributes;
     private final DataTable<Property> systemProperties;
@@ -214,7 +213,7 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
         .build();
         // @formatter:on
 
-        navigation = new VerticalNavigation();
+        VerticalNavigation navigation = new VerticalNavigation();
         registerAttachable(navigation);
 
         navigation.addPrimary(Ids.SERVER_STATUS_MAIN_ATTRIBUTES_ENTRY, resources.constants().mainAttributes(),
@@ -233,11 +232,6 @@ public class ServerStatusView extends HalViewImpl implements ServerStatusPresent
                 .end();
         Element root = layoutBuilder.build();
         initElement(root);
-    }
-
-    @Override
-    public VerticalNavigation getVerticalNavigation() {
-        return navigation;
     }
 
     @Override

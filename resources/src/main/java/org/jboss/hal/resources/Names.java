@@ -16,7 +16,7 @@
 package org.jboss.hal.resources;
 
 /**
- * Common names and terms which are not meant to be translated.
+ * Common names and technical terms which are not meant to be translated.
  *
  * @author Harald Pehl
  */

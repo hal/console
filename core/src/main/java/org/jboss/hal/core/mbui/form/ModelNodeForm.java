@@ -157,7 +157,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
          * Use this flag if you just want to use the form to add model nodes. This will create a form with an
          * {@link AddOnlyStateMachine}.
          * <p>
-         * The attributes will be taken from the {@code ATTRIBUTES} child node.
+         * The attributess will be taken from the {@code ATTRIBUTES} child node.
          */
         public Builder<T> addOnly() {
             this.addOnly = true;
@@ -169,7 +169,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
          * Use this flag if you just want to use the form to add model nodes. This will create a form with an
          * {@link AddOnlyStateMachine}.
          * <p>
-         * The attribute will be taken from the {@code REQUEST_PROPERTIES} of the {@code ADD} operation.
+         * The attributes will be taken from the {@code REQUEST_PROPERTIES} node of the {@code ADD} operation.
          */
         public Builder<T> addFromRequestProperties() {
             this.addOnly = true;

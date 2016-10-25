@@ -173,6 +173,20 @@ public interface Ids {
     String INTERFACE_ADD = build(INTERFACE, ADD_SUFFIX);
     String INTERFACE_REFRESH = build(INTERFACE, REFRESH_SUFFIX);
 
+    String JCA = "jca";
+    String JCA_ARCHIVE_VALIDATION_FORM = build(JCA, "archive-validation", FORM_SUFFIX);
+    String JCA_ARCHIVE_VALIDATION_TAB = build(JCA, "archive-validation", TAB_SUFFIX);
+    String JCA_BEAN_VALIDATION_FORM = build(JCA, "bean-validation", FORM_SUFFIX);
+    String JCA_BEAN_VALIDATION_TAB = build(JCA, "bean-validation", TAB_SUFFIX);
+    String JCA_BOOTSTRAP_CONTEXT_ADD = build(JCA, "bootstrap-context", ADD_SUFFIX);
+    String JCA_BOOTSTRAP_CONTEXT_FORM = build(JCA, "bootstrap-context", FORM_SUFFIX);
+    String JCA_BOOTSTRAP_CONTEXT_ENTRY = build(JCA, "bootstrap-context", ENTRY_SUFFIX);
+    String JCA_BOOTSTRAP_CONTEXT_TABLE = build(JCA, "bootstrap-context", TABLE_SUFFIX);
+    String JCA_CCM_FORM = build(JCA, "ccm", FORM_SUFFIX);
+    String JCA_CCM_TAB = build(JCA, "ccm", TAB_SUFFIX);
+    String JCA_COMMON_CONFIGURATION_ENTRY = build(JCA, "common-configuration", ENTRY_SUFFIX);
+    String JCA_TRACER_ENTRY = build(JCA, "tracer", ENTRY_SUFFIX);
+    String JCA_TRACER_FORM = build(JCA, "tracer", FORM_SUFFIX);
     String JDBC_DRIVER = "jdbc-driver";
     String JDBC_DRIVER_ADD = build(JDBC_DRIVER, ADD_SUFFIX);
     String JDBC_DRIVER_ADD_FORM = build(JDBC_DRIVER, ADD_SUFFIX, FORM_SUFFIX);

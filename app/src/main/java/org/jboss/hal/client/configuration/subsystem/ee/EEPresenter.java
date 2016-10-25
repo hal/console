@@ -31,7 +31,6 @@ import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
@@ -61,8 +60,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 /**
  * @author Claudio Miranda
  */
-public class EEPresenter extends ApplicationFinderPresenter<EEPresenter.MyView, EEPresenter.MyProxy> implements
-        SupportsExpertMode {
+public class EEPresenter
+        extends ApplicationFinderPresenter<EEPresenter.MyView, EEPresenter.MyProxy>
+        implements SupportsExpertMode {
 
     // @formatter:off
     @ProxyCodeSplit
@@ -70,7 +70,7 @@ public class EEPresenter extends ApplicationFinderPresenter<EEPresenter.MyView, 
     @Requires(AddressTemplates.EE_ADDRESS)
     public interface MyProxy extends ProxyPlace<EEPresenter> {}
 
-    public interface MyView extends HalView, HasVerticalNavigation, HasPresenter<EEPresenter> {
+    public interface MyView extends HalView, HasPresenter<EEPresenter> {
         void update(ModelNode eeData);
     }
     // @formatter:on

@@ -27,7 +27,6 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
-import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
@@ -59,7 +58,7 @@ public class EjbPresenter
     @Requires({EJB_SUBSYSTEM_ADDRESS})
     public interface MyProxy extends ProxyPlace<EjbPresenter> {}
 
-    public interface MyView extends MbuiView<EjbPresenter>, HasVerticalNavigation {
+    public interface MyView extends MbuiView<EjbPresenter> {
         void updateConfiguration(ModelNode conf);
         void updateThreadPool(List<NamedNode> items);
         void updateRemotingProfile(List<NamedNode> items);

@@ -32,7 +32,7 @@ public class DmrPayloadProcessor implements PayloadProcessor {
         if (contentType.startsWith(Dispatcher.APPLICATION_DMR_ENCODED)) {
             try {
                 node = ModelNode.fromBase64(payload);
-                if (method == GET) {
+                if (method == GET && !node.isFailure()) {
                     // For GET request the response is purely the model nodes result. The outcome
                     // is not send as part of the response but expressed with the HTTP status code.
                     // In order to not break existing code, we repackage the payload into a

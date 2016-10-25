@@ -51,11 +51,6 @@ public class ServerGroupView extends MbuiViewImpl<ServerGroupPresenter> implemen
     }
 
     @Override
-    public VerticalNavigation getVerticalNavigation() {
-        return navigation;
-    }
-
-    @Override
     public void updateServerGroup(final ServerGroup serverGroup) {
         serverGroupConfigurationForm.view(serverGroup);
     }

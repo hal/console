@@ -39,7 +39,6 @@ import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
@@ -83,7 +82,7 @@ public class MailSessionPresenter
     @Requires({MAIL_ADDRESS, MAIL_SESSION_ADDRESS, SERVER_ADDRESS})
     public interface MyProxy extends ProxyPlace<MailSessionPresenter> {}
 
-    public interface MyView extends HalView, HasVerticalNavigation, HasPresenter<MailSessionPresenter> {
+    public interface MyView extends HalView, HasPresenter<MailSessionPresenter> {
         void update(MailSession mailSession);
     }
     // @formatter:on

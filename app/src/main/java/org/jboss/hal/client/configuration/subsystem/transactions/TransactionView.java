@@ -73,11 +73,4 @@ public abstract class TransactionView extends MbuiViewImpl<TransactionPresenter>
         pathForm.view(configuration);
         jdbcForm.view(configuration);
     }
-
-    // ------------------------------------------------------ view / mbui contract
-
-    @Override
-    public VerticalNavigation getVerticalNavigation() {
-        return navigation;
-    }
 }

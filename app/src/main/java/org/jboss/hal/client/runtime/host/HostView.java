@@ -61,11 +61,6 @@ public abstract class HostView extends MbuiViewImpl<HostPresenter> implements Ho
     }
 
     @Override
-    public VerticalNavigation getVerticalNavigation() {
-        return navigation;
-    }
-
-    @Override
     public void updateHost(final Host host) {
         hostConfigurationForm.view(host);
         Element element = Browser.getDocument().getElementById("host-configuration-title");

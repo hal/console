@@ -132,7 +132,7 @@ public class VerticalNavigation implements Attachable {
     private static final String UL_ELEMENT = "ulElement";
     @NonNls private static final Logger logger = LoggerFactory.getLogger(VerticalNavigation.class);
 
-    private static final Element rootContainer;
+    private static Element rootContainer;
     private static final Element root;
     private static final Element ul;
 
@@ -144,12 +144,14 @@ public class VerticalNavigation implements Attachable {
             .end();
         // @formatter:on
 
-        rootContainer = Browser.getDocument().getElementById(Ids.ROOT_CONTAINER);
         root = builder.build();
         ul = builder.referenceFor(UL_ELEMENT);
-
-        Browser.getDocument().getBody().insertBefore(root, rootContainer);
         Elements.setVisible(root, false);
+    }
+
+    private static void init() {
+        rootContainer = Browser.getDocument().getElementById(Ids.ROOT_CONTAINER);
+        Browser.getDocument().getBody().insertBefore(root, rootContainer);
     }
 
     private final LinkedHashMap<String, Entry> entries;
@@ -162,6 +164,9 @@ public class VerticalNavigation implements Attachable {
 
     @Override
     public void attach() {
+        if (rootContainer == null) {
+            init();
+        }
         rootContainer.getClassList().add(containerPfNavPfVertical);
         if (hasSecondary()) {
             rootContainer.getClassList().add(containerPfNavPfVerticalWithSubMenus);

@@ -27,7 +27,6 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.MbuiPresenter;
 import org.jboss.hal.core.mbui.MbuiView;
-import org.jboss.hal.core.mvp.HasVerticalNavigation;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
@@ -58,7 +57,7 @@ public class BatchPresenter
     @Requires({BATCH_SUBSYSTEM_ADDRESS, IN_MEMORY_JOB_REPO_ADDRESS, JDBC_JOB_REPO_ADDRESS, THREAD_FACTORY_ADDRESS, THREAD_POOL_ADDRESS})
     public interface MyProxy extends ProxyPlace<BatchPresenter> {}
 
-    public interface MyView extends MbuiView<BatchPresenter>, HasVerticalNavigation {
+    public interface MyView extends MbuiView<BatchPresenter> {
         void updateConfiguration(ModelNode conf);
         void updateInMemoryJobRepository(List<NamedNode> items);
         void updateJdbcJobRepository(List<NamedNode> items);

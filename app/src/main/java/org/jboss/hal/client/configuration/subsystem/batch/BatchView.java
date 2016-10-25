@@ -87,11 +87,4 @@ public abstract class BatchView extends MbuiViewImpl<BatchPresenter> implements 
         threadPoolTable.api().clear().add(items).refresh(RefreshMode.RESET);
         threadPoolForm.clear();
     }
-
-    // ------------------------------------------------------ view / mbui contract
-
-    @Override
-    public VerticalNavigation getVerticalNavigation() {
-        return navigation;
-    }
 }

@@ -153,6 +153,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml noMacrosDescription(String startMacro);
     SafeHtml noReferenceServerPreview(String deployment, String attribute1, String attribute2, String serverGroup, String historyToken);
     SafeHtml noReferenceServerEmptyState(String deployment, String serverGroup);
+    SafeHtml noResource();
     SafeHtml noServerGroupSelected();
     SafeHtml normalLogFile(String size);
 

@@ -495,14 +495,6 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
     }
 
 
-    // ------------------------------------------------------ view / mbui contract
-
-    @Override
-    public VerticalNavigation getVerticalNavigation() {
-        return navigation;
-    }
-
-
     // ------------------------------------------------------ helper methods
 
     private void addResource(String templateSuffix, String id, String type, String... attributes) {
