@@ -23,6 +23,7 @@
     "zeroclipboard": "^2.2.0"
   },
   "resolutions": {
-    "jquery": "~2.2.4"
+    "jquery": "~2.2.4",
+    "patternfly-bootstrap-treeview": "~2.1.0"
   }
 }
