@@ -187,6 +187,9 @@ public interface Ids {
     String JCA_COMMON_CONFIGURATION_ENTRY = build(JCA, "common-configuration", ENTRY_SUFFIX);
     String JCA_TRACER_ENTRY = build(JCA, "tracer", ENTRY_SUFFIX);
     String JCA_TRACER_FORM = build(JCA, "tracer", FORM_SUFFIX);
+    String JCA_WORKMANAGER_ADD = build(JCA, "workmanager", ADD_SUFFIX);
+    String JCA_WORKMANAGER_ENTRY = build(JCA, "workmanager", ENTRY_SUFFIX);
+    String JCA_WORKMANAGER_TABLE = build(JCA, "workmanager", TABLE_SUFFIX);
     String JDBC_DRIVER = "jdbc-driver";
     String JDBC_DRIVER_ADD = build(JDBC_DRIVER, ADD_SUFFIX);
     String JDBC_DRIVER_ADD_FORM = build(JDBC_DRIVER, ADD_SUFFIX, FORM_SUFFIX);
@@ -282,9 +285,8 @@ public interface Ids {
     String STANDALONE_HOST = "standalone-host";
     String STANDALONE_SERVER = "standalone-server";
     String SUBSYSTEM = "subsystem";
-    String SUGGEST_HANDLER_ID = "id";
-    String SUGGEST_HANDLER_VALUE = "value";
 
+    String TABLE_CELL_ACTION = "table-cell-action";
     String TLC_ACCESS_CONTROL = "tlc-access-control";
     String TLC_CONFIGURATION = "tlc-configuration";
     String TLC_DEPLOYMENTS = "tlc-deployments";

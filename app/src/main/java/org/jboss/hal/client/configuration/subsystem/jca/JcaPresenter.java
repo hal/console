@@ -46,7 +46,6 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.BOOTSTRAP_CONTEXT_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.JCA_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.JCA_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.TRACER_TEMPLATE;
@@ -120,6 +119,9 @@ public class JcaPresenter
         load();
     }
 
+
+    // ------------------------------------------------------ generic crud methods
+
     void load() {
         Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, JCA_TEMPLATE.resolve(statementContext))
                 .param(RECURSIVE, true)
@@ -127,17 +129,14 @@ public class JcaPresenter
         dispatcher.execute(operation, result -> getView().update(result));
     }
 
-    void addTracer() {
-        String type = new LabelBuilder().label(TRACER_TEMPLATE.lastKey());
-        Operation operation = new Operation.Builder(ADD, TRACER_TEMPLATE.resolve(statementContext)).build();
+    void add(final String type, final String name, final AddressTemplate template, final ModelNode model) {
+        Operation operation = new Operation.Builder(ADD, template.resolve(statementContext, name))
+                .payload(model)
+                .build();
         dispatcher.execute(operation, result -> {
-            MessageEvent.fire(getEventBus(), Message.success(resources.messages().addSingleResourceSuccess(type)));
+            MessageEvent.fire(getEventBus(), Message.success(resources.messages().addResourceSuccess(type, name)));
             load();
         });
-    }
-
-    Operation lookupTracerOp() {
-        return new Operation.Builder(READ_RESOURCE_OPERATION, TRACER_TEMPLATE.resolve(statementContext)).build();
     }
 
     void saveSingleton(final AddressTemplate template, final Map<String, Object> changedValues,
@@ -158,14 +157,19 @@ public class JcaPresenter
         });
     }
 
-    void addBootstrapContext(final String name, final ModelNode model) {
-        String type = new LabelBuilder().label(BOOTSTRAP_CONTEXT_TEMPLATE.lastKey());
-        Operation operation = new Operation.Builder(ADD, BOOTSTRAP_CONTEXT_TEMPLATE.resolve(statementContext, name))
-                .payload(model)
-                .build();
+
+    // ------------------------------------------------------ tracer specific methods
+
+    void addTracer() {
+        String type = new LabelBuilder().label(TRACER_TEMPLATE.lastKey());
+        Operation operation = new Operation.Builder(ADD, TRACER_TEMPLATE.resolve(statementContext)).build();
         dispatcher.execute(operation, result -> {
-            MessageEvent.fire(getEventBus(), Message.success(resources.messages().addResourceSuccess(type, name)));
+            MessageEvent.fire(getEventBus(), Message.success(resources.messages().addSingleResourceSuccess(type)));
             load();
         });
+    }
+
+    Operation lookupTracerOp() {
+        return new Operation.Builder(READ_RESOURCE_OPERATION, TRACER_TEMPLATE.resolve(statementContext)).build();
     }
 }

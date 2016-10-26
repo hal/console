@@ -107,6 +107,8 @@ public class DataTable<T> implements IsElement, Attachable {
         if (api == null) {
             // TODO check security context and adjust options if necessary
             api = Bridge.<T>select("#" + id).dataTable(options);
+            api.id = id;
+            api.columnActions = options.columnActions;
         }
     }
 

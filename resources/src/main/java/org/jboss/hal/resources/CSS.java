@@ -70,6 +70,7 @@ public interface CSS {
     String clickable = "clickable";
     String close = "close";
     String column = "col";
+    String columnAction = "column-action";
     String columnLg = "lg";
     String columnMd = "md";
     String columnSm = "sm";

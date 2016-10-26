@@ -18,6 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.jca;
 import java.util.Arrays;
 import javax.inject.Inject;
 
+import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.LayoutBuilder;
@@ -64,6 +65,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
     private final FailSafeModelNodeForm<ModelNode> failSafeTracerForm;
     private final DataTable<NamedNode> bcTable;
     private final Form<NamedNode> bcForm;
+    private final ModelNodeTable<NamedNode> wmTable;
     private JcaPresenter presenter;
 
     @Inject
@@ -163,12 +165,10 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 new ReadChildrenAutoComplete(dispatcher, statementContext,
                         Arrays.asList(WORKMANAGER_TEMPLATE, DISTRIBUTED_WORKMANAGER_TEMPLATE)));
         AddResourceDialog bcAddDialog = new AddResourceDialog(resources.messages().addResourceTitle(bcType), bcAddForm,
-                (name, model) -> presenter.addBootstrapContext(name, model));
+                (name, model) -> presenter.add(bcType, name, BOOTSTRAP_CONTEXT_TEMPLATE, model));
 
         Options<NamedNode> bcTableOptions = new ModelNodeTable.Builder<NamedNode>(bcMetadata)
-                .button(resources.constants().add(), (event, api) -> {
-                    bcAddDialog.show();
-                })
+                .button(resources.constants().add(), (event, api) -> bcAddDialog.show())
                 .button(tableButtonFactory.remove(bcType, BOOTSTRAP_CONTEXT_TEMPLATE,
                         api -> api.selectedRow().getName(), () -> presenter.load()))
                 .column(NAME)
@@ -203,9 +203,45 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         navigation.addPrimary(Ids.JCA_BOOTSTRAP_CONTEXT_ENTRY, bcType, fontAwesome("play"), bcLayout);
 
 
+        // ------------------------------------------------------ work manager
+
+        String wmType = labelBuilder.label(WORKMANAGER_TEMPLATE.lastKey());
+        Metadata wmMetadata = metadataRegistry.lookup(WORKMANAGER_TEMPLATE);
+
+        Form<ModelNode> wmAddForm = new ModelNodeForm.Builder<>(Ids.JCA_WORKMANAGER_ADD, wmMetadata)
+                .addFromRequestProperties()
+                .requiredOnly()
+                .build();
+        AddResourceDialog wmAddDialog = new AddResourceDialog(resources.messages().addResourceTitle(wmType), wmAddForm,
+                (name, model) -> presenter.add(wmType, name, WORKMANAGER_TEMPLATE, model));
+
+        Options<NamedNode> wmOptions = new ModelNodeTable.Builder<NamedNode>(wmMetadata)
+                .button(resources.constants().add(), (event, api) -> wmAddDialog.show())
+                .button(tableButtonFactory.remove(wmType, WORKMANAGER_TEMPLATE, api -> api.selectedRow().getName(),
+                        () -> presenter.load()))
+                .column(NAME)
+                .column("Thread Pools", row -> Browser.getWindow().alert("View " + row.getName()))
+                .build();
+        wmTable = new ModelNodeTable<>(Ids.JCA_WORKMANAGER_TABLE, wmOptions);
+
+        // @formatter:off
+        Element wmLayout = new LayoutBuilder()
+            .row()
+                .column()
+                    .h(1).textContent(wmType).end()
+                    .p().textContent(wmMetadata.getDescription().getDescription()).end()
+                    .add(wmTable)
+                .end()
+            .end()
+        .build();
+        // @formatter:on
+
+        navigation.addPrimary(Ids.JCA_WORKMANAGER_ENTRY, wmType, fontAwesome("cogs"), wmLayout);
+
+
         // ------------------------------------------------------ main layout
 
-        registerAttachable(ccmForm, avForm, bvForm, failSafeTracerForm, bcTable, bcForm, navigation);
+        registerAttachable(ccmForm, avForm, bvForm, failSafeTracerForm, bcTable, bcForm, wmTable, navigation);
 
         // @formatter:off
         LayoutBuilder layoutBuilder = new LayoutBuilder()
@@ -242,7 +278,12 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
 
         bcTable.api()
                 .clear()
-                .add(asNamedNodes(failSafePropertyList(payload, "bootstrap-context")))
+                .add(asNamedNodes(failSafePropertyList(payload, BOOTSTRAP_CONTEXT_TEMPLATE.lastKey())))
+                .refresh(RefreshMode.RESET);
+
+        wmTable.api()
+                .clear()
+                .add(asNamedNodes(failSafePropertyList(payload, WORKMANAGER_TEMPLATE.lastKey())))
                 .refresh(RefreshMode.RESET);
     }
 }
