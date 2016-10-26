@@ -41,7 +41,6 @@ import static org.jboss.hal.resources.CSS.*;
 public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T>, T> {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
-    private static final String CELL_ACTION_DATA = "cellaction";
 
     protected List<Button<T>> buttons;
     protected List<Column<T>> columns;
@@ -111,12 +110,19 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         return that();
     }
 
-    public B column(String actionName, ColumnAction<T> columnAction) {
+    /**
+     * Adds an action column named {@link Constants#action()} with the specified link title and action handler.
+     *
+     * @param link         the link title
+     * @param columnAction the action handler which receives the row data as parameter
+     */
+    @SuppressWarnings("HardCodedStringLiteral")
+    public B column(String link, ColumnAction<T> columnAction) {
         Column<T> column = new ColumnBuilder<T>(Ids.build("column-action", Ids.uniqueId()), CONSTANTS.action(),
                 (cell, type, row, meta) -> {
                     String id = Ids.uniqueId();
                     columnActions.put(id, columnAction);
-                    return "<a id=\"" + id + "\" class=\"" + CSS.columnAction + "\">" + actionName + "</a>";
+                    return "<a id=\"" + id + "\" class=\"" + CSS.columnAction + "\">" + link + "</a>";
                 })
                 .orderable(false)
                 .searchable(false)
@@ -142,11 +148,6 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
 
     public B multiselect() {
         this.select = Select.build(true);
-        return that();
-    }
-
-    public B pageLength(int pageLength) {
-        this.pageLength = pageLength;
         return that();
     }
 

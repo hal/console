@@ -105,24 +105,20 @@ public class VerticalNavigation implements Attachable {
 
         private final String id;
         private final Element element;
-        private final IsElement isElement;
 
         private Pane(final String id, final Element element) {
             this.id = id;
             this.element = element;
-            this.isElement = null;
         }
 
-        Pane(final String id, final IsElement isElement) {
+        private Pane(final String id, final IsElement isElement) {
             this.id = id;
-            this.element = null;
-            this.isElement = isElement;
+            this.element = isElement.asElement();
         }
 
         @Override
         public Element asElement() {
-            //noinspection ConstantConditions
-            return element != null ? element : isElement.asElement();
+            return element;
         }
     }
 
@@ -216,24 +212,12 @@ public class VerticalNavigation implements Attachable {
      * <p>
      * Unlike similar UI elements such as {@code Tabs} the element is <strong>not</strong> added as a child of this
      * navigation. The element should be rather a child of the root container.
-     *
-     * @param id      An unique id for the navigation entry
-     * @param text    the text shown in the vertical navigation
-     * @param element the element which visibility is controlled by this vertical navigation.
      */
-    public VerticalNavigation addPrimary(String id, String text, IsElement element) {
-        return addPrimary(id, text, null, new Pane(id, element));
-    }
-
-    public VerticalNavigation addPrimary(String id, String text, Element element) {
-        return addPrimary(id, text, null, new Pane(id, element));
-    }
-
-    public VerticalNavigation addPrimary(String id, String text, String iconClass, IsElement element) {
+    public VerticalNavigation addPrimary(String id, String text, String iconClass, Element element) {
         return addPrimary(id, text, iconClass, new Pane(id, element));
     }
 
-    public VerticalNavigation addPrimary(String id, String text, String iconClass, Element element) {
+    public VerticalNavigation addPrimary(String id, String text, String iconClass, IsElement element) {
         return addPrimary(id, text, iconClass, new Pane(id, element));
     }
 

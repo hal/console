@@ -18,10 +18,11 @@ package org.jboss.hal.client.configuration.subsystem.jca;
 import java.util.Arrays;
 import javax.inject.Inject;
 
-import elemental.client.Browser;
 import elemental.dom.Element;
+import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.LayoutBuilder;
+import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
@@ -58,6 +59,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
 
     private static final String WORKMANAGER = "workmanager";
+    static final String THREAD_POOLS = "Thread Pools";
 
     private final Form<ModelNode> ccmForm;
     private final Form<ModelNode> avForm;
@@ -66,6 +68,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
     private final DataTable<NamedNode> bcTable;
     private final Form<NamedNode> bcForm;
     private final ModelNodeTable<NamedNode> wmTable;
+    private Pages wmPages;
     private JcaPresenter presenter;
 
     @Inject
@@ -111,13 +114,11 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         tabs.add(Ids.JCA_BEAN_VALIDATION_TAB, bvType, bvForm.asElement());
 
         // @formatter:off
-        Element commonConfigLayout = new LayoutBuilder()
-            .row()
-                .column()
-                    .h(1).textContent(resources.constants().commonConfiguration()).end()
-                    .p().textContent(resources.constants().jcaCommonConfiguration()).end()
-                    .add(tabs)
-                .end()
+        Element commonConfigLayout = new Elements.Builder()
+            .div()
+                .h(1).textContent(resources.constants().commonConfiguration()).end()
+                .p().textContent(resources.constants().jcaCommonConfiguration()).end()
+                .add(tabs)
             .end()
         .build();
         // @formatter:on
@@ -138,13 +139,11 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 () -> presenter.lookupTracerOp());
 
         // @formatter:off
-        Element tracerLayout = new LayoutBuilder()
-            .row()
-                .column()
-                    .h(1).textContent(tracerType).end()
-                    .p().textContent(tracerMetadata.getDescription().getDescription()).end()
-                    .add(failSafeTracerForm)
-                .end()
+        Element tracerLayout = new Elements.Builder()
+            .div()
+                .h(1).textContent(tracerType).end()
+                .p().textContent(tracerMetadata.getDescription().getDescription()).end()
+                .add(failSafeTracerForm)
             .end()
         .build();
         // @formatter:on
@@ -188,14 +187,12 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                         Arrays.asList(WORKMANAGER_TEMPLATE, DISTRIBUTED_WORKMANAGER_TEMPLATE)));
 
         // @formatter:off
-        Element bcLayout = new LayoutBuilder()
-            .row()
-                .column()
-                    .h(1).textContent(bcType).end()
-                    .p().textContent(bcMetadata.getDescription().getDescription()).end()
-                    .add(bcTable)
-                    .add(bcForm)
-                .end()
+        Element bcLayout = new Elements.Builder()
+            .div()
+                .h(1).textContent(bcType).end()
+                .p().textContent(bcMetadata.getDescription().getDescription()).end()
+                .add(bcTable)
+                .add(bcForm)
             .end()
         .build();
         // @formatter:on
@@ -220,23 +217,26 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .button(tableButtonFactory.remove(wmType, WORKMANAGER_TEMPLATE, api -> api.selectedRow().getName(),
                         () -> presenter.load()))
                 .column(NAME)
-                .column("Thread Pools", row -> Browser.getWindow().alert("View " + row.getName()))
+                .column(THREAD_POOLS, row -> wmPages.showPage(Ids.JCA_WORKMANAGER_THREAD_POOL_PAGE))
                 .build();
         wmTable = new ModelNodeTable<>(Ids.JCA_WORKMANAGER_TABLE, wmOptions);
 
+        ThreadPools wmThreadPools = new ThreadPools();
+
         // @formatter:off
-        Element wmLayout = new LayoutBuilder()
-            .row()
-                .column()
-                    .h(1).textContent(wmType).end()
-                    .p().textContent(wmMetadata.getDescription().getDescription()).end()
-                    .add(wmTable)
-                .end()
+        Element wmLayout = new Elements.Builder()
+            .div()
+                .h(1).textContent(wmType).end()
+                .p().textContent(wmMetadata.getDescription().getDescription()).end()
+                .add(wmTable)
             .end()
         .build();
         // @formatter:on
 
-        navigation.addPrimary(Ids.JCA_WORKMANAGER_ENTRY, wmType, fontAwesome("cogs"), wmLayout);
+        wmPages = new Pages(wmType, wmLayout)
+                .addPage(Ids.JCA_WORKMANAGER_THREAD_POOL_PAGE, THREAD_POOLS, wmThreadPools.asElement());
+
+        navigation.addPrimary(Ids.JCA_WORKMANAGER_ENTRY, wmType, fontAwesome("cogs"), wmPages);
 
 
         // ------------------------------------------------------ main layout
@@ -265,6 +265,11 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
     public void attach() {
         super.attach();
         bcTable.api().bindForm(bcForm);
+    }
+
+    @Override
+    public void reset() {
+        wmPages.showMain();
     }
 
     @Override

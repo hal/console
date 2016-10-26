@@ -67,6 +67,7 @@ public class JcaPresenter
     public interface MyProxy extends ProxyPlace<JcaPresenter> {}
 
     public interface MyView extends HalView, HasPresenter<JcaPresenter> {
+        void reset();
         void update(ModelNode payload);
     }
     // @formatter:on
@@ -101,6 +102,12 @@ public class JcaPresenter
     protected void onBind() {
         super.onBind();
         getView().setPresenter(this);
+    }
+
+    @Override
+    protected void onReveal() {
+        super.onReveal();
+        getView().reset();
     }
 
     @Override

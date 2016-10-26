@@ -53,6 +53,7 @@ public interface CSS {
     String blankSlatePfSecondaryAction = "blank-slate-pf-secondary-action";
     String blue = "blue";
     String bootstrapSwitch = "bootstrap-switch";
+    String breadcrumb = "breadcrumb";
     String btn = "btn";
     String btnCancel = "btn-cancel";
     String btnDefault = "btn-default";
@@ -223,6 +224,7 @@ public interface CSS {
     String operationParameter = "operation-parameter";
     String operations = "operations";
 
+    String page = "page";
     String panel = "panel";
     String panelBody = "panel-body";
     String panelCollapse = "panel-collapse";

@@ -190,6 +190,7 @@ public interface Ids {
     String JCA_WORKMANAGER_ADD = build(JCA, "workmanager", ADD_SUFFIX);
     String JCA_WORKMANAGER_ENTRY = build(JCA, "workmanager", ENTRY_SUFFIX);
     String JCA_WORKMANAGER_TABLE = build(JCA, "workmanager", TABLE_SUFFIX);
+    String JCA_WORKMANAGER_THREAD_POOL_PAGE = build(JCA, "workmanager", "thread-pool-page");
     String JDBC_DRIVER = "jdbc-driver";
     String JDBC_DRIVER_ADD = build(JDBC_DRIVER, ADD_SUFFIX);
     String JDBC_DRIVER_ADD_FORM = build(JDBC_DRIVER, ADD_SUFFIX, FORM_SUFFIX);
