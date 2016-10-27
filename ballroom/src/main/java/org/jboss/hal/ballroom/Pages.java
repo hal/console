@@ -17,6 +17,8 @@ package org.jboss.hal.ballroom;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 
 import elemental.client.Browser;
 import elemental.dom.Element;
@@ -25,11 +27,14 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.CSS;
 
 /**
- * A structural element to manage a main and several child elements. The child elements have a {@linkplain Breadcrumb
- * breadcrumb} to navigate back to the main element.
+ * A structural element to manage a main and several nested page elements. The page elements have a {@linkplain
+ * Breadcrumb breadcrumb} to navigate back to their parent element. Each call to {@link #addPage(String, String,
+ * Element)} adds another nested page.
  * <p>
  * Use this element when you need an additional level of navigation which cannot be provided by a {@linkplain
  * VerticalNavigation vertical navigation}.
+ * <p>
+ * TODO Support nested pages
  *
  * @author Harald Pehl
  */
@@ -81,6 +86,14 @@ public class Pages implements IsElement {
     public void showPage(String id) {
         Elements.setVisible(main, false);
         pages.forEach((pageId, page) -> Elements.setVisible(page, id.equals(pageId)));
+    }
+
+    public String getCurrentPage() {
+        Optional<String> first = pages.entrySet().stream()
+                .filter(entry -> Elements.isVisible(entry.getValue()))
+                .map(Entry::getKey)
+                .findFirst();
+        return first.orElse(null);
     }
 
     /**

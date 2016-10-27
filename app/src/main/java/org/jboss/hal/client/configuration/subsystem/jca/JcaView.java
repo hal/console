@@ -69,7 +69,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
     private final DataTable<NamedNode> bcTable;
     private final Form<NamedNode> bcForm;
     private final ModelNodeTable<NamedNode> wmTable;
-    private final ThreadPoolsElement wmThreadPools;
+    private final ThreadPoolsEditor wmThreadPools;
     private final LabelBuilder labelBuilder;
     private Pages wmPages;
     private JcaPresenter presenter;
@@ -228,7 +228,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .build();
         wmTable = new ModelNodeTable<>(Ids.JCA_WORKMANAGER_TABLE, wmOptions);
 
-        wmThreadPools = new ThreadPoolsElement(metadataRegistry, tableButtonFactory, resources);
+        wmThreadPools = new ThreadPoolsEditor(metadataRegistry, resources);
 
         // @formatter:off
         Element wmLayout = new Elements.Builder()
@@ -301,12 +301,13 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
     }
 
     private void showThreadPools(String type, String name) {
+        wmPages.showPage(Ids.JCA_WORKMANAGER_THREAD_POOL_PAGE);
+        wmPages.updateBreadcrumb(Ids.JCA_WORKMANAGER_THREAD_POOL_PAGE, labelBuilder.label(type) + ": " + name);
+
         List<Property> lrt = failSafePropertyList(payload,
                 String.join("/", type, name, WORKMANAGER_LRT_TEMPLATE.lastKey()));
         List<Property> srt = failSafePropertyList(payload,
                 String.join("/", type, name, WORKMANAGER_SRT_TEMPLATE.lastKey()));
         wmThreadPools.update(name, lrt, srt);
-        wmPages.showPage(Ids.JCA_WORKMANAGER_THREAD_POOL_PAGE);
-        wmPages.updateBreadcrumb(Ids.JCA_WORKMANAGER_THREAD_POOL_PAGE, labelBuilder.label(type) + ": " + name);
     }
 }

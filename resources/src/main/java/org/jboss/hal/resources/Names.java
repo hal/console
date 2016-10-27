@@ -84,6 +84,7 @@ public interface Names {
     String SUBSYSTEM = "Subsystem";
     String SUBSYSTEMS = "Subsystems";
     String SYSTEM_PROPERTIES = "System Properties";
+    String THREAD_POOL = "Thread Pool";
     String THREAD_POOLS = "Thread Pools";
     String THREADS = "Threads";
     String TOPOLOGY = "Topology";
