@@ -14,6 +14,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+<!--suppress HtmlFormInputWithoutLabel -->
 <html class="layout-pf layout-pf-fixed">
 <head lang="en">
     <meta charset="UTF-8">
@@ -131,22 +132,22 @@
                     </fieldset>
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <!--                                                       -->
-                    <!-- TextBoxItem with type-ahead support                   -->
+                    <!-- TextBoxItem with auto complete support                -->
                     <!--                                                       -->
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <fieldset class="form-section">
-                        <legend>TextBoxItem (with type-ahead support)</legend>
+                        <legend>TextBoxItem (with auto complete support)</legend>
                         <blockquote>
                             <p>Enter a new value or choose a suggestion from the list<br/>
                                 Target type: <code>String</code></p>
                         </blockquote>
                         <div class="form-group">
-                            <label class="control-label hal-form-label" for="textBoxTypeahead-markup">Default</label>
+                            <label class="control-label hal-form-label" for="textBoxAutoComplete-markup">Default</label>
                             <div class="hal-form-input">
                                 <div class="input-group">
-                                    <input type="text" id="textBoxTypeahead-markup" class="form-control typeahead" placeholder="Text input">
+                                    <input type="text" id="textBoxAutoComplete-markup" class="form-control" placeholder="Text input">
                                     <span class="input-group-btn">
-                                        <button id="textBoxTypeahead-showAll" class="btn btn-default" type="button" title="Show all options">
+                                        <button id="textBoxAutoComplete-showAll" class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
                                         </button>
                                     </span>
@@ -154,10 +155,10 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label hal-form-label" for="textBoxTypeaheadDisabled-markup">Disabled</label>
+                            <label class="control-label hal-form-label" for="textBoxAutoCompleteDisabled-markup">Disabled</label>
                             <div class="hal-form-input">
                                 <div class="input-group">
-                                    <input type="text" value="read-only" id="textBoxTypeaheadDisabled-markup" class="form-control typeahead" disabled>
+                                    <input type="text" value="read-only" id="textBoxAutoCompleteDisabled-markup" class="form-control" disabled>
                                     <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
@@ -167,19 +168,19 @@
                             </div>
                         </div>
                         <div class="form-group has-feedback">
-                            <label class="control-label hal-form-label" for="textBoxTypeaheadRestricted-markup">Restricted</label>
+                            <label class="control-label hal-form-label" for="textBoxAutoCompleteRestricted-markup">Restricted</label>
                             <div class="hal-form-input">
                                 <div class="input-group">
-                                    <input type="text" value="The permissions for your role don't allow to access this data" id="textBoxTypeaheadRestricted-markup" class="form-control" readonly>
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="textBoxAutoCompleteRestricted-markup" class="form-control" readonly>
                                     <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group has-error">
-                            <label class="control-label hal-form-label" for="textBoxTypeaheadError-markup">With error</label>
+                            <label class="control-label hal-form-label" for="textBoxAutoCompleteError-markup">With error</label>
                             <div class="hal-form-input">
                                 <div class="input-group">
-                                    <input type="text" value="nope" id="textBoxTypeaheadError-markup" class="form-control typeahead">
+                                    <input type="text" value="nope" id="textBoxAutoCompleteError-markup" class="form-control">
                                     <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
@@ -686,67 +687,67 @@
                     </fieldset>
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <!--                                                       -->
-                    <!-- ListItem with type-ahead support                      -->
+                    <!-- ListItem with auto complete support                   -->
                     <!--                                                       -->
                     <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                     <fieldset class="form-section">
-                        <legend>ListItem (with type-ahead support)</legend>
+                        <legend>ListItem (with auto complete support)</legend>
                         <blockquote><p>Manage a list of items<br/>
                             Enter items with return or choose a suggestion from the list<br/>
                             Remove items by clicking on 'x' or by pressing backspace in the empty text input<br/>
                             Target type: <code>List&lt;String&gt;</code></p>
                         </blockquote>
                         <div class="form-group">
-                            <label class="control-label hal-form-label" for="listItemTypeahead-markup">Default</label>
+                            <label class="control-label hal-form-label" for="listItemAutoComplete-markup">Default</label>
                             <div class="hal-form-input">
                                 <div class="input-group">
-                                    <input type="text" id="listItemTypeahead-markup" class="form-control tags typeahead" placeholder="Text input">
+                                    <input type="text" id="listItemAutoComplete-markup" class="form-control tags" placeholder="Text input">
                                     <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
                                         </button>
                                     </span>
                                 </div>
-                                <div id="listItemTypeahead-markup-container" class="tag-manager-container"></div>
+                                <div id="listItemAutoComplete-markup-container" class="tag-manager-container"></div>
                                 <span class="help-block hint">Press <abbr class="key" title="RETURN">↵</abbr> to add new items and <abbr class="key" title="BACKSPACE">⌫</abbr> to remove them.</span>
                             </div>
                         </div>
                         <div class="form-group disabled">
-                            <label class="control-label hal-form-label" for="listItemTypeaheadDisabled-markup">Disabled</label>
+                            <label class="control-label hal-form-label" for="listItemAutoCompleteDisabled-markup">Disabled</label>
                             <div class="hal-form-input">
                                 <div class="input-group tags">
-                                    <input type="text" value="read-only" id="listItemTypeaheadDisabled-markup" class="form-control tags typeahead" disabled>
+                                    <input type="text" value="read-only" id="listItemAutoCompleteDisabled-markup" class="form-control tags" disabled>
                                     <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
                                         </button>
                                     </span>
                                 </div>
-                                <div id="listItemTypeaheadDisabled-markup-container" class="tag-manager-container"></div>
+                                <div id="listItemAutoCompleteDisabled-markup-container" class="tag-manager-container"></div>
                                 <span class="help-block hint">Press <abbr class="key" title="RETURN">↵</abbr> to add new items and <abbr class="key" title="BACKSPACE">⌫</abbr> to remove them.</span>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
-                            <label class="control-label hal-form-label" for="listItemTypeaheadRestricted-markup">Restricted</label>
+                            <label class="control-label hal-form-label" for="listItemAutoCompleteRestricted-markup">Restricted</label>
                             <div class="hal-form-input">
                                 <div class="input-group">
-                                    <input type="text" value="The permissions for your role don't allow to access this data" id="listItemTypeaheadRestricted-markup" class="form-control" readonly>
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="listItemAutoCompleteRestricted-markup" class="form-control" readonly>
                                     <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group has-error">
-                            <label class="control-label hal-form-label" for="listItemTypeaheadError-markup">With error</label>
+                            <label class="control-label hal-form-label" for="listItemAutoCompleteError-markup">With error</label>
                             <div class="hal-form-input">
                                 <div class="input-group">
-                                    <input type="text" value="nope" id="listItemTypeaheadError-markup" class="form-control tags typeahead">
+                                    <input type="text" value="nope" id="listItemAutoCompleteError-markup" class="form-control tags">
                                     <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
                                         </button>
                                     </span>
                                 </div>
-                                <div id="listItemTypeaheadError-markup-container" class="tag-manager-container"></div>
+                                <div id="listItemAutoCompleteError-markup-container" class="tag-manager-container"></div>
                                 <span class="help-block">Please correct the error</span>
                             </div>
                         </div>
@@ -794,6 +795,78 @@
                             <div class="hal-form-input">
                                 <input type="text" id="propertiesItemError-markup" class="form-control properties"/>
                                 <div id="propertiesItemError-markup-container" class="tag-manager-container"></div>
+                                <span class="help-block">Please correct the error</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <!--                                                       -->
+                    <!-- TimeUnitItem                                          -->
+                    <!--                                                       -->
+                    <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                    <fieldset class="form-section">
+                        <legend>TimeUnitItem</legend>
+                        <blockquote>
+                            <p>Example of a composite form item<br/>
+                                consisting of a text input and a single select box</p>
+                        </blockquote>
+                        <div class="form-group">
+                            <label class="control-label hal-form-label" for="timeUnitItem-markup">Default</label>
+                            <div class="hal-form-input">
+                                <div class="input-group">
+                                    <input type="text" id="timeUnitItem-markup" class="form-control" placeholder="Time"/>
+                                    <span class="input-group-btn">
+                                        <select class="selectpicker" id="timeUnitItem-select" name="timeUnitItem-select">
+                                            <option>MILLISECONDS</option>
+                                            <option>SECONDS</option>
+                                            <option>MINUTES</option>
+                                            <option>HOURS</option>
+                                        </select>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label hal-form-label" for="timeUnitItemDisabled-markup">Disabled</label>
+                            <div class="hal-form-input">
+                                <div class="input-group">
+                                    <input type="text" value="read-only" id="timeUnitItemDisabled-markup" class="form-control" disabled>
+                                    <span class="input-group-btn">
+                                        <select class="selectpicker" id="timeUnitItemDisabled-select" name="timeUnitItemDisabled-select" disabled>
+                                            <option>MILLISECONDS</option>
+                                            <option>SECONDS</option>
+                                            <option>MINUTES</option>
+                                            <option>HOURS</option>
+                                        </select>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="control-label hal-form-label" for="timeUnitItemRestricted-markup">Restricted</label>
+                            <div class="hal-form-input">
+                                <div class="input-group">
+                                    <input type="text" value="The permissions for your role don't allow to access this data" id="timeUnitItemRestricted-markup" class="form-control" readonly>
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-lock"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-error">
+                            <label class="control-label hal-form-label" for="timeUnitItemError-markup">With error</label>
+                            <div class="hal-form-input">
+                                <div class="input-group">
+                                    <input type="text" value="nope" id="timeUnitItemError-markup" class="form-control">
+                                    <span class="input-group-btn">
+                                        <select class="selectpicker" id="timeUnitItemError-select" name="timeUnitItemError-select">
+                                            <option>MILLISECONDS</option>
+                                            <option>SECONDS</option>
+                                            <option>MINUTES</option>
+                                            <option>HOURS</option>
+                                        </select>
+                                    </span>
+                                </div>
                                 <span class="help-block">Please correct the error</span>
                             </div>
                         </div>
@@ -988,18 +1061,18 @@
                         </fieldset>
                         <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                         <!--                                                       -->
-                        <!-- TextBoxItem with type-ahead support                   -->
+                        <!-- TextBoxItem with auto complete support                -->
                         <!--                                                       -->
                         <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                         <fieldset class="form-section">
-                            <legend>TextBoxItem (with type-ahead support)</legend>
+                            <legend>TextBoxItem (with auto complete support)</legend>
                             <div class="form-group">
-                                <label class="control-label hal-form-label" for="md-dialog-textBoxTypeahead-markup">Default</label>
+                                <label class="control-label hal-form-label" for="md-dialog-textBoxAutoComplete-markup">Default</label>
                                 <div class="hal-form-input">
                                     <div class="input-group">
-                                        <input type="text" id="md-dialog-textBoxTypeahead-markup" class="form-control typeahead" placeholder="Text input">
+                                        <input type="text" id="md-dialog-textBoxAutoComplete-markup" class="form-control" placeholder="Text input">
                                         <span class="input-group-btn">
-                                        <button id="md-dialog-textBoxTypeahead-showAll" class="btn btn-default" type="button" title="Show all options">
+                                        <button id="md-dialog-textBoxAutoComplete-showAll" class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
                                         </button>
                                     </span>
@@ -1007,10 +1080,10 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label hal-form-label" for="md-dialog-textBoxTypeaheadDisabled-markup">Disabled</label>
+                                <label class="control-label hal-form-label" for="md-dialog-textBoxAutoCompleteDisabled-markup">Disabled</label>
                                 <div class="hal-form-input">
                                     <div class="input-group">
-                                        <input type="text" value="read-only" id="md-dialog-textBoxTypeaheadDisabled-markup" class="form-control typeahead" disabled>
+                                        <input type="text" value="read-only" id="md-dialog-textBoxAutoCompleteDisabled-markup" class="form-control" disabled>
                                         <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
@@ -1020,19 +1093,19 @@
                                 </div>
                             </div>
                             <div class="form-group has-feedback">
-                                <label class="control-label hal-form-label" for="md-dialog-textBoxTypeaheadRestricted-markup">Restricted</label>
+                                <label class="control-label hal-form-label" for="md-dialog-textBoxAutoCompleteRestricted-markup">Restricted</label>
                                 <div class="hal-form-input">
                                     <div class="input-group">
-                                        <input type="text" value="The permissions for your role don't allow to access this data" id="md-dialog-textBoxTypeaheadRestricted-markup" class="form-control" readonly>
+                                        <input type="text" value="The permissions for your role don't allow to access this data" id="md-dialog-textBoxAutoCompleteRestricted-markup" class="form-control" readonly>
                                         <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group has-error">
-                                <label class="control-label hal-form-label" for="md-dialog-textBoxTypeaheadError-markup">With error</label>
+                                <label class="control-label hal-form-label" for="md-dialog-textBoxAutoCompleteError-markup">With error</label>
                                 <div class="hal-form-input">
                                     <div class="input-group">
-                                        <input type="text" value="nope" id="md-dialog-textBoxTypeaheadError-markup" class="form-control typeahead">
+                                        <input type="text" value="nope" id="md-dialog-textBoxAutoCompleteError-markup" class="form-control">
                                         <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
@@ -1498,62 +1571,62 @@
                         </fieldset>
                         <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                         <!--                                                       -->
-                        <!-- ListItem with type-ahead support                      -->
+                        <!-- ListItem with auto complete support                   -->
                         <!--                                                       -->
                         <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                         <fieldset class="form-section">
-                            <legend>ListItem (with type-ahead support)</legend>
+                            <legend>ListItem (with auto complete support)</legend>
                             <div class="form-group">
-                                <label class="control-label hal-form-label" for="md-dialog-listItemTypeahead-markup">Default</label>
+                                <label class="control-label hal-form-label" for="md-dialog-listItemAutoComplete-markup">Default</label>
                                 <div class="hal-form-input">
                                     <div class="input-group">
-                                        <input type="text" id="md-dialog-listItemTypeahead-markup" class="form-control tags typeahead" placeholder="Text input">
+                                        <input type="text" id="md-dialog-listItemAutoComplete-markup" class="form-control tags" placeholder="Text input">
                                         <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
                                         </button>
                                     </span>
                                     </div>
-                                    <div id="md-dialog-listItemTypeahead-markup-container" class="tag-manager-container"></div>
+                                    <div id="md-dialog-listItemAutoComplete-markup-container" class="tag-manager-container"></div>
                                     <span class="help-block hint">Press <abbr class="key" title="RETURN">↵</abbr> to add new items and <abbr class="key" title="BACKSPACE">⌫</abbr> to remove them.</span>
                                 </div>
                             </div>
                             <div class="form-group disabled">
-                                <label class="control-label hal-form-label" for="md-dialog-listItemTypeaheadDisabled-markup">Disabled</label>
+                                <label class="control-label hal-form-label" for="md-dialog-listItemAutoCompleteDisabled-markup">Disabled</label>
                                 <div class="hal-form-input">
                                     <div class="input-group tags">
-                                        <input type="text" value="read-only" id="md-dialog-listItemTypeaheadDisabled-markup" class="form-control tags typeahead" disabled>
+                                        <input type="text" value="read-only" id="md-dialog-listItemAutoCompleteDisabled-markup" class="form-control tags" disabled>
                                         <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
                                         </button>
                                     </span>
                                     </div>
-                                    <div id="md-dialog-listItemTypeaheadDisabled-markup-container" class="tag-manager-container"></div>
+                                    <div id="md-dialog-listItemAutoCompleteDisabled-markup-container" class="tag-manager-container"></div>
                                     <span class="help-block hint">Press <abbr class="key" title="RETURN">↵</abbr> to add new items and <abbr class="key" title="BACKSPACE">⌫</abbr> to remove them.</span>
                                 </div>
                             </div>
                             <div class="form-group has-feedback">
-                                <label class="control-label hal-form-label" for="md-dialog-listItemTypeaheadRestricted-markup">Restricted</label>
+                                <label class="control-label hal-form-label" for="md-dialog-listItemAutoCompleteRestricted-markup">Restricted</label>
                                 <div class="hal-form-input">
                                     <div class="input-group">
-                                        <input type="text" value="The permissions for your role don't allow to access this data" id="md-dialog-listItemTypeaheadRestricted-markup" class="form-control" readonly>
+                                        <input type="text" value="The permissions for your role don't allow to access this data" id="md-dialog-listItemAutoCompleteRestricted-markup" class="form-control" readonly>
                                         <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group has-error">
-                                <label class="control-label hal-form-label" for="md-dialog-listItemTypeaheadError-markup">With error</label>
+                                <label class="control-label hal-form-label" for="md-dialog-listItemAutoCompleteError-markup">With error</label>
                                 <div class="hal-form-input">
                                     <div class="input-group">
-                                        <input type="text" value="nope" id="md-dialog-listItemTypeaheadError-markup" class="form-control tags typeahead">
+                                        <input type="text" value="nope" id="md-dialog-listItemAutoCompleteError-markup" class="form-control tags">
                                         <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
                                         </button>
                                     </span>
                                     </div>
-                                    <div id="md-dialog-listItemTypeaheadError-markup-container" class="tag-manager-container"></div>
+                                    <div id="md-dialog-listItemAutoCompleteError-markup-container" class="tag-manager-container"></div>
                                     <span class="help-block">Please correct the error</span>
                                 </div>
                             </div>
@@ -1595,6 +1668,78 @@
                                 <div class="hal-form-input">
                                     <input type="text" id="md-dialog-propertiesItemError-markup" class="form-control properties"/>
                                     <div id="md-dialog-propertiesItemError-markup-container" class="tag-manager-container"></div>
+                                    <span class="help-block">Please correct the error</span>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                        <!--                                                       -->
+                        <!-- TimeUnitItem                                          -->
+                        <!--                                                       -->
+                        <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                        <fieldset class="form-section">
+                            <legend>TimeUnitItem</legend>
+                            <blockquote>
+                                <p>Example of a composite form item<br/>
+                                    consisting of a text input and a single select box</p>
+                            </blockquote>
+                            <div class="form-group">
+                                <label class="control-label hal-form-label" for="md-dialog-timeUnitItem-markup">Default</label>
+                                <div class="hal-form-input">
+                                    <div class="input-group">
+                                        <input type="text" id="md-dialog-timeUnitItem-markup" class="form-control" placeholder="Time"/>
+                                        <span class="input-group-btn">
+                                        <select class="selectpicker" id="md-dialog-timeUnitItem-select" name="md-dialog-timeUnitItem-select">
+                                            <option>MILLISECONDS</option>
+                                            <option>SECONDS</option>
+                                            <option>MINUTES</option>
+                                            <option>HOURS</option>
+                                        </select>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label hal-form-label" for="md-dialog-timeUnitItemDisabled-markup">Disabled</label>
+                                <div class="hal-form-input">
+                                    <div class="input-group">
+                                        <input type="text" value="read-only" id="md-dialog-timeUnitItemDisabled-markup" class="form-control" disabled>
+                                        <span class="input-group-btn">
+                                        <select class="selectpicker" id="md-dialog-timeUnitItemDisabled-select" name="md-dialog-timeUnitItemDisabled-select" disabled>
+                                            <option>MILLISECONDS</option>
+                                            <option>SECONDS</option>
+                                            <option>MINUTES</option>
+                                            <option>HOURS</option>
+                                        </select>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <label class="control-label hal-form-label" for="md-dialog-timeUnitItemRestricted-markup">Restricted</label>
+                                <div class="hal-form-input">
+                                    <div class="input-group">
+                                        <input type="text" value="The permissions for your role don't allow to access this data" id="md-dialog-timeUnitItemRestricted-markup" class="form-control" readonly>
+                                        <span class="input-group-addon">
+                                        <i class="fa fa-lock"></i>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group has-error">
+                                <label class="control-label hal-form-label" for="md-dialog-timeUnitItemError-markup">With error</label>
+                                <div class="hal-form-input">
+                                    <div class="input-group">
+                                        <input type="text" value="nope" id="md-dialog-timeUnitItemError-markup" class="form-control">
+                                        <span class="input-group-btn">
+                                        <select class="selectpicker" id="md-dialog-timeUnitItemError-select" name="md-dialog-timeUnitItemError-select">
+                                            <option>MILLISECONDS</option>
+                                            <option>SECONDS</option>
+                                            <option>MINUTES</option>
+                                            <option>HOURS</option>
+                                        </select>
+                                    </span>
+                                    </div>
                                     <span class="help-block">Please correct the error</span>
                                 </div>
                             </div>
@@ -1787,18 +1932,18 @@
                         </fieldset>
                         <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                         <!--                                                       -->
-                        <!-- TextBoxItem with type-ahead support                   -->
+                        <!-- TextBoxItem with auto complete support                -->
                         <!--                                                       -->
                         <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                         <fieldset class="form-section">
-                            <legend>TextBoxItem (with type-ahead support)</legend>
+                            <legend>TextBoxItem (with auto complete support)</legend>
                             <div class="form-group">
-                                <label class="control-label hal-form-label" for="lg-dialog-textBoxTypeahead-markup">Default</label>
+                                <label class="control-label hal-form-label" for="lg-dialog-textBoxAutoComplete-markup">Default</label>
                                 <div class="hal-form-input">
                                     <div class="input-group">
-                                        <input type="text" id="lg-dialog-textBoxTypeahead-markup" class="form-control typeahead" placeholder="Text input">
+                                        <input type="text" id="lg-dialog-textBoxAutoComplete-markup" class="form-control" placeholder="Text input">
                                         <span class="input-group-btn">
-                                        <button id="lg-dialog-textBoxTypeahead-showAll" class="btn btn-default" type="button" title="Show all options">
+                                        <button id="lg-dialog-textBoxAutoComplete-showAll" class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
                                         </button>
                                     </span>
@@ -1806,10 +1951,10 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label hal-form-label" for="lg-dialog-textBoxTypeaheadDisabled-markup">Disabled</label>
+                                <label class="control-label hal-form-label" for="lg-dialog-textBoxAutoCompleteDisabled-markup">Disabled</label>
                                 <div class="hal-form-input">
                                     <div class="input-group">
-                                        <input type="text" value="read-only" id="lg-dialog-textBoxTypeaheadDisabled-markup" class="form-control typeahead" disabled>
+                                        <input type="text" value="read-only" id="lg-dialog-textBoxAutoCompleteDisabled-markup" class="form-control" disabled>
                                         <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
@@ -1819,19 +1964,19 @@
                                 </div>
                             </div>
                             <div class="form-group has-feedback">
-                                <label class="control-label hal-form-label" for="lg-dialog-textBoxTypeaheadRestricted-markup">Restricted</label>
+                                <label class="control-label hal-form-label" for="lg-dialog-textBoxAutoCompleteRestricted-markup">Restricted</label>
                                 <div class="hal-form-input">
                                     <div class="input-group">
-                                        <input type="text" value="The permissions for your role don't allow to access this data" id="lg-dialog-textBoxTypeaheadRestricted-markup" class="form-control" readonly>
+                                        <input type="text" value="The permissions for your role don't allow to access this data" id="lg-dialog-textBoxAutoCompleteRestricted-markup" class="form-control" readonly>
                                         <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group has-error">
-                                <label class="control-label hal-form-label" for="lg-dialog-textBoxTypeaheadError-markup">With error</label>
+                                <label class="control-label hal-form-label" for="lg-dialog-textBoxAutoCompleteError-markup">With error</label>
                                 <div class="hal-form-input">
                                     <div class="input-group">
-                                        <input type="text" value="nope" id="lg-dialog-textBoxTypeaheadError-markup" class="form-control typeahead">
+                                        <input type="text" value="nope" id="lg-dialog-textBoxAutoCompleteError-markup" class="form-control">
                                         <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
@@ -2297,62 +2442,62 @@
                         </fieldset>
                         <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                         <!--                                                       -->
-                        <!-- ListItem with type-ahead support                      -->
+                        <!-- ListItem with auto complete support                   -->
                         <!--                                                       -->
                         <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
                         <fieldset class="form-section">
-                            <legend>ListItem (with type-ahead support)</legend>
+                            <legend>ListItem (with auto complete support)</legend>
                             <div class="form-group">
-                                <label class="control-label hal-form-label" for="lg-dialog-listItemTypeahead-markup">Default</label>
+                                <label class="control-label hal-form-label" for="lg-dialog-listItemAutoComplete-markup">Default</label>
                                 <div class="hal-form-input">
                                     <div class="input-group">
-                                        <input type="text" id="lg-dialog-listItemTypeahead-markup" class="form-control tags typeahead" placeholder="Text input">
+                                        <input type="text" id="lg-dialog-listItemAutoComplete-markup" class="form-control tags" placeholder="Text input">
                                         <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
                                         </button>
                                     </span>
                                     </div>
-                                    <div id="lg-dialog-listItemTypeahead-markup-container" class="tag-manager-container"></div>
+                                    <div id="lg-dialog-listItemAutoComplete-markup-container" class="tag-manager-container"></div>
                                     <span class="help-block hint">Press <abbr class="key" title="RETURN">↵</abbr> to add new items and <abbr class="key" title="BACKSPACE">⌫</abbr> to remove them.</span>
                                 </div>
                             </div>
                             <div class="form-group disabled">
-                                <label class="control-label hal-form-label" for="lg-dialog-listItemTypeaheadDisabled-markup">Disabled</label>
+                                <label class="control-label hal-form-label" for="lg-dialog-listItemAutoCompleteDisabled-markup">Disabled</label>
                                 <div class="hal-form-input">
                                     <div class="input-group tags">
-                                        <input type="text" value="read-only" id="lg-dialog-listItemTypeaheadDisabled-markup" class="form-control tags typeahead" disabled>
+                                        <input type="text" value="read-only" id="lg-dialog-listItemAutoCompleteDisabled-markup" class="form-control tags" disabled>
                                         <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
                                         </button>
                                     </span>
                                     </div>
-                                    <div id="lg-dialog-listItemTypeaheadDisabled-markup-container" class="tag-manager-container"></div>
+                                    <div id="lg-dialog-listItemAutoCompleteDisabled-markup-container" class="tag-manager-container"></div>
                                     <span class="help-block hint">Press <abbr class="key" title="RETURN">↵</abbr> to add new items and <abbr class="key" title="BACKSPACE">⌫</abbr> to remove them.</span>
                                 </div>
                             </div>
                             <div class="form-group has-feedback">
-                                <label class="control-label hal-form-label" for="lg-dialog-listItemTypeaheadRestricted-markup">Restricted</label>
+                                <label class="control-label hal-form-label" for="lg-dialog-listItemAutoCompleteRestricted-markup">Restricted</label>
                                 <div class="hal-form-input">
                                     <div class="input-group">
-                                        <input type="text" value="The permissions for your role don't allow to access this data" id="lg-dialog-listItemTypeaheadRestricted-markup" class="form-control" readonly>
+                                        <input type="text" value="The permissions for your role don't allow to access this data" id="lg-dialog-listItemAutoCompleteRestricted-markup" class="form-control" readonly>
                                         <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group has-error">
-                                <label class="control-label hal-form-label" for="lg-dialog-listItemTypeaheadError-markup">With error</label>
+                                <label class="control-label hal-form-label" for="lg-dialog-listItemAutoCompleteError-markup">With error</label>
                                 <div class="hal-form-input">
                                     <div class="input-group">
-                                        <input type="text" value="nope" id="lg-dialog-listItemTypeaheadError-markup" class="form-control tags typeahead">
+                                        <input type="text" value="nope" id="lg-dialog-listItemAutoCompleteError-markup" class="form-control tags">
                                         <span class="input-group-btn">
                                         <button class="btn btn-default" type="button" title="Show all options">
                                             <i class="fa fa-angle-down"></i>
                                         </button>
                                     </span>
                                     </div>
-                                    <div id="lg-dialog-listItemTypeaheadError-markup-container" class="tag-manager-container"></div>
+                                    <div id="lg-dialog-listItemAutoCompleteError-markup-container" class="tag-manager-container"></div>
                                     <span class="help-block">Please correct the error</span>
                                 </div>
                             </div>
@@ -2394,6 +2539,78 @@
                                 <div class="hal-form-input">
                                     <input type="text" id="lg-dialog-propertiesItemError-markup" class="form-control properties"/>
                                     <div id="lg-dialog-propertiesItemError-markup-container" class="tag-manager-container"></div>
+                                    <span class="help-block">Please correct the error</span>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                        <!--                                                       -->
+                        <!-- TimeUnitItem                                          -->
+                        <!--                                                       -->
+                        <!--~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~~-~-~-~-~--->
+                        <fieldset class="form-section">
+                            <legend>TimeUnitItem</legend>
+                            <blockquote>
+                                <p>Example of a composite form item<br/>
+                                    consisting of a text input and a single select box</p>
+                            </blockquote>
+                            <div class="form-group">
+                                <label class="control-label hal-form-label" for="lg-dialog-timeUnitItem-markup">Default</label>
+                                <div class="hal-form-input">
+                                    <div class="input-group">
+                                        <input type="text" id="lg-dialog-timeUnitItem-markup" class="form-control" placeholder="Time"/>
+                                        <span class="input-group-btn">
+                                        <select class="selectpicker" id="lg-dialog-timeUnitItem-select" name="lg-dialog-timeUnitItem-select">
+                                            <option>MILLISECONDS</option>
+                                            <option>SECONDS</option>
+                                            <option>MINUTES</option>
+                                            <option>HOURS</option>
+                                        </select>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label hal-form-label" for="lg-dialog-timeUnitItemDisabled-markup">Disabled</label>
+                                <div class="hal-form-input">
+                                    <div class="input-group">
+                                        <input type="text" value="read-only" id="lg-dialog-timeUnitItemDisabled-markup" class="form-control" disabled>
+                                        <span class="input-group-btn">
+                                        <select class="selectpicker" id="lg-dialog-timeUnitItemDisabled-select" name="lg-dialog-timeUnitItemDisabled-select" disabled>
+                                            <option>MILLISECONDS</option>
+                                            <option>SECONDS</option>
+                                            <option>MINUTES</option>
+                                            <option>HOURS</option>
+                                        </select>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <label class="control-label hal-form-label" for="lg-dialog-timeUnitItemRestricted-markup">Restricted</label>
+                                <div class="hal-form-input">
+                                    <div class="input-group">
+                                        <input type="text" value="The permissions for your role don't allow to access this data" id="lg-dialog-timeUnitItemRestricted-markup" class="form-control" readonly>
+                                        <span class="input-group-addon">
+                                        <i class="fa fa-lock"></i>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group has-error">
+                                <label class="control-label hal-form-label" for="lg-dialog-timeUnitItemError-markup">With error</label>
+                                <div class="hal-form-input">
+                                    <div class="input-group">
+                                        <input type="text" value="nope" id="lg-dialog-timeUnitItemError-markup" class="form-control">
+                                        <span class="input-group-btn">
+                                        <select class="selectpicker" id="lg-dialog-timeUnitItemError-select" name="lg-dialog-timeUnitItemError-select">
+                                            <option>MILLISECONDS</option>
+                                            <option>SECONDS</option>
+                                            <option>MINUTES</option>
+                                            <option>HOURS</option>
+                                        </select>
+                                    </span>
+                                    </div>
                                     <span class="help-block">Please correct the error</span>
                                 </div>
                             </div>
@@ -2482,34 +2699,6 @@
         $('.bootstrap-switch').bootstrapSwitch();
         $('.selectpicker').selectpicker();
 
-        var bloodhoundOptions = {
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            prefetch: 'https://twitter.github.io/typeahead.js/data/films/post_1960.json',
-            remote: {
-                url: 'https://twitter.github.io/typeahead.js/data/films/queries/%QUERY.json',
-                wildcard: '%QUERY'
-            }
-        };
-        var bestPictures = new Bloodhound(bloodhoundOptions);
-
-        $('.typeahead').typeahead({highlight: true}, {
-            name: 'best-pictures',
-            display: 'value',
-            limit: 50,
-            source: bestPictures,
-            templates: {
-                empty: '<div class="empty-message"><span class="pficon pficon-warning-triangle-o"></span>No results</div>'
-            }
-        });
-
-        $('#textBoxTypeahead-showAll').on('click', function () {
-            // The remote service would need to support empty queries.
-            // Because it doesn't we simply use 'i' to get *some* suggestions
-            $('#textBoxTypeahead-markup').typeahead('val', 'i');
-            $('#textBoxTypeahead-markup').focus();
-        });
-
         $('#listItem-markup').tagsManager({
             delimiters: [13],
             tagsContainer: "#listItem-markup-container",
@@ -2528,38 +2717,11 @@
             prefilled: ["with", "error"]
         });
 
-        var tagManagerApi = $('#listItemTypeahead-markup').tagsManager({
+        $('#listItemAutoCompleteDisabled-markup').tagsManager({
             delimiters: [13],
-            tagsContainer: "#listItemTypeahead-markup-container",
-            tagClass: "tag-manager-tag"
-        });
-        tagManagerApi.on('tm:refresh', function () {
-            $('#listItemTypeahead-markup').typeahead("val", "");
-            $('#listItemTypeahead-markup').typeahead("close");
-        });
-        $('#listItemTypeahead-markup').on('typeahead:select', function (e, d) {
-            tagManagerApi.tagsManager("pushTag", d.value);
-        });
-
-        $('#listItemTypeaheadDisabled-markup').tagsManager({
-            delimiters: [13],
-            tagsContainer: "#listItemTypeaheadDisabled-markup-container",
+            tagsContainer: "#listItemAutoCompleteDisabled-markup-container",
             tagClass: "tag-manager-tag",
             prefilled: ["dis", "abled"]
-        });
-
-        var tagManagerErrorApi = $('#listItemTypeaheadError-markup').tagsManager({
-            delimiters: [13],
-            tagsContainer: "#listItemTypeaheadError-markup-container",
-            tagClass: "tag-manager-tag",
-            prefilled: ["with", "error"]
-        });
-        tagManagerErrorApi.on('tm:refresh', function () {
-            $('#listItemTypeaheadError-markup').typeahead("val", "");
-            $('#listItemTypeaheadError-markup').typeahead("close");
-        });
-        $('#listItemTypeaheadError-markup').on('typeahead:selected', function (e, d) {
-            tagManagerErrorApi.tagsManager("pushTag", d.value);
         });
 
         $('#propertiesItem-markup').tagsManager({

@@ -154,6 +154,7 @@ public interface ModelDescriptionConstants {
     String MANAGEMENT_MICRO_VERSION = "management-micro-version";
     String MANAGEMENT_MINOR_VERSION = "management-minor-version";
     String MAX = "max";
+    String MAX_THREADS = "max-threads";
     String MESSAGING_ACTIVEMQ = "messaging-activemq";
     String METRIC = "metric";
     String MIN = "min";
@@ -261,6 +262,7 @@ public interface ModelDescriptionConstants {
     String SUSPEND_STATE = "suspend-state";
     String SYSTEM_PROPERTY = "system-property";
 
+    String THREAD_FACTORY = "thread-factory";
     String TIMEOUT = "timeout";
     String TRANSACTIONS = "transactions";
     String TRIM_DESCRIPTIONS = "trim-descriptions";
@@ -276,6 +278,7 @@ public interface ModelDescriptionConstants {
     String WEBSERVICES = "webservices";
     String WHERE = "where";
     String WHOAMI = "whoami";
+    String WORKMANAGER = "workmanager";
     String WRITE_ATTRIBUTE_OPERATION = "write-attribute";
 
     String UNDEFINE_ATTRIBUTE_OPERATION = "undefine-attribute";

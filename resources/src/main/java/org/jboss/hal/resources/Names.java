@@ -52,6 +52,7 @@ public interface Names {
     String LOGGING = "Logging";
     String LOGGING_PROFILE = "Logging Profile";
     String LOGGING_PROFILES = "Logging Profiles";
+    String LONG_RUNNING = "long running";
     String MAIL_SESSION = "Mail Session";
     String MANAGEMENT_CONSOLE = "Management Console";
     String MANAGEMENT_MODEL = "Management Model";
@@ -75,6 +76,7 @@ public interface Names {
     String SERVER = "Server";
     String SERVER_GROUP = "Server Group";
     String SERVER_GROUPS = "Server Groups";
+    String SHORT_RUNNING = "short running";
     String SOCKET_BINDING = "Socket Binding";
     String SOCKET_BINDINGS = "Socket Bindings";
     String STANDALONE_SERVER = "Standalone Server";
@@ -82,6 +84,7 @@ public interface Names {
     String SUBSYSTEM = "Subsystem";
     String SUBSYSTEMS = "Subsystems";
     String SYSTEM_PROPERTIES = "System Properties";
+    String THREAD_POOLS = "Thread Pools";
     String THREADS = "Threads";
     String TOPOLOGY = "Topology";
     String UNKNOWN = "unknown";

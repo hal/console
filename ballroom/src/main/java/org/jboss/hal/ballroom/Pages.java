@@ -38,7 +38,8 @@ public class Pages implements IsElement {
     private final String title;
     private final Element main;
     private final Element root;
-    private final Map<String, Element> children;
+    private final Map<String, Breadcrumb> breadcrumbs;
+    private final Map<String, Element> pages;
 
     public Pages(final String title, IsElement main) {
         this(title, main.asElement());
@@ -48,7 +49,8 @@ public class Pages implements IsElement {
         this.title = title;
         this.main = main;
         this.root = Browser.getDocument().createDivElement();
-        this.children = new HashMap<>();
+        this.breadcrumbs = new HashMap<>();
+        this.pages = new HashMap<>();
 
         root.appendChild(main);
         showMain();
@@ -66,18 +68,29 @@ public class Pages implements IsElement {
         pageContainer.appendChild(page);
 
         root.appendChild(pageContainer);
-        children.put(id, pageContainer);
+        breadcrumbs.put(id, breadcrumb);
+        pages.put(id, pageContainer);
         return this;
     }
 
     public void showMain() {
         Elements.setVisible(main, true);
-        children.values().forEach(page -> Elements.setVisible(page, false));
+        pages.values().forEach(page -> Elements.setVisible(page, false));
     }
 
     public void showPage(String id) {
         Elements.setVisible(main, false);
-        children.forEach((pageId, page) -> Elements.setVisible(page, id.equals(pageId)));
+        pages.forEach((pageId, page) -> Elements.setVisible(page, id.equals(pageId)));
+    }
+
+    /**
+     * Updates the breadcrumb on the specified page. The segments are updated from left to right.
+     */
+    public void updateBreadcrumb(String id, String firstSegment, String... restSegments) {
+        Breadcrumb breadcrumb = breadcrumbs.get(id);
+        if (breadcrumb != null) {
+            breadcrumb.update(firstSegment, restSegments);
+        }
     }
 
     @Override

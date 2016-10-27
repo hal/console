@@ -83,7 +83,6 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     protected abstract void persistModel(ModelNode modelNode);
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void assembleUI() {
         editContainer = Browser.getDocument().createDivElement();
         readonlyContainer = Browser.getDocument().createDivElement();
@@ -91,7 +90,6 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
         formItems = createFormItems();
         for (Iterator<FormItem> iterator = formItems.iterator(); iterator.hasNext(); ) {
             FormItem formItem = iterator.next();
-            formItem.addValueChangeHandler(new FormItemChangeHandler(formItem));
             editContainer.appendChild(formItem.asElement(EDITING));
             readonlyContainer.appendChild(formItem.asElement(READONLY));
             if (iterator.hasNext()) {
@@ -122,6 +120,8 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
     public void attach() {
         for (FormItem formItem : formItems) {
             formItem.attach();
+            //noinspection unchecked
+            formItem.addValueChangeHandler(new FormItemChangeHandler(formItem));
         }
     }
 

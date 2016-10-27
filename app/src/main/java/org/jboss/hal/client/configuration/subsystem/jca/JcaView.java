@@ -16,6 +16,7 @@
 package org.jboss.hal.client.configuration.subsystem.jca;
 
 import java.util.Arrays;
+import java.util.List;
 import javax.inject.Inject;
 
 import elemental.dom.Element;
@@ -37,6 +38,7 @@ import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
 import org.jboss.hal.meta.Metadata;
@@ -47,19 +49,18 @@ import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WORKMANAGER;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.Names.THREAD_POOLS;
 
 /**
  * @author Harald Pehl
  */
 public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
-
-    private static final String WORKMANAGER = "workmanager";
-    static final String THREAD_POOLS = "Thread Pools";
 
     private final Form<ModelNode> ccmForm;
     private final Form<ModelNode> avForm;
@@ -68,8 +69,11 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
     private final DataTable<NamedNode> bcTable;
     private final Form<NamedNode> bcForm;
     private final ModelNodeTable<NamedNode> wmTable;
+    private final ThreadPoolsElement wmThreadPools;
+    private final LabelBuilder labelBuilder;
     private Pages wmPages;
     private JcaPresenter presenter;
+    private ModelNode payload;
 
     @Inject
     @SuppressWarnings("ConstantConditions")
@@ -79,8 +83,9 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
             final TableButtonFactory tableButtonFactory,
             final Resources resources) {
 
-        LabelBuilder labelBuilder = new LabelBuilder();
+        labelBuilder = new LabelBuilder();
         VerticalNavigation navigation = new VerticalNavigation();
+        registerAttachable(navigation);
 
         // ------------------------------------------------------ common config (ccm, av, bv)
 
@@ -125,6 +130,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
 
         navigation.addPrimary(Ids.JCA_COMMON_CONFIGURATION_ENTRY, resources.constants().commonConfiguration(),
                 pfIcon("settings"), commonConfigLayout);
+        registerAttachable(ccmForm, avForm, bvForm);
 
 
         // ------------------------------------------------------ tracer
@@ -149,6 +155,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         // @formatter:on
 
         navigation.addPrimary(Ids.JCA_TRACER_ENTRY, tracerType, fontAwesome("bug"), tracerLayout);
+        registerAttachable(failSafeTracerForm);
 
 
         // ------------------------------------------------------ bootstrap context (bc)
@@ -198,7 +205,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         // @formatter:on
 
         navigation.addPrimary(Ids.JCA_BOOTSTRAP_CONTEXT_ENTRY, bcType, fontAwesome("play"), bcLayout);
-
+        registerAttachable(bcTable, bcForm);
 
         // ------------------------------------------------------ work manager
 
@@ -217,11 +224,11 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .button(tableButtonFactory.remove(wmType, WORKMANAGER_TEMPLATE, api -> api.selectedRow().getName(),
                         () -> presenter.load()))
                 .column(NAME)
-                .column(THREAD_POOLS, row -> wmPages.showPage(Ids.JCA_WORKMANAGER_THREAD_POOL_PAGE))
+                .column(THREAD_POOLS, row -> showThreadPools(WORKMANAGER_TEMPLATE.lastKey(), row.getName()))
                 .build();
         wmTable = new ModelNodeTable<>(Ids.JCA_WORKMANAGER_TABLE, wmOptions);
 
-        ThreadPools wmThreadPools = new ThreadPools();
+        wmThreadPools = new ThreadPoolsElement(metadataRegistry, tableButtonFactory, resources);
 
         // @formatter:off
         Element wmLayout = new Elements.Builder()
@@ -237,11 +244,9 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .addPage(Ids.JCA_WORKMANAGER_THREAD_POOL_PAGE, THREAD_POOLS, wmThreadPools.asElement());
 
         navigation.addPrimary(Ids.JCA_WORKMANAGER_ENTRY, wmType, fontAwesome("cogs"), wmPages);
-
+        registerAttachable(wmTable, wmThreadPools);
 
         // ------------------------------------------------------ main layout
-
-        registerAttachable(ccmForm, avForm, bvForm, failSafeTracerForm, bcTable, bcForm, wmTable, navigation);
 
         // @formatter:off
         LayoutBuilder layoutBuilder = new LayoutBuilder()
@@ -259,6 +264,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
     @Override
     public void setPresenter(final JcaPresenter presenter) {
         this.presenter = presenter;
+        wmThreadPools.setPresenter(presenter);
     }
 
     @Override
@@ -275,6 +281,8 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
     public void update(final ModelNode payload) {
+        this.payload = payload;
+
         ccmForm.view(failSafeGet(payload, "cached-connection-manager/cached-connection-manager"));
         avForm.view(failSafeGet(payload, "archive-validation/archive-validation"));
         bvForm.view(failSafeGet(payload, "bean-validation/bean-validation"));
@@ -290,5 +298,15 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .clear()
                 .add(asNamedNodes(failSafePropertyList(payload, WORKMANAGER_TEMPLATE.lastKey())))
                 .refresh(RefreshMode.RESET);
+    }
+
+    private void showThreadPools(String type, String name) {
+        List<Property> lrt = failSafePropertyList(payload,
+                String.join("/", type, name, WORKMANAGER_LRT_TEMPLATE.lastKey()));
+        List<Property> srt = failSafePropertyList(payload,
+                String.join("/", type, name, WORKMANAGER_SRT_TEMPLATE.lastKey()));
+        wmThreadPools.update(name, lrt, srt);
+        wmPages.showPage(Ids.JCA_WORKMANAGER_THREAD_POOL_PAGE);
+        wmPages.updateBreadcrumb(Ids.JCA_WORKMANAGER_THREAD_POOL_PAGE, labelBuilder.label(type) + ": " + name);
     }
 }

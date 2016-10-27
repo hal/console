@@ -15,11 +15,16 @@
  */
 package org.jboss.hal.ballroom;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import elemental.client.Browser;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 
+import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.active;
 import static org.jboss.hal.resources.CSS.breadcrumb;
@@ -43,7 +48,7 @@ public class Breadcrumb implements IsElement {
     private final Element root;
 
     public Breadcrumb() {
-        root = Browser.getDocument().createOListElement();
+        root = Browser.getDocument().createElement("ol"); //NON-NLS
         root.getClassList().add(breadcrumb);
     }
 
@@ -58,6 +63,25 @@ public class Breadcrumb implements IsElement {
         Element li = new Elements.Builder().li().css(active).textContent(segment).end().build();
         root.appendChild(li);
         return this;
+    }
+
+    public void update(String firstSegment, String... restSegments) {
+        List<String> segments = new ArrayList<>();
+        segments.add(firstSegment);
+        if (restSegments != null && restSegments.length != 0) {
+            segments.addAll(asList(restSegments));
+        }
+
+        int index = 0;
+        for (Iterator<Element> iterator = Elements.children(root).iterator();
+                iterator.hasNext() && index < segments.size(); index++) {
+            Element element = iterator.next();
+            //noinspection HardCodedStringLiteral
+            if (element.getFirstElementChild() != null && "A".equals(element.getFirstElementChild().getTagName())) {
+                element = element.getFirstElementChild();
+            }
+            element.setTextContent(segments.get(index));
+        }
     }
 
     @Override

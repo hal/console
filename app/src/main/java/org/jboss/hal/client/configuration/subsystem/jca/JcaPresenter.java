@@ -72,7 +72,6 @@ public class JcaPresenter
     }
     // @formatter:on
 
-
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;

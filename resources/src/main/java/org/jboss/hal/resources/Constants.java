@@ -335,6 +335,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String settings();
     String showAll();
     String size();
+    String sizing();
     String specifyNames();
     String start();
     String starting();
