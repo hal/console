@@ -39,7 +39,7 @@ class ThreadPool extends NamedNode {
         return longRunning;
     }
 
-    String getRunninMode() {
+    String getRunningMode() {
         return longRunning ? LONG_RUNNING : SHORT_RUNNING;
     }
 }

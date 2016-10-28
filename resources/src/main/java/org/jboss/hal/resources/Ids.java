@@ -182,21 +182,31 @@ public interface Ids {
     String JCA_BOOTSTRAP_CONTEXT_FORM = build(JCA, "bootstrap-context", FORM_SUFFIX);
     String JCA_BOOTSTRAP_CONTEXT_ENTRY = build(JCA, "bootstrap-context", ENTRY_SUFFIX);
     String JCA_BOOTSTRAP_CONTEXT_TABLE = build(JCA, "bootstrap-context", TABLE_SUFFIX);
+    String JCA_DISTRIBUTED_WORKMANAGER = build(JCA, "distributed-workmanager");
+    String JCA_DISTRIBUTED_WORKMANAGER_ADD = build(JCA_DISTRIBUTED_WORKMANAGER, ADD_SUFFIX);
+    String JCA_DISTRIBUTED_WORKMANAGER_ENTRY = build(JCA_DISTRIBUTED_WORKMANAGER, ENTRY_SUFFIX);
+    String JCA_DISTRIBUTED_WORKMANAGER_FORM = build(JCA_DISTRIBUTED_WORKMANAGER, FORM_SUFFIX);
+    String JCA_DISTRIBUTED_WORKMANAGER_TABLE = build(JCA_DISTRIBUTED_WORKMANAGER, TABLE_SUFFIX);
     String JCA_CCM_FORM = build(JCA, "ccm", FORM_SUFFIX);
     String JCA_CCM_TAB = build(JCA, "ccm", TAB_SUFFIX);
     String JCA_COMMON_CONFIGURATION_ENTRY = build(JCA, "common-configuration", ENTRY_SUFFIX);
     String JCA_TRACER_ENTRY = build(JCA, "tracer", ENTRY_SUFFIX);
     String JCA_TRACER_FORM = build(JCA, "tracer", FORM_SUFFIX);
-    String JCA_WORKMANAGER_ADD = build(JCA, "workmanager", ADD_SUFFIX);
-    String JCA_WORKMANAGER_ENTRY = build(JCA, "workmanager", ENTRY_SUFFIX);
-    String JCA_WORKMANAGER_TABLE = build(JCA, "workmanager", TABLE_SUFFIX);
-    String JCA_WORKMANAGER_THREAD_POOL = build(JCA, "workmanager", "thread-pool");
-    String JCA_WORKMANAGER_THREAD_POOL_ATTRIBUTES_FORM = build(JCA_WORKMANAGER_THREAD_POOL, "attributes", FORM_SUFFIX);
-    String JCA_WORKMANAGER_THREAD_POOL_ATTRIBUTES_TAB = build(JCA_WORKMANAGER_THREAD_POOL, "attributes", TAB_SUFFIX);
-    String JCA_WORKMANAGER_THREAD_POOL_PAGE = build(JCA_WORKMANAGER_THREAD_POOL, "page");
-    String JCA_WORKMANAGER_THREAD_POOL_SIZING_FORM = build(JCA_WORKMANAGER_THREAD_POOL, "sizing", FORM_SUFFIX);
-    String JCA_WORKMANAGER_THREAD_POOL_SIZING_TAB = build(JCA_WORKMANAGER_THREAD_POOL, "sizing", TAB_SUFFIX);
-    String JCA_WORKMANAGER_THREAD_POOL_TABLE = build(JCA_WORKMANAGER_THREAD_POOL, TAB_SUFFIX);
+    String JCA_WORKMANAGER = build(JCA, "workmanager");
+    String JCA_WORKMANAGER_ADD = build(JCA_WORKMANAGER, ADD_SUFFIX);
+    String JCA_WORKMANAGER_ENTRY = build(JCA_WORKMANAGER, ENTRY_SUFFIX);
+    String JCA_WORKMANAGER_TABLE = build(JCA_WORKMANAGER, TABLE_SUFFIX);
+    // Please note that the JCA_THREAD_POOL_* constants are prefixed with JCA_DISTRIBUTED_WORKMANAGER or JCA_WORKMANAGER!
+    // Thus the JCA_THREAD_POOL_ATTRIBUTES_TAB used for the distributed workmanager reads as
+    // "jca-distributed-workmanager-thread-pool-attributes-tab"
+    String JCA_THREAD_POOL = "thread-pool";
+    String JCA_THREAD_POOL_ADD = build(JCA_THREAD_POOL, ADD_SUFFIX);
+    String JCA_THREAD_POOL_ATTRIBUTES_FORM = build(JCA_THREAD_POOL, "attributes", FORM_SUFFIX);
+    String JCA_THREAD_POOL_ATTRIBUTES_TAB = build(JCA_THREAD_POOL, "attributes", TAB_SUFFIX);
+    String JCA_THREAD_POOL_PAGE = build(JCA_THREAD_POOL, "page");
+    String JCA_THREAD_POOL_SIZING_FORM = build(JCA_THREAD_POOL, "sizing", FORM_SUFFIX);
+    String JCA_THREAD_POOL_SIZING_TAB = build(JCA_THREAD_POOL, "sizing", TAB_SUFFIX);
+    String JCA_THREAD_POOL_TABLE = build(JCA_THREAD_POOL, TABLE_SUFFIX);
     String JDBC_DRIVER = "jdbc-driver";
     String JDBC_DRIVER_ADD = build(JDBC_DRIVER, ADD_SUFFIX);
     String JDBC_DRIVER_ADD_FORM = build(JDBC_DRIVER, ADD_SUFFIX, FORM_SUFFIX);
@@ -293,7 +303,6 @@ public interface Ids {
     String STANDALONE_SERVER = "standalone-server";
     String SUBSYSTEM = "subsystem";
 
-    String TABLE_CELL_ACTION = "table-cell-action";
     String TLC_ACCESS_CONTROL = "tlc-access-control";
     String TLC_CONFIGURATION = "tlc-configuration";
     String TLC_DEPLOYMENTS = "tlc-deployments";
@@ -310,9 +319,6 @@ public interface Ids {
     String UPLOAD_NAMES_STEP = build(UPLOAD, "names", WIZARD_STEP_SUFFIX);
     String USER = "user";
 
-    String VERSION_INFO = "version-info";
-    String VERSION_INFO_FORM = build(VERSION_INFO, FORM_SUFFIX);
-
     String XA_DATA_SOURCE = "xa-data-source";
     String XA_DATA_SOURCE_ADD = build(XA_DATA_SOURCE, ADD_SUFFIX);
     String XA_DATA_SOURCE_RUNTIME = "xa-data-source-runtime";
@@ -327,6 +333,7 @@ public interface Ids {
     static String content(String name) {
         return name;
     }
+
     static String dataSourceConfiguration(String name, boolean xa) {
         return build(xa ? "xa" : "non-xa", DATA_SOURCE_CONFIGURATION, name);
     }

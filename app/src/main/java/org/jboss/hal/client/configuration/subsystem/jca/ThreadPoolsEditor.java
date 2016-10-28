@@ -24,13 +24,13 @@ import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.LayoutBuilder;
 import org.jboss.hal.ballroom.Tabs;
-import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.table.Column;
 import org.jboss.hal.ballroom.table.Column.RenderCallback;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.Property;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
@@ -45,7 +45,6 @@ import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MAX_THREADS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.THREAD_FACTORY;
-import static org.jboss.hal.resources.Names.THREAD_POOL;
 import static org.jboss.hal.resources.Names.THREAD_POOLS;
 
 /**
@@ -57,42 +56,42 @@ import static org.jboss.hal.resources.Names.THREAD_POOLS;
 class ThreadPoolsEditor implements IsElement, Attachable {
 
     private final Element root;
-    private final ModelNodeTable<ThreadPool> table;
     private final List<Attachable> attachables;
-    private JcaPresenter presenter;
-    private String workmanager;
+    private final ModelNodeTable<ThreadPool> table;
     private final ModelNodeForm<ThreadPool> attributesForm;
     private final ModelNodeForm<ThreadPool> sizingForm;
 
+    private JcaPresenter presenter;
+    private AddressTemplate workmanagerTemplate;
+    private String workmanager;
+
     @SuppressWarnings("ConstantConditions")
-    ThreadPoolsEditor(final MetadataRegistry metadataRegistry,
-            final Resources resources) {
+    ThreadPoolsEditor(final String prefixId, final MetadataRegistry metadataRegistry, final Resources resources) {
 
         attachables = new ArrayList<>();
 
         Metadata metadata = metadataRegistry.lookup(WORKMANAGER_LRT_TEMPLATE);
         Options<ThreadPool> options = new ModelNodeTable.Builder<ThreadPool>(metadata)
-                .button(resources.constants().add(), (event, api) -> Browser.getWindow().alert(Names.NYI))
+                .button(resources.constants().add(), (event, api) -> presenter.launchAddThreadPool(workmanagerTemplate,
+                        workmanager))
                 .button(resources.constants().remove(), SELECTED, (event, api) ->
-                        DialogFactory.showConfirmation(
-                                resources.messages().removeResourceConfirmationTitle(THREAD_POOL),
-                                resources.messages().removeResourceConfirmationQuestion(api.selectedRow().getName()),
-                                () -> Browser.getWindow().alert(Names.NYI)))
+                        presenter.removeThreadPool(workmanagerTemplate, workmanager, api.selectedRow().getName(),
+                                api.selectedRow().isLongRunning()))
                 .column(NAME)
                 .column(resources.constants().type(), new RenderCallback<ThreadPool, String>() {
                     @Override
                     public String render(final String cell, final String type, final ThreadPool row,
                             final Column.Meta meta) {
-                        return row.getRunninMode();
+                        return row.getRunningMode();
                     }
                 })
                 .column(MAX_THREADS)
                 .build();
-        table = new ModelNodeTable<>(Ids.JCA_WORKMANAGER_THREAD_POOL_TABLE, options);
+        table = new ModelNodeTable<>(Ids.build(prefixId, Ids.JCA_THREAD_POOL_TABLE), options);
         attachables.add(table);
 
         attributesForm = new ModelNodeForm.Builder<ThreadPool>(
-                Ids.JCA_WORKMANAGER_THREAD_POOL_ATTRIBUTES_FORM, metadata)
+                Ids.build(prefixId, Ids.JCA_THREAD_POOL_ATTRIBUTES_FORM), metadata)
                 .include(NAME, "allow-core-timeout", THREAD_FACTORY)
                 .unsorted()
                 .onSave((form, changedValues) -> {
@@ -101,7 +100,7 @@ class ThreadPoolsEditor implements IsElement, Attachable {
                 .build();
         attachables.add(attributesForm);
         sizingForm = new ModelNodeForm.Builder<ThreadPool>(
-                Ids.JCA_WORKMANAGER_THREAD_POOL_SIZING_FORM, metadata)
+                Ids.build(prefixId, Ids.JCA_THREAD_POOL_SIZING_FORM), metadata)
                 .include(MAX_THREADS, "core-threads", "queue-length")
                 .onSave((form, changedValues) -> {
                     Browser.getWindow().alert(Names.NYI);
@@ -110,9 +109,9 @@ class ThreadPoolsEditor implements IsElement, Attachable {
         attachables.add(sizingForm);
 
         Tabs tabs = new Tabs()
-                .add(Ids.JCA_WORKMANAGER_THREAD_POOL_ATTRIBUTES_TAB, resources.constants().attribute(),
+                .add(Ids.build(prefixId, Ids.JCA_THREAD_POOL_ATTRIBUTES_TAB), resources.constants().attribute(),
                         attributesForm.asElement())
-                .add(Ids.JCA_WORKMANAGER_THREAD_POOL_SIZING_TAB, resources.constants().sizing(),
+                .add(Ids.build(prefixId, Ids.JCA_THREAD_POOL_SIZING_TAB), resources.constants().sizing(),
                         sizingForm.asElement());
 
         // @formatter:off
@@ -150,7 +149,9 @@ class ThreadPoolsEditor implements IsElement, Attachable {
         this.presenter = presenter;
     }
 
-    void update(String workmanager, List<Property> longRunningThreads, List<Property> shortRunningThreads) {
+    void update(AddressTemplate workmanagerTemplate, String workmanager,
+            List<Property> longRunningThreads, List<Property> shortRunningThreads) {
+        this.workmanagerTemplate = workmanagerTemplate;
         this.workmanager = workmanager;
 
         List<ThreadPool> lrt = longRunningThreads.stream()

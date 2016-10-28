@@ -112,7 +112,6 @@ public class PropertiesItem extends AbstractFormItem<Map<String, String>> {
             setUndefined(value.isEmpty());
             signalChange(value);
         });
-
     }
 
     @Override

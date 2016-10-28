@@ -16,7 +16,9 @@
 package org.jboss.hal.client.configuration.subsystem.jca;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.inject.Inject;
 
 import elemental.dom.Element;
@@ -41,6 +43,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -49,6 +52,8 @@ import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.POLICY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SELECTOR;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WORKMANAGER;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
@@ -62,6 +67,8 @@ import static org.jboss.hal.resources.Names.THREAD_POOLS;
  */
 public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
 
+    private final LabelBuilder labelBuilder;
+    private final Map<AddressTemplate, Pages> pages;
     private final Form<ModelNode> ccmForm;
     private final Form<ModelNode> avForm;
     private final Form<ModelNode> bvForm;
@@ -69,11 +76,12 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
     private final DataTable<NamedNode> bcTable;
     private final Form<NamedNode> bcForm;
     private final ModelNodeTable<NamedNode> wmTable;
-    private final ThreadPoolsEditor wmThreadPools;
-    private final LabelBuilder labelBuilder;
-    private Pages wmPages;
+    private final ThreadPoolsEditor wmTpEditor;
+    private final ModelNodeTable<NamedNode> dwmTable;
+    private final Form<NamedNode> dwmForm;
+    private final ThreadPoolsEditor dwmTpEditor;
+
     private JcaPresenter presenter;
-    private ModelNode payload;
 
     @Inject
     @SuppressWarnings("ConstantConditions")
@@ -84,6 +92,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
             final Resources resources) {
 
         labelBuilder = new LabelBuilder();
+        pages = new HashMap<>();
         VerticalNavigation navigation = new VerticalNavigation();
         registerAttachable(navigation);
 
@@ -184,7 +193,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         bcForm = new ModelNodeForm.Builder<NamedNode>(Ids.JCA_BOOTSTRAP_CONTEXT_FORM,
                 bcMetadata)
                 .onSave((form, changedValues) -> {
-                    String bcName = bcTable.api().selectedRow().getName();
+                    String bcName = form.getModel().getName();
                     presenter.saveResource(BOOTSTRAP_CONTEXT_TEMPLATE, bcName, changedValues,
                             resources.messages().modifyResourceSuccess(bcType, bcName));
                 })
@@ -207,7 +216,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         navigation.addPrimary(Ids.JCA_BOOTSTRAP_CONTEXT_ENTRY, bcType, fontAwesome("play"), bcLayout);
         registerAttachable(bcTable, bcForm);
 
-        // ------------------------------------------------------ work manager
+        // ------------------------------------------------------ workmanager
 
         String wmType = labelBuilder.label(WORKMANAGER_TEMPLATE.lastKey());
         Metadata wmMetadata = metadataRegistry.lookup(WORKMANAGER_TEMPLATE);
@@ -224,11 +233,9 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .button(tableButtonFactory.remove(wmType, WORKMANAGER_TEMPLATE, api -> api.selectedRow().getName(),
                         () -> presenter.load()))
                 .column(NAME)
-                .column(THREAD_POOLS, row -> showThreadPools(WORKMANAGER_TEMPLATE.lastKey(), row.getName()))
+                .column(THREAD_POOLS, row -> presenter.loadThreadPools(WORKMANAGER_TEMPLATE, row.getName()))
                 .build();
         wmTable = new ModelNodeTable<>(Ids.JCA_WORKMANAGER_TABLE, wmOptions);
-
-        wmThreadPools = new ThreadPoolsEditor(metadataRegistry, resources);
 
         // @formatter:off
         Element wmLayout = new Elements.Builder()
@@ -240,11 +247,68 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         .build();
         // @formatter:on
 
-        wmPages = new Pages(wmType, wmLayout)
-                .addPage(Ids.JCA_WORKMANAGER_THREAD_POOL_PAGE, THREAD_POOLS, wmThreadPools.asElement());
+        wmTpEditor = new ThreadPoolsEditor(Ids.JCA_WORKMANAGER, metadataRegistry, resources);
+        registerAttachable(wmTpEditor);
 
-        navigation.addPrimary(Ids.JCA_WORKMANAGER_ENTRY, wmType, fontAwesome("cogs"), wmPages);
-        registerAttachable(wmTable, wmThreadPools);
+        Pages wmPages = new Pages(wmType, wmLayout)
+                .addPage(Ids.JCA_THREAD_POOL_PAGE, THREAD_POOLS, wmTpEditor.asElement());
+        pages.put(WORKMANAGER_TEMPLATE, wmPages);
+
+        navigation.addPrimary(Ids.JCA_WORKMANAGER_ENTRY, wmType, fontAwesome("cog"), wmPages);
+        registerAttachable(wmTable);
+
+        // ------------------------------------------------------ distributed workmanager
+
+        String dwmType = labelBuilder.label(DISTRIBUTED_WORKMANAGER_TEMPLATE.lastKey());
+        Metadata dwmMetadata = metadataRegistry.lookup(DISTRIBUTED_WORKMANAGER_TEMPLATE);
+
+        Form<ModelNode> dwmAddForm = new ModelNodeForm.Builder<>(Ids.JCA_DISTRIBUTED_WORKMANAGER_ADD, wmMetadata)
+                .addFromRequestProperties()
+                .requiredOnly()
+                .build();
+        AddResourceDialog dwmAddDialog = new AddResourceDialog(resources.messages().addResourceTitle(dwmType),
+                dwmAddForm, (name, model) -> presenter.add(dwmType, name, DISTRIBUTED_WORKMANAGER_TEMPLATE, model));
+
+        Options<NamedNode> dwmOptions = new ModelNodeTable.Builder<NamedNode>(dwmMetadata)
+                .button(resources.constants().add(), (event, api) -> dwmAddDialog.show())
+                .button(tableButtonFactory.remove(dwmType, DISTRIBUTED_WORKMANAGER_TEMPLATE,
+                        api -> api.selectedRow().getName(), () -> presenter.load()))
+                .column(NAME)
+                .column(POLICY)
+                .column(SELECTOR)
+                .column(THREAD_POOLS, row -> presenter.loadThreadPools(DISTRIBUTED_WORKMANAGER_TEMPLATE, row.getName()))
+                .build();
+        dwmTable = new ModelNodeTable<>(Ids.JCA_DISTRIBUTED_WORKMANAGER_TABLE, dwmOptions);
+
+        dwmForm = new ModelNodeForm.Builder<NamedNode>(
+                Ids.JCA_DISTRIBUTED_WORKMANAGER_FORM, dwmMetadata)
+                .onSave((form, changedValues) -> {
+                    String dwmName = form.getModel().getName();
+                    presenter.saveResource(DISTRIBUTED_WORKMANAGER_TEMPLATE, dwmName, changedValues,
+                            resources.messages().modifyResourceSuccess(dwmType, dwmName));
+                })
+                .build();
+
+        // @formatter:off
+        Element dwmLayout = new Elements.Builder()
+            .div()
+                .h(1).textContent(dwmType).end()
+                .p().textContent(dwmMetadata.getDescription().getDescription()).end()
+                .add(dwmTable)
+                .add(dwmForm)
+            .end()
+        .build();
+        // @formatter:on
+
+        dwmTpEditor = new ThreadPoolsEditor(Ids.JCA_DISTRIBUTED_WORKMANAGER, metadataRegistry, resources);
+        registerAttachable(dwmTpEditor);
+
+        Pages dwmPages = new Pages(dwmType, dwmLayout)
+                .addPage(Ids.JCA_THREAD_POOL_PAGE, THREAD_POOLS, dwmTpEditor.asElement());
+        pages.put(DISTRIBUTED_WORKMANAGER_TEMPLATE, dwmPages);
+
+        navigation.addPrimary(Ids.JCA_DISTRIBUTED_WORKMANAGER_ENTRY, dwmType, fontAwesome("cogs"), dwmPages);
+        registerAttachable(dwmTable, dwmForm);
 
         // ------------------------------------------------------ main layout
 
@@ -264,25 +328,25 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
     @Override
     public void setPresenter(final JcaPresenter presenter) {
         this.presenter = presenter;
-        wmThreadPools.setPresenter(presenter);
+        wmTpEditor.setPresenter(presenter);
+        dwmTpEditor.setPresenter(presenter);
     }
 
     @Override
     public void attach() {
         super.attach();
         bcTable.api().bindForm(bcForm);
+        dwmTable.api().bindForm(dwmForm);
     }
 
     @Override
-    public void reset() {
-        wmPages.showMain();
+    public void reveal() {
+        pages.values().forEach(Pages::showMain);
     }
 
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
     public void update(final ModelNode payload) {
-        this.payload = payload;
-
         ccmForm.view(failSafeGet(payload, "cached-connection-manager/cached-connection-manager"));
         avForm.view(failSafeGet(payload, "archive-validation/archive-validation"));
         bvForm.view(failSafeGet(payload, "bean-validation/bean-validation"));
@@ -298,16 +362,26 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .clear()
                 .add(asNamedNodes(failSafePropertyList(payload, WORKMANAGER_TEMPLATE.lastKey())))
                 .refresh(RefreshMode.RESET);
+
+        dwmTable.api()
+                .clear()
+                .add(asNamedNodes(failSafePropertyList(payload, DISTRIBUTED_WORKMANAGER_TEMPLATE.lastKey())))
+                .refresh(RefreshMode.RESET);
     }
 
-    private void showThreadPools(String type, String name) {
-        wmPages.showPage(Ids.JCA_WORKMANAGER_THREAD_POOL_PAGE);
-        wmPages.updateBreadcrumb(Ids.JCA_WORKMANAGER_THREAD_POOL_PAGE, labelBuilder.label(type) + ": " + name);
-
-        List<Property> lrt = failSafePropertyList(payload,
-                String.join("/", type, name, WORKMANAGER_LRT_TEMPLATE.lastKey()));
-        List<Property> srt = failSafePropertyList(payload,
-                String.join("/", type, name, WORKMANAGER_SRT_TEMPLATE.lastKey()));
-        wmThreadPools.update(name, lrt, srt);
+    @Override
+    public void updateThreadPools(final AddressTemplate workmanagerTemplate, final String workmanager,
+            final List<Property> lrt, final List<Property> srt) {
+        Pages pages = this.pages.get(workmanagerTemplate);
+        if (pages != null) {
+            pages.showPage(Ids.JCA_THREAD_POOL_PAGE);
+            pages.updateBreadcrumb(Ids.JCA_THREAD_POOL_PAGE,
+                    labelBuilder.label(workmanagerTemplate.lastKey()) + ": " + workmanager);
+        }
+        if (WORKMANAGER.equals(workmanagerTemplate.lastKey())) {
+            wmTpEditor.update(workmanagerTemplate, workmanager, lrt, srt);
+        } else {
+            dwmTpEditor.update(workmanagerTemplate, workmanager, lrt, srt);
+        }
     }
 }

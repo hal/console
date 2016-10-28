@@ -332,6 +332,7 @@ public class ModelNodeForm<T extends ModelNode> extends DefaultForm<T> {
                         addHelp(labelBuilder.label(unboundFormItem.formItem.getName()), unboundFormItem.helpText);
                     }
                     iterator.remove();
+                    index++;
                 }
             }
 

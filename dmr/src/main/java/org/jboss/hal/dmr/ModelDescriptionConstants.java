@@ -173,6 +173,7 @@ public interface ModelDescriptionConstants {
 
     String PASSWORD = "password";
     String PATH = "path";
+    String POLICY = "policy";
     String POP3 = "pop3";
     String PORT = "port";
     String PROCESS_STATE = "process-state";
@@ -184,6 +185,7 @@ public interface ModelDescriptionConstants {
     String PROXIES = "proxies";
 
     String QUERY = "query";
+    String QUEUE_LENGTH = "queue-length";
 
     String READ_ATTRIBUTE_OPERATION = "read-attribute";
     String READ_CHILDREN_NAMES_OPERATION = "read-children-names";
@@ -229,6 +231,7 @@ public interface ModelDescriptionConstants {
     String SECURITY = "security";
     String SECURITY_DOMAIN = "security-domain";
     String SELECT = "select";
+    String SELECTOR = "selector";
     String SERVER = "server";
     String SERVER_CONFIG = "server-config";
     String SERVER_GROUP = "server-group";
