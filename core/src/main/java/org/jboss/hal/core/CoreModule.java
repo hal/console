@@ -45,6 +45,7 @@ public class CoreModule extends AbstractGinModule {
     protected void configure() {
         bind(ColumnRegistry.class).in(Singleton.class);
         bind(ColumnActionFactory.class).in(Singleton.class);
+        bind(CrudOperations.class).in(Singleton.class);
         bind(Finder.class).in(Singleton.class);
         bind(FinderPathFactory.class).in(Singleton.class);
         bind(HostActions.class).in(Singleton.class);

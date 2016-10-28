@@ -65,7 +65,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String close();
     String closed();
     String committed();
-    String commonConfiguration();
     String connectedTo();
     String connection();
     String connections();
@@ -225,7 +224,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String includesAllHeader();
     String input();
 
-    String jcaCommonConfiguration();
+    String jcaConfiguration();
     String jdbcDriver();
     String jndiTree();
 

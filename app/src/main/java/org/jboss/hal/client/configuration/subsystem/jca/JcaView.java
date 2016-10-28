@@ -43,16 +43,19 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
+import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.POLICY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SELECTOR;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WORKMANAGER;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -63,6 +66,9 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.Names.THREAD_POOLS;
 
 /**
+ * Implementation note: Not based on MBUI XML due to special handling of long and short running thread pools for
+ * (distributed) work manager (only one long and short running thread pool allowed per (distributed) work manager).
+ *
  * @author Harald Pehl
  */
 public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
@@ -128,17 +134,16 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         tabs.add(Ids.JCA_BEAN_VALIDATION_TAB, bvType, bvForm.asElement());
 
         // @formatter:off
-        Element commonConfigLayout = new Elements.Builder()
+        Element configLayout = new Elements.Builder()
             .div()
-                .h(1).textContent(resources.constants().commonConfiguration()).end()
-                .p().textContent(resources.constants().jcaCommonConfiguration()).end()
+                .h(1).textContent(Names.CONFIGURATION).end()
+                .p().textContent(resources.constants().jcaConfiguration()).end()
                 .add(tabs)
             .end()
         .build();
         // @formatter:on
 
-        navigation.addPrimary(Ids.JCA_COMMON_CONFIGURATION_ENTRY, resources.constants().commonConfiguration(),
-                pfIcon("settings"), commonConfigLayout);
+        navigation.addPrimary(Ids.JCA_CONFIGURATION_ENTRY, Names.CONFIGURATION, pfIcon("settings"), configLayout);
         registerAttachable(ccmForm, avForm, bvForm);
 
 
@@ -150,8 +155,9 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .onSave((form, changedValues) -> presenter.saveSingleton(TRACER_TEMPLATE, changedValues,
                         resources.messages().modifySingleResourceSuccess(tracerType)))
                 .build();
-        failSafeTracerForm = new FailSafeModelNodeForm<>(dispatcher, () -> presenter.addTracer(), tracerForm,
-                () -> presenter.lookupTracerOp());
+        failSafeTracerForm = new FailSafeModelNodeForm<>(dispatcher,
+                new Operation.Builder(READ_RESOURCE_OPERATION, TRACER_TEMPLATE.resolve(statementContext)).build(),
+                tracerForm, () -> presenter.addTracer());
 
         // @formatter:off
         Element tracerLayout = new Elements.Builder()

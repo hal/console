@@ -15,7 +15,8 @@
  */
 package org.jboss.hal.client.deployment;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
+
 import elemental.dom.Element;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;

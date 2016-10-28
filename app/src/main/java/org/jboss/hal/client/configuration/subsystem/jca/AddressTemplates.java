@@ -30,8 +30,8 @@ public interface AddressTemplates {
     String DISTRIBUTED_WORKMANAGER_ADDRESS = JCA_ADDRESS + "/distributed-workmanager=*";
     String TRACER_ADDRESS = JCA_ADDRESS + "/tracer=tracer";
     String WORKMANAGER_ADDRESS = JCA_ADDRESS + "/workmanager=*";
-    String WORKMANAGER_LRT_ADDRESS = JCA_ADDRESS + "/workmanager=*/long-running-threads=*";
-    String WORKMANAGER_SRT_ADDRESS = JCA_ADDRESS + "/workmanager=*/short-running-threads=*";
+    String WORKMANAGER_LRT_ADDRESS = WORKMANAGER_ADDRESS + "/long-running-threads=*";
+    String WORKMANAGER_SRT_ADDRESS = WORKMANAGER_ADDRESS + "/short-running-threads=*";
 
     AddressTemplate JCA_TEMPLATE = AddressTemplate.of(JCA_ADDRESS);
     AddressTemplate ARCHIVE_VALIDATION_TEMPLATE =  AddressTemplate.of(ARCHIVE_VALIDATION_ADDRESS);

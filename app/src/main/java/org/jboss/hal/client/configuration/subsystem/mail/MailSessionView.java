@@ -61,6 +61,9 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 /**
+ * Implementation note: Not based on MBUI XML due to special handling of mail servers. Each mail session can define
+ * three different servers: smtp, imap and pop3.
+ *
  * @author Claudio Miranda
  */
 public class MailSessionView extends HalViewImpl implements MailSessionPresenter.MyView {

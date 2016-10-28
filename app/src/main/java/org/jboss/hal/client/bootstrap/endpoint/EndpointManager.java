@@ -15,10 +15,11 @@
  */
 package org.jboss.hal.client.bootstrap.endpoint;
 
+import javax.inject.Inject;
+
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.inject.Inject;
 import elemental.client.Browser;
 import elemental.xml.XMLHttpRequest;
 import org.jboss.hal.config.Endpoints;

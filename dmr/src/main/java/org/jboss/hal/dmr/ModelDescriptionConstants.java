@@ -109,6 +109,7 @@ public interface ModelDescriptionConstants {
     String GLOBAL_MODULES = "global-modules";
     String GROUP = "group";
 
+    String HANDLER = "handler";
     String HANDLERS = "handlers";
     String HASH = "hash";
     String HOST = "host";

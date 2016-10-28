@@ -48,6 +48,8 @@ import org.jboss.hal.client.configuration.subsystem.io.IOPresenter;
 import org.jboss.hal.client.configuration.subsystem.io.Mbui_IOView_Provider;
 import org.jboss.hal.client.configuration.subsystem.jca.JcaPresenter;
 import org.jboss.hal.client.configuration.subsystem.jca.JcaView;
+import org.jboss.hal.client.configuration.subsystem.jmx.JmxPresenter;
+import org.jboss.hal.client.configuration.subsystem.jmx.JmxView;
 import org.jboss.hal.client.configuration.subsystem.logging.LoggingPresenter;
 import org.jboss.hal.client.configuration.subsystem.logging.LoggingProfilePresenter;
 import org.jboss.hal.client.configuration.subsystem.logging.Mbui_LoggingProfileView_Provider;
@@ -237,6 +239,11 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 JcaPresenter.MyView.class,
                 JcaView.class,
                 JcaPresenter.MyProxy.class);
+
+        bindPresenter(JmxPresenter.class,
+                JmxPresenter.MyView.class,
+                JmxView.class,
+                JmxPresenter.MyProxy.class);
 
         bindPresenter(JndiPresenter.class,
                 JndiPresenter.MyView.class,

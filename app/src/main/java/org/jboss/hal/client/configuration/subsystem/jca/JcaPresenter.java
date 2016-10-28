@@ -110,7 +110,6 @@ public class JcaPresenter
         this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
         this.resources = resources;
-
         this.operationFactory = new OperationFactory();
     }
 
@@ -190,10 +189,6 @@ public class JcaPresenter
             MessageEvent.fire(getEventBus(), Message.success(resources.messages().addSingleResourceSuccess(type)));
             load();
         });
-    }
-
-    Operation lookupTracerOp() {
-        return new Operation.Builder(READ_RESOURCE_OPERATION, TRACER_TEMPLATE.resolve(statementContext)).build();
     }
 
 

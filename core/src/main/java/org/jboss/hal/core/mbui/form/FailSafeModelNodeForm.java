@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.core.mbui.form;
 
-import java.util.function.Supplier;
-
 import com.google.gwt.core.client.GWT;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
@@ -31,8 +29,9 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
 
 /**
- * An element which uses an async callback to check whether a resource exists. If it exists the specified form is
- * displayed, otherwise the empty state element is displayed which should be used to create the resource.
+ * An element which uses the dispatcher and an operation to check whether a resource exists. If it exists the specified
+ * form is displayed in view mode, otherwise the empty state element is displayed which can be used to create the
+ * resource.
  *
  * @author Harald Pehl
  */
@@ -44,21 +43,19 @@ public class FailSafeModelNodeForm<T extends ModelNode> implements IsElement, At
     private final Dispatcher dispatcher;
     private final EmptyState emptyState;
     private final Form<T> form;
-    private final Supplier<Operation> operation;
+    private final Operation operation;
     private final Element root;
 
-    public FailSafeModelNodeForm(final Dispatcher dispatcher, final EmptyState.Action action, final Form<T> form,
-            final Supplier<Operation> operation) {
-        this(dispatcher,
-                new EmptyState.Builder(CONSTANTS.noResource())
-                        .description(MESSAGES.noResource())
-                        .primaryAction(CONSTANTS.add(), action)
-                        .build(),
-                form, operation);
+    public FailSafeModelNodeForm(final Dispatcher dispatcher, final Operation operation,
+            final Form<T> form, final EmptyState.Action action) {
+        this(dispatcher, operation, form, new EmptyState.Builder(CONSTANTS.noResource())
+                .description(MESSAGES.noResource())
+                .primaryAction(CONSTANTS.add(), action)
+                .build());
     }
 
-    public FailSafeModelNodeForm(final Dispatcher dispatcher, final EmptyState emptyState, final Form<T> form,
-            final Supplier<Operation> operation) {
+    public FailSafeModelNodeForm(final Dispatcher dispatcher, final Operation operation, final Form<T> form,
+            final EmptyState emptyState) {
         this.dispatcher = dispatcher;
         this.emptyState = emptyState;
         this.form = form;
@@ -77,7 +74,7 @@ public class FailSafeModelNodeForm<T extends ModelNode> implements IsElement, At
     @Override
     public void attach() {
         form.attach();
-        dispatcher.execute(operation.get(),
+        dispatcher.execute(operation,
                 result -> formMode(),
                 (op, failure) -> emptyStateMode());
     }
@@ -88,7 +85,7 @@ public class FailSafeModelNodeForm<T extends ModelNode> implements IsElement, At
     }
 
     public void view(T model) {
-        dispatcher.execute(operation.get(),
+        dispatcher.execute(operation,
                 result -> {
                     formMode();
                     form.view(model);

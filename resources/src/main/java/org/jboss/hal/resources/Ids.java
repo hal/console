@@ -189,7 +189,7 @@ public interface Ids {
     String JCA_DISTRIBUTED_WORKMANAGER_TABLE = build(JCA_DISTRIBUTED_WORKMANAGER, TABLE_SUFFIX);
     String JCA_CCM_FORM = build(JCA, "ccm", FORM_SUFFIX);
     String JCA_CCM_TAB = build(JCA, "ccm", TAB_SUFFIX);
-    String JCA_COMMON_CONFIGURATION_ENTRY = build(JCA, "common-configuration", ENTRY_SUFFIX);
+    String JCA_CONFIGURATION_ENTRY = build(JCA, "configuration", ENTRY_SUFFIX);
     String JCA_TRACER_ENTRY = build(JCA, "tracer", ENTRY_SUFFIX);
     String JCA_TRACER_FORM = build(JCA, "tracer", FORM_SUFFIX);
     String JCA_WORKMANAGER = build(JCA, "workmanager");
@@ -211,6 +211,13 @@ public interface Ids {
     String JDBC_DRIVER_ADD = build(JDBC_DRIVER, ADD_SUFFIX);
     String JDBC_DRIVER_ADD_FORM = build(JDBC_DRIVER, ADD_SUFFIX, FORM_SUFFIX);
     String JDBC_DRIVER_REFRESH = build(JDBC_DRIVER, REFRESH_SUFFIX);
+    String JMX = "jmx";
+    String JMX_AUDIT_LOG_ENTRY = build(JMX, "audit-log", ENTRY_SUFFIX);
+    String JMX_AUDIT_LOG_FORM = build(JMX, "audit-log", FORM_SUFFIX);
+    String JMX_CONFIGURATION_ENTRY = build(JMX, "configuration", ENTRY_SUFFIX);
+    String JMX_CONFIGURATION_FORM = build(JMX, "configuration", FORM_SUFFIX);
+    String JMX_REMOTING_CONNECTOR_ENTRY = build(JMX, "remoting-connector", ENTRY_SUFFIX);
+    String JMX_REMOTING_CONNECTOR_FORM = build(JMX, "remoting-connector", FORM_SUFFIX);
     String JNDI = "jndi";
     String JNDI_DETAILS = build(JNDI, "details");
     String JNDI_SEARCH = build(JNDI, "search");
