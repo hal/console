@@ -23,6 +23,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -32,7 +33,6 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.NamedNode;
-import org.jboss.hal.dmr.model.Operation;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.meta.StatementContext;
@@ -43,8 +43,6 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE_DEPTH;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
@@ -81,6 +79,7 @@ public class LoggingProfilePresenter
     // @formatter:on
 
 
+    private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
@@ -91,10 +90,12 @@ public class LoggingProfilePresenter
             final MyView view,
             final MyProxy myProxy,
             final Finder finder,
+            final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
             final StatementContext statementContext,
             final Dispatcher dispatcher) {
         super(eventBus, view, myProxy, finder);
+        this.crud = crud;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = new SelectionAwareStatementContext(statementContext, () -> loggingProfile);
         this.dispatcher = dispatcher;
@@ -131,10 +132,7 @@ public class LoggingProfilePresenter
     @Override
     protected void reload() {
         ResourceAddress address = SELECTED_LOGGING_PROFILE_TEMPLATE.resolve(statementContext);
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
-                .param(RECURSIVE_DEPTH, 2)
-                .build();
-        dispatcher.execute(operation, result -> {
+        crud.read(address, 2, result -> {
             // @formatter:off
             if (result.hasDefined(ROOT_LOGGER_TEMPLATE.lastKey())) {
                 getView().updateRootLogger(result.get(ROOT_LOGGER_TEMPLATE.lastKey()).get(ROOT_LOGGER_TEMPLATE.lastValue()));

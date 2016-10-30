@@ -60,8 +60,8 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
     // @formatter:on
 
 
+    private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
-    private final CrudOperations crudOperations;
     private final StatementContext statementContext;
 
     @Inject
@@ -69,12 +69,12 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
             final MyView view,
             final MyProxy myProxy,
             final Finder finder,
+            final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
-            final CrudOperations crudOperations,
             final StatementContext statementContext) {
         super(eventBus, view, myProxy, finder);
+        this.crud = crud;
         this.finderPathFactory = finderPathFactory;
-        this.crudOperations = crudOperations;
         this.statementContext = statementContext;
     }
 
@@ -101,13 +101,13 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
     }
 
     void load() {
-        crudOperations.readRecursive(JMX_TEMPLATE, result -> getView().update(result));
+        crud.readRecursive(JMX_TEMPLATE, result -> getView().update(result));
     }
 
     void saveAuditLog(final Map<String, Object> changedValues, final boolean changedHandler,
             final List<String> handler) {
         if (!changedHandler) {
-            crudOperations.saveSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, changedValues, this::load);
+            crud.saveSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, changedValues, this::load);
         } else {
             // TODO Calculate the 'diff' between existing and new handler and create a composite which
             //  a) saves the changed values

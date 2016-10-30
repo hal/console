@@ -23,28 +23,20 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
+import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
-import org.jboss.hal.core.mvp.HalView;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
-import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.Resources;
-import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_ADDRESS;
@@ -53,7 +45,6 @@ import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTem
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DATASOURCES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
 /**
  * Presenter which is used for both XA and normal data sources.
@@ -79,11 +70,9 @@ public class DataSourcePresenter
 
     static final String XA_PARAM = "xa";
 
+    private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
-    private final Resources resources;
-    private final Dispatcher dispatcher;
     private final StatementContext statementContext;
-    private final OperationFactory operationFactory;
     private String name;
     private boolean xa;
 
@@ -92,16 +81,13 @@ public class DataSourcePresenter
             final MyView view,
             final MyProxy proxy,
             final Finder finder,
+            final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
-            final Resources resources,
-            final Dispatcher dispatcher,
             final StatementContext statementContext) {
         super(eventBus, view, proxy, finder);
+        this.crud = crud;
         this.finderPathFactory = finderPathFactory;
-        this.resources = resources;
-        this.dispatcher = dispatcher;
         this.statementContext = statementContext;
-        this.operationFactory = new OperationFactory();
     }
 
     @Override
@@ -138,34 +124,11 @@ public class DataSourcePresenter
     }
 
     private void loadDataSource() {
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION,
-                template().resolve(statementContext, name)).build();
-        dispatcher.execute(operation,
-                result -> getView().update(new DataSource(name, result, xa)),
-                (op, failure) -> {
-                    getView().clear(xa);
-                    MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().resourceNotFound(type(), name), failure));
-                },
-                (op, exception) -> {
-                    getView().clear(xa);
-                    dispatcher.defaultExceptionCallback().onException(op, exception);
-                });
+        crud.read(resourceAddress(), result -> getView().update(new DataSource(name, result, xa)));
     }
 
     void saveDataSource(final Map<String, Object> changedValues) {
-        ResourceAddress resourceAddress = template().resolve(statementContext, name);
-        Composite composite = operationFactory.fromChangeSet(resourceAddress, changedValues);
-
-        dispatcher.execute(composite, (CompositeResult result) -> {
-            MessageEvent.fire(getEventBus(),
-                    Message.success(resources.messages().modifyResourceSuccess(type(), name)));
-            loadDataSource();
-        });
-    }
-
-    private AddressTemplate template() {
-        return xa ? AddressTemplates.XA_DATA_SOURCE_TEMPLATE : AddressTemplates.DATA_SOURCE_TEMPLATE;
+        crud.save(type(), name, resourceAddress(), changedValues, this::loadDataSource);
     }
 
     private String type() {

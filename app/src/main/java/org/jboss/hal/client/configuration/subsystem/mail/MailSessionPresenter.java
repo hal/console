@@ -32,22 +32,20 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
-import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.HalView;
+import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -90,9 +88,9 @@ public class MailSessionPresenter
     private final Resources resources;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
+    private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final MetadataRegistry metadataRegistry;
-    private final OperationFactory operationFactory;
     private String mailSessionName;
 
     @Inject
@@ -100,18 +98,19 @@ public class MailSessionPresenter
             final MyView view,
             final MyProxy proxy,
             final Finder finder,
+            final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
             final Resources resources,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
             final MetadataRegistry metadataRegistry) {
         super(eventBus, view, proxy, finder);
+        this.crud = crud;
         this.finderPathFactory = finderPathFactory;
         this.metadataRegistry = metadataRegistry;
         this.resources = resources;
         this.dispatcher = dispatcher;
         this.statementContext = new SelectionAwareStatementContext(statementContext, () -> mailSessionName);
-        this.operationFactory = new OperationFactory();
     }
 
     @Override
@@ -145,21 +144,12 @@ public class MailSessionPresenter
 
     void loadMailSession() {
         ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, address)
-                .param(RECURSIVE, true)
-                .build();
-        dispatcher.execute(operation, result -> getView().update(new MailSession(mailSessionName, result)));
+        crud.read(address, result -> getView().update(new MailSession(mailSessionName, result)));
     }
 
     void save(final Map<String, Object> changedValues) {
-        ResourceAddress resourceAddress = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
-        Composite composite = operationFactory.fromChangeSet(resourceAddress, changedValues);
-
-        dispatcher.execute(composite, (CompositeResult result) -> {
-            MessageEvent.fire(getEventBus(),
-                    Message.success(resources.messages().modifyResourceSuccess(Names.MAIL_SESSION, mailSessionName)));
-            loadMailSession();
-        });
+        ResourceAddress address = SELECTED_MAIL_SESSION_TEMPLATE.resolve(statementContext);
+        crud.save(Names.MAIL_SESSION, mailSessionName, address, changedValues, this::loadMailSession);
     }
 
     void launchAddNewServer() {

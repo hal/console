@@ -25,11 +25,11 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.LabelBuilder;
-import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -46,7 +46,6 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.Composite;
 import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
@@ -86,31 +85,31 @@ public class JcaPresenter
     }
     // @formatter:on
 
+    private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
     private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private final Resources resources;
-    private final OperationFactory operationFactory;
 
     @Inject
     public JcaPresenter(final EventBus eventBus,
             final MyView view,
             final MyProxy myProxy,
             final Finder finder,
+            final CrudOperations crud,
             final FinderPathFactory finderPathFactory,
             final Dispatcher dispatcher,
             final MetadataRegistry metadataRegistry,
             final StatementContext statementContext,
             final Resources resources) {
         super(eventBus, view, myProxy, finder);
-
+        this.crud = crud;
         this.finderPathFactory = finderPathFactory;
         this.dispatcher = dispatcher;
         this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
         this.resources = resources;
-        this.operationFactory = new OperationFactory();
     }
 
     @Override
@@ -145,50 +144,28 @@ public class JcaPresenter
     // ------------------------------------------------------ generic crud
 
     void load() {
-        Operation operation = new Operation.Builder(READ_RESOURCE_OPERATION, JCA_TEMPLATE.resolve(statementContext))
-                .param(RECURSIVE_DEPTH, 1)
-                .build();
-        dispatcher.execute(operation, result -> getView().update(result));
+        crud.read(JCA_TEMPLATE, 1, result -> getView().update(result));
     }
 
-    void add(final String type, final String name, final AddressTemplate template, final ModelNode model) {
-        Operation operation = new Operation.Builder(ADD, template.resolve(statementContext, name))
-                .payload(model)
-                .build();
-        dispatcher.execute(operation, result -> {
-            MessageEvent.fire(getEventBus(), Message.success(resources.messages().addResourceSuccess(type, name)));
-            load();
-        });
-    }
-
-    void saveSingleton(final AddressTemplate template, final Map<String, Object> changedValues,
-            final SafeHtml successMessage) {
-        Composite operation = operationFactory.fromChangeSet(template.resolve(statementContext), changedValues);
-        dispatcher.execute(operation, (CompositeResult result) -> {
-            MessageEvent.fire(getEventBus(), Message.success(successMessage));
-            load();
-        });
+    void add(final String type, final String name, final AddressTemplate template, final ModelNode payload) {
+        crud.add(type, name, template, payload, (n, a) -> load());
     }
 
     void saveResource(final AddressTemplate template, final String name, final Map<String, Object> changedValues,
             final SafeHtml successMessage) {
-        Composite operation = operationFactory.fromChangeSet(template.resolve(statementContext, name), changedValues);
-        dispatcher.execute(operation, (CompositeResult result) -> {
-            MessageEvent.fire(getEventBus(), Message.success(successMessage));
-            load();
-        });
+        crud.save(name, template, changedValues, successMessage, this::load);
+    }
+
+    void saveSingleton(final AddressTemplate template, final Map<String, Object> changedValues,
+            final SafeHtml successMessage) {
+        crud.saveSingleton(template, changedValues, successMessage, this::load);
     }
 
 
     // ------------------------------------------------------ tracer
 
     void addTracer() {
-        String type = new LabelBuilder().label(TRACER_TEMPLATE.lastKey());
-        Operation operation = new Operation.Builder(ADD, TRACER_TEMPLATE.resolve(statementContext)).build();
-        dispatcher.execute(operation, result -> {
-            MessageEvent.fire(getEventBus(), Message.success(resources.messages().addSingleResourceSuccess(type)));
-            load();
-        });
+        crud.addSingleton(new LabelBuilder().label(TRACER_TEMPLATE.lastKey()), TRACER_TEMPLATE, (n, a) -> load());
     }
 
 
@@ -266,21 +243,11 @@ public class JcaPresenter
 
     void removeThreadPool(AddressTemplate workmanagerTemplate, String workmanager, String threadPoolName,
             boolean longRunning) {
-        DialogFactory.showConfirmation(
-                resources.messages().removeResourceConfirmationTitle(THREAD_POOL),
-                resources.messages().removeResourceConfirmationQuestion(threadPoolName),
-                () -> {
-                    AddressTemplate template = longRunning
-                            ? workmanagerTemplate.append(WORKMANAGER_LRT_TEMPLATE.lastKey() + "=" + threadPoolName)
-                            : workmanagerTemplate.append(WORKMANAGER_SRT_TEMPLATE.lastKey() + "=" + threadPoolName);
-                    Operation operation = new Operation.Builder(REMOVE, template.resolve(statementContext, workmanager))
-                            .build();
-                    dispatcher.execute(operation, result -> {
-                        MessageEvent.fire(getEventBus(), Message.success(
-                                resources.messages().removeResourceSuccess(Names.THREAD_POOL, threadPoolName)));
-                        loadThreadPools(workmanagerTemplate, workmanager);
-                    });
-                });
+        AddressTemplate template = longRunning
+                ? workmanagerTemplate.append(WORKMANAGER_LRT_TEMPLATE.lastKey() + "=" + threadPoolName)
+                : workmanagerTemplate.append(WORKMANAGER_SRT_TEMPLATE.lastKey() + "=" + threadPoolName);
+        ResourceAddress address = template.resolve(statementContext, workmanager);
+        crud.remove(THREAD_POOL, threadPoolName, address, () -> loadThreadPools(workmanagerTemplate, workmanager));
     }
 
     private Composite threadPoolsOperation(final AddressTemplate template, final String name) {

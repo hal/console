@@ -66,8 +66,9 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
     private static final String MANAGED_THREAD_FACTORY_NAME = "Thread Factories";
 
     private final MetadataRegistry metadataRegistry;
-    private final VerticalNavigation navigation;
     private final TableButtonFactory tableButtonFactory;
+    private final Resources resources;
+    private final VerticalNavigation navigation;
     private final Map<String, ModelNodeForm> forms;
     private final DataTable<ModelNode> globalModulesTable;
     private final Map<String, ModelNodeTable> tables;
@@ -80,6 +81,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
             final Resources resources) {
         this.metadataRegistry = metadataRegistry;
         this.tableButtonFactory = tableButtonFactory;
+        this.resources = resources;
 
         this.forms = new HashMap<>();
         this.tables = new HashMap<>(4);
@@ -92,7 +94,8 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
         ModelNodeForm<ModelNode> eeAttributesForm = new ModelNodeForm.Builder<>(EE_ATTRIBUTES_FORM, eeMetadata)
                 .onSave((f, changedValues) -> presenter.save(AddressTemplates.EE_SUBSYSTEM_TEMPLATE, changedValues,
-                        resources.constants().deploymentAttributes()))
+                        resources.messages()
+                                .modifyResourceSuccess(Names.EE, resources.constants().deploymentAttributes())))
                 .build();
         forms.put(EE_ATTRIBUTES_FORM, eeAttributesForm);
         registerAttachable(eeAttributesForm);
@@ -135,7 +138,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         ModelNodeForm<ModelNode> defaultBindingsForm = new ModelNodeForm.Builder<>(EE_DEFAULT_BINDINGS_FORM,
                 defaultBindingsMetadata)
                 .onSave((form, changedValues) -> presenter.save(AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE,
-                        changedValues, DEFAULT_BINDINGS_NAME))
+                        changedValues, resources.messages().modifyResourceSuccess(Names.EE, DEFAULT_BINDINGS_NAME)))
                 .build();
         forms.put(EE_DEFAULT_BINDINGS_FORM, defaultBindingsForm);
         registerAttachable(defaultBindingsForm);
@@ -257,7 +260,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
                 metadata)
                 .onSave((f, changedValues) -> {
                     AddressTemplate fullyQualified = template.replaceWildcards(table.api().selectedRow().getName());
-                    presenter.save(fullyQualified, changedValues, template.lastKey());
+                    presenter.save(fullyQualified, changedValues, resources.messages().modifyResourceSuccess(Names.EE, template.lastKey()));
                 })
                 .build();
 
