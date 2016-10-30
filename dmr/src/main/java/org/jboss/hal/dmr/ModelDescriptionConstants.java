@@ -41,6 +41,7 @@ package org.jboss.hal.dmr;
  * @author Brian Stansberry
  * @author Harald Pehl
  */
+@SuppressWarnings({"DuplicateStringLiteralInspection", "SpellCheckingInspection"})
 public interface ModelDescriptionConstants {
 
     // KEEP THESE IN ALPHABETICAL ORDER!
@@ -125,8 +126,8 @@ public interface ModelDescriptionConstants {
     String INCLUDE_DEFAULTS = "include-defaults";
     String INCLUDE_RUNTIME = "include-runtime";
     String INCLUDE_SINGLETONS = "include-singletons";
+    String INET_ADDRESS = "inet-address";
     String INFINISPAN = "infinispan";
-    String INHERITED = "inherited";
     String INTERFACE = "interface";
     String IO = "io";
 
@@ -141,7 +142,6 @@ public interface ModelDescriptionConstants {
     String LEVEL = "level";
     String LIST_ADD = "list-add";
     String LIST_REMOVE = "list-remove";
-    String LOCALE = "locale";
     String LOGGING = "logging";
     String LOGGING_PROFILE = "logging-profile";
 

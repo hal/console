@@ -240,8 +240,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
                 .column(NAME, (cell, t, row, meta) -> row.getName())
 
                 .button(tableButtonFactory.add(Ids.build(baseId, Ids.ADD_SUFFIX), type,
-                        template,
-                        () -> presenter.loadEESubsystem()))
+                        template, (name, address) -> presenter.loadEESubsystem()))
 
                 .button(tableButtonFactory.remove(
                         type,

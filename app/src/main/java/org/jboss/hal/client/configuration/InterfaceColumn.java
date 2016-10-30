@@ -35,7 +35,9 @@ import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Requires;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INET_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INTERFACE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
@@ -56,15 +58,13 @@ public class InterfaceColumn extends FinderColumn<Property> {
                         Ids.INTERFACE_ADD,
                         Names.INTERFACE,
                         InterfacePresenter.ROOT_TEMPLATE,
-                        "inet-address"))
+                        singletonList(INET_ADDRESS)))
                 .columnAction(columnActionFactory.refresh(Ids.INTERFACE_REFRESH))
 
                 .itemsProvider((context, callback) -> {
                     Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
                             .param(CHILD_TYPE, INTERFACE).build();
-                    dispatcher.execute(operation, result -> {
-                        callback.onSuccess(result.asPropertyList());
-                    });
+                    dispatcher.execute(operation, result -> callback.onSuccess(result.asPropertyList()));
                 })
 
                 .useFirstActionAsBreadcrumbHandler());

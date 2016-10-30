@@ -31,6 +31,7 @@ import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
@@ -76,7 +77,7 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
     private MailSessionPresenter presenter;
 
     @Inject
-    public MailSessionView(MetadataRegistry metadataRegistry,
+    public MailSessionView(final MetadataRegistry metadataRegistry,
             final MetadataProcessor metadataProcessor,
             @Footer final Provider<Progress> progress,
             final Dispatcher dispatcher,
@@ -90,9 +91,9 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
         VerticalNavigation navigation = new VerticalNavigation();
         registerAttachable(navigation);
 
-        TableButtonFactory tableButtonFactory = new TableButtonFactory(metadataProcessor, progress, dispatcher,
-                eventBus, new SelectionAwareStatementContext(statementContext, () -> presenter.getMailSessionName()),
-                resources);
+        CrudOperations crud = new CrudOperations(eventBus, dispatcher, metadataProcessor, progress,
+                new SelectionAwareStatementContext(statementContext, () -> presenter.getMailSessionName()), resources);
+        TableButtonFactory tableButtonFactory = new TableButtonFactory(crud, resources);
 
         // ============================================
         // mail-session attributes

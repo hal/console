@@ -42,7 +42,6 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -72,11 +71,10 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
     private JmxPresenter presenter;
 
     @Inject
-    public JmxView(Dispatcher dispatcher,
-            StatementContext statementContext,
-            CrudOperations crudOperations,
+    public JmxView(CrudOperations crud,
+            Dispatcher dispatcher,
             MetadataRegistry metadataRegistry,
-            Resources resources) {
+            StatementContext statementContext) {
 
         LabelBuilder labelBuilder = new LabelBuilder();
         VerticalNavigation navigation = new VerticalNavigation();
@@ -86,7 +84,7 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
 
         Metadata configMetadata = metadataRegistry.lookup(JMX_TEMPLATE);
         configForm = new ModelNodeForm.Builder<>(Ids.JMX_CONFIGURATION_FORM, configMetadata)
-                .onSave((form, changedValues) -> crudOperations
+                .onSave((form, changedValues) -> crud
                         .saveSingleton(Names.CONFIGURATION, JMX_TEMPLATE, changedValues, () -> presenter.load()))
                 .build();
 
@@ -123,7 +121,8 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
                 .build();
         failSafeAlForm = new FailSafeModelNodeForm<>(dispatcher,
                 new Operation.Builder(READ_RESOURCE_OPERATION, AUDIT_LOG_TEMPLATE.resolve(statementContext)).build(),
-                alForm, () -> crudOperations.addSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, () -> presenter.load()));
+                alForm,
+                () -> crud.addSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, (name, address) -> presenter.load()));
 
         // @formatter:off
         Element alLayout = new Elements.Builder()
@@ -143,13 +142,14 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
         String type = labelBuilder.label(REMOTING_CONNECTOR_TEMPLATE.lastKey());
         Metadata rcMetadata = metadataRegistry.lookup(REMOTING_CONNECTOR_TEMPLATE);
         Form<ModelNode> rcForm = new ModelNodeForm.Builder<>(Ids.JMX_REMOTING_CONNECTOR_FORM, rcMetadata)
-                .onSave((form, changedValues) -> crudOperations.saveSingleton(type, REMOTING_CONNECTOR_TEMPLATE,
+                .onSave((form, changedValues) -> crud.saveSingleton(type, REMOTING_CONNECTOR_TEMPLATE,
                         changedValues, () -> presenter.load()))
                 .build();
         failSafeRcForm = new FailSafeModelNodeForm<>(dispatcher,
                 new Operation.Builder(READ_RESOURCE_OPERATION, REMOTING_CONNECTOR_TEMPLATE.resolve(statementContext))
                         .build(),
-                rcForm, () -> crudOperations.addSingleton(type, REMOTING_CONNECTOR_TEMPLATE, () -> presenter.load()));
+                rcForm,
+                () -> crud.addSingleton(type, REMOTING_CONNECTOR_TEMPLATE, (name, address) -> presenter.load()));
 
         // @formatter:off
         Element rcLayout = new Elements.Builder()

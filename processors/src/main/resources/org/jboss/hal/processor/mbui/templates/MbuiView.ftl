@@ -91,11 +91,10 @@ final class ${context.subclass} extends ${context.base} {
                 <#if form.nameResolver??>
             .onSave((form, changedValues) -> {
                 String name = ${form.nameResolver};
-                saveForm(changedValues, ${form.metadata.name}Template.resolve(mbuiContext.statementContext(), name),
-                    ${form.title}, name);
+                saveForm(${form.title}, name, ${form.metadata.name}Template.resolve(mbuiContext.statementContext(), name), changedValues);
             })
                 <#else>
-            .onSave((form, changedValues) -> saveSingletonForm(changedValues, ${form.metadata.name}Template.resolve(mbuiContext.statementContext()), ${form.title}))
+            .onSave((form, changedValues) -> saveSingletonForm(${form.title}, ${form.metadata.name}Template.resolve(mbuiContext.statementContext()), changedValues))
                 </#if>
             <#elseif form.onSave??>
             .onSave((form, changedValues) -> ${form.onSave})
@@ -207,16 +206,12 @@ final class ${context.subclass} extends ${context.base} {
             })
                                 <#else>
             .button(mbuiContext.tableButtonFactory().add(Ids.build("${table.selector}", Ids.ADD_SUFFIX), ${table.title},
-                ${table.metadata.name}Template,
-                () -> presenter.reload(),
-                                    <#list action.attributes as attribute>
-                "${attribute.name}"<#if attribute_has_next>, <#else>))</#if>
-                                    </#list>
+                ${table.metadata.name}Template, <#if action.attributes?has_content>asList(<#list action.attributes as attribute>"${attribute.name}"<#if attribute_has_next>, </#if></#list>), </#if>(name, address) -> presenter.reload()))
                                 </#if>
                             <#else>
             .button(mbuiContext.tableButtonFactory().add(Ids.build("${table.selector}", Ids.ADD_SUFFIX), ${table.title},
                 ${table.metadata.name}Template,
-                () -> presenter.reload()))
+                (name, address) -> presenter.reload()))
                             </#if>
                             <#break>
                         <#case "REMOVE_RESOURCE">

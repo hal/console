@@ -142,8 +142,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     @SuppressWarnings("UnusedParameters")
     void saveRootLogger(Form<ModelNode> form, Map<String, Object> changedValues) {
-        saveSingletonForm(changedValues, SELECTED_LOGGING_PROFILE_TEMPLATE.append("root-logger=ROOT")
-                .resolve(selectionAwareStatementContext), "Root Logger");
+        saveSingletonForm("Root Logger", SELECTED_LOGGING_PROFILE_TEMPLATE.append("root-logger=ROOT")
+                .resolve(selectionAwareStatementContext), changedValues);
     }
 
     @Override
@@ -205,8 +205,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     void saveLogger(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
-        saveForm(changedValues, SELECTED_LOGGING_PROFILE_TEMPLATE.append("logger=*")
-                .resolve(selectionAwareStatementContext, name), "Category", name);
+        saveForm("Category", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("logger=*")
+                .resolve(selectionAwareStatementContext, name), changedValues);
     }
 
     @Override
@@ -229,8 +229,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     void saveConsoleHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
-        saveForm(changedValues, SELECTED_LOGGING_PROFILE_TEMPLATE.append("console-handler=*")
-                .resolve(selectionAwareStatementContext, name), "Console Handler", name);
+        saveForm("Console Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("console-handler=*")
+                .resolve(selectionAwareStatementContext, name), changedValues);
     }
 
     @Override
@@ -254,8 +254,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     void saveFileHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
-        saveForm(changedValues, SELECTED_LOGGING_PROFILE_TEMPLATE.append("file-handler=*")
-                .resolve(selectionAwareStatementContext, name), "File Handler", name);
+        saveForm("File Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("file-handler=*")
+                .resolve(selectionAwareStatementContext, name), changedValues);
     }
 
     @Override
@@ -280,8 +280,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     void savePeriodicHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
-        saveForm(changedValues, SELECTED_LOGGING_PROFILE_TEMPLATE.append("periodic-rotating-file-handler=*")
-                .resolve(selectionAwareStatementContext, name), "Periodic Handler", name);
+        saveForm("Periodic Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("periodic-rotating-file-handler=*")
+                .resolve(selectionAwareStatementContext, name), changedValues);
     }
 
     @Override
@@ -306,8 +306,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     void savePeriodicSizeHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
-        saveForm(changedValues, SELECTED_LOGGING_PROFILE_TEMPLATE.append("periodic-size-rotating-file-handler=*")
-                .resolve(selectionAwareStatementContext, name), "Periodic Size Handler", name);
+        saveForm("Periodic Size Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("periodic-size-rotating-file-handler=*")
+                .resolve(selectionAwareStatementContext, name), changedValues);
     }
 
     @Override
@@ -332,8 +332,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     void saveSizeHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
-        saveForm(changedValues, SELECTED_LOGGING_PROFILE_TEMPLATE.append("size-rotating-file-handler=*")
-                .resolve(selectionAwareStatementContext, name), "Size Handler", name);
+        saveForm("Size Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("size-rotating-file-handler=*")
+                .resolve(selectionAwareStatementContext, name), changedValues);
     }
 
     @Override
@@ -382,8 +382,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     void saveAsyncHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
-        saveForm(changedValues, SELECTED_LOGGING_PROFILE_TEMPLATE.append("async-handler=*")
-                .resolve(selectionAwareStatementContext, name), "Async Handler", name);
+        saveForm("Async Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("async-handler=*")
+                .resolve(selectionAwareStatementContext, name), changedValues);
     }
 
     @Override
@@ -407,8 +407,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     void saveCustomHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
-        saveForm(changedValues, SELECTED_LOGGING_PROFILE_TEMPLATE.append("custom-handler=*")
-                .resolve(selectionAwareStatementContext, name), "Custom Handler", name);
+        saveForm("Custom Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("custom-handler=*")
+                .resolve(selectionAwareStatementContext, name), changedValues);
     }
 
     @Override
@@ -433,8 +433,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     void saveSyslogHandler(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
-        saveForm(changedValues, SELECTED_LOGGING_PROFILE_TEMPLATE.append("syslog-handler=*")
-                .resolve(selectionAwareStatementContext, name), "Syslog Handler", name);
+        saveForm("Syslog Handler", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("syslog-handler=*")
+                .resolve(selectionAwareStatementContext, name), changedValues);
     }
 
     @Override
@@ -458,8 +458,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     void saveCustomFormatter(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
-        saveForm(changedValues, SELECTED_LOGGING_PROFILE_TEMPLATE.append("custom-formatter=*")
-                .resolve(selectionAwareStatementContext, name), "Custom Formatter", name);
+        saveForm("Custom Formatter", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("custom-formatter=*")
+                .resolve(selectionAwareStatementContext, name), changedValues);
     }
 
     @Override
@@ -483,8 +483,8 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
     void savePatternFormatter(Form<NamedNode> form, Map<String, Object> changedValues) {
         String name = form.getModel().getName();
-        saveForm(changedValues, SELECTED_LOGGING_PROFILE_TEMPLATE.append("pattern-formatter=*")
-                .resolve(selectionAwareStatementContext, name), "Pattern Formatter", name);
+        saveForm("Pattern Formatter", name, SELECTED_LOGGING_PROFILE_TEMPLATE.append("pattern-formatter=*")
+                .resolve(selectionAwareStatementContext, name), changedValues);
     }
 
     @Override

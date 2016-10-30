@@ -17,12 +17,10 @@ package org.jboss.hal.core.mbui.dialog;
 
 import java.util.Map;
 
-import com.google.gwt.core.client.GWT;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.Dialog.Size;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.resources.Constants;
 
 /**
  * @author Harald Pehl
@@ -38,8 +36,6 @@ public class ModifyResourceDialog {
         void onModify(Form<ModelNode> form, Map<String, Object> changedValues);
     }
 
-
-    private static final Constants CONSTANTS = GWT.create(Constants.class);
 
     private Form<ModelNode> form;
     private Dialog dialog;

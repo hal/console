@@ -43,15 +43,13 @@ import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.tree.SelectionChangeHandler.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
 import org.jboss.hal.ballroom.wizard.Wizard;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.ui.Skeleton;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Composite;
-import org.jboss.hal.dmr.model.CompositeResult;
 import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.OperationFactory;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
@@ -75,7 +73,10 @@ import static org.jboss.hal.core.modelbrowser.SingletonState.CHOOSE;
 import static org.jboss.hal.core.modelbrowser.SingletonState.CREATE;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_BIG;
 import static org.jboss.hal.core.ui.Skeleton.MARGIN_SMALL;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_GROUP;
 import static org.jboss.hal.meta.StatementContext.Tuple.SELECTED_PROFILE;
 import static org.jboss.hal.resources.CSS.*;
@@ -130,9 +131,7 @@ public class ModelBrowser implements HasElements {
     }
 
 
-    private abstract class DefaultMetadataCallback implements MetadataProcessor.MetadataCallback {
-
-        DefaultMetadataCallback() {}
+    private abstract class SuccessfulMetadataCallback implements MetadataProcessor.MetadataCallback {
 
         @Override
         public void onError(final Throwable error) {
@@ -149,12 +148,12 @@ public class ModelBrowser implements HasElements {
 
     @NonNls private static final Logger logger = LoggerFactory.getLogger(ModelBrowser.class);
 
+    private final CrudOperations crud;
     private MetadataProcessor metadataProcessor;
     private Provider<Progress> progress;
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
     private final Resources resources;
-    private final OperationFactory operationFactory;
     private final Stack<FilterInfo> filterStack;
 
     private final Iterable<Element> rows;
@@ -175,17 +174,18 @@ public class ModelBrowser implements HasElements {
     // ------------------------------------------------------ ui setup
 
     @Inject
-    public ModelBrowser(final MetadataProcessor metadataProcessor,
+    public ModelBrowser(final CrudOperations crud,
+            final MetadataProcessor metadataProcessor,
             @Footer final Provider<Progress> progress,
             final Dispatcher dispatcher,
             final EventBus eventBus,
             final Resources resources) {
+        this.crud = crud;
         this.metadataProcessor = metadataProcessor;
         this.progress = progress;
         this.dispatcher = dispatcher;
         this.eventBus = eventBus;
         this.resources = resources;
-        this.operationFactory = new OperationFactory();
         this.filterStack = new Stack<>();
         this.updateBreadcrumb = false;
         this.surroundingHeight = 0;
@@ -397,7 +397,7 @@ public class ModelBrowser implements HasElements {
     private void showResourceView(Node<Context> node, ResourceAddress address) {
         Node<Context> parent = tree.api().getNode(node.parent);
         AddressTemplate template = asGenericTemplate(parent, address);
-        metadataProcessor.lookup(template, progress.get(), new DefaultMetadataCallback() {
+        metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback() {
             @Override
             public void onMetadata(final Metadata metadata) {
                 resourcePanel.update(node, node.data.getAddress(), metadata);
@@ -419,7 +419,7 @@ public class ModelBrowser implements HasElements {
 
                 ResourceAddress singletonAddress = parent.data.getAddress().getParent().add(parent.text, singleton);
                 AddressTemplate template = asGenericTemplate(parent, singletonAddress);
-                metadataProcessor.lookup(template, progress.get(), new DefaultMetadataCallback() {
+                metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback() {
                     @Override
                     public void onMetadata(Metadata metadata) {
                         String id = Ids.build(parent.id, "singleton", Ids.FORM_SUFFIX);
@@ -428,20 +428,8 @@ public class ModelBrowser implements HasElements {
                                 .build();
                         AddResourceDialog dialog = new AddResourceDialog(
                                 resources.messages().addResourceTitle(singleton), form,
-                                (n, modelNode) -> {
-                                    Operation.Builder builder = new Operation.Builder(ADD,
-                                            fqAddress(parent, singleton));
-                                    if (modelNode != null) {
-                                        builder.payload(modelNode);
-                                    }
-                                    dispatcher.execute(builder.build(),
-                                            result -> {
-                                                MessageEvent.fire(eventBus,
-                                                        Message.success(resources.messages()
-                                                                .addResourceSuccess(parent.text, singleton)));
-                                                refresh(parent);
-                                            });
-                                });
+                                (n1, modelNode) -> crud.addSingleton(singleton, fqAddress(parent, singleton), modelNode,
+                                        (n2, address) -> refresh(parent)));
                         dialog.show();
                     }
                 });
@@ -478,24 +466,16 @@ public class ModelBrowser implements HasElements {
 
         } else {
             AddressTemplate template = asGenericTemplate(parent, parent.data.getAddress());
-            metadataProcessor.lookup(template, progress.get(), new DefaultMetadataCallback() {
+            metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback() {
                 @Override
                 public void onMetadata(Metadata metadata) {
                     AddResourceDialog dialog = new AddResourceDialog(
                             Ids.build(parent.id, "add"),
                             resources.messages().addResourceTitle(parent.text),
-                            metadata, (name, modelNode) -> {
-                        Operation operation = new Operation.Builder(ADD, fqAddress(parent, name))
-                                .payload(modelNode)
-                                .build();
-                        dispatcher.execute(operation,
-                                result -> {
-                                    MessageEvent.fire(eventBus,
-                                            Message.success(resources.messages()
-                                                    .addResourceSuccess(parent.text, name)));
-                                    refresh(parent);
-                                });
-                    });
+                            metadata,
+                            (name, modelNode) ->
+                                    crud.add(parent.text, name, fqAddress(parent, name), modelNode,
+                                            (n, a) -> refresh(parent)));
                     dialog.show();
                 }
             });
@@ -525,13 +505,7 @@ public class ModelBrowser implements HasElements {
     }
 
     void remove(ResourceAddress address) {
-        Operation operation = new Operation.Builder(REMOVE, address).build();
-        dispatcher.execute(operation, result -> {
-            MessageEvent.fire(eventBus,
-                    Message.success(
-                            resources.messages().removeResourceSuccess(address.lastName(), address.lastValue())));
-            refresh(tree.api().getSelected());
-        });
+        crud.remove(address.lastName(), address.lastValue(), address, () -> refresh(tree.api().getSelected()));
     }
 
     void reset(Form<ModelNode> form) {
@@ -539,13 +513,8 @@ public class ModelBrowser implements HasElements {
     }
 
     void save(ResourceAddress address, Map<String, Object> changedValues) {
-        Composite composite = operationFactory.fromChangeSet(address, changedValues);
-        dispatcher.execute(composite, (CompositeResult result) -> {
-            MessageEvent.fire(eventBus,
-                    Message.success(
-                            resources.messages().modifyResourceSuccess(address.lastName(), address.lastValue())));
-            refresh(tree.api().getSelected());
-        });
+        crud.save(address.lastName(), address.lastValue(), address, changedValues,
+                () -> refresh(tree.api().getSelected()));
     }
 
 

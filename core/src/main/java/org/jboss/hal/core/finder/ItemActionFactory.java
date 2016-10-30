@@ -19,21 +19,14 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
-import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.model.Operation;
-import org.jboss.hal.dmr.model.ResourceAddress;
+import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.MessageEvent;
 
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 
 /**
  * Convenience methods for common item actions.
@@ -42,24 +35,18 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
  */
 public class ItemActionFactory {
 
+    private final CrudOperations crud;
     private final ItemMonitor itemMonitor;
-    private final StatementContext statementContext;
-    private final Dispatcher dispatcher;
-    private final EventBus eventBus;
     private final PlaceManager placeManager;
     private final Resources resources;
 
     @Inject
-    public ItemActionFactory(ItemMonitor itemMonitor,
-            StatementContext statementContext,
-            Dispatcher dispatcher,
-            EventBus eventBus,
+    public ItemActionFactory(CrudOperations crud,
+            ItemMonitor itemMonitor,
             PlaceManager placeManager,
             Resources resources) {
+        this.crud = crud;
         this.itemMonitor = itemMonitor;
-        this.statementContext = statementContext;
-        this.dispatcher = dispatcher;
-        this.eventBus = eventBus;
         this.placeManager = placeManager;
         this.resources = resources;
     }
@@ -95,7 +82,7 @@ public class ItemActionFactory {
     }
 
     /**
-     * Wraps the specified handler inside a confirmation dialog. The action is executed when upon confirmation.
+     * Wraps the specified handler inside a confirmation dialog. The action is executed upon confirmation.
      */
     public <T> ItemAction<T> remove(String type, String name, ItemActionHandler<T> handler) {
         return new ItemAction<>(resources.constants().remove(), item -> DialogFactory.showConfirmation(
@@ -109,18 +96,8 @@ public class ItemActionFactory {
      * wildcard which is replaced by the resource name. The action wil bring up a confirmation dialog. If confirmed the
      * resource is removed and {@link FinderColumn#refresh(FinderColumn.RefreshMode)} is called.
      */
-    public <T> ItemAction<T> remove(String type, String name, AddressTemplate addressTemplate, FinderColumn<T> column) {
-        return new ItemAction<>(resources.constants().remove(), item -> DialogFactory.showConfirmation(
-                resources.messages().removeResourceConfirmationTitle(type),
-                resources.messages().removeResourceConfirmationQuestion(name),
-                () -> {
-                    ResourceAddress address = addressTemplate.resolve(statementContext, name);
-                    Operation operation = new Operation.Builder(REMOVE, address).build();
-                    dispatcher.execute(operation, result -> {
-                        MessageEvent.fire(eventBus,
-                                Message.success(resources.messages().removeResourceSuccess(type, name)));
-                        column.refresh(CLEAR_SELECTION);
-                    });
-                }));
+    public <T> ItemAction<T> remove(String type, String name, AddressTemplate template, FinderColumn<T> column) {
+        return new ItemAction<>(resources.constants().remove(), item -> crud.remove(type, name, template,
+                () -> column.refresh(CLEAR_SELECTION)));
     }
 }
