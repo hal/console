@@ -87,8 +87,6 @@ import org.jboss.hal.client.runtime.server.ServerStatusPresenter;
 import org.jboss.hal.client.runtime.server.ServerStatusView;
 import org.jboss.hal.client.runtime.subsystem.jndi.JndiPresenter;
 import org.jboss.hal.client.runtime.subsystem.jndi.JndiView;
-import org.jboss.hal.client.runtime.subsystem.jpa.JpaPresenter;
-import org.jboss.hal.client.runtime.subsystem.jpa.JpaView;
 import org.jboss.hal.client.runtime.subsystem.logging.LogFilePresenter;
 import org.jboss.hal.client.runtime.subsystem.logging.Templated_LogFileView_Provider;
 import org.jboss.hal.client.skeleton.FooterPresenter;
@@ -250,10 +248,15 @@ public class AppModule extends AbstractTemplatedPresenterModule {
                 JndiView.class,
                 JndiPresenter.MyProxy.class);
 
-        bindPresenter(JpaPresenter.class,
-                JpaPresenter.MyView.class,
-                JpaView.class,
-                JpaPresenter.MyProxy.class);
+        bindPresenter(org.jboss.hal.client.runtime.subsystem.jpa.JpaPresenter.class,
+                org.jboss.hal.client.runtime.subsystem.jpa.JpaPresenter.MyView.class,
+                org.jboss.hal.client.runtime.subsystem.jpa.JpaView.class,
+                org.jboss.hal.client.runtime.subsystem.jpa.JpaPresenter.MyProxy.class);
+
+        bindTemplatedPresenter(org.jboss.hal.client.configuration.subsystem.jpa.JpaPresenter.class,
+                org.jboss.hal.client.configuration.subsystem.jpa.JpaPresenter.MyView.class,
+                org.jboss.hal.client.configuration.subsystem.jpa.Mbui_JpaView_Provider.class,
+                org.jboss.hal.client.configuration.subsystem.jpa.JpaPresenter.MyProxy.class);
 
         bindTemplatedPresenter(LogFilePresenter.class,
                 LogFilePresenter.MyView.class,

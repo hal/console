@@ -32,12 +32,12 @@ import org.jboss.hal.resources.Messages;
 
 /**
  * An element which uses the dispatcher and an operation to check whether a resource exists. If it exists the specified
- * form is displayed in view mode, otherwise the empty state element is displayed which can be used to create the
+ * form is displayed in view mode, otherwise an empty state element is displayed which can be used to create the
  * resource.
  *
  * @author Harald Pehl
  */
-public class FailSafeModelNodeForm<T extends ModelNode> implements IsElement, Attachable {
+public class FailSafeForm<T extends ModelNode> implements IsElement, Attachable {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
@@ -48,7 +48,7 @@ public class FailSafeModelNodeForm<T extends ModelNode> implements IsElement, At
     private final Supplier<Operation> operation;
     private final Element root;
 
-    public FailSafeModelNodeForm(final Dispatcher dispatcher, final Supplier<Operation> operation,
+    public FailSafeForm(final Dispatcher dispatcher, final Supplier<Operation> operation,
             final Form<T> form, final EmptyState.Action action) {
         this(dispatcher, operation, form, new EmptyState.Builder(CONSTANTS.noResource())
                 .description(MESSAGES.noResource())
@@ -56,7 +56,7 @@ public class FailSafeModelNodeForm<T extends ModelNode> implements IsElement, At
                 .build());
     }
 
-    public FailSafeModelNodeForm(final Dispatcher dispatcher, final Supplier<Operation> operation, final Form<T> form,
+    public FailSafeForm(final Dispatcher dispatcher, final Supplier<Operation> operation, final Form<T> form,
             final EmptyState emptyState) {
         this.dispatcher = dispatcher;
         this.emptyState = emptyState;

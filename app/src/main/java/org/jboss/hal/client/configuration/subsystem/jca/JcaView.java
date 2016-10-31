@@ -34,7 +34,7 @@ import org.jboss.hal.ballroom.table.Api.RefreshMode;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.Options;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mbui.form.FailSafeModelNodeForm;
+import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
@@ -74,7 +74,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
     private final Form<ModelNode> ccmForm;
     private final Form<ModelNode> avForm;
     private final Form<ModelNode> bvForm;
-    private final FailSafeModelNodeForm<ModelNode> failSafeTracerForm;
+    private final FailSafeForm<ModelNode> failSafeTracerForm;
     private final DataTable<NamedNode> bcTable;
     private final Form<NamedNode> bcForm;
     private final ModelNodeTable<NamedNode> wmTable;
@@ -151,7 +151,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                 .onSave((form, changedValues) -> presenter.saveSingleton(TRACER_TEMPLATE, changedValues,
                         resources.messages().modifySingleResourceSuccess(tracerType)))
                 .build();
-        failSafeTracerForm = new FailSafeModelNodeForm<>(dispatcher,
+        failSafeTracerForm = new FailSafeForm<>(dispatcher,
                 () -> new Operation.Builder(READ_RESOURCE_OPERATION, TRACER_TEMPLATE.resolve(statementContext)).build(),
                 tracerForm, () -> presenter.addTracer());
 

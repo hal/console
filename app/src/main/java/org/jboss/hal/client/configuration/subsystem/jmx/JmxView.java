@@ -29,7 +29,7 @@ import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.ListItem;
 import org.jboss.hal.core.CrudOperations;
-import org.jboss.hal.core.mbui.form.FailSafeModelNodeForm;
+import org.jboss.hal.core.mbui.form.FailSafeForm;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
@@ -65,8 +65,8 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
 
     private final ModelNodeForm<ModelNode> configForm;
     private final ListItem handlerItem;
-    private final FailSafeModelNodeForm<ModelNode> failSafeAlForm;
-    private final FailSafeModelNodeForm<ModelNode> failSafeRcForm;
+    private final FailSafeForm<ModelNode> failSafeAlForm;
+    private final FailSafeForm<ModelNode> failSafeRcForm;
 
     private JmxPresenter presenter;
 
@@ -119,7 +119,7 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
                 .onSave((form, changedValues) -> presenter
                         .saveAuditLog(changedValues, handlerItem.isModified(), handlerItem.getValue()))
                 .build();
-        failSafeAlForm = new FailSafeModelNodeForm<>(dispatcher,
+        failSafeAlForm = new FailSafeForm<>(dispatcher,
                 () -> new Operation.Builder(READ_RESOURCE_OPERATION, AUDIT_LOG_TEMPLATE.resolve(statementContext))
                         .build(),
                 alForm,
@@ -146,7 +146,7 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
                 .onSave((form, changedValues) -> crud.saveSingleton(type, REMOTING_CONNECTOR_TEMPLATE,
                         changedValues, () -> presenter.load()))
                 .build();
-        failSafeRcForm = new FailSafeModelNodeForm<>(dispatcher,
+        failSafeRcForm = new FailSafeForm<>(dispatcher,
                 () -> new Operation.Builder(READ_RESOURCE_OPERATION,
                         REMOTING_CONNECTOR_TEMPLATE.resolve(statementContext))
                         .build(),

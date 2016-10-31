@@ -51,7 +51,7 @@ public class Subsystems {
         add(new SubsystemMetadata(IO, "IO", null, NameTokens.IO, null, true, resources.previews().configurationIo()));
         add(new SubsystemMetadata(JCA, "JCA", null, NameTokens.JCA, null, true));
         add(new SubsystemMetadata(JMX, "JMX", null, NameTokens.JMX, null, true));
-        add(new SubsystemMetadata(JPA, "JPA", null, NameTokens.JPA_CONFIGURATION, null, false));
+        add(new SubsystemMetadata(JPA, "JPA", null, NameTokens.JPA_CONFIGURATION, null, true));
         add(new SubsystemMetadata(LOGGING, Names.LOGGING, null, null, Ids.LOGGING, true, resources.previews().configurationLogging()));
         add(new SubsystemMetadata(MAIL, "Mail", null, null, Ids.MAIL_SESSION, true, resources.previews().configurationMail()));
         add(new SubsystemMetadata(MESSAGING_ACTIVEMQ, "Messaging", "ActiveMQ", null, null, true));
