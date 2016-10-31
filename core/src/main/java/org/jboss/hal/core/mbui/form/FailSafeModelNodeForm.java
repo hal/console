@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.core.mbui.form;
 
+import java.util.function.Supplier;
+
 import com.google.gwt.core.client.GWT;
 import elemental.dom.Element;
 import org.jboss.gwt.elemento.core.Elements;
@@ -43,10 +45,10 @@ public class FailSafeModelNodeForm<T extends ModelNode> implements IsElement, At
     private final Dispatcher dispatcher;
     private final EmptyState emptyState;
     private final Form<T> form;
-    private final Operation operation;
+    private final Supplier<Operation> operation;
     private final Element root;
 
-    public FailSafeModelNodeForm(final Dispatcher dispatcher, final Operation operation,
+    public FailSafeModelNodeForm(final Dispatcher dispatcher, final Supplier<Operation> operation,
             final Form<T> form, final EmptyState.Action action) {
         this(dispatcher, operation, form, new EmptyState.Builder(CONSTANTS.noResource())
                 .description(MESSAGES.noResource())
@@ -54,7 +56,7 @@ public class FailSafeModelNodeForm<T extends ModelNode> implements IsElement, At
                 .build());
     }
 
-    public FailSafeModelNodeForm(final Dispatcher dispatcher, final Operation operation, final Form<T> form,
+    public FailSafeModelNodeForm(final Dispatcher dispatcher, final Supplier<Operation> operation, final Form<T> form,
             final EmptyState emptyState) {
         this.dispatcher = dispatcher;
         this.emptyState = emptyState;
@@ -74,7 +76,7 @@ public class FailSafeModelNodeForm<T extends ModelNode> implements IsElement, At
     @Override
     public void attach() {
         form.attach();
-        dispatcher.execute(operation,
+        dispatcher.execute(operation.get(),
                 result -> formMode(),
                 (op, failure) -> emptyStateMode());
     }
@@ -85,7 +87,7 @@ public class FailSafeModelNodeForm<T extends ModelNode> implements IsElement, At
     }
 
     public void view(T model) {
-        dispatcher.execute(operation,
+        dispatcher.execute(operation.get(),
                 result -> {
                     formMode();
                     form.view(model);

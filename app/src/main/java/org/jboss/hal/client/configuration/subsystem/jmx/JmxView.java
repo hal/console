@@ -120,7 +120,8 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
                         .saveAuditLog(changedValues, handlerItem.isModified(), handlerItem.getValue()))
                 .build();
         failSafeAlForm = new FailSafeModelNodeForm<>(dispatcher,
-                new Operation.Builder(READ_RESOURCE_OPERATION, AUDIT_LOG_TEMPLATE.resolve(statementContext)).build(),
+                () -> new Operation.Builder(READ_RESOURCE_OPERATION, AUDIT_LOG_TEMPLATE.resolve(statementContext))
+                        .build(),
                 alForm,
                 () -> crud.addSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, (name, address) -> presenter.load()));
 
@@ -146,7 +147,8 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
                         changedValues, () -> presenter.load()))
                 .build();
         failSafeRcForm = new FailSafeModelNodeForm<>(dispatcher,
-                new Operation.Builder(READ_RESOURCE_OPERATION, REMOTING_CONNECTOR_TEMPLATE.resolve(statementContext))
+                () -> new Operation.Builder(READ_RESOURCE_OPERATION,
+                        REMOTING_CONNECTOR_TEMPLATE.resolve(statementContext))
                         .build(),
                 rcForm,
                 () -> crud.addSingleton(type, REMOTING_CONNECTOR_TEMPLATE, (name, address) -> presenter.load()));

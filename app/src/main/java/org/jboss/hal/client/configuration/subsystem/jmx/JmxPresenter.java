@@ -109,6 +109,7 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
         if (!changedHandler) {
             crud.saveSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, changedValues, this::load);
         } else {
+
             // TODO Calculate the 'diff' between existing and new handler and create a composite which
             //  a) saves the changed values
             //  b) removes removed handler

@@ -53,11 +53,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.POLICY;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SELECTOR;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.WORKMANAGER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
@@ -156,7 +152,7 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
                         resources.messages().modifySingleResourceSuccess(tracerType)))
                 .build();
         failSafeTracerForm = new FailSafeModelNodeForm<>(dispatcher,
-                new Operation.Builder(READ_RESOURCE_OPERATION, TRACER_TEMPLATE.resolve(statementContext)).build(),
+                () -> new Operation.Builder(READ_RESOURCE_OPERATION, TRACER_TEMPLATE.resolve(statementContext)).build(),
                 tracerForm, () -> presenter.addTracer());
 
         // @formatter:off
