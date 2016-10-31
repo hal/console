@@ -15,14 +15,21 @@
  */
 package org.jboss.hal.client.configuration.subsystem.jmx;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import org.jboss.gwt.flow.Async;
+import org.jboss.gwt.flow.Function;
+import org.jboss.gwt.flow.FunctionContext;
+import org.jboss.gwt.flow.Outcome;
+import org.jboss.gwt.flow.Progress;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -32,15 +39,21 @@ import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.model.ResourceAddress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
+import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Footer;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.AUDIT_LOG_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.JMX_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.JMX_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLER;
 
 /**
  * @author Harald Pehl
@@ -61,8 +74,11 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
 
 
     private final CrudOperations crud;
+    private final Dispatcher dispatcher;
+    private final Provider<Progress> progress;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
+    private final Resources resources;
 
     @Inject
     public JmxPresenter(final EventBus eventBus,
@@ -70,12 +86,17 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
             final MyProxy myProxy,
             final Finder finder,
             final CrudOperations crud,
+            final Dispatcher dispatcher,
+            @Footer final Provider<Progress> progress,
             final FinderPathFactory finderPathFactory,
-            final StatementContext statementContext) {
+            final StatementContext statementContext, final Resources resources) {
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
+        this.dispatcher = dispatcher;
+        this.progress = progress;
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
+        this.resources = resources;
     }
 
     @Override
@@ -109,11 +130,26 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
         if (!changedHandler) {
             crud.saveSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, changedValues, this::load);
         } else {
+            changedValues.remove(HANDLER);
+            Function[] functions = {
+                    new HandlerFunctions.SaveAuditLog(dispatcher, statementContext, changedValues),
+                    new HandlerFunctions.ReadHandlers(dispatcher, statementContext),
+                    new HandlerFunctions.MergeHandler(dispatcher, statementContext, new HashSet<>(handler))
+            };
+            new Async<FunctionContext>(progress.get()).waterfall(new FunctionContext(),
+                    new Outcome<FunctionContext>() {
+                        @Override
+                        public void onFailure(final FunctionContext context) {
+                            MessageEvent.fire(getEventBus(), Message.error(resources.messages().lastOperationFailed(),
+                                    context.getErrorMessage()));
 
-            // TODO Calculate the 'diff' between existing and new handler and create a composite which
-            //  a) saves the changed values
-            //  b) removes removed handler
-            //  c) adds new handler
+                        }
+
+                        @Override
+                        public void onSuccess(final FunctionContext context) {
+                            load();
+                        }
+                    }, functions);
         }
     }
 }

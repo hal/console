@@ -384,7 +384,7 @@ public class CrudOperations {
      * @param callback the callback which gets the result of the {@code read-resource} operation
      */
     public void readRecursive(final AddressTemplate template, final ReadCallback callback) {
-        read(template.resolve(statementContext), callback);
+        readRecursive(template.resolve(statementContext), callback);
     }
 
     /**
