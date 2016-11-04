@@ -72,7 +72,7 @@ public class GenericSubsystemPresenter
         super(eventBus, view, proxy, finder);
         this.finderPathFactory = finderPathFactory;
         this.statementContext = statementContext;
-        this.address = ResourceAddress.ROOT;
+        this.address = ResourceAddress.root();
     }
 
     @Override
@@ -81,7 +81,7 @@ public class GenericSubsystemPresenter
         if (parameter != null) {
             address = AddressTemplate.of(parameter).resolve(statementContext);
         } else {
-            address = ResourceAddress.ROOT;
+            address = ResourceAddress.root();
         }
         address.asPropertyList().stream()
                 .filter(property -> PROFILE.equals(property.getName()))

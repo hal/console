@@ -59,9 +59,12 @@ public class SocketBindingColumn extends FinderColumn<Property> {
                         SocketBindingPresenter.ROOT_TEMPLATE))
                 .columnAction(columnActionFactory.refresh(Ids.SOCKET_BINDING_REFRESH))
                 .itemsProvider((context, callback) -> {
-                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
+                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
+                            ResourceAddress.root())
                             .param(CHILD_TYPE, "socket-binding-group").build();
-                    dispatcher.execute(operation, result -> { callback.onSuccess(result.asPropertyList()); });
+                    dispatcher.execute(operation, result -> {
+                        callback.onSuccess(result.asPropertyList());
+                    });
                 }));
 
         setItemRenderer(property -> new ItemDisplay<Property>() {

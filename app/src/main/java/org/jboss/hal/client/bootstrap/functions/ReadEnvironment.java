@@ -57,7 +57,6 @@ import org.jboss.hal.meta.ManagementModel;
 
 import static org.jboss.hal.config.AccessControlProvider.SIMPLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.dmr.model.ResourceAddress.ROOT;
 
 /**
  * Reads important information from the root resource like product name and version, operation mode and management
@@ -85,11 +84,11 @@ public class ReadEnvironment implements BootstrapFunction {
         logStart();
 
         List<Operation> ops = new ArrayList<>();
-        ops.add(new Operation.Builder(READ_RESOURCE_OPERATION, ROOT)
+        ops.add(new Operation.Builder(READ_RESOURCE_OPERATION, ResourceAddress.root())
                 .param(ATTRIBUTES_ONLY, true)
                 .param(INCLUDE_RUNTIME, true)
                 .build());
-        ops.add(new Operation.Builder(WHOAMI, ROOT).param(VERBOSE, true).build());
+        ops.add(new Operation.Builder(WHOAMI, ResourceAddress.root()).param(VERBOSE, true).build());
         ResourceAddress address = new ResourceAddress().add("core-service", "management")
                 .add("access", "authorization");
         ops.add(new Operation.Builder(READ_ATTRIBUTE_OPERATION, address).param(NAME, PROVIDER).build());

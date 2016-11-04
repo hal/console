@@ -34,7 +34,7 @@ public class Composite extends Operation implements Iterable<Operation> {
     private List<Operation> operations;
 
     public Composite(Operation first, Operation... rest) {
-        super(COMPOSITE, ResourceAddress.ROOT, new ModelNode(), null);
+        super(COMPOSITE, ResourceAddress.root(), new ModelNode(), null);
         this.operations = new ArrayList<>();
         this.operations.add(first);
         if (rest != null) {
@@ -44,7 +44,7 @@ public class Composite extends Operation implements Iterable<Operation> {
     }
 
     public Composite(List<Operation> operations) {
-        super(COMPOSITE, ResourceAddress.ROOT, new ModelNode(), null);
+        super(COMPOSITE, ResourceAddress.root(), new ModelNode(), null);
         this.operations = new ArrayList<>();
         this.operations.addAll(operations);
         addSteps();

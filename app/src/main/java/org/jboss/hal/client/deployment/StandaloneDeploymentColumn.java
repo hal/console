@@ -110,7 +110,8 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
         super(new Builder<Deployment>(finder, Ids.DEPLOYMENT, Names.DEPLOYMENT)
 
                 .itemsProvider((context, callback) -> {
-                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ROOT)
+                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
+                            ResourceAddress.root())
                             .param(CHILD_TYPE, DEPLOYMENT)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
@@ -161,9 +162,10 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                     return resources.constants().stopped();
                 } else if (item.getStatus() == Status.OK) {
                     return resources.constants().activeLower();
-                } else
+                } else {
                     return item.isEnabled() ? resources.constants().enabled() : resources.constants()
                             .disabled();
+                }
             }
 
             @Override

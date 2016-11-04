@@ -79,6 +79,6 @@ public class PathsPresenter extends MbuiPresenter<PathsPresenter.MyView, PathsPr
 
     @Override
     protected void reload() {
-        crud.readChildren(ResourceAddress.ROOT, "path", children -> getView().update(asNamedNodes(children)));
+        crud.readChildren(ResourceAddress.root(), "path", children -> getView().update(asNamedNodes(children)));
     }
 }

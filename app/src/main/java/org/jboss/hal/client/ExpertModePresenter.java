@@ -73,7 +73,7 @@ public class ExpertModePresenter
             AddressTemplate template = AddressTemplate.of(parameter);
             address = template.resolve(statementContext);
         } else {
-            address = ResourceAddress.ROOT;
+            address = ResourceAddress.root();
         }
     }
 

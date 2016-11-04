@@ -101,7 +101,7 @@ public class ModelBrowser implements HasElements {
         final List<String> parents;
 
         private FilterInfo(Node<Context> parent, Node<Context> child) {
-            this.address = child == null ? ResourceAddress.ROOT : child.data.getAddress();
+            this.address = child == null ? ResourceAddress.root() : child.data.getAddress();
             this.node = child == null ? null : child;
             this.text = child == null ? Names.MANAGEMENT_MODEL : child.text;
             this.filterText = parent == null || child == null ? null : parent.text + "=" + child.text;
@@ -259,7 +259,7 @@ public class ModelBrowser implements HasElements {
     }
 
     private void emptyTree() {
-        Context context = new Context(ResourceAddress.ROOT, Collections.emptySet());
+        Context context = new Context(ResourceAddress.root(), Collections.emptySet());
         Node<Context> rootNode = new Node.Builder<>(MODEL_BROWSER_ROOT, Names.NOT_AVAILABLE, context)
                 .asyncFolder()
                 .build();
@@ -541,13 +541,13 @@ public class ModelBrowser implements HasElements {
     public void setRoot(ResourceAddress root, boolean updateBreadcrumb) {
         this.updateBreadcrumb = updateBreadcrumb;
 
-        String resource = root == ResourceAddress.ROOT ? Names.MANAGEMENT_MODEL : root.lastValue();
+        String resource = root.equals(ResourceAddress.root()) ? Names.MANAGEMENT_MODEL : root.lastValue();
         if ("*".equals(resource)) {
             throw new IllegalArgumentException("Invalid root address: " + root +
                     ". ModelBrowser.setRoot() must be called with a concrete address.");
         }
         // TODO Removing a filter in a scoped model browser does not work
-        Elements.setVisible(filter, root == ResourceAddress.ROOT);
+        Elements.setVisible(filter, root.equals(ResourceAddress.root()));
 
         Operation ping = new Operation.Builder(READ_RESOURCE_OPERATION, root).build();
         dispatcher.execute(ping,

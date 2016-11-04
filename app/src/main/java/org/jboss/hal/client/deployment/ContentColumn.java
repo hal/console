@@ -351,7 +351,7 @@ public class ContentColumn extends FinderColumn<Content> {
     }
 
     void deploy(Content content) {
-        Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, ResourceAddress.ROOT)
+        Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, ResourceAddress.root())
                 .param(CHILD_TYPE, SERVER_GROUP)
                 .build();
         dispatcher.execute(operation, result -> {

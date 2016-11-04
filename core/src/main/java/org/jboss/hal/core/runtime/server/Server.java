@@ -152,22 +152,22 @@ public class Server extends NamedNode {
     }
 
     /**
-     * @return the {@code /host=&lt;host&gt;/server-config=&lt;server&gt;} address or {@link ResourceAddress#ROOT} if
+     * @return the {@code /host=&lt;host&gt;/server-config=&lt;server&gt;} address or {@link ResourceAddress#root()} if
      * either host or server-config is undefined.
      */
     public ResourceAddress getServerConfigAddress() {
-        return isStandalone() ? ResourceAddress.ROOT : new ResourceAddress().add(HOST, getHost())
+        return isStandalone() ? ResourceAddress.root() : new ResourceAddress().add(HOST, getHost())
                 .add(SERVER_CONFIG, getName());
     }
 
     /**
-     * @return the {@code /host=&lt;host&gt;/server=&lt;server&gt;} address or {@link ResourceAddress#ROOT} if either
+     * @return the {@code /host=&lt;host&gt;/server=&lt;server&gt;} address or {@link ResourceAddress#root()} if either
      * host or server is undefined.
      */
     public ResourceAddress getServerAddress() {
         // Do *not* return ResourceAddress.ROOT for standalone. The reference server is used to dynamically
         // create deployment addresses like 'server.getServerAddress().add(..., ...)'
-        return isStandalone() ? new ResourceAddress() : new ResourceAddress().add(HOST, getHost())
+        return isStandalone() ? ResourceAddress.root() : new ResourceAddress().add(HOST, getHost())
                 .add(SERVER, getName());
     }
 

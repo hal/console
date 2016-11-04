@@ -194,10 +194,10 @@ public class ServerActions {
                                 .buildLongRunning(title,
                                         resources.messages().restartStandalonePending(server.getName()));
                         pendingDialog.show();
-                        Operation operation = new Operation.Builder(SHUTDOWN, ResourceAddress.ROOT)
+                        Operation operation = new Operation.Builder(SHUTDOWN, ResourceAddress.root())
                                 .param(RESTART, true)
                                 .build();
-                        Operation ping = new Operation.Builder(READ_RESOURCE_OPERATION, ResourceAddress.ROOT).build();
+                        Operation ping = new Operation.Builder(READ_RESOURCE_OPERATION, ResourceAddress.root()).build();
                         dispatcher.execute(operation,
 
                                 result -> new TimeoutHandler(dispatcher, SERVER_RESTART_TIMEOUT)

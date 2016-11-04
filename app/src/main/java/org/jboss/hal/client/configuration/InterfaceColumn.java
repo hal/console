@@ -62,7 +62,8 @@ public class InterfaceColumn extends FinderColumn<Property> {
                 .columnAction(columnActionFactory.refresh(Ids.INTERFACE_REFRESH))
 
                 .itemsProvider((context, callback) -> {
-                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ResourceAddress.ROOT)
+                    Operation operation = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
+                            ResourceAddress.root())
                             .param(CHILD_TYPE, INTERFACE).build();
                     dispatcher.execute(operation, result -> callback.onSuccess(result.asPropertyList()));
                 })

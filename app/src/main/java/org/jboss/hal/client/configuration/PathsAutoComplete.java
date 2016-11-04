@@ -97,7 +97,7 @@ public class PathsAutoComplete extends AutoComplete {
     }
 
     private static Operation defaultOperation() {
-        return new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, ResourceAddress.ROOT)
+        return new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, ResourceAddress.root())
                 .param(CHILD_TYPE, "path").build();
     }
 

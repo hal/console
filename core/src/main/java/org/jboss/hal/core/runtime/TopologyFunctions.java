@@ -47,7 +47,6 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.dmr.model.ResourceAddress.ROOT;
 
 /**
  * Set of functions to read runtime data like running server of a specific server group.
@@ -69,12 +68,13 @@ public class TopologyFunctions {
     private static final ResourceAddress ALL_SERVERS = new ResourceAddress()
             .add(ModelDescriptionConstants.HOST, "*")
             .add(SERVER, "*");
-    private static final Operation HOSTS_OPERATION = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION, ROOT)
+    private static final Operation HOSTS_OPERATION = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
+            ResourceAddress.root())
             .param(CHILD_TYPE, ModelDescriptionConstants.HOST)
             .param(INCLUDE_RUNTIME, true)
             .build();
     private static final Operation SERVER_GROUPS_OPERATION = new Operation.Builder(READ_CHILDREN_RESOURCES_OPERATION,
-            ROOT)
+            ResourceAddress.root())
             .param(CHILD_TYPE, ModelDescriptionConstants.SERVER_GROUP)
             .param(INCLUDE_RUNTIME, true)
             .build();

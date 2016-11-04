@@ -43,7 +43,6 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
-import static org.jboss.hal.dmr.model.ResourceAddress.ROOT;
 
 /**
  * @author Harald Pehl
@@ -71,7 +70,7 @@ public class ProfileColumn extends FinderColumn<String> {
                 .columnAction(columnActionFactory.refresh(Ids.PROFILE_REFRESH))
 
                 .itemsProvider((context, callback) -> {
-                    Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, ROOT)
+                    Operation operation = new Operation.Builder(READ_CHILDREN_NAMES_OPERATION, ResourceAddress.root())
                             .param(CHILD_TYPE, PROFILE)
                             .build();
                     dispatcher.execute(operation, result ->
